@@ -18,7 +18,7 @@ from azure.core.exceptions import ResourceNotFoundError
 
 from azure.communication.jobrouter.aio import RouterAdministrationClient
 from azure.communication.jobrouter import (
-    RoundRobinMode,
+    RoundRobinMode, DistributionPolicy, JobQueue,
 )
 
 queue_labels = {
@@ -71,12 +71,17 @@ class TestJobQueueAsync(AsyncRouterTestCase):
 
         async with client:
             distribution_policy_id = self.get_distribution_policy_id()
-            distribution_policy = await client.create_distribution_policy(
-                distribution_policy_id = distribution_policy_id,
+
+            policy: DistributionPolicy = DistributionPolicy(
                 name = distribution_policy_id,
                 offer_ttl_seconds = 10.0,
                 mode = RoundRobinMode(min_concurrent_offers = 1,
                                       max_concurrent_offers = 1)
+            )
+
+            distribution_policy = await client.create_distribution_policy(
+                distribution_policy_id = distribution_policy_id,
+                distribution_policy = policy
             )
 
         # add for cleanup later
@@ -94,11 +99,15 @@ class TestJobQueueAsync(AsyncRouterTestCase):
         router_client: RouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
-            job_queue = await router_client.create_queue(
-                queue_id = dp_identifier,
+            job_queue: JobQueue = JobQueue(
                 name = dp_identifier,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
+            )
+
+            job_queue = await router_client.create_queue(
+                queue_id = dp_identifier,
+                queue = job_queue
             )
 
             # add for cleanup
@@ -122,11 +131,15 @@ class TestJobQueueAsync(AsyncRouterTestCase):
         router_client: RouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
-            job_queue = await router_client.create_queue(
-                queue_id = dp_identifier,
+            job_queue: JobQueue = JobQueue(
                 name = dp_identifier,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
+            )
+
+            job_queue = await router_client.create_queue(
+                queue_id = dp_identifier,
+                queue = job_queue
             )
 
             # add for cleanup
@@ -171,11 +184,15 @@ class TestJobQueueAsync(AsyncRouterTestCase):
         router_client: RouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
-            job_queue = await router_client.create_queue(
-                queue_id = dp_identifier,
+            job_queue: JobQueue = JobQueue(
                 name = dp_identifier,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
+            )
+
+            job_queue = await router_client.create_queue(
+                queue_id = dp_identifier,
+                queue = job_queue
             )
 
             # add for cleanup
@@ -219,11 +236,15 @@ class TestJobQueueAsync(AsyncRouterTestCase):
         router_client: RouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
-            job_queue = await router_client.create_queue(
-                queue_id = dp_identifier,
+            job_queue: JobQueue = JobQueue(
                 name = dp_identifier,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
+            )
+
+            job_queue = await router_client.create_queue(
+                queue_id = dp_identifier,
+                queue = job_queue
             )
 
             # add for cleanup
@@ -257,11 +278,15 @@ class TestJobQueueAsync(AsyncRouterTestCase):
         dp_identifier = "test_delete_q_async"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
-        job_queue = await router_client.create_queue(
-            queue_id = dp_identifier,
+        job_queue: JobQueue = JobQueue(
             name = dp_identifier,
             labels = queue_labels,
             distribution_policy_id = self.get_distribution_policy_id()
+        )
+
+        job_queue = await router_client.create_queue(
+            queue_id = dp_identifier,
+            queue = job_queue
         )
 
         assert job_queue is not None
@@ -291,11 +316,15 @@ class TestJobQueueAsync(AsyncRouterTestCase):
 
         async with router_client:
             for identifier in dp_identifiers:
-                job_queue = await router_client.create_queue(
-                    queue_id = identifier,
+                job_queue: JobQueue = JobQueue(
                     name = identifier,
                     labels = queue_labels,
                     distribution_policy_id = self.get_distribution_policy_id()
+                )
+
+                job_queue = await router_client.create_queue(
+                    queue_id = identifier,
+                    queue = job_queue
                 )
 
                 # add for cleanup

@@ -33,15 +33,18 @@ class JobQueueSamples(object):
 
         from azure.communication.jobrouter import (
             RouterAdministrationClient,
-            LongestIdleMode
+            LongestIdleMode,
+            DistributionPolicy
         )
         router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
         distribution_policy = router_admin_client.create_distribution_policy(
             distribution_policy_id = distribution_policy_id,
-            offer_ttl_seconds = 10 * 60,
-            mode = LongestIdleMode(
-                min_concurrent_offers = 1,
-                max_concurrent_offers = 1
+            distribution_policy = DistributionPolicy(
+                offer_ttl_seconds = 10 * 60,
+                mode = LongestIdleMode(
+                    min_concurrent_offers = 1,
+                    max_concurrent_offers = 1
+                )
             )
         )
         print(f"Sample setup completed: Created distribution policy")
@@ -62,8 +65,10 @@ class JobQueueSamples(object):
 
         job_queue: JobQueue = router_admin_client.create_queue(
             queue_id = job_queue_id,
-            distribution_policy_id = distribution_policy_id,
-            name = "My job queue"
+            queue = JobQueue(
+                distribution_policy_id = distribution_policy_id,
+                name = "My job queue"
+            )
         )
 
         print(f"Job queue successfully created with id: {job_queue.id}")

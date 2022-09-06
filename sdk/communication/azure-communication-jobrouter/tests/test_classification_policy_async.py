@@ -36,6 +36,8 @@ from azure.communication.jobrouter import (
     ExpressionRule,
     FunctionRule,
     FunctionRuleCredential,
+    DistributionPolicy,
+    JobQueue,
 )
 
 
@@ -196,12 +198,17 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
 
         async with client:
             distribution_policy_id = self.get_distribution_policy_id()
-            distribution_policy = await client.create_distribution_policy(
-                distribution_policy_id = distribution_policy_id,
+
+            policy: DistributionPolicy = DistributionPolicy(
                 name = distribution_policy_id,
                 offer_ttl_seconds = 10.0,
                 mode = RoundRobinMode(min_concurrent_offers = 1,
                                       max_concurrent_offers = 1)
+            )
+
+            distribution_policy = await client.create_distribution_policy(
+                distribution_policy_id = distribution_policy_id,
+                distribution_policy = policy
             )
 
             # add for cleanup later
@@ -219,11 +226,16 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
 
         async with client:
             job_queue_id = self.get_job_queue_id()
-            job_queue = await client.create_queue(
-                queue_id = job_queue_id,
+
+            job_queue: JobQueue = JobQueue(
                 name = job_queue_id,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
+            )
+
+            job_queue = await client.create_queue(
+                queue_id = job_queue_id,
+                queue = job_queue
             )
 
             # add for cleanup later
@@ -245,13 +257,17 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
             for qs in queue_selectors:
                 for rule in prioritization_rules:
                     for ws in worker_selectors:
-                        classification_policy = await router_client.create_classification_policy(
-                            classification_policy_id = cp_identifier,
+                        classification_policy: ClassificationPolicy = ClassificationPolicy(
                             name = cp_identifier,
                             fallback_queue_id = self.get_job_queue_id(),
                             queue_selectors = [qs],
                             prioritization_rule = rule,
                             worker_selectors = [ws]
+                        )
+
+                        classification_policy = await router_client.create_classification_policy(
+                            classification_policy_id = cp_identifier,
+                            classification_policy = classification_policy
                         )
 
                         # add for cleanup
@@ -280,13 +296,17 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
             for qs in queue_selectors:
                 for rule in prioritization_rules:
                     for ws in worker_selectors:
-                        classification_policy = await router_client.create_classification_policy(
-                            classification_policy_id = cp_identifier,
+                        classification_policy: ClassificationPolicy = ClassificationPolicy(
                             name = cp_identifier,
                             fallback_queue_id = self.get_job_queue_id(),
                             queue_selectors = [qs],
                             prioritization_rule = rule,
                             worker_selectors = [ws]
+                        )
+
+                        classification_policy = await router_client.create_classification_policy(
+                            classification_policy_id = cp_identifier,
+                            classification_policy = classification_policy
                         )
 
                         # add for cleanup
@@ -332,13 +352,17 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
             for qs in queue_selectors:
                 for rule in prioritization_rules:
                     for ws in worker_selectors:
-                        classification_policy = await router_client.create_classification_policy(
-                            classification_policy_id = cp_identifier,
+                        classification_policy: ClassificationPolicy = ClassificationPolicy(
                             name = cp_identifier,
                             fallback_queue_id = self.get_job_queue_id(),
                             queue_selectors = [qs],
                             prioritization_rule = rule,
                             worker_selectors = [ws]
+                        )
+
+                        classification_policy = await router_client.create_classification_policy(
+                            classification_policy_id = cp_identifier,
+                            classification_policy = classification_policy
                         )
 
                         # add for cleanup
@@ -384,13 +408,17 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
             for qs in queue_selectors:
                 for rule in prioritization_rules:
                     for ws in worker_selectors:
-                        classification_policy = await router_client.create_classification_policy(
-                            classification_policy_id = cp_identifier,
+                        classification_policy: ClassificationPolicy = ClassificationPolicy(
                             name = cp_identifier,
                             fallback_queue_id = self.get_job_queue_id(),
                             queue_selectors = [qs],
                             prioritization_rule = rule,
                             worker_selectors = [ws]
+                        )
+
+                        classification_policy = await router_client.create_classification_policy(
+                            classification_policy_id = cp_identifier,
+                            classification_policy = classification_policy
                         )
 
                         # add for cleanup
@@ -436,13 +464,17 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
                 for rule in prioritization_rules:
                     for ws in worker_selectors:
                         for _identifier in cp_identifiers:
-                            classification_policy = await router_client.create_classification_policy(
-                                classification_policy_id = _identifier,
+                            classification_policy: ClassificationPolicy = ClassificationPolicy(
                                 name = _identifier,
                                 fallback_queue_id = self.get_job_queue_id(),
                                 queue_selectors = [qs],
                                 prioritization_rule = rule,
                                 worker_selectors = [ws]
+                            )
+
+                            classification_policy = await router_client.create_classification_policy(
+                                classification_policy_id = _identifier,
+                                classification_policy = classification_policy
                             )
 
                             policy_count += 1
@@ -501,13 +533,17 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
             for qs in queue_selectors:
                 for rule in prioritization_rules:
                     for ws in worker_selectors:
-                        classification_policy = await router_client.create_classification_policy(
-                            classification_policy_id = cp_identifier,
+                        classification_policy: ClassificationPolicy = ClassificationPolicy(
                             name = cp_identifier,
                             fallback_queue_id = self.get_job_queue_id(),
                             queue_selectors = [qs],
                             prioritization_rule = rule,
                             worker_selectors = [ws]
+                        )
+
+                        classification_policy = await router_client.create_classification_policy(
+                            classification_policy_id = cp_identifier,
+                            classification_policy = classification_policy,
                         )
 
                         # add for cleanup

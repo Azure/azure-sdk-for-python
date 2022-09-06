@@ -38,7 +38,8 @@ class RouterJobSamples(object):
 
         from azure.communication.jobrouter import (
             RouterAdministrationClient,
-            LongestIdleMode
+            LongestIdleMode,
+            DistributionPolicy
         )
 
         router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
@@ -46,10 +47,12 @@ class RouterJobSamples(object):
 
         dist_policy = router_admin_client.create_distribution_policy(
             distribution_policy_id = distribution_policy_id,
-            offer_ttl_seconds = 10 * 60,
-            mode = LongestIdleMode(
-                min_concurrent_offers = 1,
-                max_concurrent_offers = 1
+            distribution_policy = DistributionPolicy(
+                offer_ttl_seconds = 10 * 60,
+                mode = LongestIdleMode(
+                    min_concurrent_offers = 1,
+                    max_concurrent_offers = 1
+                )
             )
         )
 
@@ -64,9 +67,11 @@ class RouterJobSamples(object):
 
         router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
-        job_queue = router_admin_client.create_queue(
+        job_queue: JobQueue = router_admin_client.create_queue(
             queue_id = queue_id,
-            distribution_policy_id = self._distribution_policy_id
+            queue = JobQueue(
+                distribution_policy_id = self._distribution_policy_id
+            )
         )
 
     def setup_classification_policy(self):
@@ -78,7 +83,8 @@ class RouterJobSamples(object):
             StaticRule,
             StaticQueueSelectorAttachment,
             QueueSelector,
-            LabelOperator
+            LabelOperator,
+            ClassificationPolicy
         )
 
         router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
@@ -86,15 +92,17 @@ class RouterJobSamples(object):
 
         classification_policy = router_admin_client.create_classification_policy(
             classification_policy_id = classification_policy_id,
-            prioritization_rule = StaticRule(value = 10),
-            queue_selectors = [
-                StaticQueueSelectorAttachment(
-                    label_selector = QueueSelector(
-                        key = "Id",
-                        label_operator = LabelOperator.EQUAL,
-                        value = self._queue_id)
-                )
-            ]
+            classification_policy = ClassificationPolicy(
+                prioritization_rule = StaticRule(value = 10),
+                queue_selectors = [
+                    StaticQueueSelectorAttachment(
+                        label_selector = QueueSelector(
+                            key = "Id",
+                            label_operator = LabelOperator.EQUAL,
+                            value = self._queue_id)
+                    )
+                ]
+            )
         )
 
     def setup_worker(self):
@@ -105,20 +113,23 @@ class RouterJobSamples(object):
         from azure.communication.jobrouter import (
             RouterClient,
             ChannelConfiguration,
-            QueueAssignment
+            QueueAssignment,
+            RouterWorker
         )
 
         router_client = RouterClient.from_connection_string(conn_str = connection_string)
         router_worker = router_client.create_worker(
             worker_id = worker_id,
-            total_capacity = 100,
-            available_for_offers = True,
-            channel_configurations = {
-                "general": ChannelConfiguration(capacity_cost_per_job = 1)
-            },
-            queue_assignments = {
-                queue_id: QueueAssignment()
-            }
+            router_worker = RouterWorker(
+                total_capacity = 100,
+                available_for_offers = True,
+                channel_configurations = {
+                    "general": ChannelConfiguration(capacity_cost_per_job = 1)
+                },
+                queue_assignments = {
+                    queue_id: QueueAssignment()
+                }
+            )
         )
 
     def create_job(self):
@@ -131,6 +142,7 @@ class RouterJobSamples(object):
         # [START create_job]
         from azure.communication.jobrouter import (
             RouterClient,
+            RouterJob
         )
 
         # set `connection_string` to an existing ACS endpoint
@@ -140,10 +152,12 @@ class RouterJobSamples(object):
         # We need to create a distribution policy + queue as a pre-requisite to start creating job
         router_job = router_client.create_job(
             job_id = job_id,
-            channel_id = "general",
-            queue_id = queue_id,
-            priority = 10,
-            channel_reference = "12345"
+            router_job = RouterJob(
+                channel_id = "general",
+                queue_id = queue_id,
+                priority = 10,
+                channel_reference = "12345"
+            )
         )
 
         print(f"Job has been successfully created with status: {router_job.job_status}")
@@ -152,9 +166,11 @@ class RouterJobSamples(object):
         # As a pre-requisite, we would need to create a classification policy first
         router_job_with_cp = router_client.create_job(
             job_id = job_w_cp_id,
-            channel_id = "general",
-            classification_policy_id = classification_policy_id,
-            channel_reference = "12345"
+            router_job = RouterJob(
+                channel_id = "general",
+                classification_policy_id = classification_policy_id,
+                channel_reference = "12345"
+            )
         )
         print(f"Job has been successfully created with status: {router_job_with_cp.job_status}")
 

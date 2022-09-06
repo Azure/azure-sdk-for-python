@@ -35,7 +35,8 @@ class ExceptionPolicySamples(object):
             WaitTimeExceptionTrigger,
             QueueLengthExceptionTrigger,
             ReclassifyExceptionAction,
-            ExceptionRule
+            ExceptionRule,
+            ExceptionPolicy
         )
 
         # set `connection_string` to an existing ACS endpoint
@@ -93,8 +94,10 @@ class ExceptionPolicySamples(object):
         # set a unique value to `policy_id`
         exception_policy = router_admin_client.create_exception_policy(
             exception_policy_id = policy_id,
-            name = "TriggerJobCancellationWhenQueueLenIs10",
-            exception_rules = exception_rule
+            exception_policy = ExceptionPolicy(
+                name = "TriggerJobCancellationWhenQueueLenIs10",
+                exception_rules = exception_rule
+            )
         )
 
         print(f"Exception policy has been successfully created with id: {exception_policy.id}")

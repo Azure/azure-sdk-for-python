@@ -21,7 +21,7 @@ from azure.communication.jobrouter import (
     RoundRobinMode,
     RouterWorker,
     QueueAssignment,
-    ChannelConfiguration,
+    ChannelConfiguration, DistributionPolicy, JobQueue,
 )
 
 worker_labels = {
@@ -87,12 +87,17 @@ class TestRouterWorker(RouterTestCase):
         client: RouterAdministrationClient = self.create_admin_client()
 
         distribution_policy_id = self.get_distribution_policy_id()
-        distribution_policy = client.create_distribution_policy(
-            distribution_policy_id = distribution_policy_id,
+
+        policy: DistributionPolicy = DistributionPolicy(
             offer_ttl_seconds = 10.0,
             mode = RoundRobinMode(min_concurrent_offers = 1,
                                   max_concurrent_offers = 1),
             name = distribution_policy_id
+        )
+
+        distribution_policy = client.create_distribution_policy(
+            distribution_policy_id = distribution_policy_id,
+            distribution_policy = policy
         )
 
         # add for cleanup later
@@ -108,11 +113,16 @@ class TestRouterWorker(RouterTestCase):
     def setup_job_queue(self):
         client: RouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_job_queue_id()
-        job_queue = client.create_queue(
-            queue_id = job_queue_id,
+
+        job_queue: JobQueue = JobQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
             name = job_queue_id,
             labels = worker_labels
+        )
+
+        job_queue = client.create_queue(
+            queue_id = job_queue_id,
+            queue = job_queue
         )
 
         # add for cleanup later
@@ -129,14 +139,18 @@ class TestRouterWorker(RouterTestCase):
         router_client: RouterClient = self.create_client()
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
 
-        router_worker = router_client.create_worker(
-            worker_id = w_identifier,
+        router_worker: RouterWorker = RouterWorker(
             total_capacity = worker_total_capacity,
             labels = worker_labels,
             tags = worker_tags,
             queue_assignments = worker_queue_assignments,
             channel_configurations = worker_channel_configs,
             available_for_offers = False
+        )
+
+        router_worker = router_client.create_worker(
+            worker_id = w_identifier,
+            router_worker = router_worker
         )
 
         # add for cleanup
@@ -162,14 +176,18 @@ class TestRouterWorker(RouterTestCase):
         router_client: RouterClient = self.create_client()
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
 
-        router_worker = router_client.create_worker(
-            worker_id = w_identifier,
+        router_worker: RouterWorker = RouterWorker(
             total_capacity = worker_total_capacity,
             labels = worker_labels,
             tags = worker_tags,
             queue_assignments = worker_queue_assignments,
             channel_configurations = worker_channel_configs,
             available_for_offers = False
+        )
+
+        router_worker = router_client.create_worker(
+            worker_id = w_identifier,
+            router_worker = router_worker
         )
 
         # add for cleanup
@@ -216,14 +234,18 @@ class TestRouterWorker(RouterTestCase):
         router_client: RouterClient = self.create_client()
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
 
-        router_worker = router_client.create_worker(
-            worker_id = w_identifier,
+        router_worker: RouterWorker = RouterWorker(
             total_capacity = worker_total_capacity,
             labels = worker_labels,
             tags = worker_tags,
             queue_assignments = worker_queue_assignments,
             channel_configurations = worker_channel_configs,
             available_for_offers = False
+        )
+
+        router_worker = router_client.create_worker(
+            worker_id = w_identifier,
+            router_worker = router_worker
         )
 
         # add for cleanup
@@ -269,14 +291,18 @@ class TestRouterWorker(RouterTestCase):
         router_client: RouterClient = self.create_client()
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
 
-        router_worker = router_client.create_worker(
-            worker_id = w_identifier,
+        router_worker: RouterWorker = RouterWorker(
             total_capacity = worker_total_capacity,
             labels = worker_labels,
             tags = worker_tags,
             queue_assignments = worker_queue_assignments,
             channel_configurations = worker_channel_configs,
             available_for_offers = False
+        )
+
+        router_worker = router_client.create_worker(
+            worker_id = w_identifier,
+            router_worker = router_worker
         )
 
         # add for cleanup
@@ -316,14 +342,18 @@ class TestRouterWorker(RouterTestCase):
         router_client: RouterClient = self.create_client()
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
 
-        router_worker = router_client.create_worker(
-            worker_id = w_identifier,
+        router_worker: RouterWorker = RouterWorker(
             total_capacity = worker_total_capacity,
             labels = worker_labels,
             tags = worker_tags,
             queue_assignments = worker_queue_assignments,
             channel_configurations = worker_channel_configs,
             available_for_offers = False
+        )
+
+        router_worker = router_client.create_worker(
+            worker_id = w_identifier,
+            router_worker = router_worker
         )
 
         assert router_worker is not None
@@ -355,14 +385,18 @@ class TestRouterWorker(RouterTestCase):
         self.worker_ids[self._testMethodName] = []
 
         for identifier in w_identifiers:
-            worker = router_client.create_worker(
-                worker_id = identifier,
+            router_worker: RouterWorker = RouterWorker(
                 total_capacity = worker_total_capacity,
                 labels = worker_labels,
                 tags = worker_tags,
                 queue_assignments = worker_queue_assignments,
                 channel_configurations = worker_channel_configs,
                 available_for_offers = False
+            )
+
+            worker = router_client.create_worker(
+                worker_id = identifier,
+                router_worker = router_worker
             )
 
             # add for cleanup

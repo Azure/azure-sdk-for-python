@@ -49,46 +49,48 @@ class ClassificationPolicySamples(object):
 
         classification_policy: ClassificationPolicy = router_admin_client.create_classification_policy(
             classification_policy_id = policy_id,
-            prioritization_rule = StaticRule(value = 10),
-            queue_selectors = [
-                StaticQueueSelectorAttachment(
-                    label_selector = QueueSelector(
-                        key = "Region",
-                        label_operator = LabelOperator.EQUAL,
-                        value = "NA"
+            classification_policy = ClassificationPolicy(
+                prioritization_rule = StaticRule(value = 10),
+                queue_selectors = [
+                    StaticQueueSelectorAttachment(
+                        label_selector = QueueSelector(
+                            key = "Region",
+                            label_operator = LabelOperator.EQUAL,
+                            value = "NA"
+                        )
+                    ),
+                    ConditionalQueueSelectorAttachment(
+                        condition = ExpressionRule(expression = "If(job.Product = \"O365\", true, false)"),
+                        label_selectors = [
+                            QueueSelector(key = "Product", label_operator = LabelOperator.EQUAL, value = "O365"),
+                            QueueSelector(key = "QGroup", label_operator = LabelOperator.EQUAL, value = "NA_O365")
+                        ]
+                    ),
+                ],
+                worker_selectors = [
+                    ConditionalWorkerSelectorAttachment(
+                        condition = ExpressionRule(expression = "If(job.Product = \"O365\", true, false)"),
+                        label_selectors = [
+                            WorkerSelector(key = "Skill_O365", label_operator = LabelOperator.EQUAL, value = True),
+                            WorkerSelector(
+                                key = "Skill_O365_Lvl",
+                                label_operator = LabelOperator.GREATER_THAN_EQUAL,
+                                value = 1
+                            )
+                        ]
+                    ),
+                    ConditionalWorkerSelectorAttachment(
+                        condition = ExpressionRule(expression = "If(job.HighPriority = \"true\", true, false)"),
+                        label_selectors = [
+                            WorkerSelector(
+                                key = "Skill_O365_Lvl",
+                                label_operator = LabelOperator.GREATER_THAN_EQUAL,
+                                value = 10
+                            )
+                        ]
                     )
-                ),
-                ConditionalQueueSelectorAttachment(
-                    condition = ExpressionRule(expression = "If(job.Product = \"O365\", true, false)"),
-                    label_selectors = [
-                        QueueSelector(key = "Product", label_operator = LabelOperator.EQUAL, value = "O365"),
-                        QueueSelector(key = "QGroup", label_operator = LabelOperator.EQUAL, value = "NA_O365")
-                    ]
-                ),
-            ],
-            worker_selectors = [
-                ConditionalWorkerSelectorAttachment(
-                    condition = ExpressionRule(expression = "If(job.Product = \"O365\", true, false)"),
-                    label_selectors = [
-                        WorkerSelector(key = "Skill_O365", label_operator = LabelOperator.EQUAL, value = True),
-                        WorkerSelector(
-                            key = "Skill_O365_Lvl",
-                            label_operator = LabelOperator.GREATER_THAN_EQUAL,
-                            value = 1
-                        )
-                    ]
-                ),
-                ConditionalWorkerSelectorAttachment(
-                    condition = ExpressionRule(expression = "If(job.HighPriority = \"true\", true, false)"),
-                    label_selectors = [
-                        WorkerSelector(
-                            key = "Skill_O365_Lvl",
-                            label_operator = LabelOperator.GREATER_THAN_EQUAL,
-                            value = 10
-                        )
-                    ]
-                )
-            ]
+                ]
+            )
         )
 
         print(f"Classification Policy successfully created with id: {classification_policy.id}")

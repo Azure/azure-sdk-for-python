@@ -23,7 +23,7 @@ from azure.communication.jobrouter import (
     ReclassifyExceptionAction,
     ManualReclassifyExceptionAction,
     CancelExceptionAction,
-    RoundRobinMode
+    RoundRobinMode, DistributionPolicy, JobQueue, ClassificationPolicy
 )
 
 queue_labels = {
@@ -91,12 +91,17 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
 
         async with client:
             distribution_policy_id = self.get_distribution_policy_id()
-            distribution_policy = await client.create_distribution_policy(
-                distribution_policy_id = distribution_policy_id,
+
+            policy: DistributionPolicy = DistributionPolicy(
                 name = distribution_policy_id,
                 offer_ttl_seconds = 10.0,
                 mode = RoundRobinMode(min_concurrent_offers = 1,
                                       max_concurrent_offers = 1)
+            )
+
+            distribution_policy = await client.create_distribution_policy(
+                distribution_policy_id = distribution_policy_id,
+                distribution_policy = policy
             )
 
         # add for cleanup later
@@ -114,11 +119,16 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
 
         async with client:
             job_queue_id = self.get_job_queue_id()
-            job_queue = await client.create_queue(
-                queue_id = job_queue_id,
+
+            job_queue: JobQueue = JobQueue(
                 name = job_queue_id,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
+            )
+
+            job_queue = await client.create_queue(
+                queue_id = job_queue_id,
+                queue = job_queue
             )
 
         # add for cleanup later
@@ -136,10 +146,15 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
 
         async with client:
             cp_id = self.get_classification_policy_id()
-            classification_policy = await client.create_classification_policy(
-                classification_policy_id = cp_id,
+
+            classification_policy: ClassificationPolicy = ClassificationPolicy(
                 name = cp_id,
                 fallback_queue_id = self.get_job_queue_id(),
+            )
+
+            classification_policy = await client.create_classification_policy(
+                classification_policy_id = cp_id,
+                classification_policy = classification_policy
             )
 
         # add for cleanup later
@@ -194,10 +209,14 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                         )
                     }
 
-                    exception_policy = await router_client.create_exception_policy(
-                        exception_policy_id = ep_identifier,
+                    exception_policy: ExceptionPolicy = ExceptionPolicy(
                         name = ep_identifier,
                         exception_rules = exception_rules
+                    )
+
+                    exception_policy = await router_client.create_exception_policy(
+                        exception_policy_id = ep_identifier,
+                        exception_policy = exception_policy
                     )
 
                     # add for cleanup
@@ -246,10 +265,14 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                         )
                     }
 
-                    exception_policy: ExceptionPolicy = await router_client.create_exception_policy(
-                        exception_policy_id = ep_identifier,
+                    exception_policy: ExceptionPolicy = ExceptionPolicy(
                         name = ep_identifier,
                         exception_rules = exception_rules
+                    )
+
+                    exception_policy: ExceptionPolicy = await router_client.create_exception_policy(
+                        exception_policy_id = ep_identifier,
+                        exception_policy = exception_policy
                     )
 
                     # add for cleanup
@@ -323,10 +346,14 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                         )
                     }
 
-                    exception_policy = await router_client.create_exception_policy(
-                        exception_policy_id = ep_identifier,
+                    exception_policy: ExceptionPolicy = ExceptionPolicy(
                         name = ep_identifier,
                         exception_rules = exception_rules
+                    )
+
+                    exception_policy = await router_client.create_exception_policy(
+                        exception_policy_id = ep_identifier,
+                        exception_policy = exception_policy
                     )
 
                     # add for cleanup
@@ -399,10 +426,14 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                         )
                     }
 
-                    exception_policy = await router_client.create_exception_policy(
-                        exception_policy_id = ep_identifier,
+                    exception_policy: ExceptionPolicy = ExceptionPolicy(
                         name = ep_identifier,
                         exception_rules = exception_rules
+                    )
+
+                    exception_policy = await router_client.create_exception_policy(
+                        exception_policy_id = ep_identifier,
+                        exception_policy = exception_policy
                     )
 
                     # add for cleanup
@@ -463,10 +494,14 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                         )
                     }
 
-                    exception_policy = await router_client.create_exception_policy(
-                        exception_policy_id = ep_identifier,
+                    exception_policy: ExceptionPolicy = ExceptionPolicy(
                         name = ep_identifier,
                         exception_rules = exception_rules
+                    )
+
+                    exception_policy = await router_client.create_exception_policy(
+                        exception_policy_id = ep_identifier,
+                        exception_policy = exception_policy
                     )
 
                     # add for cleanup
@@ -525,10 +560,14 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                             )
                         }
 
-                        exception_policy = await router_client.create_exception_policy(
-                            exception_policy_id = identifier,
+                        exception_policy: ExceptionPolicy = ExceptionPolicy(
                             name = identifier,
                             exception_rules = exception_rules
+                        )
+
+                        exception_policy = await router_client.create_exception_policy(
+                            exception_policy_id = identifier,
+                            exception_policy = exception_policy
                         )
 
                         policy_count += 1

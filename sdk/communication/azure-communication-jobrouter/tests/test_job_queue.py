@@ -17,7 +17,7 @@ from azure.core.exceptions import ResourceNotFoundError
 
 from azure.communication.jobrouter import (
     RouterAdministrationClient,
-    RoundRobinMode,
+    RoundRobinMode, DistributionPolicy, JobQueue,
 )
 
 queue_labels = {
@@ -68,12 +68,17 @@ class TestJobQueue(RouterTestCase):
         client: RouterAdministrationClient = self.create_admin_client()
 
         distribution_policy_id = self.get_distribution_policy_id()
-        distribution_policy = client.create_distribution_policy(
-            distribution_policy_id = distribution_policy_id,
+
+        policy: DistributionPolicy = DistributionPolicy(
             offer_ttl_seconds = 10.0,
             mode = RoundRobinMode(min_concurrent_offers = 1,
                                   max_concurrent_offers = 1),
             name = distribution_policy_id,
+        )
+
+        distribution_policy = client.create_distribution_policy(
+            distribution_policy_id = distribution_policy_id,
+            distribution_policy = policy
         )
 
         # add for cleanup later
@@ -88,11 +93,15 @@ class TestJobQueue(RouterTestCase):
         dp_identifier = "tst_create_q"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
-        job_queue = router_client.create_queue(
-            queue_id = dp_identifier,
+        job_queue: JobQueue = JobQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
             name = dp_identifier,
             labels = queue_labels,
+        )
+
+        job_queue = router_client.create_queue(
+            queue_id = dp_identifier,
+            queue = job_queue
         )
 
         # add for cleanup
@@ -113,11 +122,15 @@ class TestJobQueue(RouterTestCase):
         dp_identifier = "tst_update_q"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
-        job_queue = router_client.create_queue(
-            queue_id = dp_identifier,
+        job_queue: JobQueue = JobQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
             name = dp_identifier,
             labels = queue_labels,
+        )
+
+        job_queue = router_client.create_queue(
+            queue_id = dp_identifier,
+            queue = job_queue
         )
 
         # add for cleanup
@@ -159,11 +172,15 @@ class TestJobQueue(RouterTestCase):
         dp_identifier = "tst_update_q_w_kwargs"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
-        job_queue = router_client.create_queue(
-            queue_id = dp_identifier,
+        job_queue: JobQueue = JobQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
             name = dp_identifier,
             labels = queue_labels,
+        )
+
+        job_queue = router_client.create_queue(
+            queue_id = dp_identifier,
+            queue = job_queue
         )
 
         # add for cleanup
@@ -204,11 +221,15 @@ class TestJobQueue(RouterTestCase):
         dp_identifier = "tst_get_q"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
-        job_queue = router_client.create_queue(
-            queue_id = dp_identifier,
+        job_queue: JobQueue = JobQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
             name = dp_identifier,
             labels = queue_labels
+        )
+
+        job_queue = router_client.create_queue(
+            queue_id = dp_identifier,
+            queue = job_queue
         )
 
         # add for cleanup
@@ -240,11 +261,15 @@ class TestJobQueue(RouterTestCase):
         dp_identifier = "tst_delete_q"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
-        job_queue = router_client.create_queue(
-            queue_id = dp_identifier,
+        job_queue: JobQueue = JobQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
             name = dp_identifier,
             labels = queue_labels
+        )
+
+        job_queue = router_client.create_queue(
+            queue_id = dp_identifier,
+            queue = job_queue
         )
 
         assert job_queue is not None
@@ -271,11 +296,15 @@ class TestJobQueue(RouterTestCase):
         self.queue_ids[self._testMethodName] = []
 
         for identifier in dp_identifiers:
-            job_queue = router_client.create_queue(
-                queue_id = identifier,
+            job_queue: JobQueue = JobQueue(
                 distribution_policy_id = self.get_distribution_policy_id(),
                 name = identifier,
                 labels = queue_labels
+            )
+
+            job_queue = router_client.create_queue(
+                queue_id = identifier,
+                queue = job_queue
             )
 
             # add for cleanup

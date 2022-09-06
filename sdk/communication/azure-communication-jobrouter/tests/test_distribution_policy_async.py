@@ -18,7 +18,7 @@ from azure.communication.jobrouter.aio import RouterAdministrationClient
 from azure.communication.jobrouter import (
     BestWorkerMode,
     LongestIdleMode,
-    RoundRobinMode
+    RoundRobinMode, DistributionPolicy
 )
 
 min_concurrent_offer_count = 1
@@ -68,11 +68,15 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
 
         async with router_client:
             for mode in distribution_modes:
-                distribution_policy_response = await router_client.create_distribution_policy(
-                    distribution_policy_id = dp_identifier,
+                policy: DistributionPolicy = DistributionPolicy(
                     name = dp_identifier,
                     offer_ttl_seconds = 10.0,
                     mode = mode
+                )
+
+                distribution_policy_response = await router_client.create_distribution_policy(
+                    distribution_policy_id = dp_identifier,
+                    distribution_policy = policy
                 )
 
                 self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
@@ -95,11 +99,16 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
         async with router_client:
             for mode in distribution_modes:
                 # Arrange
-                distribution_policy_response = await router_client.create_distribution_policy(
-                    distribution_policy_id = dp_identifier,
+
+                policy: DistributionPolicy = DistributionPolicy(
                     name = dp_identifier,
                     offer_ttl_seconds = 10.0,
                     mode = mode
+                )
+
+                distribution_policy_response = await router_client.create_distribution_policy(
+                    distribution_policy_id = dp_identifier,
+                    distribution_policy = policy
                 )
 
                 self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
@@ -140,11 +149,16 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
         async with router_client:
             for mode in distribution_modes:
                 # Arrange
-                distribution_policy_response = await router_client.create_distribution_policy(
-                    distribution_policy_id = dp_identifier,
+
+                policy: DistributionPolicy = DistributionPolicy(
                     name = dp_identifier,
                     offer_ttl_seconds = 10.0,
                     mode = mode
+                )
+
+                distribution_policy_response = await router_client.create_distribution_policy(
+                    distribution_policy_id = dp_identifier,
+                    distribution_policy = policy
                 )
 
                 self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
@@ -184,11 +198,15 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
 
         async with router_client:
             for mode in distribution_modes:
-                distribution_policy_response = await router_client.create_distribution_policy(
-                    distribution_policy_id = dp_identifier,
+                policy: DistributionPolicy = DistributionPolicy(
                     name = dp_identifier,
                     offer_ttl_seconds = 10.0,
                     mode = mode
+                )
+
+                distribution_policy_response = await router_client.create_distribution_policy(
+                    distribution_policy_id = dp_identifier,
+                    distribution_policy = policy
                 )
 
                 self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
@@ -220,11 +238,15 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
 
         async with router_client:
             for mode in distribution_modes:
-                distribution_policy_response = await router_client.create_distribution_policy(
-                    distribution_policy_id = dp_identifier,
+                policy: DistributionPolicy = DistributionPolicy(
                     name = dp_identifier,
                     offer_ttl_seconds = 10.0,
                     mode = mode
+                )
+
+                distribution_policy_response = await router_client.create_distribution_policy(
+                    distribution_policy_id = dp_identifier,
+                    distribution_policy = policy
                 )
 
                 assert distribution_policy_response is not None
@@ -253,11 +275,15 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
 
         async with router_client:
             for identifier in dp_identifiers:
-                distribution_policy_response = await router_client.create_distribution_policy(
-                    distribution_policy_id = identifier,
+                policy: DistributionPolicy = DistributionPolicy(
                     name = identifier,
                     offer_ttl_seconds = 10.0,
                     mode = distribution_modes[0]
+                )
+
+                distribution_policy_response = await router_client.create_distribution_policy(
+                    distribution_policy_id = identifier,
+                    distribution_policy = policy
                 )
 
                 # add for cleanup

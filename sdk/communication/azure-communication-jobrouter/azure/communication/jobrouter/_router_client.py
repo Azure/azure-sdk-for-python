@@ -158,42 +158,16 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     def create_worker(
             self,
             worker_id: str,
-            total_capacity: int = None,
-            *,
-            queue_assignments: Optional[Dict[str, QueueAssignment]] = None,
-            labels: Optional[Dict[str, Union[int, float, str, bool]]] = None,
-            tags: Optional[Dict[str, Union[int, float, str, bool]]] = None,
-            channel_configurations: Optional[Dict[str, ChannelConfiguration]] = None,
-            available_for_offers: Optional[bool] = None,
+            router_worker: RouterWorker,
             **kwargs: Any
     ) -> RouterWorker:
         """ Create a new worker.
 
         :param str worker_id: Id of the worker.
 
-        :param int total_capacity: The total capacity score this worker has to manage multiple concurrent
-            jobs.
-
         :param router_worker: An instance of RouterWorker. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
         :type router_worker: ~azure.communication.jobrouter.RouterWorker
-
-        :keyword queue_assignments: The queue(s) that this worker can receive work from.
-        :paramtype queue_assignments: Optional[Dict[str, ~azure.communication.jobrouter.QueueAssignment]]
-
-        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
-            engines to make decisions.
-        :paramtype labels: Optional[dict[str, Union[int, float, str, bool]]]
-
-        :keyword tags: A set of tags. A set of non-identifying attributes attached to this worker.
-        :paramtype tags: Optional[dict[str, Union[int, float, str, bool]]]
-
-        :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
-            capacity of the worker.
-        :paramtype channel_configurations: Optional[Dict[str, ~azure.communication.jobrouter.ChannelConfiguration]]
-
-        :keyword available_for_offers: A flag indicating whether the worker is open to receive offers or not.
-        :paramtype available_for_offers: Optional[bool]
 
         :return: RouterWorker
         :rtype: ~azure.communication.jobrouter.RouterWorker
@@ -210,18 +184,6 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         """
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
-
-        if not total_capacity:
-            raise ValueError("total_capacity cannot be None")
-
-        router_worker = RouterWorker(
-            queue_assignments = queue_assignments,
-            total_capacity = total_capacity,
-            labels = labels,
-            tags = tags,
-            channel_configurations = channel_configurations,
-            available_for_offers = available_for_offers
-        )
 
         return self._client.job_router.upsert_worker(
             worker_id = worker_id,
@@ -514,51 +476,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     def create_job(
             self,
             job_id: str,
-            channel_id: str,
-            *,
-            channel_reference: Optional[str] = None,
-            classification_policy_id: Optional[str] = None,
-            queue_id: Optional[str] = None,
-            priority: Optional[int] = None,
-            requested_worker_selectors: Optional[List[WorkerSelector]] = None,
-            labels: Optional[Dict[str, Union[int, float, str, bool]]] = None,
-            tags: Optional[Dict[str, Union[int, float, str, bool]]] = None,
-            notes: Optional[Dict[datetime, str]] = None,
+            router_job: RouterJob,
             **kwargs: Any
     ) -> RouterJob:
         """ Create a job.
 
         :param str job_id: Id of the job.
 
-        :param str channel_id: The channel identifier. eg. voice, chat, etc.
-
-        :keyword channel_reference: Reference to an external parent context, eg. call ID.
-        :paramtype channel_reference: Optional[str]
-
-        :keyword classification_policy_id: The Id of the Classification policy used for classifying a
-         job.
-        :paramtype classification_policy_id: Optional[str]
-
-        :keyword queue_id: The Id of the Queue that this job is queued to.
-        :paramtype queue_id: Optional[str]
-
-        :keyword priority: The priority of this job.
-        :paramtype priority: Optional[int]
-
-        :keyword requested_worker_selectors: A collection of manually specified label selectors, which
-         a worker must satisfy in order to process this job.
-        :paramtype requested_worker_selectors: Optional[List[~azure.communication.jobrouter.WorkerSelector]]
-
-        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
-         engines to make decisions.
-        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
-
-        :keyword tags: A set of tags. A set of non-identifying attributes attached to this job.
-        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool]]]
-
-        :keyword notes: Notes attached to a job, sorted by timestamp.
-        :paramtype notes: Optional[Dict[~datetime.datetime, str]]
-
+        :param router_job: An instance of RouterJob.
+        :type router_job: ~azure.communication.jobrouter.RouterJob
 
         :return: RouterJob
         :rtype: ~azure.communication.jobrouter.RouterJob
@@ -575,21 +501,6 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
-
-        if not channel_id:
-            raise ValueError("channel_id cannot be None")
-
-        router_job = RouterJob(
-            channel_reference = channel_reference,
-            channel_id = channel_id,
-            classification_policy_id = classification_policy_id,
-            queue_id = queue_id,
-            priority = priority,
-            requested_worker_selectors = requested_worker_selectors,
-            labels = labels,
-            tags = tags,
-            notes = notes
-        )
 
         return self._client.job_router.upsert_job(
             id = job_id,

@@ -44,10 +44,12 @@ class DistributionPolicySamplesAsync(object):
         async with router_admin_client:
             distribution_policy: DistributionPolicy = await router_admin_client.create_distribution_policy(
                 distribution_policy_id = policy_id,
-                offer_ttl_seconds = 1 * 60,
-                mode = LongestIdleMode(
-                    min_concurrent_offers = 1,
-                    max_concurrent_offers = 1
+                distribution_policy = DistributionPolicy(
+                    offer_ttl_seconds = 1 * 60,
+                    mode = LongestIdleMode(
+                        min_concurrent_offers = 1,
+                        max_concurrent_offers = 1
+                    )
                 )
             )
 

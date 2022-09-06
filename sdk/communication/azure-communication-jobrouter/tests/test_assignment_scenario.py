@@ -31,6 +31,7 @@ from azure.communication.jobrouter import (
     JobAssignment,
     JobRouterError,
     RouterWorkerState,
+    DistributionPolicy, JobQueue,
 )
 
 
@@ -101,12 +102,17 @@ class TestAssignmentScenario(RouterTestCase):
     def setup_distribution_policy(self):
         client: RouterAdministrationClient = self.create_admin_client()
         distribution_policy_id = self.get_distribution_policy_id()
-        distribution_policy = client.create_distribution_policy(
-            distribution_policy_id = distribution_policy_id,
+
+        policy: DistributionPolicy = DistributionPolicy(
             offer_ttl_seconds = 10.0 * 60,
             mode = LongestIdleMode(min_concurrent_offers = 1,
                                    max_concurrent_offers = 1),
             name = "test"
+        )
+
+        distribution_policy = client.create_distribution_policy(
+            distribution_policy_id = distribution_policy_id,
+            distribution_policy = policy
         )
 
         # add for cleanup later
@@ -122,10 +128,15 @@ class TestAssignmentScenario(RouterTestCase):
     def setup_job_queue(self):
         client: RouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_job_queue_id()
-        job_queue = client.create_queue(
-            queue_id = job_queue_id,
+
+        job_queue: JobQueue = JobQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
             name = "test"
+        )
+
+        job_queue = client.create_queue(
+            queue_id = job_queue_id,
+            queue = job_queue
         )
 
         # add for cleanup later
@@ -146,12 +157,16 @@ class TestAssignmentScenario(RouterTestCase):
             channel_id: ChannelConfiguration(capacity_cost_per_job = 1)
         }
 
-        router_worker = router_client.create_worker(
-            worker_id = w_identifier,
+        worker: RouterWorker = RouterWorker(
             total_capacity = 1,
             queue_assignments = worker_queue_assignments,
             channel_configurations = worker_channel_configs,
             available_for_offers = True
+        )
+
+        router_worker = router_client.create_worker(
+            worker_id = w_identifier,
+            router_worker = worker
         )
 
         # add for cleanup
@@ -195,11 +210,15 @@ class TestAssignmentScenario(RouterTestCase):
 
         # create job
         job_identifier = f"assignment_scenario_job_id"
-        router_job: RouterJob = router_client.create_job(
-            job_id = job_identifier,
+
+        router_job: RouterJob = RouterJob(
             channel_id = channel_id,
             queue_id = self.get_job_queue_id(),
             priority = 1,
+        )
+        router_job: RouterJob = router_client.create_job(
+            job_id = job_identifier,
+            router_job = router_job
         )
 
         # add for cleanup

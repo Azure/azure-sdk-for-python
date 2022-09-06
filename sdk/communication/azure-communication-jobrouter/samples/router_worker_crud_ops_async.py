@@ -34,17 +34,20 @@ class RouterWorkerSamplesAsync(object):
 
         from azure.communication.jobrouter.aio import RouterAdministrationClient
         from azure.communication.jobrouter import (
-            LongestIdleMode
+            LongestIdleMode,
+            DistributionPolicy
         )
         router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
         async with router_admin_client:
             distribution_policy = await router_admin_client.create_distribution_policy(
                 distribution_policy_id = distribution_policy_id,
-                offer_ttl_seconds = 10 * 60,
-                mode = LongestIdleMode(
-                    min_concurrent_offers = 1,
-                    max_concurrent_offers = 1
+                distribution_policy = DistributionPolicy(
+                    offer_ttl_seconds = 10 * 60,
+                    mode = LongestIdleMode(
+                        min_concurrent_offers = 1,
+                        max_concurrent_offers = 1
+                    )
                 )
             )
             print(f"Sample setup completed: Created distribution policy")
@@ -63,17 +66,23 @@ class RouterWorkerSamplesAsync(object):
         async with router_admin_client:
             job_queue1: JobQueue = await router_admin_client.create_queue(
                 queue_id = "worker-q-1",
-                distribution_policy_id = distribution_policy_id,
+                queue = JobQueue(
+                    distribution_policy_id = distribution_policy_id,
+                )
             )
 
             job_queue2: JobQueue = await router_admin_client.create_queue(
                 queue_id = "worker-q-2",
-                distribution_policy_id = distribution_policy_id,
+                queue = JobQueue(
+                    distribution_policy_id = distribution_policy_id,
+                )
             )
 
             job_queue3: JobQueue = await router_admin_client.create_queue(
                 queue_id = "worker-q-3",
-                distribution_policy_id = distribution_policy_id,
+                queue = JobQueue(
+                    distribution_policy_id = distribution_policy_id,
+                )
             )
 
             print(f"Sample setup completed: Created queues")
@@ -96,26 +105,28 @@ class RouterWorkerSamplesAsync(object):
         async with router_client:
             router_worker: RouterWorker = await router_client.create_worker(
                 worker_id = worker_id,
-                total_capacity = 100,
-                queue_assignments = {
-                    "worker-q-1": QueueAssignment(),
-                    "worker-q-2": QueueAssignment()
-                },
-                channel_configurations = {
-                    "WebChat": ChannelConfiguration(capacity_cost_per_job = 1),
-                    "WebChatEscalated": ChannelConfiguration(capacity_cost_per_job = 20),
-                    "Voip": ChannelConfiguration(capacity_cost_per_job = 100)
-                },
-                labels = {
-                    "Location": "NA",
-                    "English": 7,
-                    "O365": True,
-                    "Xbox_Support": False
-                },
-                tags = {
-                    "Name": "John Doe",
-                    "Department": "IT_HelpDesk"
-                }
+                router_worker = RouterWorker(
+                    total_capacity = 100,
+                    queue_assignments = {
+                        "worker-q-1": QueueAssignment(),
+                        "worker-q-2": QueueAssignment()
+                    },
+                    channel_configurations = {
+                        "WebChat": ChannelConfiguration(capacity_cost_per_job = 1),
+                        "WebChatEscalated": ChannelConfiguration(capacity_cost_per_job = 20),
+                        "Voip": ChannelConfiguration(capacity_cost_per_job = 100)
+                    },
+                    labels = {
+                        "Location": "NA",
+                        "English": 7,
+                        "O365": True,
+                        "Xbox_Support": False
+                    },
+                    tags = {
+                        "Name": "John Doe",
+                        "Department": "IT_HelpDesk"
+                    }
+                )
             )
 
             print(f"Router worker successfully created with id: {router_worker.id}")

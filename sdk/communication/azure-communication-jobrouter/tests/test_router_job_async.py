@@ -33,7 +33,7 @@ from azure.communication.jobrouter import (
     StaticRule,
     StaticWorkerSelectorAttachment,
     RouterJobStatus,
-    JobStateSelector
+    JobStateSelector, DistributionPolicy, JobQueue, ClassificationPolicy, RouterJob
 )
 
 job_labels = {
@@ -170,12 +170,17 @@ class TestRouterJobAsync(AsyncRouterTestCase):
 
         async with client:
             distribution_policy_id = self.get_distribution_policy_id()
-            distribution_policy = await client.create_distribution_policy(
-                distribution_policy_id = distribution_policy_id,
+
+            policy: DistributionPolicy = DistributionPolicy(
                 name = distribution_policy_id,
                 offer_ttl_seconds = 10.0,
                 mode = RoundRobinMode(min_concurrent_offers = 1,
                                       max_concurrent_offers = 1)
+            )
+
+            distribution_policy = await client.create_distribution_policy(
+                distribution_policy_id = distribution_policy_id,
+                distribution_policy = policy
             )
 
             # add for cleanup later
@@ -193,11 +198,16 @@ class TestRouterJobAsync(AsyncRouterTestCase):
 
         async with client:
             job_queue_id = self.get_job_queue_id()
-            job_queue = await client.create_queue(
-                queue_id = job_queue_id,
+
+            job_queue: JobQueue = JobQueue(
                 name = job_queue_id,
                 labels = job_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
+            )
+
+            job_queue = await client.create_queue(
+                queue_id = job_queue_id,
+                queue = job_queue
             )
 
             # add for cleanup later
@@ -214,11 +224,16 @@ class TestRouterJobAsync(AsyncRouterTestCase):
 
         async with client:
             job_queue_id = self.get_fallback_queue_id()
-            job_queue = await client.create_queue(
-                queue_id = job_queue_id,
+
+            job_queue: JobQueue = JobQueue(
                 name = job_queue_id,
                 labels = job_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
+            )
+
+            job_queue = await client.create_queue(
+                queue_id = job_queue_id,
+                queue = job_queue
             )
 
             # add for cleanup later
@@ -243,13 +258,18 @@ class TestRouterJobAsync(AsyncRouterTestCase):
             ]
 
             cp_id = self.get_classification_policy_id()
-            cp = await client.create_classification_policy(
-                classification_policy_id = cp_id,
+
+            classification_policy: ClassificationPolicy = ClassificationPolicy(
                 name = cp_id,
                 fallback_queue_id = self.get_fallback_queue_id(),
                 queue_selectors = cp_queue_selectors,
                 prioritization_rule = prioritization_rules[0],
                 worker_selectors = cp_worker_selectors
+            )
+
+            cp = await client.create_classification_policy(
+                classification_policy_id = cp_id,
+                classification_policy = classification_policy
             )
 
             # add for cleanup later
@@ -289,8 +309,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            router_job = await router_client.create_job(
-                job_id = job_identifier,
+            router_job: RouterJob = RouterJob(
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
                 queue_id = self.get_job_queue_id(),
@@ -299,6 +318,11 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 labels = job_labels,
                 tags = job_tags,
                 notes = job_notes
+            )
+
+            router_job = await router_client.create_job(
+                job_id = job_identifier,
+                router_job = router_job
             )
 
             # add for cleanup
@@ -334,8 +358,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            router_job = await router_client.create_job(
-                job_id = job_identifier,
+            router_job: RouterJob = RouterJob(
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
                 queue_id = self.get_job_queue_id(),
@@ -344,6 +367,11 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 labels = job_labels,
                 tags = job_tags,
                 notes = job_notes
+            )
+
+            router_job = await router_client.create_job(
+                job_id = job_identifier,
+                router_job = router_job
             )
 
             # add for cleanup
@@ -403,8 +431,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            router_job = await router_client.create_job(
-                job_id = job_identifier,
+            router_job: RouterJob = RouterJob(
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
                 queue_id = self.get_job_queue_id(),
@@ -413,6 +440,11 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 labels = job_labels,
                 tags = job_tags,
                 notes = job_notes
+            )
+
+            router_job = await router_client.create_job(
+                job_id = job_identifier,
+                router_job = router_job
             )
 
             # add for cleanup
@@ -472,8 +504,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            router_job = await router_client.create_job(
-                job_id = job_identifier,
+            router_job: RouterJob = RouterJob(
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
                 queue_id = self.get_job_queue_id(),
@@ -482,6 +513,11 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 labels = job_labels,
                 tags = job_tags,
                 notes = job_notes
+            )
+
+            router_job = await router_client.create_job(
+                job_id = job_identifier,
+                router_job = router_job
             )
 
             # add for cleanup
@@ -536,8 +572,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            router_job = await router_client.create_job(
-                job_id = job_identifier,
+            router_job: RouterJob = RouterJob(
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
                 classification_policy_id = self.get_classification_policy_id(),
@@ -545,6 +580,11 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 labels = job_labels,
                 tags = job_tags,
                 notes = job_notes
+            )
+
+            router_job = await router_client.create_job(
+                job_id = job_identifier,
+                router_job = router_job
             )
 
             # add for cleanup
@@ -581,8 +621,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            router_job = await router_client.create_job(
-                job_id = job_identifier,
+            router_job: RouterJob = RouterJob(
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
                 classification_policy_id = self.get_classification_policy_id(),
@@ -590,6 +629,11 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 labels = job_labels,
                 tags = job_tags,
                 notes = job_notes
+            )
+
+            router_job = await router_client.create_job(
+                job_id = job_identifier,
+                router_job = router_job
             )
 
             # add for cleanup
@@ -656,8 +700,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            router_job = await router_client.create_job(
-                job_id = job_identifier,
+            router_job: RouterJob = RouterJob(
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
                 classification_policy_id = self.get_classification_policy_id(),
@@ -665,6 +708,11 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 labels = job_labels,
                 tags = job_tags,
                 notes = job_notes
+            )
+
+            router_job = await router_client.create_job(
+                job_id = job_identifier,
+                router_job = router_job
             )
 
             # add for cleanup
@@ -731,8 +779,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            router_job = await router_client.create_job(
-                job_id = job_identifier,
+            router_job: RouterJob = RouterJob(
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
                 classification_policy_id = self.get_classification_policy_id(),
@@ -740,6 +787,11 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 labels = job_labels,
                 tags = job_tags,
                 notes = job_notes
+            )
+
+            router_job = await router_client.create_job(
+                job_id = job_identifier,
+                router_job = router_job
             )
 
             # add for cleanup
@@ -794,8 +846,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            router_job = await router_client.create_job(
-                job_id = job_identifier,
+            router_job: RouterJob = RouterJob(
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
                 queue_id = self.get_job_queue_id(),
@@ -804,6 +855,11 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 labels = job_labels,
                 tags = job_tags,
                 notes = job_notes
+            )
+
+            router_job = await router_client.create_job(
+                job_id = job_identifier,
+                router_job = router_job
             )
 
             assert router_job is not None
@@ -850,8 +906,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
 
         async with router_client:
             for identifier in job_identifiers:
-                router_job = await router_client.create_job(
-                    job_id = identifier,
+                router_job: RouterJob = RouterJob(
                     channel_reference = job_channel_references[0],
                     channel_id = job_channel_ids[0],
                     queue_id = self.get_job_queue_id(),
@@ -860,6 +915,11 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                     labels = job_labels,
                     tags = job_tags,
                     notes = job_notes
+                )
+
+                router_job = await router_client.create_job(
+                    job_id = identifier,
+                    router_job = router_job
                 )
 
                 # add for cleanup

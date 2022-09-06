@@ -30,7 +30,7 @@ from azure.communication.jobrouter import (
     StaticRule,
     StaticWorkerSelectorAttachment,
     RouterJobStatus,
-    JobStateSelector
+    JobStateSelector, DistributionPolicy, JobQueue, ClassificationPolicy, RouterJob
 )
 
 job_labels = {
@@ -164,12 +164,17 @@ class TestRouterJob(RouterTestCase):
         client: RouterAdministrationClient = self.create_admin_client()
 
         distribution_policy_id = self.get_distribution_policy_id()
-        distribution_policy = client.create_distribution_policy(
-            distribution_policy_id = distribution_policy_id,
+
+        policy: DistributionPolicy = DistributionPolicy(
             offer_ttl_seconds = 10.0,
             mode = RoundRobinMode(min_concurrent_offers = 1,
                                   max_concurrent_offers = 1),
             name = distribution_policy_id,
+        )
+
+        distribution_policy = client.create_distribution_policy(
+            distribution_policy_id = distribution_policy_id,
+            distribution_policy = policy
         )
 
         # add for cleanup later
@@ -185,11 +190,16 @@ class TestRouterJob(RouterTestCase):
     def setup_job_queue(self):
         client: RouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_job_queue_id()
-        job_queue = client.create_queue(
-            queue_id = job_queue_id,
+
+        job_queue: JobQueue = JobQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
             name = job_queue_id,
             labels = job_labels,
+        )
+
+        job_queue = client.create_queue(
+            queue_id = job_queue_id,
+            queue = job_queue
         )
 
         # add for cleanup later
@@ -204,11 +214,16 @@ class TestRouterJob(RouterTestCase):
     def setup_fallback_queue(self):
         client: RouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_fallback_queue_id()
-        job_queue = client.create_queue(
-            queue_id = job_queue_id,
+
+        job_queue: JobQueue = JobQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
             name = job_queue_id,
             labels = job_labels,
+        )
+
+        job_queue = client.create_queue(
+            queue_id = job_queue_id,
+            queue = job_queue
         )
 
         # add for cleanup later
@@ -232,13 +247,18 @@ class TestRouterJob(RouterTestCase):
         ]
 
         cp_id = self.get_classification_policy_id()
-        job_queue = client.create_classification_policy(
-            classification_policy_id = cp_id,
+
+        classification_policy: ClassificationPolicy = ClassificationPolicy(
             name = cp_id,
             fallback_queue_id = self.get_fallback_queue_id(),
             queue_selectors = cp_queue_selectors,
             prioritization_rule = prioritization_rules[0],
             worker_selectors = cp_worker_selectors
+        )
+
+        job_queue = client.create_classification_policy(
+            classification_policy_id = cp_id,
+            classification_policy = classification_policy
         )
 
         # add for cleanup later
@@ -271,8 +291,7 @@ class TestRouterJob(RouterTestCase):
         job_identifier = "tst_create_job_man"
         router_client: RouterClient = self.create_client()
 
-        router_job = router_client.create_job(
-            job_id = job_identifier,
+        router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
             channel_reference = job_channel_references[0],
             queue_id = self.get_job_queue_id(),
@@ -281,6 +300,11 @@ class TestRouterJob(RouterTestCase):
             labels = job_labels,
             tags = job_tags,
             notes = job_notes
+        )
+
+        router_job = router_client.create_job(
+            job_id = job_identifier,
+            router_job = router_job
         )
 
         # add for cleanup
@@ -314,8 +338,7 @@ class TestRouterJob(RouterTestCase):
         job_identifier = "tst_update_job_man"
         router_client: RouterClient = self.create_client()
 
-        router_job = router_client.create_job(
-            job_id = job_identifier,
+        router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
             channel_reference = job_channel_references[0],
             queue_id = self.get_job_queue_id(),
@@ -324,6 +347,11 @@ class TestRouterJob(RouterTestCase):
             labels = job_labels,
             tags = job_tags,
             notes = job_notes
+        )
+
+        router_job = router_client.create_job(
+            job_id = job_identifier,
+            router_job = router_job
         )
 
         # add for cleanup
@@ -381,8 +409,7 @@ class TestRouterJob(RouterTestCase):
         job_identifier = "tst_update_job_man_w_kwargs"
         router_client: RouterClient = self.create_client()
 
-        router_job = router_client.create_job(
-            job_id = job_identifier,
+        router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
             channel_reference = job_channel_references[0],
             queue_id = self.get_job_queue_id(),
@@ -391,6 +418,11 @@ class TestRouterJob(RouterTestCase):
             labels = job_labels,
             tags = job_tags,
             notes = job_notes
+        )
+
+        router_job = router_client.create_job(
+            job_id = job_identifier,
+            router_job = router_job
         )
 
         # add for cleanup
@@ -447,8 +479,7 @@ class TestRouterJob(RouterTestCase):
         job_identifier = "tst_get_job_man"
         router_client: RouterClient = self.create_client()
 
-        router_job = router_client.create_job(
-            job_id = job_identifier,
+        router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
             channel_reference = job_channel_references[0],
             queue_id = self.get_job_queue_id(),
@@ -457,6 +488,11 @@ class TestRouterJob(RouterTestCase):
             labels = job_labels,
             tags = job_tags,
             notes = job_notes
+        )
+
+        router_job = router_client.create_job(
+            job_id = job_identifier,
+            router_job = router_job
         )
 
         # add for cleanup
@@ -508,8 +544,7 @@ class TestRouterJob(RouterTestCase):
         job_identifier = "tst_create_job_cp"
         router_client: RouterClient = self.create_client()
 
-        router_job = router_client.create_job(
-            job_id = job_identifier,
+        router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
             channel_reference = job_channel_references[0],
             classification_policy_id = self.get_classification_policy_id(),
@@ -517,6 +552,11 @@ class TestRouterJob(RouterTestCase):
             labels = job_labels,
             tags = job_tags,
             notes = job_notes
+        )
+
+        router_job = router_client.create_job(
+            job_id = job_identifier,
+            router_job = router_job
         )
 
         # add for cleanup
@@ -550,8 +590,7 @@ class TestRouterJob(RouterTestCase):
         job_identifier = "tst_update_job_cp"
         router_client: RouterClient = self.create_client()
 
-        router_job = router_client.create_job(
-            job_id = job_identifier,
+        router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
             channel_reference = job_channel_references[0],
             classification_policy_id = self.get_classification_policy_id(),
@@ -559,6 +598,11 @@ class TestRouterJob(RouterTestCase):
             labels = job_labels,
             tags = job_tags,
             notes = job_notes
+        )
+
+        router_job = router_client.create_job(
+            job_id = job_identifier,
+            router_job = router_job
         )
 
         # add for cleanup
@@ -622,8 +666,7 @@ class TestRouterJob(RouterTestCase):
         job_identifier = "tst_update_job_cp_w_kwargs"
         router_client: RouterClient = self.create_client()
 
-        router_job = router_client.create_job(
-            job_id = job_identifier,
+        router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
             channel_reference = job_channel_references[0],
             classification_policy_id = self.get_classification_policy_id(),
@@ -631,6 +674,11 @@ class TestRouterJob(RouterTestCase):
             labels = job_labels,
             tags = job_tags,
             notes = job_notes
+        )
+
+        router_job = router_client.create_job(
+            job_id = job_identifier,
+            router_job = router_job
         )
 
         # add for cleanup
@@ -694,8 +742,7 @@ class TestRouterJob(RouterTestCase):
         job_identifier = "tst_get_job_cp"
         router_client: RouterClient = self.create_client()
 
-        router_job = router_client.create_job(
-            job_id = job_identifier,
+        router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
             channel_reference = job_channel_references[0],
             classification_policy_id = self.get_classification_policy_id(),
@@ -703,6 +750,11 @@ class TestRouterJob(RouterTestCase):
             labels = job_labels,
             tags = job_tags,
             notes = job_notes
+        )
+
+        router_job = router_client.create_job(
+            job_id = job_identifier,
+            router_job = router_job
         )
 
         # add for cleanup
@@ -754,8 +806,7 @@ class TestRouterJob(RouterTestCase):
         job_identifier = "tst_del_job_man"
         router_client: RouterClient = self.create_client()
 
-        router_job = router_client.create_job(
-            job_id = job_identifier,
+        router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
             channel_reference = job_channel_references[0],
             queue_id = self.get_job_queue_id(),
@@ -764,6 +815,11 @@ class TestRouterJob(RouterTestCase):
             labels = job_labels,
             tags = job_tags,
             notes = job_notes
+        )
+
+        router_job = router_client.create_job(
+            job_id = job_identifier,
+            router_job = router_job
         )
 
         assert router_job is not None
@@ -807,8 +863,7 @@ class TestRouterJob(RouterTestCase):
         self.job_ids[self._testMethodName] = []
 
         for identifier in job_identifiers:
-            router_job = router_client.create_job(
-                job_id = identifier,
+            router_job: RouterJob = RouterJob(
                 channel_id = job_channel_ids[0],
                 channel_reference = job_channel_references[0],
                 queue_id = self.get_job_queue_id(),
@@ -817,6 +872,11 @@ class TestRouterJob(RouterTestCase):
                 labels = job_labels,
                 tags = job_tags,
                 notes = job_notes
+            )
+
+            router_job = router_client.create_job(
+                job_id = identifier,
+                router_job = router_job
             )
 
             # add for cleanup

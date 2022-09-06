@@ -129,24 +129,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     def create_exception_policy(
             self,
             exception_policy_id: str,
-            exception_rules: Dict[str, ExceptionRule],
-            *,
-            name: Optional[str] = None,
+            exception_policy: ExceptionPolicy,
             **kwargs: Any
     ) -> ExceptionPolicy:
         """ Create a new exception policy.
 
         :param str exception_policy_id: Id of the exception policy.
 
-        :param exception_rules: A dictionary collection of exception rules on the exception
-          policy. Key is the Id of each exception rule.
-        :type exception_rules: Dict[str, ~azure.communication.jobrouter.ExceptionRule]
-
-        :param exception_policy: An instance of exception policy. This is a positional-only parameter.
-          Please provide either this or individual keyword parameters.
+        :param exception_policy: An instance of exception policy.
         :type exception_policy: ~azure.communication.jobrouter.ExceptionPolicy
-
-        :keyword Optional[str] name: The name of this policy.
 
         :return: ExceptionPolicy
         :rtype: ~azure.communication.jobrouter.ExceptionPolicy
@@ -164,14 +155,6 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         """
         if not exception_policy_id:
             raise ValueError("exception_policy_id cannot be None.")
-
-        if not exception_rules or any(exception_rules) is False:
-            raise ValueError("exception_rules cannot be None or empty.")
-
-        exception_policy = ExceptionPolicy(
-            name = name,
-            exception_rules = exception_rules
-        )
 
         return self._client.job_router_administration.upsert_exception_policy(
             id = exception_policy_id,
@@ -380,23 +363,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     def create_distribution_policy(
             self,
             distribution_policy_id: str,
-            offer_ttl_seconds: float,
-            mode: Union[BestWorkerMode, LongestIdleMode, RoundRobinMode],
-            *,
-            name: Optional[str] = None,
+            distribution_policy: DistributionPolicy,
             **kwargs: Any
     ) -> DistributionPolicy:
         """ Create a new distribution policy.
 
         :param str distribution_policy_id: Id of the distribution policy.
-        :param float offer_ttl_seconds: The expiry time of any offers created under this policy will
-          be governed by the offer time to live.
 
-        :param mode: Specified distribution mode
-        :type mode: Union[~azure.communication.jobrouter.BestWorkerMode,
-            ~azure.communication.jobrouter.LongestIdleMode, ~azure.communication.jobrouter.RoundRobinMode]
-
-        :keyword Optional[str] name: The name of this policy.
+        :param distribution_policy: An instance of distribution policy.
+        :type distribution_policy: ~azure.communication.jobrouter.DistributionPolicy
 
         :return: DistributionPolicy
         :rtype: ~azure.communication.jobrouter.DistributionPolicy
@@ -413,18 +388,6 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         """
         if not distribution_policy_id:
             raise ValueError("distribution_policy_id cannot be None.")
-
-        if not offer_ttl_seconds:
-            raise ValueError("offer_ttl_seconds cannot be None.")
-
-        if not mode:
-            raise ValueError("mode cannot be None.")
-
-        distribution_policy = DistributionPolicy(
-            name = name,
-            offer_ttl_seconds = offer_ttl_seconds,
-            mode = mode
-        )
 
         return self._client.job_router_administration.upsert_distribution_policy(
             id = distribution_policy_id,
@@ -640,28 +603,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     def create_queue(
             self,
             queue_id: str,
-            distribution_policy_id: str,
-            *,
-            name: Optional[str] = None,
-            labels: Optional[Dict[str, Union[int, float, str, bool]]] = None,
-            exception_policy_id: Optional[str] = None,
+            queue: JobQueue,
             **kwargs: Any
     ) -> JobQueue:
         """ Create a job queue
 
         :param str queue_id: Id of the queue.
 
-        :param str distribution_policy_id: The ID of the distribution policy that will determine
-          how a job is distributed to workers.
-
-        :keyword Optional[str] name: The name of this queue.
-
-        :keyword labels: A set of key/value pairs that are
-          identifying attributes used by the rules engines to make decisions.
-        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
-
-        :keyword Optional[str] exception_policy_id: The ID of the exception policy that determines various
-          job escalation rules.
+        :param queue: An instance of JobQueue.
+        :type queue: ~azure.communication.jobrouter.JobQueue
 
         :return: JobQueue
         :rtype: ~azure.communication.jobrouter.JobQueue
@@ -678,16 +628,6 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         """
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
-
-        if not distribution_policy_id:
-            raise ValueError("distribution_policy_id cannot be None.")
-
-        queue = JobQueue(
-            name = name,
-            distribution_policy_id = distribution_policy_id,
-            labels = labels,
-            exception_policy_id = exception_policy_id
-        )
 
         return self._client.job_router_administration.upsert_queue(
             id = queue_id,
@@ -909,40 +849,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     def create_classification_policy(
             self,
             classification_policy_id: str,
-            *,
-            name: Optional[str] = None,
-            fallback_queue_id: Optional[str] = None,
-            queue_selectors: Optional[List[Union[StaticQueueSelectorAttachment, ConditionalQueueSelectorAttachment, RuleEngineQueueSelectorAttachment, PassThroughQueueSelectorAttachment, WeightedAllocationQueueSelectorAttachment]]] = None,  # pylint: disable=line-too-long
-            prioritization_rule: Optional[Union[StaticRule, ExpressionRule, FunctionRule]] = None,
-            worker_selectors: Optional[List[Union[StaticWorkerSelectorAttachment, ConditionalWorkerSelectorAttachment, RuleEngineWorkerSelectorAttachment, PassThroughWorkerSelectorAttachment, WeightedAllocationWorkerSelectorAttachment]]] = None,  # pylint: disable=line-too-long
+            classification_policy: ClassificationPolicy,
             **kwargs: Any
     ) -> ClassificationPolicy:
         """ Create a classification policy
 
         :param str classification_policy_id: Id of the classification policy.
 
-        :keyword Optional[str] name: Friendly name of this policy.
-
-        :keyword fallback_queue_id: The fallback queue to select if the queue selector doesn't find a match.
-        :paramtype fallback_queue_id: Optional[str]
-
-        :keyword queue_selectors: The queue selectors to resolve a queue for a given job.
-        :paramtype queue_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticQueueSelectorAttachment,
-          ~azure.communication.jobrouter.ConditionalQueueSelectorAttachment,
-          ~azure.communication.jobrouter.RuleEngineQueueSelectorAttachment,
-          ~azure.communication.jobrouter.PassThroughQueueSelectorAttachment,
-          ~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
-
-        :keyword prioritization_rule: The rule to determine a priority score for a given job.
-        :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRule,
-          ~azure.communication.jobrouter.ExpressionRule, ~azure.communication.jobrouter.FunctionRule]]
-
-        :keyword worker_selectors: The worker label selectors to attach to a given job.
-        :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.ConditionalWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.RuleEngineWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
+        :param classification_policy: An instance of Classification policy.
+        :type classification_policy: ~azure.communication.jobrouter.ClassificationPolicy
 
         :return: ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
@@ -959,14 +874,6 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         """
         if not classification_policy_id:
             raise ValueError("classification_policy_id cannot be None.")
-
-        classification_policy = ClassificationPolicy(
-            name = name,
-            fallback_queue_id = fallback_queue_id,
-            queue_selectors = queue_selectors,
-            prioritization_rule = prioritization_rule,
-            worker_selectors = worker_selectors
-        )
 
         return self._client.job_router_administration.upsert_classification_policy(
             id = classification_policy_id,
