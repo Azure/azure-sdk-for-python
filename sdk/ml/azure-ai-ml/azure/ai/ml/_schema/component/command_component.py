@@ -11,6 +11,7 @@ from marshmallow import INCLUDE, fields, post_load
 
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
+from azure.ai.ml._schema.component.input_output import OutputPortSchema, PrimitiveOutputSchema
 from azure.ai.ml._schema.component.resource import ComponentResourceSchema
 from azure.ai.ml._schema.core.fields import FileRefField, NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.job.distribution import (
@@ -36,6 +37,16 @@ class CommandComponentSchema(ComponentSchema, ParameterizedCommandSchema):
             NestedField(PyTorchDistributionSchema, unknown=INCLUDE),
         ],
         metadata={"description": "Provides the configuration for a distributed run."},
+    )
+    # primitive output is only supported for command component
+    outputs = fields.Dict(
+        keys=fields.Str(),
+        values=UnionField(
+            [
+                NestedField(OutputPortSchema),
+                NestedField(PrimitiveOutputSchema),
+            ]
+        ),
     )
 
 

@@ -10,18 +10,22 @@
  - Load and dump 'path' input still works, but is deprecated and emits a warning.
  - Managed Identity Support for Compute Instance.
  - Enable using @dsl.pipeline without brackets when no additional parameters.
+ - Expose Azure subscription Id and resource group name from MLClient objects.
 
 ### Breaking Changes
  - Change (begin_)create_or_update typehints to use generics.
  - Remove invalid option from create_or_update typehints.
  - Change error returned by (begin_)create_or_update invalid input to TypeError.
  - Rename set_image_model APIs for all vision tasks to set_training_parameters
+ - JobOperations.download no longer provides a default value for download_path
 
 ### Bugs Fixed
 
 ### Other Changes
 
-## 0.1.0b6 (2022-08-09)
+
+## 0.1.0b6
+
 ### Features Added
 
 - Support for AutoML Component
@@ -37,6 +41,7 @@
 - Removed az CLI command that was printed when deleting OnlineEndpoint
 
 ### Other Changes
+
 
 ## 0.1.0b5 (2022-07-15)
 

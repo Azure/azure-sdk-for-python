@@ -65,6 +65,14 @@ def _resolve_builders_2_data_bindings(data: Union[list, dict]) -> Union[list, di
     return _build_data_binding(data)
 
 
+def _data_to_input(data):
+    """Convert a Data object to an Input object."""
+    if data.id:
+        return Input(type=data.type, path=data.id)
+    else:
+        return Input(type=data.type, path=f"{data.name}:{data.version}")
+
+
 class InputOutputBase(ABC):
     def __init__(self, meta: Union[Input, Output], data, **kwargs):
         """Base class of input & output.
@@ -247,10 +255,7 @@ class PipelineInputBase(InputOutputBase):
             if isinstance(data, str):
                 return Input(type=self._meta.type, path=data)
             elif isinstance(data, Data):
-                if data.id:
-                    return Input(type=data.type, path=data.id)
-                else:
-                    return Input(type=data.type, path=f"{data.name}:{data.version}")
+                return _data_to_input(data)
             msg = "only path input is supported now but get {}: {}."
             raise UserErrorException(
                 message=msg.format(type(data), data),
@@ -445,8 +450,8 @@ class PipelineInput(PipelineInputBase, PipelineExpressionMixin):
                 )
             return data
         if isinstance(data, Data):
-            msg = "Data input is not supported for now."
-            raise UserErrorException(message=msg, no_personal_data_message=msg)
+            # If value is Data, we convert it to an corresponding Input
+            return _data_to_input(data)
         return data
 
     def _data_binding(self):

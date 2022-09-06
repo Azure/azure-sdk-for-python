@@ -21,6 +21,9 @@ re_memory_pattern = re.compile("^\\d+[kKmMgGtTpP]$")
 
 class SparkEntryFileSchema(metaclass=PatchedSchemaMeta):
     file = fields.Str(required=True)
+    # add spark_job_entry_type and make it dump only to align with model definition,
+    # this will make us get expected value when call spark._from_rest_object()
+    spark_job_entry_type = fields.Str(dump_only=True)
 
     @pre_dump
     def to_dict(self, data, **kwargs):
@@ -29,6 +32,9 @@ class SparkEntryFileSchema(metaclass=PatchedSchemaMeta):
 
 class SparkEntryClassSchema(metaclass=PatchedSchemaMeta):
     class_name = fields.Str(required=True)
+    # add spark_job_entry_type and make it dump only to align with model definition,
+    # this will make us get expected value when call spark._from_rest_object()
+    spark_job_entry_type = fields.Str(dump_only=True)
 
     @pre_dump
     def to_dict(self, data, **kwargs):

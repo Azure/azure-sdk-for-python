@@ -181,6 +181,10 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
     def _get_supported_outputs_types(cls):
         return None
 
+    @property
+    def _skip_required_compute_missing_validation(self):
+        return False
+
     @classmethod
     def _validate_io(cls, io_dict: dict, allowed_types: Optional[tuple], parse_cls):
         if allowed_types is None:

@@ -4,6 +4,8 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
+from azure.ai.ml._restclient.v2021_10_01.models import CreatedByType
+
 from ._assets._artifacts.data import Data
 from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
@@ -11,6 +13,7 @@ from ._assets.environment import BuildContext, Environment
 from ._component.command_component import CommandComponent
 from ._component.component import Component
 from ._component.parallel_component import ParallelComponent
+from ._component.pipeline_component import PipelineComponent
 from ._component.spark_component import SparkComponent
 from ._compute._aml_compute_node_info import AmlComputeNodeInfo
 from ._compute._identity import IdentityConfiguration
@@ -70,8 +73,10 @@ from ._job.sweep.search_space import (
 from ._resource import Resource
 from ._schedule.schedule import JobSchedule
 from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
+from ._system_data import SystemData
 from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.customer_managed_key import CustomerManagedKey
+from ._workspace.identity import ManagedServiceIdentity, ManagedServiceIdentityType
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 
@@ -86,11 +91,13 @@ __all__ = [
     "Job",
     "CommandJob",
     "PipelineJob",
+    "SystemData",
     "SparkJob",
     "SparkJobEntry",
     "SparkJobEntryType",
     "CommandJobLimits",
     "ComputeConfiguration",
+    "CreatedByType",
     "ResourceConfiguration",
     "JobResourceConfiguration",
     "SparkResourceConfiguration",
@@ -120,6 +127,8 @@ __all__ = [
     "Model",
     "Workspace",
     "WorkspaceConnection",
+    "ManagedServiceIdentity",
+    "ManagedServiceIdentityType",
     "PrivateEndpoint",
     "EndpointConnection",
     "CustomerManagedKey",
@@ -167,6 +176,7 @@ __all__ = [
     "ComputeSchedules",
     "ComputeStartStopSchedule",
     "ScheduleState",
+    "PipelineComponent",
     "VirtualMachineSshSettings",
     "AmlComputeSshSettings",
     "AmlComputeNodeInfo",

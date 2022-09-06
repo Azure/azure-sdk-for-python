@@ -16,26 +16,22 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 class TestSparkComponentEntity:
     def test_component_load(self):
         # code is specified in yaml, value is respected
-        component_yaml = "./tests/test_configs/components/basic_spark_component.yml"
+        component_yaml = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
         spark_component = load_component(
             path=component_yaml,
         )
 
-        assert isinstance(spark_component.jars, list) and spark_component.jars[0] == "scalaproj.jar"
         assert isinstance(spark_component.py_files, list) and spark_component.py_files[0] == "utils.zip"
-        assert spark_component.code == "../dsl_pipeline/spark_job_in_pipeline/src"
+        assert spark_component.code == "./src"
         assert spark_component.entry._to_rest_object().as_dict() == {
             "spark_job_entry_type": "SparkJobPythonEntry",
-            "file": "entry.py",
+            "file": "add_greeting_column.py",
         }
-        assert (
-            spark_component.args
-            == "--file_input1 ${{inputs.file_input1}} --file_input2 ${{inputs.file_input2}} --output ${{outputs.output}}"
-        )
+        assert spark_component.args == "--file_input ${{inputs.file_input}}"
 
     def test_spark_component_to_dict(self):
         # Test optional params exists in component dict
-        yaml_path = "./tests/test_configs/components/basic_spark_component.yml"
+        yaml_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
         yaml_dict = load_yaml(yaml_path)
         yaml_dict["mock_option_param"] = {"mock_key": "mock_val"}
         spark_component = SparkComponent._load(data=yaml_dict, yaml_path=yaml_path)
@@ -43,30 +39,24 @@ class TestSparkComponentEntity:
 
     def test_spark_component_entity(self):
         component = SparkComponent(
-            name="dummy_spark_component",
-            display_name="Aml Spark dataset test module",
-            description="Aml Spark dataset test module",
+            name="add_greeting_column_spark_component",
+            display_name="Aml Spark add greeting column test module",
+            description="Aml Spark add greeting column test module",
             version="1",
             inputs={
-                "file_input1": {"type": "uri_file"},
-                "file_input2": {"type": "uri_file"},
-            },
-            outputs={
-                "output": {"type": "uri_folder"},
+                "file_input": {"type": "uri_file"},
             },
             driver_cores=2,
             driver_memory="1g",
             executor_cores=1,
             executor_memory="1g",
             executor_instances=1,
-            code="../dsl_pipeline/spark_job_in_pipeline/src",
-            entry={"file": "entry.py"},
+            code="./src",
+            entry={"file": "add_greeting_column.py"},
             py_files=["utils.zip"],
             files=["my_files.txt"],
-            jars=["scalaproj.jar"],
-            environment="azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
-            args="--file_input1 ${{inputs.file_input1}} --file_input2 ${{inputs.file_input2}} --output ${{outputs.output}}",
-            base_path="./tests/test_configs/components",
+            args="--file_input ${{inputs.file_input}}",
+            base_path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline",
         )
         omit_fields = [
             "properties.component_spec.$schema",
@@ -75,7 +65,7 @@ class TestSparkComponentEntity:
         component_dict = component._to_rest_object().as_dict()
         component_dict = pydash.omit(component_dict, *omit_fields)
 
-        yaml_path = "./tests/test_configs/components/basic_spark_component.yml"
+        yaml_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
         yaml_component = load_component(path=yaml_path)
         yaml_component_dict = yaml_component._to_rest_object().as_dict()
         yaml_component_dict = pydash.omit(yaml_component_dict, *omit_fields)
@@ -86,9 +76,9 @@ class TestSparkComponentEntity:
         expected_rest_component = {
             "type": "spark",
             "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
-            "entry": {"file": "entry.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+            "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
             "py_files": ["utils.zip"],
-            "jars": ["scalaproj.jar"],
+            "jars": None,
             "files": ["my_files.txt"],
             "archives": None,
             "identity": None,
@@ -99,23 +89,22 @@ class TestSparkComponentEntity:
                 "spark.executor.instances": 1,
                 "spark.executor.memory": "1g",
             },
-            "args": "--file_input1 ${{inputs.file_input1}} --file_input2 ${{inputs.file_input2}} --output ${{outputs.output}}",
+            "args": "--file_input ${{inputs.file_input}}",
             "name": None,
             "display_name": None,
             "tags": {},
             "computeId": None,
             "inputs": {
-                "file_input1": {"job_input_type": "literal", "value": "${{parent.inputs.pipeline_input}}"},
-                "file_input2": {"job_input_type": "literal", "value": "${{parent.inputs.pipeline_input}}"},
+                "file_input": {"job_input_type": "literal", "value": "${{parent.inputs.pipeline_input}}"},
             },
             "outputs": {},
             "_source": "YAML.COMPONENT",
             "componentId": "fake_component",
         }
-        yaml_path = "./tests/test_configs/components/basic_spark_component.yml"
+        yaml_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
         yaml_component_version = load_component(path=yaml_path)
         pipeline_input = PipelineInput(name="pipeline_input", owner="pipeline", meta=None)
-        yaml_component = yaml_component_version(file_input1=pipeline_input, file_input2=pipeline_input)
+        yaml_component = yaml_component_version(file_input=pipeline_input)
         yaml_component.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
         yaml_component._component = "fake_component"
         rest_yaml_component = yaml_component._to_rest_object()
