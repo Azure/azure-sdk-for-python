@@ -53,6 +53,7 @@ _STATSBEAT_METRIC_NAME_MAPPINGS = dict(
 # Instrumentations
 
 _BASE = 2
+# cSpell:disable
 _INSTRUMENTATIONS_LIST = [
     "django",
     "flask",
@@ -93,4 +94,5 @@ _INSTRUMENTATIONS_LIST = [
     "urllib",
     "urllib3",
 ]
+# cSpell:enable
 _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}
