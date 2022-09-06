@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import AsyncIterator, Optional
+from typing import AsyncIterator, IO, Optional
 
 from .._deserialize import from_blob_properties
 
@@ -59,7 +59,7 @@ class StorageStreamDownloader(object):
         """
         return await self._downloader.readall()
 
-    async def readinto(self, stream) -> int:
+    async def readinto(self, stream: IO[bytes]) -> int:
         """Download the contents of this file to a stream.
 
         :param stream:

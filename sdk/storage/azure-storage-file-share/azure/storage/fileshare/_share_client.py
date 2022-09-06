@@ -196,7 +196,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
     def from_connection_string(
             cls, conn_str,  # type: str
             share_name, # type: str
-            snapshot=None,  # type: Optional[str]
+            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credential=None, # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs # type: Any
         ):
