@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from optparse import Option
+# from optparse import Option
 import time
 import uuid
 from datetime import datetime
