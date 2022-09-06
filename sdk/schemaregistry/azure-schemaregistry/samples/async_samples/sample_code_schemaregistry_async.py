@@ -27,7 +27,7 @@
 FILE: sample_code_schemaregistry_async.py
 DESCRIPTION:
     This sample demonstrates asynchronously authenticating the SchemaRegistryClient and registering a schema,
-     retrieving a schema by its ID, and retrieving schema properties.
+     retrieving a schema by its ID, retrieving a schema by its version, and retrieving schema properties.
 USAGE:
     python sample_code_schemaregistry_async.py
     Set the environment variables with your own values before running the sample:
@@ -79,7 +79,7 @@ async def register_schema(schema_registry_client):
     )
     schema_id = schema_properties.id
     # [END register_schema_async]
-    return schema_id
+    return schema_properties
 
 
 async def get_schema(schema_registry_client, schema_id):
@@ -91,6 +91,19 @@ async def get_schema(schema_registry_client, schema_id):
     print(definition)
     print(properties)
     return definition
+
+
+async def get_schema_by_version(schema_registry_client, version):
+    # [START get_schema_by_version_async]
+    group_name = os.environ["SCHEMAREGISTRY_GROUP"]
+    name = "your-schema-name"
+    schema = await schema_registry_client.get_schema_by_version(group_name, name, version)
+    definition = schema.definition
+    properties = schema.properties
+    # [END get_schema_by_version_async]
+    print(definition)
+    print(properties)
+    return schema
 
 
 async def get_schema_id(schema_registry_client):
@@ -120,8 +133,9 @@ async def get_schema_id(schema_registry_client):
 async def main():
     client, credential = create_client()
     async with client, credential:
-        schema_id = await register_schema(client)
-        schema = await get_schema(client, schema_id)
+        schema_properties = await register_schema(client)
+        schema = await get_schema(client, schema_properties.id)
+        schema = await get_schema_by_version(client, schema_properties.version)
         schema_id = await get_schema_id(client)
 
 

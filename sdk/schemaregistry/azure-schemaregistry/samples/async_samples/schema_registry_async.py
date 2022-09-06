@@ -9,6 +9,7 @@ DESCRIPTION:
     This sample demonstrates asynchronously authenticating the SchemaRegistryClient and basic usage, including:
         - registering a schema
         - getting a schema by its ID
+        - getting a schema by its version.
         - getting schema id.
 USAGE:
     python schema_registry_async.py
@@ -53,20 +54,28 @@ async def register_schema(client, group_name, name, definition, format):
     )
     print("Schema registered, returned schema id is {}".format(schema_properties.id))
     print("Schema properties are {}".format(schema_properties))
-    return schema_properties.id
+    return schema_properties
 
 
 async def get_schema_by_id(client, schema_id):
     print("Getting schema by id...")
     schema = await client.get_schema(schema_id)
     print(
-        "The schema string of schema id: {} string is {}".format(
+        "The schema string of schema id: {} is {}".format(
             schema_id, schema.definition
         )
     )
-    print("Schema properties are {}".format(schema_id))
+    print("Schema properties are {}".format(schema.properties))
     return schema.definition
 
+async def get_schema_by_version(client, group_name, name, version):
+    print("Getting schema by version...")
+    schema = await client.get_schema_by_version(group_name, name, version)
+    print(
+        "The schema string of schema id: {} is {}".format(schema.properties.id, schema.definition)
+    )
+    print("Schema properties are {}".format(schema.properties))
+    return schema.definition
 
 async def get_schema_id(client, group_name, name, definition, format):
     print("Getting schema id...")
@@ -84,10 +93,11 @@ async def main():
         fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential
     )
     async with token_credential, schema_registry_client:
-        schema_id = await register_schema(
+        schema_properties = await register_schema(
             schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT
         )
-        schema_str = await get_schema_by_id(schema_registry_client, schema_id)
+        schema_str = await get_schema_by_id(schema_registry_client, schema_properties.id)
+        schema_str = await get_schema_by_version(schema_registry_client, GROUP_NAME, NAME, schema_properties.version)
         schema_id = await get_schema_id(
             schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT
         )
