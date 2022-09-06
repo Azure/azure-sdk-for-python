@@ -64,7 +64,6 @@ class EnvironmentCredential(object):
     """
 
     def __init__(self, **kwargs):
-        # type: (Mapping[str, Any]) -> None
         self._credential = None  # type: Optional[EnvironmentCredentialTypes]
 
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
