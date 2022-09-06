@@ -5,27 +5,24 @@
 # --------------------------------------------------------------------------
 
 # pylint: disable=unused-import,ungrouped-imports, R0904, C0302
-from typing import TYPE_CHECKING
+from typing import Union, Any, List
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import HttpResponseError
-from azure.core.credentials import AzureKeyCredential
-
+from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.polling import LROPoller
 from ._base_client import MapsRouteClientBase
-from ._generated.models import (
+from .models import (
     RouteDirectionsResponse,
     GetRouteRangeResponse,
     RouteDirectionsBatchResponse,
     RouteMatrixResponse,
     PostRouteMatrixRequestBody,
     BatchRequestBody,
-    AlternativeRouteType,
-    TextFormat
+    LatLon
 )
 
-if TYPE_CHECKING:
-    from typing import Union, Any, List, Tuple
-    from azure.core.credentials import TokenCredential
-    from azure.core.polling import LROPoller
+from ._generated.models import (
+    TextFormat
+)
 
 # By default, use the latest supported API version
 class MapsRouteClient(MapsRouteClientBase):
@@ -45,10 +42,9 @@ class MapsRouteClient(MapsRouteClientBase):
 
     def __init__(
         self,
-        credential, # type: Union[AzureKeyCredential, TokenCredential]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: Union[AzureKeyCredential, TokenCredential],
+        **kwargs: Any
+    )-> None:
 
         super().__init__(
             credential=credential, **kwargs
@@ -58,10 +54,10 @@ class MapsRouteClient(MapsRouteClientBase):
     @distributed_trace
     def get_route_directions(
         self,
-        route_points,  # type: List[Tuple]
-        **kwargs  # type: Any
-    ):
-         # type: (...) -> "RouteDirectionsResponse"
+        route_points: List[LatLon],
+        **kwargs: Any
+    ) -> RouteDirectionsResponse:
+
         """
         Returns a route between an origin and a destination, passing through waypoints if they are
         specified. The route will take into account factors such as current traffic and the typical
@@ -72,7 +68,7 @@ class MapsRouteClient(MapsRouteClientBase):
         instructions is also available, depending on the options selected.
 
         :param route_points: The Coordinate from which the range calculation should start, coordinates as (lat, lon)
-        :type route_points: List[Tuple]
+        :type route_points: List[LatLon]
         :keyword supporting_points: A GeoJSON Geometry collection representing sequence of coordinates
          used as input for route reconstruction and for calculating zero or more alternative routes to
          this reference route.
@@ -249,10 +245,10 @@ class MapsRouteClient(MapsRouteClientBase):
     @distributed_trace
     def get_route_range(
         self,
-        coordinates,  # type: Tuple
-        **kwargs  # type: Any
-    ):
-         # type: (...) -> "GetRouteRangeResponse"
+        coordinates: LatLon,
+        **kwargs: Any
+    ) -> GetRouteRangeResponse:
+
         """**Route Range (Isochrone) API**
 
         This service will calculate a set of locations that can be reached from the origin point based
@@ -261,7 +257,7 @@ class MapsRouteClient(MapsRouteClientBase):
         the result of the origin point.
 
         :param coordinates: The Coordinate from which the range calculation should start, coordinates as (lat, lon)
-        :type coordinates: Tuple
+        :type coordinates: LatLon
         :param fuel_budget_in_liters: Fuel budget in liters that determines maximal range which can be
          travelled using the specified Combustion Consumption Model.
          Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec, or
@@ -381,10 +377,10 @@ class MapsRouteClient(MapsRouteClientBase):
     @distributed_trace
     def request_route_directions_batch(
         self,
-        route_points_batch, #type: BatchRequestBody
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> RouteDirectionsBatchResponse
+        route_points_batch: BatchRequestBody,
+        **kwargs: Any
+    ) -> RouteDirectionsBatchResponse:
+
         """Sends batches of route directions requests.
         The method return the result directly.
 
@@ -527,10 +523,10 @@ class MapsRouteClient(MapsRouteClientBase):
     @distributed_trace
     def begin_request_route_directions_batch(
         self,
-        route_points_batch, #type: BatchRequestBody
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["RouteDirectionsBatchResponse"]
+        route_points_batch: BatchRequestBody,
+        **kwargs: Any
+    ) -> LROPoller[RouteDirectionsBatchResponse]:
+
         """Sends batches of route direction queries.
         The method returns a poller for retrieving the result later.
 
@@ -659,10 +655,10 @@ class MapsRouteClient(MapsRouteClientBase):
     @distributed_trace
     def begin_get_route_directions_batch_result(
         self,
-        batch_id, #type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["RouteDirectionsBatchResponse"]
+        batch_id: str,
+        **kwargs: Any
+    )-> LROPoller[RouteDirectionsBatchResponse]:
+
         """Retrieves the result of a previous route direction batch request.
         The method returns a poller for retrieving the result.
 
@@ -688,10 +684,10 @@ class MapsRouteClient(MapsRouteClientBase):
     @distributed_trace
     def request_route_matrix(
         self,
-        route_matrix_query, #type: PostRouteMatrixRequestBody
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "RouteMatrixResponse"
+        route_matrix_query: PostRouteMatrixRequestBody,
+        **kwargs: Any
+    ) -> RouteMatrixResponse:
+
         """
         Calculates a matrix of route summaries for a set of routes defined by origin and destination locations.
         The method return the result directly.
@@ -768,10 +764,10 @@ class MapsRouteClient(MapsRouteClientBase):
     @distributed_trace
     def begin_request_route_matrix(
         self,
-        route_matrix_query, #type: PostRouteMatrixRequestBody
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["RouteMatrixResponse"]
+        route_matrix_query: PostRouteMatrixRequestBody,
+        **kwargs: Any
+    ) -> LROPoller[RouteMatrixResponse]:
+
         """
         Calculates a matrix of route summaries for a set of routes defined by origin and destination locations.
         The method returns a poller for retrieving the result later.
@@ -847,10 +843,10 @@ class MapsRouteClient(MapsRouteClientBase):
     @distributed_trace
     def begin_get_route_matrix_result(
         self,
-        matrix_id, #type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["RouteMatrixResponse"]
+        matrix_id: str,
+        **kwargs: Any
+    ) -> LROPoller[RouteMatrixResponse]:
+
         """If the Matrix Route request was accepted successfully, the Location header in the response
         contains the URL to download the results of the request.
 

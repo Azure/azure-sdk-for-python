@@ -4,60 +4,40 @@
 # ------------------------------------
 
 # pylint: disable=unused-import,ungrouped-imports
-from typing import List, Optional, Union
+from typing import List, Optional, Union, NamedTuple
 from enum import Enum, EnumMeta
 from six import with_metaclass
 import msrest.serialization
 
 from azure.core import CaseInsensitiveEnumMeta
 
-class LatLon(object):
+class LatLon(NamedTuple):
+    """Represents coordinate latitude and longitude
 
-    def __init__(
-        self,
-        lat: float = None,
-        lon: float = None
-    ):
-        self._lat = lat
-        self._lon = lon
+    :keyword lat: The coordinate as latitude.
+    :paramtype lat: float
+    :keyword lon: The coordinate as longitude.
+    :paramtype lon: float
+    """
+    lat: float = 0
+    lon: float = 0
 
-    @property
-    def lat(self) -> float:
-        return self._lat
+class BoundingBox(NamedTuple):
+    """Represents information about the coordinate range
 
-    @lat.setter
-    def lat(self, value: float) -> None:
-        self._lat = value
-
-    @property
-    def lon(self) -> float:
-        return self._lon
-
-    @lon.setter
-    def lon(self, value: float) -> None:
-        self._lon = value
-
-
-class BoundingBox(object):
-
-    def __init__(
-        self,
-        top_left: LatLon = None,
-        bottom_right: LatLon = None,
-        top_right: LatLon = None,
-        bottom_left: LatLon = None
-    ):
-        self.top_left = top_left
-        self.bottom_right = bottom_right
-        self.top = top_left.lat
-        self.bottom = bottom_right.lat
-        self.left = top_left.lon
-        self.right = bottom_right.lon
-        self.top_right = top_right if top_right else LatLon(
-            top_left.lat, bottom_right.lon)
-        self.bottom_left = bottom_left if bottom_left else LatLon(
-            bottom_right.lat, top_left.lon)
-
+    :keyword west: The westmost value of coordinates.
+    :paramtype west: float
+    :keyword south: The southmost value of coordinates.
+    :paramtype south: float
+    :keyword east: The eastmost value of coordinates.
+    :paramtype east: float
+    :keyword north: The northmost value of coordinates.
+    :paramtype north: float
+    """
+    west: float = 0.0
+    south: float = 0.0
+    east: float = 0.0
+    north: float = 0.0
 
 class GeoJsonObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types - Point,

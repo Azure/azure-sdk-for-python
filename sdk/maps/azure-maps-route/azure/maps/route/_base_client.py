@@ -3,13 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Union, TYPE_CHECKING
+from typing import Union, Any
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from ._generated import RouteClient as _MapsRouteClient
 from ._version import VERSION
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 # To check the credential is either AzureKeyCredential or TokenCredential
 def _authentication_policy(credential):
@@ -30,10 +28,9 @@ def _authentication_policy(credential):
 class MapsRouteClientBase:
     def __init__(
         self,
-        credential, #type: Union[AzureKeyCredential, TokenCredential]
-        **kwargs #type Any
-    ):
-        # type: (...) -> None
+        credential: Union[AzureKeyCredential, TokenCredential],
+        **kwargs: Any
+    ) -> None:
 
         self._maps_client = _MapsRouteClient(
             credential=credential,  # type: ignore

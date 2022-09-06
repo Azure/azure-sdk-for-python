@@ -2,47 +2,31 @@
 
 > see https://aka.ms/autorest
 
-## Setup
-
+### Setup
+Install Autorest v3
 ```ps
-
 npm install -g autorest
 ```
 
-## Generation
-
+### Generation
 ```ps
-
 cd <swagger-folder>
-autorest SWAGGER.md
+autorest --v3 --python
 ```
 
-To generate this file, simply type
-
-```ps
-
-autorest swagger/README.md --python-sdks-folder=<location-of-your-sdk-dir>
-```
-
-We automatically hardcode in that this is `python`.
-
-## Basic Information
-
-```yaml
-tag: 1.0-preview
-require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/maps/data-plane/Route/readme.md
+### Settings
+``` yaml
+input-file: https://github.com/Azure/azure-rest-api-specs/blob/f729f12bb95b4515b51ded20aab2f728551053b6/specification/maps/data-plane/Route/preview/1.0/route.json
 output-folder: ../azure/maps/route/_generated
 namespace: azure.maps.route
-package-name: azure-maps-route
-package-version: 1.0-preview
-credential-default-policy-type: BearerTokenCredentialPolicy
-credential-scopes: https://atlas.microsoft.com/.default
-clear-output-folder: true
 no-namespace-folders: true
+use-extension:
+  "@autorest/modelerfour": "4.22.3"
+
+license-header: MICROSOFT_MIT_NO_VERSION
+enable-xml: true
+vanilla: true
+clear-output-folder: true
 python: true
-no-async: false
-add-credential: false
-title: MapsRouteClient
-disable-async-iterators: true
-python-sdks-folder: $(python-sdks-folder)
+version-tolerant: false
 ```
