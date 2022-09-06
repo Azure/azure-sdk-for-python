@@ -29,10 +29,12 @@ class SecretClient(KeyVaultClientBase):
     :param str vault_url: URL of the vault the client will access. This is also called the vault's "DNS Name".
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
-    :keyword api_version: version of the Key Vault API to use. Defaults to the most recent.
+    :type credential: :class:`~azure.core.credentials.TokenCredential`
+
+    :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.secrets.ApiVersion
-    :keyword transport: transport to use. Defaults to :class:`~azure.core.pipeline.transport.RequestsTransport`.
-    :paramtype transport: ~azure.core.pipeline.transport.HttpTransport
+    :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
+        Vault domain. Defaults to True.
 
     Example:
         .. literalinclude:: ../tests/test_samples_secrets.py

@@ -35,12 +35,12 @@ class KeyClient(AsyncKeyVaultClientBase):
     :param str vault_url: URL of the vault the client will access
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
+    :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
 
-    :keyword api_version: version of the Key Vault API to use. Defaults to the most recent.
+    :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.keys.ApiVersion
-    :keyword transport: transport to use. Defaults to
-     :class:`~azure.core.pipeline.transport.AioHttpTransport`.
-    :paramtype transport: ~azure.core.pipeline.transport.AsyncHttpTransport
+    :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
+        Vault or Managed HSM domain. Defaults to True.
 
     Example:
         .. literalinclude:: ../tests/test_samples_keys_async.py
