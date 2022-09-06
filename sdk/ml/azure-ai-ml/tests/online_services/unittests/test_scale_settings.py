@@ -1,13 +1,12 @@
 import pytest
 import yaml
-
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml._utils.utils import camel_to_snake
 from marshmallow import RAISE
+
+from azure.ai.ml._restclient.v2021_10_01.models import DefaultScaleSettings as RestDefaultScaleSettings
 from azure.ai.ml._restclient.v2021_10_01.models import (
-    DefaultScaleSettings as RestDefaultScaleSettings,
     TargetUtilizationScaleSettings as RestTargetUtilizationScaleSettings,
 )
+from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import DefaultScaleSettings, TargetUtilizationScaleSettings
 
 

@@ -1,0 +1,100 @@
+interactions:
+- request:
+    body: '{"geometry": {"coordinates": [[[-122.43576049804686, 37.7524152343544],
+      [-122.43301391601562, 37.70660472542312], [-122.36434936523438, 37.712059855877314],
+      [-122.43576049804686, 37.7524152343544]]], "type": "Polygon"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '219'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-maps-search/1.0-preview Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      subscription-key:
+      - <RealSubscriptionKey>
+      x-ms-client-id:
+      - <RealClientId>
+    method: POST
+    uri: https://atlas.microsoft.com/search/geometry/json?api-version=1.0&query=pizza
+  response:
+    body:
+      string: '{"summary":{"query":"pizza","queryType":"NON_NEAR","queryTime":10,"numResults":10,"offset":0,"totalResults":18,"fuzzyLevel":1},"results":[{"type":"POI","id":"840069019806542","score":2.1455464363,"info":"search:ta:840069019806542-US","poi":{"name":"Giovanni''s
+        Pizza Bistro","phone":"+1 415-647-6122","categorySet":[{"id":7315036}],"url":"www.giovannispizzabistroca.com","categories":["pizza","restaurant"],"classifications":[{"code":"RESTAURANT","names":[{"nameLocale":"en-US","name":"restaurant"},{"nameLocale":"en-US","name":"pizza"}]}]},"address":{"streetNumber":"3839","streetName":"Mission
+        Street","municipalitySubdivision":"Bernal Heights","municipality":"San Francisco","countrySecondarySubdivision":"San
+        Francisco","countrySubdivision":"CA","countrySubdivisionName":"California","postalCode":"94110","extendedPostalCode":"94110-5831","countryCode":"US","country":"United
+        States","countryCodeISO3":"USA","freeformAddress":"3839 Mission Street, San
+        Francisco, CA 94110","localName":"San Francisco"},"position":{"lat":37.73548,"lon":-122.42454},"viewport":{"topLeftPoint":{"lat":37.73638,"lon":-122.42568},"btmRightPoint":{"lat":37.73458,"lon":-122.4234}},"entryPoints":[{"type":"main","position":{"lat":37.73552,"lon":-122.42465}}]},{"type":"POI","id":"840069009046971","score":2.1455261707,"info":"search:ta:840069009046971-US","poi":{"name":"Pizza
+        Express","phone":"+1 415-282-2333","categorySet":[{"id":7315036}],"url":"pizzaexpresssf.com/","categories":["pizza","restaurant"],"classifications":[{"code":"RESTAURANT","names":[{"nameLocale":"en-US","name":"restaurant"},{"nameLocale":"en-US","name":"pizza"}]}]},"address":{"streetNumber":"919","streetName":"Cortland
+        Avenue","municipalitySubdivision":"Bernal Heights","municipality":"San Francisco","countrySecondarySubdivision":"San
+        Francisco","countrySubdivision":"CA","countrySubdivisionName":"California","postalCode":"94110","extendedPostalCode":"94110-5632","countryCode":"US","country":"United
+        States","countryCodeISO3":"USA","freeformAddress":"919 Cortland Avenue, San
+        Francisco, CA 94110","localName":"San Francisco"},"position":{"lat":37.73913,"lon":-122.41367},"viewport":{"topLeftPoint":{"lat":37.74003,"lon":-122.41481},"btmRightPoint":{"lat":37.73823,"lon":-122.41253}},"entryPoints":[{"type":"main","position":{"lat":37.73895,"lon":-122.41365}}]},{"type":"POI","id":"840069019116268","score":2.1455130577,"info":"search:ta:840069019116268-US","poi":{"name":"Red''s
+        Pizzeria","categorySet":[{"id":7315036}],"categories":["pizza","restaurant"],"classifications":[{"code":"RESTAURANT","names":[{"nameLocale":"en-US","name":"restaurant"},{"nameLocale":"en-US","name":"pizza"}]}]},"address":{"streetNumber":"3839","streetName":"Mission
+        Street","municipalitySubdivision":"Bernal Heights","municipality":"San Francisco","countrySecondarySubdivision":"San
+        Francisco","countrySubdivision":"CA","countrySubdivisionName":"California","postalCode":"94110","extendedPostalCode":"94110-5831","countryCode":"US","country":"United
+        States","countryCodeISO3":"USA","freeformAddress":"3839 Mission Street, San
+        Francisco, CA 94110","localName":"San Francisco"},"position":{"lat":37.73548,"lon":-122.42454},"viewport":{"topLeftPoint":{"lat":37.73638,"lon":-122.42568},"btmRightPoint":{"lat":37.73458,"lon":-122.4234}},"entryPoints":[{"type":"main","position":{"lat":37.73552,"lon":-122.42465}}]},{"type":"POI","id":"840061002330210","score":2.1454834938,"info":"search:ta:840061002330210-US","poi":{"name":"Golden
+        Boy Wholesale Pizza Company","phone":"+1 415-334-5700","categorySet":[{"id":7315036}],"categories":["pizza","restaurant"],"classifications":[{"code":"RESTAURANT","names":[{"nameLocale":"en-US","name":"restaurant"},{"nameLocale":"en-US","name":"pizza"}]}]},"address":{"streetNumber":"4531","streetName":"Mission
+        Street","municipalitySubdivision":"Mission Terrace","municipality":"San Francisco","countrySecondarySubdivision":"San
+        Francisco","countrySubdivision":"CA","countrySubdivisionName":"California","postalCode":"94112","extendedPostalCode":"94112-2603","countryCode":"US","country":"United
+        States","countryCodeISO3":"USA","freeformAddress":"4531 Mission Street, San
+        Francisco, CA 94112","localName":"San Francisco"},"position":{"lat":37.72561,"lon":-122.43376},"viewport":{"topLeftPoint":{"lat":37.72651,"lon":-122.4349},"btmRightPoint":{"lat":37.72471,"lon":-122.43262}},"entryPoints":[{"type":"main","position":{"lat":37.72573,"lon":-122.43402}}]},{"type":"POI","id":"840069019716710","score":2.1454782486,"info":"search:ta:840069019716710-US","poi":{"name":"Gialina
+        Pizzeria","phone":"+1 415-239-8500","categorySet":[{"id":7315036}],"url":"gialina.com/","categories":["pizza","restaurant"],"classifications":[{"code":"RESTAURANT","names":[{"nameLocale":"en-US","name":"restaurant"},{"nameLocale":"en-US","name":"pizza"}]}]},"address":{"streetNumber":"2842","streetName":"Diamond
+        Street","municipalitySubdivision":"Glen Park","municipality":"San Francisco","countrySecondarySubdivision":"San
+        Francisco","countrySubdivision":"CA","countrySubdivisionName":"California","postalCode":"94131","extendedPostalCode":"94131-3005","countryCode":"US","country":"United
+        States","countryCodeISO3":"USA","freeformAddress":"2842 Diamond Street, San
+        Francisco, CA 94131","localName":"San Francisco"},"position":{"lat":37.73404,"lon":-122.43416},"viewport":{"topLeftPoint":{"lat":37.73494,"lon":-122.4353},"btmRightPoint":{"lat":37.73314,"lon":-122.43302}},"entryPoints":[{"type":"main","position":{"lat":37.734,"lon":-122.43403}}]},{"type":"POI","id":"840069019388007","score":2.1454687119,"info":"search:ta:840069019388007-US","poi":{"name":"Pizza
+        Hut","phone":"+1 415-641-0400","brands":[{"name":"Pizza Hut"}],"categorySet":[{"id":7315036}],"url":"https://locations.pizzahut.com/ca/san-francisco/3349-mission-st","categories":["pizza","restaurant"],"classifications":[{"code":"RESTAURANT","names":[{"nameLocale":"en-US","name":"restaurant"},{"nameLocale":"en-US","name":"pizza"}]}]},"address":{"streetNumber":"3349","streetName":"Mission
+        Street","municipalitySubdivision":"Bernal Heights","municipality":"San Francisco","countrySecondarySubdivision":"San
+        Francisco","countrySubdivision":"CA","countrySubdivisionName":"California","postalCode":"94110","extendedPostalCode":"94110-5008","countryCode":"US","country":"United
+        States","countryCodeISO3":"USA","freeformAddress":"3349 Mission Street, San
+        Francisco, CA 94110","localName":"San Francisco"},"position":{"lat":37.74328,"lon":-122.42112},"viewport":{"topLeftPoint":{"lat":37.74418,"lon":-122.42226},"btmRightPoint":{"lat":37.74238,"lon":-122.41998}},"entryPoints":[{"type":"main","position":{"lat":37.74334,"lon":-122.42134}}]},{"type":"POI","id":"840069000105213","score":2.1454672813,"info":"search:ta:840069000105213-US","poi":{"name":"Ginny
+        Pizzardi MFCC","phone":"+1 415-285-4061","categorySet":[{"id":7315036}],"url":"www.ginnypizzardi.com","categories":["pizza","restaurant"],"classifications":[{"code":"RESTAURANT","names":[{"nameLocale":"en-US","name":"restaurant"},{"nameLocale":"en-US","name":"pizza"}]}]},"address":{"streetNumber":"4155","streetName":"24th
+        Street","municipalitySubdivision":"Noe Valley","municipality":"San Francisco","countrySecondarySubdivision":"San
+        Francisco","countrySubdivision":"CA","countrySubdivisionName":"California","postalCode":"94114","extendedPostalCode":"94114-3614","countryCode":"US","country":"United
+        States","countryCodeISO3":"USA","freeformAddress":"4155 24th Street, San Francisco,
+        CA 94114","localName":"San Francisco"},"position":{"lat":37.75098,"lon":-122.43527},"viewport":{"topLeftPoint":{"lat":37.75188,"lon":-122.43641},"btmRightPoint":{"lat":37.75008,"lon":-122.43413}},"entryPoints":[{"type":"main","position":{"lat":37.75123,"lon":-122.43528}}]},{"type":"POI","id":"840069002602194","score":2.1454598904,"info":"search:ta:840069002602194-US","poi":{"name":"Round
+        Table Pizza","phone":"+1 415-586-1200","brands":[{"name":"Round Table Pizza"}],"categorySet":[{"id":7315036}],"url":"https://ordering.roundtablepizza.com/Site/rtsf","categories":["pizza","restaurant"],"classifications":[{"code":"RESTAURANT","names":[{"nameLocale":"en-US","name":"restaurant"},{"nameLocale":"en-US","name":"pizza"}]}]},"address":{"streetNumber":"4523","streetName":"Mission
+        Street","municipalitySubdivision":"Mission Terrace","municipality":"San Francisco","countrySecondarySubdivision":"San
+        Francisco","countrySubdivision":"CA","countrySubdivisionName":"California","postalCode":"94112","extendedPostalCode":"94112-2600","countryCode":"US","country":"United
+        States","countryCodeISO3":"USA","freeformAddress":"4523 Mission Street, San
+        Francisco, CA 94112","localName":"San Francisco"},"position":{"lat":37.72572,"lon":-122.43368},"viewport":{"topLeftPoint":{"lat":37.72662,"lon":-122.43482},"btmRightPoint":{"lat":37.72482,"lon":-122.43254}},"entryPoints":[{"type":"main","position":{"lat":37.72585,"lon":-122.43393}}]},{"type":"POI","id":"840069020866687","score":2.1454584599,"info":"search:ta:840069020866687-US","poi":{"name":"Wood
+        Fired Pizza","categorySet":[{"id":7315036}],"categories":["pizza","restaurant"],"classifications":[{"code":"RESTAURANT","names":[{"nameLocale":"en-US","name":"restaurant"},{"nameLocale":"en-US","name":"pizza"}]}]},"address":{"streetName":"Peralta
+        Avenue","municipalitySubdivision":"Bernal Heights","municipality":"San Francisco","countrySecondarySubdivision":"San
+        Francisco","countrySubdivision":"CA","countrySubdivisionName":"California","postalCode":"94110","countryCode":"US","country":"United
+        States","countryCodeISO3":"USA","freeformAddress":"Peralta Avenue, San Francisco,
+        CA 94110","localName":"San Francisco"},"position":{"lat":37.73537,"lon":-122.41061},"viewport":{"topLeftPoint":{"lat":37.73627,"lon":-122.41175},"btmRightPoint":{"lat":37.73447,"lon":-122.40947}},"entryPoints":[{"type":"main","position":{"lat":37.73524,"lon":-122.41059}}]},{"type":"POI","id":"840069006941877","score":2.1454472542,"info":"search:ta:840069006941877-US","poi":{"name":"Cecilia''s
+        Pizza Restaurant","phone":"+1 415-821-5852","categorySet":[{"id":7315036}],"categories":["pizza","restaurant"],"classifications":[{"code":"RESTAURANT","names":[{"nameLocale":"en-US","name":"restaurant"},{"nameLocale":"en-US","name":"pizza"}]}]},"address":{"streetNumber":"3515","streetName":"Mission
+        Street","municipalitySubdivision":"Bernal Heights","municipality":"San Francisco","countrySecondarySubdivision":"San
+        Francisco","countrySubdivision":"CA","countrySubdivisionName":"California","postalCode":"94110","extendedPostalCode":"94110-5429","countryCode":"US","country":"United
+        States","countryCodeISO3":"USA","freeformAddress":"3515 Mission Street, San
+        Francisco, CA 94110","localName":"San Francisco"},"position":{"lat":37.74069,"lon":-122.42269},"viewport":{"topLeftPoint":{"lat":37.74159,"lon":-122.42383},"btmRightPoint":{"lat":37.73979,"lon":-122.42155}},"entryPoints":[{"type":"main","position":{"lat":37.7408,"lon":-122.42298}}]}]}'
+    headers:
+      content-length:
+      - '10910'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 12 Aug 2022 09:51:55 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding,X-HTTP-Method-Override
+      x-cache:
+      - CONFIG_NOCACHE
+      x-content-type-options:
+      - nosniff
+      x-ms-azuremaps-region:
+      - West US 2
+      x-msedge-ref:
+      - 'Ref A: 9D06C10272944A4AAD073D7B0CFF1ADA Ref B: TPE30EDGE0720 Ref C: 2022-08-12T09:51:55Z'
+    status:
+      code: 200
+      message: OK
+version: 1

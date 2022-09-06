@@ -2,17 +2,22 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._schema.core.fields import StringTransformedEnum
+# pylint: disable=unused-argument,no-self-use
+
 from marshmallow import fields, post_load
-from azure.ai.ml._schema import PatchedSchemaMeta
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    LearningRateScheduler,
-    ModelSize,
+
+from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     ImageModelSettingsClassification,
     ImageModelSettingsObjectDetection,
+    LearningRateScheduler,
+    ModelSize,
     StochasticOptimizer,
     ValidationMetricType,
 )
+from azure.ai.ml._schema.core.fields import StringTransformedEnum
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
+from azure.ai.ml._schema.job.input_output_fields_provider import InputsField
+from azure.ai.ml._utils.utils import camel_to_snake
 
 
 class ImageModelSettingsSchema(metaclass=PatchedSchemaMeta):
@@ -22,9 +27,8 @@ class ImageModelSettingsSchema(metaclass=PatchedSchemaMeta):
     beta1 = fields.Float()
     beta2 = fields.Float()
     checkpoint_frequency = fields.Int()
-    checkpoint_dataset_id = fields.Str()
-    checkpoint_filename = fields.Str()
     checkpoint_run_id = fields.Str()
+    checkpoint_model = InputsField()
     distributed = fields.Bool()
     early_stopping = fields.Bool()
     early_stopping_delay = fields.Int()
@@ -36,6 +40,7 @@ class ImageModelSettingsSchema(metaclass=PatchedSchemaMeta):
     learning_rate = fields.Float()
     learning_rate_scheduler = StringTransformedEnum(
         allowed_values=[o.value for o in LearningRateScheduler],
+        casing_transform=camel_to_snake,
     )
     model_name = fields.Str()
     momentum = fields.Float()
@@ -44,6 +49,7 @@ class ImageModelSettingsSchema(metaclass=PatchedSchemaMeta):
     number_of_workers = fields.Int()
     optimizer = StringTransformedEnum(
         allowed_values=[o.value for o in StochasticOptimizer],
+        casing_transform=camel_to_snake,
     )
     random_seed = fields.Int()
     step_lr_gamma = fields.Float()
@@ -72,9 +78,7 @@ class ImageModelSettingsObjectDetectionSchema(ImageModelSettingsSchema):
     image_size = fields.Int()
     max_size = fields.Int()
     min_size = fields.Int()
-    model_size = StringTransformedEnum(
-        allowed_values=[o.value for o in ModelSize],
-    )
+    model_size = StringTransformedEnum(allowed_values=[o.value for o in ModelSize], casing_transform=camel_to_snake)
     multi_scale = fields.Bool()
     nms_iou_threshold = fields.Float()
     tile_grid_size = fields.Str()
@@ -83,6 +87,7 @@ class ImageModelSettingsObjectDetectionSchema(ImageModelSettingsSchema):
     validation_iou_threshold = fields.Float()
     validation_metric_type = StringTransformedEnum(
         allowed_values=[o.value for o in ValidationMetricType],
+        casing_transform=camel_to_snake,
     )
 
     @post_load

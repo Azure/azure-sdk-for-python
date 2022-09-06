@@ -1,0 +1,26 @@
+{
+  "name": "test_528682527072",
+  "description": "transfer data between common storage types such as Azure Blob Storage and Azure Data Lake.",
+  "tags": {
+    "category": "Component Tutorial",
+    "contact": "amldesigner@microsoft.com"
+  },
+  "version": "0.0.1",
+  "$schema": "https://componentsdk.azureedge.net/jsonschema/DataTransferComponent.json",
+  "display_name": "Data Transfer",
+  "is_deterministic": true,
+  "inputs": {
+    "source_data": {
+      "type": "path",
+      "description": "Source data"
+    }
+  },
+  "outputs": {
+    "destination_data": {
+      "type": "path",
+      "description": "Destination data"
+    }
+  },
+  "type": "DataTransferComponent",
+  "code": "azureml:/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/test-rg-eastus2euap-v2-2022W34/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/codes/d5cd6dc5-5d43-41d0-9533-ecb809095abc/versions/1"
+}

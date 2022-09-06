@@ -15,11 +15,23 @@ from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import LabServicesClientConfiguration
-from .operations import ImagesOperations, LabPlansOperations, LabsOperations, OperationResultsOperations, Operations, SchedulesOperations, SkusOperations, UsagesOperations, UsersOperations, VirtualMachinesOperations
+from .operations import (
+    ImagesOperations,
+    LabPlansOperations,
+    LabsOperations,
+    OperationResultsOperations,
+    Operations,
+    SchedulesOperations,
+    SkusOperations,
+    UsagesOperations,
+    UsersOperations,
+    VirtualMachinesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
+
 
 class LabServicesClient:
     """REST API for managing Azure Lab Services images.
@@ -72,19 +84,18 @@ class LabServicesClient:
         self.lab_plans = LabPlansOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.labs = LabsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operation_results = OperationResultsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operation_results = OperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.schedules = SchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.users = UsersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machines = VirtualMachinesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.virtual_machines = VirtualMachinesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

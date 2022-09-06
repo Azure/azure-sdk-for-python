@@ -52,8 +52,8 @@ class QueueHelloWorldSamplesAsync(object):
             try:
                 # Send messages
                 await asyncio.gather(
-                    queue.send_message(u"I'm using queues!"),
-                    queue.send_message(u"This is my second message")
+                    queue.send_message("I'm using queues!"),
+                    queue.send_message("This is my second message")
                 )
 
                 # Receive the messages

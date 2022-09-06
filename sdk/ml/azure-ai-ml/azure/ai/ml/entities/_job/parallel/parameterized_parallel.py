@@ -3,19 +3,20 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Union, Dict
+from typing import Dict, Union
 
 from azure.ai.ml._schema.job.loadable_mixin import LoadableMixin
-from .retry_settings import RetrySettings
-from .parallel_task import ParallelTask
-from ..resource_configuration import ResourceConfiguration
 
+from ..job_resource_configuration import JobResourceConfiguration
+from .parallel_task import ParallelTask
+from .retry_settings import RetrySettings
 
 module_logger = logging.getLogger(__name__)
 
 
 class ParameterizedParallel(LoadableMixin):
-    """Parallel component that contains the traning parallel and supporting parameters for the parallel.
+    """Parallel component that contains the traning parallel and supporting
+    parameters for the parallel.
 
     :param retry_settings: parallel component run failed retry
     :type retry_settings: BatchRetrySettings
@@ -34,9 +35,10 @@ class ParameterizedParallel(LoadableMixin):
     :param input_data: The input data.
     :type input_data: str
     :param resources: Compute Resource configuration for the job.
-    :type resources: Union[Dict, ~azure.ai.ml.entities.ResourceConfiguration]
+    :type resources: Union[Dict, ~azure.ai.ml.entities.JobResourceConfiguration]
     """
 
+    # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         retry_settings: RetrySettings = None,
@@ -47,7 +49,7 @@ class ParameterizedParallel(LoadableMixin):
         input_data: str = None,
         task: ParallelTask = None,
         mini_batch_size: int = None,
-        resources: Union[dict, ResourceConfiguration] = None,
+        resources: Union[dict, JobResourceConfiguration] = None,
         environment_variables: Dict = None,
     ):
         self.mini_batch_size = mini_batch_size
@@ -72,13 +74,13 @@ class ParameterizedParallel(LoadableMixin):
         self._task = value
 
     @property
-    def resources(self) -> ResourceConfiguration:
+    def resources(self) -> JobResourceConfiguration:
         return self._resources
 
     @resources.setter
     def resources(self, value):
         if isinstance(value, dict):
-            value = ResourceConfiguration(**value)
+            value = JobResourceConfiguration(**value)
         self._resources = value
 
     @property

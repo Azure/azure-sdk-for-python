@@ -2,9 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
+
 from typing import Dict
 
-from marshmallow import fields, post_load, pre_dump, ValidationError
+from marshmallow import ValidationError, fields, post_load, pre_dump
 
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 

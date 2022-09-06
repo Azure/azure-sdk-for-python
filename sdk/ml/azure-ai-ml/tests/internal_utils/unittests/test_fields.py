@@ -1,18 +1,19 @@
 import pytest
 import yaml
+from marshmallow import fields
+from marshmallow.exceptions import ValidationError
+from marshmallow.schema import Schema
+
+from azure.ai.ml import load_data
 from azure.ai.ml._schema import ArmStr, ArmVersionedStr
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.constants import (
+from azure.ai.ml.constants._common import (
     AZUREML_RESOURCE_PROVIDER,
     BASE_PATH_CONTEXT_KEY,
     NAMED_RESOURCE_ID_FORMAT,
     RESOURCE_ID_FORMAT,
 )
-from marshmallow.exceptions import ValidationError
-from marshmallow import fields
-from marshmallow.schema import Schema
 from azure.ai.ml.entities import Data
-from azure.ai.ml import load_data
 
 
 class DummyStr(ArmStr):
@@ -164,7 +165,7 @@ name: {data_name}
 version: 3.12
 path: ./bla"""
         )
-        asset = load_data(path=p)
+        asset = load_data(source=p)
         assert asset.version == "3.12"
 
         p = tmp_path / "version_int.yml"
@@ -174,7 +175,7 @@ name: {data_name}
 version: 3
 path: ./bla"""
         )
-        asset = load_data(path=p)
+        asset = load_data(source=p)
         assert asset.version == "3"
 
         p = tmp_path / "version_str.yml"
@@ -184,5 +185,5 @@ name: {data_name}
 version: foobar
 path: ./bla"""
         )
-        asset = load_data(path=p)
+        asset = load_data(source=p)
         assert asset.version == "foobar"

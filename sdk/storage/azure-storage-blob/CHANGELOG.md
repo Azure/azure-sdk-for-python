@@ -1,16 +1,31 @@
 # Release History
 
-## 12.14.0b1 (2022-08-09)
+## 12.14.0 (Unreleased)
+
+### Features Added
+- Stable release of features from 12.14.0b1 and 12.14.0b2.
+
+## 12.14.0b2 (2022-08-30)
+
+### Features Added
+- Added a new API, `list_blob_names`, to `ContainerClient` that lists only the names of the blobs in the respective
+container. This API is significantly faster than the traditional `list_blobs` and can be used if only the blob names
+are desired. It does not return any additional properties or metadata for the blobs.
+
+## 12.14.0b1 (2022-08-23)
 
 This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
 
 ### Features Added
 - Added support for `AzureNamedKeyCredential` as a valid `credential` type.
+- Added standard `read` method to `StorageStreamDownloader`.
+- Added support for async streams (classes with an async `read` method) to async `upload_blob`.
 
 ### Bugs Fixed
 - Removed dead retry meachism from async `azure.storage.blob.aio.StorageStreamDownloader`.
 - Updated exception catching of `azure.storage.blob.StorageStreamDownloader`'s retry mechanism.
 - Adjusted type hints for `upload_blob` and `StorageStreamDownloader.readall`.
+- Fixed a bug where uploading an empty blob via `upload_blob` would fail with `validate_content=True`.
 
 ## 12.13.1 (2022-08-04)
 

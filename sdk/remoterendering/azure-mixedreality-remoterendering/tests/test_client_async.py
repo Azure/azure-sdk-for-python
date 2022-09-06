@@ -176,7 +176,7 @@ class ClientTests(AzureTestCase):
         client = create_remote_rendering_client(remoterendering_arr_service_endpoint,
                                                 remoterendering_arr_account_id,
                                                 remoterendering_arr_account_domain,
-                                                "thisisnotthekey")
+                                                "thisisnotthekey") # cspell: disable-line
 
         if self.is_live:
             conversion_id = str(uuid.uuid4())

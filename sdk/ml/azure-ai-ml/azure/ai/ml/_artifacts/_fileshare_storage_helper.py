@@ -2,31 +2,33 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import os
-import time
-import sys
-from typing import Optional, Union, Dict, Tuple, Any
-from pathlib import PurePosixPath, Path
+# pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes,client-method-missing-type-annotations,missing-client-constructor-parameter-kwargs
+
 import logging
+import os
+import sys
+import time
+from pathlib import Path, PurePosixPath
+from typing import Any, Dict, Optional, Tuple, Union
 
 from azure.ai.ml._artifacts._constants import (
     ARTIFACT_ORIGIN,
-    UPLOAD_CONFIRMATION,
-    LEGACY_ARTIFACT_DIRECTORY,
     FILE_SIZE_WARNING,
+    LEGACY_ARTIFACT_DIRECTORY,
+    UPLOAD_CONFIRMATION,
 )
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, MlException
 from azure.ai.ml._utils._asset_utils import (
-    traverse_directory,
-    generate_asset_id,
-    _build_metadata_dict,
-    IgnoreFile,
-    FileUploadProgressBar,
     DirectoryUploadProgressBar,
+    FileUploadProgressBar,
+    IgnoreFile,
+    _build_metadata_dict,
+    generate_asset_id,
     get_directory_size,
+    traverse_directory,
 )
-from azure.storage.fileshare import ShareDirectoryClient, ShareFileClient
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.ai.ml._ml_exceptions import MlException, ErrorCategory, ErrorTarget
+from azure.storage.fileshare import ShareDirectoryClient, ShareFileClient
 
 module_logger = logging.getLogger(__name__)
 
@@ -68,9 +70,7 @@ class FileStorageClient:
         asset_hash: str = None,
         show_progress: bool = True,
     ) -> Dict[str, str]:
-        """
-        Upload a file or directory to a path inside the file system
-        """
+        """Upload a file or directory to a path inside the file system."""
         asset_id = generate_asset_id(asset_hash, include_directory=False)
         source_name = Path(source).name
         dest = str(PurePosixPath(asset_id, source_name))
@@ -91,7 +91,13 @@ class FileStorageClient:
 
             # start upload
             if os.path.isdir(source):
-                self.upload_dir(source, asset_id, msg=msg, show_progress=show_progress, ignore_file=ignore_file)
+                self.upload_dir(
+                    source,
+                    asset_id,
+                    msg=msg,
+                    show_progress=show_progress,
+                    ignore_file=ignore_file,
+                )
             else:
                 self.upload_file(source, asset_id, msg=msg, show_progress=show_progress)
 
@@ -118,9 +124,8 @@ class FileStorageClient:
         subdirectory_client: Optional[ShareDirectoryClient] = None,
         callback: Any = None,
     ) -> None:
-        """ "
-        Upload a single file to a path inside the file system directory
-        """
+        """ " Upload a single file to a path inside the file system
+        directory."""
         validate_content = os.stat(source).st_size > 0  # don't do checksum for empty files
 
         with open(source, "rb") as data:
@@ -128,10 +133,17 @@ class FileStorageClient:
                 file_name = dest.rsplit("/")[-1]
                 if show_progress:
                     subdirectory_client.upload_file(
-                        file_name=file_name, data=data, validate_content=validate_content, raw_response_hook=callback
+                        file_name=file_name,
+                        data=data,
+                        validate_content=validate_content,
+                        raw_response_hook=callback,
                     )
                 else:
-                    subdirectory_client.upload_file(file_name=file_name, data=data, validate_content=validate_content)
+                    subdirectory_client.upload_file(
+                        file_name=file_name,
+                        data=data,
+                        validate_content=validate_content,
+                    )
             else:
                 if show_progress:
                     with FileUploadProgressBar(msg=msg) as pbar:
@@ -145,23 +157,28 @@ class FileStorageClient:
                     self.directory_client.upload_file(file_name=dest, data=data, validate_content=validate_content)
         self.uploaded_file_count = self.uploaded_file_count + 1
 
-    def upload_dir(self, source: str, dest: str, msg: str, show_progress: bool, ignore_file: IgnoreFile) -> None:
-        """
-        Upload a directory to a path inside the fileshare directory
-        """
+    def upload_dir(
+        self,
+        source: str,
+        dest: str,
+        msg: str,
+        show_progress: bool,
+        ignore_file: IgnoreFile,
+    ) -> None:
+        """Upload a directory to a path inside the fileshare directory."""
         subdir = self.directory_client.create_subdirectory(dest)
         source_path = Path(source).resolve()
         prefix = "" if dest == "" else dest + "/"
         prefix += os.path.basename(source) + "/"
 
         upload_paths = []
-        for root, dirs, files in os.walk(source_path):
+        for root, _, files in os.walk(source_path):
             upload_paths += list(traverse_directory(root, files, source_path, prefix, ignore_file))
 
         upload_paths = sorted(upload_paths)
         self.total_file_count = len(upload_paths)
 
-        for root, dirs, files in os.walk(source):
+        for root, _, files in os.walk(source):
             if sys.platform.startswith(("win32", "cygwin")):
                 split_char = "\\"
             else:
@@ -171,23 +188,27 @@ class FileStorageClient:
 
         if show_progress:
             with DirectoryUploadProgressBar(dir_size=get_directory_size(source_path), msg=msg) as pbar:
-                for src, dest in upload_paths:
+                for src, destination in upload_paths:
                     self.upload_file(
                         src,
-                        dest,
+                        destination,
                         in_directory=True,
                         subdirectory_client=subdir,
                         show_progress=show_progress,
                         callback=pbar.update_to,
                     )
         else:
-            for src, dest in upload_paths:
-                self.upload_file(src, dest, in_directory=True, subdirectory_client=subdir, show_progress=show_progress)
+            for src, destination in upload_paths:
+                self.upload_file(
+                    src,
+                    destination,
+                    in_directory=True,
+                    subdirectory_client=subdir,
+                    show_progress=show_progress,
+                )
 
     def exists(self, asset_id: str) -> bool:
-        """
-        Check if file or directory already exists in fileshare directory
-        """
+        """Check if file or directory already exists in fileshare directory."""
         # get dictionary of asset ids and if each asset is a file or directory (e.g. {"ijd930j23d8": True})
         default_directory_items = {
             item["name"]: item["is_directory"] for item in self.directory_client.list_directories_and_files()
@@ -212,14 +233,17 @@ class FileStorageClient:
                 self.name = metadata.get("name")
                 self.version = metadata.get("version")
                 return True
-            elif not self.legacy:
+            if not self.legacy:
                 delete(client)  # If past upload never reached upload confirmation, delete and proceed to upload
         return False
 
-    def download(self, starts_with: str = "", destination: str = Path.home(), max_concurrency: int = 4) -> None:
-        """
-        Downloads all contents inside a specified fileshare directory
-        """
+    def download(
+        self,
+        starts_with: str = "",
+        destination: str = Path.home(),
+        max_concurrency: int = 4,
+    ) -> None:
+        """Downloads all contents inside a specified fileshare directory."""
         recursive_download(
             client=self.directory_client,
             starts_with=starts_with,
@@ -237,9 +261,13 @@ class FileStorageClient:
             properties.set_file_metadata(metadata_dict)
 
     def _get_asset_metadata(
-        self, asset_id: str, default_items: Dict[str, bool], legacy_items: Dict[str, bool]
+        self,
+        asset_id: str,
+        default_items: Dict[str, bool],
+        legacy_items: Dict[str, bool],
     ) -> Tuple[Union[ShareDirectoryClient, ShareFileClient], Dict]:
-        # if asset_id key's value doesn't match either bool, it's not in the dictionary and we check "LocalUpload" dictionary below.
+        # if asset_id key's value doesn't match either bool,
+        # it's not in the dictionary and we check "LocalUpload" dictionary below.
 
         client, properties = None, None
 
@@ -252,7 +280,10 @@ class FileStorageClient:
             client = self.legacy_directory_client.get_file_client(asset_id)
             properties = client.get_file_properties()
         if client and properties:
-            return client, properties  # if found in legacy, no need to look in "LocalUpload"
+            return (
+                client,
+                properties,
+            )  # if found in legacy, no need to look in "LocalUpload"
 
         if default_items.get(asset_id) is True:
             client = self.directory_client.get_subdirectory_client(asset_id)
@@ -265,12 +296,11 @@ class FileStorageClient:
 
 
 def delete(root_client: Union[ShareDirectoryClient, ShareFileClient]) -> None:
-    """
-    Deletes a file or directory recursively.
+    """Deletes a file or directory recursively.
 
-    Azure File Share SDK does not allow overwriting, so if an upload is interrupted
-    before it can finish, the files from that upload must be deleted before the upload
-    can be re-attempted.
+    Azure File Share SDK does not allow overwriting, so if an upload is
+    interrupted before it can finish, the files from that upload must be
+    deleted before the upload can be re-attempted.
     """
     if isinstance(root_client, ShareFileClient):
         return root_client.delete_file()
@@ -287,10 +317,14 @@ def delete(root_client: Union[ShareDirectoryClient, ShareFileClient]) -> None:
 
 
 def recursive_download(
-    client: ShareDirectoryClient, destination: str, max_concurrency: int, starts_with: str = ""
+    client: ShareDirectoryClient,
+    destination: str,
+    max_concurrency: int,
+    starts_with: str = "",
 ) -> None:
-    """
-    Helper function for `download`. Recursively downloads remote fileshare directory locally
+    """Helper function for `download`.
+
+    Recursively downloads remote fileshare directory locally
     """
     try:
         items = list(client.list_directories_and_files(name_starts_with=starts_with))

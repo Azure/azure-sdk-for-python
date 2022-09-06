@@ -2,66 +2,61 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
+import hashlib
 import logging
 import os
 import uuid
-from typing import TYPE_CHECKING, Tuple, Union, Optional, List, Iterable, Dict, Any, cast
-from pathlib import Path
-import hashlib
-from contextlib import suppress
-from colorama import Fore
-import pathspec
-from tqdm import tqdm, TqdmWarning
 import warnings
-from platform import system
-from multiprocessing import cpu_count
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from contextlib import suppress
+from multiprocessing import cpu_count
+from pathlib import Path
+from platform import system
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Union, cast
+
+import pathspec
+from colorama import Fore
+from tqdm import TqdmWarning, tqdm
 
 from azure.ai.ml._artifacts._constants import (
-    CHUNK_SIZE,
-    ARTIFACT_ORIGIN,
-    UPLOAD_CONFIRMATION,
     AML_IGNORE_FILE_NAME,
-    GIT_IGNORE_FILE_NAME,
-    EMPTY_DIRECTORY_ERROR,
-    PROCESSES_PER_CORE,
-    MAX_CONCURRENCY,
+    ARTIFACT_ORIGIN,
     BLOB_STORAGE_CLIENT_NAME,
+    CHUNK_SIZE,
+    DEFAULT_CONNECTION_TIMEOUT,
+    EMPTY_DIRECTORY_ERROR,
     GEN2_STORAGE_CLIENT_NAME,
+    GIT_IGNORE_FILE_NAME,
+    MAX_CONCURRENCY,
+    PROCESSES_PER_CORE,
+    UPLOAD_CONFIRMATION,
 )
-from azure.ai.ml.entities._assets.asset import Asset
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._restclient.v2021_10_01.models import (
     DatasetVersionData,
     ModelVersionData,
     ModelVersionResourceArmPaginatedResult,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.operations import (
-    DataVersionsOperations,
-    DataContainersOperations,
-    ModelVersionsOperations,
-    ModelContainersOperations,
-    EnvironmentVersionsOperations,
-    EnvironmentContainersOperations,
-    ComponentVersionsOperations,
+from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: disable = unused-import
     ComponentContainersOperations,
+    ComponentVersionsOperations,
+    DataContainersOperations,
+    DataVersionsOperations,
+    EnvironmentContainersOperations,
+    EnvironmentVersionsOperations,
+    ModelContainersOperations,
+    ModelVersionsOperations,
 )
-from azure.ai.ml.constants import (
-    OrderString,
-    MAX_AUTOINCREMENT_ATTEMPTS,
-)
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.ai.ml._utils.utils import retry, convert_windows_path_to_unix
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 from azure.ai.ml._utils._exception_utils import EmptyDirectoryError
+from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry
+from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, OrderString
+from azure.ai.ml.entities._assets.asset import Asset
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 if TYPE_CHECKING:
-    from azure.ai.ml.operations import (
-        DatasetOperations,
-        DataOperations,
-        ComponentOperations,
-        EnvironmentOperations,
-        ModelOperations,
-    )
+    from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
 
 hash_type = type(hashlib.md5())
 
@@ -74,8 +69,7 @@ class AssetNotChangedError(Exception):
 
 class IgnoreFile(object):
     def __init__(self, file_path: Optional[Union[str, Path]] = None):
-        """
-        Base class for handling .gitignore and .amlignore files
+        """Base class for handling .gitignore and .amlignore files.
 
         :param file_path: Relative path, or absolute path to the ignore file.
         """
@@ -84,23 +78,18 @@ class IgnoreFile(object):
         self._path_spec = None
 
     def _create_pathspec(self) -> Optional[pathspec.PathSpec]:
-        """
-        Creates path specification based on ignore file contents
-        """
+        """Creates path specification based on ignore file contents."""
         if not self.exists():
             return None
         with open(self._path, "r") as fh:
             return pathspec.PathSpec.from_lines("gitwildmatch", fh)
 
     def exists(self) -> bool:
-        """
-        Checks if ignore file exists
-        """
+        """Checks if ignore file exists."""
         return self._path and self._path.exists()
 
     def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
-        """
-        Checks if given file_path is excluded.
+        """Checks if given file_path is excluded.
 
         :param file_path: File path to be checked against ignore file specifications
         """
@@ -115,7 +104,7 @@ class IgnoreFile(object):
                 return True
             file_path = os.path.relpath(file_path, ignore_dirname)
 
-        return self._path_spec.match_file(file_path)
+        return self._path_spec.match_file(str(file_path))
 
     @property
     def path(self) -> Union[Path, str]:
@@ -135,8 +124,9 @@ class GitIgnoreFile(IgnoreFile):
 
 
 def get_ignore_file(directory_path: Union[Path, str]) -> Optional[IgnoreFile]:
-    """
-    Finds and returns IgnoreFile object based on ignore file found in directory_path
+    """Finds and returns IgnoreFile object based on ignore file found in
+    directory_path.
+
     .amlignore takes precedence over .gitignore and if no file is found, an empty
     IgnoreFile object will be returned.
 
@@ -149,18 +139,20 @@ def get_ignore_file(directory_path: Union[Path, str]) -> Optional[IgnoreFile]:
 
     if aml_ignore.exists():
         return aml_ignore
-    elif git_ignore.exists():
+    if git_ignore.exists():
         return git_ignore
-    else:
-        return IgnoreFile()
+    return IgnoreFile()
 
 
-def _validate_path(path: Union[str, os.PathLike]) -> None:
+def _validate_path(path: Union[str, os.PathLike], _type: str) -> None:
     path = Path(path)  # Okay to do this since Path is idempotent
     if not path.is_file() and not path.is_dir():
-        msg = "{} not found, local path must point to a file or directory. Path must follow proper formatting for datastore, job or run uri's."
         raise ValidationException(
-            message=msg.format(path), no_personal_data_message=msg.format("[path]"), target=ErrorTarget.ASSET
+            message=f"No such file or directory: {path}",
+            target=_type,
+            error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
+            no_personal_data_message="No such file or directory",
+            error_category=ErrorCategory.USER_ERROR,
         )
 
 
@@ -173,49 +165,52 @@ def _parse_name_version(
     token_list = name.split(":")
     if len(token_list) == 1:
         return name, None
-    else:
-        *name, version = token_list
-        if version_as_int:
-            version = int(version)
-        return ":".join(name), version
+    *name, version = token_list
+    if version_as_int:
+        version = int(version)
+    return ":".join(name), version
 
 
-def _get_file_hash(filename: Union[str, Path], hash: hash_type) -> hash_type:
+def _get_file_hash(filename: Union[str, Path], _hash: hash_type) -> hash_type:
     with open(str(filename), "rb") as f:
         for chunk in iter(lambda: f.read(CHUNK_SIZE), b""):
-            hash.update(chunk)
-    return hash
+            _hash.update(chunk)
+    return _hash
 
 
-def _get_dir_hash(directory: Union[str, Path], hash: hash_type, ignore_file: IgnoreFile) -> hash_type:
+def _get_dir_hash(directory: Union[str, Path], _hash: hash_type, ignore_file: IgnoreFile) -> hash_type:
     dir_contents = Path(directory).iterdir()
     sorted_contents = sorted(dir_contents, key=lambda path: str(path).lower())
     for path in sorted_contents:
         if ignore_file.is_file_excluded(path):
             continue
-        hash.update(path.name.encode())
+        _hash.update(path.name.encode())
         if os.path.islink(path):  # ensure we're hashing the contents of the linked file
             path = Path(os.readlink(convert_windows_path_to_unix(path)))
         if path.is_file():
-            hash = _get_file_hash(path, hash)
+            _hash = _get_file_hash(path, _hash)
         elif path.is_dir():
-            hash = _get_dir_hash(path, hash, ignore_file)
-    return hash
+            _hash = _get_dir_hash(path, _hash, ignore_file)
+    return _hash
 
 
 def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
-    """
-    Build metadata dictionary to attach to uploaded data.
+    """Build metadata dictionary to attach to uploaded data.
 
-    Metadata includes an upload confirmation field, and for code uploads only,
-    the name and version of the code asset being created for that data.
+    Metadata includes an upload confirmation field, and for code uploads
+    only, the name and version of the code asset being created for that
+    data.
     """
     if name:
         linked_asset_arm_id = {"name": name, "version": version}
     else:
         msg = "'name' cannot be NoneType for asset artifact upload."
         raise ValidationException(
-            message=msg, no_personal_data_message=msg, target=ErrorTarget.ASSET, error_category=ErrorCategory.USER_ERROR
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.ASSET,
+            error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.INVALID_VALUE,
         )
 
     metadata_dict = {**UPLOAD_CONFIRMATION, **linked_asset_arm_id}
@@ -223,22 +218,89 @@ def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
 
 
 def get_object_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> str:
-    hash = hashlib.md5(b"Initialize for october 2021 AML CLI version")
+    _hash = hashlib.md5(b"Initialize for october 2021 AML CLI version")
     if Path(path).is_dir():
-        object_hash = _get_dir_hash(directory=path, hash=hash, ignore_file=ignore_file)
+        object_hash = _get_dir_hash(directory=path, _hash=_hash, ignore_file=ignore_file)
     else:
         if os.path.islink(path):  # ensure we're hashing the contents of the linked file
             path = Path(os.readlink(convert_windows_path_to_unix(path)))
-        object_hash = _get_file_hash(filename=path, hash=hash)
+        object_hash = _get_file_hash(filename=path, _hash=_hash)
     return str(object_hash.hexdigest())
 
 
-def traverse_directory(
-    root: str, files: List[str], source: str, prefix: str, ignore_file: IgnoreFile = IgnoreFile()
-) -> Iterable[Tuple[str, Union[str, Any]]]:
+def get_content_hash_version():
+    return 202208
+
+
+def get_content_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> str:
+    """Generating sha256 hash for file/folder, e.g. Code snapshot fingerprints to prevent tampering.
+    The process of hashing is:
+    1. If it's a link, get the actual path of the link.
+    2. If it's a file, append file content.
+    3. If it's a folder:
+        1. list all files under the folder
+        2. convert file count to str and append to hash
+        3. sort the files by lower case of relative path
+        4. for each file append '#'+relative path+'#' and file size to hash
+        5. do another iteration on file list to append each files content to hash.
+        The example of absolute path to relative path mapping is:
+        [
+            ('/mnt/c/codehash/code/file1.txt', 'file1.txt'),
+            ('/mnt/c/codehash/code/folder1/file1.txt', 'folder1/file1.txt'),
+            ('/mnt/c/codehash/code/Folder2/file1.txt', 'Folder2/file1.txt'),
+            ('/mnt/c/codehash/code/Folder2/folder1/file1.txt', 'Folder2/folder1/file1.txt')
+        ]
+    4. Hash the content and convert to hex digest string.
     """
-    Enumerate all files in the given directory and compose paths for them to be uploaded to in the remote storage.
-    e.g. [/mnt/c/Users/dipeck/upload_files/my_file1.txt, /mnt/c/Users/dipeck/upload_files/my_file2.txt] -->
+    # DO NOT change this function unless you change the verification logic together
+    _hash = hashlib.sha256()
+    actual_path = path
+    if os.path.islink(path):
+        link_path = os.readlink(path)
+        actual_path = link_path if os.path.isabs(link_path) else os.path.join(os.path.dirname(path), link_path)
+    if os.path.isdir(actual_path):
+        _hash = _get_folder_content_hash(actual_path, _hash, ignore_file=ignore_file)
+    elif os.path.isfile(actual_path):
+        _hash = _get_file_hash(actual_path, _hash)
+    return str(_hash.hexdigest())
+
+
+def _get_folder_content_hash(
+    path: Union[str, Path], _hash: hash_type, ignore_file: IgnoreFile = IgnoreFile()
+) -> hash_type:
+    upload_paths = []
+    for root, _, files in os.walk(path, followlinks=True):
+        upload_paths += list(traverse_directory(root, files, Path(path).resolve(), "", ignore_file=ignore_file))
+    # Add file count to the hash and add '#' around file name then add each file's size to avoid collision like:
+    # Case 1:
+    # 'a.txt' with contents 'a'
+    # 'b.txt' with contents 'b'
+    #
+    # Case 2:
+    # cspell:disable-next-line
+    # 'a.txt' with contents 'ab.txtb'
+    _hash.update(str(len(upload_paths)).encode())
+    # Sort by "destination" path, since in this function destination prefix is empty and keep the link name in path.
+    for file_path, file_name in sorted(upload_paths, key=lambda x: str(x[1]).lower()):
+        _hash.update(("#" + file_name + "#").encode())
+        _hash.update(str(os.path.getsize(file_path)).encode())
+    for file_path, file_name in sorted(upload_paths, key=lambda x: str(x[1]).lower()):
+        _hash = _get_file_hash(file_path, _hash)
+    return _hash
+
+
+def traverse_directory(
+    root: str,
+    files: List[str],
+    source: str,
+    prefix: str,
+    ignore_file: IgnoreFile = IgnoreFile(),
+) -> Iterable[Tuple[str, Union[str, Any]]]:
+    """Enumerate all files in the given directory and compose paths for them to
+    be uploaded to in the remote storage. e.g.
+    [/mnt/c/Users/dipeck/upload_files/my_file1.txt,
+    /mnt/c/Users/dipeck/upload_files/my_file2.txt] -->
+
         [(/mnt/c/Users/dipeck/upload_files/my_file1.txt, LocalUpload/<guid>/upload_files/my_file1.txt),
         (/mnt/c/Users/dipeck/upload_files/my_file2.txt, LocalUpload/<guid>/upload_files/my_file2.txt))]
 
@@ -292,13 +354,11 @@ def traverse_directory(
                 }  # for each symlink, store its target_path as key and symlink path as value
                 file_paths_including_links.update(file_path_info)  # Add discovered symlinks to file paths list
             del file_paths_including_links[path]  # Remove original symlink entry now that detailed entry has been added
-        else:
-            pass
 
     file_paths = sorted(
         file_paths_including_links
     )  # sort files to keep consistent order in case of repeat upload comparisons
-    dir_parts = [os.path.relpath(root, source) for _ in file_paths]
+    dir_parts = [convert_windows_path_to_unix(os.path.relpath(root, source)) for _ in file_paths]
     dir_parts = ["" if dir_part == "." else dir_part + "/" for dir_part in dir_parts]
     blob_paths = []
 
@@ -322,7 +382,8 @@ def generate_asset_id(asset_hash: str, include_directory=True) -> str:
 
 
 def get_directory_size(root: os.PathLike) -> Tuple[int, Dict[str, int]]:
-    """Returns total size of a directory and a dictionary itemizing each sub-path and its size."""
+    """Returns total size of a directory and a dictionary itemizing each sub-
+    path and its size."""
     total_size = 0
     size_list = {}
     for dirpath, _, filenames in os.walk(root, followlinks=True):
@@ -349,11 +410,12 @@ def upload_file(
     in_directory: bool = False,
     callback: Any = None,
 ) -> None:
-    """
-    Upload a single file to remote storage.
+    """Upload a single file to remote storage.
 
     :param storage_client: Storage client object
-    :type storage_client: Union[azure.ai.ml._artifacts._blob_storage_helper.BlobStorageClient, azure.ai.ml._artifacts._gen2_storage_helper.Gen2StorageClient]
+    :type storage_client: Union[
+        azure.ai.ml._artifacts._blob_storage_helper.BlobStorageClient,
+        azure.ai.ml._artifacts._gen2_storage_helper.Gen2StorageClient]
     :param source: Local path to project directory
     :type source: str
     :param dest: Remote upload path for project directory (e.g. LocalUpload/<guid>/project_dir)
@@ -376,7 +438,23 @@ def upload_file(
         type(storage_client).__name__ == GEN2_STORAGE_CLIENT_NAME
     ):  # Only for Gen2StorageClient, Blob Storage doesn't have true directories
         if in_directory:
-            storage_client.file_client = storage_client.sub_directory_client.create_file(source.split("/")[-1])
+            storage_client.temp_sub_directory_client = None
+            file_name_tail = dest.split(os.path.sep)[-1]
+            # Indexing from 2 because the first two parts of the remote path will always be LocalUpload/<asset_id>
+            all_sub_folders = dest.split(os.path.sep)[2:-1]
+
+            # Create remote directories for each nested directory if file is in a nested directory
+            for sub_folder in all_sub_folders:
+                if storage_client.temp_sub_directory_client:
+                    storage_client.temp_sub_directory_client = (
+                        storage_client.temp_sub_directory_client.create_sub_directory(sub_folder)
+                    )
+                else:
+                    storage_client.temp_sub_directory_client = storage_client.directory_client.create_sub_directory(
+                        sub_folder
+                    )
+
+            storage_client.file_client = storage_client.temp_sub_directory_client.create_file(file_name_tail)
         else:
             storage_client.file_client = storage_client.directory_client.create_file(source.split("/")[-1])
 
@@ -410,6 +488,7 @@ def upload_file(
                     overwrite=storage_client.overwrite,
                     raw_response_hook=callback,
                     max_concurrency=MAX_CONCURRENCY,
+                    connection_timeout=DEFAULT_CONNECTION_TIMEOUT,
                 )
 
     storage_client.uploaded_file_count += 1
@@ -423,11 +502,12 @@ def upload_directory(
     show_progress: bool,
     ignore_file: IgnoreFile,
 ) -> None:
-    """
-    Upload directory to remote storage.
+    """Upload directory to remote storage.
 
     :param storage_client: Storage client object
-    :type storage_client: Union[azure.ai.ml._artifacts._blob_storage_helper.BlobStorageClient, azure.ai.ml._artifacts._gen2_storage_helper.Gen2StorageClient]
+    :type storage_client: Union[
+        azure.ai.ml._artifacts._blob_storage_helper.BlobStorageClient,
+        azure.ai.ml._artifacts._gen2_storage_helper.Gen2StorageClient]
     :param source: Local path to project directory
     :type source: str
     :param dest: Remote upload path for project directory (e.g. LocalUpload/<guid>/project_dir)
@@ -507,9 +587,10 @@ def upload_directory(
         if show_progress:
             warnings.simplefilter("ignore", category=TqdmWarning)
             msg += f" ({round(total_size/10**6, 2)} MBs)"
-            ascii = system() == "Windows"  # Default unicode progress bar doesn't display well on Windows
-            with tqdm(total=total_size, desc=msg, ascii=ascii) as pbar:
+            is_windows = system() == "Windows"  # Default unicode progress bar doesn't display well on Windows
+            with tqdm(total=total_size, desc=msg, ascii=is_windows) as pbar:
                 for future in as_completed(futures_dict):
+                    future.result()  # access result to propagate any exceptions
                     file_path_name = futures_dict[future][0]
                     pbar.update(size_dict.get(file_path_name) or 0)
 
@@ -556,23 +637,37 @@ def _get_latest(
     asset_name: str,
     version_operation: Any,
     resource_group_name: str,
-    workspace_name: str,
+    workspace_name: str = None,
+    registry_name: str = None,
     order_by: str = OrderString.CREATED_AT_DESC,
     **kwargs,
 ) -> Union[ModelVersionData, DatasetVersionData]:
     """Returns the latest version of the asset with the given name.
 
-    Latest is defined as the most recently created, not the most recently updated.
+    Latest is defined as the most recently created, not the most
+    recently updated.
     """
-    try:
-        latest = version_operation.list(
+    result = (
+        version_operation.list(
+            name=asset_name,
+            resource_group_name=resource_group_name,
+            registry_name=registry_name,
+            order_by=order_by,
+            top=1,
+            **kwargs,
+        )
+        if registry_name
+        else version_operation.list(
             name=asset_name,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             order_by=order_by,
             top=1,
             **kwargs,
-        ).next()
+        )
+    )
+    try:
+        latest = result.next()
     except StopIteration:
         latest = None
 
@@ -580,13 +675,25 @@ def _get_latest(
         # Data list return object doesn't require this since its elements are already DatasetVersionResources
         latest = cast(ModelVersionData, latest)
     if not latest:
-        raise ResourceNotFoundError(f"Asset {asset_name} does not exist in workspace {workspace_name}.")
-
+        message = f"Asset {asset_name} does not exist in workspace {workspace_name}."
+        no_personal_data_message = "Asset {asset_name} does not exist in workspace {workspace_name}."
+        raise ValidationException(
+            message=message,
+            no_personal_data_message=no_personal_data_message,
+            target=ErrorTarget.ASSET,
+            error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
+        )
     return latest
 
 
 def _archive_or_restore(
-    asset_operations: Union["DataOperations", "EnvironmentOperations", "ModelOperations", "ComponentOperations"],
+    asset_operations: Union[
+        "DataOperations",
+        "EnvironmentOperations",
+        "ModelOperations",
+        "ComponentOperations",
+    ],
     version_operation: Union[
         "DataVersionsOperations",
         "EnvironmentVersionsOperations",
@@ -604,13 +711,16 @@ def _archive_or_restore(
     version: str = None,
     label: str = None,
 ) -> None:
-
     resource_group_name = asset_operations._operation_scope._resource_group_name
     workspace_name = asset_operations._workspace_name
     if version and label:
         msg = "Cannot specify both version and label."
         raise ValidationException(
-            message=msg, no_personal_data_message=msg, target=ErrorTarget.ASSET, error_category=ErrorCategory.USER_ERROR
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.ASSET,
+            error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
         )
     if label:
         version = _resolve_label_to_asset(asset_operations, name, label).version
@@ -647,7 +757,10 @@ def _archive_or_restore(
 
 def _resolve_label_to_asset(
     assetOperations: Union[
-        "DatasetOperations", "DataOperations", "ComponentOperations", "EnvironmentOperations", "ModelOperations"
+        "DataOperations",
+        "ComponentOperations",
+        "EnvironmentOperations",
+        "ModelOperations",
     ],
     name: str,
     label: str,
@@ -659,11 +772,12 @@ def _resolve_label_to_asset(
 
     resolver = assetOperations._managed_label_resolver.get(label, None)
     if not resolver:
-        msg = 'No version corresponds to label "{}" for asset {}'
+        msg = "Asset {} with version label {} does not exist in workspace."
         raise ValidationException(
-            message=msg.format(label, name),
-            no_personal_data_message=msg.format("[label]", "[name]"),
+            message=msg.format(name, label),
+            no_personal_data_message=msg.format("[name]", "[label]"),
             target=ErrorTarget.ASSET,
+            error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
         )
     return resolver(name)
 
@@ -671,8 +785,8 @@ def _resolve_label_to_asset(
 class FileUploadProgressBar(tqdm):
     def __init__(self, msg: str = None):
         warnings.simplefilter("ignore", category=TqdmWarning)
-        ascii = system() == "Windows"  # Default unicode progress bar doesn't display well on Windows
-        super().__init__(unit="B", unit_scale=True, desc=msg, ascii=ascii)
+        is_windows = system() == "Windows"  # Default unicode progress bar doesn't display well on Windows
+        super().__init__(unit="B", unit_scale=True, desc=msg, ascii=is_windows)
 
     def update_to(self, response):
         current = response.context["upload_stream_current"]
@@ -694,8 +808,3 @@ class DirectoryUploadProgressBar(tqdm):
             self.completed = current
         if current:
             self.update(current - self.n)
-
-
-def _is_local_path(path: Union[os.PathLike, str]) -> bool:
-    path = Path(path)
-    return path.exists()

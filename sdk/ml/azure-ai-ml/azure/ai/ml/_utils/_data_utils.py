@@ -3,28 +3,31 @@
 # ---------------------------------------------------------
 
 import io
-import logging
-import yaml
-import requests
 import json
-from jsonschema import Draft7Validator, ValidationError
-from jsonschema.exceptions import best_match
+import logging
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Dict, Union
 from urllib.parse import urlparse
-from azure.ai.ml.operations import DatastoreOperations
-from azure.ai.ml._artifacts._constants import INVALID_MLTABLE_METADATA_SCHEMA_ERROR, INVALID_MLTABLE_METADATA_SCHEMA_MSG
+
+import yaml
+from jsonschema import Draft7Validator, ValidationError
+from jsonschema.exceptions import best_match
+
 from azure.ai.ml._artifacts._artifact_utilities import get_datastore_info, get_storage_client
-from azure.ai.ml._ml_exceptions import DataException, ErrorCategory, ErrorTarget
-from .utils import load_yaml
+from azure.ai.ml._artifacts._constants import INVALID_MLTABLE_METADATA_SCHEMA_ERROR, INVALID_MLTABLE_METADATA_SCHEMA_MSG
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+
+from ._http_utils import HttpPipeline
 from ._storage_utils import AzureMLDatastorePathUri
+from .utils import load_yaml
 
 module_logger = logging.getLogger(__name__)
 
 
-def download_mltable_metadata_schema(mltable_schema_url: str):
-    response = requests.get(mltable_schema_url, stream=True)
+def download_mltable_metadata_schema(mltable_schema_url: str, requests_pipeline: HttpPipeline):
+    response = requests_pipeline.get(mltable_schema_url)
     return response.json()
 
 
@@ -33,15 +36,20 @@ def read_local_mltable_metadata_contents(*, path: str) -> Dict:
     return load_yaml(metadata_path)
 
 
-def read_remote_mltable_metadata_contents(*, path: str, datastore_operations: DatastoreOperations) -> Union[Dict, None]:
+def read_remote_mltable_metadata_contents(
+    *,
+    path: str,
+    datastore_operations: DatastoreOperations,
+    requests_pipeline: HttpPipeline,
+) -> Union[Dict, None]:
     mltable_path = str(path)
     metadata_path = str(Path(path, "MLTable"))
     scheme = urlparse(mltable_path).scheme
     if scheme == "https":
-        response = requests.get(metadata_path)
+        response = requests_pipeline.get(metadata_path)
         yaml_file = io.BytesIO(response.content)
         return yaml.safe_load(yaml_file)
-    elif scheme == "azureml":
+    if scheme == "azureml":
         datastore_path_uri = AzureMLDatastorePathUri(mltable_path)
         datastore_info = get_datastore_info(datastore_operations, datastore_path_uri.datastore)
         storage_client = get_storage_client(**datastore_info)
@@ -60,14 +68,16 @@ def validate_mltable_metadata(*, mltable_metadata_dict: Dict, mltable_schema: Di
     if error:
         err_path = ".".join(error.path)
         err_path = f"{err_path}: " if err_path != "" else ""
-        raise DataException(
-            message=INVALID_MLTABLE_METADATA_SCHEMA_ERROR.format(
-                jsonSchemaErrorPath=err_path,
-                jsonSchemaMessage=error.message,
-                invalidMLTableMsg=INVALID_MLTABLE_METADATA_SCHEMA_MSG,
-                invalidSchemaSnippet=json.dumps(error.schema, indent=2),
-            ),
+        msg = INVALID_MLTABLE_METADATA_SCHEMA_ERROR.format(
+            jsonSchemaErrorPath=err_path,
+            jsonSchemaMessage=error.message,
+            invalidMLTableMsg=INVALID_MLTABLE_METADATA_SCHEMA_MSG,
+            invalidSchemaSnippet=json.dumps(error.schema, indent=2),
+        )
+        raise ValidationException(
+            message=msg,
             no_personal_data_message=INVALID_MLTABLE_METADATA_SCHEMA_MSG,
+            error_type=ValidationErrorType.INVALID_VALUE,
             target=ErrorTarget.DATA,
             error_category=ErrorCategory.USER_ERROR,
         )

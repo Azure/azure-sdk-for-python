@@ -1,20 +1,20 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+import contextlib
+import importlib
+import inspect
 import os
 import re
 import sys
-import contextlib
-import inspect
-import importlib
 from pathlib import Path
+
+from azure.ai.ml._ml_exceptions import ComponentException, ErrorCategory, ErrorTarget
 from azure.ai.ml.dsl._constants import VALID_NAME_CHARS
-from azure.ai.ml._ml_exceptions import ErrorTarget, ComponentException
 
 
 def _normalize_identifier_name(name):
-    import re
-
     normalized_name = name.lower()
     normalized_name = re.sub(r"[\W_]", " ", normalized_name)  # No non-word characters
     normalized_name = re.sub(" +", " ", normalized_name).strip()  # No double spaces, leading or trailing spaces
@@ -33,7 +33,8 @@ def is_valid_name(name: str):
 
 
 def _resolve_source_directory():
-    """Resolve source directory as last customer frame's module file dir position."""
+    """Resolve source directory as last customer frame's module file dir
+    position."""
     source_file = _resolve_source_file()
     # Fall back to current working directory if not found
     return os.getcwd() if not source_file else Path(os.path.dirname(source_file)).absolute()
@@ -52,7 +53,7 @@ def _resolve_source_file():
             ):
                 module = inspect.getmodule(last_frame.frame)
                 return Path(module.__file__).absolute() if module else None
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         return None
 
 
@@ -63,15 +64,16 @@ def _assert_frame_package_name(pattern, frame):
     # Although __package__ is set when importing, it may happen __package__ does not exist in globals
     # when using exec to execute.
     package_name = frame.f_globals.get("__package__", "")
-    return True if package_name and re.match(pattern, package_name) else False
+    return package_name and re.match(pattern, package_name)
 
 
 def _relative_to(path, basedir, raises_if_impossible=False):
     """Compute the relative path under basedir.
 
-    This is a wrapper function of Path.relative_to, by default Path.relative_to raises if path is not under basedir,
-    In this function, it returns None if raises_if_impossible=False, otherwise raises.
-
+    This is a wrapper function of Path.relative_to, by default
+    Path.relative_to raises if path is not under basedir, In this
+    function, it returns None if raises_if_impossible=False, otherwise
+    raises.
     """
     # The second resolve is to resolve possible win short path.
     path = Path(path).resolve().absolute().resolve()
@@ -106,7 +108,7 @@ def _force_reload_module(module):
 
 @contextlib.contextmanager
 def _change_working_dir(path, mkdir=True):
-    """Context manager for changing the current working directory"""
+    """Context manager for changing the current working directory."""
 
     saved_path = os.getcwd()
     if mkdir:
@@ -127,7 +129,13 @@ def _import_component_with_working_dir(module_name, working_dir=None, force_relo
         try:
             py_module = importlib.import_module(module_name)
         except Exception as e:
-            raise e
+            raise ComponentException(
+                message=str(e),
+                no_personal_data_message="Failure importing component with working directory",
+                target=ErrorTarget.COMPONENT,
+                error=e,
+                error_category=ErrorCategory.SYSTEM_ERROR,
+            ) from e
         except BaseException as e:
             # raise base exception like system.exit as normal exception
             raise ComponentException(
@@ -135,6 +143,7 @@ def _import_component_with_working_dir(module_name, working_dir=None, force_relo
                 no_personal_data_message="Failure importing component with working directory",
                 target=ErrorTarget.COMPONENT,
                 error=e,
+                error_category=ErrorCategory.USER_ERROR,
             ) from e
         loaded_module_file = Path(py_module.__file__).resolve().absolute().as_posix()
         posix_working_dir = Path(working_dir).absolute().as_posix()

@@ -69,4 +69,3 @@ jobs:
     #  python eval.py
     #  --scoring_result ${{inputs.scoring_result}}
     #  --eval_output ${{outputs.eval_output}}
-

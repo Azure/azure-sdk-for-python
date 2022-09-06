@@ -2,36 +2,38 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional, Dict, Tuple
-from azure.identity import ChainedTokenCredential
-from threading import Thread
-import requests
-import json
-import urllib.parse
-from pathlib import Path
-import tempfile
-import zipfile
-import os
-import subprocess
-import re
 import base64
-import docker
+import json
 import logging
-import tarfile
+import os
+import re
 import shutil
+import subprocess
+import tarfile
+import tempfile
 import time
+import urllib.parse
+import zipfile
+from pathlib import Path
+from threading import Thread
+from typing import Dict, Optional, Tuple
 
-from azure.ai.ml._ml_exceptions import JobException, ErrorTarget
+import docker
+
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, JobException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
-from azure.ai.ml.constants import (
-    INVOCATION_BAT_FILE,
-    INVOCATION_ZIP_FILE,
-    INVOCATION_BASH_FILE,
+from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml.constants._common import (
     AZUREML_RUN_SETUP_DIR,
     AZUREML_RUNS_DIR,
     EXECUTION_SERVICE_URL_KEY,
+    INVOCATION_BASH_FILE,
+    INVOCATION_BAT_FILE,
+    INVOCATION_ZIP_FILE,
     LOCAL_JOB_FAILURE_MSG,
 )
+from azure.core.credentials import TokenCredential
+from azure.core.exceptions import AzureError
 
 module_logger = logging.getLogger(__name__)
 
@@ -48,15 +50,25 @@ def unzip_to_temporary_file(job_definition: JobBaseData, zip_content: bytes) -> 
     return temp_dir
 
 
-def _get_creationflags_and_startupinfo_for_background_process(os_override: Optional[str] = None) -> None:
-    args = {"startupinfo": None, "creationflags": None, "stdin": None, "stdout": None, "stderr": None, "shell": False}
+def _get_creationflags_and_startupinfo_for_background_process(
+    os_override: Optional[str] = None,
+) -> None:
+    args = {
+        "startupinfo": None,
+        "creationflags": None,
+        "stdin": None,
+        "stdout": None,
+        "stderr": None,
+        "shell": False,
+    }
     os_name = os_override if os_override is not None else os.name
     if os_name == "nt":
         """Windows process creation flag to not reuse the parent console.
+
         Without this, the background service is associated with the
         starting process's console, and will block that console from
-        exiting until the background service self-terminates.
-        Elsewhere, fork just does the right thing.
+        exiting until the background service self-terminates. Elsewhere,
+        fork just does the right thing.
         """
         CREATE_NEW_CONSOLE = 0x00000010
         args["creationflags"] = CREATE_NEW_CONSOLE
@@ -67,9 +79,9 @@ def _get_creationflags_and_startupinfo_for_background_process(os_override: Optio
         args["startupinfo"] = startupinfo
 
     else:
-        """On MacOS, the child inherits the parent's stdio descriptors by default
-        this can block the parent's stdout/stderr from closing even after the parent has exited
-        """
+        """On MacOS, the child inherits the parent's stdio descriptors by
+        default this can block the parent's stdout/stderr from closing even
+        after the parent has exited."""
         args["stdin"] = subprocess.DEVNULL
         args["stdout"] = subprocess.DEVNULL
         args["stderr"] = subprocess.STDOUT
@@ -103,13 +115,17 @@ def invoke_command(project_temp_dir: Path) -> None:
     env = os.environ.copy()
     env.pop("AZUREML_TARGET_TYPE", None)
     subprocess.Popen(
-        invoked_command, cwd=project_temp_dir, env=env, **_get_creationflags_and_startupinfo_for_background_process()
+        invoked_command,
+        cwd=project_temp_dir,
+        env=env,
+        **_get_creationflags_and_startupinfo_for_background_process(),
     )
 
 
-def get_execution_service_response(job_definition: JobBaseData, token: str) -> Tuple[Dict[str, str], str]:
-    """
-    Get zip file containing local run information from Execution Service.
+def get_execution_service_response(
+    job_definition: JobBaseData, token: str, requests_pipeline: HttpPipeline
+) -> Tuple[Dict[str, str], str]:
+    """Get zip file containing local run information from Execution Service.
 
     MFE will send down a mock job contract, with service 'local'.
     This will have the URL for contacting Execution Service, with a URL-encoded JSON object following the '&fake='
@@ -129,14 +145,19 @@ def get_execution_service_response(job_definition: JobBaseData, token: str) -> T
         (url, encodedBody) = local.endpoint.split(EXECUTION_SERVICE_URL_KEY)
         body = urllib.parse.unquote_plus(encodedBody)
         body = json.loads(body)
-        response = requests.post(url=url, json=body, headers={"Authorization": "Bearer " + token})
+        response = requests_pipeline.post(url=url, json=body, headers={"Authorization": "Bearer " + token})
         response.raise_for_status()
         return (response.content, body.get("SnapshotId", None))
-    except requests.exceptions.HTTPError as err:
+    except AzureError as err:
         raise SystemExit(err)
     except Exception:
         msg = "Failed to read in local executable job"
-        raise JobException(message=msg, target=ErrorTarget.LOCAL_JOB, no_personal_data_message=msg)
+        raise JobException(
+            message=msg,
+            target=ErrorTarget.LOCAL_JOB,
+            no_personal_data_message=msg,
+            error_category=ErrorCategory.SYSTEM_ERROR,
+        )
 
 
 def is_local_run(job_definition: JobBaseData) -> bool:
@@ -170,14 +191,14 @@ class CommonRuntimeHelper:
             shutil.rmtree(self.common_runtime_temp_folder)
         Path(self.common_runtime_temp_folder).mkdir(parents=True)
         self.vm_bootstrapper_full_path = os.path.join(
-            self.common_runtime_temp_folder, CommonRuntimeHelper.VM_BOOTSTRAPPER_FILE_NAME
+            self.common_runtime_temp_folder,
+            CommonRuntimeHelper.VM_BOOTSTRAPPER_FILE_NAME,
         )
         self.stdout = open(os.path.join(self.common_runtime_temp_folder, "stdout"), "w+")
         self.stderr = open(os.path.join(self.common_runtime_temp_folder, "stderr"), "w+")
 
     def get_docker_client(self, registry: Dict[str, str]) -> docker.DockerClient:
-        """
-        Retrieves the Docker client for performing docker operations.
+        """Retrieves the Docker client for performing docker operations.
 
         :param registry: Registry information
         :type registry: Dict[str, str]
@@ -196,7 +217,11 @@ class CommonRuntimeHelper:
 
         if registry:
             try:
-                client.login(username=registry["username"], password=registry["password"], registry=registry["url"])
+                client.login(
+                    username=registry["username"],
+                    password=registry["password"],
+                    registry=registry["url"],
+                )
             except Exception as e:
                 raise RuntimeError(self.DOCKER_LOGIN_FAILURE_MSG.format(registry["url"], e))
         else:
@@ -205,8 +230,7 @@ class CommonRuntimeHelper:
         return client
 
     def copy_bootstrapper_from_container(self, container: docker.models.containers.Container) -> None:
-        """
-        Copy file/folder from container to local machine.
+        """Copy file/folder from container to local machine.
 
         :param container: Docker container
         :type container: docker.models.containers.Container
@@ -228,8 +252,7 @@ class CommonRuntimeHelper:
             raise Exception(f"Copying {path_in_container} from container has failed. Detailed message: {e}")
 
     def get_common_runtime_info_from_response(self, response: Dict[str, str]) -> Tuple[Dict[str, str], str]:
-        """
-        Extract common-runtime info from Execution Service response.
+        """Extract common-runtime info from Execution Service response.
 
         :param response: Content of zip file from Execution Service containing all the scripts required to invoke a local run.
         :type response: Dict[str, str]
@@ -258,8 +281,8 @@ class CommonRuntimeHelper:
         return bootstrapper_json, job_spec
 
     def get_bootstrapper_binary(self, bootstrapper_info: Dict[str, str]) -> None:
-        """
-        Copy bootstrapper binary from the bootstrapper image to local machine.
+        """Copy bootstrapper binary from the bootstrapper image to local
+        machine.
 
         :param bootstrapper_info:
         :type bootstrapper: Dict[str, str]
@@ -293,9 +316,14 @@ class CommonRuntimeHelper:
         boot_container.remove()
 
     def execute_bootstrapper(self, bootstrapper_binary: str, job_spec: str) -> subprocess.Popen:
-        """
-        Runs vm-bootstrapper with the job specification passed to it. This will build the Docker container, create all necessary files and directories, and run the job locally.
-        Command args are defined by Common Runtime team here: https://msdata.visualstudio.com/Vienna/_git/vienna?path=/src/azureml-job-runtime/common-runtime/bootstrapper/vm-bootstrapper/src/main.rs&version=GBmaster&line=764&lineEnd=845&lineStartColumn=1&lineEndColumn=6&lineStyle=plain&_a=contents
+        """Runs vm-bootstrapper with the job specification passed to it. This
+        will build the Docker container, create all necessary files and
+        directories, and run the job locally. Command args are defined by
+        Common Runtime team here:
+        https://msdata.visualstudio.com/Vienna/_git/vienna?path=/src/azureml-
+        job-runtime/common-runtime/bootstrapper/vm-bootstrapper/src/main.rs&ver
+        sion=GBmaster&line=764&lineEnd=845&lineStartColumn=1&lineEndColumn=6&li
+        neStyle=plain&_a=contents.
 
         :param bootstrapper_binary: Binary file path for VM bootstrapper (".azureml-common-runtime/<job_name>/vm-bootstrapper")
         :type bootstrapper_binary: str
@@ -345,8 +373,7 @@ class CommonRuntimeHelper:
         thread.start()
 
     def check_bootstrapper_process_status(self, bootstrapper_process: subprocess.Popen) -> int:
-        """
-        Check if bootstrapper process status is non-zero.
+        """Check if bootstrapper process status is non-zero.
 
         :param bootstrapper_process: bootstrapper process
         :type bootstrapper: subprocess.Popen
@@ -363,24 +390,25 @@ class CommonRuntimeHelper:
 
 def start_run_if_local(
     job_definition: JobBaseData,
-    credential: ChainedTokenCredential,
+    credential: TokenCredential,
     ws_base_url: str,
+    requests_pipeline: HttpPipeline,
 ) -> str:
-    """
-    Request execution bundle from ES and run job.
-    If Linux or WSL environment, unzip and invoke job using job spec and bootstrapper. Otherwise, invoke command locally.
+    """Request execution bundle from ES and run job. If Linux or WSL
+    environment, unzip and invoke job using job spec and bootstrapper.
+    Otherwise, invoke command locally.
 
     :param job_definition: Job definition data
     :type job_definition: JobBaseData
     :param credential: Credential to use for authentication
-    :type credential: ChainedTokenCredential
+    :type credential: TokenCredential
     :param ws_base_url: Base url to workspace
     :type ws_base_url: str
     :return: snapshot ID
     :rtype: str
     """
     token = credential.get_token(ws_base_url + "/.default").token
-    (zip_content, snapshot_id) = get_execution_service_response(job_definition, token)
+    (zip_content, snapshot_id) = get_execution_service_response(job_definition, token, requests_pipeline)
 
     if os.name != "nt":
         cr_helper = CommonRuntimeHelper(job_definition.name)

@@ -2,73 +2,66 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import os
+# pylint: disable=protected-access
+
 import json
-import logging
-from pathlib import Path
+import os
+import re
 import time
-from typing import Any, Dict, Iterable, Union, TYPE_CHECKING
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Union
+
+from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
 from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
-from azure.core.polling import LROPoller
-from azure.identity import ChainedTokenCredential
-from azure.ai.ml._restclient.v2022_05_01 import (
-    AzureMachineLearningWorkspaces as ServiceClient052022,
-)
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    BatchEndpointTrackedResourceArmPaginatedResult,
-)
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource
+from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointTrackedResourceArmPaginatedResult
 from azure.ai.ml._schema._deployment.batch.batch_job import BatchJobSchema
-from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml._utils._endpoint_utils import polling_wait, post_and_validate_response
-from azure.ai.ml._utils._arm_id_utils import (
-    generate_data_arm_id,
-    get_datastore_arm_id,
-    is_ARM_id_for_resource,
-    parse_name_version,
-    remove_datastore_prefix,
-)
-from azure.ai.ml._utils.utils import (
-    _get_mfe_base_url_from_discovery_service,
-    modified_operation_client,
-)
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
-from azure.ai.ml.constants import (
-    AssetTypes,
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    AzureMLResourceType,
-    EndpointInvokeFields,
-    EndpointYamlFields,
-    HTTP_PREFIX,
-    LROConfigurations,
-    ARM_ID_FULL_PREFIX,
-)
-from azure.ai.ml.entities import BatchEndpoint
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._utils._arm_id_utils import get_datastore_arm_id, is_ARM_id_for_resource, remove_datastore_prefix
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
+from azure.ai.ml._utils._endpoint_utils import polling_wait, validate_response
+from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client
+from azure.ai.ml.constants._common import (
+    ARM_ID_FULL_PREFIX,
+    BASE_PATH_CONTEXT_KEY,
+    HTTP_PREFIX,
+    LONG_URI_REGEX_FORMAT,
+    PARAMS_OVERRIDE_KEY,
+    SHORT_URI_REGEX_FORMAT,
+    AssetTypes,
+    AzureMLResourceType,
+    LROConfigurations,
+)
+from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointYamlFields
+from azure.ai.ml.entities import BatchEndpoint
+from azure.ai.ml.entities._inputs_outputs import Input
+from azure.core.credentials import TokenCredential
+from azure.core.exceptions import HttpResponseError
+from azure.core.polling import LROPoller
 
 from ._operation_orchestrator import OperationOrchestrator
-
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
-from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
 
 if TYPE_CHECKING:
     from azure.ai.ml.operations import DatastoreOperations
 
-logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
-logger.propagate = False
-module_logger = logging.getLogger(__name__)
+ops_logger = OpsLogger(__name__)
+logger, module_logger = ops_logger.logger, ops_logger.module_logger
 
 
 class BatchEndpointOperations(_ScopeDependentOperations):
-    """
-    BatchEndpointOperations
+    """BatchEndpointOperations.
 
-    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should
+    create an MLClient instance that instantiates it for you and
+    attaches it as an attribute.
     """
 
     def __init__(
@@ -77,19 +70,20 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         service_client_05_2022: ServiceClient052022,
         service_client_09_2020_dataplanepreview: ServiceClient092020DataplanePreview,
         all_operations: OperationsContainer,
-        credentials: ChainedTokenCredential = None,
+        credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
 
         super(BatchEndpointOperations, self).__init__(operation_scope)
-        if "app_insights_handler" in kwargs:
-            logger.addHandler(kwargs.pop("app_insights_handler"))
+        ops_logger.update_info(kwargs)
         self._batch_operation = service_client_05_2022.batch_endpoints
         self._batch_deployment_operation = service_client_05_2022.batch_deployments
         self._batch_job_endpoint = service_client_09_2020_dataplanepreview.batch_job_endpoint
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs
+
+        self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
     @property
     def _datastore_operations(self) -> "DatastoreOperations":
@@ -165,16 +159,15 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         )
         if no_wait:
             module_logger.info(
-                f"Delete request initiated. Status can be checked using `az ml batch-endpoint show {name}`\n"
+                "Delete request initiated. Status can be checked using `az ml batch-endpoint show %s`\n", name
             )
             return delete_poller
-        else:
-            message = f"Deleting batch endpoint {name} "
-            polling_wait(poller=delete_poller, start_time=start_time, message=message)
+        message = f"Deleting batch endpoint {name} "
+        polling_wait(poller=delete_poller, start_time=start_time, message=message)
 
     @monitor_with_activity(logger, "BatchEndpoint.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, endpoint: BatchEndpoint, **kwargs: Any) -> Union[BatchEndpoint, LROPoller]:
-        """Create or update a batch endpoint
+        """Create or update a batch endpoint.
 
         :param endpoint: The endpoint entity.
         :type endpoint: Endpoint
@@ -197,11 +190,13 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             )
             if no_wait:
                 module_logger.info(
-                    f"Batch endpoint create/update request initiated. Status can be checked using `az ml batch-endpoint show -n {endpoint.name}`\n"
+                    "Batch endpoint create/update request initiated. "
+                    "Status can be checked using"
+                    "`az ml batch-endpoint show -n %s`\n",
+                    endpoint.name,
                 )
                 return poller
-            else:
-                return BatchEndpoint._from_rest_object(poller.result())
+            return BatchEndpoint._from_rest_object(poller.result())
 
         except Exception as ex:
             raise ex
@@ -211,15 +206,17 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         self,
         endpoint_name: str,
         deployment_name: str = None,
-        input: Input = None,
+        input: Input = None,  # pylint: disable=redefined-builtin
         params_override=None,
-        **kwargs,
+        **kwargs,  # pylint: disable=unused-argument
     ) -> BatchJobResource:
-        """Invokes the batch endpoint with the provided payload
+        """Invokes the batch endpoint with the provided payload.
 
         :param str endpoint_name: the endpoint name
-        :param (str, optional) deployment_name: Name of a specific deployment to invoke. This is optional. By default requests are routed to any of the deployments according to the traffic rules.
-        :param (Input, optional) input: To use a existing data asset, public uri file, or folder pass in a Input object, for batch endpoints only.
+        :param (str, optional) deployment_name: Name of a specific deployment to invoke. This is optional.
+            By default requests are routed to any of the deployments according to the traffic rules.
+        :param (Input, optional) input: To use a existing data asset, public uri file,
+            or folder pass in a Input object, for batch endpoints only.
         :param (List, optional) params_override: Used to overwrite deployment configurations, for batch endpoints only.
         Returns:
             Union[str, BatchJobResource]: Prediction output for online endpoints or details of batch prediction job.
@@ -232,10 +229,14 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         if isinstance(input, Input):
             if HTTP_PREFIX not in input.path:
                 self._resolve_input(input, os.getcwd())
-            # MFE expects a dictionary as input_data that's why we are using "input_data" as key before parsing it to JobInput
+            # MFE expects a dictionary as input_data that's why we are using
+            # "input_data" as key before parsing it to JobInput
             params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: {"input_data": input}})
         else:
-            msg = "Unsupported input please use either a path on the datastore, public URI, a registered data asset, or a local folder path."
+            msg = (
+                "Unsupported input please use either a path on the datastore, public URI, "
+                "a registered data asset, or a local folder path."
+            )
             raise ValidationException(
                 message=msg,
                 target=ErrorTarget.BATCH_ENDPOINT,
@@ -244,9 +245,12 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             )
 
         # Batch job doesn't have a python class, loading a rest object using params override
-        context = {BASE_PATH_CONTEXT_KEY: Path(".").parent, PARAMS_OVERRIDE_KEY: params_override}
+        context = {
+            BASE_PATH_CONTEXT_KEY: Path(".").parent,
+            PARAMS_OVERRIDE_KEY: params_override,
+        }
 
-        batch_job = BatchJobSchema(context=context).load(data={})
+        batch_job = BatchJobSchema(context=context).load(data={})  # pylint: disable=no-member
         # update output datastore to arm id if needed
         # TODO: Unify datastore name -> arm id logic, TASK: 1104172
         if (
@@ -267,33 +271,35 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         headers = EndpointInvokeFields.DEFAULT_HEADER
         ml_audience_scopes = _resource_to_scopes(_get_aml_resource_id_from_metadata())
-        module_logger.debug(f"ml_audience_scopes used: `{ml_audience_scopes}`\n")
+        module_logger.debug("ml_audience_scopes used: `%s`\n", ml_audience_scopes)
         key = self._credentials.get_token(*ml_audience_scopes).token
         headers[EndpointInvokeFields.AUTHORIZATION] = f"Bearer {key}"
 
         if deployment_name:
             headers[EndpointInvokeFields.MODEL_DEPLOYMENT] = deployment_name
 
-        response = post_and_validate_response(
-            url=endpoint.properties.scoring_uri,
+        response = self._requests_pipeline.post(
+            endpoint.properties.scoring_uri,
             json=BatchJobResource(properties=batch_job).serialize(),
             headers=headers,
-            **kwargs,
         )
-        batch_job = json.loads(response.text)
+        validate_response(response)
+        batch_job = json.loads(response.text())
         return BatchJobResource.deserialize(batch_job)
 
     @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
     def list_jobs(self, endpoint_name: str):
-        """List jobs under the provided batch endpoint deployment. This is only valid for batch endpoint.
-
+        """List jobs under the provided batch endpoint deployment. This is only
+        valid for batch endpoint.
 
         :param str endpoint_name: the endpoint name
         :return: Iterable[BatchJobResourceArmPaginatedResult]
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
-        mfe_base_uri = _get_mfe_base_url_from_discovery_service(workspace_operations, self._workspace_name)
+        mfe_base_uri = _get_mfe_base_url_from_discovery_service(
+            workspace_operations, self._workspace_name, self._requests_pipeline
+        )
 
         with modified_operation_client(self._batch_job_endpoint, mfe_base_uri):
             result = self._batch_job_endpoint.list(
@@ -305,9 +311,6 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
             # This is necessary as the paged result need to be resolved inside the context manager
             return list(result)
-
-    def _load_code_configuration(self, register_asset: bool, endpoint: BatchEndpoint):
-        OperationOrchestrator(operation_container=self._all_operations, operation_scope=self._operation_scope)
 
     def _get_workspace_location(self) -> str:
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
@@ -362,7 +365,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                         target=ErrorTarget.BATCH_ENDPOINT,
                         no_personal_data_message="There is no folder on target path",
                     )
-                elif entry.type == AssetTypes.URI_FILE and not os.path.isfile(entry.path):
+                if entry.type == AssetTypes.URI_FILE and not os.path.isfile(entry.path):
                     raise ValidationException(
                         message="There is no file on target path: {}".format(entry.path),
                         target=ErrorTarget.BATCH_ENDPOINT,
@@ -377,6 +380,10 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
                     entry.path = entry.path + "/"
             elif ":" in entry.path or "@" in entry.path:  # Check registered file or folder datastore
+                # If we receive a datastore path in long/short form we don't need
+                # to get the arm asset id
+                if re.match(SHORT_URI_REGEX_FORMAT, entry.path) or re.match(LONG_URI_REGEX_FORMAT, entry.path):
+                    return
                 asset_type = AzureMLResourceType.DATASTORE
                 entry.path = remove_datastore_prefix(entry.path)
                 orchestrator = OperationOrchestrator(self._all_operations, self._operation_scope)
@@ -390,11 +397,15 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 )
                 if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
                     entry.path = entry.path + "/"
+        except (MlException, HttpResponseError) as e:
+            raise e
         except Exception as e:
             raise ValidationException(
-                message=f"Supported input path value are: path on the datastore, public URI, a registered data asset, or a local folder path.\n"
+                message=f"Supported input path value are: path on the datastore, public URI, "
+                "a registered data asset, or a local folder path.\n"
                 f"Met {type(e)}:\n{e}",
                 target=ErrorTarget.BATCH_ENDPOINT,
-                no_personal_data_message="Supported input path value are: path on the datastore, public URI, a registered data asset, or a local folder path.",
+                no_personal_data_message="Supported input path value are: path on the datastore, "
+                "public URI, a registered data asset, or a local folder path.",
                 error=e,
             )

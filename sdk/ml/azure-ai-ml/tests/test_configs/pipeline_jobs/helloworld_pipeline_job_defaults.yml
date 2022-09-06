@@ -18,7 +18,6 @@ inputs:
   job_in_number: 10
   job_in_other_number:
     value: 15
-
 jobs:
   hello_world_component_inline_1:
     type: command
