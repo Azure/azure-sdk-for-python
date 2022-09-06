@@ -270,7 +270,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
-        _set_throughput_options(offer=offer_throughput, options=request_options)
+        _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
         result = self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
         if response_hook:
