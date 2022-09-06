@@ -18,9 +18,10 @@ from typing import (
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.communication.jobrouter._shared.policy import HMACCredentialsPolicy
 
-from .._shared.utils import parse_connection_str, get_authentication_policy
+from .._shared.utils import parse_connection_str
 
 from .._generated._serialization import Serializer  # pylint:disable=protected-access
 from .._generated.aio import AzureCommunicationJobRouterService
@@ -66,18 +67,23 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
     :param str endpoint:
         The endpoint of the Azure Communication resource.
-    :param Union[str, AsyncTokenCredential] credential:
+    :param ~azure.core.credentials.AzureKeyCredential credential:
         The credentials with which to authenticate
     """
 
     def __init__(
             self,
             endpoint: str,
-            credential: Union[str, AsyncTokenCredential],
+            credential: AzureKeyCredential,
             **kwargs: Any
     ) -> None:
         if not credential:
             raise ValueError("credential can not be None")
+
+        # TokenCredential not supported at the moment
+        if hasattr(credential, "get_token"):
+            raise TypeError("Unsupported credential: {}. Use an AzureKeyCredential to use HMACCredentialsPolicy"
+                            " for authentication".format(type(credential)))
 
         try:
             if not endpoint.lower().startswith('http'):
@@ -91,7 +97,7 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         self._endpoint = endpoint
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-        self._authentication_policy = get_authentication_policy(endpoint, credential)
+        self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key, decode_url=True)
         self._client = AzureCommunicationJobRouterService(
             self._endpoint,
             api_version = self._api_version,
@@ -123,7 +129,7 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
-        return cls(endpoint, access_key, **kwargs)
+        return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
     # region ExceptionPolicyAio
 
