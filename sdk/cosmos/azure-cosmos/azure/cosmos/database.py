@@ -233,7 +233,7 @@ class DatabaseProxy(object):
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
-        _set_throughput_options(offer=offer_throughput, options=request_options)
+        _set_throughput_options(offer=offer_throughput, request_options=request_options)
         data = self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
