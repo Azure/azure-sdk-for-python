@@ -53,11 +53,12 @@ class AsyncKeyVaultClientBase(object):
 
                 transport = AioHttpTransport(**kwargs)
 
+            verify_challenge = kwargs.pop("verify_challenge_resource", True)
             self._client = _KeyVaultClient(
                 api_version=self.api_version,
                 pipeline=pipeline,
                 transport=transport,
-                authentication_policy=AsyncChallengeAuthPolicy(credential),
+                authentication_policy=AsyncChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge),
                 sdk_moniker=SDK_MONIKER,
                 http_logging_policy=http_logging_policy,
                 **kwargs
