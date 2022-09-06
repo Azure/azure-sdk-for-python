@@ -16,6 +16,7 @@ protocol again.
 
 import time
 from typing import TYPE_CHECKING
+from urllib.parse import urlparse
 
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 
@@ -36,6 +37,7 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         super().__init__(credential, *scopes, **kwargs)
         self._credential = credential
         self._token = None  # type: Optional[AccessToken]
+        self._verify_challenge_resource = kwargs.pop("verify_challenge_resource", True)
 
     async def on_request(self, request: "PipelineRequest") -> None:
         _enforce_tls(request)
@@ -68,6 +70,15 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
             scope = challenge.get_scope() or challenge.get_resource() + "/.default"
         except ValueError:
             return False
+
+        if self._verify_challenge_resource:
+            resource_domain = urlparse(scope).netloc
+            if not resource_domain:
+                raise ValueError(f"The challenge contains invalid scope '{scope}'.")
+
+            request_domain = urlparse(request.http_request.url).netloc
+            if not request_domain.lower().endswith(f".{resource_domain.lower()}"):
+                raise ValueError(f"The challenge resource '{resource_domain}' does not match the requested domain.")
 
         body = request.context.pop("key_vault_request_data", None)
         request.http_request.set_text_body(body)  # no-op when text is None
