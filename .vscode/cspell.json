@@ -76,7 +76,6 @@
     "sdk/keyvault/azure-keyvault-keys/tests/keys.py",
     "sdk/modelsrepository/azure-iot-modelsrepository/**",
     "sdk/monitor/azure-monitor-query/**",
-    "sdk/metricsadvisor/azure-ai-metricsadvisor/**",
     "sdk/purview/azure-purview-catalog/**",
     "sdk/servicefabric/azure-servicefabric/**",
     "sdk/search/azure-search-documents/**",
@@ -301,6 +300,7 @@
     "timegm",
     "toxenv",
     "tzname",
+    "tzutc",
     "uamqp",
     "uksouth",
     "ukwest",
@@ -673,6 +673,19 @@
       "words": [
         "Ijoi",
         "Iiwid"
+      ]
+    },
+    {
+      "filename": "sdk/metricsadvisor/azure-ai-metricsadvisor/**",
+      "words": [
+        "POSTGRE",
+        "tolist",
+        "cond",
+        "conds",
+        "sumrollup",
+        "adreadonly",
+        "Shenzen",
+        "myusername"
       ]
     }
   ],

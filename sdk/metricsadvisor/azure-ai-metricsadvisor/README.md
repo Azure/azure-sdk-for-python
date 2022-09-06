@@ -25,7 +25,7 @@ pip install azure-ai-metricsadvisor
 ### Prerequisites
 
 * Python 3.7 or later is required to use this package.
-* You need an [Azure subscription][azure_sub], and a [Metrics Advisor serivce][ma_service] to use this package.
+* You need an [Azure subscription][azure_sub], and a [Metrics Advisor service][ma_service] to use this package.
 
 ### Authenticate the client
 
