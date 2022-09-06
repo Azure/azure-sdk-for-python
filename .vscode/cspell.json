@@ -30,7 +30,6 @@
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/appconfiguration/azure-appconfiguration/**",
     "sdk/agrifood/azure-agrifood-farming/**",
-    "sdk/attestation/azure-security-attestation/**",
     "sdk/batch/azure-batch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
@@ -673,6 +672,22 @@
       "words": [
         "Ijoi",
         "Iiwid"
+      ]
+    },
+    {
+      "filename": "sdk/attestation/azure-security-attestation/**",
+      "words": [
+        "MRENCLAVE",
+        "ECDS",
+        "kwtype",
+        "clist",
+        "mrsigner",
+        "ECDH",
+        "TPMs",
+        "getopenidmetadata",
+        "getopenidmetadataasync",
+        "aikcert",
+        "shareduks"
       ]
     }
   ],
