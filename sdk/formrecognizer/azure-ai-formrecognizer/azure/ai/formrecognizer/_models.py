@@ -2757,7 +2757,7 @@ class DocumentPage:
     :ivar page_number: 1-based page number in the input document.
     :vartype page_number: int
     :ivar angle: The general orientation of the content in clockwise direction, measured
-     in degrees between (-180, 180).
+     in degrees between (-180, 180].
     :vartype angle: Optional[float]
     :ivar width: The width of the image/PDF in pixels/inches, respectively.
     :vartype width: Optional[float]
