@@ -193,9 +193,10 @@ Other optional configuration keyword arguments that can be specified on the clie
 **Client keyword arguments:**
 
 * __connection_timeout__ (int): The number of seconds the client will wait to establish a connection to the server.
+Defaults to 20 seconds.
 * __read_timeout__ (int): The number of seconds the client will wait, between consecutive read operations, for a
-response from the server. This is a socket level timeout and is not affected by overall data size. Read timeouts will be
-automatically retried.
+response from the server. This is a socket level timeout and is not affected by overall data size. Client-side read 
+timeouts will be automatically retried. Defaults to 60 seconds.
 * __transport__ (Any): User-provided transport to send the HTTP request.
 
 **Per-operation keyword arguments:**
