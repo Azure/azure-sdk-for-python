@@ -52,6 +52,7 @@ def collect_statsbeat_metrics(exporter) -> None:
                 _STATSBEAT_METER_PROVIDER,
                 exporter._instrumentation_key,
                 exporter._endpoint,
+                exporter._enable_local_storage,
                 long_interval_threshold,
             )
             # Export some initial stats on program start

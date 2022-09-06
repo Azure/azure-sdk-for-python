@@ -6,7 +6,7 @@
 import logging
 from pathlib import Path
 
-from azure.ai.ml.constants import LocalEndpointConstants
+from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
 module_logger = logging.getLogger(__name__)
 

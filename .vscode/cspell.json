@@ -32,7 +32,6 @@
     "sdk/agrifood/azure-agrifood-farming/**",
     "sdk/attestation/azure-security-attestation/**",
     "sdk/batch/azure-batch/**",
-    "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customsearch/**",
@@ -75,12 +74,9 @@
     "sdk/identity/azure-identity/tests/managed-identity-live/service-fabric/**",
     "sdk/keyvault/azure-keyvault-certificates/tests/certs.py",
     "sdk/keyvault/azure-keyvault-keys/tests/keys.py",
-    "sdk/mixedreality/azure-mixedreality-authentication/**",
     "sdk/modelsrepository/azure-iot-modelsrepository/**",
     "sdk/monitor/azure-monitor-query/**",
-    "sdk/metricsadvisor/azure-ai-metricsadvisor/**",
     "sdk/purview/azure-purview-catalog/**",
-    "sdk/remoterendering/azure-mixedreality-remoterendering/**",
     "sdk/servicefabric/azure-servicefabric/**",
     "sdk/search/azure-search-documents/**",
     "sdk/storage/azure-storage-blob-changefeed/**",
@@ -187,6 +183,7 @@
     "hmac",
     "hnstestscope",
     "howto",
+    "Hololens",
     "httpx",
     "illumos",
     "imds",
@@ -303,6 +300,7 @@
     "timegm",
     "toxenv",
     "tzname",
+    "tzutc",
     "uamqp",
     "uksouth",
     "ukwest",
@@ -435,6 +433,10 @@
       "words": ["groovin", "Olufsen"]
     },
     {
+      "filename": "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/tests/*.py",
+      "words": ["Apim", "cognituve"]
+    },
+    {
       "filename": "sdk/communication/**",
       "words": [
         "XVCJ",
@@ -564,6 +566,7 @@
         "qloguniform",
         "odict",
         "sdkv",
+        "jioindiawest",
         "levelno",
         "amlignore",
         "envvar",
@@ -644,13 +647,45 @@
         "errno",
         "firstlineno",
         "chdir",
-        "fset"
+        "fset",
+        "azuresqldb",
+        "unflat",
+        "unflatten",
+        "unflattened",
+        "unflattens",
+        "subel",
+        "azuresynapseanalytics",
+        "deque",
+        "fstring",
+        "vals",
+        "reprlib",
+        "wsid"
       ]
     },
     {
       "filename": "sdk/confidentialledger/test-resources.bicep",
       "words": [
         "pysdkci"
+      ]
+    },
+    {
+      "filename": "sdk/mixedreality/azure-mixedreality-authentication/**",
+      "words": [
+        "Ijoi",
+        "Iiwid"
+      ]
+    },
+    {
+      "filename": "sdk/metricsadvisor/azure-ai-metricsadvisor/**",
+      "words": [
+        "POSTGRE",
+        "tolist",
+        "cond",
+        "conds",
+        "sumrollup",
+        "adreadonly",
+        "Shenzen",
+        "myusername"
       ]
     }
   ],

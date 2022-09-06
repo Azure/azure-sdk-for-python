@@ -1,5 +1,22 @@
 # Release History
 
+## 14.0.0 (2022-09-05)
+
+### Features Added
+
+  - Added operation group AsyncOperationStatusOperations
+  - Model ExportRDBParameters has a new parameter preferred_data_archive_auth_method
+  - Model ImportRDBParameters has a new parameter preferred_data_archive_auth_method
+  - Model RedisCommonPropertiesRedisConfiguration has a new parameter aof_backup_enabled
+  - Model RedisCommonPropertiesRedisConfiguration has a new parameter authnotrequired
+  - Model RedisCommonPropertiesRedisConfiguration has a new parameter zonal_configuration
+  - Model RedisPatchSchedule has a new parameter location
+
+### Breaking Changes
+
+  - Renamed operation LinkedServerOperations.delete to LinkedServerOperations.begin_delete
+  - Renamed operation RedisOperations.update to RedisOperations.begin_update
+
 ## 13.1.0 (2021-12-16)
 
 **Features**
