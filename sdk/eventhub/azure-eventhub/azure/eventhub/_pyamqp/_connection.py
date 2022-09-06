@@ -411,7 +411,10 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
             self._outgoing_open()
             self._set_state(ConnectionState.OPENED)
         else:
-            pass # TODO what now...?
+            self.close(error=AMQPError(
+                condition=ErrorCondition.IllegalState, 
+                description=f"connection is an illegal state: {self.state}"))
+            _LOGGER.error("connection is an illegal state: %r", self.state)
 
     def _outgoing_close(self, error=None):
         # type: (Optional[AMQPError]) -> None
@@ -506,10 +509,12 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
         """
         try:
             self._incoming_endpoints[channel]._incoming_end(frame)  # pylint:disable=protected-access
+            self._incoming_endpoints.pop(channel)
+            self._outgoing_endpoints.pop(channel)
         except KeyError:
-            pass  # TODO: channel error
-        #self._incoming_endpoints.pop(channel)  # TODO If we don't clean up channels - this will
-        #self._outgoing_endpoints.pop(channel)  # TODO eventually crash
+            end_error = AMQPError(condition=ErrorCondition.InvalidField, description=f"Invalid channel {channel}", info=None)
+            _LOGGER.error(f"Invalid channel {channel} ")
+            self.close(error=end_error)
 
     def _process_incoming_frame(self, channel, frame): # pylint:disable=too-many-return-statements
         # type: (int, Optional[Union[bytes, Tuple[int, Tuple[Any, ...]]]]) -> bool
