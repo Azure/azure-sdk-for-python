@@ -101,7 +101,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                 for key, field in doc_type.field_schema.items():
                     assert key
                     assert field["type"]
-                assert doc_type.field_confidence is None
+                assert doc_type.field_confidence == {}
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()

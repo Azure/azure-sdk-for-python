@@ -39,7 +39,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         <=v2.1, instantiate a FormRecognizerClient.
     :paramtype api_version: str or ~azure.ai.formrecognizer.DocumentAnalysisApiVersion
 
-    .. versionadded:: 2021-09-30-preview
+    .. versionadded:: 2022-08-31
         The *DocumentAnalysisClient* and its client methods.
 
     .. admonition:: Example:
