@@ -82,7 +82,7 @@ def empty_challenge_cache(fn):
 def get_random_url():
     """The challenge cache is keyed on URLs. Random URLs defend against tests interfering with each other."""
 
-    return "https://{}/{}".format(uuid4(), uuid4()).replace("-", "")
+    return "https://{}.vault.azure.net/{}".format(uuid4(), uuid4()).replace("-", "")
 
 
 def test_enforces_tls():
@@ -170,7 +170,7 @@ def test_scope():
     endpoint = "https://authority.net/tenant"
 
     # an AADv1 resource becomes an AADv2 scope with the addition of '/.default'
-    resource = "https://challenge.resource"
+    resource = "https://vault.azure.net"
     scope = resource + "/.default"
 
     challenge_with_resource = Mock(
@@ -227,10 +227,11 @@ def test_tenant():
 
     tenant = "tenant-id"
     endpoint = "https://authority.net/{}".format(tenant)
+    resource = "https://vault.azure.net"
 
     challenge = Mock(
         status_code=401,
-        headers={"WWW-Authenticate": 'Bearer authorization="{}", resource=https://challenge.resource'.format(endpoint)},
+        headers={"WWW-Authenticate": f'Bearer authorization="{endpoint}", resource={resource}'},
     )
 
     test_with_challenge(challenge, tenant)
@@ -243,9 +244,9 @@ def test_policy_updates_cache():
     """
 
     url = get_random_url()
-    first_scope = "https://first-scope"
+    first_scope = "https://vault.azure.net/first-scope"
     first_token = "first-scope-token"
-    second_scope = "https://second-scope"
+    second_scope = "https://vault.azure.net/second-scope"
     second_token = "second-scope-token"
     challenge_fmt = 'Bearer authorization="https://login.authority.net/tenant", resource={}'
 
@@ -299,6 +300,7 @@ def test_token_expiration():
     expires_on = time.time() + 3600
     first_token = "*"
     second_token = "**"
+    resource = "https://vault.azure.net"
 
     token = AccessToken(first_token, expires_on)
 
@@ -315,7 +317,7 @@ def test_token_expiration():
         ],
         responses=[
             mock_response(
-                status_code=401, headers={"WWW-Authenticate": 'Bearer authorization="{}", resource=foo'.format(url)}
+                status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
             )
         ]
         + [mock_response()] * 3,
@@ -338,6 +340,7 @@ def test_preserves_options_and_headers():
 
     url = get_random_url()
     token = "**"
+    resource = "https://vault.azure.net"
 
     def get_token(*_, **__):
         return AccessToken(token, 0)
@@ -348,7 +351,7 @@ def test_preserves_options_and_headers():
         requests=[Request()] * 2 + [Request(required_headers={"Authorization": "Bearer " + token})],
         responses=[
             mock_response(
-                status_code=401, headers={"WWW-Authenticate": 'Bearer authorization="{}", resource=foo'.format(url)}
+                status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
             )
         ]
         + [mock_response()] * 2,
