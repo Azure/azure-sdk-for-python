@@ -198,4 +198,4 @@ def test_proxy(request) -> None:
         # Everything before this yield will be run before fixtures that invoke this one are run
         # Everything after it will be run after invoking fixtures are done executing
         yield
-        stop_test_proxy(request)
+        stop_test_proxy()
