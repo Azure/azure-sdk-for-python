@@ -47,6 +47,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from uamqp import Message as uamqp_Message
     from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+    from ._pyamqp.message import Message
+    from ._pyamqp.authentication import JWTTokenAuth
 
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
@@ -167,7 +169,7 @@ def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
     if retry_mode == RetryMode.Fixed:
         backoff_value = backoff_factor
     else:
-        backoff_value = backoff_factor * (2**retried_times)
+        backoff_value = backoff_factor * (2 ** retried_times)
     return min(backoff_max, backoff_value)
 
 
@@ -327,7 +329,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
-    def _create_auth(self) -> uamqp_JWTTokenAuth:
+    def _create_auth(self) -> Union[uamqp_JWTTokenAuth, JWTTokenAuth]:
         """
         Create an ~uamqp.authentication.SASTokenAuth instance
          to authenticate the session.
@@ -386,7 +388,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             raise last_exception
 
     def _management_request(
-        self, mgmt_msg: uamqp_Message, op_type: bytes
+        self, mgmt_msg: Union[uamqp_Message, Message], op_type: bytes
     ) -> Any:
         # pylint:disable=assignment-from-none
         retried_times = 0

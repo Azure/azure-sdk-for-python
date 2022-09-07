@@ -24,10 +24,17 @@ from ._client_base_async import ConsumerProducerMixin
 from ._async_utils import get_dict_with_loop_if_needed
 
 if TYPE_CHECKING:
-    from uamqp import types, constants, errors
-    from uamqp import SendClientAsync
-
-    from uamqp.authentication import JWTTokenAsync  # pylint: disable=ungrouped-imports
+    try:
+        from uamqp import constants, SendClientAsync as uamqp_SendClientAsync
+        from uamqp.constants import MessageSendResult as uamqp_MessageSendResult
+        from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAsync
+    except ImportError:
+        uamqp_MessageSendResult = None
+        uamqp_SendClientAsync = None
+        uamqp_JWTTokenAsync = None
+    
+    from .._pyamqp.aio._client_async import SendClientAsync
+    from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
     from ._producer_client_async import EventHubProducerClient
 
 _LOGGER = logging.getLogger(__name__)
@@ -94,8 +101,8 @@ class EventHubProducer(
         if partition:
             self._target += "/Partitions/" + partition
             self._name += "-partition{}".format(partition)
-        self._handler: Optional[SendClientAsync] = None
-        self._outcome: Optional[constants.MessageSendResult] = None
+        self._handler: Optional[Union[uamqp_SendClientAsync, SendClientAsync]] = None
+        self._outcome: Optional[uamqp_MessageSendResult] = None
         self._condition: Optional[Exception] = None
         self._lock = asyncio.Lock(**self._internal_kwargs)
         self._link_properties = self._amqp_transport.create_link_properties(
@@ -103,7 +110,7 @@ class EventHubProducer(
         )
 
 
-    def _create_handler(self, auth: "JWTTokenAsync") -> None:
+    def _create_handler(self, auth: Union[uamqp_JWTTokenAsync, JWTTokenAuthAsync]) -> None:
         self._handler = self._amqp_transport.create_send_client(
             config=self._client._config,  # pylint:disable=protected-access
             target=self._target,
@@ -118,7 +125,7 @@ class EventHubProducer(
                 self._client._config.user_agent,  # pylint: disable=protected-access
                 amqp_transport=self._amqp_transport,
             ),
-            msg_timeout=self._timeout * 1000,
+            msg_timeout=self._timeout * self._amqp_transport.TIMEOUT_FACTOR,
         )
 
     async def _open_with_retry(self) -> Any:
@@ -142,7 +149,7 @@ class EventHubProducer(
         await self._do_retryable_operation(self._send_event_data, timeout=timeout)
 
     def _on_outcome(
-        self, outcome: constants.MessageSendResult, condition: Optional[Exception]
+        self, outcome: uamqp_MessageSendResult, condition: Optional[Exception]
     ) -> None:
         """
         Called when the outcome is received for a delivery.

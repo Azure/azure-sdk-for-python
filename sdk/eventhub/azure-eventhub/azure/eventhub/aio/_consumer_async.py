@@ -18,9 +18,20 @@ from .._constants import EPOCH_SYMBOL, TIMEOUT_SYMBOL, RECEIVER_RUNTIME_METRIC_S
 
 if TYPE_CHECKING:
     from typing import Deque
-    import uamqp
-    from uamqp import ReceiveClientAsync, Source, types
-    from uamqp.authentication import JWTTokenAsync
+    try:
+        from uamqp import ReceiveClientAsync as uamqp_ReceiveClientAsync, Message as uamqp_Message
+        from uamqp.types import AMQPType as uamqp_AMQPType
+        from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAsync
+    except ImportError:
+        uamqp_Message = None
+        uamqp_ReceiveClientAsync = None
+        uamqp_AMQPType = None
+        uamqp_JWTTokenAsync = None
+        
+    from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
+    from .._pyamqp.aio._client_async import ReceiveClientAsync
+    from .._pyamqp import types
+
     from ._consumer_client_async import EventHubConsumerClient
 
 _LOGGER = logging.getLogger(__name__)
@@ -94,7 +105,7 @@ class EventHubConsumer(
         self._reconnect_backoff = 1
         self._timeout = 0
         self._idle_timeout = (idle_timeout * self._amqp_transport.TIMEOUT_FACTOR) if idle_timeout else None
-        link_properties: Dict[types.AMQPType, types.AMQPType] = {}
+        link_properties: Union[Dict[uamqp_AMQPType, uamqp_AMQPType], Dict[types.AMQPTypes, types.AMQPTypes]] = {}
         self._partition = self._source.split("/")[-1]
         self._name = f"EHReceiver-{uuid.uuid4()}-partition{self._partition}"
         if owner_level is not None:
@@ -109,13 +120,13 @@ class EventHubConsumer(
         self._track_last_enqueued_event_properties = (
             track_last_enqueued_event_properties
         )
-        self._message_buffer: Deque[uamqp.Message] = deque()
+        self._message_buffer: Deque[uamqp_Message] = deque()
         self._last_received_event: Optional[EventData] = None
         self._message_buffer_lock = asyncio.Lock()
         self._last_callback_called_time = None
         self._callback_task_run = None
 
-    def _create_handler(self, auth: JWTTokenAsync) -> None:
+    def _create_handler(self, auth: Union[uamqp_JWTTokenAsync, JWTTokenAuthAsync]) -> None:
         source = self._amqp_transport.create_source(
             self._source,
             self._offset,

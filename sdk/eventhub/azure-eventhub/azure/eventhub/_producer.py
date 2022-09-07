@@ -33,8 +33,16 @@ _LOGGER = logging.getLogger(__name__)
 if TYPE_CHECKING:
     from azure.core.tracing import AbstractSpan
 
-    from uamqp import constants as uamqp_constants, SendClient as uamqp_SendClient
-    from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+    try:
+        from uamqp import SendClient as uamqp_SendClient
+        from uamqp.constants import MessageSendResult as uamqp_MessageSendResult
+        from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+    except ImportError:
+        uamqp_MessageSendResult = None
+        uamqp_SendClient = None
+        uamqp_JWTTokenAuth = None
+    from ._pyamqp.client import SendClient
+    from ._pyamqp.authentication import JWTTokenAuth
     from ._transport._base import AmqpTransport
     from ._producer_client import EventHubProducerClient
 
@@ -120,8 +128,8 @@ class EventHubProducer(
         if partition:
             self._target += "/Partitions/" + partition
             self._name += f"-partition{partition}"
-        self._handler: Optional[uamqp_SendClient] = None
-        self._outcome: Optional[uamqp_constants.MessageSendResult] = None
+        self._handler: Optional[Union[uamqp_SendClient, SendClient]] = None
+        self._outcome: Optional[uamqp_MessageSendResult] = None
         self._condition: Optional[Exception] = None
         self._lock = threading.Lock()
         self._link_properties = self._amqp_transport.create_link_properties(
@@ -129,7 +137,7 @@ class EventHubProducer(
         )
 
     def _create_handler(
-        self, auth: uamqp_JWTTokenAuth
+        self, auth: Union[uamqp_JWTTokenAuth, JWTTokenAuth]
     ) -> None:
         self._handler = self._amqp_transport.create_send_client(
             config=self._client._config,  # pylint:disable=protected-access
@@ -145,7 +153,7 @@ class EventHubProducer(
                 self._client._config.user_agent,  # pylint: disable=protected-access
                 amqp_transport=self._amqp_transport,
             ),
-            msg_timeout=self._timeout * 1000,
+            msg_timeout=self._timeout * self._amqp_transport.TIMEOUT_FACTOR,
         )
 
     def _open_with_retry(self) -> None:
@@ -153,7 +161,7 @@ class EventHubProducer(
 
     def _on_outcome(
         self,
-        outcome: "uamqp_constants.MessageSendResult",
+        outcome: uamqp_MessageSendResult,
         condition: Optional[Exception],
     ) -> None:
         """

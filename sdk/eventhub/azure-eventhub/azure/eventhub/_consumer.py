@@ -8,7 +8,7 @@ import time
 import uuid
 import logging
 from collections import deque
-from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque
+from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque, Union
 
 from ._common import EventData
 from ._client_base import ConsumerProducerMixin
@@ -20,9 +20,19 @@ from ._constants import (
 )
 
 if TYPE_CHECKING:
-    from uamqp import ReceiveClient as uamqp_ReceiveClient, Message as uamqp_Message, types as uamqp_types
-    from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
-
+    try:
+        from uamqp import ReceiveClient as uamqp_ReceiveClient, Message as uamqp_Message
+        from uamqp.types import AMQPType as uamqp_AMQPType
+        from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+    except ImportError:
+        uamqp_ReceiveClient = None
+        uamqp_Message = None
+        uamqp_AMQPType = None
+        uamqp_JWTTokenAuth = None
+    from ._pyamqp import types
+    from ._pyamqp.client import ReceiveClient
+    from ._pyamqp.message import Message
+    from ._pyamqp.authentication import JWTTokenAuth
     from ._consumer_client import EventHubConsumerClient
 
 
@@ -49,7 +59,7 @@ class EventHubConsumer(
     :param client: The parent EventHubConsumerClient.
     :type client: ~azure.eventhub.EventHubConsumerClient
     :param source: The source EventHub from which to receive events.
-    :type source: ~uamqp.address.Source
+    :type source: ~azure.eventhub._pyamqp.endpoints.Source or ~uamqp.address.Source
     :keyword event_position: The position from which to start receiving.
     :paramtype event_position: int, str, datetime.datetime
     :keyword int prefetch: The number of events to prefetch from the service
@@ -95,7 +105,7 @@ class EventHubConsumer(
         self._auto_reconnect = auto_reconnect
         self._retry_policy = self._amqp_transport.create_retry_policy(self._client._config)
         self._reconnect_backoff = 1
-        link_properties: Dict[uamqp_types.AMQPType, uamqp_types.AMQPType] = {}
+        link_properties: Union[Dict[uamqp_AMQPType, uamqp_AMQPType], Dict[types.AMQPTypes, types.AMQPTypes]] = {}
         self._error = None
         self._timeout = 0
         self._idle_timeout = (idle_timeout * self._amqp_transport.TIMEOUT_FACTOR) if idle_timeout else None
@@ -108,7 +118,7 @@ class EventHubConsumer(
         ) * self._amqp_transport.TIMEOUT_FACTOR
         link_properties[TIMEOUT_SYMBOL] = int(link_property_timeout_ms)
         self._link_properties = self._amqp_transport.create_link_properties(link_properties)
-        self._handler: Optional[uamqp_ReceiveClient] = None
+        self._handler: Optional[Union[uamqp_ReceiveClient, ReceiveClient]] = None
         self._track_last_enqueued_event_properties = (
             track_last_enqueued_event_properties
         )
@@ -116,7 +126,7 @@ class EventHubConsumer(
         self._last_received_event: Optional[EventData] = None
         self._receive_start_time: Optional[float]= None
 
-    def _create_handler(self, auth: uamqp_JWTTokenAuth) -> None:
+    def _create_handler(self, auth: Union[uamqp_JWTTokenAuth, JWTTokenAuth]) -> None:
         source = self._amqp_transport.create_source(
             self._source,
             self._offset,
@@ -147,7 +157,7 @@ class EventHubConsumer(
     def _open_with_retry(self) -> None:
         self._do_retryable_operation(self._open, operation_need_param=False)
 
-    def _message_received(self, message: uamqp_Message) -> None:
+    def _message_received(self, message: Union[uamqp_Message, Message]) -> None:
         # pylint:disable=protected-access
         self._message_buffer.append(message)
 

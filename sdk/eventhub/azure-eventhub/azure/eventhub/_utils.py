@@ -30,7 +30,6 @@ from typing import (
 )
 
 import six
-from uamqp import types as uamqp_types
 
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind, Link
@@ -51,6 +50,11 @@ from ._constants import (
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
     from ._transport._base import AmqpTransport
+    try:
+        from uamqp import types as uamqp_types
+    except ImportError:
+        uamqp_types = None
+    from ._pyamqp import types
     from azure.core.tracing import AbstractSpan
     from azure.core.credentials import AzureSasCredential
     from ._common import EventData
@@ -94,7 +98,7 @@ def utc_from_timestamp(timestamp):
 
 def create_properties(
     user_agent: Optional[str] = None, *, amqp_transport: AmqpTransport
-) -> Dict[uamqp_types.AMQPSymbol, str]:
+) -> Union[Dict[uamqp_types.AMQPSymbol, str], Dict[str, str]]:
     """
     Format the properties with which to instantiate the connection.
     This acts like a user agent over HTTP.

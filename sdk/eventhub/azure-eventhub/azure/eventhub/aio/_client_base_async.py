@@ -41,11 +41,16 @@ if TYPE_CHECKING:
     from .._pyamqp.message import Message
     from .._pyamqp.aio import AMQPClientAsync
     from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
-    from uamqp import (
-        authentication as uamqp_authentication,
-        Message as uamqp_Message,
-        AMQPClientAsync as uamqp_AMQPClientAsync,
-    )
+    try:
+        from uamqp import (
+            authentication as uamqp_authentication,
+            Message as uamqp_Message,
+            AMQPClientAsync as uamqp_AMQPClientAsync,
+        )
+    except ImportError:
+        uamqp_authentication = None
+        uamqp_Message = None
+        uamqp_AMQPClientAsync = None
     from azure.core.credentials_async import AsyncTokenCredential
 
     CredentialTypes = Union[
