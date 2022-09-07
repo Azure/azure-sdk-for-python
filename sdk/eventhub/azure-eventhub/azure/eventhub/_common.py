@@ -58,7 +58,11 @@ from ._transport._pyamqp_transport import PyamqpTransport
 from ._transport._uamqp_transport import UamqpTransport
 
 if TYPE_CHECKING:
-    from uamqp import Message as uamqp_Message, BatchMessage as uamqp_BatchMessage
+    try:
+        from uamqp import Message as uamqp_Message, BatchMessage as uamqp_BatchMessage
+    except ImportError:
+        uamqp_Message = None
+        uamqp_BatchMessage = None
     from ._transport._base import AmqpTransport
 
 MessageContent = TypedDict("MessageContent", {"content": bytes, "content_type": str})
@@ -128,7 +132,6 @@ class EventData(object):
             data_body=body, annotations={}, application_properties={}
         )
         self._uamqp_message = None
-        # amqp message to be reset right before sending
         self._message = None
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
@@ -213,7 +216,7 @@ class EventData(object):
     @classmethod
     def _from_message(
         cls,
-        message: uamqp_Message,
+        message: Union[uamqp_Message, Message],
         raw_amqp_message: Optional[AmqpAnnotatedMessage] = None,
     ) -> EventData:
         # pylint:disable=protected-access
@@ -257,10 +260,7 @@ class EventData(object):
 
     @message.setter
     def message(self, value: "uamqp_Message") -> None:
-        self._uamqp_message = LegacyMessage(
-            AmqpAnnotatedMessage(message=value),
-            to_outgoing_amqp_message=PyamqpTransport().to_outgoing_amqp_message,
-        )
+        self._uamqp_message = value
 
     @property
     def raw_amqp_message(self) -> AmqpAnnotatedMessage:
@@ -528,7 +528,6 @@ class EventDataBatch(object):
 
         self._partition_id = partition_id
         self._partition_key = partition_key
-        self._uamqp_message = None
 
         self._message = self._amqp_transport.build_batch_message(data=[])
         self._message = self._amqp_transport.set_message_partition_key(
@@ -543,6 +542,7 @@ class EventDataBatch(object):
         self._internal_events: List[
             Union[EventData, AmqpAnnotatedMessage]
         ] = []
+        self._uamqp_message = None if PyamqpTransport.TIMEOUT_FACTOR == self._amqp_transport.TIMEOUT_FACTOR else self._message
 
     def __repr__(self) -> str:
         batch_repr = (
@@ -593,12 +593,15 @@ class EventDataBatch(object):
                 )
     
     @property
-    def message(self) -> Union["uamqp_BatchMessage", BatchMessage]:
-        return self._message
+    def message(self) -> Union["uamqp_BatchMessage", LegacyBatchMessage]:
+        if not self._uamqp_message:
+            message = AmqpAnnotatedMessage(message=Message(*self._message))
+            self._uamqp_message = LegacyBatchMessage(message, to_outgoing_amqp_message=PyamqpTransport().to_outgoing_amqp_message)
+        return self._uamqp_message
 
     @message.setter
-    def message(self, value: Union["uamqp_BatchMessage", BatchMessage]) -> None:
-        self._message = value
+    def message(self, value: "uamqp_BatchMessage") -> None:
+        self._uamqp_message = value
 
     @property
     def size_in_bytes(self) -> int:

@@ -243,3 +243,83 @@ def test_amqp_message_from_message(uamqp_transport):
     assert amqp_message.header.durable == message.header.durable
     assert amqp_message.header.priority == message.header.priority
     assert amqp_message.annotations == message.message_annotations
+
+def test_legacy_message(uamqp_transport):
+    if uamqp_transport:
+        header = uamqp.message.MessageHeader()
+        header.delivery_count = 1
+        header.time_to_live = 10000
+        header.first_acquirer = True
+        header.durable = True
+        header.priority = 1
+        properties = uamqp.message.MessageProperties()
+        properties.message_id = "message_id"
+        properties.user_id = "user_id"
+        properties.to = "to"
+        properties.subject = "subject"
+        properties.reply_to = "reply_to"
+        properties.correlation_id = "correlation_id"
+        properties.content_type = "content_type"
+        properties.content_encoding = "content_encoding"
+        properties.absolute_expiry_time = 1
+        properties.creation_time = 1
+        properties.group_id = "group_id"
+        properties.group_sequence = 1
+        properties.reply_to_group_id = "reply_to_group_id"
+        message = uamqp.message.Message(body=b'abc', header=header, properties=properties)
+        message.annotations = {_common.PROP_OFFSET: "@latest"}
+        amqp_transport = UamqpTransport
+    else:
+        header = Header(
+            delivery_count=1,
+            ttl=10000,
+            first_acquirer=True,
+            durable=True,
+            priority=1
+        )
+        properties = Properties(
+            message_id="message_id",
+            user_id="user_id",
+            to="to",
+            subject="subject",
+            reply_to="reply_to",
+            correlation_id="correlation_id",
+            content_type="content_type",
+            content_encoding="content_encoding",
+            absolute_expiry_time=1,
+            creation_time=1,
+            group_id="group_id",
+            group_sequence=1,
+            reply_to_group_id="reply_to_group_id"
+        )
+        message_annotations = {_common.PROP_OFFSET: "@latest"}
+        message = Message(data=b'abc', properties=properties, header=header, message_annotations=message_annotations)
+        amqp_transport = PyamqpTransport
+    event_data = EventData._from_message(message=message)
+    assert event_data.message.properties.user_id == b'user_id'
+    assert event_data.message.properties.message_id == b'message_id'
+    assert event_data.message.properties.to == b'to'
+    assert event_data.message.properties.subject == b'subject'
+    assert event_data.message.properties.reply_to == b"reply_to"
+    assert event_data.message.properties.correlation_id == b"correlation_id"
+    assert event_data.message.properties.content_type == b"content_type"
+    assert event_data.message.properties.content_encoding == b"content_encoding"
+    assert event_data.message.properties.absolute_expiry_time == 1
+    assert event_data.message.properties.creation_time == 1
+    assert event_data.message.properties.group_id == b"group_id"
+    assert event_data.message.properties.group_sequence == 1
+    assert event_data.message.properties.reply_to_group_id == b"reply_to_group_id"
+    assert event_data.message.state.value == 2
+    assert event_data.message.delivery_annotations == {}
+    assert event_data.message.delivery_no is None
+    assert event_data.message.delivery_tag is None
+    assert event_data.message.on_send_complete is None
+    assert event_data.message.footer == {}
+    assert event_data.message.retries == 0
+    assert event_data.message.idle_time == 0
+
+    event_data_batch = EventDataBatch(partition_key=b'par', partition_id='1', amqp_transport=amqp_transport)
+    event_data_batch.add(event_data)
+    assert event_data_batch.message.max_message_length == 1024 * 1024
+    assert event_data_batch.message.size_offset == 0
+    assert event_data_batch.message.batch_format == 0x80013700

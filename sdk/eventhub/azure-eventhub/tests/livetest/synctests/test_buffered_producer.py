@@ -516,6 +516,7 @@ def test_long_wait_small_buffer(connection_str, uamqp_transport):
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True
     receive_thread.start()
+    time.sleep(10)
 
     sent_events = defaultdict(list)
 
