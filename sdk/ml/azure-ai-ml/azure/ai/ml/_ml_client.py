@@ -4,6 +4,8 @@
 
 # pylint: disable=client-accepts-api-version-keyword,too-many-statements,too-many-instance-attributes
 
+# developing in azure-sdk-for-python is way cooler than in sdk-cli-v2
+
 import json
 import logging
 from functools import singledispatch
