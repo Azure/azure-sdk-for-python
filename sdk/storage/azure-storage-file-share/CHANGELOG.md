@@ -230,7 +230,7 @@ the following APIs:
   - `path` (str): The full path of the file.
   - `share` (str): The share the file will be downloaded from.
   - `properties` (`FileProperties`): The properties of the file.
-  - `size` (int): The size of the download. Either the total file size, or the length of a subsection if sepcified. Previously called `download_size`.
+  - `size` (int): The size of the download. Either the total file size, or the length of a subsection if specified. Previously called `download_size`.
 - `StorageStreamDownloader` now has new functions:
   - `readall()`: Reads the complete download stream, returning bytes. This replaces the functions `content_as_bytes` and `content_as_text` which have been deprecated.
   - `readinto(stream)`: Download the complete stream into the supplied writable stream, returning the number of bytes written. This replaces the function `download_to_stream` which has been deprecated.
