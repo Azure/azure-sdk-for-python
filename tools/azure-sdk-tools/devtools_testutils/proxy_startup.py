@@ -69,7 +69,6 @@ def ascend_to_root(start_dir_or_file: str) -> str:
     while current_dir is not None and not (os.path.dirname(current_dir) == current_dir):
         possible_root = os.path.join(current_dir, ".git")
 
-        # we need to check for assets.json first!
         # we need the git check to prevent ascending out of the repo
         if os.path.exists(possible_root):
             return current_dir
