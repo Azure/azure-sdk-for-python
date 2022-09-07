@@ -94,9 +94,12 @@ class VariableRecorder:
         return self.variables.setdefault(variable, default)
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def environment_variables(test_proxy: None) -> EnvironmentVariableSanitizer:
     """Fixture that returns an EnvironmentVariableSanitizer for convenient environment variable fetching and sanitizing.
+
+    This fixture is session-scoped, so a single instance of EnvironmentVariableSanitizer is shared across all
+    tests using this fixture in the test session.
 
     :param test_proxy: The fixture responsible for starting up the test proxy server.
     :type test_proxy: None
