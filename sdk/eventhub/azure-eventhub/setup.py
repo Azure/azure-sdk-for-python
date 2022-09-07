@@ -69,7 +69,6 @@ setup(
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
         "azure-core<2.0.0,>=1.14.0",
-        "uamqp>=1.6.0,<2.0.0",  # TODO: remove and prob move to extra_requires
         "typing-extensions>=4.0.1",
     ]
 )

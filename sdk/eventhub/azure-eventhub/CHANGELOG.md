@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Added the `uamqp_transport` optional parameter to the clients, to allow switching to the `uamqp` library as the transport.
+
 ## 5.8.0a5 (2022-07-19)
 
 ### Bugs Fixed

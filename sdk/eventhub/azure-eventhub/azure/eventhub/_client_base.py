@@ -5,6 +5,7 @@
 from __future__ import unicode_literals, annotations
 
 import logging
+from multiprocessing.sharedctypes import Value
 import uuid
 import time
 import functools
@@ -26,7 +27,10 @@ from azure.core.utils import parse_connection_string as core_parse_connection_st
 from azure.core.pipeline.policies import RetryMode
 
 
-from ._transport._uamqp_transport import UamqpTransport
+try:
+    from ._transport._uamqp_transport import UamqpTransport
+except ImportError:
+    UamqpTransport = None
 from ._transport._pyamqp_transport import PyamqpTransport
 from .exceptions import ClientClosedError
 from ._configuration import Configuration
@@ -286,6 +290,8 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         **kwargs: Any,
     ) -> None:
         uamqp_transport = kwargs.pop("uamqp_transport", False)
+        if uamqp_transport and not UamqpTransport:
+            raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.0,<2.0.0`.")
         self._amqp_transport = kwargs.pop("amqp_transport", UamqpTransport if uamqp_transport else PyamqpTransport)
 
         self.eventhub_name = eventhub_name

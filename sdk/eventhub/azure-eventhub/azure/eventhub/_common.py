@@ -55,7 +55,10 @@ from .amqp import (
 from ._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
 from ._pyamqp.message import Message, BatchMessage
 from ._transport._pyamqp_transport import PyamqpTransport
-from ._transport._uamqp_transport import UamqpTransport
+try:
+    from ._transport._uamqp_transport import UamqpTransport
+except ImportError:
+    UamqpTransport = None
 
 if TYPE_CHECKING:
     try:

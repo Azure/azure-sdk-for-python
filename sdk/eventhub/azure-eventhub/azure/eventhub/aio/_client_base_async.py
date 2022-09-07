@@ -34,7 +34,10 @@ from .._constants import (
 )
 from ._async_utils import get_dict_with_loop_if_needed
 from ._connection_manager_async import get_connection_manager
-from ._transport._uamqp_transport_async import UamqpTransportAsync
+try:
+    from ._transport._uamqp_transport_async import UamqpTransportAsync
+except ImportError:
+    UamqpTransportAsync = None
 from ._transport._pyamqp_transport_async import PyamqpTransportAsync
 
 if TYPE_CHECKING:
@@ -213,6 +216,8 @@ class ClientBaseAsync(ClientBase):
     ) -> None:
         self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))
         uamqp_transport = kwargs.pop("uamqp_transport", False)
+        if uamqp_transport and not UamqpTransportAsync:
+            raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.0,<2.0.0`.")
         self._amqp_transport = UamqpTransportAsync if uamqp_transport else PyamqpTransportAsync
         if isinstance(credential, AzureSasCredential):
             self._credential = EventhubAzureSasTokenCredentialAsync(credential)  # type: ignore

@@ -20,8 +20,9 @@ from azure.eventhub._pyamqp import ReceiveClient
 from azure.eventhub._pyamqp.authentication import SASTokenAuth
 try:
     import uamqp
+    uamqp_transport_params = [True, False]
 except ImportError:
-    pass
+    uamqp_transport_params = [False]
 
 from devtools_testutils import get_region_override
 
@@ -46,7 +47,7 @@ def sleep(request):
     sleep = request.config.getoption("--sleep")
     return sleep.lower() in ('true', 'yes', '1', 'y')
 
-@pytest.fixture(scope="session", params=[True, False])
+@pytest.fixture(scope="session", params=uamqp_transport_params)
 def uamqp_transport(request):
     return request.param
 
