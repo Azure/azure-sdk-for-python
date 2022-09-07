@@ -55,7 +55,7 @@ async def analyze_identity_documents_async():
         id_documents = await poller.result()
 
     for idx, id_document in enumerate(id_documents.documents):
-        print("--------Recognizing ID document #{}--------".format(idx + 1))
+        print("--------Analyzing ID document #{}--------".format(idx + 1))
         first_name = id_document.fields.get("FirstName")
         if first_name:
             print(

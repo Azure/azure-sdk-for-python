@@ -17,8 +17,6 @@ urlFragment: formrecognizer-samples
 
 These code samples show common scenario operations with the Azure Form Recognizer client library.
 
-These sample programs show common scenarios for the Form Recognizer client's offerings.
-
 All of these samples need the endpoint to your Form Recognizer resource ([instructions on how to get endpoint][get-endpoint-instructions]), and your Form Recognizer API key ([instructions on how to get key][get-key-instructions]).
 
 ## Samples for client library versions 3.2.0 and later
