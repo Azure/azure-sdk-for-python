@@ -75,7 +75,7 @@ def ascend_to_root(start_dir_or_file: str) -> str:
         else:
             current_dir = os.path.dirname(current_dir)
 
-    raise Exception('Requested target "{}" does not exist within a git repo.'.format(start_dir_or_file))
+    raise Exception(f'Requested target "{start_dir_or_file}" does not exist within a git repo.')
 
 
 def delete_container() -> None:
