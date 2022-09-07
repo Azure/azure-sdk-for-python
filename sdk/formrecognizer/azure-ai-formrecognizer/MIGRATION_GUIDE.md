@@ -52,8 +52,8 @@ Please refer to the [README][readme] for more information on these new clients.
 
 Some terminology has changed to reflect the enhanced capabilities of the newest Form Recognizer service APIs. While the service is still called `Form Recognizer`, it is capable of much more than simple recognition and is not limited to documents that are `forms`. As a result, we've made the following broad changes to the terminology used throughout the SDK:
 
-- The word `Document` has broadly replaced the word `Form.` The service supports a wide variety of documents and data-extraction scenarios, not merely limited to `forms.`
-- The word `Analyze` has broadly replaced the word `Recognize.` The document analysis operation executes a data extraction pipeline that supports more than just recognition.
+- The word `Document` has broadly replaced the word `Form.` The service supports a wide variety of documents and data-extraction scenarios, not merely limited to `forms`.
+- The word `Analyze` has broadly replaced the word `Recognize`. The document analysis operation executes a data extraction pipeline that supports more than just recognition.
 - Distinctions between `custom` and `prebuilt` models have broadly been eliminated. Prebuilt models are simply models that were created by the Form Recognizer service team and that exist within every Form Recognizer resource.
 - The concept of `model training` has broadly been replaced with `model creation`, `building a model`, or `model administration` (whatever is most appropriate in context), as not all model creation operations involve `training` a model from a data set. When referring to a model schema trained from a data set, we will use the term `document type` instead.
 
@@ -106,7 +106,7 @@ document_model_admin_client = DocumentModelAdministrationClient(
 Differences between the versions:
 - `begin_analyze_document` and `begin_analyze_document_from_url` accept a string with the desired model ID for analysis. The model ID can be any of the prebuilt model IDs or a custom model ID.
 - Along with more consolidated analysis methods in the `DocumentAnalysisClient`, the return types have also been improved and remove the hierarchical dependencies between elements. An instance of the `AnalyzeResult` model is now returned which showcases important document elements, such as key-value pairs, tables, and document fields and values, among others, at the top level of the returned model. This can be contrasted with `RecognizedForm` which included more hierarchical relationships, for instance tables were an element of a `FormPage` and not a top-level element.
-- In the new version of the library, the functionality of `begin_recognize_content` has been added as a prebuilt model and can be called in library version `azure-ai-formrecognizer (3.2.x)` with `begin_analyze_document` by passing in the `prebuilt-layout` model ID. Similarly, to get general document information, such as key-value pairs and text layout, the `prebuilt-document` model ID can be used with `begin_analyze_document`. Additionally, passing in the `prebuilt-read` model was added to read information about pages and detected languages.
+- In the new version of the library, the functionality of `begin_recognize_content` has been added as a prebuilt model and can be called in library version `azure-ai-formrecognizer (3.2.x)` with `begin_analyze_document` by passing in the `prebuilt-layout` model ID. Similarly, to get general document information, such as key-value pairs and text layout, the `prebuilt-document` model ID can be used with `begin_analyze_document`. Additionally, the `prebuilt-read` model was added to read information about pages and detected languages.
 - When calling `begin_analyze_document` and `begin_analyze_document_from_url` the returned type is an `AnalyzeResult` object, while the various methods used with `FormRecognizerClient` return a list of `RecognizedForm`.
 - The `pages` keyword argument is a string with library version `azure-ai-formrecognizer (3.2.x)`. In `azure-ai-formrecognizer (3.1.x)`, `pages` was a list of strings.
 - The `include_field_elements` keyword argument is not supported with the `DocumentAnalysisClient`, text details are automatically included with API version `2022-08-31` and later.
@@ -169,14 +169,8 @@ with open(path_to_sample_documents, "rb") as f:
 receipts = poller.result()
 
 for idx, receipt in enumerate(receipts.documents):
-    print("--------Recognizing receipt #{}--------".format(idx + 1))
-    receipt_type = receipt.fields.get("ReceiptType")
-    if receipt_type:
-        print(
-            "Receipt Type: {} has confidence: {}".format(
-                receipt_type.value, receipt_type.confidence
-            )
-        )
+    print("--------Analysis of receipt #{}--------".format(idx + 1))
+    print("Receipt type: {}".format(receipt.doc_type or "N/A"))
     merchant_name = receipt.fields.get("MerchantName")
     if merchant_name:
         print(
@@ -195,11 +189,11 @@ for idx, receipt in enumerate(receipts.documents):
         print("Receipt items:")
         for idx, item in enumerate(receipt.fields.get("Items").value):
             print("...Item #{}".format(idx + 1))
-            item_name = item.value.get("Name")
-            if item_name:
+            item_description = item.value.get("Description")
+            if item_description:
                 print(
-                    "......Item Name: {} has confidence: {}".format(
-                        item_name.value, item_name.confidence
+                    "......Item Description: {} has confidence: {}".format(
+                        item_description.value, item_description.confidence
                     )
                 )
             item_quantity = item.value.get("Quantity")
@@ -230,9 +224,9 @@ for idx, receipt in enumerate(receipts.documents):
                 subtotal.value, subtotal.confidence
             )
         )
-    tax = receipt.fields.get("Tax")
+    tax = receipt.fields.get("TotalTax")
     if tax:
-        print("Tax: {} has confidence: {}".format(tax.value, tax.confidence))
+        print("Total tax: {} has confidence: {}".format(tax.value, tax.confidence))
     tip = receipt.fields.get("Tip")
     if tip:
         print("Tip: {} has confidence: {}".format(tip.value, tip.confidence))
@@ -307,8 +301,8 @@ for idx, style in enumerate(result.styles):
         )
     )
 
-for idx, page in enumerate(result.pages):
-    print("----Analyzing layout from page #{}----".format(idx + 1))
+for page in result.pages:
+    print("----Analyzing layout from page #{}----".format(page.page_number))
     print(
         "Page has width: {} and height: {}, measured with unit: {}".format(
             page.width, page.height, page.unit
@@ -316,26 +310,28 @@ for idx, page in enumerate(result.pages):
     )
 
     for line_idx, line in enumerate(page.lines):
+        words = line.get_words()
         print(
-            "Line # {} has text content '{}' within bounding box '{}'".format(
+            "...Line # {} has word count {} and text '{}' within bounding polygon '{}'".format(
                 line_idx,
+                len(words),
                 line.content,
-                line.bounding_box,
+                line.polygon,
             )
         )
 
-    for word in page.words:
-        print(
-            "...Word '{}' has a confidence of {}".format(
-                word.content, word.confidence
+        for word in words:
+            print(
+                "......Word '{}' has a confidence of {}".format(
+                    word.content, word.confidence
+                )
             )
-        )
 
     for selection_mark in page.selection_marks:
         print(
-            "Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+            "...Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
                 selection_mark.state,
-                selection_mark.bounding_box,
+                selection_mark.polygon,
                 selection_mark.confidence,
             )
         )
@@ -351,12 +347,12 @@ for table_idx, table in enumerate(result.tables):
             "Table # {} location on page: {} is {}".format(
                 table_idx,
                 region.page_number,
-                region.bounding_box,
+                region.polygon,
             )
         )
     for cell in table.cells:
         print(
-            "...Cell[{}][{}] has text '{}'".format(
+            "...Cell[{}][{}] has content '{}'".format(
                 cell.row_index,
                 cell.column_index,
                 cell.content,
@@ -364,9 +360,9 @@ for table_idx, table in enumerate(result.tables):
         )
         for region in cell.bounding_regions:
             print(
-                "...content on page {} is within bounding box '{}'".format(
+                "...content on page {} is within bounding polygon '{}'".format(
                     region.page_number,
-                    region.bounding_box,
+                    region.polygon,
                 )
             )
 
@@ -385,74 +381,9 @@ with open(path_to_sample_documents, "rb") as f:
 result = poller.result()
 
 for style in result.styles:
-    print(
-        "Document contains {} content".format(
-            "handwritten" if style.is_handwritten else "no handwritten"
-        )
-    )
-
-for page in result.pages:
-    print("----Analyzing document from page #{}----".format(page.page_number))
-    print(
-        "Page has width: {} and height: {}, measured with unit: {}".format(
-            page.width, page.height, page.unit
-        )
-    )
-
-    for line_idx, line in enumerate(page.lines):
-        print(
-            "...Line # {} has text content '{}' within bounding box '{}'".format(
-                line_idx,
-                line.content,
-                line.bounding_box,
-            )
-        )
-
-    for word in page.words:
-        print(
-            "...Word '{}' has a confidence of {}".format(
-                word.content, word.confidence
-            )
-        )
-
-    for selection_mark in page.selection_marks:
-        print(
-            "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
-                selection_mark.state,
-                selection_mark.bounding_box,
-                selection_mark.confidence,
-            )
-        )
-
-for table_idx, table in enumerate(result.tables):
-    print(
-        "Table # {} has {} rows and {} columns".format(
-            table_idx, table.row_count, table.column_count
-        )
-    )
-    for region in table.bounding_regions:
-        print(
-            "Table # {} location on page: {} is {}".format(
-                table_idx,
-                region.page_number,
-                region.bounding_box,
-            )
-        )
-    for cell in table.cells:
-        print(
-            "...Cell[{}][{}] has content '{}'".format(
-                cell.row_index,
-                cell.column_index,
-                cell.content,
-            )
-        )
-        for region in cell.bounding_regions:
-            print(
-                "...content on page {} is within bounding box '{}'\n".format(
-                    region.page_number,
-                    region.bounding_box,
-                )
-            )
+    if style.is_handwritten:
+        print("Document contains handwritten content: ")
+        print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
 
 print("----Key-value pairs found in document----")
 for kv_pair in result.key_value_pairs:
@@ -468,6 +399,71 @@ for kv_pair in result.key_value_pairs:
                 "Value '{}' found within '{}' bounding regions\n".format(
                     kv_pair.value.content,
                     kv_pair.value.bounding_regions,
+                )
+            )
+
+for page in result.pages:
+    print("----Analyzing document from page #{}----".format(page.page_number))
+    print(
+        "Page has width: {} and height: {}, measured with unit: {}".format(
+            page.width, page.height, page.unit
+        )
+    )
+
+    for line_idx, line in enumerate(page.lines):
+        words = line.get_words()
+        print(
+            "...Line # {} has {} words and text '{}' within bounding polygon '{}'".format(
+                line_idx,
+                len(words),
+                line.content,
+                line.polygon,
+            )
+        )
+
+        for word in words:
+            print(
+                "......Word '{}' has a confidence of {}".format(
+                    word.content, word.confidence
+                )
+            )
+
+    for selection_mark in page.selection_marks:
+        print(
+            "...Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
+                selection_mark.state,
+                selection_mark.polygon,
+                selection_mark.confidence,
+            )
+        )
+
+for table_idx, table in enumerate(result.tables):
+    print(
+        "Table # {} has {} rows and {} columns".format(
+            table_idx, table.row_count, table.column_count
+        )
+    )
+    for region in table.bounding_regions:
+        print(
+            "Table # {} location on page: {} is {}".format(
+                table_idx,
+                region.page_number,
+                region.polygon,
+            )
+        )
+    for cell in table.cells:
+        print(
+            "...Cell[{}][{}] has content '{}'".format(
+                cell.row_index,
+                cell.column_index,
+                cell.content,
+            )
+        )
+        for region in cell.bounding_regions:
+            print(
+                "...content on page {} is within bounding polygon '{}'\n".format(
+                    region.page_number,
+                    region.polygon,
                 )
             )
 print("----------------------------------------")
@@ -539,6 +535,7 @@ for idx, form in enumerate(forms):
 
 Analyze custom document with `3.2.x`:
 ```python
+# Make sure your document's type is included in the list of document types the custom model can analyze
 with open(path_to_sample_documents, "rb") as f:
     poller = document_analysis_client.begin_analyze_document(
         model_id=model_id, document=f
@@ -548,8 +545,8 @@ result = poller.result()
 for idx, document in enumerate(result.documents):
     print("--------Analyzing document #{}--------".format(idx + 1))
     print("Document has type {}".format(document.doc_type))
-    print("Document has document type confidence {}".format(document.confidence))
-    print("Document was analyzed with model with ID {}".format(result.model_id))
+    print("Document has confidence {}".format(document.confidence))
+    print("Document was analyzed by model with ID {}".format(result.model_id))
     for name, field in document.fields.items():
         field_value = field.value if field.value else field.content
         print("......found field of type '{}' with value '{}' and with confidence {}".format(field.value_type, field_value, field.confidence))
@@ -566,14 +563,12 @@ for page in result.pages:
                 word.content, word.confidence
             )
         )
-    if page.selection_marks:
-        print("\nSelection marks found on page {}".format(page.page_number))
-        for selection_mark in page.selection_marks:
-            print(
-                "...Selection mark is '{}' and has a confidence of {}".format(
-                    selection_mark.state, selection_mark.confidence
-                )
+    for selection_mark in page.selection_marks:
+        print(
+            "...Selection mark is '{}' and has a confidence of {}".format(
+                selection_mark.state, selection_mark.confidence
             )
+        )
 
 for i, table in enumerate(result.tables):
     print("\nTable {} can be found on page:".format(i + 1))
@@ -581,7 +576,7 @@ for i, table in enumerate(result.tables):
         print("...{}".format(i + 1, region.page_number))
     for cell in table.cells:
         print(
-            "...Cell[{}][{}] has text '{}'".format(
+            "...Cell[{}][{}] has content '{}'".format(
                 cell.row_index, cell.column_index, cell.content
             )
         )
@@ -632,6 +627,7 @@ for doc in model.training_documents:
 ```
 
 Train a custom model with `3.2.x`:
+
 Use `begin_build_document_model()` to build a custom document model. Please note that this method has a required `build_mode` parameter. See https://aka.ms/azsdk/formrecognizer/buildmode for more information about build modes. Additionally, `blob_container_url` is a required keyword-only parameter.
 
 ```python
