@@ -8,6 +8,10 @@ from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
 from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import _StatsbeatMetrics
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    _STATSBEAT_STATE,
+    _STATSBEAT_STATE_LOCK,
+)
 
 # pylint: disable=line-too-long
 _DEFAULT_NON_EU_STATS_CONNECTION_STRING = "InstrumentationKey=c4a29126-a7cb-47e5-b348-11414998b11e;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"
@@ -55,32 +59,26 @@ def collect_statsbeat_metrics(exporter) -> None:
                 exporter._enable_local_storage,
                 long_interval_threshold,
             )
-            # Export some initial stats on program start
-            _STATSBEAT_METER_PROVIDER.force_flush()
-            # initialize non-initial stats
-            metrics.init_non_initial_metrics()
-        # TODO: state
-        # with _STATSBEAT_STATE_LOCK:
-        #     _STATSBEAT_STATE["INITIAL_FAILURE_COUNT"] = 0
-        #     _STATSBEAT_STATE["INITIAL_SUCCESS"] = 0
-        #     _STATSBEAT_STATE["SHUTDOWN"] = False
+        # Export some initial stats on program start
+        _STATSBEAT_METER_PROVIDER.force_flush()
+        # initialize non-initial stats
+        metrics.init_non_initial_metrics()
 
-# TODO
-# def shutdown_statsbeat_metrics() -> None:
-#     global _STATSBEAT_METER_PROVIDER
-#     shutdown_success = False
-#     if _STATSBEAT_METER_PROVIDER is not None:
-#         with _STATSBEAT_LOCK:
-#             try:
-#                 _STATSBEAT_METER_PROVIDER.shutdown()
-#                 _STATSBEAT_METER_PROVIDER = None
-#                 shutdown_success = True
-#             except:
-#                 pass
-#         if shutdown_success:
-#             # with _STATSBEAT_STATE_LOCK:
-#             #     _STATSBEAT_STATE["SHUTDOWN"] = True
-#             pass
+
+def shutdown_statsbeat_metrics() -> None:
+    global _STATSBEAT_METER_PROVIDER
+    shutdown_success = False
+    if _STATSBEAT_METER_PROVIDER is not None:
+        with _STATSBEAT_LOCK:
+            try:
+                _STATSBEAT_METER_PROVIDER.shutdown()
+                _STATSBEAT_METER_PROVIDER = None
+                shutdown_success = True
+            except:
+                pass
+        if shutdown_success:
+            with _STATSBEAT_STATE_LOCK:
+                _STATSBEAT_STATE["SHUTDOWN"] = True
 
 
 def _get_stats_connection_string(endpoint: str) -> str:
