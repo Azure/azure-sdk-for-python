@@ -171,7 +171,7 @@ def start_test_proxy(request) -> None:
     set_custom_default_matcher(excluded_headers=headers_to_ignore)
 
 
-def stop_test_proxy(request) -> None:
+def stop_test_proxy() -> None:
     """Stops any running instance of the test proxy"""
 
     if not PROXY_MANUALLY_STARTED:
