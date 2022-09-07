@@ -46,7 +46,7 @@ def sleep(request):
     sleep = request.config.getoption("--sleep")
     return sleep.lower() in ('true', 'yes', '1', 'y')
 
-@pytest.fixture(scope="session", params=[False])
+@pytest.fixture(scope="session", params=[True, False])
 def uamqp_transport(request):
     return request.param
 

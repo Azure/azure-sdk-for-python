@@ -124,7 +124,7 @@ if uamqp_installed:
             :rtype: uamqp.Message
             """
             message_header = None
-            if annotated_message.header:
+            if annotated_message.header and any(annotated_message.header.values()):
                 message_header = MessageHeader()
                 message_header.delivery_count = annotated_message.header.delivery_count
                 message_header.time_to_live = annotated_message.header.time_to_live
@@ -133,7 +133,7 @@ if uamqp_installed:
                 message_header.priority = annotated_message.header.priority
 
             message_properties = None
-            if annotated_message.properties:
+            if annotated_message.properties and any(annotated_message.properties.values()):
                 message_properties = MessageProperties(
                     message_id=annotated_message.properties.message_id,
                     user_id=annotated_message.properties.user_id,

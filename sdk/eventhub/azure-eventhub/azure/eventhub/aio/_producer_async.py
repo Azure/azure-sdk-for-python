@@ -179,6 +179,16 @@ class EventHubProducer(
             ):  # The partition_key in the param will be omitted.
                 if not event_data:
                     return event_data
+                # If AmqpTransports are not the same, create batch with correct BatchMessage.
+                if self._amqp_transport.TIMEOUT_FACTOR != event_data._amqp_transport.TIMEOUT_FACTOR:
+                    # pylint: disable=protected-access
+                    event_data = EventDataBatch._from_batch(
+                        event_data._internal_events,
+                        amqp_transport=self._amqp_transport,
+                        partition_key=event_data._partition_key,
+                        partition_id=event_data._partition_id,
+                        max_size_in_bytes=event_data.max_size_in_bytes
+                    )
                 if (
                     partition_key
                     and partition_key

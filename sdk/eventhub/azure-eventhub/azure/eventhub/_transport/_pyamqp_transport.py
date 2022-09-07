@@ -317,16 +317,16 @@ class PyamqpTransport(AmqpTransport):
         return message
 
     @staticmethod
-    def add_batch(batch_message, outgoing_event_data, event_data):    # pylint: disable=unused-argument
+    def add_batch(event_data_batch, outgoing_event_data, event_data):    # pylint: disable=unused-argument
         """
         Add EventData to the data body of the BatchMessage.
-        :param batch_message: BatchMessage to add data to.
+        :param event_data_batch: EventDataBatch to add data to.
         :param outgoing_event_data: Transformed EventData for sending.
         :param event_data: EventData to add to internal batch events. uamqp use only.
         :rtype: None
         """
-        batch_message._internal_events.append(event_data)
-        utils.add_batch(batch_message._message, outgoing_event_data._message)   # pylint: disable=protected-access
+        event_data_batch._internal_events.append(event_data)
+        utils.add_batch(event_data_batch._message, outgoing_event_data._message)   # pylint: disable=protected-access
 
     @staticmethod
     def create_source(source, offset, selector):

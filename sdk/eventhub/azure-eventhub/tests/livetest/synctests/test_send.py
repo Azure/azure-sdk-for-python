@@ -313,11 +313,16 @@ def test_send_partition(connstr_receivers, uamqp_transport, timeout_factor):
         client.send_batch(batch)
         client.send_event(EventData(b"Data"), partition_id="0")
 
+    with client:
+        batch = EventDataBatch(partition_id="0")
+        batch.add(EventData(b"Data"))
+        client.send_batch(batch)
+
     time.sleep(5)
     partition_0 = receivers[0].receive_message_batch(timeout=timeout)
     partition_1 = receivers[1].receive_message_batch(timeout=timeout)
-    assert len(partition_0) >= 2
-    assert len(partition_0) + len(partition_1) == 4
+    assert len(partition_0) >= 3
+    assert len(partition_0) + len(partition_1) == 5
 
 
 @pytest.mark.liveTest
@@ -522,21 +527,22 @@ def test_send_with_callback(connstr_receivers, uamqp_transport):
 
         assert not on_error.err
 
-# TODO: add more checks after LegacyMessage has been added
 @pytest.mark.liveTest
 def test_send_message_modify_backcompat(connstr_receivers, uamqp_transport, timeout_factor):
     connection_str, receivers = connstr_receivers
-    if uamqp_transport:
-        properties = MessageProperties
-    else:
-        properties = Properties
+    properties = MessageProperties
 
     timeout = 10 * timeout_factor
     outgoing_event_data = EventData(body="hello")
     message = outgoing_event_data.message
     message.properties = properties(user_id='fake_user')
+    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
+    with client:
+        batch = client.create_batch()
+        batch.add(outgoing_event_data)
+        client.send_batch(batch)
     assert outgoing_event_data.message.properties.user_id == b'fake_user'
-    assert outgoing_event_data.message.state == MessageState.WaitingToBeSent
+    assert outgoing_event_data.message.state == MessageState.SendComplete
     assert outgoing_event_data.message.delivery_annotations is None
     assert outgoing_event_data.message.delivery_no is None
     assert outgoing_event_data.message.delivery_tag is None
@@ -544,9 +550,6 @@ def test_send_message_modify_backcompat(connstr_receivers, uamqp_transport, time
     assert outgoing_event_data.message.footer is None
     assert outgoing_event_data.message.retries == 0
     assert outgoing_event_data.message.idle_time == 0
-    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
-    with client:
-        client.send_batch([outgoing_event_data])
     received = []
     for r in receivers:
         received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=timeout)])

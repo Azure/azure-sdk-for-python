@@ -127,13 +127,15 @@ def test_sys_properties(uamqp_transport):
 def test_event_data_batch(uamqp_transport):
     if uamqp_transport:
         if version.parse(uamqp.__version__) >= version.parse("1.2.8"):
-            expected_result = 101
+            expected_result = 97
         else:
             expected_result = 93
+        amqp_transport=UamqpTransport
     else:
         expected_result = 99
+        amqp_transport=PyamqpTransport
 
-    batch = EventDataBatch(max_size_in_bytes=110, partition_key="par", amqp_transport=PyamqpTransport)
+    batch = EventDataBatch(max_size_in_bytes=110, partition_key="par", amqp_transport=amqp_transport)
     batch.add(EventData("A"))
     assert str(batch) == "EventDataBatch(max_size_in_bytes=110, partition_id=None, partition_key='par', event_count=1)"
     assert repr(batch) == "EventDataBatch(max_size_in_bytes=110, partition_id=None, partition_key='par', event_count=1)"

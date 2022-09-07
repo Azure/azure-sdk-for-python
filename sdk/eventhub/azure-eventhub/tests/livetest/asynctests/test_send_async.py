@@ -287,11 +287,16 @@ async def test_send_partition_async(connstr_receivers, uamqp_transport, timeout_
         batch.add(EventData(b"Data"))
         await client.send_batch(batch)
         await client.send_event(EventData(b"Data"), partition_id="0")
+    async with client:
+        batch = EventDataBatch(partition_id="0")
+        batch.add(EventData(b"Data"))
+        await client.send_batch(batch)
 
     time.sleep(5)
     partition_0 = receivers[0].receive_message_batch(timeout=10 * timeout_factor)
     partition_1 = receivers[1].receive_message_batch(timeout=10 * timeout_factor)
-    assert len(partition_0) >= 2
+    assert len(partition_0) >= 3
+    assert len(partition_0) + len(partition_1) == 5
 
 
 @pytest.mark.liveTest

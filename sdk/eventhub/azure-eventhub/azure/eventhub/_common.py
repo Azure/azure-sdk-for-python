@@ -514,8 +514,7 @@ class EventDataBatch(object):
         partition_key: Optional[Union[str, bytes]] = None,
         **kwargs
     ) -> None:
-        #self._amqp_transport = PyamqpTransport
-        self._amqp_transport = kwargs.pop("amqp_transport", None)
+        self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
 
         if partition_key and not isinstance(
             partition_key, (str, bytes)
@@ -531,26 +530,14 @@ class EventDataBatch(object):
         self._partition_key = partition_key
         self._uamqp_message = None
 
-        try:
-            self._message = self._amqp_transport.build_batch_message(data=[])
-            self._message = self._amqp_transport.set_message_partition_key(
-                self._message, self._partition_key
-            )
-            self._size = self._amqp_transport.get_batch_message_encoded_size(self._message)
-            self.max_size_in_bytes = (
-                max_size_in_bytes or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
-            )
-        except AttributeError:
-            # to be reset right before sending, if UamqpTransport
-            self._amqp_transport = PyamqpTransport
-            self._message = PyamqpTransport.build_batch_message(data=[])
-            self._message = PyamqpTransport.set_message_partition_key(
-                self._message, self._partition_key
-            )
-            self._size = PyamqpTransport.get_batch_message_encoded_size(self._message)
-            self.max_size_in_bytes = (
-                max_size_in_bytes or PyamqpTransport.MAX_MESSAGE_LENGTH_BYTES
-            )
+        self._message = self._amqp_transport.build_batch_message(data=[])
+        self._message = self._amqp_transport.set_message_partition_key(
+            self._message, self._partition_key
+        )
+        self._size = self._amqp_transport.get_batch_message_encoded_size(self._message)
+        self.max_size_in_bytes = (
+            max_size_in_bytes or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
+        )
 
         self._count = 0
         self._internal_events: List[
@@ -573,6 +560,9 @@ class EventDataBatch(object):
         batch_data: Iterable[EventData],
         amqp_transport: AmqpTransport,
         partition_key: Optional[AnyStr] = None,
+        *,
+        max_size_in_bytes: Optional[int] = None,
+        partition_id: Optional[str] = None,
     ) -> EventDataBatch:
         outgoing_batch_data = [
             transform_outbound_single_message(
@@ -580,7 +570,12 @@ class EventDataBatch(object):
             )
             for m in batch_data
         ]
-        batch_data_instance = cls(partition_key=partition_key)
+        batch_data_instance = cls(
+            partition_key=partition_key,
+            amqp_transport=amqp_transport,
+            max_size_in_bytes=max_size_in_bytes,
+            partition_id=partition_id
+        )
 
         for event_data in outgoing_batch_data:
             batch_data_instance.add(event_data)
@@ -597,20 +592,13 @@ class EventDataBatch(object):
                     "or use EventDataBatch, which is guaranteed to be under the frame size limit"
                 )
     
-    # TODO: add back after removing amqp transport
-    #@property
-    #def message(self) -> LegacyBatchMessage:
-    #    if not self._uamqp_message:
-    #        message = AmqpAnnotatedMessage(message=Message(*self._message))
-    #        self._uamqp_message = LegacyBatchMessage(message, to_outgoing_amqp_message=PyamqpTransport().to_outgoing_amqp_message)
-    #    return self._uamqp_message
+    @property
+    def message(self) -> Union["uamqp_BatchMessage", BatchMessage]:
+        return self._message
 
-    #@message.setter
-    #def message(self, value: "uamqp_BatchMessage") -> None:
-    #    self._uamqp_message = LegacyBatchMessage(
-    #        AmqpAnnotatedMessage(message=Message(*value)),
-    #        to_outgoing_amqp_message=PyamqpTransport().to_outgoing_amqp_message,
-    #    )
+    @message.setter
+    def message(self, value: Union["uamqp_BatchMessage", BatchMessage]) -> None:
+        self._message = value
 
     @property
     def size_in_bytes(self) -> int:
