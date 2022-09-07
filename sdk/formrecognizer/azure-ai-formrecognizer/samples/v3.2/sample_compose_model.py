@@ -51,16 +51,16 @@ def sample_compose_model():
     po_cleaning_supplies = os.environ['PURCHASE_ORDER_OFFICE_CLEANING_SUPPLIES_SAS_URL']
 
     document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-    supplies_poller = document_model_admin_client.begin_build_model(
+    supplies_poller = document_model_admin_client.begin_build_document_model(
         ModelBuildMode.TEMPLATE, blob_container_url=po_supplies, description="Purchase order-Office supplies"
     )
-    equipment_poller = document_model_admin_client.begin_build_model(
+    equipment_poller = document_model_admin_client.begin_build_document_model(
         ModelBuildMode.TEMPLATE, blob_container_url=po_equipment, description="Purchase order-Office Equipment"
     )
-    furniture_poller = document_model_admin_client.begin_build_model(
+    furniture_poller = document_model_admin_client.begin_build_document_model(
         ModelBuildMode.TEMPLATE, blob_container_url=po_furniture, description="Purchase order-Furniture"
     )
-    cleaning_supplies_poller = document_model_admin_client.begin_build_model(
+    cleaning_supplies_poller = document_model_admin_client.begin_build_document_model(
         ModelBuildMode.TEMPLATE, blob_container_url=po_cleaning_supplies, description="Purchase order-Cleaning Supplies"
     )
     supplies_model = supplies_poller.result()
@@ -75,7 +75,7 @@ def sample_compose_model():
         cleaning_supplies_model.model_id
     ]
 
-    poller = document_model_admin_client.begin_compose_model(
+    poller = document_model_admin_client.begin_compose_document_model(
         purchase_order_models, description="Office Supplies Composed Model"
     )
     model = poller.result()

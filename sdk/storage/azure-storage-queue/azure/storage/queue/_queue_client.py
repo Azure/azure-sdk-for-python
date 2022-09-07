@@ -92,7 +92,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         if not queue_name:
             raise ValueError("Please specify a queue name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(parsed_url))
+            raise ValueError(f"Invalid URL: {parsed_url}")
 
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
@@ -115,11 +115,9 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         queue_name = self.queue_name
         if isinstance(queue_name, six.text_type):
             queue_name = queue_name.encode('UTF-8')
-        return "{}://{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(queue_name),
-            self._query_str)
+        return (
+            f"{self.scheme}://{hostname}"
+            f"/{quote(queue_name)}{self._query_str}")
 
     @classmethod
     def from_queue_url(cls,
@@ -151,17 +149,15 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         parsed_url = urlparse(queue_url.rstrip('/'))
 
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(queue_url))
+            raise ValueError(f"Invalid URL: {queue_url}")
 
         queue_path = parsed_url.path.lstrip('/').split('/')
         account_path = ""
         if len(queue_path) > 1:
             account_path = "/" + "/".join(queue_path[:-1])
-        account_url = "{}://{}{}?{}".format(
-            parsed_url.scheme,
-            parsed_url.netloc.rstrip('/'),
-            account_path,
-            parsed_url.query)
+        account_url = (
+            f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}"
+            f"{account_path}?{parsed_url.query}")
         queue_name = unquote(queue_path[-1])
         if not queue_name:
             raise ValueError("Invalid URL. Please provide a URL with a valid queue name")

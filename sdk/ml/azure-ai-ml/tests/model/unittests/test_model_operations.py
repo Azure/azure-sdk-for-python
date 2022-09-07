@@ -1,19 +1,21 @@
 from pathlib import Path
 from typing import Callable, Iterable
 from unittest.mock import Mock, patch
+
 import pytest
 
-from azure.ai.ml.operations import DatastoreOperations, ModelOperations
-from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
-from azure.ai.ml.entities._assets import Model
+from azure.ai.ml import load_model
+from azure.ai.ml._ml_exceptions import ErrorTarget
 from azure.ai.ml._restclient.v2022_05_01.models._models_py3 import (
     ModelContainerData,
     ModelContainerDetails,
     ModelVersionData,
     ModelVersionDetails,
 )
-from azure.ai.ml import load_model
+from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml.entities._assets import Model
+from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
+from azure.ai.ml.operations import DatastoreOperations, ModelOperations
 
 
 @pytest.fixture
@@ -72,7 +74,7 @@ version: 3"""
             "azure.ai.ml.operations._model_operations.Model._from_rest_object",
             return_value=Model(),
         ):
-            model = load_model(path=p)
+            model = load_model(source=p)
             path = Path(model._base_path, model.path).resolve()
             mock_model_operation.create_or_update(model)
             mock_upload.assert_called_once_with(
@@ -84,6 +86,7 @@ version: 3"""
                 datastore_name=None,
                 asset_hash=None,
                 sas_uri=None,
+                artifact_type=ErrorTarget.MODEL,
             )
         mock_model_operation._model_versions_operation.create_or_update.assert_called_once()
         assert "version='3'" in str(mock_model_operation._model_versions_operation.create_or_update.call_args)
@@ -107,7 +110,7 @@ version: 3"""
 name: {model_name}
 path: ./model.pkl"""
         )
-        model = load_model(path=p)
+        model = load_model(source=p)
         model.version = None
 
         with patch(
@@ -211,3 +214,40 @@ path: ./model.pkl"""
             body=model_container,
             resource_group_name=mock_model_operation._resource_group_name,
         )
+
+    def test_create_with_datastore(
+        self,
+        mock_workspace_scope: OperationScope,
+        mock_model_operation: ModelOperations,
+        randstr: Callable[[], str],
+    ) -> None:
+        p = "./tests/test_configs/model/model_with_datastore.yml"
+        model_name = f"model_{randstr()}"
+
+        with patch(
+            "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
+            return_value=ArtifactStorageInfo(
+                name=model_name,
+                version="3",
+                relative_path="path",
+                datastore_arm_id="/subscriptions/mock/resourceGroups/mock/providers/Microsoft.MachineLearningServices/workspaces/mock/datastores/datastore_id",
+                container_name="containerName",
+            ),
+        ) as mock_upload, patch(
+            "azure.ai.ml.operations._model_operations.Model._from_rest_object",
+            return_value=Model(),
+        ):
+            model = load_model(path=p)
+            path = Path(model._base_path, model.path).resolve()
+            mock_model_operation.create_or_update(model)
+            mock_upload.assert_called_once_with(
+                mock_workspace_scope,
+                mock_model_operation._datastore_operation,
+                path,
+                asset_name=model.name,
+                asset_version=model.version,
+                datastore_name="workspaceartifactstore",
+                asset_hash=None,
+                sas_uri=None,
+                artifact_type=ErrorTarget.MODEL,
+            )

@@ -1,18 +1,19 @@
-from azure.ai.ml import dsl, Input
-from .mldesigner_component import train_component_func, eval_component_func, score_component_func
+from azure.ai.ml import Input, dsl
 from azure.ai.ml.sweep import (
     BanditPolicy,
     Choice,
-    Randint,
-    QUniform,
-    QLogNormal,
-    QLogUniform,
-    QNormal,
     LogNormal,
     LogUniform,
     Normal,
+    QLogNormal,
+    QLogUniform,
+    QNormal,
+    QUniform,
+    Randint,
     Uniform,
 )
+
+from .mldesigner_component import eval_component_func, score_component_func, train_component_func
 
 
 def generate_dsl_pipeline_with_sweep_node():

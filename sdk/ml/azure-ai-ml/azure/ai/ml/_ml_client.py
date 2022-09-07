@@ -10,7 +10,7 @@ from functools import singledispatch
 from itertools import product
 from os import PathLike
 from pathlib import Path
-from typing import Any, Optional, Tuple, Union
+from typing import Any, Optional, Tuple, TypeVar, Union
 
 from azure.ai.ml._azure_environments import (
     _get_base_url_from_metadata,
@@ -32,9 +32,10 @@ from azure.ai.ml._restclient.v2022_06_01_preview import AzureMachineLearningWork
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
+from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._registry_utils import get_registry_service_client
 from azure.ai.ml._utils.utils import _is_https_url
-from azure.ai.ml.constants import REGISTRY_DISCOVERY_BASE_URI, AzureMLResourceType
+from azure.ai.ml.constants._common import REGISTRY_DISCOVERY_BASE_URI, AzureMLResourceType
 from azure.ai.ml.entities import (
     BatchDeployment,
     BatchEndpoint,
@@ -49,7 +50,6 @@ from azure.ai.ml.entities import (
     OnlineEndpoint,
     Workspace,
 )
-from azure.ai.ml.entities._builders.base_node import BaseNode
 from azure.ai.ml.operations import (
     BatchDeploymentOperations,
     BatchEndpointOperations,
@@ -69,8 +69,8 @@ from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
 from azure.ai.ml.operations._schedule_operations import ScheduleOperations
+from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
-from azure.identity import ChainedTokenCredential
 
 module_logger = logging.getLogger(__name__)
 
@@ -84,16 +84,16 @@ class MLClient(object):
 
     def __init__(
         self,
-        credential: ChainedTokenCredential,
-        subscription_id: str,
-        resource_group_name: str,
-        workspace_name: str = None,
-        **kwargs: Any,
+        credential: TokenCredential,  # type: TokenCredential
+        subscription_id: str,  # type: str
+        resource_group_name: str,  # type: str
+        workspace_name: str = None,  # type: str
+        **kwargs: Any,  # type: Any
     ):
         """Initiate Azure ML client.
 
         :param credential: Credential to use for authentication.
-        :type credential: ChainedTokenCredential
+        :type credential: TokenCredential
         :param subscription_id: Azure subscription ID.
         :type subscription_id: str
         :param resource_group_name: Azure resource group.
@@ -180,12 +180,20 @@ class MLClient(object):
 
         self._operation_container = OperationsContainer()
 
-        self._rp_service_client = ServiceClient012022Preview(
+        self._rp_service_client_2022_01_01_preview = ServiceClient012022Preview(
             subscription_id=self._operation_scope._subscription_id,
             credential=self._credential,
             base_url=base_url,
             **kwargs,
         )
+
+        self._rp_service_client = ServiceClient052022(
+            subscription_id=self._operation_scope._subscription_id,
+            credential=self._credential,
+            base_url=base_url,
+            **kwargs,
+        )
+
         # kwargs related to operations alone not all kwargs passed to MLClient are needed by operations
         ops_kwargs = app_insights_handler_kwargs
         if base_url:
@@ -218,6 +226,10 @@ class MLClient(object):
             base_url=base_url,
             **kwargs,
         )
+
+        # A general purpose, user-configurable pipeline for making
+        # http requests
+        self._requests_pipeline = HttpPipeline(**kwargs)
 
         self._service_client_06_2022_preview = ServiceClient062022Preview(
             credential=self._credential,
@@ -253,14 +265,14 @@ class MLClient(object):
 
         self._workspace_connections = WorkspaceConnectionsOperations(
             self._operation_scope,
-            self._rp_service_client,
+            self._rp_service_client_2022_01_01_preview,
             self._operation_container,
             self._credential,
         )
         self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)
         self._compute = ComputeOperations(
             self._operation_scope,
-            self._rp_service_client,
+            self._rp_service_client_2022_01_01_preview,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.COMPUTE, self._compute)
@@ -291,7 +303,7 @@ class MLClient(object):
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.ENVIRONMENT, self._environments)
-        self._local_endpoint_helper = _LocalEndpointHelper()
+        self._local_endpoint_helper = _LocalEndpointHelper(requests_pipeline=self._requests_pipeline)
         self._local_deployment_helper = _LocalDeploymentHelper(self._operation_container)
         self._online_endpoints = OnlineEndpointOperations(
             self._operation_scope,
@@ -299,6 +311,7 @@ class MLClient(object):
             self._operation_container,
             self._local_endpoint_helper,
             self._credential,
+            requests_pipeline=self._requests_pipeline,
             **ops_kwargs,
         )
         self._batch_endpoints = BatchEndpointOperations(
@@ -307,6 +320,7 @@ class MLClient(object):
             self._service_client_09_2020_dataplanepreview,
             self._operation_container,
             self._credential,
+            requests_pipeline=self._requests_pipeline,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.BATCH_ENDPOINT, self._batch_endpoints)
@@ -326,6 +340,7 @@ class MLClient(object):
             self._service_client_09_2020_dataplanepreview,
             self._operation_container,
             credentials=self._credential,
+            requests_pipeline=self._requests_pipeline,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.ONLINE_DEPLOYMENT, self._online_deployments)
@@ -334,6 +349,7 @@ class MLClient(object):
             self._operation_scope,
             self._service_client_05_2022,
             self._datastores,
+            requests_pipeline=self._requests_pipeline,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.DATA, self._data)
@@ -346,10 +362,11 @@ class MLClient(object):
         self._operation_container.add(AzureMLResourceType.COMPONENT, self._components)
         self._jobs = JobOperations(
             self._operation_scope,
-            self._service_client_02_2022_preview,
+            self._service_client_06_2022_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,
+            requests_pipeline=self._requests_pipeline,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
@@ -366,7 +383,7 @@ class MLClient(object):
     @classmethod
     def from_config(
         cls,
-        credential: ChainedTokenCredential,
+        credential: TokenCredential,
         path: Union[PathLike, str] = None,
         _file_name=None,
         **kwargs,
@@ -377,12 +394,12 @@ class MLClient(object):
 
         The method provides a simple way to reuse the same workspace across multiple Python notebooks or projects.
         Users can save the workspace Azure Resource Manager (ARM) properties using the
-        [workspace.write_config](https://docs.microsoft.com/python/api/azureml-core/azureml.core.workspace.workspace?view=azure-ml-py) method,
+        [workspace.write_config](https://aka.ms/ml-workspace-class) method,
         and use this method to load the same workspace in different Python notebooks or projects without
         retyping the workspace ARM properties.
 
         :param credential: The credential object for the workspace.
-        :type credential: azureml.core.authentication.ChainedTokenCredential
+        :type credential: azureml.core.credentials.TokenCredential
         :param path: The path to the config file or starting directory to search.
             The parameter defaults to starting the search in the current directory.
         :type path: str
@@ -651,36 +668,51 @@ class MLClient(object):
             workspace_name_from_config,
         )
 
+    # Leftover thoughts for anyone considering refactoring begin_create_or_update and create_or_update
+    # Advantages of using generics+singledispatch (current impl)
+    # - Minimal refactoring over previous iteration AKA Easy
+    # - Only one docstring
+    # Advantages of using @overload on public functions
+    # - Custom docstring per overload
+    # - More customized code per input type without needing @singledispatch helper function
+    # IMO we don't need custom docstrings yet, so the former option's simplicity wins for now.
+
+    # T = valid inputs/outputs for create_or_update
+    # Each entry here requires a registered _create_or_update function below
+    T = TypeVar("T", Job, Model, Environment, Component, Datastore)
+
     def create_or_update(
         self,
-        entity: Union[Job, BaseNode, Model, Environment, Component, Datastore],
+        entity: T,
         **kwargs,
-    ) -> Union[Job, Model, Environment, Component, Datastore]:
+    ) -> T:
         """Creates or updates an Azure ML resource.
 
         :param entity: The resource to create or update.
-        :type entity: Union[azure.ai.ml.entities.Job, azure.ai.ml.entities.Model, azure.ai.ml.entities.Environment,
-            azure.ai.ml.entities.Component, azure.ai.ml.entities.Datastore]
+        :type entity: Union[azure.ai.ml.entities.Job,
+            azure.ai.ml.entities.Model,
+            azure.ai.ml.entities.Environment,
+            azure.ai.ml.entities.Component,
+            azure.ai.ml.entities.Datastore]
         :return: The created or updated resource
-        :rtype: Union[azure.ai.ml.entities.Job, azure.ai.ml.entities.Model, azure.ai.ml.entities.Environment,
-            azure.ai.ml.entities.Component, azure.ai.ml.entities.Datastore]
+        :rtype: Union[azure.ai.ml.entities.Job,
+            azure.ai.ml.entities.Model,
+            azure.ai.ml.entities.Environment,
+            azure.ai.ml.entities.Component,
+            azure.ai.ml.entities.Datastore]
         """
 
         return _create_or_update(entity, self._operation_container.all_operations, **kwargs)
 
+    # R = valid inputs/outputs for begin_create_or_update
+    # Each entry here requires a registered _begin_create_or_update function below
+    R = TypeVar("R", Workspace, Compute, OnlineDeployment, OnlineEndpoint, BatchDeployment, BatchEndpoint, JobSchedule)
+
     def begin_create_or_update(
         self,
-        entity: Union[
-            Workspace,
-            Compute,
-            OnlineDeployment,
-            OnlineEndpoint,
-            BatchDeployment,
-            BatchEndpoint,
-            JobSchedule,
-        ],
+        entity: R,
         **kwargs,
-    ) -> LROPoller:
+    ) -> LROPoller[R]:
         """Creates or updates an Azure ML resource asynchronously.
 
         :param entity: The resource to create or update.
@@ -689,14 +721,16 @@ class MLClient(object):
             azure.ai.ml.entities.OnlineDeployment,
             azure.ai.ml.entities.OnlineEndpoint,
             azure.ai.ml.entities.BatchDeployment,
-            azure.ai.ml.entities.BatchEndpoint]
+            azure.ai.ml.entities.BatchEndpoint,
+            azure.ai.ml.entities.JobSchedule]
         :return: The resource after create/update operation
-        :rtype: Optional[Union[azure.ai.ml.entities.Workspace,
+        :rtype: azure.core.polling.LROPoller[Union[azure.ai.ml.entities.Workspace,
             azure.ai.ml.entities.Compute,
             azure.ai.ml.entities.OnlineDeployment,
             azure.ai.ml.entities.OnlineEndpoint,
             azure.ai.ml.entities.BatchDeployment,
-            azure.ai.ml.entities.BatchEndpoint]]
+            azure.ai.ml.entities.BatchEndpoint,
+            azure.ai.ml.entities.JobSchedule]]
         """
 
         return _begin_create_or_update(entity, self._operation_container.all_operations, **kwargs)
@@ -716,7 +750,7 @@ def _add_user_agent(kwargs) -> None:
 
 @singledispatch
 def _create_or_update(entity, operations, **kwargs):
-    raise NotImplementedError()
+    raise TypeError("Please refer to create_or_update docstring for valid input types.")
 
 
 @_create_or_update.register(Job)
@@ -751,7 +785,7 @@ def _(entity: Datastore, operations):
 
 @singledispatch
 def _begin_create_or_update(entity, operations, **kwargs):
-    raise NotImplementedError()
+    raise TypeError("Please refer to begin_create_or_update docstring for valid input types.")
 
 
 @_begin_create_or_update.register(Workspace)

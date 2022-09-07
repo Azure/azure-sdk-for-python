@@ -1,14 +1,19 @@
 # Release History
 
-## 12.14.0b2 (Unreleased)
+## 12.14.0 (Unreleased)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+- Stable release of features from 12.14.0b1 and 12.14.0b2.
 
 ### Other Changes
+- Changed the default value for `read_timeout` to 60 seconds for all clients.
+
+## 12.14.0b2 (2022-08-30)
+
+### Features Added
+- Added a new API, `list_blob_names`, to `ContainerClient` that lists only the names of the blobs in the respective
+container. This API is significantly faster than the traditional `list_blobs` and can be used if only the blob names
+are desired. It does not return any additional properties or metadata for the blobs.
 
 ## 12.14.0b1 (2022-08-23)
 

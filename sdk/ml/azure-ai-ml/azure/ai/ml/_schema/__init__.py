@@ -21,15 +21,22 @@ from .core.fields import (
 )
 from .core.schema import PathAwareSchema, YamlFileSchema
 from .core.schema_meta import PatchedSchemaMeta
-from .job import CommandJobSchema, ParallelJobSchema
+from .job import CommandJobSchema, ParallelJobSchema, SparkJobSchema
+
+# TODO: enable in PuP
+# from .job import ImportJobSchema
+# from .component import ImportComponentSchema
 
 __all__ = [
+    # "ImportJobSchema",
+    # "ImportComponentSchema",
     "ArmStr",
     "ArmVersionedStr",
     "DataSchema",
     "StringTransformedEnum",
     "CodeAssetSchema",
     "CommandJobSchema",
+    "SparkJobSchema",
     "ParallelJobSchema",
     "EnvironmentSchema",
     "AnonymousEnvironmentSchema",

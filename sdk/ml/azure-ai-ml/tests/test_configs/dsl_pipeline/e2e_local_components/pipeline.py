@@ -1,15 +1,16 @@
-from azure.ai.ml import dsl, Input, load_component
-from azure.ai.ml.entities import PipelineJob
 from pathlib import Path
+
+from azure.ai.ml import Input, dsl, load_component
+from azure.ai.ml.entities import PipelineJob
 
 parent_dir = str(Path(__file__).parent)
 
 
 def generate_dsl_pipeline() -> PipelineJob:
     # 1. Load component funcs
-    train_func = load_component(path=parent_dir + "/train.yml")
-    score_func = load_component(path=parent_dir + "/score.yml")
-    eval_func = load_component(path=parent_dir + "/eval.yml")
+    train_func = load_component(source=parent_dir + "/train.yml")
+    score_func = load_component(source=parent_dir + "/score.yml")
+    eval_func = load_component(source=parent_dir + "/eval.yml")
 
     # 2. Construct pipeline
     @dsl.pipeline(
