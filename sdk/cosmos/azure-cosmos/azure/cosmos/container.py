@@ -185,7 +185,6 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        **Provisional** keyword argument max_integrated_cache_staleness_in_ms
         :keyword int max_integrated_cache_staleness_in_ms:
         The max cache staleness for the integrated cache in milliseconds.
             For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -242,7 +241,6 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        **Provisional** keyword argument max_integrated_cache_staleness_in_ms
         :keyword int max_integrated_cache_staleness_in_ms:
         The max cache staleness for the integrated cache in milliseconds.
             For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -357,7 +355,6 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        **Provisional** keyword argument max_integrated_cache_staleness_in_ms
         :keyword int max_integrated_cache_staleness_in_ms:
         The max cache staleness for the integrated cache in milliseconds.
             For accounts configured to use the integrated cache, using Session or Eventual consistency,

@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.1 Python/3.7.12 (Darwin-21.5.0-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 01 Jun 2022 08:16:37 GMT
+      - Wed, 03 Aug 2022 09:15:52 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -24,12 +24,12 @@ interactions:
         2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Wed, 01 Jun 2022 08:16:36 GMT
-      ms-cv: 4R6b2QbzP06pHueyx/juRw.2.0
+      date: Wed, 03 Aug 2022 09:15:52 GMT
+      ms-cv: DosOraXNEEuCUXhRpIzYmA.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 87ms
+      x-processing-time: 30ms
     status:
       code: 201
       message: Created
@@ -44,9 +44,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.1 Python/3.7.12 (Darwin-21.5.0-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 01 Jun 2022 08:16:37 GMT
+      - Wed, 03 Aug 2022 09:15:52 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -57,13 +57,13 @@ interactions:
         field is required.", "target": "Scopes"}}'
     headers:
       content-type: application/json
-      date: Wed, 01 Jun 2022 08:16:37 GMT
-      ms-cv: MiY2wPJ8yUWL3IHtuJ1Mpw.2.0
+      date: Wed, 03 Aug 2022 09:15:52 GMT
+      ms-cv: +dOtgKrPLku4/qWErMTSnw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 30ms
+      x-processing-time: 25ms
     status:
       code: 400
       message: Bad Request

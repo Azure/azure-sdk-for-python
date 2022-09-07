@@ -223,19 +223,19 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         return True
 
     def mark_endpoint_unavailable(self, unavailable_endpoint, unavailable_operation_type):
-        unavailablility_info = (
+        unavailability_info = (
             self.location_unavailability_info_by_endpoint[unavailable_endpoint]
             if unavailable_endpoint in self.location_unavailability_info_by_endpoint
             else None
         )
         current_time = self.current_time_millis()
-        if not unavailablility_info:
+        if not unavailability_info:
             self.location_unavailability_info_by_endpoint[unavailable_endpoint] = {
                 "lastUnavailabilityCheckTimeStamp": current_time,
                 "operationType": set([unavailable_operation_type]),
             }
         else:
-            unavailable_operations = set([unavailable_operation_type]).union(unavailablility_info["operationType"])
+            unavailable_operations = set([unavailable_operation_type]).union(unavailability_info["operationType"])
             self.location_unavailability_info_by_endpoint[unavailable_endpoint] = {
                 "lastUnavailabilityCheckTimeStamp": current_time,
                 "operationType": unavailable_operations,

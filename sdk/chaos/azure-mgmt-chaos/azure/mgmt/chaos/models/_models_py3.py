@@ -360,6 +360,10 @@ class CapabilityType(Resource):
     :vartype parameters_schema: str
     :ivar urn: String of the URN for this Capability Type.
     :vartype urn: str
+    :ivar kind: String of the kind of this Capability Type.
+    :vartype kind: str
+    :ivar runtime_properties: Runtime properties of this Capability Type.
+    :vartype runtime_properties: ~azure.mgmt.chaos.models.CapabilityTypePropertiesRuntimeProperties
     """
 
     _validation = {
@@ -373,6 +377,7 @@ class CapabilityType(Resource):
         'description': {'readonly': True},
         'parameters_schema': {'readonly': True, 'max_length': 2048, 'min_length': 0},
         'urn': {'readonly': True, 'max_length': 2048, 'min_length': 0},
+        'kind': {'readonly': True},
     }
 
     _attribute_map = {
@@ -387,17 +392,23 @@ class CapabilityType(Resource):
         'description': {'key': 'properties.description', 'type': 'str'},
         'parameters_schema': {'key': 'properties.parametersSchema', 'type': 'str'},
         'urn': {'key': 'properties.urn', 'type': 'str'},
+        'kind': {'key': 'properties.kind', 'type': 'str'},
+        'runtime_properties': {'key': 'properties.runtimeProperties', 'type': 'CapabilityTypePropertiesRuntimeProperties'},
     }
 
     def __init__(
         self,
         *,
         location: Optional[str] = None,
+        runtime_properties: Optional["_models.CapabilityTypePropertiesRuntimeProperties"] = None,
         **kwargs
     ):
         """
         :keyword location: Location of the Capability Type resource.
         :paramtype location: str
+        :keyword runtime_properties: Runtime properties of this Capability Type.
+        :paramtype runtime_properties:
+         ~azure.mgmt.chaos.models.CapabilityTypePropertiesRuntimeProperties
         """
         super(CapabilityType, self).__init__(**kwargs)
         self.system_data = None
@@ -408,6 +419,8 @@ class CapabilityType(Resource):
         self.description = None
         self.parameters_schema = None
         self.urn = None
+        self.kind = None
+        self.runtime_properties = runtime_properties
 
 
 class CapabilityTypeListResult(msrest.serialization.Model):
@@ -440,6 +453,33 @@ class CapabilityTypeListResult(msrest.serialization.Model):
         super(CapabilityTypeListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class CapabilityTypePropertiesRuntimeProperties(msrest.serialization.Model):
+    """Runtime properties of this Capability Type.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar kind: String of the kind of the resource's action type (continuous or discrete).
+    :vartype kind: str
+    """
+
+    _validation = {
+        'kind': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(CapabilityTypePropertiesRuntimeProperties, self).__init__(**kwargs)
+        self.kind = None
 
 
 class ContinuousAction(Action):

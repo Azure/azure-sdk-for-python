@@ -2,54 +2,43 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import logging
+# pylint: disable=protected-access
+
 import copy
-
+import logging
+from pathlib import Path
 from typing import Dict, Union
-from azure.ai.ml._schema.job.command_job import CommandJobSchema
-from azure.ai.ml.entities._inputs_outputs import Input
 
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
+from azure.ai.ml._schema.job.command_job import CommandJobSchema
+from azure.ai.ml._utils.utils import map_single_brackets_and_warn
+from azure.ai.ml.constants import JobType
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, LOCAL_COMPUTE_PROPERTY, LOCAL_COMPUTE_TARGET, TYPE
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
-    from_rest_inputs_to_dataset_literal,
-    validate_inputs_for_command,
-    to_rest_dataset_literal_inputs,
-    to_rest_data_outputs,
     from_rest_data_outputs,
-)
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    JobBaseData,
-    CommandJob as RestCommandJob,
-    ManagedIdentity,
-    AmlToken,
-    UserIdentity,
-)
-from azure.ai.ml._utils.utils import (
-    map_single_brackets_and_warn,
-)
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    TYPE,
-    JobType,
-    ComponentJobConstants,
-    LOCAL_COMPUTE_TARGET,
-    LOCAL_COMPUTE_PROPERTY,
-    ENVIRONMENT_VARIABLES,
+    from_rest_inputs_to_dataset_literal,
+    to_rest_data_outputs,
+    to_rest_dataset_literal_inputs,
+    validate_inputs_for_command,
 )
 from azure.ai.ml.entities._job.distribution import DistributionConfiguration
-from azure.ai.ml.entities._inputs_outputs import Output
-from .job import Job
 from azure.ai.ml.entities._util import load_from_dict
-from .parameterized_command import ParameterizedCommand
-from .resource_configuration import ResourceConfiguration
+
+from .identity import AmlToken, Identity, ManagedIdentity, UserIdentity
+from .job import Job
 from .job_io_mixin import JobIOMixin
 from .job_limits import CommandJobLimits
-from azure.ai.ml._ml_exceptions import ErrorTarget, ErrorCategory, ValidationException
+from .job_resource_configuration import JobResourceConfiguration
+from .parameterized_command import ParameterizedCommand
 
 module_logger = logging.getLogger(__name__)
 
 
 class CommandJob(Job, ParameterizedCommand, JobIOMixin):
-    """Command job
+    """Command job.
 
     :param name: Name of the job.
     :type name: str
@@ -96,7 +85,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         outputs: Dict[str, Union[Output]] = None,
         limits: CommandJobLimits = None,
         identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
-        **kwargs
+        **kwargs,
     ):
         kwargs[TYPE] = JobType.COMMAND
         self._parameters = kwargs.pop("parameters", {})
@@ -110,7 +99,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
 
     @property
     def parameters(self) -> Dict[str, str]:
-        """MLFlow parameters
+        """MLFlow parameters.
 
         :return: MLFlow parameters logged in job.
         :rtype: Dict[str, str]
@@ -120,7 +109,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     def _to_dict(self) -> Dict:
         return CommandJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
-    def _to_rest_object(self) -> JobBaseData:
+    def _to_rest_object(self) -> JobBase:
         self._validate()
         self.command = map_single_brackets_and_warn(self.command)
         modified_properties = copy.deepcopy(self.properties)
@@ -132,7 +121,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         if self.compute == LOCAL_COMPUTE_TARGET:
             compute = None
             if resources is None:
-                resources = ResourceConfiguration()
+                resources = JobResourceConfiguration()
             if resources.properties is None:
                 resources.properties = {}
             # This is the format of the October Api response. We need to match it exactly
@@ -146,18 +135,18 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             compute_id=compute,
             properties=modified_properties,
             experiment_name=self.experiment_name,
-            inputs=to_rest_dataset_literal_inputs(self.inputs),
+            inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=self.type),
             outputs=to_rest_data_outputs(self.outputs),
             environment_id=self.environment,
-            distribution=self.distribution,
+            distribution=self.distribution._to_rest_object() if self.distribution else None,
             tags=self.tags,
-            identity=self.identity,
+            identity=self.identity._to_rest_object() if self.identity else None,
             environment_variables=self.environment_variables,
             resources=resources._to_rest_object() if resources else None,
             limits=self.limits._to_rest_object() if self.limits else None,
             services=self.services,
         )
-        result = JobBaseData(properties=properties)
+        result = JobBase(properties=properties)
         result.name = self.name
         return result
 
@@ -167,7 +156,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         return CommandJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
     @classmethod
-    def _load_from_rest(cls, obj: JobBaseData) -> "CommandJob":
+    def _load_from_rest(cls, obj: JobBase) -> "CommandJob":
         rest_command_job: RestCommandJob = obj.properties
         command_job = CommandJob(
             name=obj.name,
@@ -186,9 +175,9 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             environment=rest_command_job.environment_id,
             distribution=DistributionConfiguration._from_rest_object(rest_command_job.distribution),
             parameters=rest_command_job.parameters,
-            identity=rest_command_job.identity,
+            identity=Identity._from_rest_object(rest_command_job.identity) if rest_command_job.identity else None,
             environment_variables=rest_command_job.environment_variables,
-            resources=ResourceConfiguration._from_rest_object(rest_command_job.resources),
+            resources=JobResourceConfiguration._from_rest_object(rest_command_job.resources),
             limits=CommandJobLimits._from_rest_object(rest_command_job.limits),
             inputs=from_rest_inputs_to_dataset_literal(rest_command_job.inputs),
             outputs=from_rest_data_outputs(rest_command_job.outputs),
@@ -213,17 +202,19 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         from azure.ai.ml.entities import CommandComponent
 
         pipeline_job_dict = kwargs.get("pipeline_job_dict", {})
+        context = context or {BASE_PATH_CONTEXT_KEY: Path("./")}
 
         # Create anonymous command component with default version as 1
         return CommandComponent(
             tags=self.tags,
+            is_anonymous=True,
             base_path=context[BASE_PATH_CONTEXT_KEY],
             code=self.code,
             command=self.command,
             environment=self.environment,
             description=self.description,
-            inputs=self._to_component_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
-            outputs=self._to_component_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
+            inputs=self._to_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
+            outputs=self._to_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
             resources=self.resources if self.resources else None,
             distribution=self.distribution if self.distribution else None,
         )
@@ -253,14 +244,6 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         )
 
     def _validate(self) -> None:
-        if self.name is None:
-            msg = "Job name is required"
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
-                target=ErrorTarget.JOB,
-                error_category=ErrorCategory.USER_ERROR,
-            )
         if self.compute is None:
             msg = "compute is required"
             raise ValidationException(
@@ -268,6 +251,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
                 no_personal_data_message=msg,
                 target=ErrorTarget.JOB,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )
         if self.command is None:
             msg = "command is required"
@@ -276,6 +260,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
                 no_personal_data_message=msg,
                 target=ErrorTarget.JOB,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )
         if self.environment is None:
             msg = "environment is required for non-local runs"
@@ -284,5 +269,6 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
                 no_personal_data_message=msg,
                 target=ErrorTarget.JOB,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )
         validate_inputs_for_command(self.command, self.inputs)

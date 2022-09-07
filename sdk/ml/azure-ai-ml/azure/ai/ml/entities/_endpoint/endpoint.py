@@ -3,18 +3,17 @@
 # ---------------------------------------------------------
 
 import logging
-from os import PathLike
 from abc import abstractmethod
-from typing import Any, Dict, Optional, Union
+from os import PathLike
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml.entities import Resource
 from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-
+from azure.ai.ml.entities._resource import Resource
 
 module_logger = logging.getLogger(__name__)
 
 
-class Endpoint(Resource):
+class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
     """Endpoint base class.
 
     :param auth_mode: the authentication mode, defaults to None
@@ -41,7 +40,6 @@ class Endpoint(Resource):
 
     def __init__(
         self,
-        base_path: Optional[str] = None,  # TODO: maybe delete this?
         auth_mode: str = None,
         location: str = None,
         name: str = None,
@@ -62,7 +60,7 @@ class Endpoint(Resource):
 
     @property
     def scoring_uri(self) -> Optional[str]:
-        """URI to use to perform a prediction, readonly
+        """URI to use to perform a prediction, readonly.
 
         :return: The scoring URI
         :rtype: Optional[str]
@@ -80,7 +78,7 @@ class Endpoint(Resource):
 
     @property
     def provisioning_state(self) -> Optional[str]:
-        """Endpoint provisioning state, readonly
+        """Endpoint provisioning state, readonly.
 
         :return: Endpoint provisioning state.
         :rtype: Optional[str]
@@ -88,11 +86,13 @@ class Endpoint(Resource):
         return self._provisioning_state
 
     @abstractmethod
-    def dump(self, path: Union[PathLike, str]) -> None:
+    def dump(
+        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
+    ) -> None:
         pass
 
     @abstractmethod
-    def _from_rest_object(self) -> Any:
+    def _from_rest_object(self, obj: Any) -> Any:
         pass
 
     def _merge_with(self, other: "Endpoint") -> None:
@@ -112,8 +112,8 @@ class Endpoint(Resource):
                 self.properties = {**self.properties, **other.properties}
             self.auth_mode = other.auth_mode or self.auth_mode
             if hasattr(other, "traffic"):
-                self.traffic = other.traffic
+                self.traffic = other.traffic  # pylint: disable=attribute-defined-outside-init
             if hasattr(other, "mirror_traffic"):
-                self.mirror_traffic = other.mirror_traffic
+                self.mirror_traffic = other.mirror_traffic  # pylint: disable=attribute-defined-outside-init
             if hasattr(other, "defaults"):
-                self.defaults = other.defaults
+                self.defaults = other.defaults  # pylint: disable=attribute-defined-outside-init

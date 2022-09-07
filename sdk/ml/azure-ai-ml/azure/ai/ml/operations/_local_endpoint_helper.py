@@ -2,19 +2,22 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
 
 import json
 import logging
-import requests
-from docker.models.containers import Container
 from typing import Iterable
 
-from azure.ai.ml.constants import EndpointInvokeFields, LocalEndpointConstants
-from azure.ai.ml.entities import OnlineEndpoint
+from docker.models.containers import Container
+from marshmallow.exceptions import ValidationError as SchemaValidationError
+
 from azure.ai.ml._local_endpoints import DockerClient, EndpointStub
 from azure.ai.ml._local_endpoints.errors import InvalidLocalEndpointError, LocalEndpointNotFoundError
 from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
-
+from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml.constants._endpoint import EndpointInvokeFields, LocalEndpointConstants
+from azure.ai.ml.entities import OnlineEndpoint
+from azure.ai.ml._ml_exceptions import ValidationException, log_and_raise_error
 
 module_logger = logging.getLogger(__name__)
 
@@ -22,12 +25,14 @@ module_logger = logging.getLogger(__name__)
 class _LocalEndpointHelper(object):
     """A helper class to interact with Azure ML endpoints locally.
 
-    Use this helper to manage Azure ML endpoints locally, e.g. create, invoke, show, list, delete.
+    Use this helper to manage Azure ML endpoints locally, e.g. create,
+    invoke, show, list, delete.
     """
 
-    def __init__(self):
+    def __init__(self, *, requests_pipeline: HttpPipeline):
         self._docker_client = DockerClient()
         self._endpoint_stub = EndpointStub()
+        self._requests_pipeline = requests_pipeline
 
     def create_or_update(self, endpoint: OnlineEndpoint) -> OnlineEndpoint:
         """Create or update an endpoint locally using Docker.
@@ -37,22 +42,28 @@ class _LocalEndpointHelper(object):
         :param operation_message: Output string for operation messages.
         :type operation_message: str
         """
-        if endpoint is None:
-            msg = "The entity provided for local endpoint was null. Please provide valid entity."
-            raise InvalidLocalEndpointError(message=msg, no_personal_data_message=msg)
-
         try:
-            self.get(endpoint_name=endpoint.name)
-            operation_message = "Updating local endpoint"
-        except LocalEndpointNotFoundError:
-            operation_message = "Creating local endpoint"
+            if endpoint is None:
+                msg = "The entity provided for local endpoint was null. Please provide valid entity."
+                raise InvalidLocalEndpointError(message=msg, no_personal_data_message=msg)
 
-        local_endpoint_polling_wrapper(
-            func=self._endpoint_stub.create_or_update,
-            message=f"{operation_message} ({endpoint.name}) ",
-            endpoint=endpoint,
-        )
-        return self.get(endpoint_name=endpoint.name)
+            try:
+                self.get(endpoint_name=endpoint.name)
+                operation_message = "Updating local endpoint"
+            except LocalEndpointNotFoundError:
+                operation_message = "Creating local endpoint"
+
+            local_endpoint_polling_wrapper(
+                func=self._endpoint_stub.create_or_update,
+                message=f"{operation_message} ({endpoint.name}) ",
+                endpoint=endpoint,
+            )
+            return self.get(endpoint_name=endpoint.name)
+        except Exception as ex:
+            if isinstance(ex, (ValidationException, SchemaValidationError)):
+                log_and_raise_error(ex)
+            else:
+                raise ex
 
     def invoke(self, endpoint_name: str, data: dict, deployment_name: str = None) -> str:
         """Invoke a local endpoint.
@@ -71,7 +82,7 @@ class _LocalEndpointHelper(object):
             headers = {}
             if deployment_name is not None:
                 headers[EndpointInvokeFields.MODEL_DEPLOYMENT] = deployment_name
-            return requests.post(scoring_uri, json=data, headers=headers).text
+            return self._requests_pipeline.post(scoring_uri, json=data, headers=headers).text()
         endpoint_stub = self._endpoint_stub.get(endpoint_name=endpoint_name)
         if endpoint_stub:
             return self._endpoint_stub.invoke()
@@ -141,7 +152,8 @@ class _LocalEndpointHelper(object):
             raise LocalEndpointNotFoundError(endpoint_name=name)
 
     def _convert_container_to_endpoint(self, container: Container, endpoint_json: dict = None) -> OnlineEndpoint:
-        """Converts provided Container for local deployment to OnlineEndpoint entity.
+        """Converts provided Container for local deployment to OnlineEndpoint
+        entity.
 
         :param container: Container for a local deployment.
         :type container: docker.models.containers.Container

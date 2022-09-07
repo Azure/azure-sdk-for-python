@@ -1,29 +1,33 @@
-import yaml
 import json
+from pathlib import Path
+
 import pydash
 import pytest
+import yaml
 from marshmallow import ValidationError
 from pytest_mock import MockFixture
+from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml.automl import classification
-from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml.entities import PipelineJob, Job
+from azure.ai.ml._ml_exceptions import ValidationException
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
-from azure.ai.ml.entities._job.pipeline._io import PipelineInput
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData as RestJob
-from azure.ai.ml.entities._job.automl.tabular import RegressionJob, ClassificationJob, ForecastingJob
+from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
+from azure.ai.ml.automl import classification
+from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.entities import PipelineJob
+from azure.ai.ml.entities._builders import Spark
 from azure.ai.ml.entities._job.automl.image import (
     ImageClassificationJob,
     ImageClassificationMultilabelJob,
-    ImageObjectDetectionJob,
     ImageInstanceSegmentationJob,
+    ImageObjectDetectionJob,
 )
-from azure.ai.ml.entities._job.automl.nlp import (
-    TextClassificationJob,
-    TextClassificationMultilabelJob,
-    TextNerJob,
-)
+from azure.ai.ml.entities._job.automl.nlp import TextClassificationJob, TextClassificationMultilabelJob, TextNerJob
+from azure.ai.ml.entities._job.automl.tabular import ClassificationJob, ForecastingJob, RegressionJob
+from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
+
+from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 
 
 def load_pipeline_entity_from_rest_json(job_dict) -> PipelineJob:
@@ -34,6 +38,7 @@ def load_pipeline_entity_from_rest_json(job_dict) -> PipelineJob:
 
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
+@pytest.mark.timeout(_PIPELINE_JOB_TIMEOUT_SECOND)
 @pytest.mark.unittest
 class TestPipelineJobEntity:
     def test_automl_node_in_pipeline_regression(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
@@ -44,12 +49,19 @@ class TestPipelineJobEntity:
             {"jobs.hello_automl_regression.primary_metric": "${{parent.inputs.primary_metric}}"},
             {"jobs.hello_automl_regression.limits.max_trials": "${{parent.inputs.max_trials}}"},
         ]
-        job = load_job(path=test_path, params_override=params_override)
-        assert isinstance(job, PipelineJob)
-        node = next(iter(job.jobs.values()))
-        assert isinstance(node, RegressionJob)
 
-        mocker.patch("azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        def simple_job_validation(job):
+            assert isinstance(job, PipelineJob)
+            node = next(iter(job.jobs.values()))
+            assert isinstance(node, RegressionJob)
+
+        job = verify_entity_load_and_dump(load_job, simple_job_validation, test_path, params_override=params_override)[
+            0
+        ]
+
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+        )
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
@@ -81,11 +93,13 @@ class TestPipelineJobEntity:
 
     def test_automl_node_in_pipeline_classification(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_classification.yml"
-        job = load_job(path=test_path)
+        job = load_job(source=test_path)
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, ClassificationJob)
-        mocker.patch("azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+        )
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
@@ -111,11 +125,13 @@ class TestPipelineJobEntity:
 
     def test_automl_node_in_pipeline_forecasting(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_forecasting.yml"
-        job = load_job(path=test_path)
+        job = load_job(source=test_path)
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, ForecastingJob)
-        mocker.patch("azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+        )
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
@@ -165,6 +181,18 @@ class TestPipelineJobEntity:
         actual_automl_job = pipeline._to_rest_object().as_dict()["properties"]["jobs"][node_name]
         assert actual_automl_job == expected_automl_job
 
+    @pytest.mark.parametrize(
+        "invalid_pipeline_job_without_jobs",
+        [
+            "./tests/test_configs/pipeline_jobs/invalid_pipeline_job_without_jobs.json",
+        ],
+    )
+    def test_invalid_pipeline_jobs_descerialize(self, invalid_pipeline_job_without_jobs):
+        with open(invalid_pipeline_job_without_jobs, "r") as f:
+            job_dict = yaml.safe_load(f)
+        pipeline = load_pipeline_entity_from_rest_json(job_dict)
+        assert pipeline.jobs == {}
+
     def test_automl_node_in_pipeline_with_binding(self):
         # classification node
         automl_classif_job = classification(
@@ -195,9 +223,11 @@ class TestPipelineJobEntity:
 
     def test_pipeline_job_automl_regression_output(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/automl_regression_with_command_node.yml"
-        pipeline: PipelineJob = load_job(path=test_path)
+        pipeline: PipelineJob = load_job(source=test_path)
 
-        mocker.patch("azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+        )
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(pipeline)
 
@@ -211,7 +241,7 @@ class TestPipelineJobEntity:
             "featurization": {"mode": "off"},
             "limits": {"max_concurrent_trials": 1, "max_trials": 1},
             "log_verbosity": "info",
-            "outputs": {"best_model": {"job_output_type": "MLFlowModel", "mode": "ReadWriteMount"}},
+            "outputs": {"best_model": {"job_output_type": "mlflow_model"}},
             "primary_metric": "r2_score",
             "tags": {},
             "target_column_name": "SalePrice",
@@ -224,13 +254,14 @@ class TestPipelineJobEntity:
         command_actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["command_node"], fields_to_omit)
 
         assert command_actual_dict == {
+            "_source": "YAML.JOB",
             "componentId": "xxx",
             "computeId": "xxx",
             "distribution": None,
             "environment_variables": {},
             "inputs": {
                 "mltable_output": {
-                    "job_input_type": "Literal",
+                    "job_input_type": "literal",
                     "value": "${{parent.jobs.regression_node.outputs.best_model}}",
                 }
             },
@@ -238,17 +269,20 @@ class TestPipelineJobEntity:
             "outputs": {},
             "resources": None,
             "tags": {},
+            "type": "command",
         }
 
     def test_automl_node_in_pipeline_text_classification(
         self, mock_machinelearning_client: MLClient, mocker: MockFixture
     ):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_text_classification.yml"
-        job = load_job(path=test_path)
+        job = load_job(source=test_path)
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, TextClassificationJob)
-        mocker.patch("azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+        )
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
@@ -276,11 +310,13 @@ class TestPipelineJobEntity:
         test_path = (
             "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_text_classification_multilabel.yml"
         )
-        job = load_job(path=test_path)
+        job = load_job(source=test_path)
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, TextClassificationMultilabelJob)
-        mocker.patch("azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+        )
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
@@ -305,11 +341,13 @@ class TestPipelineJobEntity:
 
     def test_automl_node_in_pipeline_text_ner(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_text_ner.yml"
-        job = load_job(path=test_path)
+        job = load_job(source=test_path)
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, TextNerJob)
-        mocker.patch("azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+        )
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
@@ -323,22 +361,38 @@ class TestPipelineJobEntity:
             "outputs": {},
             "primary_metric": "accuracy",
             "tags": {},
-            "target_column_name": "label",
             "task": "text_ner",
             "training_data": "${{parent.inputs.text_ner_training_data}}",
             "validation_data": "${{parent.inputs.text_ner_validation_data}}",
             "type": "automl",
         }
 
+    @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_automl_node_in_pipeline_image_multiclass_classification(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+        self,
+        mock_machinelearning_client: MLClient,
+        mocker: MockFixture,
+        run_type: str,
+        tmp_path: Path,
     ):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_multiclass_classification.yml"
-        job = load_job(path=test_path)
+
+        test_config = load_yaml(test_path)
+        if (run_type == "single") or (run_type == "automode"):
+            # Remove search_space and sweep sections from the config
+            del test_config["jobs"]["hello_automl_image_multiclass_classification"]["search_space"]
+            del test_config["jobs"]["hello_automl_image_multiclass_classification"]["sweep"]
+
+        test_yaml_file = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_file, test_config)
+        job = load_job(source=test_yaml_file)
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, ImageClassificationJob)
-        mocker.patch("azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
+        )
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
@@ -348,7 +402,7 @@ class TestPipelineJobEntity:
             rest_job_dict["properties"]["jobs"]["hello_automl_image_multiclass_classification"], omit_fields
         )
 
-        assert actual_dict == {
+        expected_dict = {
             "limits": {"timeout_minutes": 60},
             "log_verbosity": "info",
             "outputs": {},
@@ -370,7 +424,7 @@ class TestPipelineJobEntity:
                     "slack_amount": 0.0,
                 },
             },
-            "image_model": {
+            "training_parameters": {
                 "checkpoint_frequency": 1,
                 "early_stopping": True,
                 "early_stopping_delay": 2,
@@ -386,16 +440,37 @@ class TestPipelineJobEntity:
                 }
             ],
         }
+        if (run_type == "single") or (run_type == "automode"):
+            del expected_dict["search_space"]
+            del expected_dict["sweep"]
+        assert actual_dict == expected_dict
 
+    @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_automl_node_in_pipeline_image_multilabel_classification(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+        self,
+        mock_machinelearning_client: MLClient,
+        mocker: MockFixture,
+        run_type: str,
+        tmp_path: Path,
     ):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_multilabel_classification.yml"
-        job = load_job(path=test_path)
+
+        test_config = load_yaml(test_path)
+        if (run_type == "single") or (run_type == "automode"):
+            # Remove search_space and sweep sections from the config
+            del test_config["jobs"]["hello_automl_image_multilabel_classification"]["search_space"]
+            del test_config["jobs"]["hello_automl_image_multilabel_classification"]["sweep"]
+
+        test_yaml_file = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_file, test_config)
+        job = load_job(source=test_yaml_file)
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, ImageClassificationMultilabelJob)
-        mocker.patch("azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
+        )
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
@@ -405,7 +480,7 @@ class TestPipelineJobEntity:
             rest_job_dict["properties"]["jobs"]["hello_automl_image_multilabel_classification"], omit_fields
         )
 
-        assert actual_dict == {
+        expected_dict = {
             "limits": {"timeout_minutes": 60},
             "log_verbosity": "info",
             "outputs": {},
@@ -427,7 +502,7 @@ class TestPipelineJobEntity:
                     "slack_amount": 0.0,
                 },
             },
-            "image_model": {
+            "training_parameters": {
                 "checkpoint_frequency": 1,
                 "early_stopping": True,
                 "early_stopping_delay": 2,
@@ -443,16 +518,33 @@ class TestPipelineJobEntity:
                 }
             ],
         }
+        if (run_type == "single") or (run_type == "automode"):
+            del expected_dict["search_space"]
+            del expected_dict["sweep"]
+        assert actual_dict == expected_dict
 
+    @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_automl_node_in_pipeline_image_object_detection(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+        self, mock_machinelearning_client: MLClient, mocker: MockFixture, run_type: str, tmp_path: Path
     ):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_object_detection.yml"
-        job = load_job(path=test_path)
+
+        test_config = load_yaml(test_path)
+        if (run_type == "single") or (run_type == "automode"):
+            # Remove search_space and sweep sections from the config
+            del test_config["jobs"]["hello_automl_image_object_detection"]["search_space"]
+            del test_config["jobs"]["hello_automl_image_object_detection"]["sweep"]
+
+        test_yaml_file = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_file, test_config)
+        job = load_job(source=test_yaml_file)
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, ImageObjectDetectionJob)
-        mocker.patch("azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
+        )
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
@@ -462,7 +554,7 @@ class TestPipelineJobEntity:
             rest_job_dict["properties"]["jobs"]["hello_automl_image_object_detection"], omit_fields
         )
 
-        assert actual_dict == {
+        expected_dict = {
             "limits": {"timeout_minutes": 60},
             "log_verbosity": "info",
             "outputs": {},
@@ -484,7 +576,7 @@ class TestPipelineJobEntity:
                     "slack_amount": 0.0,
                 },
             },
-            "image_model": {
+            "training_parameters": {
                 "checkpoint_frequency": 1,
                 "early_stopping": True,
                 "early_stopping_delay": 2,
@@ -501,18 +593,39 @@ class TestPipelineJobEntity:
                 }
             ],
         }
+        if (run_type == "single") or (run_type == "automode"):
+            del expected_dict["search_space"]
+            del expected_dict["sweep"]
+        assert actual_dict == expected_dict
 
+    @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_automl_node_in_pipeline_image_instance_segmentation(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+        self,
+        mock_machinelearning_client: MLClient,
+        mocker: MockFixture,
+        run_type: str,
+        tmp_path: Path,
     ):
         test_path = (
             "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_instance_segmentation.yml"
         )
-        job = load_job(path=test_path)
+
+        test_config = load_yaml(test_path)
+        if (run_type == "single") or (run_type == "automode"):
+            # Remove search_space and sweep sections from the config
+            del test_config["jobs"]["hello_automl_image_instance_segmentation"]["search_space"]
+            del test_config["jobs"]["hello_automl_image_instance_segmentation"]["sweep"]
+
+        test_yaml_file = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_file, test_config)
+        job = load_job(source=test_yaml_file)
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, ImageInstanceSegmentationJob)
-        mocker.patch("azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx")
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
+        )
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
@@ -522,7 +635,7 @@ class TestPipelineJobEntity:
             rest_job_dict["properties"]["jobs"]["hello_automl_image_instance_segmentation"], omit_fields
         )
 
-        assert actual_dict == {
+        expected_dict = {
             "limits": {"timeout_minutes": 60},
             "log_verbosity": "info",
             "outputs": {},
@@ -544,7 +657,7 @@ class TestPipelineJobEntity:
                     "slack_amount": 0.0,
                 },
             },
-            "image_model": {
+            "training_parameters": {
                 "checkpoint_frequency": 1,
                 "early_stopping": True,
                 "early_stopping_delay": 2,
@@ -561,14 +674,487 @@ class TestPipelineJobEntity:
                 }
             ],
         }
+        if (run_type == "single") or (run_type == "automode"):
+            del expected_dict["search_space"]
+            del expected_dict["sweep"]
+        assert actual_dict == expected_dict
+
+    def test_spark_node_in_pipeline(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
+        test_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline.yml"
+
+        job = load_job(path=test_path)
+        assert isinstance(job, PipelineJob)
+        node = next(iter(job.jobs.values()))
+        assert isinstance(node, Spark)
+
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+        )
+        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+
+        rest_job_dict = job._to_rest_object().as_dict()
+        omit_fields = []  # "name", "display_name", "experiment_name", "properties"
+        actual_dict = pydash.omit(rest_job_dict["properties"]["jobs"]["spark_job"], omit_fields)
+
+        expected_dict = {
+            "type": "spark",
+            "resources": None,
+            "entry": {"file": "entry.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+            "py_files": ["utils.zip"],
+            "jars": ["scalaproj.jar"],
+            "files": ["my_files.txt"],
+            "archives": None,
+            "identity": None,
+            "args": "--file_input1 ${{inputs.file_input1}} --file_input2 ${{inputs.file_input2}} --output ${{outputs.output}}",
+            "name": "spark_job",
+            "display_name": None,
+            "tags": {},
+            "computeId": "xxx",
+            "inputs": {
+                "file_input1": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"},
+                "file_input2": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"},
+            },
+            "outputs": {"output": {"value": "${{parent.outputs.output}}", "type": "literal"}},
+            "_source": "YAML.JOB",
+            "conf": {
+                "spark.driver.cores": 2,
+                "spark.driver.memory": "1g",
+                "spark.executor.cores": 1,
+                "spark.executor.instances": 1,
+                "spark.executor.memory": "1g",
+            },
+            "componentId": "xxx",
+        }
+        assert actual_dict == expected_dict
+
+    def test_spark_node_in_pipeline_with_dynamic_allocation_disabled(
+        self,
+    ):
+        test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_dynamic_allocation_disabled.yml"
+        job = load_job(path=test_path)
+        with pytest.raises(ValidationException) as ve:
+            job._to_rest_object().as_dict()
+            assert ve.message == "Should not specify min or max executors when dynamic allocation is disabled."
 
     def test_infer_pipeline_output_type_as_node_type(
         self,
     ) -> None:
         pipeline_job = load_job(
-            path="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_tabular_input_e2e.yml",
+            source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_tabular_input_e2e.yml",
         )
         assert (
             pipeline_job.jobs["hello_world_inline_parallel_tabular_job_1"].outputs["job_output_file"].type
             == AssetTypes.URI_FILE
         )
+
+    @pytest.mark.parametrize(
+        "pipeline_job_path, expected_type",
+        [
+            (
+                "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_literal_output_binding_to_inline_job_input.yml",
+                "uri_folder",
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_literal_output_binding_to_inline_job_input2.yml",
+                "mltable",
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_output_binding_to_inline_job_input.yml",
+                "uri_folder",
+            ),
+        ],
+    )
+    def test_pipeline_job_with_inline_command_job_input_binding_to_registered_component_job_output(
+        self,
+        client: MLClient,
+        pipeline_job_path: str,
+        expected_type,
+    ) -> None:
+        pipeline_job = load_job(
+            source=pipeline_job_path,
+        )
+        actual_type = pipeline_job.jobs["score_job"].inputs.model_input.type
+        assert actual_type == expected_type
+        actual_type = pipeline_job.jobs["score_job"].component.inputs["model_input"].type
+        assert actual_type == expected_type
+
+    def test_pipeline_without_setting_binding_node(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
+        test_path = "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_without_setting_binding_node.yml"
+        job = load_job(source=test_path)
+
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+        )
+        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+
+        actual_dict = job._to_rest_object().as_dict()["properties"]
+
+        assert actual_dict == {
+            "properties": {},
+            "tags": {},
+            "is_archived": False,
+            "compute_id": "xxx",
+            "job_type": "Pipeline",
+            "inputs": {
+                "training_input": {"uri": "yyy/", "job_input_type": "uri_folder"},
+                "training_max_epochs": {"job_input_type": "literal", "value": "20"},
+                "training_learning_rate": {"job_input_type": "literal", "value": "1.8"},
+                "learning_rate_schedule": {"job_input_type": "literal", "value": "time-based"},
+            },
+            "jobs": {
+                "train_job": {
+                    "type": "command",
+                    "_source": "YAML.JOB",
+                    "resources": None,
+                    "distribution": None,
+                    "limits": None,
+                    "environment_variables": {},
+                    "name": "train_job",
+                    "display_name": None,
+                    "tags": {},
+                    "computeId": "xxx",
+                    "inputs": {
+                        "training_data": {"job_input_type": "literal", "value": "${{parent.inputs.training_input}}"},
+                        "learning_rate": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.training_learning_rate}}",
+                        },
+                        "learning_rate_schedule": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.learning_rate_schedule}}",
+                        },
+                        "max_epochs": {"job_input_type": "literal", "value": "${{parent.inputs.training_max_epochs}}"},
+                    },
+                    "outputs": {"model_output": {"value": "${{parent.outputs.trained_model}}", "type": "literal"}},
+                    "componentId": "xxx",
+                }
+            },
+            "outputs": {"trained_model": {"job_output_type": "uri_folder"}},
+            "settings": {"default_compute": "xxx", "default_datastore": "xxx", "_source": "YAML.JOB"},
+        }
+
+    def test_pipeline_with_only_setting_pipeline_level(
+        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+    ):
+        test_path = "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_only_setting_pipeline_level.yml"
+        job = load_job(source=test_path)
+
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+        )
+        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+
+        actual_dict = job._to_rest_object().as_dict()["properties"]
+
+        assert actual_dict == {
+            "properties": {},
+            "tags": {},
+            "is_archived": False,
+            "compute_id": "xxx",
+            "job_type": "Pipeline",
+            "inputs": {
+                "training_input": {"uri": "yyy/", "job_input_type": "uri_folder", "mode": "ReadOnlyMount"},
+                "training_max_epochs": {"job_input_type": "literal", "value": "20"},
+                "training_learning_rate": {"job_input_type": "literal", "value": "1.8"},
+                "learning_rate_schedule": {"job_input_type": "literal", "value": "time-based"},
+            },
+            "jobs": {
+                "train_job": {
+                    "type": "command",
+                    "_source": "YAML.JOB",
+                    "resources": None,
+                    "distribution": None,
+                    "limits": None,
+                    "environment_variables": {},
+                    "name": "train_job",
+                    "display_name": None,
+                    "tags": {},
+                    "computeId": "xxx",
+                    "inputs": {
+                        "training_data": {"job_input_type": "literal", "value": "${{parent.inputs.training_input}}"},
+                        "learning_rate": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.training_learning_rate}}",
+                        },
+                        "learning_rate_schedule": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.learning_rate_schedule}}",
+                        },
+                        "max_epochs": {"job_input_type": "literal", "value": "${{parent.inputs.training_max_epochs}}"},
+                    },
+                    "outputs": {"model_output": {"value": "${{parent.outputs.trained_model}}", "type": "literal"}},
+                    "componentId": "xxx",
+                }
+            },
+            "outputs": {"trained_model": {"job_output_type": "uri_folder", "mode": "Upload"}},
+            "settings": {
+                "default_compute": "xxx",
+                "default_datastore": "xxx",
+                "_source": "YAML.JOB",
+            },
+        }
+
+    def test_pipeline_with_only_setting_binding_node(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
+        test_path = "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_only_setting_binding_node.yml"
+        job = load_job(source=test_path)
+
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+        )
+        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+
+        actual_dict = job._to_rest_object().as_dict()["properties"]
+
+        assert actual_dict == {
+            "properties": {},
+            "tags": {},
+            "is_archived": False,
+            "compute_id": "xxx",
+            "job_type": "Pipeline",
+            "inputs": {
+                "training_input": {
+                    "uri": "yyy/",
+                    "job_input_type": "uri_folder",
+                },
+                "training_max_epochs": {"job_input_type": "literal", "value": "20"},
+                "training_learning_rate": {"job_input_type": "literal", "value": "1.8"},
+                "learning_rate_schedule": {"job_input_type": "literal", "value": "time-based"},
+            },
+            "jobs": {
+                "train_job": {
+                    "type": "command",
+                    "_source": "YAML.JOB",
+                    "resources": None,
+                    "distribution": None,
+                    "limits": None,
+                    "environment_variables": {},
+                    "name": "train_job",
+                    "display_name": None,
+                    "tags": {},
+                    "computeId": "xxx",
+                    "inputs": {
+                        "training_data": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.training_input}}",
+                            "mode": "ReadOnlyMount",
+                        },
+                        "learning_rate": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.training_learning_rate}}",
+                        },
+                        "learning_rate_schedule": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.learning_rate_schedule}}",
+                        },
+                        "max_epochs": {"job_input_type": "literal", "value": "${{parent.inputs.training_max_epochs}}"},
+                    },
+                    "outputs": {
+                        # add mode in rest if binding output set mode
+                        "model_output": {
+                            "value": "${{parent.outputs.trained_model}}",
+                            "type": "literal",
+                            "mode": "Upload",
+                        }
+                    },
+                    "componentId": "xxx",
+                }
+            },
+            "outputs": {"trained_model": {"job_output_type": "uri_folder"}},
+            "settings": {"default_compute": "xxx", "default_datastore": "xxx", "_source": "YAML.JOB"},
+        }
+
+    def test_pipeline_with_setting_binding_node_and_pipeline_level(
+        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+    ):
+        test_path = "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_setting_binding_node_and_pipeline_level.yml"
+        job = load_job(source=test_path)
+
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+        )
+        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+
+        actual_dict = job._to_rest_object().as_dict()["properties"]
+
+        assert actual_dict == {
+            "properties": {},
+            "tags": {},
+            "is_archived": False,
+            "compute_id": "xxx",
+            "job_type": "Pipeline",
+            "inputs": {
+                "training_input": {"uri": "yyy/", "job_input_type": "uri_folder", "mode": "Download"},
+                "training_max_epochs": {"job_input_type": "literal", "value": "20"},
+                "training_learning_rate": {"job_input_type": "literal", "value": "1.8"},
+                "learning_rate_schedule": {"job_input_type": "literal", "value": "time-based"},
+            },
+            "jobs": {
+                "train_job": {
+                    "type": "command",
+                    "_source": "YAML.JOB",
+                    "resources": None,
+                    "distribution": None,
+                    "limits": None,
+                    "environment_variables": {},
+                    "name": "train_job",
+                    "display_name": None,
+                    "tags": {},
+                    "computeId": "xxx",
+                    "inputs": {
+                        "training_data": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.training_input}}",
+                            "mode": "ReadOnlyMount",
+                        },
+                        "learning_rate": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.training_learning_rate}}",
+                        },
+                        "learning_rate_schedule": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.learning_rate_schedule}}",
+                        },
+                        "max_epochs": {"job_input_type": "literal", "value": "${{parent.inputs.training_max_epochs}}"},
+                    },
+                    "outputs": {
+                        # add mode in rest if binding output set mode
+                        "model_output": {
+                            "value": "${{parent.outputs.trained_model}}",
+                            "type": "literal",
+                            "mode": "Upload",
+                        }
+                    },
+                    "componentId": "xxx",
+                }
+            },
+            "outputs": {"trained_model": {"job_output_type": "uri_folder", "mode": "ReadWriteMount"}},
+            "settings": {"default_compute": "xxx", "default_datastore": "xxx", "_source": "YAML.JOB"},
+        }
+
+    def test_pipeline_with_inline_job_setting_binding_node_and_pipeline_level(
+        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+    ):
+        test_path = "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_inline_job_setting_binding_node_and_pipeline_level.yml"
+        job = load_job(source=test_path)
+
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+        )
+        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+
+        actual_dict = job._to_rest_object().as_dict()["properties"]
+
+        assert actual_dict == {
+            "properties": {},
+            "tags": {},
+            "is_archived": False,
+            "compute_id": "xxx",
+            "job_type": "Pipeline",
+            "inputs": {
+                "training_input": {"uri": "yyy/", "job_input_type": "uri_folder", "mode": "Download"},
+                "training_max_epochs": {"job_input_type": "literal", "value": "20"},
+                "training_learning_rate": {"job_input_type": "literal", "value": "1.8"},
+                "learning_rate_schedule": {"job_input_type": "literal", "value": "time-based"},
+            },
+            "jobs": {
+                "train_job": {
+                    "type": "command",
+                    "_source": "YAML.JOB",
+                    "resources": None,
+                    "distribution": None,
+                    "limits": None,
+                    "environment_variables": {},
+                    "name": "train_job",
+                    "display_name": None,
+                    "tags": {},
+                    "computeId": "xxx",
+                    "inputs": {
+                        "training_data": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.training_input}}",
+                            "mode": "ReadOnlyMount",
+                        },
+                        "learning_rate": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.training_learning_rate}}",
+                        },
+                        "learning_rate_schedule": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.learning_rate_schedule}}",
+                        },
+                        "max_epochs": {"job_input_type": "literal", "value": "${{parent.inputs.training_max_epochs}}"},
+                    },
+                    "outputs": {
+                        # add mode in rest if binding output set mode
+                        "model_output": {
+                            "value": "${{parent.outputs.trained_model}}",
+                            "type": "literal",
+                            "mode": "Upload",
+                        }
+                    },
+                    "componentId": "xxx",
+                }
+            },
+            "outputs": {"trained_model": {"job_output_type": "uri_folder", "mode": "ReadWriteMount"}},
+            "settings": {"default_compute": "xxx", "default_datastore": "xxx", "_source": "YAML.JOB"},
+        }
+
+    def test_pipeline_job_with_parameter_group(self):
+        test_path = "./tests/test_configs/pipeline_jobs/pipeline_job_with_parameter_group.yml"
+        job: PipelineJob = load_job(path=test_path)
+        assert isinstance(job.inputs.group, _GroupAttrDict)
+        job.inputs.group.int_param = 5
+        job.inputs.group.sub_group.str_param = "str"
+        job_dict = job._to_dict()
+        assert job_dict["inputs"] == {
+            "group.int_param": 5,
+            "group.enum_param": "hello",
+            "group.number_param": 4,
+            "group.sub_group.str_param": "str",
+            "group.sub_group.bool_param": 1,
+        }
+        assert job_dict["jobs"]["hello_world_component_1"]["inputs"] == {
+            "component_in_string": {"path": "${{parent.inputs.group.sub_group.str_param}}"},
+            "component_in_ranged_integer": {"path": "${{parent.inputs.group.int_param}}"},
+            "component_in_enum": {"path": "${{parent.inputs.group.enum_param}}"},
+            "component_in_boolean": {"path": "${{parent.inputs.group.sub_group.bool_param}}"},
+            "component_in_ranged_number": {"path": "${{parent.inputs.group.number_param}}"},
+        }
+        rest_job = job._to_rest_object().as_dict()["properties"]
+        assert rest_job["inputs"] == {
+            "group.int_param": {"job_input_type": "literal", "value": "5"},
+            "group.enum_param": {"job_input_type": "literal", "value": "hello"},
+            "group.number_param": {"job_input_type": "literal", "value": "4.0"},
+            "group.sub_group.str_param": {"job_input_type": "literal", "value": "str"},
+            "group.sub_group.bool_param": {"job_input_type": "literal", "value": "True"},
+        }
+        assert rest_job["jobs"]["hello_world_component_1"]["inputs"] == {
+            "component_in_string": {
+                "job_input_type": "literal",
+                "value": "${{parent.inputs.group.sub_group.str_param}}",
+            },
+            "component_in_ranged_integer": {"job_input_type": "literal", "value": "${{parent.inputs.group.int_param}}"},
+            "component_in_enum": {"job_input_type": "literal", "value": "${{parent.inputs.group.enum_param}}"},
+            "component_in_boolean": {
+                "job_input_type": "literal",
+                "value": "${{parent.inputs.group.sub_group.bool_param}}",
+            },
+            "component_in_ranged_number": {
+                "job_input_type": "literal",
+                "value": "${{parent.inputs.group.number_param}}",
+            },
+        }
+
+    def test_pipeline_with_init_finalize(self) -> None:
+        pipeline_job = load_job(path="./tests/test_configs/pipeline_jobs/pipeline_job_init_finalize.yaml")
+        assert pipeline_job.settings.on_init == "a"
+        assert pipeline_job.settings.on_finalize == "c"
+        pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
+        assert pipeline_job_dict["properties"]["settings"]["on_init"] == "a"
+        assert pipeline_job_dict["properties"]["settings"]["on_finalize"] == "c"

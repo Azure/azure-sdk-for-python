@@ -43,6 +43,7 @@ class TestAzureLogExporter(unittest.TestCase):
         os.environ[
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
+        os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         cls._exporter = AzureMonitorLogExporter()
         cls._log_data = _logs.LogData(
             _logs.LogRecord(

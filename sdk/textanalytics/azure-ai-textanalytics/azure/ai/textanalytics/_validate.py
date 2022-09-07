@@ -30,8 +30,8 @@ def check_for_unsupported_actions_types(*args, **kwargs):
         "2022-05-01":
         [
             "RecognizeCustomEntitiesAction",
-            "SingleCategoryClassifyAction",
-            "MultiCategoryClassifyAction",
+            "SingleLabelClassifyAction",
+            "MultiLabelClassifyAction",
             "AnalyzeHealthcareEntitiesAction"
         ]
     }
@@ -47,8 +47,9 @@ def check_for_unsupported_actions_types(*args, **kwargs):
 
     if unsupported:
         error_strings = [
-            f"'{param}' is only available for API version {version} and up.\n"
-            for param, version in unsupported.items()
+            f"'{action_type}' is not available in API version {selected_api_version}. "
+            f"Use service API version {version} or newer.\n"
+            for action_type, version in unsupported.items()
         ]
         raise ValueError("".join(error_strings))
 
@@ -74,7 +75,10 @@ def validate_multiapi_args(**kwargs: typing.Any) -> typing.Callable[[typing.Call
 
             if version_method_added and version_method_added != selected_api_version and \
                     VERSIONS_SUPPORTED.index(selected_api_version) < VERSIONS_SUPPORTED.index(version_method_added):
-                raise ValueError(f"'{func.__name__}' is only available for API version {version_method_added} and up.")
+                raise ValueError(
+                    f"'{client.__class__.__name__}.{func.__name__}' is not available in API version "
+                    f"{selected_api_version}. Use service API version {version_method_added} or newer."
+                )
 
             if args_mapping:
                 unsupported = {
@@ -85,9 +89,11 @@ def validate_multiapi_args(**kwargs: typing.Any) -> typing.Callable[[typing.Call
                     and selected_api_version != version
                     and VERSIONS_SUPPORTED.index(selected_api_version) < VERSIONS_SUPPORTED.index(version)
                 }
+
                 if unsupported:
                     error_strings = [
-                        f"'{param}' is only available for API version {version} and up.\n"
+                        f"'{param}' is not available in API version {selected_api_version}. "
+                        f"Use service API version {version} or newer.\n"
                         for param, version in unsupported.items()
                     ]
                     raise ValueError("".join(error_strings))

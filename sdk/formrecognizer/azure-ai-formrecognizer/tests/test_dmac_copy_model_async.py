@@ -10,9 +10,9 @@ import uuid
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import HttpResponseError
-from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
-from azure.ai.formrecognizer import DocumentModelInfo
-from azure.ai.formrecognizer.aio import FormTrainingClient, DocumentModelAdministrationClient
+from azure.ai.formrecognizer._generated.v2022_08_31.models import DocumentModelCopyToOperationDetails, DocumentModelDetails as ModelDetails
+from azure.ai.formrecognizer import DocumentModelDetails
+from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, AsyncDocumentModelAdministrationLROPoller
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -29,7 +29,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         client = kwargs.pop("client")
         with pytest.raises(ValueError):
             async with client:
-                await client.begin_copy_model_to(model_id=None, target={})
+                await client.begin_copy_document_model_to(model_id=None, target={})
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -37,7 +37,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         client = kwargs.pop("client")
         with pytest.raises(ValueError):
             async with client:
-                await client.begin_copy_model_to(model_id="", target={})
+                await client.begin_copy_document_model_to(model_id="", target={})
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -45,12 +45,12 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     async def test_copy_model_successful(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         async with client:
-            training_poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+            training_poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await training_poller.result()
 
             target = await client.get_copy_authorization(tags={"testkey": "testvalue"})
 
-            copy_poller = await client.begin_copy_model_to(model.model_id, target=target)
+            copy_poller = await client.begin_copy_document_model_to(model.model_id, target=target)
             copy = await copy_poller.result()
 
             assert copy.model_id == target["targetModelId"]
@@ -71,14 +71,14 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     async def test_copy_model_with_model_id_and_desc(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         async with client:
-            poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await poller.result()
 
             model_id = str(uuid.uuid4())
             description = "this is my copied model"
             target = await client.get_copy_authorization(model_id=model_id, description=description)
 
-            poller = await client.begin_copy_model_to(model.model_id, target=target)
+            poller = await client.begin_copy_document_model_to(model.model_id, target=target)
             copy = await poller.result()
             if self.is_live:
                 assert copy.model_id == model_id
@@ -100,14 +100,14 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     async def test_copy_model_fail_bad_model_id(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         async with client:
-            poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await poller.result()
 
             target = await client.get_copy_authorization()
 
             with pytest.raises(HttpResponseError):
                 # give bad model_id
-                poller = await client.begin_copy_model_to("00000000-0000-0000-0000-000000000000", target=target)
+                poller = await client.begin_copy_document_model_to("00000000-0000-0000-0000-000000000000", target=target)
                 copy = await poller.result()
 
     @FormRecognizerPreparer()
@@ -118,18 +118,18 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         raw_response = []
 
         def callback(response, _, headers):
-            op_response = client._deserialize(GetOperationResponse, response)
-            model_info = client._deserialize(ModelInfo, op_response.result)
-            document_model = DocumentModelInfo._from_generated(model_info)
+            op_response = client._deserialize(DocumentModelCopyToOperationDetails, response)
+            model_info = client._deserialize(ModelDetails, op_response.result)
+            document_model = DocumentModelDetails._from_generated(model_info)
             raw_response.append(model_info)
             raw_response.append(document_model)
 
         async with client:
-            training_poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+            training_poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await training_poller.result()
 
             target = await client.get_copy_authorization()
-            poller = await client.begin_copy_model_to(model.model_id, target=target, cls=callback)
+            poller = await client.begin_copy_document_model_to(model.model_id, target=target, cls=callback)
             copy = await poller.result()
 
             generated = raw_response[0]
@@ -157,18 +157,18 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     async def test_copy_model_with_composed_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         async with client:
-            poller_1 = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+            poller_1 = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model_1 = await poller_1.result()
 
-            poller_2 = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+            poller_2 = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model_2 = await poller_2.result()
 
-            composed_poller = await client.begin_compose_model([model_1.model_id, model_2.model_id])
+            composed_poller = await client.begin_compose_document_model([model_1.model_id, model_2.model_id])
             composed_model = await composed_poller.result()
 
             target = await client.get_copy_authorization()
 
-            poller = await client.begin_copy_model_to(composed_model.model_id, target=target)
+            poller = await client.begin_copy_document_model_to(composed_model.model_id, target=target)
             copy = await poller.result()
 
             assert target["targetModelId"] == copy.model_id
@@ -190,14 +190,14 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         client = kwargs.pop("client")
         formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         async with client:
-            poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await poller.result()
 
             target = await client.get_copy_authorization()
 
-            initial_poller = await client.begin_copy_model_to(model.model_id, target=target)
+            initial_poller = await client.begin_copy_document_model_to(model.model_id, target=target)
             cont_token = initial_poller.continuation_token()
-            poller = await client.begin_copy_model_to(model.model_id, None, continuation_token=cont_token)
+            poller = await client.begin_copy_document_model_to(model.model_id, None, continuation_token=cont_token)
             result = await poller.result()
             assert result
 
@@ -209,17 +209,19 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     async def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         async with client:
-            poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await poller.result()
 
             target = await client.get_copy_authorization()
 
-            poller = await client.begin_copy_model_to(model.model_id, target=target)
-            assert poller.operation_id
-            assert poller.percent_completed is not None
+            poller = await client.begin_copy_document_model_to(model.model_id, target=target)
             await poller.result()
-            assert poller.operation_kind == "documentModelCopyTo"
-            assert poller.percent_completed == 100
-            assert poller.resource_location_url
-            assert poller.created_on
-            assert poller.last_updated_on
+            assert isinstance(poller, AsyncDocumentModelAdministrationLROPoller)
+            details = poller.details
+            assert details["operation_id"]
+            assert details["percent_completed"] is not None
+            assert details["operation_kind"] == "documentModelCopyTo"
+            assert details["percent_completed"] == 100
+            assert details["resource_location_url"]
+            assert details["created_on"]
+            assert details["last_updated_on"]

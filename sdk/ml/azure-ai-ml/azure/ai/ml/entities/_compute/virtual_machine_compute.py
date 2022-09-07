@@ -1,18 +1,17 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Optional, Dict
 from pathlib import Path
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, ComputeType, ComputeDefaults, TYPE
-from azure.ai.ml.entities import Compute
-from azure.ai.ml.entities._util import load_from_dict
+from typing import Dict, Optional
+
+from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeResource
+from azure.ai.ml._restclient.v2022_01_01_preview.models import VirtualMachine as VMResource
+from azure.ai.ml._restclient.v2022_01_01_preview.models import VirtualMachineProperties, VirtualMachineSshCredentials
 from azure.ai.ml._schema.compute.virtual_machine_compute import VirtualMachineComputeSchema
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
-    ComputeResource,
-    VirtualMachineProperties,
-    VirtualMachine as VMResource,
-    VirtualMachineSshCredentials,
-)
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
+from azure.ai.ml.constants._compute import ComputeType
+from azure.ai.ml.entities._compute.compute import Compute
+from azure.ai.ml.entities._util import load_from_dict
 
 
 class VirtualMachineSshSettings:
@@ -23,17 +22,19 @@ class VirtualMachineSshSettings:
         admin_password: str = None,
         ssh_port: int = 22,
         ssh_private_key_file: str = None,
-        **kwargs,
     ):
-        """SSH settings for a virtual machine
+        """SSH settings for a virtual machine.
 
         :param admin_username:  Describes the admin user name., defaults to None.
         :type admin_username: str, required
-        :param admin_password: Describes the admin user password, defaults to None. Required if ssh_private_key_file is not specified.
+        :param admin_password: Describes the admin user password.
+            Defaults to None. Required if ssh_private_key_file is not specified.
         :type admin_password: str, optional
         :param ssh_port: The ssh port number. Default is 22.
         :type ssh_port: str, optional
-        :param ssh_private_key_file: Specifies the file containing SSH rsa private key. Use "ssh-keygen -t rsa -b 2048" to generate your SSH key pairs.Required if admin_password is not specified.
+        :param ssh_private_key_file: Specifies the file containing SSH rsa private key.
+            Use "ssh-keygen -t rsa -b 2048" to generate your SSH key pairs.
+            Required if admin_password is not specified.
         :type ssh_private_key_file: str, optional
         """
         self.admin_username = admin_username
@@ -43,7 +44,7 @@ class VirtualMachineSshSettings:
 
 
 class VirtualMachineCompute(Compute):
-    """Virtual Machine Compute resource
+    """Virtual Machine Compute resource.
 
     :param name: Name of the compute
     :type name: str
@@ -61,16 +62,19 @@ class VirtualMachineCompute(Compute):
         name: str,
         description: Optional[str] = None,
         resource_id: str,
-        public_key_data: Optional[str] = None,
         ssh_settings: VirtualMachineSshSettings = None,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.VIRTUALMACHINE
+        self._public_key_data = kwargs.pop("public_key_data", None)
         super().__init__(
-            name=name, location=kwargs.pop("location", None), description=description, resource_id=resource_id, **kwargs
+            name=name,
+            location=kwargs.pop("location", None),
+            description=description,
+            resource_id=resource_id,
+            **kwargs,
         )
         self.ssh_settings = ssh_settings
-        self._public_key_data = kwargs.pop("public_key_data", None)
 
     @property
     def public_key_data(self) -> str:
@@ -91,7 +95,6 @@ class VirtualMachineCompute(Compute):
                 admin_username=credentials.username if credentials else None,
                 admin_password=credentials.password if credentials else None,
                 ssh_port=prop.properties.ssh_port if prop.properties else None,
-                ssh_key_value=credentials.private_key_data if credentials else None,
             )
         response = VirtualMachineCompute(
             name=rest_obj.name,
@@ -109,6 +112,7 @@ class VirtualMachineCompute(Compute):
         return response
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return VirtualMachineComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
@@ -127,6 +131,10 @@ class VirtualMachineCompute(Compute):
             private_key_data=ssh_key_value,
         )
         properties = VirtualMachineProperties(ssh_port=self.ssh_settings.ssh_port, administrator_account=credentials)
-        vm_compute = VMResource(properties=properties, resource_id=self.resource_id, description=self.description)
+        vm_compute = VMResource(
+            properties=properties,
+            resource_id=self.resource_id,
+            description=self.description,
+        )
         resource = ComputeResource(name=self.name, location=self.location, properties=vm_compute)
         return resource

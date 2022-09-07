@@ -358,111 +358,321 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin):    # pyli
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.application_gateways = ApplicationGatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.application_gateway_private_link_resources = ApplicationGatewayPrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.application_gateway_private_endpoint_connections = ApplicationGatewayPrivateEndpointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.application_security_groups = ApplicationSecurityGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.available_delegations = AvailableDelegationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.available_resource_group_delegations = AvailableResourceGroupDelegationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.available_service_aliases = AvailableServiceAliasesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.azure_firewalls = AzureFirewallsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.azure_firewall_fqdn_tags = AzureFirewallFqdnTagsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.web_categories = WebCategoriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.bastion_hosts = BastionHostsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.custom_ip_prefixes = CustomIPPrefixesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.ddos_custom_policies = DdosCustomPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.ddos_protection_plans = DdosProtectionPlansOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.dscp_configuration = DscpConfigurationOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.available_endpoint_services = AvailableEndpointServicesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.express_route_circuit_authorizations = ExpressRouteCircuitAuthorizationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.express_route_circuit_peerings = ExpressRouteCircuitPeeringsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.express_route_circuit_connections = ExpressRouteCircuitConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.peer_express_route_circuit_connections = PeerExpressRouteCircuitConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.express_route_circuits = ExpressRouteCircuitsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.express_route_service_providers = ExpressRouteServiceProvidersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.express_route_cross_connections = ExpressRouteCrossConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.express_route_cross_connection_peerings = ExpressRouteCrossConnectionPeeringsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.express_route_ports_locations = ExpressRoutePortsLocationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.express_route_ports = ExpressRoutePortsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.express_route_links = ExpressRouteLinksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.firewall_policies = FirewallPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.firewall_policy_rule_collection_groups = FirewallPolicyRuleCollectionGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.ip_allocations = IpAllocationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.ip_groups = IpGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.load_balancers = LoadBalancersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.load_balancer_backend_address_pools = LoadBalancerBackendAddressPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.load_balancer_frontend_ip_configurations = LoadBalancerFrontendIPConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.inbound_nat_rules = InboundNatRulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.load_balancer_load_balancing_rules = LoadBalancerLoadBalancingRulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.load_balancer_outbound_rules = LoadBalancerOutboundRulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.load_balancer_network_interfaces = LoadBalancerNetworkInterfacesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.load_balancer_probes = LoadBalancerProbesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.nat_gateways = NatGatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.network_interfaces = NetworkInterfacesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.network_interface_ip_configurations = NetworkInterfaceIPConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.network_interface_load_balancers = NetworkInterfaceLoadBalancersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.network_interface_tap_configurations = NetworkInterfaceTapConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.network_profiles = NetworkProfilesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.network_security_groups = NetworkSecurityGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.security_rules = SecurityRulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.default_security_rules = DefaultSecurityRulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.network_virtual_appliances = NetworkVirtualAppliancesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_appliance_sites = VirtualApplianceSitesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_appliance_skus = VirtualApplianceSkusOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.inbound_security_rule = InboundSecurityRuleOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.network_watchers = NetworkWatchersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.packet_captures = PacketCapturesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.connection_monitors = ConnectionMonitorsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.flow_logs = FlowLogsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoints = PrivateEndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.available_private_endpoint_types = AvailablePrivateEndpointTypesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_dns_zone_groups = PrivateDnsZoneGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_link_services = PrivateLinkServicesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.public_ip_addresses = PublicIPAddressesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.public_ip_prefixes = PublicIPPrefixesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.route_filters = RouteFiltersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.route_filter_rules = RouteFilterRulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.route_tables = RouteTablesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.routes = RoutesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.security_partner_providers = SecurityPartnerProvidersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.bgp_service_communities = BgpServiceCommunitiesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.service_endpoint_policies = ServiceEndpointPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.service_endpoint_policy_definitions = ServiceEndpointPolicyDefinitionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.service_tags = ServiceTagsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_networks = VirtualNetworksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.subnets = SubnetsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resource_navigation_links = ResourceNavigationLinksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.service_association_links = ServiceAssociationLinksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_network_peerings = VirtualNetworkPeeringsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_network_gateways = VirtualNetworkGatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_network_gateway_connections = VirtualNetworkGatewayConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.local_network_gateways = LocalNetworkGatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_network_taps = VirtualNetworkTapsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_routers = VirtualRoutersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_router_peerings = VirtualRouterPeeringsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_wans = VirtualWansOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.vpn_sites = VpnSitesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.vpn_site_links = VpnSiteLinksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.vpn_sites_configuration = VpnSitesConfigurationOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.vpn_server_configurations = VpnServerConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_hubs = VirtualHubsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.hub_virtual_network_connections = HubVirtualNetworkConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.vpn_gateways = VpnGatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.vpn_connections = VpnConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.vpn_site_link_connections = VpnSiteLinkConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.vpn_link_connections = VpnLinkConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.p2_svpn_gateways = P2SVpnGatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.vpn_server_configurations_associated_with_virtual_wan = VpnServerConfigurationsAssociatedWithVirtualWanOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_hub_route_table_v2_s = VirtualHubRouteTableV2SOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.express_route_gateways = ExpressRouteGatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.express_route_connections = ExpressRouteConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_hub_bgp_connection = VirtualHubBgpConnectionOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_hub_bgp_connections = VirtualHubBgpConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_hub_ip_configuration = VirtualHubIpConfigurationOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.hub_route_tables = HubRouteTablesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.web_application_firewall_policies = WebApplicationFirewallPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.application_gateways = ApplicationGatewaysOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.application_gateway_private_link_resources = ApplicationGatewayPrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.application_gateway_private_endpoint_connections = ApplicationGatewayPrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.application_security_groups = ApplicationSecurityGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.available_delegations = AvailableDelegationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.available_resource_group_delegations = AvailableResourceGroupDelegationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.available_service_aliases = AvailableServiceAliasesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.azure_firewalls = AzureFirewallsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.azure_firewall_fqdn_tags = AzureFirewallFqdnTagsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.web_categories = WebCategoriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.bastion_hosts = BastionHostsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.custom_ip_prefixes = CustomIPPrefixesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ddos_custom_policies = DdosCustomPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ddos_protection_plans = DdosProtectionPlansOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.dscp_configuration = DscpConfigurationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.available_endpoint_services = AvailableEndpointServicesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.express_route_circuit_authorizations = ExpressRouteCircuitAuthorizationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.express_route_circuit_peerings = ExpressRouteCircuitPeeringsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.express_route_circuit_connections = ExpressRouteCircuitConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.peer_express_route_circuit_connections = PeerExpressRouteCircuitConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.express_route_circuits = ExpressRouteCircuitsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.express_route_service_providers = ExpressRouteServiceProvidersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.express_route_cross_connections = ExpressRouteCrossConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.express_route_cross_connection_peerings = ExpressRouteCrossConnectionPeeringsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.express_route_ports_locations = ExpressRoutePortsLocationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.express_route_ports = ExpressRoutePortsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.express_route_links = ExpressRouteLinksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.firewall_policies = FirewallPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.firewall_policy_rule_collection_groups = FirewallPolicyRuleCollectionGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ip_allocations = IpAllocationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ip_groups = IpGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.load_balancers = LoadBalancersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.load_balancer_backend_address_pools = LoadBalancerBackendAddressPoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.load_balancer_frontend_ip_configurations = LoadBalancerFrontendIPConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.inbound_nat_rules = InboundNatRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.load_balancer_load_balancing_rules = LoadBalancerLoadBalancingRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.load_balancer_outbound_rules = LoadBalancerOutboundRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.load_balancer_network_interfaces = LoadBalancerNetworkInterfacesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.load_balancer_probes = LoadBalancerProbesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.nat_gateways = NatGatewaysOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_interfaces = NetworkInterfacesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_interface_ip_configurations = NetworkInterfaceIPConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_interface_load_balancers = NetworkInterfaceLoadBalancersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_interface_tap_configurations = NetworkInterfaceTapConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_profiles = NetworkProfilesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_security_groups = NetworkSecurityGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.security_rules = SecurityRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.default_security_rules = DefaultSecurityRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_virtual_appliances = NetworkVirtualAppliancesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_appliance_sites = VirtualApplianceSitesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_appliance_skus = VirtualApplianceSkusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.inbound_security_rule = InboundSecurityRuleOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_watchers = NetworkWatchersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.packet_captures = PacketCapturesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.connection_monitors = ConnectionMonitorsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.flow_logs = FlowLogsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoints = PrivateEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.available_private_endpoint_types = AvailablePrivateEndpointTypesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_dns_zone_groups = PrivateDnsZoneGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_services = PrivateLinkServicesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.public_ip_addresses = PublicIPAddressesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.public_ip_prefixes = PublicIPPrefixesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.route_filters = RouteFiltersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.route_filter_rules = RouteFilterRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.route_tables = RouteTablesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.routes = RoutesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.security_partner_providers = SecurityPartnerProvidersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.bgp_service_communities = BgpServiceCommunitiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.service_endpoint_policies = ServiceEndpointPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.service_endpoint_policy_definitions = ServiceEndpointPolicyDefinitionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.service_tags = ServiceTagsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.usages = UsagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_networks = VirtualNetworksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.subnets = SubnetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.resource_navigation_links = ResourceNavigationLinksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.service_association_links = ServiceAssociationLinksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_network_peerings = VirtualNetworkPeeringsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_network_gateways = VirtualNetworkGatewaysOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_network_gateway_connections = VirtualNetworkGatewayConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.local_network_gateways = LocalNetworkGatewaysOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_network_taps = VirtualNetworkTapsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_routers = VirtualRoutersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_router_peerings = VirtualRouterPeeringsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_wans = VirtualWansOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.vpn_sites = VpnSitesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.vpn_site_links = VpnSiteLinksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.vpn_sites_configuration = VpnSitesConfigurationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.vpn_server_configurations = VpnServerConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_hubs = VirtualHubsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.hub_virtual_network_connections = HubVirtualNetworkConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.vpn_gateways = VpnGatewaysOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.vpn_connections = VpnConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.vpn_site_link_connections = VpnSiteLinkConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.vpn_link_connections = VpnLinkConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.p2_svpn_gateways = P2SVpnGatewaysOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.vpn_server_configurations_associated_with_virtual_wan = VpnServerConfigurationsAssociatedWithVirtualWanOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_hub_route_table_v2_s = VirtualHubRouteTableV2SOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.express_route_gateways = ExpressRouteGatewaysOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.express_route_connections = ExpressRouteConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_hub_bgp_connection = VirtualHubBgpConnectionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_hub_bgp_connections = VirtualHubBgpConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_hub_ip_configuration = VirtualHubIpConfigurationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.hub_route_tables = HubRouteTablesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.web_application_firewall_policies = WebApplicationFirewallPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

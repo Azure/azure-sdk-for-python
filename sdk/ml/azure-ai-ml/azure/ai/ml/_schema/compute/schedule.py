@@ -2,17 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
+
 from marshmallow import fields
 from marshmallow.decorators import post_load
-from azure.ai.ml._schema import NestedField, UnionField, StringTransformedEnum
+
+from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputePowerAction, DaysOfWeek, RecurrenceFrequency
+from azure.ai.ml._restclient.v2022_01_01_preview.models import ScheduleStatus as ScheduleState
+from azure.ai.ml._restclient.v2022_01_01_preview.models import TriggerType
+from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
-    TriggerType,
-    RecurrenceFrequency,
-    ComputePowerAction,
-    ScheduleStatus as ScheduleState,
-    DaysOfWeek,
-)
 
 
 class BaseTriggerSchema(metaclass=PatchedSchemaMeta):
@@ -28,6 +27,7 @@ class CronTriggerSchema(BaseTriggerSchema):
     def make(self, data, **kwargs):
         from azure.ai.ml.entities import CronTrigger
 
+        data.pop("type")
         return CronTrigger(**data)
 
 
@@ -69,6 +69,7 @@ class RecurrenceTriggerSchema(BaseTriggerSchema):
     def make(self, data, **kwargs):
         from azure.ai.ml.entities import RecurrenceTrigger
 
+        data.pop("type")
         return RecurrenceTrigger(**data)
 
 

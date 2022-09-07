@@ -550,7 +550,7 @@ def GetItemContainerLink(link):
 
 
 def IndexOfNth(s, value, n):
-    """Gets the index of Nth occurance of a given character in a string.
+    """Gets the index of Nth occurrence of a given character in a string.
 
     :param str s: Input string
     :param char value: Input char to be searched.
@@ -671,5 +671,6 @@ def create_scope_from_url(url):
 
 def validate_cache_staleness_value(max_integrated_cache_staleness):
     int(max_integrated_cache_staleness)  # Will throw error if data type cant be converted to int
-    if max_integrated_cache_staleness <= 0:
-        raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be a positive integer.")
+    if max_integrated_cache_staleness < 0:
+        raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be an "
+                         "integer greater than or equal to zero")

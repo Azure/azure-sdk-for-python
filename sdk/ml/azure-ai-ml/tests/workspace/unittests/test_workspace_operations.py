@@ -1,14 +1,16 @@
 from typing import Callable
-from azure.ai.ml.entities._workspace.workspace import Workspace
-from azure.ai.ml.entities._workspace.customer_managed_key import CustomerManagedKey
+from unittest.mock import DEFAULT, Mock, call, patch
+
 import pytest
 from pytest_mock import MockFixture
-from unittest.mock import Mock, call, DEFAULT, patch
-from azure.ai.ml.operations import WorkspaceOperations
-from azure.identity import DefaultAzureCredential
+
 from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml.entities._workspace.customer_managed_key import CustomerManagedKey
+from azure.ai.ml.entities._workspace.workspace import Workspace
+from azure.ai.ml.operations import WorkspaceOperations
 from azure.core.exceptions import ResourceExistsError
 from azure.core.polling import LROPoller
+from azure.identity import DefaultAzureCredential
 
 
 @pytest.fixture
@@ -68,9 +70,7 @@ class TestWorkspaceOperation:
         mocker: MockFixture,
     ):
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", return_value=None)
-        mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=None)
-        mock_workspace_operation.template = None
-        mock_workspace_operation.param = None
+        mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=({}, {}, {}))
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=None)
         mock_workspace_operation.begin_create(workspace=Workspace(name="name"))
 
@@ -79,9 +79,7 @@ class TestWorkspaceOperation:
             name="name",
             resource_group="another_resource_group",
         )
-        mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=None)
-        mock_workspace_operation.template = None
-        mock_workspace_operation.param = None
+        mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=({}, {}, {}))
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=None)
 
         def outgoing_call(rg, name):
@@ -99,9 +97,7 @@ class TestWorkspaceOperation:
         mocker: MockFixture,
     ):
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", side_effect=Exception)
-        mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=None)
-        mock_workspace_operation.template = None
-        mock_workspace_operation.param = None
+        mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=({}, {}, {}))
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=None)
         mock_workspace_operation.begin_create(workspace=Workspace(name="name"), no_wait=True)
 

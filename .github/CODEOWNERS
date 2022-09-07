@@ -72,7 +72,7 @@
 /sdk/loganalytics/                                                   @alexeldeib
 
 # PRLabel: %Monitor - Exporter
-/sdk/monitor/azure-monitor-opentelemetry-exporter                    @rakshith91 @lmazuel @lzchen @hectorhdzg
+/sdk/monitor/azure-monitor-opentelemetry-exporter                    @rakshith91 @lmazuel @lzchen @hectorhdzg @jeremydvoss
 
 # PRLabel: %Monitor - Log
 /sdk/monitor/azure-monitor-query                                     @rakshith91
@@ -135,7 +135,7 @@
 /sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
 
 # PRLabel: %Synapse
-/sdk/synapse/                                                        @wonner @idear1203 @xiangyan99
+/sdk/synapse/                                                        @wonner @yanjungao718 @xiangyan99
 
 # PRLabel: %EngSys
 /sdk/template/                                                       @scbedd @weshaggard @benbp
@@ -237,7 +237,7 @@
 #/<NotInRepo>/          @darshanhs90 @AshishGargMicrosoft
 
 # ServiceLabel: %Automation %Service Attention
-#/<NotInRepo>/          @jaspkaur28
+#/<NotInRepo>/          @jaspkaur28 @omairabdullah
 
 # ServiceLabel: %AVS %Service Attention
 #/<NotInRepo>/          @divka78 @amitchat @aishu

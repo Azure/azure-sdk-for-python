@@ -6,52 +6,51 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import FluidRelayEndpoints
-    from ._models_py3 import FluidRelayServer
-    from ._models_py3 import FluidRelayServerKeys
-    from ._models_py3 import FluidRelayServerList
-    from ._models_py3 import FluidRelayServerUpdate
-    from ._models_py3 import Identity
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import OperationResult
-    from ._models_py3 import RegenerateKeyRequest
-    from ._models_py3 import Resource
-    from ._models_py3 import SystemData
-    from ._models_py3 import TrackedResource
-except (SyntaxError, ImportError):
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import FluidRelayEndpoints  # type: ignore
-    from ._models import FluidRelayServer  # type: ignore
-    from ._models import FluidRelayServerKeys  # type: ignore
-    from ._models import FluidRelayServerList  # type: ignore
-    from ._models import FluidRelayServerUpdate  # type: ignore
-    from ._models import Identity  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import OperationResult  # type: ignore
-    from ._models import RegenerateKeyRequest  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TrackedResource  # type: ignore
+from ._models_py3 import CustomerManagedKeyEncryptionProperties
+from ._models_py3 import CustomerManagedKeyEncryptionPropertiesKeyEncryptionKeyIdentity
+from ._models_py3 import EncryptionProperties
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import FluidRelayContainer
+from ._models_py3 import FluidRelayContainerList
+from ._models_py3 import FluidRelayEndpoints
+from ._models_py3 import FluidRelayServer
+from ._models_py3 import FluidRelayServerKeys
+from ._models_py3 import FluidRelayServerList
+from ._models_py3 import FluidRelayServerUpdate
+from ._models_py3 import Identity
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import OperationResult
+from ._models_py3 import ProxyResource
+from ._models_py3 import RegenerateKeyRequest
+from ._models_py3 import Resource
+from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
+from ._models_py3 import UserAssignedIdentitiesValue
+
 
 from ._fluid_relay_management_client_enums import (
+    CmkIdentityType,
     CreatedByType,
     KeyName,
     ProvisioningState,
     ResourceIdentityType,
+    StorageSKU,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
+    'CustomerManagedKeyEncryptionProperties',
+    'CustomerManagedKeyEncryptionPropertiesKeyEncryptionKeyIdentity',
+    'EncryptionProperties',
     'ErrorAdditionalInfo',
     'ErrorDetail',
     'ErrorResponse',
+    'FluidRelayContainer',
+    'FluidRelayContainerList',
     'FluidRelayEndpoints',
     'FluidRelayServer',
     'FluidRelayServerKeys',
@@ -61,12 +60,18 @@ __all__ = [
     'OperationDisplay',
     'OperationListResult',
     'OperationResult',
+    'ProxyResource',
     'RegenerateKeyRequest',
     'Resource',
     'SystemData',
     'TrackedResource',
+    'UserAssignedIdentitiesValue',
+    'CmkIdentityType',
     'CreatedByType',
     'KeyName',
     'ProvisioningState',
     'ResourceIdentityType',
+    'StorageSKU',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

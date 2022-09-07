@@ -56,6 +56,9 @@ from ._recovery_points_recommended_for_move_operations import RecoveryPointsReco
 from ._resource_guard_proxies_operations import ResourceGuardProxiesOperations
 from ._resource_guard_proxy_operations import ResourceGuardProxyOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'BackupResourceStorageConfigsNonCRROperations',
     'ProtectionIntentOperations',
@@ -107,3 +110,5 @@ __all__ = [
     'ResourceGuardProxiesOperations',
     'ResourceGuardProxyOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

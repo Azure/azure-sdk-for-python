@@ -4,17 +4,18 @@
 
 
 import pytest
+
 from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_properties import (
-    Image,
+    AppPort,
     Build,
     ContainerEnv,
+    Extensions,
+    ForwardPorts,
+    Image,
     Mounts,
     Name,
-    ForwardPorts,
-    AppPort,
-    RunArgs,
     OverrideCommand,
-    Extensions,
+    RunArgs,
     Settings,
 )
 

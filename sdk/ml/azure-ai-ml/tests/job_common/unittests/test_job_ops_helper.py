@@ -2,21 +2,24 @@ import re
 import time
 from collections import OrderedDict
 from io import StringIO
-from unittest.mock import Mock
 from typing import Dict
+from unittest.mock import Mock
+
 import pytest
 import vcr
-from .test_vcr_utils import before_record_cb
-from azure.ai.ml.operations._job_ops_helper import (
-    list_logs,
-    stream_logs_until_completion,
-    _incremental_print,
-    _get_sorted_filtered_logs,
-)
-from azure.ai.ml.operations._run_operations import RunOperations
+from mock import mock_open, patch
+
 from azure.ai.ml._restclient.runhistory.models import RunDetails, RunDetailsWarning
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from mock import mock_open, patch
+from azure.ai.ml.operations._job_ops_helper import (
+    _get_sorted_filtered_logs,
+    _incremental_print,
+    list_logs,
+    stream_logs_until_completion,
+)
+from azure.ai.ml.operations._run_operations import RunOperations
+
+from .test_vcr_utils import before_record_cb
 
 
 class DummyJob:
@@ -52,7 +55,7 @@ def mock__commands():
 
 @pytest.fixture
 def mock_time(request):
-    p = patch("azure.ai.ml.operations.job_ops_helper.time")
+    p = patch("azure.ai.ml.operations._job_ops_helper.time")
     yield p.start()
     p.stop()
 
@@ -62,6 +65,7 @@ def mock_run_operations(mock_workspace_scope: OperationScope, mock_aml_services_
     yield RunOperations(mock_workspace_scope, mock_aml_services_run_history)
 
 
+@pytest.mark.skip("TODO 1907352: Relies on a missing VCR.py recording + test suite needs to be reworked")
 @pytest.mark.unittest
 class TestJobLogManager:
     def test_wait_for_completion_with_output(self, mock_run_operations):
@@ -210,7 +214,6 @@ class TestJobLogManager:
 
     # Method to test the golden path, a new log was added on each call to get run details
     @pytest.mark.vcr()
-    @pytest.mark.skip(reason="To address after code migration")
     def test_stream_logs_golden_path(self, mock_run_operations) -> None:
         run_details_sequence = [
             self._get_run_details_dto(status="Running"),
@@ -227,7 +230,6 @@ class TestJobLogManager:
 
     # Method to test when all the logs were available at the same time
     @pytest.mark.vcr()
-    @pytest.mark.skip(reason="To address after code migration")
     def test_stream_logs_arriving_all_together(self, mock_run_operations) -> None:
         run_details_sequence = [
             self._get_run_details_dto(status="Running"),
@@ -241,7 +243,6 @@ class TestJobLogManager:
 
     # Method to test when the logs became available in batches of 2
     @pytest.mark.vcr()
-    @pytest.mark.skip(reason="To address after code migration")
     def test_stream_logs_arriving_in_batches(self, mock_run_operations) -> None:
         run_details_sequence = [
             self._get_run_details_dto(status="Running"),

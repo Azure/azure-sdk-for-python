@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
+import os
 from typing import TYPE_CHECKING
 
 from azure.core.exceptions import AzureError
@@ -63,6 +64,17 @@ class LocalCryptographyProvider(ABC):
     def encrypt(self, algorithm, plaintext, iv=None):
         # type: (EncryptionAlgorithm, bytes, Optional[bytes]) -> EncryptResult
         self._raise_if_unsupported(KeyOperation.encrypt, algorithm)
+
+        # If an IV isn't provided with AES-CBCPAD encryption, try to create one
+        if iv is None and algorithm.value.endswith("CBCPAD"):
+            try:
+                iv = os.urandom(16)
+            except NotImplementedError as ex:
+                raise ValueError(
+                    "An IV could not be generated on this OS. Please provide your own cryptographically random, "
+                    "non-repeating IV for local cryptography."
+                ) from ex
+
         ciphertext = self._internal_key.encrypt(plaintext, algorithm=algorithm.value, iv=iv)
         return EncryptResult(
             key_id=self._key.kid, algorithm=algorithm, ciphertext=ciphertext, iv=iv  # type: ignore[attr-defined]

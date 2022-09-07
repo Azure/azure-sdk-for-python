@@ -1,10 +1,9 @@
-
 import argparse
 import os
 from datetime import datetime
 from pathlib import Path
 
-print ("Hello Python World")
+print("Hello Python World")
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input_data", type=str)
@@ -29,12 +28,11 @@ for filename in arr:
     print("########### Reading file: %s ..." % filename)
     fp = os.path.join(fpath, filename)
     if os.path.isfile(fp):
-        with open(fp, 'r') as handle:
+        with open(fp, "r") as handle:
             print(handle.read())
 
 if args.output_data:
     cur_time_str = datetime.now().strftime("%b-%d-%Y-%H-%M-%S")
-    print("########### Writing file: %s" % os.path.join(args.output_data,"file-" + cur_time_str + ".txt"))
+    print("########### Writing file: %s" % os.path.join(args.output_data, "file-" + cur_time_str + ".txt"))
     with open(os.path.join(args.output_data, "file-" + cur_time_str + ".txt"), "wt") as text_file:
         print(f"Logging date time: {cur_time_str}", file=text_file)
-

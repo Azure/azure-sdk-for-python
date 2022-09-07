@@ -1,0 +1,86 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
+from marshmallow import INCLUDE
+
+from azure.ai.ml._internal._schema.command import CommandSchema, DistributedSchema, ParallelSchema
+from azure.ai.ml._internal._schema.component import NodeType
+from azure.ai.ml._internal._schema.node import HDInsightSchema, InternalBaseNodeSchema, ScopeSchema
+from azure.ai.ml._internal.entities import (
+    Command,
+    Distributed,
+    HDInsight,
+    InternalBaseNode,
+    InternalComponent,
+    Parallel,
+    Scope,
+)
+from azure.ai.ml._schema import NestedField
+from azure.ai.ml.constants._component import IOConstants
+from azure.ai.ml.entities._component.component_factory import component_factory
+from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+
+
+def _enable_internal_components():
+    create_schema_func = InternalComponent._create_schema_for_validation
+    for _type in NodeType.all_values():
+        component_factory.register_type(
+            _type=_type,
+            create_instance_func=lambda: InternalComponent.__new__(InternalComponent),
+            create_schema_func=create_schema_func,
+        )
+
+    # hack - internal primitive type
+    int_primitive_type = "int"
+    IOConstants.PRIMITIVE_STR_2_TYPE[int_primitive_type] = int
+    IOConstants.PARAM_PARSERS[int_primitive_type] = int
+    IOConstants.TYPE_MAPPING_YAML_2_REST[int_primitive_type] = "Int"
+
+    float_primitive_type = "float"
+    IOConstants.PRIMITIVE_STR_2_TYPE[float_primitive_type] = float
+    IOConstants.PARAM_PARSERS[float_primitive_type] = float
+    IOConstants.TYPE_MAPPING_YAML_2_REST[float_primitive_type] = "Float"
+
+    # TODO: do we support both Enum & enum?
+    enum_primitive_type = "Enum"
+    IOConstants.PRIMITIVE_STR_2_TYPE[enum_primitive_type] = str
+    IOConstants.TYPE_MAPPING_YAML_2_REST[enum_primitive_type] = "Enum"
+
+    enum_primitive_type = "enum"
+    IOConstants.PRIMITIVE_STR_2_TYPE[enum_primitive_type] = str
+    IOConstants.TYPE_MAPPING_YAML_2_REST[enum_primitive_type] = "enum"
+
+
+_registered = False
+
+
+def _register_node(_type, node_cls, schema_cls):
+    pipeline_node_factory.register_type(
+        _type=_type,
+        create_instance_func=lambda: node_cls.__new__(node_cls),
+        load_from_rest_object_func=node_cls._from_rest_object,
+        nested_schema=NestedField(schema_cls, unknown=INCLUDE),
+    )
+
+
+def enable_internal_components_in_pipeline():
+    global _registered  # pylint: disable=global-statement
+    if _registered:
+        return  # already registered
+
+    _enable_internal_components()
+    for _type in NodeType.all_values():
+        # if we do not register node class for all node types, the only difference will be the type of created node
+        # instance (Ae365exepool => InternalBaseNode). Not sure if this is acceptable.
+        _register_node(_type, InternalBaseNode, InternalBaseNodeSchema)
+
+    # redo the registration for those with specific runsettings
+    _register_node(NodeType.COMMAND, Command, CommandSchema)
+    _register_node(NodeType.DISTRIBUTED, Distributed, DistributedSchema)
+    _register_node(NodeType.SCOPE, Scope, ScopeSchema)
+    _register_node(NodeType.PARALLEL, Parallel, ParallelSchema)
+    _register_node(NodeType.HDI, HDInsight, HDInsightSchema)
+    _registered = True

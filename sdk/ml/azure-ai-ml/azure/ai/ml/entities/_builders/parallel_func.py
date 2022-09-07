@@ -4,15 +4,17 @@
 import os
 from typing import Dict, Union
 
-from azure.ai.ml.constants import ComponentSource
+from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken, ManagedIdentity
+from azure.ai.ml.constants._component import ComponentSource
+from azure.ai.ml.entities._component.parallel_component import ParallelComponent
+from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
+from azure.ai.ml.entities._job.parallel.run_function import RunFunction
 
+from .command_func import _parse_input, _parse_inputs_outputs, _parse_output
 from .parallel import Parallel
-from .command_func import _parse_input, _parse_output, _parse_inputs_outputs
-from azure.ai.ml.entities import ParallelComponent, BatchRetrySettings, ParallelTask
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ManagedIdentity, AmlToken
 
 
-def parallel(
+def parallel_run_function(
     *,
     name: str = None,
     description: str = None,
@@ -27,14 +29,17 @@ def parallel(
     max_concurrency_per_instance: int = None,
     error_threshold: int = None,
     mini_batch_error_threshold: int = None,
-    task: ParallelTask = None,
+    task: RunFunction = None,
     mini_batch_size: str = None,
     input_data: str = None,
     inputs: Dict = None,
     outputs: Dict = None,
     instance_count: int = None,
     instance_type: str = None,
+    docker_args: str = None,
+    shm_size: str = None,
     identity: Union[ManagedIdentity, AmlToken] = None,
+    is_deterministic: bool = True,
     **kwargs,
 ) -> Parallel:
     """Create a Parallel object which can be used inside dsl.pipeline as a
@@ -45,9 +50,9 @@ def parallel(
 
     .. remarks::
 
-        To use parallel:
+        To use parallel_run_function:
 
-        * Create a :class:`azure.ai.ml.parallel` object to specify how parallel run is performed,
+        * Create a :class:`azure.ai.ml.entities._builders.Parallel` object to specify how parallel run is performed,
           with parameters to control batch size,number of nodes per compute target, and a
           reference to your custom Python script.
 
@@ -60,7 +65,7 @@ def parallel(
 
         from azure.ai.ml import Input, Output, parallel
 
-        parallel_run = parallel(
+        parallel_run = parallel_run_function(
             name = 'batch_score_with_tabular_input',
             display_name = 'Batch Score with Tabular Dataset',
             description = 'parallel component for batch score',
@@ -76,17 +81,17 @@ def parallel(
             logging_level = 'DEBUG',     # Optional, default is INFO
             error_threshold = 5,       # Optional, allowed failed count totally, default is -1
             retry_settings = dict(max_retries=2, timeout=60),  # Optional
-            task = ParallelTask(
-                type = 'function',
+            task = RunFunction(
                 code = './src',
                 entry_script = 'tabular_batch_inference.py',
                 environment = Environment(
                     image= 'mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04',
-                    conda_file='./src/environment_parallel.yml'),
-                    args = '--model ${{inputs.score_model}}',
-                    append_row_to = '${{outputs.job_output_path}}',   # Optional, if not set, summary_only
+                    conda_file='./src/environment_parallel.yml'
                 ),
-            )
+                program_arguments = '--model ${{inputs.score_model}}',
+                append_row_to = '${{outputs.job_output_path}}',   # Optional, if not set, summary_only
+            ),
+        )
 
     :param name: Name of the parallel job or component created
     :type name: str
@@ -98,7 +103,8 @@ def parallel(
     :type properties: dict[str, str]
     :param display_name: a friendly name
     :type display_name: str
-    :param experiment_name: Name of the experiment the job will be created under, if None is provided, default will be set to current directory name. Will be ignored as a pipeline step.
+    :param experiment_name: Name of the experiment the job will be created under,
+        if None is provided, default will be set to current directory name. Will be ignored as a pipeline step.
     :type experiment_name: str
     :param compute: the name of the compute where the parallel job is executed(
         will not be used if the parallel is used as a component/function)
@@ -123,7 +129,7 @@ def parallel(
     :param mini_batch_error_threshold: The number of mini batch processing failures should be ignored.
     :type mini_batch_error_threshold: int
     :param task: The parallel task.
-    :type task: ParallelTask
+    :type task: RunFunction
     :param mini_batch_size: For FileDataset input, this field is the number of files a user script can process
         in one run() call. For TabularDataset input, this field is the approximate size of data the user script
         can process in one run() call. Example values are 1024, 1024KB, 10MB, and 1GB.
@@ -140,9 +146,24 @@ def parallel(
     :type instance_count: int
     :param instance_type: Optional type of VM used as supported by the compute target.
     :type instance_type: str
+    :param docker_args: Extra arguments to pass to the Docker run command. This would override any
+     parameters that have already been set by the system, or in this section. This parameter is only
+     supported for Azure ML compute types.
+    :type docker_args: str
+    :param shm_size: Size of the docker container's shared memory block. This should be in the
+     format of (number)(unit) where number as to be greater than 0 and the unit can be one of
+     b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
+    :type shm_size: str
     :param identity: Identity that training job will use while running on compute.
     :type identity: Union[ManagedIdentity, AmlToken]
+    :param is_deterministic: Specify whether the parallel will return same output given same input.
+        If a parallel (component) is deterministic, when use it as a node/step in a pipeline,
+        it will reuse results from a previous submitted job in current workspace which has same inputs and settings.
+        In this case, this step will not use any compute resource.
+        Default to be True, specify is_deterministic=False if you would like to avoid such reuse behavior.
+    :type is_deterministic: bool
     """
+    # pylint: disable=too-many-locals
     inputs = inputs or {}
     outputs = outputs or {}
     component_inputs, job_inputs = _parse_inputs_outputs(inputs, parse_func=_parse_input)
@@ -171,10 +192,11 @@ def parallel(
             mini_batch_size=mini_batch_size,
             input_data=input_data,
             _source=ComponentSource.BUILDER,
+            is_deterministic=is_deterministic,
             **kwargs,
         )
 
-    parallel_obj = Parallel(
+    parallel_obj = Parallel(  # pylint: disable=abstract-class-instantiated
         component=component,
         name=name,
         description=description,
@@ -198,7 +220,9 @@ def parallel(
         **kwargs,
     )
 
-    if instance_count is not None or instance_type is not None:
-        parallel_obj.set_resources(instance_count=instance_count, instance_type=instance_type)
+    if instance_count is not None or instance_type is not None or docker_args is not None or shm_size is not None:
+        parallel_obj.set_resources(
+            instance_count=instance_count, instance_type=instance_type, docker_args=docker_args, shm_size=shm_size
+        )
 
     return parallel_obj
