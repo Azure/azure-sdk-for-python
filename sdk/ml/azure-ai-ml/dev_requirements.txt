@@ -12,6 +12,7 @@ pytest
 pydash
 pytest-vcr
 azure-mgmt-storage~=19.1.0
+azure-devtools
 numpy;platform.python_implementation!="PyPy"
 scikit-image;platform.python_implementation!="PyPy"
 simplification;platform.python_implementation!="PyPy"
