@@ -51,15 +51,15 @@ def get_instrumentations():
 def add_instrumentation(instrumentation_name):
     with _INSTRUMENTATIONS_BIT_MASK_LOCK:
         global _INSTRUMENTATIONS_BIT_MASK  # pylint: disable=global-statement
-        instrumentation = _INSTRUMENTATIONS_BIT_MAP.get(instrumentation_name, 0)
-        _INSTRUMENTATIONS_BIT_MASK |= instrumentation
+        instrumentation_bits = _INSTRUMENTATIONS_BIT_MAP.get(instrumentation_name, 0)
+        _INSTRUMENTATIONS_BIT_MASK |= instrumentation_bits
 
 
 def remove_instrumentation(instrumentation_name):
     with _INSTRUMENTATIONS_BIT_MASK_LOCK:
         global _INSTRUMENTATIONS_BIT_MASK  # pylint: disable=global-statement
-        instrumentation = _INSTRUMENTATIONS_BIT_MAP.get(instrumentation_name, 0)
-        _INSTRUMENTATIONS_BIT_MASK &= ~instrumentation
+        instrumentation_bits = _INSTRUMENTATIONS_BIT_MAP.get(instrumentation_name, 0)
+        _INSTRUMENTATIONS_BIT_MASK &= ~instrumentation_bits
 
 
 class PeriodicTask(threading.Thread):

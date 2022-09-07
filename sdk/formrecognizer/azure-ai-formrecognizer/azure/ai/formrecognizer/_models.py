@@ -53,7 +53,7 @@ def get_polygon(field):
             for point in range(0, len(field.polygon), 2)
         ]
         if field.polygon
-        else None
+        else []
     )
 
 
@@ -134,9 +134,17 @@ def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
             else []
         )
     if value.type == "currency":
-        return CurrencyValue._from_generated(value.value_currency)
+        return (
+            CurrencyValue._from_generated(value.value_currency)
+            if value.value_currency
+            else None
+        )
     if value.type == "address":
-        return AddressValue._from_generated(value.value_address)
+        return (
+            AddressValue._from_generated(value.value_address)
+            if value.value_address
+            else None
+        )
     if value.type == "object":
         return (
             {
@@ -221,7 +229,7 @@ class FormContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class Point(namedtuple("Point", "x y")):
-    """The x, y coordinate of a point on a bounding box.
+    """The x, y coordinate of a point on a bounding box or polygon.
 
     :ivar float x: x-coordinate
     :ivar float y: y-coordinate
@@ -2755,7 +2763,7 @@ class DocumentPage:
     :vartype width: Optional[float]
     :ivar height: The height of the image/PDF in pixels/inches, respectively.
     :vartype height: Optional[float]
-    :ivar unit: The unit used by the width, height, and bounding box properties. For
+    :ivar unit: The unit used by the width, height, and bounding polygon properties. For
      images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: "pixel",
      "inch".
     :vartype unit: Optional[str]
@@ -2943,7 +2951,7 @@ class DocumentSelectionMark:
 class DocumentStyle:
     """An object representing observed text styles.
 
-    :ivar is_handwritten: Is content handwritten?.
+    :ivar is_handwritten: Indicates if the content is handwritten.
     :vartype is_handwritten: Optional[bool]
     :ivar spans: Location of the text elements in the concatenated content the style
      applies to.
@@ -3005,7 +3013,7 @@ class DocumentStyle:
 
 
 class DocumentTable:
-    """A table object consisting table cells arranged in a rectangular layout.
+    """A table object consisting of table cells arranged in a rectangular layout.
 
     :ivar row_count: Number of rows in the table.
     :vartype row_count: int
@@ -3497,8 +3505,7 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
     :ivar tables: Extracted tables.
     :vartype tables: Optional[list[~azure.ai.formrecognizer.DocumentTable]]
     :ivar key_value_pairs: Extracted key-value pairs.
-    :vartype key_value_pairs:
-     Optional[list[~azure.ai.formrecognizer.DocumentKeyValuePair]]
+    :vartype key_value_pairs: Optional[list[~azure.ai.formrecognizer.DocumentKeyValuePair]]
     :ivar styles: Extracted font styles.
     :vartype styles: Optional[list[~azure.ai.formrecognizer.DocumentStyle]]
     :ivar documents: Extracted documents.
@@ -3667,7 +3674,7 @@ class DocumentModelSummary:
             description=model.description,
             created_on=model.created_date_time,
             api_version=model.api_version,
-            tags=model.tags,
+            tags=model.tags if model.tags else {},
         )
 
     def to_dict(self) -> dict:
@@ -3737,7 +3744,7 @@ class DocumentModelDetails(DocumentModelSummary):
             description=model.description,
             created_on=model.created_date_time,
             api_version=model.api_version,
-            tags=model.tags,
+            tags=model.tags if model.tags else {},
             doc_types={k: DocumentTypeDetails._from_generated(v) for k, v in model.doc_types.items()}
             if model.doc_types else {}
         )
@@ -3813,7 +3820,8 @@ class DocumentTypeDetails:
             build_mode=doc_type.build_mode,
             field_schema={name: field.serialize() for name, field in doc_type.field_schema.items()}
             if doc_type.field_schema else {},
-            field_confidence=doc_type.field_confidence,
+            field_confidence=doc_type.field_confidence
+            if doc_type.field_confidence else {},
         )
 
     def to_dict(self) -> dict:
@@ -3914,7 +3922,8 @@ class ResourceDetails:
     @classmethod
     def _from_generated(cls, info):
         return cls(
-            custom_document_models=CustomDocumentModelsDetails._from_generated(info),
+            custom_document_models=CustomDocumentModelsDetails._from_generated(info)
+            if info else None,
         )
 
 
@@ -3924,7 +3933,11 @@ class ResourceDetails:
         :return: dict
         :rtype: dict
         """
-        return {"custom_document_models": self.custom_document_models.to_dict()}
+        return {
+                "custom_document_models": self.custom_document_models.to_dict()
+                if self.custom_document_models
+                else None,
+            }
 
     @classmethod
     def from_dict(cls, data: dict) -> "ResourceDetails":
@@ -3935,7 +3948,9 @@ class ResourceDetails:
         :rtype: ResourceDetails
         """
         return cls(
-            custom_document_models=CustomDocumentModelsDetails.from_dict(data.get("custom_document_models", None)),
+            custom_document_models=CustomDocumentModelsDetails.from_dict(
+                data.get("custom_document_models")  # type: ignore
+            ) if data.get("custom_document_models") else None,
         )
 
 

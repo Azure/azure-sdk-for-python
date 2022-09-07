@@ -59,6 +59,9 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         <=v2.1, instantiate a FormTrainingClient.
     :paramtype api_version: str or ~azure.ai.formrecognizer.DocumentAnalysisApiVersion
 
+    .. versionadded:: 2022-08-31
+        The *DocumentModelAdministrationClient* and its client methods.
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/v3.2/sample_authentication.py
@@ -237,7 +240,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :keyword tags: List of user defined key-value tag attributes associated with the model.
         :paramtype tags: dict[str, str]
         :return: A dictionary with values necessary for the copy authorization.
-        :rtype: TargetAuthorization
+        :rtype: ~azure.ai.formrecognizer.TargetAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -269,7 +272,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         target resource's output from calling the :func:`~get_copy_authorization()` method.
 
         :param str model_id: Model identifier of the model to copy to target resource.
-        :param TargetAuthorization target:
+        :param ~azure.ai.formrecognizer.TargetAuthorization target:
             The copy authorization generated from the target resource's call to
             :func:`~get_copy_authorization()`.
         :return: An instance of a DocumentModelAdministrationLROPoller. Call `result()` on the poller

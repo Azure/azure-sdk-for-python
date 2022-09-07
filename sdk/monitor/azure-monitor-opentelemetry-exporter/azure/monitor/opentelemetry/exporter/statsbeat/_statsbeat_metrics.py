@@ -213,9 +213,9 @@ class _StatsbeatMetrics:
 
         # instrumentation metric
         # Don't send observation if no instrumentations enabled
-        instrumentations = _utils.get_instrumentations()
-        if instrumentations != 0:
-            _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"] = instrumentations
+        instrumentation_bits = _utils.get_instrumentations()
+        if instrumentation_bits != 0:
+            _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"] = instrumentation_bits
             attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
             attributes.update(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)
             observations.append(Observation(1, dict(attributes)))

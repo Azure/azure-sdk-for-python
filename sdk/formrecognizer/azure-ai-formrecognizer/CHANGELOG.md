@@ -23,6 +23,9 @@
 - Removed `kind` and `content` properties from `DocumentSelectionMark`.
 - Removed `kind` from `DocumentWord`.
 
+### Bugs Fixed
+- Added `DocumentParagraph` to `__all__`.
+
 ## 3.2.0b6 (2022-08-09)
 
 ### Features Added

@@ -11,7 +11,7 @@ import asyncio
 import config
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites -
 #
 # 1. An Azure Cosmos account -
 #    https://azure.microsoft.com/en-us/documentation/articles/documentdb-create-account/
@@ -261,7 +261,7 @@ async def list_containers(db):
     for container in containers:
         print(container['id'])
 
-    # Alternitavely, you can directly iterate over the asynchronous iterator without building a separate
+    # Alternatively, you can directly iterate over the asynchronous iterator without building a separate
     # list if you don't need the ordering or indexing capabilities
     async for container in container_list:
         print(container['id'])
