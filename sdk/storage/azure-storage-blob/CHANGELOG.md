@@ -5,6 +5,9 @@
 ### Features Added
 - Stable release of features from 12.14.0b1 and 12.14.0b2.
 
+### Other Changes
+- Changed the default value for `read_timeout` to 60 seconds for all clients.
+
 ## 12.14.0b2 (2022-08-30)
 
 ### Features Added

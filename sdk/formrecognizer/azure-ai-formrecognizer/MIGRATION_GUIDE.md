@@ -31,7 +31,7 @@ New features provided by the `DocumentAnalysisClient` include:
 
 New features provided by the `DocumentModelAdministrationClient` include:
 - Users can now assign their own model IDs and specify a description when building, composing, or copying models.
-- Users can specify the algorithm used to build the custom model through the required `build_mode` parameter on `begin_build_document_model()`. See more about `build_mode` [here][https://aka.ms/azsdk/formrecognizer/buildmode].
+- Users can specify the algorithm used to build the custom model through the required `build_mode` parameter on `begin_build_document_model()`. See more about `build_mode` [here](https://aka.ms/azsdk/formrecognizer/buildmode).
 - Listing models now includes both prebuilt and custom models.
 - When using `get_document_model()`, users can get the field schema (field names and types that the model can extract) for the model they specified, including for prebuilt models. 
 - Ability to get information from model operations that occurred in the last 24 hours.
