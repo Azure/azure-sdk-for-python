@@ -88,7 +88,6 @@ class MLClient(object):
         credential: TokenCredential,  # type: TokenCredential
         subscription_id: str,  # type: str
         resource_group_name: str,  # type: str
-        *,
         workspace_name: str = None,  # type: str
         registry_name: str = None,  # type: str
         **kwargs: Any,  # type: Any
