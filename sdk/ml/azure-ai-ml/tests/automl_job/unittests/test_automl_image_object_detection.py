@@ -19,7 +19,8 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import ValidationMetricT
 from azure.ai.ml.automl import image_object_detection
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job.automl.image import ImageObjectDetectionJob, ImageObjectDetectionSearchSpace
+from azure.ai.ml.entities._job.automl import SearchSpace
+from azure.ai.ml.entities._job.automl.image import ImageObjectDetectionJob
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 
@@ -80,12 +81,12 @@ class TestAutoMLImageObjectDetection:
                 },
             ]
             """
-            search_sub_space_1 = ImageObjectDetectionSearchSpace(
+            search_sub_space_1 = SearchSpace(
                 model_name="yolov5",
                 learning_rate=Uniform(0.0001, 0.01),
                 model_size=Choice(["small", "medium"]),
             )
-            search_sub_space_2 = ImageObjectDetectionSearchSpace(
+            search_sub_space_2 = SearchSpace(
                 model_name="fasterrcnn_resnet50_fpn",
                 learning_rate=Uniform(0.0001, 0.01),
                 optimizer=Choice(["sgd", "adam", "adamw"]),

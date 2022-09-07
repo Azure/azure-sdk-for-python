@@ -5,9 +5,10 @@ import re
 from typing import Dict, List, Tuple, Union
 
 from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2021_10_01.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2021_10_01.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2021_10_01.models import Mpi, PyTorch, TensorFlow
+from azure.ai.ml._restclient.v2022_06_01_preview.models import InputDeliveryMode
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2022_06_01_preview.models import Mpi, PyTorch, TensorFlow
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
@@ -16,6 +17,7 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     OUTPUT_MOUNT_MAPPING_FROM_REST,
     OUTPUT_MOUNT_MAPPING_TO_REST,
 )
+from azure.ai.ml.entities._util import normalize_job_input_output_type
 
 
 def process_sdk_component_job_io(
@@ -83,13 +85,25 @@ def from_dict_to_rest_io(
     """
     io_bindings = {}
     rest_io_objects = {}
-
+    DIRTY_MODE_MAPPING = {
+        "Mount": InputDeliveryMode.READ_ONLY_MOUNT,
+        "RoMount": InputDeliveryMode.READ_ONLY_MOUNT,
+        "RwMount": InputDeliveryMode.READ_WRITE_MOUNT,
+    }
     for key, val in io.items():
         if isinstance(val, dict):
+            # convert the input of camel to snake to be compatible with the Jun api
+            # todo: backend help convert node level input/output type
+            normalize_job_input_output_type(val)
+
             io_value = val.get("value", "")
             io_mode = val.get("mode", None)
             if any([re.match(item, io_value) for item in io_binding_regex_list]):
                 if io_mode:
+                    # deal with dirty mode data submitted before
+                    if io_mode in DIRTY_MODE_MAPPING:
+                        io_mode = DIRTY_MODE_MAPPING[io_mode]
+                        val["mode"] = io_mode
                     # add mode to literal value for binding input
                     io_bindings.update({key: {"path": io_value}})
                     if io_mode in OUTPUT_MOUNT_MAPPING_FROM_REST:

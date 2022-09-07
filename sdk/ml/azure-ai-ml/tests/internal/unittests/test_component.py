@@ -8,7 +8,6 @@ from typing import Dict
 
 import pytest
 import yaml
-from tests.internal._utils import PARAMETERS_TO_TEST
 
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
@@ -17,6 +16,8 @@ from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
 from azure.ai.ml.entities import Component
+
+from .._utils import PARAMETERS_TO_TEST
 
 
 @pytest.mark.usefixtures("enable_internal_components")

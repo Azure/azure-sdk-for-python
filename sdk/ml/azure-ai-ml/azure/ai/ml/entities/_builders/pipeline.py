@@ -8,7 +8,6 @@ from typing import Dict, Union
 from marshmallow import Schema
 
 from azure.ai.ml.entities._component.component import Component, NodeType
-from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 
 from ..._schema import PathAwareSchema
@@ -36,7 +35,7 @@ class Pipeline(BaseNode):
     def __init__(
         self,
         *,
-        component: Union[PipelineComponent, str],
+        component: Union[Component, str],
         inputs: Dict[
             str,
             Union[
@@ -68,7 +67,7 @@ class Pipeline(BaseNode):
         )
 
     @property
-    def component(self) -> Union[str, PipelineComponent]:
+    def component(self) -> Union[str, Component]:
         return self._component
 
     @property
@@ -82,6 +81,9 @@ class Pipeline(BaseNode):
 
     @classmethod
     def _attr_type_map(cls) -> dict:
+        # Use local import to avoid recursive reference as BaseNode is imported in PipelineComponent.
+        from azure.ai.ml.entities import PipelineComponent
+
         return {
             "component": (str, PipelineComponent),
         }

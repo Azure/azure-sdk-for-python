@@ -16,6 +16,7 @@ try:
     from ._models_py3 import AksComputeSecrets
     from ._models_py3 import AksComputeSecretsProperties
     from ._models_py3 import AksNetworkingConfiguration
+    from ._models_py3 import AllNodes
     from ._models_py3 import AmlCompute
     from ._models_py3 import AmlComputeNodeInformation
     from ._models_py3 import AmlComputeNodesInformation
@@ -42,6 +43,7 @@ try:
     from ._models_py3 import AutoSeasonality
     from ._models_py3 import AutoTargetLags
     from ._models_py3 import AutoTargetRollingWindowSize
+    from ._models_py3 import AutologgerSettings
     from ._models_py3 import AzureBlobDatastore
     from ._models_py3 import AzureDataLakeGen1Datastore
     from ._models_py3 import AzureDataLakeGen2Datastore
@@ -204,7 +206,6 @@ try:
     from ._models_py3 import ImageModelSettingsObjectDetection
     from ._models_py3 import ImageObjectDetection
     from ._models_py3 import ImageObjectDetectionBase
-    from ._models_py3 import ImageSweepLimitSettings
     from ._models_py3 import ImageSweepSettings
     from ._models_py3 import ImageVertical
     from ._models_py3 import InferenceContainerProperties
@@ -266,10 +267,14 @@ try:
     from ._models_py3 import ModelVersionResourceArmPaginatedResult
     from ._models_py3 import Mpi
     from ._models_py3 import NCrossValidations
+    from ._models_py3 import NlpFixedParameters
+    from ._models_py3 import NlpParameterSubspace
+    from ._models_py3 import NlpSweepSettings
     from ._models_py3 import NlpVertical
     from ._models_py3 import NlpVerticalFeaturizationSettings
     from ._models_py3 import NlpVerticalLimitSettings
     from ._models_py3 import NodeStateCounts
+    from ._models_py3 import Nodes
     from ._models_py3 import NoneAuthTypeWorkspaceConnectionProperties
     from ._models_py3 import NoneDatastoreCredentials
     from ._models_py3 import NotebookAccessTokenResult
@@ -368,6 +373,9 @@ try:
     from ._models_py3 import SystemCreatedStorageAccount
     from ._models_py3 import SystemData
     from ._models_py3 import SystemService
+    from ._models_py3 import TableFixedParameters
+    from ._models_py3 import TableParameterSubspace
+    from ._models_py3 import TableSweepSettings
     from ._models_py3 import TableVertical
     from ._models_py3 import TableVerticalFeaturizationSettings
     from ._models_py3 import TableVerticalLimitSettings
@@ -433,6 +441,7 @@ except (SyntaxError, ImportError):
     from ._models import AksComputeSecrets  # type: ignore
     from ._models import AksComputeSecretsProperties  # type: ignore
     from ._models import AksNetworkingConfiguration  # type: ignore
+    from ._models import AllNodes  # type: ignore
     from ._models import AmlCompute  # type: ignore
     from ._models import AmlComputeNodeInformation  # type: ignore
     from ._models import AmlComputeNodesInformation  # type: ignore
@@ -459,6 +468,7 @@ except (SyntaxError, ImportError):
     from ._models import AutoSeasonality  # type: ignore
     from ._models import AutoTargetLags  # type: ignore
     from ._models import AutoTargetRollingWindowSize  # type: ignore
+    from ._models import AutologgerSettings  # type: ignore
     from ._models import AzureBlobDatastore  # type: ignore
     from ._models import AzureDataLakeGen1Datastore  # type: ignore
     from ._models import AzureDataLakeGen2Datastore  # type: ignore
@@ -621,7 +631,6 @@ except (SyntaxError, ImportError):
     from ._models import ImageModelSettingsObjectDetection  # type: ignore
     from ._models import ImageObjectDetection  # type: ignore
     from ._models import ImageObjectDetectionBase  # type: ignore
-    from ._models import ImageSweepLimitSettings  # type: ignore
     from ._models import ImageSweepSettings  # type: ignore
     from ._models import ImageVertical  # type: ignore
     from ._models import InferenceContainerProperties  # type: ignore
@@ -683,10 +692,14 @@ except (SyntaxError, ImportError):
     from ._models import ModelVersionResourceArmPaginatedResult  # type: ignore
     from ._models import Mpi  # type: ignore
     from ._models import NCrossValidations  # type: ignore
+    from ._models import NlpFixedParameters  # type: ignore
+    from ._models import NlpParameterSubspace  # type: ignore
+    from ._models import NlpSweepSettings  # type: ignore
     from ._models import NlpVertical  # type: ignore
     from ._models import NlpVerticalFeaturizationSettings  # type: ignore
     from ._models import NlpVerticalLimitSettings  # type: ignore
     from ._models import NodeStateCounts  # type: ignore
+    from ._models import Nodes  # type: ignore
     from ._models import NoneAuthTypeWorkspaceConnectionProperties  # type: ignore
     from ._models import NoneDatastoreCredentials  # type: ignore
     from ._models import NotebookAccessTokenResult  # type: ignore
@@ -785,6 +798,9 @@ except (SyntaxError, ImportError):
     from ._models import SystemCreatedStorageAccount  # type: ignore
     from ._models import SystemData  # type: ignore
     from ._models import SystemService  # type: ignore
+    from ._models import TableFixedParameters  # type: ignore
+    from ._models import TableParameterSubspace  # type: ignore
+    from ._models import TableSweepSettings  # type: ignore
     from ._models import TableVertical  # type: ignore
     from ._models import TableVerticalFeaturizationSettings  # type: ignore
     from ._models import TableVerticalLimitSettings  # type: ignore
@@ -841,136 +857,141 @@ except (SyntaxError, ImportError):
     from ._models import WorkspaceListResult  # type: ignore
     from ._models import WorkspaceUpdateParameters  # type: ignore
 
-from ._azure_machine_learning_workspaces_enums import (
-    AllocationState,
-    ApplicationSharingPolicy,
-    Autosave,
-    BatchLoggingLevel,
-    BatchOutputAction,
-    BillingCurrency,
-    BlockedTransformers,
-    Caching,
-    ClassificationModels,
-    ClassificationMultilabelPrimaryMetrics,
-    ClassificationPrimaryMetrics,
-    ClusterPurpose,
-    ComputeInstanceAuthorizationType,
-    ComputeInstanceState,
-    ComputePowerAction,
-    ComputeProvisioningState,
-    ComputeType,
-    ConnectionAuthType,
-    ConnectionCategory,
-    ContainerType,
-    CreatedByType,
-    CredentialsType,
-    DataType,
-    DatastoreType,
-    DeploymentProvisioningState,
-    DiagnoseResultLevel,
-    DistributionType,
-    EarlyTerminationPolicyType,
-    EgressPublicNetworkAccessType,
-    EncryptionStatus,
-    EndpointAuthMode,
-    EndpointComputeType,
-    EndpointProvisioningState,
-    EnvironmentType,
-    EnvironmentVariableType,
-    ExportFormatType,
-    FeatureLags,
-    FeaturizationMode,
-    ForecastHorizonMode,
-    ForecastingModels,
-    ForecastingPrimaryMetrics,
-    Goal,
-    IdentityConfigurationType,
-    ImageAnnotationType,
-    ImageType,
-    InputDeliveryMode,
-    InstanceSegmentationPrimaryMetrics,
-    JobInputType,
-    JobLimitsType,
-    JobOutputType,
-    JobProvisioningState,
-    JobStatus,
-    JobType,
-    KeyType,
-    LearningRateScheduler,
-    ListViewType,
-    LoadBalancerType,
-    LogVerbosity,
-    MLAssistConfigurationType,
-    ManagedServiceIdentityType,
-    MediaType,
-    ModelSize,
-    MountAction,
-    MountState,
-    NCrossValidationsMode,
-    Network,
-    NodeState,
-    ObjectDetectionPrimaryMetrics,
-    OperatingSystemType,
-    OperationName,
-    OperationStatus,
-    OperationTrigger,
-    OrderString,
-    OsType,
-    OutputDeliveryMode,
-    PrivateEndpointConnectionProvisioningState,
-    PrivateEndpointServiceConnectionStatus,
-    Protocol,
-    ProvisioningStatus,
-    PublicNetworkAccess,
-    PublicNetworkAccessType,
-    QuotaUnit,
-    RandomSamplingAlgorithmRule,
-    RecurrenceFrequency,
-    ReferenceType,
-    RegressionModels,
-    RegressionPrimaryMetrics,
-    RemoteLoginPortPublicAccess,
-    SamplingAlgorithmType,
-    ScaleType,
-    ScheduleActionType,
-    ScheduleProvisioningState,
-    ScheduleProvisioningStatus,
-    ScheduleStatus,
-    SeasonalityMode,
-    SecretsType,
-    ServiceDataAccessAuthIdentity,
-    ShortSeriesHandlingConfiguration,
-    SkuScaleType,
-    SkuTier,
-    SourceType,
-    SparkJobEntryType,
-    SshPublicAccess,
-    SslConfigStatus,
-    StackMetaLearnerType,
-    Status,
-    StatusMessageLevel,
-    StochasticOptimizer,
-    StorageAccountType,
-    TargetAggregationFunction,
-    TargetLagsMode,
-    TargetRollingWindowSizeMode,
-    TaskType,
-    TextAnnotationType,
-    TriggerType,
-    UnderlyingResourceAction,
-    UnitOfMeasure,
-    UsageUnit,
-    UseStl,
-    VMPriceOSType,
-    VMTier,
-    ValidationMetricType,
-    ValueFormat,
-    VmPriority,
-    VolumeDefinitionType,
-    WeekDay,
-    WorkspaceProvisioningState,
-)
-
+from ._azure_machine_learning_workspaces_enums import AllocationState
+from ._azure_machine_learning_workspaces_enums import ApplicationSharingPolicy
+from ._azure_machine_learning_workspaces_enums import AssetProvisioningState
+from ._azure_machine_learning_workspaces_enums import Autosave
+from ._azure_machine_learning_workspaces_enums import BatchLoggingLevel
+from ._azure_machine_learning_workspaces_enums import BatchOutputAction
+from ._azure_machine_learning_workspaces_enums import BillingCurrency
+from ._azure_machine_learning_workspaces_enums import BlockedTransformers
+from ._azure_machine_learning_workspaces_enums import Caching
+from ._azure_machine_learning_workspaces_enums import ClassificationModels
+from ._azure_machine_learning_workspaces_enums import ClassificationMultilabelPrimaryMetrics
+from ._azure_machine_learning_workspaces_enums import ClassificationPrimaryMetrics
+from ._azure_machine_learning_workspaces_enums import ClusterPurpose
+from ._azure_machine_learning_workspaces_enums import ComputeInstanceAuthorizationType
+from ._azure_machine_learning_workspaces_enums import ComputeInstanceState
+from ._azure_machine_learning_workspaces_enums import ComputePowerAction
+from ._azure_machine_learning_workspaces_enums import ComputeProvisioningState
+from ._azure_machine_learning_workspaces_enums import ComputeType
+from ._azure_machine_learning_workspaces_enums import ConnectionAuthType
+from ._azure_machine_learning_workspaces_enums import ConnectionCategory
+from ._azure_machine_learning_workspaces_enums import ContainerType
+from ._azure_machine_learning_workspaces_enums import CreatedByType
+from ._azure_machine_learning_workspaces_enums import CredentialsType
+from ._azure_machine_learning_workspaces_enums import DataType
+from ._azure_machine_learning_workspaces_enums import DatastoreType
+from ._azure_machine_learning_workspaces_enums import DeploymentProvisioningState
+from ._azure_machine_learning_workspaces_enums import DiagnoseResultLevel
+from ._azure_machine_learning_workspaces_enums import DistributionType
+from ._azure_machine_learning_workspaces_enums import EarlyTerminationPolicyType
+from ._azure_machine_learning_workspaces_enums import EgressPublicNetworkAccessType
+from ._azure_machine_learning_workspaces_enums import EncryptionStatus
+from ._azure_machine_learning_workspaces_enums import EndpointAuthMode
+from ._azure_machine_learning_workspaces_enums import EndpointComputeType
+from ._azure_machine_learning_workspaces_enums import EndpointProvisioningState
+from ._azure_machine_learning_workspaces_enums import EnvironmentType
+from ._azure_machine_learning_workspaces_enums import EnvironmentVariableType
+from ._azure_machine_learning_workspaces_enums import ExportFormatType
+from ._azure_machine_learning_workspaces_enums import FeatureLags
+from ._azure_machine_learning_workspaces_enums import FeaturizationMode
+from ._azure_machine_learning_workspaces_enums import ForecastHorizonMode
+from ._azure_machine_learning_workspaces_enums import ForecastingModels
+from ._azure_machine_learning_workspaces_enums import ForecastingPrimaryMetrics
+from ._azure_machine_learning_workspaces_enums import Goal
+from ._azure_machine_learning_workspaces_enums import IdentityConfigurationType
+from ._azure_machine_learning_workspaces_enums import ImageAnnotationType
+from ._azure_machine_learning_workspaces_enums import ImageType
+from ._azure_machine_learning_workspaces_enums import InputDeliveryMode
+from ._azure_machine_learning_workspaces_enums import InstanceSegmentationPrimaryMetrics
+from ._azure_machine_learning_workspaces_enums import JobInputType
+from ._azure_machine_learning_workspaces_enums import JobLimitsType
+from ._azure_machine_learning_workspaces_enums import JobOutputType
+from ._azure_machine_learning_workspaces_enums import JobProvisioningState
+from ._azure_machine_learning_workspaces_enums import JobStatus
+from ._azure_machine_learning_workspaces_enums import JobType
+from ._azure_machine_learning_workspaces_enums import KeyType
+from ._azure_machine_learning_workspaces_enums import LearningRateScheduler
+from ._azure_machine_learning_workspaces_enums import ListViewType
+from ._azure_machine_learning_workspaces_enums import LoadBalancerType
+from ._azure_machine_learning_workspaces_enums import LogVerbosity
+from ._azure_machine_learning_workspaces_enums import MLAssistConfigurationType
+from ._azure_machine_learning_workspaces_enums import MLFlowAutologgerState
+from ._azure_machine_learning_workspaces_enums import ManagedServiceIdentityType
+from ._azure_machine_learning_workspaces_enums import MediaType
+from ._azure_machine_learning_workspaces_enums import ModelSize
+from ._azure_machine_learning_workspaces_enums import MountAction
+from ._azure_machine_learning_workspaces_enums import MountState
+from ._azure_machine_learning_workspaces_enums import NCrossValidationsMode
+from ._azure_machine_learning_workspaces_enums import Network
+from ._azure_machine_learning_workspaces_enums import NlpLearningRateScheduler
+from ._azure_machine_learning_workspaces_enums import NodeState
+from ._azure_machine_learning_workspaces_enums import NodesValueType
+from ._azure_machine_learning_workspaces_enums import ObjectDetectionPrimaryMetrics
+from ._azure_machine_learning_workspaces_enums import OperatingSystemType
+from ._azure_machine_learning_workspaces_enums import OperationName
+from ._azure_machine_learning_workspaces_enums import OperationStatus
+from ._azure_machine_learning_workspaces_enums import OperationTrigger
+from ._azure_machine_learning_workspaces_enums import OrderString
+from ._azure_machine_learning_workspaces_enums import OsType
+from ._azure_machine_learning_workspaces_enums import OutputDeliveryMode
+from ._azure_machine_learning_workspaces_enums import PrivateEndpointConnectionProvisioningState
+from ._azure_machine_learning_workspaces_enums import PrivateEndpointServiceConnectionStatus
+from ._azure_machine_learning_workspaces_enums import Protocol
+from ._azure_machine_learning_workspaces_enums import ProvisioningStatus
+from ._azure_machine_learning_workspaces_enums import PublicNetworkAccess
+from ._azure_machine_learning_workspaces_enums import PublicNetworkAccessType
+from ._azure_machine_learning_workspaces_enums import QuotaUnit
+from ._azure_machine_learning_workspaces_enums import RandomSamplingAlgorithmRule
+from ._azure_machine_learning_workspaces_enums import RecurrenceFrequency
+from ._azure_machine_learning_workspaces_enums import ReferenceType
+from ._azure_machine_learning_workspaces_enums import RegressionModels
+from ._azure_machine_learning_workspaces_enums import RegressionPrimaryMetrics
+from ._azure_machine_learning_workspaces_enums import RemoteLoginPortPublicAccess
+from ._azure_machine_learning_workspaces_enums import SamplingAlgorithmType
+from ._azure_machine_learning_workspaces_enums import ScaleType
+from ._azure_machine_learning_workspaces_enums import ScheduleActionType
+from ._azure_machine_learning_workspaces_enums import ScheduleListViewType
+from ._azure_machine_learning_workspaces_enums import ScheduleProvisioningState
+from ._azure_machine_learning_workspaces_enums import ScheduleProvisioningStatus
+from ._azure_machine_learning_workspaces_enums import ScheduleStatus
+from ._azure_machine_learning_workspaces_enums import SeasonalityMode
+from ._azure_machine_learning_workspaces_enums import SecretsType
+from ._azure_machine_learning_workspaces_enums import ServiceDataAccessAuthIdentity
+from ._azure_machine_learning_workspaces_enums import ShortSeriesHandlingConfiguration
+from ._azure_machine_learning_workspaces_enums import SkuScaleType
+from ._azure_machine_learning_workspaces_enums import SkuTier
+from ._azure_machine_learning_workspaces_enums import SourceType
+from ._azure_machine_learning_workspaces_enums import SparkJobEntryType
+from ._azure_machine_learning_workspaces_enums import SshPublicAccess
+from ._azure_machine_learning_workspaces_enums import SslConfigStatus
+from ._azure_machine_learning_workspaces_enums import StackMetaLearnerType
+from ._azure_machine_learning_workspaces_enums import Status
+from ._azure_machine_learning_workspaces_enums import StatusMessageLevel
+from ._azure_machine_learning_workspaces_enums import StochasticOptimizer
+from ._azure_machine_learning_workspaces_enums import StorageAccountType
+from ._azure_machine_learning_workspaces_enums import TargetAggregationFunction
+from ._azure_machine_learning_workspaces_enums import TargetLagsMode
+from ._azure_machine_learning_workspaces_enums import TargetRollingWindowSizeMode
+from ._azure_machine_learning_workspaces_enums import TaskType
+from ._azure_machine_learning_workspaces_enums import TextAnnotationType
+from ._azure_machine_learning_workspaces_enums import TriggerType
+from ._azure_machine_learning_workspaces_enums import UnderlyingResourceAction
+from ._azure_machine_learning_workspaces_enums import UnitOfMeasure
+from ._azure_machine_learning_workspaces_enums import UsageUnit
+from ._azure_machine_learning_workspaces_enums import UseStl
+from ._azure_machine_learning_workspaces_enums import VMPriceOSType
+from ._azure_machine_learning_workspaces_enums import VMTier
+from ._azure_machine_learning_workspaces_enums import ValidationMetricType
+from ._azure_machine_learning_workspaces_enums import ValueFormat
+from ._azure_machine_learning_workspaces_enums import VmPriority
+from ._azure_machine_learning_workspaces_enums import VolumeDefinitionType
+from ._azure_machine_learning_workspaces_enums import WeekDay
+from ._azure_machine_learning_workspaces_enums import WorkspaceProvisioningState
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AKS',
     'AKSSchema',
@@ -981,6 +1002,7 @@ __all__ = [
     'AksComputeSecrets',
     'AksComputeSecretsProperties',
     'AksNetworkingConfiguration',
+    'AllNodes',
     'AmlCompute',
     'AmlComputeNodeInformation',
     'AmlComputeNodesInformation',
@@ -1007,6 +1029,7 @@ __all__ = [
     'AutoSeasonality',
     'AutoTargetLags',
     'AutoTargetRollingWindowSize',
+    'AutologgerSettings',
     'AzureBlobDatastore',
     'AzureDataLakeGen1Datastore',
     'AzureDataLakeGen2Datastore',
@@ -1169,7 +1192,6 @@ __all__ = [
     'ImageModelSettingsObjectDetection',
     'ImageObjectDetection',
     'ImageObjectDetectionBase',
-    'ImageSweepLimitSettings',
     'ImageSweepSettings',
     'ImageVertical',
     'InferenceContainerProperties',
@@ -1231,10 +1253,14 @@ __all__ = [
     'ModelVersionResourceArmPaginatedResult',
     'Mpi',
     'NCrossValidations',
+    'NlpFixedParameters',
+    'NlpParameterSubspace',
+    'NlpSweepSettings',
     'NlpVertical',
     'NlpVerticalFeaturizationSettings',
     'NlpVerticalLimitSettings',
     'NodeStateCounts',
+    'Nodes',
     'NoneAuthTypeWorkspaceConnectionProperties',
     'NoneDatastoreCredentials',
     'NotebookAccessTokenResult',
@@ -1333,6 +1359,9 @@ __all__ = [
     'SystemCreatedStorageAccount',
     'SystemData',
     'SystemService',
+    'TableFixedParameters',
+    'TableParameterSubspace',
+    'TableSweepSettings',
     'TableVertical',
     'TableVerticalFeaturizationSettings',
     'TableVerticalLimitSettings',
@@ -1390,6 +1419,7 @@ __all__ = [
     'WorkspaceUpdateParameters',
     'AllocationState',
     'ApplicationSharingPolicy',
+    'AssetProvisioningState',
     'Autosave',
     'BatchLoggingLevel',
     'BatchOutputAction',
@@ -1447,6 +1477,7 @@ __all__ = [
     'LoadBalancerType',
     'LogVerbosity',
     'MLAssistConfigurationType',
+    'MLFlowAutologgerState',
     'ManagedServiceIdentityType',
     'MediaType',
     'ModelSize',
@@ -1454,7 +1485,9 @@ __all__ = [
     'MountState',
     'NCrossValidationsMode',
     'Network',
+    'NlpLearningRateScheduler',
     'NodeState',
+    'NodesValueType',
     'ObjectDetectionPrimaryMetrics',
     'OperatingSystemType',
     'OperationName',
@@ -1479,6 +1512,7 @@ __all__ = [
     'SamplingAlgorithmType',
     'ScaleType',
     'ScheduleActionType',
+    'ScheduleListViewType',
     'ScheduleProvisioningState',
     'ScheduleProvisioningStatus',
     'ScheduleStatus',
@@ -1516,3 +1550,5 @@ __all__ = [
     'WeekDay',
     'WorkspaceProvisioningState',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

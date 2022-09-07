@@ -17,7 +17,8 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity as R
 from azure.ai.ml.automl import image_classification
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job.automl.image import ImageClassificationJob, ImageClassificationSearchSpace
+from azure.ai.ml.entities._job.automl import SearchSpace
+from azure.ai.ml.entities._job.automl.image import ImageClassificationJob
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 
@@ -77,12 +78,12 @@ class TestAutoMLImageClassification:
                 },
             ]
             """
-            search_sub_space_1 = ImageClassificationSearchSpace(
+            search_sub_space_1 = SearchSpace(
                 model_name=Choice(["vitb16r224", "vits16r224"]),
                 learning_rate=Uniform(0.001, 0.01),
                 number_of_epochs=Choice([15, 30]),
             )
-            search_sub_space_2 = ImageClassificationSearchSpace(
+            search_sub_space_2 = SearchSpace(
                 model_name=Choice(["seresnext", "resnest50"]),
                 learning_rate=Uniform(0.001, 0.01),
                 layers_to_freeze=Choice([0, 2]),

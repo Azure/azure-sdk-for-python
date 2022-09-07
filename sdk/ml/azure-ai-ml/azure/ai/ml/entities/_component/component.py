@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 import tempfile
 import typing
-from abc import abstractmethod
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
@@ -12,8 +11,14 @@ from typing import IO, AnyStr, Dict, Union
 from marshmallow import Schema
 
 from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails, SystemData
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    ComponentContainerData,
+    ComponentContainerDetails,
+    ComponentVersionData,
+    ComponentVersionDetails,
+)
 from azure.ai.ml._schema import PathAwareSchema
+from azure.ai.ml._schema.component import ComponentSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, hash_dict, is_private_preview_enabled
 from azure.ai.ml.constants._common import (
     ANONYMOUS_COMPONENT_NAME,
@@ -25,6 +30,7 @@ from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import find_type_in_override
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
 
@@ -53,6 +59,7 @@ class Component(
     :param id:  Global id of the resource, Azure Resource Manager ID.
     :type id: str
     :param type:  Type of the command, supported is 'command'.
+    :param type:  Type of the command, supported is 'command'.
     :type type: str
     :param description: Description of the resource.
     :type description: str
@@ -73,7 +80,7 @@ class Component(
     :param _schema: Schema of the component.
     :type _schema: str
     :param creation_context: Creation metadata of the component.
-    :type creation_context: SystemData
+    :type creation_context: ~azure.ai.ml.entities.SystemData
     """
 
     # pylint: disable=too-many-instance-attributes
@@ -102,7 +109,6 @@ class Component(
         self._source = (
             self._resolve_component_source_from_id(id) if id else kwargs.pop("_source", ComponentSource.CLASS)
         )
-
         super().__init__(
             name=name,
             version=version,
@@ -308,9 +314,8 @@ class Component(
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, args=args, **kwargs)
 
     @classmethod
-    @abstractmethod
     def _create_schema_for_validation(cls, context) -> typing.Union[PathAwareSchema, Schema]:
-        pass
+        return ComponentSchema(context=context)
 
     @classmethod
     def _get_validation_error_target(cls) -> ErrorTarget:
@@ -359,6 +364,22 @@ class Component(
         component = component_factory.load_from_dict(_type=type_in_override, data=data, context=context, **kwargs)
         if yaml_path:
             component._source_path = yaml_path
+        return component
+
+    @classmethod
+    def _from_container_rest_object(cls, component_container_rest_object: ComponentContainerData) -> "Component":
+        component_container_details: ComponentContainerDetails = component_container_rest_object.properties
+        component = Component(
+            id=component_container_rest_object.id,
+            name=component_container_rest_object.name,
+            description=component_container_details.description,
+            creation_context=SystemData._from_rest_object(component_container_rest_object.system_data),
+            tags=component_container_details.tags,
+            properties=component_container_details.properties,
+            type=NodeType._CONTAINER,
+            # Set this field to None as it hold a default True in init.
+            is_deterministic=None,
+        )
         return component
 
     @classmethod
