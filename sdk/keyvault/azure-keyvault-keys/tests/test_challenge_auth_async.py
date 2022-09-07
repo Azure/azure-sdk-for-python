@@ -351,3 +351,75 @@ async def test_preserves_options_and_headers():
     # ensure the mock sans I/O policies were called
     assert adder.on_request.called, "mock policy wasn't invoked"
     assert verifier.on_request.called, "mock policy wasn't invoked"
+
+
+@pytest.mark.asyncio
+@empty_challenge_cache
+@pytest.mark.parametrize("verify_challenge_resource", [True, False])
+async def test_verify_challenge_resource_matches(verify_challenge_resource):
+    """The auth policy should raise if the challenge resource doesn't match the request URL unless check is disabled"""
+
+    url = get_random_url()
+    token = "**"
+    resource = "https://bad-resource.azure.net"
+
+    async def get_token(*_, **__):
+        return AccessToken(token, 0)
+
+    credential = Mock(get_token=Mock(wraps=get_token))
+
+    transport = async_validating_transport(
+        requests=[Request(), Request(required_headers={"Authorization": f"Bearer {token}"})],
+        responses=[
+            mock_response(
+                status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
+            ),
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
+        ]
+    )
+
+    client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)
+
+    if verify_challenge_resource:
+        with pytest.raises(ValueError) as e:
+            await client.get_key("key-name")
+        assert f"The challenge resource 'bad-resource.azure.net' does not match the requested domain" in str(e.value)
+    else:
+        key = await client.get_key("key-name")
+        assert key.name == "key-name"
+
+
+@pytest.mark.asyncio
+@empty_challenge_cache
+@pytest.mark.parametrize("verify_challenge_resource", [True, False])
+async def test_verify_challenge_resource_valid(verify_challenge_resource):
+    """The auth policy should raise if the challenge resource isn't a valid URL unless check is disabled"""
+
+    url = get_random_url()
+    token = "**"
+    resource = "bad-resource"
+
+    async def get_token(*_, **__):
+        return AccessToken(token, 0)
+
+    credential = Mock(get_token=Mock(wraps=get_token))
+
+    transport = async_validating_transport(
+        requests=[Request(), Request(required_headers={"Authorization": f"Bearer {token}"})],
+        responses=[
+            mock_response(
+                status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
+            ),
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
+        ]
+    )
+
+    client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)
+
+    if verify_challenge_resource:
+        with pytest.raises(ValueError) as e:
+            await client.get_key("key-name")
+        assert "The challenge contains invalid scope" in str(e.value)
+    else:
+        key = await client.get_key("key-name")
+        assert key.name == "key-name"
