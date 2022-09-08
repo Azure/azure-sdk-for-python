@@ -708,6 +708,8 @@ def _set_throughput_options(offer: Union[int, ThroughputProperties], request_opt
         except AttributeError:
             if isinstance(offer, int):
                 request_options["offerThroughput"] = offer
+            else:
+                raise TypeError("offer_throughput must be int or an instance of ThroughputProperties")
 
 
 def _deserialize_throughput(throughput: list) -> Any:
