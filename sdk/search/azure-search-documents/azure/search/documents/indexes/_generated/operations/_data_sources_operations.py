@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,21 +7,222 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
-import warnings
+
+from msrest import Serializer
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
-
+    from typing import Any, Callable, Dict, Optional, TypeVar
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
+# fmt: off
+
+def build_create_or_update_request(
+    data_source_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    prefer = kwargs.pop('prefer', "return=representation")  # type: str
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+    skip_indexer_reset_requirement_for_cache = kwargs.pop('skip_indexer_reset_requirement_for_cache', None)  # type: Optional[bool]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/datasources(\'{dataSourceName}\')")
+    path_format_arguments = {
+        "dataSourceName": _SERIALIZER.url("data_source_name", data_source_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    if skip_indexer_reset_requirement_for_cache is not None:
+        _query_parameters['ignoreResetRequirements'] = _SERIALIZER.query("skip_indexer_reset_requirement_for_cache", skip_indexer_reset_requirement_for_cache, 'bool')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if x_ms_client_request_id is not None:
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, 'str')
+    if if_match is not None:
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+    if if_none_match is not None:
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+    _header_parameters['Prefer'] = _SERIALIZER.header("prefer", prefer, 'str')
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PUT",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_delete_request(
+    data_source_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+    x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/datasources(\'{dataSourceName}\')")
+    path_format_arguments = {
+        "dataSourceName": _SERIALIZER.url("data_source_name", data_source_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if x_ms_client_request_id is not None:
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, 'str')
+    if if_match is not None:
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+    if if_none_match is not None:
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_get_request(
+    data_source_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+    x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/datasources(\'{dataSourceName}\')")
+    path_format_arguments = {
+        "dataSourceName": _SERIALIZER.url("data_source_name", data_source_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if x_ms_client_request_id is not None:
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_list_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+    select = kwargs.pop('select', None)  # type: Optional[str]
+    x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/datasources")
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if select is not None:
+        _query_parameters['$select'] = _SERIALIZER.query("select", select, 'str')
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if x_ms_client_request_id is not None:
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_create_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    x_ms_client_request_id = kwargs.pop('x_ms_client_request_id', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/datasources")
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if x_ms_client_request_id is not None:
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, 'str')
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+# fmt: on
 class DataSourcesOperations(object):
     """DataSourcesOperations operations.
 
@@ -43,12 +245,14 @@ class DataSourcesOperations(object):
         self._deserialize = deserializer
         self._config = config
 
+    @distributed_trace
     def create_or_update(
         self,
         data_source_name,  # type: str
         data_source,  # type: "_models.SearchIndexerDataSource"
         if_match=None,  # type: Optional[str]
         if_none_match=None,  # type: Optional[str]
+        skip_indexer_reset_requirement_for_cache=None,  # type: Optional[bool]
         request_options=None,  # type: Optional["_models.RequestOptions"]
         **kwargs  # type: Any
     ):
@@ -65,8 +269,14 @@ class DataSourcesOperations(object):
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value.
         :type if_none_match: str
+        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
+        :type skip_indexer_reset_requirement_for_cache: bool
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
+        :keyword prefer: For HTTP PUT requests, instructs the service to return the created/updated
+         resource on success. The default value is "return=representation". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype prefer: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexerDataSource, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSource
@@ -77,49 +287,44 @@ class DataSourcesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        prefer = kwargs.pop('prefer', "return=representation")  # type: str
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        prefer = "return=representation"
-        api_version = "2020-06-30"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
+        _json = self._serialize.body(data_source, 'SearchIndexerDataSource')
 
-        # Construct URL
-        url = self.create_or_update.metadata['url']  # type: ignore
+        request = build_create_or_update_request(
+            data_source_name=data_source_name,
+            prefer=prefer,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            x_ms_client_request_id=_x_ms_client_request_id,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
+            template_url=self.create_or_update.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'dataSourceName': self._serialize.url("data_source_name", data_source_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _x_ms_client_request_id is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
-        if if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
-        header_parameters['Prefer'] = self._serialize.header("prefer", prefer, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(data_source, 'SearchIndexerDataSource')
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if response.status_code == 200:
@@ -132,9 +337,12 @@ class DataSourcesOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update.metadata = {'url': '/datasources(\'{dataSourceName}\')'}  # type: ignore
 
-    def delete(
+    create_or_update.metadata = {'url': "/datasources(\'{dataSourceName}\')"}  # type: ignore
+
+
+    @distributed_trace
+    def delete(  # pylint: disable=inconsistent-return-statements
         self,
         data_source_name,  # type: str
         if_match=None,  # type: Optional[str]
@@ -165,49 +373,46 @@ class DataSourcesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
+        request = build_delete_request(
+            data_source_name=data_source_name,
+            api_version=api_version,
+            x_ms_client_request_id=_x_ms_client_request_id,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            template_url=self.delete.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'dataSourceName': self._serialize.url("data_source_name", data_source_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _x_ms_client_request_id is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
-        if if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/datasources(\'{dataSourceName}\')'}  # type: ignore
+    delete.metadata = {'url': "/datasources(\'{dataSourceName}\')"}  # type: ignore
 
+
+    @distributed_trace
     def get(
         self,
         data_source_name,  # type: str
@@ -231,38 +436,35 @@ class DataSourcesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
+        request = build_get_request(
+            data_source_name=data_source_name,
+            api_version=api_version,
+            x_ms_client_request_id=_x_ms_client_request_id,
+            template_url=self.get.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'dataSourceName': self._serialize.url("data_source_name", data_source_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _x_ms_client_request_id is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SearchIndexerDataSource', pipeline_response)
@@ -271,8 +473,11 @@ class DataSourcesOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/datasources(\'{dataSourceName}\')'}  # type: ignore
 
+    get.metadata = {'url': "/datasources(\'{dataSourceName}\')"}  # type: ignore
+
+
+    @distributed_trace
     def list(
         self,
         select=None,  # type: Optional[str]
@@ -298,39 +503,35 @@ class DataSourcesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.list.metadata['url']  # type: ignore
+        request = build_list_request(
+            api_version=api_version,
+            select=select,
+            x_ms_client_request_id=_x_ms_client_request_id,
+            template_url=self.list.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if select is not None:
-            query_parameters['$select'] = self._serialize.query("select", select, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _x_ms_client_request_id is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('ListDataSourcesResult', pipeline_response)
@@ -339,8 +540,11 @@ class DataSourcesOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/datasources'}  # type: ignore
 
+    list.metadata = {'url': "/datasources"}  # type: ignore
+
+
+    @distributed_trace
     def create(
         self,
         data_source,  # type: "_models.SearchIndexerDataSource"
@@ -364,42 +568,38 @@ class DataSourcesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
+        _json = self._serialize.body(data_source, 'SearchIndexerDataSource')
 
-        # Construct URL
-        url = self.create.metadata['url']  # type: ignore
+        request = build_create_request(
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            x_ms_client_request_id=_x_ms_client_request_id,
+            template_url=self.create.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _x_ms_client_request_id is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(data_source, 'SearchIndexerDataSource')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.SearchError, response)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SearchIndexerDataSource', pipeline_response)
@@ -408,4 +608,6 @@ class DataSourcesOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create.metadata = {'url': '/datasources'}  # type: ignore
+
+    create.metadata = {'url': "/datasources"}  # type: ignore
+

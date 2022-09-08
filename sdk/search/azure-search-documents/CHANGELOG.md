@@ -1,5 +1,10 @@
 # Release History
 
+## 11.4.0b1 (2022-09-08)
+
+### Features Added
+- Added support to create, update and delete aliases via the `SearchIndexClient`.
+
 ## 11.3.0 (2022-09-06)
 
 ### Note
