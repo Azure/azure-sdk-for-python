@@ -188,7 +188,8 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         if not isinstance(document_url, str):
             raise ValueError(
                 "'document_url' needs to be of type 'str'. "
-                "Please see `begin_analyze_document()` to pass a byte stream.")
+                "Please see `begin_analyze_document()` to pass a byte stream."
+            )
 
         return await self._client.begin_analyze_document(  # type: ignore
             model_id=model_id,
