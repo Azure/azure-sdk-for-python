@@ -35,7 +35,6 @@
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customsearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/**",
-    "sdk/cognitiveservices/azure-cognitiveservices-language-luis/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-entitysearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-knowledge-qnamaker/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-imagesearch/**",
@@ -778,6 +777,13 @@
         "adreadonly",
         "Shenzen",
         "myusername"
+      ]
+    },
+    {
+      "filename": "sdk/cognitiveservices/azure-cognitiveservices-language-luis/azure/cognitiveservices/language/luis/authoring/**/*.py",
+      "words": [
+        "hierarchicals",
+        "listprebuilts"
       ]
     }
   ],
