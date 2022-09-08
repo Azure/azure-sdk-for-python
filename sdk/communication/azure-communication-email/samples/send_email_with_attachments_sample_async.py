@@ -37,7 +37,7 @@ sys.path.append("..")
 
 class EmailWithAttachmentSampleAsync(object):
 
-    connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING")
+    connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING_EMAIL")
     sender_address = os.getenv("SENDER_ADDRESS")
     recipient_address = os.getenv("RECIPIENT_ADDRESS")
     
