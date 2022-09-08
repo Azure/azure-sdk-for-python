@@ -19,6 +19,7 @@ from opentelemetry.trace.status import Status, StatusCode
 from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import (
     AzureMonitorTraceExporter,
+    _check_instrumentation_span,
     _get_trace_export_result,
 )
 from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
@@ -1162,3 +1163,21 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
             SpanExportResult.FAILURE,
         )
         self.assertEqual(_get_trace_export_result(None), None)
+
+    def test_check_instrumentation_span(self):
+        span = mock.Mock()
+        span.instrumentation_scope.name = "opentelemetry.instrumentation.test"
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
+            _check_instrumentation_span(span)
+            add.assert_called_once_with("test")
+
+    def test_check_instrumentation_span_not_instrumentation(self):
+        span = mock.Mock()
+        span.instrumentation_scope.name = "__main__"
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
+            _check_instrumentation_span(span)
+            add.assert_not_called()
