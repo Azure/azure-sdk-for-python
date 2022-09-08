@@ -107,5 +107,4 @@ async def main():
     await sample_analyze_orchestration_app_conv_response_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())
