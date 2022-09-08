@@ -74,7 +74,6 @@
     "sdk/keyvault/azure-keyvault-keys/tests/keys.py",
     "sdk/modelsrepository/azure-iot-modelsrepository/**",
     "sdk/monitor/azure-monitor-query/**",
-    "sdk/purview/azure-purview-catalog/**",
     "sdk/servicefabric/azure-servicefabric/**",
     "sdk/search/azure-search-documents/**",
     "sdk/storage/azure-storage-blob-changefeed/**",
@@ -778,6 +777,27 @@
         "adreadonly",
         "Shenzen",
         "myusername"
+      ]
+    },
+    {
+      "filename": "sdk/purview/azure-purview-catalog/azure/purview/catalog/aio/operations/*.py",
+      "words": [
+        "struct",
+        "STRUCT",
+        "nonly",
+        "nthe",
+        "reques"
+      ]
+    },
+    {
+      "filename": "sdk/purview/azure-purview-catalog/azure/purview/catalog/operations/*.py",
+      "words": [
+        "struct",
+        "structdef",
+        "STRUCT",
+        "nonly",
+        "nthe",
+        "reques"
       ]
     }
   ],
