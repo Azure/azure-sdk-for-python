@@ -24,5 +24,5 @@ def get_api_version(kwargs):
     api_version = kwargs.get('api_version', None)
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = '\n'.join(_SUPPORTED_API_VERSIONS)
-        raise ValueError("Unsupported API version '{}'. Please select from:\n{}".format(api_version, versions))
+        raise ValueError(f"Unsupported API version '{api_version}'. Please select from:\n{versions}")
     return api_version or _SUPPORTED_API_VERSIONS[-1]

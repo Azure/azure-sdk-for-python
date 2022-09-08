@@ -49,7 +49,7 @@ class InstancesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~deviceupdatemgmtclient.aio.DeviceUpdateMgmtClient`'s
+        :class:`~azure.mgmt.deviceupdate.aio.DeviceUpdateMgmtClient`'s
         :attr:`instances` attribute.
     """
 
@@ -74,7 +74,7 @@ class InstancesOperations:
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Instance or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~deviceupdatemgmtclient.models.Instance]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.deviceupdate.models.Instance]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -152,7 +152,7 @@ class InstancesOperations:
         :type instance_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Instance or the result of cls(response)
-        :rtype: ~deviceupdatemgmtclient.models.Instance
+        :rtype: ~azure.mgmt.deviceupdate.models.Instance
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -333,7 +333,7 @@ class InstancesOperations:
         :param instance_name: Instance name. Required.
         :type instance_name: str
         :param instance: Instance details. Required.
-        :type instance: ~deviceupdatemgmtclient.models.Instance
+        :type instance: ~azure.mgmt.deviceupdate.models.Instance
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -347,7 +347,7 @@ class InstancesOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Instance or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~deviceupdatemgmtclient.models.Instance]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceupdate.models.Instance]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -385,7 +385,7 @@ class InstancesOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Instance or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~deviceupdatemgmtclient.models.Instance]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceupdate.models.Instance]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -407,7 +407,7 @@ class InstancesOperations:
         :param instance_name: Instance name. Required.
         :type instance_name: str
         :param instance: Instance details. Is either a model type or a IO type. Required.
-        :type instance: ~deviceupdatemgmtclient.models.Instance or IO
+        :type instance: ~azure.mgmt.deviceupdate.models.Instance or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -421,7 +421,7 @@ class InstancesOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Instance or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~deviceupdatemgmtclient.models.Instance]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceupdate.models.Instance]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -603,13 +603,13 @@ class InstancesOperations:
         :param instance_name: Instance name. Required.
         :type instance_name: str
         :param tag_update_payload: Updated tags. Required.
-        :type tag_update_payload: ~deviceupdatemgmtclient.models.TagUpdate
+        :type tag_update_payload: ~azure.mgmt.deviceupdate.models.TagUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Instance or the result of cls(response)
-        :rtype: ~deviceupdatemgmtclient.models.Instance
+        :rtype: ~azure.mgmt.deviceupdate.models.Instance
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -639,7 +639,7 @@ class InstancesOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Instance or the result of cls(response)
-        :rtype: ~deviceupdatemgmtclient.models.Instance
+        :rtype: ~azure.mgmt.deviceupdate.models.Instance
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -661,13 +661,13 @@ class InstancesOperations:
         :param instance_name: Instance name. Required.
         :type instance_name: str
         :param tag_update_payload: Updated tags. Is either a model type or a IO type. Required.
-        :type tag_update_payload: ~deviceupdatemgmtclient.models.TagUpdate or IO
+        :type tag_update_payload: ~azure.mgmt.deviceupdate.models.TagUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Instance or the result of cls(response)
-        :rtype: ~deviceupdatemgmtclient.models.Instance
+        :rtype: ~azure.mgmt.deviceupdate.models.Instance
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}

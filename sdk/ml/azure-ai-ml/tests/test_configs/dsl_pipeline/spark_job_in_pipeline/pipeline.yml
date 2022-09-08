@@ -1,0 +1,26 @@
+type: pipeline
+
+description: 'submit a spark job using component sdk'
+
+inputs:
+  iris_data:
+    type: uri_file
+    path: ./dataset/iris.csv
+    mode: direct
+
+outputs:
+  output:
+    type: uri_folder
+    mode: direct
+
+jobs:
+  spark_job:
+    type: spark
+    component: file:./component.yml
+    inputs:
+      file_input1: ${{parent.inputs.iris_data}}
+      file_input2: ${{parent.inputs.iris_data}}
+
+    outputs:
+      output: ${{parent.outputs.output}}
+    compute: azureml:spark31

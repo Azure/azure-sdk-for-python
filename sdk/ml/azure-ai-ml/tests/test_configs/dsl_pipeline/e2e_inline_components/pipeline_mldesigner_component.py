@@ -1,13 +1,11 @@
+import os
+from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
-from datetime import datetime
-import os
 
-from mldesigner import command_component
-
-from azure.ai.ml import dsl, Input, Output
+from azure.ai.ml import Input, Output, dsl
 from azure.ai.ml.entities import PipelineJob
-
+from mldesigner import command_component
 
 # We propose using command_component to support inline component in dsl.pipeline.
 # Which allows user define a pipeline job without YAML.

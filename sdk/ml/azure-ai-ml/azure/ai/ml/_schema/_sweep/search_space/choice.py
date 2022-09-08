@@ -17,7 +17,7 @@ from azure.ai.ml._schema.core.fields import (
     UnionField,
 )
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
-from azure.ai.ml.constants import SearchSpace
+from azure.ai.ml.constants._job.sweep import SearchSpace
 
 
 class ChoiceSchema(metaclass=PatchedSchemaMeta):

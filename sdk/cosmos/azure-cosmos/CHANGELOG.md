@@ -8,7 +8,8 @@
 
 #### Bugs Fixed
 - Fixed parsing of args for overloaded `container.read()` method.
-- Fixed `validate_cache_staleness_value()` method to allow max_integrated_cache_staleness to be an integer greater than or equal to 0
+- Fixed `validate_cache_staleness_value()` method to allow max_integrated_cache_staleness to be an integer greater than or equal to 0.
+- Fixed `__aiter__()` method by removing the async keyword.
 
 ### 4.3.0 (2022-05-23)
 #### Features Added
@@ -180,7 +181,7 @@ Version 4.0.0b2 is the second iteration in our efforts to build a more Pythonic 
     - `Database.read_all_users` -> `DatabaseProxy.list_users`
     - `User.read_all_permissions` -> `UserProxy.list_permissions`
 - All operations that take `request_options` or `feed_options` parameters, these have been moved to keyword only parameters. In addition, while these options dictionaries are still supported, each of the individual options within the dictionary are now supported as explicit keyword arguments.
-- The error heirarchy is now inherited from `azure.core.AzureError` instead of `CosmosError` which has been removed.
+- The error hierarchy is now inherited from `azure.core.AzureError` instead of `CosmosError` which has been removed.
     - `HTTPFailure` has been renamed to `CosmosHttpResponseError`
     - `JSONParseFailure` has been removed and replaced by `azure.core.DecodeError`
     - Added additional errors for specific response codes:
@@ -198,7 +199,7 @@ Version 4.0.0b1 is the first preview of our efforts to create a user-friendly an
 
 - Operations are now scoped to a particular client:
     - `CosmosClient`: This client handles account-level operations. This includes managing service properties and listing the databases within an account.
-    - `Database`: This client handles database-level operations. This includes creating and deleting containers, users and stored procedurs. It can be accessed from a `CosmosClient` instance by name.
+    - `Database`: This client handles database-level operations. This includes creating and deleting containers, users and stored procedures. It can be accessed from a `CosmosClient` instance by name.
     - `Container`: This client handles operations for a particular container. This includes querying and inserting items and managing properties.
     - `User`: This client handles operations for a particular user. This includes adding and deleting permissions and managing user properties.
     
@@ -287,10 +288,10 @@ Version 4.0.0b1 is the first preview of our efforts to create a user-friendly an
   By default, DocumentDB retries nine times for each request when error code 429 is encountered, honoring the retryAfter time in the response header.
   A fixed retry interval time can now be set as part of the RetryOptions property on the ConnectionPolicy object if you want to ignore the retryAfter time returned by server between the retries.
   DocumentDB now waits for a maximum of 30 seconds for each request that is being throttled (irrespective of retry count) and returns the response with error code 429.
-  This time can also be overriden in the RetryOptions property on ConnectionPolicy object.
+  This time can also be overridden in the RetryOptions property on ConnectionPolicy object.
 
 - DocumentDB now returns x-ms-throttle-retry-count and x-ms-throttle-retry-wait-time-ms as the response headers in every request to denote the throttle retry count
-  and the cummulative time the request waited between the retries.
+  and the cumulative time the request waited between the retries.
 
 - Removed the RetryPolicy class and the corresponding property (retry_policy) exposed on the document_client class and instead introduced a RetryOptions class
   exposing the RetryOptions property on ConnectionPolicy class that can be used to override some of the default retry options.

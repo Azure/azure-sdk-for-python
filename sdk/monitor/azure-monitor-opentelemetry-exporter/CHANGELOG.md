@@ -6,6 +6,14 @@
 
 - Implement success count network statsbeat
     ([#25752](https://github.com/Azure/azure-sdk-for-python/pull/25752))
+- Implement all network statsbeat
+    ([#25845](https://github.com/Azure/azure-sdk-for-python/pull/25845))
+- Implement attach statsbeat
+    ([#25956](https://github.com/Azure/azure-sdk-for-python/pull/25956))
+- Implement feature statsbeat
+    ([#26009](https://github.com/Azure/azure-sdk-for-python/pull/26009))
+- Implement instrumentation statsbeat
+    ([#26023](https://github.com/Azure/azure-sdk-for-python/pull/26023))
 
 ### Breaking Changes
 

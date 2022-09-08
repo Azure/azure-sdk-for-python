@@ -771,15 +771,6 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert not document.sentences[0].mined_opinions
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
-    async def test_opinion_mining_v3(self, **kwargs):
-        client = kwargs.pop("client")
-        with pytest.raises(ValueError) as excinfo:
-            await client.analyze_sentiment(["will fail"], show_opinion_mining=True)
-
-        assert "'show_opinion_mining' is only available for API version v3.1 and up" in str(excinfo.value)
-
-    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_offset(self, client):
@@ -886,19 +877,19 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
         with pytest.raises(ValueError) as e:
             res = await client.analyze_sentiment(["I'm tired"], string_index_type="UnicodeCodePoint")
-        assert str(e.value) == "'string_index_type' is only available for API version v3.1 and up.\n"
+        assert str(e.value) == "'string_index_type' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
 
         with pytest.raises(ValueError) as e:
             res = await client.analyze_sentiment(["I'm tired"], show_opinion_mining=True)
-        assert str(e.value) == "'show_opinion_mining' is only available for API version v3.1 and up.\n"
+        assert str(e.value) == "'show_opinion_mining' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
 
         with pytest.raises(ValueError) as e:
             res = await client.analyze_sentiment(["I'm tired"], disable_service_logs=True)
-        assert str(e.value) == "'disable_service_logs' is only available for API version v3.1 and up.\n"
+        assert str(e.value) == "'disable_service_logs' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
 
         with pytest.raises(ValueError) as e:
             res = await client.analyze_sentiment(["I'm tired"], show_opinion_mining=True, disable_service_logs=True, string_index_type="UnicodeCodePoint")
-        assert str(e.value) == "'show_opinion_mining' is only available for API version v3.1 and up.\n'disable_service_logs' is only available for API version v3.1 and up.\n'string_index_type' is only available for API version v3.1 and up.\n"
+        assert str(e.value) == "'show_opinion_mining' is not available in API version v3.0. Use service API version v3.1 or newer.\n'disable_service_logs' is not available in API version v3.0. Use service API version v3.1 or newer.\n'string_index_type' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
 
     @TextAnalyticsPreparer()
     async def test_mock_quota_exceeded(self, **kwargs):

@@ -8,13 +8,13 @@ from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationExc
 from azure.ai.ml._restclient.v2021_10_01.models import JobInput as RestJobInput
 from azure.ai.ml._restclient.v2021_10_01.models import JobOutput as RestJobOutput
 from azure.ai.ml._restclient.v2021_10_01.models import Mpi, PyTorch, TensorFlow
-from azure.ai.ml.constants import ComponentJobConstants
+from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
-    INPUT_MOUNT_MAPPING_TO_REST,
-    OUTPUT_MOUNT_MAPPING_TO_REST,
     INPUT_MOUNT_MAPPING_FROM_REST,
+    INPUT_MOUNT_MAPPING_TO_REST,
     OUTPUT_MOUNT_MAPPING_FROM_REST,
+    OUTPUT_MOUNT_MAPPING_TO_REST,
 )
 
 
@@ -28,8 +28,9 @@ def process_sdk_component_job_io(
 
     :param io: Input or output dictionary of an SDK ComponentJob
     :type io:  Dict[str, Union[str, float, bool, Input]]
-    :return: A tuple of dictionaries: One mapping inputs to REST formatted ComponentJobInput/ComponentJobOutput for data binding io.
-             The other dictionary contains any IO that is not a databinding that is yet to be turned into REST form
+    :return: A tuple of dictionaries: \
+            One mapping inputs to REST formatted ComponentJobInput/ComponentJobOutput for data binding io.
+            The other dictionary contains any IO that is not a databinding that is yet to be turned into REST form
     :rtype: Tuple[Dict[str, str], Dict[str, Union[str, float, bool, Input]]]
     """
     io_bindings = {}
@@ -115,15 +116,14 @@ def from_dict_to_rest_distribution(distribution_dict: Dict[str, Union[str, int]]
     target_type = distribution_dict["distribution_type"].lower()
     if target_type == "pytorch":
         return PyTorch(**distribution_dict)
-    elif target_type == "mpi":
+    if target_type == "mpi":
         return Mpi(**distribution_dict)
-    elif target_type == "tensorflow":
+    if target_type == "tensorflow":
         return TensorFlow(**distribution_dict)
-    else:
-        msg = "Distribution type must be pytorch, mpi or tensorflow: {}".format(target_type)
-        raise ValidationException(
-            message=msg,
-            no_personal_data_message=msg,
-            target=ErrorTarget.PIPELINE,
-            error_category=ErrorCategory.USER_ERROR,
-        )
+    msg = "Distribution type must be pytorch, mpi or tensorflow: {}".format(target_type)
+    raise ValidationException(
+        message=msg,
+        no_personal_data_message=msg,
+        target=ErrorTarget.PIPELINE,
+        error_category=ErrorCategory.USER_ERROR,
+    )

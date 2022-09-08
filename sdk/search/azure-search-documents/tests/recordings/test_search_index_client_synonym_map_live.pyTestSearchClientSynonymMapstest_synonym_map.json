@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2020-06-30",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -33,7 +33,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -58,7 +58,7 @@
         "elapsed-time": "22",
         "ETag": "W/\u00220x8D9E1E5EE854772\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-create\u0027)?api-version=2021-04-30-Preview",
+        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-create\u0027)?api-version=2020-06-30",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -75,7 +75,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2020-06-30",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -115,7 +115,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-create\u0027)?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-create\u0027)?api-version=2020-06-30",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -139,7 +139,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -164,7 +164,7 @@
         "elapsed-time": "23",
         "ETag": "W/\u00220x8D9E1E5EEC15D3A\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-del\u0027)?api-version=2021-04-30-Preview",
+        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-del\u0027)?api-version=2020-06-30",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -181,7 +181,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2020-06-30",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -221,7 +221,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-del\u0027)?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-del\u0027)?api-version=2020-06-30",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -245,7 +245,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2020-06-30",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -277,7 +277,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -302,7 +302,7 @@
         "elapsed-time": "32",
         "ETag": "W/\u00220x8D9E1E5EF182300\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-delunch\u0027)?api-version=2021-04-30-Preview",
+        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-delunch\u0027)?api-version=2020-06-30",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -319,7 +319,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-delunch\u0027)?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-delunch\u0027)?api-version=2020-06-30",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -363,7 +363,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-delunch\u0027)?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-delunch\u0027)?api-version=2020-06-30",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -398,7 +398,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-delunch\u0027)?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-delunch\u0027)?api-version=2020-06-30",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -422,7 +422,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2020-06-30",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -454,7 +454,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -479,7 +479,7 @@
         "elapsed-time": "33",
         "ETag": "W/\u00220x8D9E1E5EF837F32\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-get\u0027)?api-version=2021-04-30-Preview",
+        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-get\u0027)?api-version=2020-06-30",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -496,7 +496,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2020-06-30",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -536,7 +536,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-get\u0027)?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-get\u0027)?api-version=2020-06-30",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -573,7 +573,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-get\u0027)?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-get\u0027)?api-version=2020-06-30",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -597,7 +597,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -622,7 +622,7 @@
         "elapsed-time": "22",
         "ETag": "W/\u00220x8D9E1E5EFD6C310\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-list1\u0027)?api-version=2021-04-30-Preview",
+        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-list1\u0027)?api-version=2020-06-30",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -639,7 +639,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -664,7 +664,7 @@
         "elapsed-time": "22",
         "ETag": "W/\u00220x8D9E1E5EFEAE455\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-list2\u0027)?api-version=2021-04-30-Preview",
+        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-list2\u0027)?api-version=2020-06-30",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -681,7 +681,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2020-06-30",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -728,7 +728,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-list1\u0027)?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-list1\u0027)?api-version=2020-06-30",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -752,7 +752,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-list2\u0027)?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-list2\u0027)?api-version=2020-06-30",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -776,7 +776,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2020-06-30",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -808,7 +808,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -833,7 +833,7 @@
         "elapsed-time": "23",
         "ETag": "W/\u00220x8D9E1E5F05AD3BE\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-cou\u0027)?api-version=2021-04-30-Preview",
+        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-cou\u0027)?api-version=2020-06-30",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -850,7 +850,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2020-06-30",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -890,7 +890,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-cou\u0027)?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-cou\u0027)?api-version=2020-06-30",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -934,7 +934,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2020-06-30",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -974,7 +974,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-cou\u0027)?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-cou\u0027)?api-version=2020-06-30",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -1011,7 +1011,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-cou\u0027)?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-cou\u0027)?api-version=2020-06-30",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",

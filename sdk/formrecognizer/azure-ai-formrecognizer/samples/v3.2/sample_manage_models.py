@@ -37,41 +37,41 @@ def sample_manage_models():
     # [START get_resource_details]
     document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    account_info = document_model_admin_client.get_resource_details()
+    account_details = document_model_admin_client.get_resource_details()
     print("Our resource has {} custom models, and we can have at most {} custom models\n".format(
-        account_info.document_model_count, account_info.document_model_limit
+        account_details.custom_document_models.count, account_details.custom_document_models.limit
     ))
     # [END get_resource_details]
 
     # Next, we get a paged list of all of our custom models
-    # [START list_models]
-    models = document_model_admin_client.list_models()
+    # [START list_document_models]
+    models = document_model_admin_client.list_document_models()
 
     print("We have the following 'ready' models with IDs and descriptions:")
     for model in models:
         print("{} | {}".format(model.model_id, model.description))
-    # [END list_models]
+    # [END list_document_models]
 
     # let's build a model to use for this sample
-    poller = document_model_admin_client.begin_build_model(ModelBuildMode.TEMPLATE, blob_container_url=container_sas_url, description="model for sample")
+    poller = document_model_admin_client.begin_build_document_model(ModelBuildMode.TEMPLATE, blob_container_url=container_sas_url, description="model for sample")
     model = poller.result()
 
-    # [START get_model]
-    my_model = document_model_admin_client.get_model(model_id=model.model_id)
+    # [START get_document_model]
+    my_model = document_model_admin_client.get_document_model(model_id=model.model_id)
     print("\nModel ID: {}".format(my_model.model_id))
     print("Description: {}".format(my_model.description))
     print("Model created on: {}".format(my_model.created_on))
-    # [END get_model]
+    # [END get_document_model]
 
     # Finally, we will delete this model by ID
-    # [START delete_model]
-    document_model_admin_client.delete_model(model_id=my_model.model_id)
+    # [START delete_document_model]
+    document_model_admin_client.delete_document_model(model_id=my_model.model_id)
 
     try:
-        document_model_admin_client.get_model(model_id=my_model.model_id)
+        document_model_admin_client.get_document_model(model_id=my_model.model_id)
     except ResourceNotFoundError:
         print("Successfully deleted model with ID {}".format(my_model.model_id))
-    # [END delete_model]
+    # [END delete_document_model]
 
 
 if __name__ == '__main__':
