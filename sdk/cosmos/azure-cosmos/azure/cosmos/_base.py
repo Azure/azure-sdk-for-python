@@ -702,7 +702,7 @@ def _set_throughput_options(offer: Union[int, ThroughputProperties], request_opt
             elif increment_percent:
                 raise ValueError("auto_scale_max_throughput must be supplied in "
                                  "conjunction with auto_scale_increment_percent")
-            elif offer.offer_throughput:
+            if offer.offer_throughput:
                 request_options["offerThroughput"] = offer.offer_throughput
 
         except AttributeError:
