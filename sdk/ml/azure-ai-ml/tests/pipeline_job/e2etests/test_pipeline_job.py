@@ -54,7 +54,7 @@ def assert_job_cancel(pipeline, client: MLClient):
 
 
 @pytest.fixture
-def generate_weekly_fixed_job_name(job_name: str, variable_recorder) -> str:
+def generate_weekly_fixed_job_name(variable_recorder) -> str:
     def create_or_record_weekly_fixed_job_name(job_name: str):
         """Add a week postfix to job name, make it a weekly fixed name."""
         c = datetime.utcnow().isocalendar()  # follow CI workspace generate rule
@@ -163,15 +163,17 @@ class TestPipelineJob(AzureRecordedTestCase):
     @pytest.mark.parametrize(
         "pipeline_job_path, expected_error_type",
         [
-            ("./tests/test_configs/pipeline_jobs/invalid/non_existent_remote_component.yml", ValidationException),
+            # flaky parameterization
+            # ("./tests/test_configs/pipeline_jobs/invalid/non_existent_remote_component.yml", ValidationException),
             (
                 "./tests/test_configs/pipeline_jobs/invalid/non_existent_remote_version.yml",
                 HttpResponseError,
             ),
-            (
-                "./tests/test_configs/pipeline_jobs/invalid/non_existent_compute.yml",
-                ValidationException,
-            ),
+            # Flaky parameterization
+            # (
+            #     "./tests/test_configs/pipeline_jobs/invalid/non_existent_compute.yml",
+            #     ValidationException,
+            # ),
         ],
     )
     def test_pipeline_job_validation_remote(
@@ -1464,6 +1466,7 @@ class TestPipelineJob(AzureRecordedTestCase):
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
 class TestPipelineJobReuse(AzureRecordedTestCase):
+    @pytest.mark.skip(reason="flaky test")
     def test_reused_pipeline_child_job_download(
         self,
         client: MLClient,

@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.8.6 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,16 +17,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 17:04:42 GMT",
+        "Date": "Wed, 07 Sep 2022 21:24:27 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AjguElt8XdxCkXNrilEUJrHwQhvHBQAAAG2imdoOAAAARUxcfQIAAACFopnaDgAAAA; expires=Sat, 24-Sep-2022 17:04:42 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Ai0qymOAPv9Np0yn7IpqpVnwQhvHBQAAAOsCq9oOAAAARUxcfQIAAAD3AqvaDgAAAA; expires=Fri, 07-Oct-2022 21:24:27 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13481.12 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13622.6 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -104,8 +104,8 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AjguElt8XdxCkXNrilEUJrHwQhvHBQAAAG2imdoOAAAARUxcfQIAAACFopnaDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
-        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+        "Cookie": "fpc=Ai0qymOAPv9Np0yn7IpqpVnwQhvHBQAAAOsCq9oOAAAARUxcfQIAAAD3AqvaDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.8.6 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -115,16 +115,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 17:04:42 GMT",
+        "Date": "Wed, 07 Sep 2022 21:24:27 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AjguElt8XdxCkXNrilEUJrHwQhvHBQAAAG2imdoOAAAARUxcfQIAAACFopnaDgAAAA; expires=Sat, 24-Sep-2022 17:04:42 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Ai0qymOAPv9Np0yn7IpqpVnwQhvHBQAAAOsCq9oOAAAARUxcfQIAAAD3AqvaDgAAAA; expires=Fri, 07-Oct-2022 21:24:27 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13481.11 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13562.12 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -180,12 +180,12 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "5fd415fb-97c9-4b63-ba5b-a53df8884641",
+        "client-request-id": "6dbeb121-12dc-4d03-a158-6033dc8af281",
         "Connection": "keep-alive",
         "Content-Length": "284",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=AjguElt8XdxCkXNrilEUJrHwQhvHBQAAAG2imdoOAAAARUxcfQIAAACFopnaDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
-        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.6 (Windows-10-10.0.22000-SP0)",
+        "Cookie": "fpc=Ai0qymOAPv9Np0yn7IpqpVnwQhvHBQAAAOsCq9oOAAAARUxcfQIAAAD3AqvaDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.8.6 (Windows-10-10.0.22000-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
@@ -198,22 +198,22 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "5fd415fb-97c9-4b63-ba5b-a53df8884641",
+        "client-request-id": "6dbeb121-12dc-4d03-a158-6033dc8af281",
         "Content-Length": "111",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 17:04:42 GMT",
+        "Date": "Wed, 07 Sep 2022 21:24:27 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=AjguElt8XdxCkXNrilEUJrHwQhvHBQAAAG2imdoOAAAARUxcfQMAAACFopnaDgAAAA; expires=Sat, 24-Sep-2022 17:04:43 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Ai0qymOAPv9Np0yn7IpqpVnwQhvHBQAAAOsCq9oOAAAARUxcfQIAAAD3AqvaDgAAAA; expires=Fri, 07-Oct-2022 21:24:27 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.13481.12 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13622.6 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -230,12 +230,12 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "2ae467da-cb2e-472a-95d9-dbff2de613de",
+        "client-request-id": "2fa25ac6-0311-4ea4-9d05-4106a3440b37",
         "Connection": "keep-alive",
         "Content-Length": "292",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=AjguElt8XdxCkXNrilEUJrHwQhvHBQAAAG2imdoOAAAARUxcfQMAAACFopnaDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
-        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.6 (Windows-10-10.0.22000-SP0)",
+        "Cookie": "fpc=Ai0qymOAPv9Np0yn7IpqpVnwQhvHBQAAAOsCq9oOAAAARUxcfQIAAAD3AqvaDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.8.6 (Windows-10-10.0.22000-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
@@ -248,22 +248,22 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "2ae467da-cb2e-472a-95d9-dbff2de613de",
+        "client-request-id": "2fa25ac6-0311-4ea4-9d05-4106a3440b37",
         "Content-Length": "111",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 17:04:42 GMT",
+        "Date": "Wed, 07 Sep 2022 21:24:27 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=AjguElt8XdxCkXNrilEUJrHwQhvHBgAAAG2imdoOAAAARUxcfQMAAACFopnaDgAAAA; expires=Sat, 24-Sep-2022 17:04:43 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Ai0qymOAPv9Np0yn7IpqpVnwQhvHBgAAAOsCq9oOAAAARUxcfQIAAAD3AqvaDgAAAA; expires=Fri, 07-Oct-2022 21:24:28 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.13481.12 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13622.6 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -275,7 +275,7 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_644494411243?api-version=2022-06-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_678714524976?api-version=2022-06-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -291,12 +291,12 @@
             "test_property": "test_value",
             "mlflow.source.git.repoURL": "https://github.com/needuv/azure-sdk-for-python.git",
             "mlflow.source.git.branch": "needuv/add-live-tests",
-            "mlflow.source.git.commit": "7a82567d35ff75d0848553aaf892cf8a00914851",
+            "mlflow.source.git.commit": "bfb49b1c10f7fa8fc23bbc5886da63bd780a30aa",
             "azureml.git.dirty": "True"
           },
           "tags": {},
           "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/testCompute",
-          "displayName": "test_644494411243",
+          "displayName": "test_678714524976",
           "experimentName": "mfe-test1",
           "isArchived": false,
           "jobType": "Command",
@@ -316,26 +316,26 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "2968",
+        "Content-Length": "2978",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 17:04:46 GMT",
+        "Date": "Wed, 07 Sep 2022 21:24:32 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_644494411243?api-version=2022-06-01-preview",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_678714524976?api-version=2022-06-01-preview",
         "Pragma": "no-cache",
-        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
-        "Server-Timing": "traceparent;desc=\u002200-fee9323edb9d6ff1629026ab9ea43601-e89ac6f35bca81a0-00\u0022",
+        "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
+        "Server-Timing": "traceparent;desc=\u002200-b493e02af4439f0529b2296d0854be46-4ffe80bc860c9d58-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-westus-01",
+        "x-aml-cluster": "vienna-eastus2euap-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "b1c1e348-333b-489a-aad5-e57872f52616",
-        "x-ms-ratelimit-remaining-subscription-writes": "1184",
+        "x-ms-correlation-request-id": "887746e4-28a4-4f94-8970-d9f8ed5aa492",
+        "x-ms-ratelimit-remaining-subscription-writes": "1186",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "CANADACENTRAL:20220825T170447Z:b1c1e348-333b-489a-aad5-e57872f52616",
-        "x-request-time": "1.304"
+        "x-ms-routing-request-id": "CANADACENTRAL:20220907T212432Z:887746e4-28a4-4f94-8970-d9f8ed5aa492",
+        "x-request-time": "1.163"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_644494411243",
-        "name": "test_644494411243",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_678714524976",
+        "name": "test_678714524976",
         "type": "Microsoft.MachineLearningServices/workspaces/jobs",
         "properties": {
           "description": null,
@@ -344,18 +344,18 @@
             "test_property": "test_value",
             "mlflow.source.git.repoURL": "https://github.com/needuv/azure-sdk-for-python.git",
             "mlflow.source.git.branch": "needuv/add-live-tests",
-            "mlflow.source.git.commit": "7a82567d35ff75d0848553aaf892cf8a00914851",
+            "mlflow.source.git.commit": "bfb49b1c10f7fa8fc23bbc5886da63bd780a30aa",
             "azureml.git.dirty": "True",
             "_azureml.ComputeTargetType": "amlctrain"
           },
-          "displayName": "test_644494411243",
+          "displayName": "test_678714524976",
           "status": "Starting",
           "experimentName": "mfe-test1",
           "services": {
             "Tracking": {
               "jobServiceType": "Tracking",
               "port": null,
-              "endpoint": "azureml://westus.api.azureml.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?",
+              "endpoint": "azureml://eastus2euap.api.azureml.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?",
               "status": null,
               "errorMessage": null,
               "properties": null
@@ -363,7 +363,7 @@
             "Studio": {
               "jobServiceType": "Studio",
               "port": null,
-              "endpoint": "https://ml.azure.com/runs/test_644494411243?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
+              "endpoint": "https://ml.azure.com/runs/test_678714524976?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
               "status": null,
               "errorMessage": null,
               "properties": null
@@ -395,7 +395,7 @@
           "outputs": {
             "default": {
               "description": null,
-              "uri": "azureml://datastores/workspaceartifactstore/ExperimentRun/dcid.test_644494411243",
+              "uri": "azureml://datastores/workspaceartifactstore/ExperimentRun/dcid.test_678714524976",
               "mode": "ReadWriteMount",
               "jobOutputType": "uri_folder"
             }
@@ -406,7 +406,7 @@
           "parameters": {}
         },
         "systemData": {
-          "createdAt": "2022-08-25T17:04:46.9247661Z",
+          "createdAt": "2022-09-07T21:24:32.8383745\u002B00:00",
           "createdBy": "5019366a-3f7a-4d18-adae-d2483c23e1ee",
           "createdByType": "Application"
         }
@@ -414,6 +414,6 @@
     }
   ],
   "Variables": {
-    "job_name": "test_644494411243"
+    "job_name": "test_678714524976"
   }
 }

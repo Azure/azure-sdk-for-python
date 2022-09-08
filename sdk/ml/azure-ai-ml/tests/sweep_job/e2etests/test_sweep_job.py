@@ -23,7 +23,7 @@ class TestSweepJob(AzureRecordedTestCase):
     def test_sweep_job_submit(self, randstr: Callable[[], str], client: MLClient) -> None:
         # TODO: need to create a workspace under a e2e-testing-only subscription and reousrce group
 
-        job_name = randstr()
+        job_name = randstr("job_name")
 
         params_override = [{"name": job_name}]
         sweep_job = load_job(

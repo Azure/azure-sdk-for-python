@@ -11,6 +11,7 @@ from devtools_testutils import AzureRecordedTestCase
 
 @pytest.mark.timeout(600)
 @pytest.mark.usefixtures("recorded_test", "mock_asset_name", "mock_code_hash")
+@pytest.mark.skip(reason="user assigned identity not attached to test workspace")
 class TestSparkJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_spark_job(self, randstr: Callable[[], str], client: MLClient) -> None:
