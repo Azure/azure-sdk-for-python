@@ -49,3 +49,50 @@ _STATSBEAT_METRIC_NAME_MAPPINGS = dict(
         _REQ_THROTTLE_NAME,
     ]
 )
+
+# Instrumentations
+
+_BASE = 2
+# cSpell:disable
+_INSTRUMENTATIONS_LIST = [
+    "django",
+    "flask",
+    "google_cloud",
+    "http_lib",
+    "logging",
+    "mysql",
+    "psycopg2",
+    "pymongo",
+    "pymysql",
+    "pyramid",
+    "requests",
+    "sqlalchemy",
+    "aio-pika",
+    "aiohttp-client",
+    "aiopg",
+    "asgi",
+    "asyncpg",
+    "celery",
+    "confluent-kafka",
+    "dbapi",
+    "elasticsearch",
+    "falcon",
+    "fastapi",
+    "grpc",
+    "httpx",
+    "jinja2",
+    "kafka-python",
+    "pika",
+    "pymemcache",
+    "redis",
+    "remoulade",
+    "sklearn",
+    "sqlite3",
+    "starlette",
+    "system-metrics",
+    "tornado",
+    "urllib",
+    "urllib3",
+]
+# cSpell:enable
+_INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}

@@ -30,9 +30,13 @@ class TestServiceStats(StorageRecordedTestCase):
         assert stats['geo_replication']['last_sync_time'] is None
     # --------------------------------------------------------------------------
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_blob_service_stats(self, **kwargs):
+        # The accounts created in the Live test pipeline do not have time to finish
+        # setting up GRS by the time this test runs so this test will return a different
+        # response. Therefore can only run in playback.
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 

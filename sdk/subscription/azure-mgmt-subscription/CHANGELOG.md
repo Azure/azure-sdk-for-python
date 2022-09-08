@@ -1,5 +1,11 @@
 # Release History
 
+## 3.1.1 (2022-09-05)
+
+### Bugs Fixed
+
+  - Fix error about `api_version` in operation
+
 ## 3.1.0 (2022-08-30)
 
 ### Features Added

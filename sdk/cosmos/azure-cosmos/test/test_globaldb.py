@@ -446,7 +446,7 @@ class Test_globaldb_tests(unittest.TestCase):
             message="Write Forbidden",
             response=response)
             
-    def _MockGetDatabaseAccount(self, url_conection):
+    def _MockGetDatabaseAccount(self, url_connection):
         database_account = documents.DatabaseAccount()
         return database_account
 

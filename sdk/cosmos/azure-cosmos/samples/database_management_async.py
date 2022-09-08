@@ -10,7 +10,7 @@ import asyncio
 import config
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites -
 #
 # 1. An Azure Cosmos account -
 #    https://docs.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
@@ -56,7 +56,7 @@ async def find_database(client, id):
     else:
         print('No database with id \'{0}\' was found'. format(id))
 
-    # Alternitavely, you can directly iterate over the asynchronous iterator without building a separate
+    # Alternatively, you can directly iterate over the asynchronous iterator without building a separate
     # list if you don't need the ordering or indexing capabilities
     async for database in query_databases_response:
         print(database['id'])
@@ -109,7 +109,7 @@ async def list_databases(client):
     for database in databases:
         print(database['id'])
 
-    # Alternitavely, you can directly iterate over the asynchronous iterator without building a separate
+    # Alternatively, you can directly iterate over the asynchronous iterator without building a separate
     # list if you don't need the ordering or indexing capabilities
     async for database in list_databases_response:
         print(database['id'])
