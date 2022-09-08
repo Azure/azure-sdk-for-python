@@ -74,7 +74,7 @@ def shutdown_statsbeat_metrics() -> None:
                 _STATSBEAT_METER_PROVIDER.shutdown()
                 _STATSBEAT_METER_PROVIDER = None
                 shutdown_success = True
-            except:
+            except:  # pylint: disable=bare-except
                 pass
         if shutdown_success:
             with _STATSBEAT_STATE_LOCK:

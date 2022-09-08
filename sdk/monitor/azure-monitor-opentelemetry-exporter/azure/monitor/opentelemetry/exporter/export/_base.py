@@ -272,6 +272,7 @@ class BaseExporter:
                             # Import here to avoid circular dependencies
                             from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import shutdown_statsbeat_metrics
                             shutdown_statsbeat_metrics()
+                            # pylint: disable=lost-exception
                             return ExportResult.FAILED_NOT_RETRYABLE
                 return result
 

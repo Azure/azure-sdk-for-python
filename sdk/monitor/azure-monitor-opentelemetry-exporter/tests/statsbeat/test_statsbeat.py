@@ -557,23 +557,6 @@ class TestStatsbeatMetrics(unittest.TestCase):
             False,
             0,
         )
-        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], 0)
-        observations = metric._get_feature_metric(options=None)
-        self.assertEqual(len(observations), 0)
-        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], 0)
-
-    # pylint: disable=protected-access
-    def test_get_feature_metric_instrumentation(self):
-        mp = MeterProvider()
-        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
-        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        metric = _StatsbeatMetrics(
-            mp,
-            ikey,
-            endpoint,
-            False,
-            0,
-        )
         metric._feature = _StatsbeatFeature.NONE
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         attributes.update(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)

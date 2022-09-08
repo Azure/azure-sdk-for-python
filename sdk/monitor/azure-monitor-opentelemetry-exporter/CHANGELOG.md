@@ -15,7 +15,7 @@
 - Implement instrumentation statsbeat
     ([#26023](https://github.com/Azure/azure-sdk-for-python/pull/26023))
 - Implement statsbeat shutdown
-    ([#26023](https://github.com/Azure/azure-sdk-for-python/pull/26023))
+    ([#26077](https://github.com/Azure/azure-sdk-for-python/pull/26077))
 
 ### Breaking Changes
 
