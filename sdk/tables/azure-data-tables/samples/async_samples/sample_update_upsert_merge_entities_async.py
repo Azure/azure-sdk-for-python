@@ -112,7 +112,7 @@ class TableEntitySamples(object):
                 # [START list_entities]
                 # Query the entities in the table
                 i = 0
-                for entity in table.list_entities():
+                async for entity in table.list_entities():
                     print("Entity #{}: {}".format(i, entity))
                     i += 1
                 # [END list_entities]
