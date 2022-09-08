@@ -84,7 +84,6 @@
     "sdk/synapse/azure-synapse-managedprivateendpoints/**",
     "sdk/storage/azure-storage-file-datalake/**",
     "sdk/synapse/azure-synapse/**",
-    "sdk/videoanalyzer/azure-media-videoanalyzer-edge/**",
     "sdk/synapse/azure-synapse-artifacts/**",
     "sdk/webpubsub/azure-messaging-webpubsubservice/**",
     "sdk/translation/azure-ai-translation-document/samples/assets/**",
