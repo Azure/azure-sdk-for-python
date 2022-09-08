@@ -550,7 +550,7 @@ def GetItemContainerLink(link):
 
 
 def IndexOfNth(s, value, n):
-    """Gets the index of Nth occurance of a given character in a string.
+    """Gets the index of Nth occurrence of a given character in a string.
 
     :param str s: Input string
     :param char value: Input char to be searched.

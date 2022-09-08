@@ -12,6 +12,8 @@
     ([#25956](https://github.com/Azure/azure-sdk-for-python/pull/25956))
 - Implement feature statsbeat
     ([#26009](https://github.com/Azure/azure-sdk-for-python/pull/26009))
+- Implement instrumentation statsbeat
+    ([#26023](https://github.com/Azure/azure-sdk-for-python/pull/26023))
 
 ### Breaking Changes
 
