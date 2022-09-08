@@ -15,3 +15,6 @@ stages:
           MatrixReplace:
             - TestSamples=.*/true
       Clouds: Public
+      EnvVars:
+        AZURE_SKIP_LIVE_RECORDING: 'True'
+        AZURE_TEST_RUN_LIVE: 'true'
