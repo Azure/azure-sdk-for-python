@@ -3,7 +3,4 @@ trigger: none
 stages:
   - template: /sdk/communication/tests.yml
     parameters:
-      - name: Services
-        type: object
-        values:
-          - azure-communication-email
+      Services: azure-communication-email
