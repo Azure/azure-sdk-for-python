@@ -28,6 +28,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP_LOCK,
     _REQUESTS_MAP,
 )
+from azure.monitor.opentelemetry.exporter import _utils
 
 
 _AIMS_URI = "http://169.254.169.254/metadata/instance/compute"
@@ -76,6 +77,11 @@ class _StatsbeatMetrics:
         "type": _FEATURE_TYPES.FEATURE,
     }
 
+    _INSTRUMENTATION_ATTRIBUTES = {
+        "feature": 0,  # 64-bit long, bits represent instrumentations used
+        "type": _FEATURE_TYPES.INSTRUMENTATION,
+    }
+
     def __init__(
         self,
         meter_provider: MeterProvider,
@@ -101,6 +107,7 @@ class _StatsbeatMetrics:
         _StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"] = instrumentation_key
         _StatsbeatMetrics._NETWORK_ATTRIBUTES["host"] = _shorten_host(endpoint)
         _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
+        _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"] = _utils.get_instrumentations()
 
         self._vm_retry = True  # True if we want to attempt to find if in VM
         self._vm_data = {}
@@ -197,12 +204,22 @@ class _StatsbeatMetrics:
         # Check if it is time to observe long interval metrics
         if not self._meets_long_interval_threshold(_FEATURE_METRIC_NAME[0]):
             return observations
+        # Feature metric
         # Don't send observation if no features enabled
-        if self._feature is _StatsbeatFeature.NONE:
-            return observations
-        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-        attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
-        observations.append(Observation(1, dict(attributes)))
+        if self._feature is not _StatsbeatFeature.NONE:
+            attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+            attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
+            observations.append(Observation(1, dict(attributes)))
+
+        # instrumentation metric
+        # Don't send observation if no instrumentations enabled
+        instrumentation_bits = _utils.get_instrumentations()
+        if instrumentation_bits != 0:
+            _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"] = instrumentation_bits
+            attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+            attributes.update(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)
+            observations.append(Observation(1, dict(attributes)))
+
         return observations
 
     def _meets_long_interval_threshold(self, name) -> bool:

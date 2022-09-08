@@ -15,6 +15,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -72,9 +73,11 @@ class RestorableSqlContainersOperations:
         :type instance_id: str
         :param restorable_sql_database_rid: The resource ID of the SQL database. Default value is None.
         :type restorable_sql_database_rid: str
-        :param start_time: Restorable Sql containers event feed start time. Default value is None.
+        :param start_time: The snapshot create timestamp after which snapshots need to be listed.
+         Default value is None.
         :type start_time: str
-        :param end_time: Restorable Sql containers event feed end time. Default value is None.
+        :param end_time: The snapshot create timestamp before which snapshots need to be listed.
+         Default value is None.
         :type end_time: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RestorableSqlContainerGetResult or the result of
@@ -89,7 +92,12 @@ class RestorableSqlContainersOperations:
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.RestorableSqlContainersListResult]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
