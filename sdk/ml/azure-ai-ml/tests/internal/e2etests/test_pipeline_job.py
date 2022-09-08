@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 import pydash
 import pytest
 from tests.internal._utils import DATA_VERSION, PARAMETERS_TO_TEST, set_run_settings
@@ -52,8 +52,12 @@ def create_internal_sample_dependent_datasets(client: MLClient):
     "mock_asset_name",
     "mock_component_hash",
     "enable_pipeline_private_preview_features",
-    "create_internal_sample_dependent_dataset",
+    "create_internal_sample_dependent_datasets",
     "enable_internal_components",
+)
+@pytest.mark.skipif(
+    condition=not is_live(),
+    reason="Works in live mode, does not work in playback"
 )
 @pytest.mark.e2etest
 class TestPipelineJob(AzureRecordedTestCase):
@@ -119,8 +123,8 @@ class TestPipelineJob(AzureRecordedTestCase):
         runsettings_dict,
         pipeline_runsettings_dict,
     ):
-        component_to_register = load_component(yaml_path, params_override=[{"name": randstr()}])
-        component_name = randstr()
+        component_to_register = load_component(yaml_path, params_override=[{"name": randstr("name")}])
+        component_name = randstr("component_name")
         component_resource = client.components.create_or_update(component_to_register)
 
         created_component = client.components.get(component_name, component_resource.version)
@@ -134,7 +138,6 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_data_as_pipeline_inputs(
         self,
         client: MLClient,
-        randstr: Callable[[], str],
         yaml_path,
         inputs,
         runsettings_dict,
@@ -165,7 +168,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         runsettings_dict,
         pipeline_runsettings_dict,
     ):
-        component_func = load_component(yaml_path, params_override=[{"name": randstr()}])
+        component_func = load_component(yaml_path, params_override=[{"name": randstr("name")}])
 
         @pipeline()
         def sub_pipeline_func():

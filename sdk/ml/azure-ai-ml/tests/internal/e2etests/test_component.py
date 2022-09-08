@@ -55,7 +55,7 @@ class TestComponent(AzureRecordedTestCase):
         list(map(lambda x: x[0], PARAMETERS_TO_TEST)),
     )
     def test_component_create(self, client: MLClient, randstr: Callable[[], str], yaml_path: str) -> None:
-        component_name = randstr()
+        component_name = randstr("component_name")
         component_resource = create_component(client, component_name, path=yaml_path)
         assert component_resource.name == component_name
         assert component_resource.code
