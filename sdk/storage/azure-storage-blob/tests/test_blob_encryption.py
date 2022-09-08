@@ -25,7 +25,7 @@ from cryptography.hazmat.primitives.padding import PKCS7
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
-from encryption_test_helper import KeyResolver, KeyWrapper, RSAKeyWrapper
+from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
 from settings.testcase import BlobPreparer
 
 
@@ -37,20 +37,6 @@ TEST_BLOB_PREFIXES = {'BlockBlob': 'encryption_block_blob',
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = 'The require_encryption flag is set, but encryption is not supported' + \
                                            ' for this method.'
 # ------------------------------------------------------------------------------
-
-
-def mock_urandom(size: int):
-    """
-    Used to mock os.urandom to return fixed values for creation of IV (16 bytes) and
-    encryption keys (32 bytes) internal to the encryption algorithm. This allows
-    these tests to be recorded.
-    """
-    if size == 16:
-        return b'\xbb\xd6\x87\xb6j\xe5\xdc\x93\xb0\x13\x1e\xcc\x9f\xf4\xca\xab'
-    elif size == 32:
-        return b'\x08\xe0A\xb6\xf2\xb7x\x8f\xe5\xdap\x87^6x~\xa4F\xc4\xe9\xb1\x8a:\xfbC%S\x0cZ\xbb\xbe\x88'
-    else:
-        return urandom(size)
 
 
 @mock.patch('os.urandom', mock_urandom)
