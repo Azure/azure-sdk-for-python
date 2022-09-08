@@ -1,3 +1,5 @@
+trigger: none
+
 parameters:
   - name: Services
     type: object
