@@ -521,3 +521,13 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
             subscription_receiver = servicebus_client.get_subscription_receiver(topic_name, sub_name, client_identifier=custom_id)
             assert subscription_receiver.client_identifier is not None
             assert subscription_receiver.client_identifier == custom_id
+
+    async def test_connection_verify_exception(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+        custom_id = "my_custom_id"
+        topic_name = "topic_name"
+        sub_name = "sub_name"
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str, connection_verify="cacert.pem")
+        async with servicebus_client as client:
+            with pytest.raises(ServiceBusError):
+                client.get_subscription_receiver(topic_name, sub_name)
