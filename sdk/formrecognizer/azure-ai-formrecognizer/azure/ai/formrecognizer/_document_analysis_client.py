@@ -172,13 +172,13 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         # regular analysis requests
         if continuation_token is not None:
             return self._client.begin_analyze_document(  # type: ignore
-            model_id=model_id,
-            analyze_request={"urlSource": document_url},  # type: ignore
-            string_index_type="unicodeCodePoint",
-            continuation_token=continuation_token,
-            cls=cls,
-            **kwargs
-        )
+                model_id=model_id,
+                analyze_request={"urlSource": document_url},  # type: ignore
+                string_index_type="unicodeCodePoint",
+                continuation_token=continuation_token,
+                cls=cls,
+                **kwargs
+            )
 
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
@@ -186,7 +186,8 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         if not isinstance(document_url, str):
             raise ValueError(
                 "'document_url' needs to be of type 'str'. "
-                "Please see `begin_analyze_document()` to pass a byte stream.")
+                "Please see `begin_analyze_document()` to pass a byte stream."
+            )
 
         return self._client.begin_analyze_document(  # type: ignore
             model_id=model_id,
