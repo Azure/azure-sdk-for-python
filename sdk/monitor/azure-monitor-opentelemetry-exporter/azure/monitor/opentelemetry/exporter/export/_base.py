@@ -274,6 +274,7 @@ class BaseExporter:
                             shutdown_statsbeat_metrics()
                             # pylint: disable=lost-exception
                             return ExportResult.FAILED_NOT_RETRYABLE
+                # pylint: disable=lost-exception
                 return result
 
         # No spans to export
