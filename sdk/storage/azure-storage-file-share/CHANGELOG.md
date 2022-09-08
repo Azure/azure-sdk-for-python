@@ -5,6 +5,10 @@
 ### Features Added
 - Stable release of features from 12.10.0b1.
 
+### Bugs Fixed
+- Fixed an issue where calling `download_file` with an invalid base64-encoded account key would raise an
+`AttributeError` rather than the proper `AzureSigningError`.
+
 ### Other Changes
 - Changed the default value for `read_timeout` to 60 seconds for all clients.
 
