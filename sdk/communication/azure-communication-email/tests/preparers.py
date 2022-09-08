@@ -9,7 +9,7 @@ from devtools_testutils import is_live
 def email_decorator(func, **kwargs):
     def wrapper(self, *args, **kwargs):
         if is_live():
-            self.communication_connection_string = os.environ["COMMUNICATION_CONNECTION_STRING"]
+            self.communication_connection_string = os.environ["COMMUNICATION_CONNECTION_STRING_EMAIL"]
             self.sender_address = os.environ["SENDER_ADDRESS"]
             self.recipient_address = os.environ["RECIPIENT_ADDRESS"]
         else:
