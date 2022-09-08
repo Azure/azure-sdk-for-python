@@ -111,8 +111,10 @@ class TableEntitySamples(object):
                 await table.create_entity(entity=entity1)
                 # [START list_entities]
                 # Query the entities in the table
-                async for i, entity in table.list_entities():
+                i = 0
+                for entity in table.list_entities():
                     print("Entity #{}: {}".format(i, entity))
+                    i += 1
                 # [END list_entities]
 
             finally:

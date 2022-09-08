@@ -62,11 +62,8 @@ class CopyTableSamples(object):
         self._setup_table()
         try:
             self.container_client = self.blob_service_client.create_container(self.container_name)
-            # Download entities from table to memory
-            entities = self.table_client.list_entities()
             # Upload in-memory table data to a blob that stays in a container
-            for i in range(10):
-                entity = entities[i]
+            for entity in self.table_client.list_entities():
                 # Convert type datetime, bytes, UUID values to string as they're not JSON serializable
                 entity["last_updated"] = entity["last_updated"].isoformat()
                 entity["product_id"] = entity["product_id"].hex
