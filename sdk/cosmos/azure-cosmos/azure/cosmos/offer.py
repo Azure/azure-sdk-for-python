@@ -38,7 +38,7 @@ class ThroughputProperties(object):
     """
 
     def __init__(self, *args, **kwargs): # pylint: disable=super-init-not-called
-        self.offer_throughput = args[0] if args else kwargs.get('offer_througput')
+        self.offer_throughput = args[0] if args else kwargs.get('offer_throughput')
         self.properties = args[1] if len(args) > 1 else kwargs.get('properties')
         self.auto_scale_max_throughput = kwargs.get('auto_scale_max_throughput')
         self.auto_scale_increment_percent = kwargs.get('auto_scale_increment_percent')
