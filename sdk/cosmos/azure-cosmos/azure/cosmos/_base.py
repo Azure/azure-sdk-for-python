@@ -27,18 +27,17 @@ import datetime
 import json
 import uuid
 import binascii
-from typing import Dict, Any
+from typing import Dict, Any, Union
 
 from urllib.parse import quote as urllib_quote
 from urllib.parse import urlsplit
-
 from azure.core import MatchConditions
-
 from . import auth
 from . import documents
 from . import partition_key
 from . import http_constants
 from . import _runtime_constants
+from .offer import ThroughputProperties
 
 # pylint: disable=protected-access
 
@@ -296,6 +295,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if options.get("maxIntegratedCacheStaleness"):
         headers[http_constants.HttpHeaders.DedicatedGatewayCacheStaleness] = options["maxIntegratedCacheStaleness"]
+
+    if options.get("autoUpgradePolicy"):
+        headers[http_constants.HttpHeaders.AutoscaleSettings] = options["autoUpgradePolicy"]
 
     return headers
 
@@ -674,3 +676,60 @@ def validate_cache_staleness_value(max_integrated_cache_staleness):
     if max_integrated_cache_staleness < 0:
         raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be an "
                          "integer greater than or equal to zero")
+
+
+def _stringify_auto_scale(offer: Dict[str, Any]) -> Any:
+    auto_scale_params = None
+    max_throughput = offer.auto_scale_max_throughput
+    increment_percent = offer.auto_scale_increment_percent
+    auto_scale_params = {"maxThroughput": max_throughput}
+    if increment_percent is not None:
+        auto_scale_params["autoUpgradePolicy"] = {"throughputPolicy": {"incrementPercent": increment_percent}}
+    auto_scale_settings = json.dumps(auto_scale_params)
+
+    return auto_scale_settings
+
+
+def _set_throughput_options(offer: Union[int, ThroughputProperties], request_options: Dict[str, Any]) -> Any:
+    if offer is not None:
+        try:
+            max_throughput = offer.auto_scale_max_throughput
+            increment_percent = offer.auto_scale_increment_percent
+
+            if max_throughput is not None:
+                request_options['autoUpgradePolicy'] = _stringify_auto_scale(offer=offer)
+            elif increment_percent:
+                raise ValueError("auto_scale_max_throughput must be supplied in "
+                                 "conjunction with auto_scale_increment_percent")
+            if offer.offer_throughput:
+                request_options["offerThroughput"] = offer.offer_throughput
+
+        except AttributeError:
+            if isinstance(offer, int):
+                request_options["offerThroughput"] = offer
+            else:
+                raise TypeError("offer_throughput must be int or an instance of ThroughputProperties")
+
+
+def _deserialize_throughput(throughput: list) -> Any:
+    throughput_properties = throughput
+    try:
+        max_throughput = throughput_properties[0]['content']['offerAutopilotSettings']['maxThroughput']
+    except (KeyError, TypeError):  # Adding TypeError just in case one of these dicts is None
+        max_throughput = None
+    try:
+        increment_percent = \
+            throughput_properties[0]['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
+                'incrementPercent']
+    except (KeyError, TypeError):
+        increment_percent = None
+    try:
+        throughput = throughput_properties[0]["content"]["offerThroughput"]
+    except (KeyError, TypeError):
+        throughput = None
+    return ThroughputProperties(
+        auto_scale_max_throughput=max_throughput,
+        auto_scale_increment_percent=increment_percent,
+        offer_throughput=throughput,
+        properties=throughput_properties[0]
+    )
