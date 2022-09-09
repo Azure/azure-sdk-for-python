@@ -6,6 +6,7 @@
 - GA release of integrated cache functionality. For more information on integrated cache please see [Azure Cosmos DB integrated cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache).
 - Added ability to replace analytical ttl on containers. For more information on analytical ttl please see [Azure Cosmos DB analytical store](https://docs.microsoft.com/azure/cosmos-db/analytical-store-introduction).
 - Added the ability to create containers and databases with autoscale properties for the sync and async clients.
+- Added the ability to update autoscale throughput properties.
 
 #### Bugs Fixed
 - Fixed parsing of args for overloaded `container.read()` method.
