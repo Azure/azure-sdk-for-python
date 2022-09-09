@@ -44,7 +44,6 @@
     "sdk/cognitiveservices/azure-cognitiveservices-search-websearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-vision-computervision/**",
     "sdk/cognitiveservices/azure-cognitiveservices-vision-contentmoderator/**",
-    "sdk/cognitiveservices/azure-cognitiveservices-vision-face/**",
     "sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-visualsearch/**",
     "sdk/communication/azure-communication-networktraversal/**",
@@ -778,6 +777,12 @@
         "adreadonly",
         "Shenzen",
         "myusername"
+      ]
+    },
+    {
+      "filename": "sdk/cognitiveservices/azure-cognitiveservices-vision-face/azure/cognitiveservices/vision/face/models/*.py",
+      "words": [
+        "responsed"
       ]
     }
   ],
