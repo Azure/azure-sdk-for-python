@@ -10,11 +10,6 @@ import platform
 import datetime
 import calendar
 import logging
-from base64 import b64encode
-from hashlib import sha256
-from hmac import HMAC
-from urllib.parse import urlencode, quote_plus
-import time
 from typing import (
     TYPE_CHECKING,
     cast,
