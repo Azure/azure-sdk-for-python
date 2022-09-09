@@ -11,14 +11,11 @@ import asyncio
 from typing import Optional, Union
 
 from ..constants import (
-    INCOMING_WINDOW,
-    OUTGOING_WIDNOW,
     ConnectionState,
     SessionState,
     SessionTransferState,
     Role
 )
-from ..endpoints import Source, Target
 from ._sender_async import SenderLink
 from ._receiver_async import ReceiverLink
 from ._management_link_async import ManagementLink
@@ -26,8 +23,6 @@ from ..performatives import (
     BeginFrame,
     EndFrame,
     FlowFrame,
-    AttachFrame,
-    DetachFrame,
     TransferFrame,
     DispositionFrame
 )

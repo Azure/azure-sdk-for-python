@@ -13,12 +13,8 @@ from typing import Iterable, Union, Tuple, Dict  # pylint: disable=unused-import
 import six
 
 from .types import TYPE, VALUE, AMQPTypes, FieldDefinition, ObjDefinition, ConstructorBytes
-from .message import Header, Properties, Message
+from .message import Message
 from . import performatives
-from . import outcomes
-from . import endpoints
-from . import error
-
 
 _FRAME_OFFSET = b"\x02"
 _FRAME_TYPE = b'\x00'

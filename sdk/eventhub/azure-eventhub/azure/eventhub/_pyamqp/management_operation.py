@@ -9,10 +9,7 @@ import time
 from functools import partial
 
 from .management_link import ManagementLink
-from .message import Message
 from .error import (
-    AMQPException,
-    AMQPConnectionError,
     AMQPLinkError,
     ErrorCondition
 )

@@ -6,18 +6,14 @@
 
 import uuid
 import logging
-from enum import Enum
 import time
 
 from .constants import (
-    INCOMING_WINDOW,
-    OUTGOING_WIDNOW,
     ConnectionState,
     SessionState,
     SessionTransferState,
     Role
 )
-from .endpoints import Source, Target
 from .sender import SenderLink
 from .receiver import ReceiverLink
 from .management_link import ManagementLink
@@ -25,8 +21,6 @@ from .performatives import (
     BeginFrame,
     EndFrame,
     FlowFrame,
-    AttachFrame,
-    DetachFrame,
     TransferFrame,
     DispositionFrame
 )

@@ -18,12 +18,11 @@ from .constants import (
     ReceiverSettleMode,
     ManagementExecuteOperationResult,
     ManagementOpenResult,
-    SEND_DISPOSITION_ACCEPT,
     SEND_DISPOSITION_REJECT,
     MessageDeliveryState
 )
-from .error import ErrorResponse, AMQPException, ErrorCondition
-from .message import Message, Properties, _MessageDelivery
+from .error import AMQPException, ErrorCondition
+from .message import Properties, _MessageDelivery
 
 _LOGGER = logging.getLogger(__name__)
 

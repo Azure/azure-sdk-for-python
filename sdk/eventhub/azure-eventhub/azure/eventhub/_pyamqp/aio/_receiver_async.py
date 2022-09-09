@@ -9,23 +9,14 @@ import logging
 from typing import Optional, Union
 
 from .._decode import decode_payload
-from ..endpoints import Target
 from ._link_async import Link
-from ..message import Message, Properties, Header
 from ..constants import (
-    DEFAULT_LINK_CREDIT,
-    SessionState,
-    SessionTransferState,
-    LinkDeliverySettleReason,
     LinkState,
     Role
 )
 from ..performatives import (
-    AttachFrame,
-    DetachFrame,
     TransferFrame,
     DispositionFrame,
-    FlowFrame,
 )
 from ..outcomes import (
     Received,

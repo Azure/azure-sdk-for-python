@@ -4,22 +4,15 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import threading
-import struct
+
 from typing import Optional
 import uuid
 import logging
-import time
-from enum import Enum
-from io import BytesIO
-from urllib.parse import urlparse
 
 from .endpoints import Source, Target
 from .constants import (
     DEFAULT_LINK_CREDIT,
     SessionState,
-    SessionTransferState,
-    LinkDeliverySettleReason,
     LinkState,
     Role,
     SenderSettleMode,
@@ -27,10 +20,7 @@ from .constants import (
 )
 from .performatives import (
     AttachFrame,
-    DetachFrame,
-    TransferFrame,
-    DispositionFrame,
-    FlowFrame,
+    DetachFrame
 )
 
 from .error import (

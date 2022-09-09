@@ -5,7 +5,7 @@
 
 import logging
 import time
-from typing import TYPE_CHECKING, Optional, Union, Any, Tuple
+from typing import Optional, Union, Any, Tuple
 
 from .._pyamqp import (
     error as errors,
@@ -26,7 +26,6 @@ from .._constants import (
 )
 
 from ._base import AmqpTransport
-from ..amqp._constants import AmqpMessageBodyType
 from .._constants import (
     NO_RETRY_ERRORS,
     PROP_PARTITION_KEY,
@@ -35,7 +34,6 @@ from .._constants import (
 from ..exceptions import (
     ConnectError,
     EventDataSendError,
-    OperationTimeoutError,
     EventHubError,
     AuthenticationError,
     ConnectionLostError,

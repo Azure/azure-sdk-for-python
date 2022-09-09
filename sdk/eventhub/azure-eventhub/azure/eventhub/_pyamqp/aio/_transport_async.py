@@ -34,19 +34,16 @@
 
 import asyncio
 import errno
-import re
 import socket
 import ssl
 import struct
 from ssl import SSLError
-from contextlib import contextmanager
 from io import BytesIO
 import logging
-from threading import Lock
 
 import certifi
 
-from .._platform import KNOWN_TCP_OPTS, SOL_TCP, pack, unpack
+from .._platform import KNOWN_TCP_OPTS, SOL_TCP
 from .._encode import encode_frame
 from .._decode import decode_frame, decode_empty_frame
 from ..constants import TLS_HEADER_FRAME, WEBSOCKET_PORT, AMQP_WS_SUBPROTOCOL
@@ -55,13 +52,11 @@ from .._transport import (
     get_errno,
     to_host_port,
     DEFAULT_SOCKET_SETTINGS,
-    IPV6_LITERAL,
     SIGNED_INT_MAX,
     _UNAVAIL,
     set_cloexec,
     AMQP_PORT,
-    TIMEOUT_INTERVAL,
-    WebSocketTransport
+    TIMEOUT_INTERVAL
 )
 
 

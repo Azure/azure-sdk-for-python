@@ -7,25 +7,18 @@
 # pylint: disable=too-many-lines
 
 import logging
+import queue
 import time
 import uuid
-import certifi
-import queue
 from functools import partial
 from typing import Any, Dict, Optional, Tuple, Union, overload
+import certifi
 from typing_extensions import Literal
 
 from ._connection import Connection
 from .message import _MessageDelivery
-from .session import Session
-from .sender import SenderLink
-from .receiver import ReceiverLink
-from .sasl import SASLTransport
-from .endpoints import Source, Target
 from .error import (
-    AMQPConnectionError,
     AMQPException,
-    ErrorResponse,
     ErrorCondition,
     MessageException,
     MessageSendFailed,
@@ -58,7 +51,6 @@ from .constants import (
 
 from .management_operation import ManagementOperation
 from .cbs import CBSAuthenticator
-from .authentication import _CBSAuth
 
 
 _logger = logging.getLogger(__name__)
