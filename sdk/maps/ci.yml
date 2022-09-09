@@ -30,3 +30,6 @@ extends:
     Artifacts:
     - name: azure-mgmt-maps
       safeName: azuremgmtmaps
+    - name: azure-maps-search
+      safeName: azuremapssearch
+

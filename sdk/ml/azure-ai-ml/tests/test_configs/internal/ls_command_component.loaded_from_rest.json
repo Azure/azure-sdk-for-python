@@ -1,0 +1,17 @@
+{
+  "name": "test_784652269840",
+  "tags": {},
+  "version": "0.0.1",
+  "$schema": "https://componentsdk.azureedge.net/jsonschema/CommandComponent.json",
+  "display_name": "Ls Command",
+  "is_deterministic": true,
+  "inputs": {},
+  "outputs": {},
+  "type": "CommandComponent",
+  "successful_return_code": "Zero",
+  "environment": {
+    "name": "AzureML-Designer",
+    "os": "Linux"
+  },
+  "command": "ls"
+}

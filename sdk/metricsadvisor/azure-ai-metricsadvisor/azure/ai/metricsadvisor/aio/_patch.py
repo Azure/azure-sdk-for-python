@@ -1043,7 +1043,7 @@ class MetricsAdvisorClient:  # pylint: disable=client-accepts-api-version-keywor
 
         :param str metric_id: filter feedbacks by metric id
         :keyword int skip:
-        :keyword dimension_key: filter specfic dimension name and values
+        :keyword dimension_key: filter specific dimension name and values
         :paramtype dimension_key: dict[str, str]
         :keyword feedback_type: filter feedbacks by type. Possible values include: "Anomaly",
                 "ChangePoint", "Period", "Comment".
@@ -1268,7 +1268,7 @@ class MetricsAdvisorClient:  # pylint: disable=client-accepts-api-version-keywor
         :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
         :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword int skip:
-        :keyword Dict[str, str] dimension_filter: filter specfic dimension name and values.
+        :keyword Dict[str, str] dimension_filter: filter specific dimension name and values.
         :return: Dimension values of anomalies.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1445,7 +1445,7 @@ class MetricsAdvisorClient:  # pylint: disable=client-accepts-api-version-keywor
          yyyy-MM-ddTHH:mm:ssZ.
         :type active_since: datetime.datetime
         :keyword int skip:
-        :keyword dimension_filter: filter specfic dimension name and values.
+        :keyword dimension_filter: filter specific dimension name and values.
         :paramtype dimension_filter: dict[str, list[str]]
         :return: Series (dimension combinations) from metric.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesDefinition]
