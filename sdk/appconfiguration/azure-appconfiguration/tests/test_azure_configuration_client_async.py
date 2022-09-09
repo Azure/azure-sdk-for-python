@@ -281,6 +281,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert all(x.key == KEY for x in items)
         await self.tear_down()
 
+    @pytest.mark.live_test_only
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_fields(self, appconfiguration_connection_string):
@@ -292,6 +293,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert all(x.key and not x.label and x.content_type for x in items)
         await self.tear_down()
 
+    @pytest.mark.live_test_only
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_reserved_chars(self, appconfiguration_connection_string):
@@ -304,6 +306,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert all(x.label == LABEL_RESERVED_CHARS for x in items)
         await client.delete_configuration_setting(resered_char_kv.key)
 
+    @pytest.mark.live_test_only
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_contains(self, appconfiguration_connection_string):
@@ -327,6 +330,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
         await client.delete_configuration_setting(to_list_kv.key)
 
+    @pytest.mark.live_test_only
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_multi_pages(self, appconfiguration_connection_string):
@@ -413,6 +417,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert all(x.key == KEY for x in items)
         await self.tear_down()
 
+    @pytest.mark.live_test_only
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_revisions_fields(self, appconfiguration_connection_string):
