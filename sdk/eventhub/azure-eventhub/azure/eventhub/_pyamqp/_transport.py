@@ -228,7 +228,7 @@ class _AbstractTransport(object):
             if "timed out" in str(exc):
                 # http://bugs.python.org/issue10272
                 raise socket.timeout()
-            elif "The operation did not complete" in str(exc):
+            if "The operation did not complete" in str(exc):
                 # Non-blocking SSL sockets can throw SSLError
                 raise socket.timeout()
             raise
@@ -370,11 +370,9 @@ class _AbstractTransport(object):
 
     def _setup_transport(self):
         """Do any additional initialization of the class."""
-        pass
 
     def _shutdown_transport(self):
         """Do any preliminary work in shutting down the connection."""
-        pass
 
     def _write(self, s):
         """Completely write a string to the peer."""
@@ -481,7 +479,7 @@ class SSLTransport(_AbstractTransport):
     def _setup_transport(self):
         """Wrap the socket in an SSL object."""
         self.sock = self._wrap_socket(self.sock, **self.sslopts)
-        a = self.sock.do_handshake()
+        self.sock.do_handshake()
         self._quick_recv = self.sock.recv
 
     def _wrap_socket(self, sock, context=None, **sslopts):
