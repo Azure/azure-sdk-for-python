@@ -191,6 +191,11 @@ class QUniform(Uniform):
 
 
 class QLogUniform(QUniform):
+    """QLogUniform.
+
+    :ivar type: Specifies the type of distribution. Set automatically to "qloguniform" for this class.
+    :vartype type: str
+    """
     def __init__(self, min_value: float = None, max_value: float = None, q: int = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.QLOGUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, q=q, **kwargs)
