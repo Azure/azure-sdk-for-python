@@ -1,31 +1,21 @@
+{{- include "stress-test-addons.chaos-wrapper.tpl" (list . "stress.eh-network-chaos") -}}
+{{- define "stress.eh-network-chaos" -}}
 apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
-metadata:
-  name: '{{ .Release.Name }}-{{ .Release.Revision }}'
-  namespace: {{ .Release.Namespace }}
-  annotations:
-    experiment.chaos-mesh.org/pause: 'true'
-  labels:
-    scenario: 'stress'
-    release: '{{ .Release.Name }}'
-    revision: '{{ .Release.Revision }}'
+
 spec:
-  scheduler:
-    cron: '@every 30s'
-  duration: '10s'
   action: loss
   direction: to
   externalTargets:
-    - 'servicebus.windows.net'
+    - servicebus.windows.net
   mode: one
   selector:
     labelSelectors:
-      testInstance: "eventhub-{{ .Release.Name }}-{{ .Release.Revision }}"
-      chaos: 'true'
+      testInstance: "eh-network-loss-{{ .Release.Name }}-{{ .Release.Revision }}"
+      chaos: "true"
     namespaces:
       - {{ .Release.Namespace }}
-    podPhaseSelectors:
-      - 'Running'
   loss:
-    loss: '100'
-    correlation: '100'
+    loss: "100"
+    correlation: "100"
+{{- end -}}
