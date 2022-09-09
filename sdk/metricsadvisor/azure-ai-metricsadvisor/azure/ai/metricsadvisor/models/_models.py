@@ -11,7 +11,7 @@ import datetime
 import sys
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from .. import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -19,11 +19,11 @@ if TYPE_CHECKING:
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class AlertResultList(msrest.serialization.Model):
+class AlertResultList(_serialization.Model):
     """AlertResultList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -56,7 +56,7 @@ class AlertResultList(msrest.serialization.Model):
         self.value = value
 
 
-class AnomalyAlert(msrest.serialization.Model):
+class AnomalyAlert(_serialization.Model):
     """AnomalyAlert.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -94,7 +94,7 @@ class AnomalyAlert(msrest.serialization.Model):
         self.modified_time = None
 
 
-class AnomalyAlertConfiguration(msrest.serialization.Model):
+class AnomalyAlertConfiguration(_serialization.Model):
     """AnomalyAlertConfiguration.
 
     All required parameters must be populated in order to send to Azure.
@@ -180,7 +180,7 @@ class AnomalyAlertConfiguration(msrest.serialization.Model):
         self.metric_alert_configurations = metric_alert_configurations
 
 
-class AnomalyAlertingConfigurationList(msrest.serialization.Model):
+class AnomalyAlertingConfigurationList(_serialization.Model):
     """AnomalyAlertingConfigurationList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -208,7 +208,7 @@ class AnomalyAlertingConfigurationList(msrest.serialization.Model):
         self.next_link = None
 
 
-class AnomalyDetectionConfiguration(msrest.serialization.Model):
+class AnomalyDetectionConfiguration(_serialization.Model):
     """AnomalyDetectionConfiguration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -297,7 +297,7 @@ class AnomalyDetectionConfiguration(msrest.serialization.Model):
         self.series_detection_conditions = series_detection_conditions
 
 
-class AnomalyDetectionConfigurationList(msrest.serialization.Model):
+class AnomalyDetectionConfigurationList(_serialization.Model):
     """AnomalyDetectionConfigurationList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -325,7 +325,7 @@ class AnomalyDetectionConfigurationList(msrest.serialization.Model):
         self.next_link = None
 
 
-class AnomalyDimensionList(msrest.serialization.Model):
+class AnomalyDimensionList(_serialization.Model):
     """AnomalyDimensionList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -358,7 +358,7 @@ class AnomalyDimensionList(msrest.serialization.Model):
         self.value = value
 
 
-class MetricFeedback(msrest.serialization.Model):
+class MetricFeedback(_serialization.Model):
     """MetricFeedback.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -530,7 +530,7 @@ class AnomalyFeedback(MetricFeedback):  # pylint: disable=too-many-instance-attr
         self.value = value
 
 
-class AnomalyIncident(msrest.serialization.Model):  # pylint: disable=too-many-instance-attributes
+class AnomalyIncident(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """AnomalyIncident.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -635,7 +635,7 @@ class AnomalyIncident(msrest.serialization.Model):  # pylint: disable=too-many-i
         self.dimension_key = dimension_key
 
 
-class AnomalyResultList(msrest.serialization.Model):
+class AnomalyResultList(_serialization.Model):
     """AnomalyResultList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -668,7 +668,7 @@ class AnomalyResultList(msrest.serialization.Model):
         self.value = value
 
 
-class AzureApplicationInsightsDataFeedSource(msrest.serialization.Model):
+class AzureApplicationInsightsDataFeedSource(_serialization.Model):
     """AzureApplicationInsightsDataFeedSource.
 
     All required parameters must be populated in order to send to Azure.
@@ -720,7 +720,7 @@ class AzureApplicationInsightsDataFeedSource(msrest.serialization.Model):
         self.query = query
 
 
-class AzureBlobDataFeedSource(msrest.serialization.Model):
+class AzureBlobDataFeedSource(_serialization.Model):
     """AzureBlobDataFeedSource.
 
     All required parameters must be populated in order to send to Azure.
@@ -759,7 +759,7 @@ class AzureBlobDataFeedSource(msrest.serialization.Model):
         self.blob_template = blob_template
 
 
-class AzureCosmosDbDataFeedSource(msrest.serialization.Model):
+class AzureCosmosDbDataFeedSource(_serialization.Model):
     """AzureCosmosDbDataFeedSource.
 
     All required parameters must be populated in order to send to Azure.
@@ -807,7 +807,7 @@ class AzureCosmosDbDataFeedSource(msrest.serialization.Model):
         self.collection_id = collection_id
 
 
-class AzureDataExplorerDataFeedSource(msrest.serialization.Model):
+class AzureDataExplorerDataFeedSource(_serialization.Model):
     """AzureDataExplorerDataFeedSource.
 
     All required parameters must be populated in order to send to Azure.
@@ -839,7 +839,7 @@ class AzureDataExplorerDataFeedSource(msrest.serialization.Model):
         self.query = query
 
 
-class AzureDataLakeStorageGen2DataFeedSource(msrest.serialization.Model):
+class AzureDataLakeStorageGen2DataFeedSource(_serialization.Model):
     """AzureDataLakeStorageGen2DataFeedSource.
 
     All required parameters must be populated in order to send to Azure.
@@ -900,7 +900,7 @@ class AzureDataLakeStorageGen2DataFeedSource(msrest.serialization.Model):
         self.file_template = file_template
 
 
-class AzureEventHubsDataFeedSource(msrest.serialization.Model):
+class AzureEventHubsDataFeedSource(_serialization.Model):
     """AzureEventHubsDataFeedSource.
 
     All required parameters must be populated in order to send to Azure.
@@ -932,7 +932,7 @@ class AzureEventHubsDataFeedSource(msrest.serialization.Model):
         self.consumer_group = consumer_group
 
 
-class AzureLogAnalyticsDataFeedSource(msrest.serialization.Model):
+class AzureLogAnalyticsDataFeedSource(_serialization.Model):
     """AzureLogAnalyticsDataFeedSource.
 
     All required parameters must be populated in order to send to Azure.
@@ -996,7 +996,7 @@ class AzureLogAnalyticsDataFeedSource(msrest.serialization.Model):
         self.query = query
 
 
-class AzureTableDataFeedSource(msrest.serialization.Model):
+class AzureTableDataFeedSource(_serialization.Model):
     """AzureTableDataFeedSource.
 
     All required parameters must be populated in order to send to Azure.
@@ -1120,7 +1120,7 @@ class ChangePointFeedback(MetricFeedback):
         self.value = value
 
 
-class ChangeThresholdCondition(msrest.serialization.Model):
+class ChangeThresholdCondition(_serialization.Model):
     """ChangeThresholdCondition.
 
     :ivar change_percentage: change percentage, value range : [0, +∞).
@@ -1262,7 +1262,7 @@ class CommentFeedback(MetricFeedback):
         self.value = value
 
 
-class DataFeed(msrest.serialization.Model):  # pylint: disable=too-many-instance-attributes
+class DataFeed(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """DataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1532,7 +1532,7 @@ class DataFeed(msrest.serialization.Model):  # pylint: disable=too-many-instance
         self.data_source_parameter = data_source_parameter
 
 
-class DataFeedDimension(msrest.serialization.Model):
+class DataFeedDimension(_serialization.Model):
     """DataFeedDimension.
 
     All required parameters must be populated in order to send to Azure.
@@ -1565,7 +1565,7 @@ class DataFeedDimension(msrest.serialization.Model):
         self.display_name = display_name
 
 
-class DataFeedIngestionProgress(msrest.serialization.Model):
+class DataFeedIngestionProgress(_serialization.Model):
     """DataFeedIngestionProgress.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1595,7 +1595,7 @@ class DataFeedIngestionProgress(msrest.serialization.Model):
         self.latest_active_timestamp = None
 
 
-class DataFeedIngestionStatus(msrest.serialization.Model):
+class DataFeedIngestionStatus(_serialization.Model):
     """DataFeedIngestionStatus.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1628,7 +1628,7 @@ class DataFeedIngestionStatus(msrest.serialization.Model):
         self.message = None
 
 
-class DataFeedList(msrest.serialization.Model):
+class DataFeedList(_serialization.Model):
     """DataFeedList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1656,7 +1656,7 @@ class DataFeedList(msrest.serialization.Model):
         self.value = None
 
 
-class DataFeedMetric(msrest.serialization.Model):
+class DataFeedMetric(_serialization.Model):
     """DataFeedMetric.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1702,7 +1702,7 @@ class DataFeedMetric(msrest.serialization.Model):
         self.description = description
 
 
-class DataPointAnomaly(msrest.serialization.Model):  # pylint: disable=too-many-instance-attributes
+class DataPointAnomaly(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """DataPointAnomaly.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1803,7 +1803,7 @@ class DataPointAnomaly(msrest.serialization.Model):  # pylint: disable=too-many-
         self.expected_value = None
 
 
-class DatasourceCredential(msrest.serialization.Model):
+class DatasourceCredential(_serialization.Model):
     """DatasourceCredential.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1862,7 +1862,7 @@ class DatasourceCredential(msrest.serialization.Model):
         self.description = description
 
 
-class DataSourceCredentialList(msrest.serialization.Model):
+class DataSourceCredentialList(_serialization.Model):
     """DataSourceCredentialList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2163,7 +2163,7 @@ class DatasourceSqlConnectionString(DatasourceCredential):
         self.connection_string = connection_string
 
 
-class DetectionAnomalyFilterCondition(msrest.serialization.Model):
+class DetectionAnomalyFilterCondition(_serialization.Model):
     """DetectionAnomalyFilterCondition.
 
     :ivar dimension_filter: dimension filter.
@@ -2199,7 +2199,7 @@ class DetectionAnomalyFilterCondition(msrest.serialization.Model):
         self.severity_filter = severity_filter
 
 
-class DetectionIncidentFilterCondition(msrest.serialization.Model):
+class DetectionIncidentFilterCondition(_serialization.Model):
     """DetectionIncidentFilterCondition.
 
     :ivar dimension_filter: dimension filter.
@@ -2223,7 +2223,7 @@ class DetectionIncidentFilterCondition(msrest.serialization.Model):
         self.dimension_filter = dimension_filter
 
 
-class DimensionGroupIdentity(msrest.serialization.Model):
+class DimensionGroupIdentity(_serialization.Model):
     """DimensionGroupIdentity.
 
     All required parameters must be populated in order to send to Azure.
@@ -2249,7 +2249,7 @@ class DimensionGroupIdentity(msrest.serialization.Model):
         self.dimension = dimension
 
 
-class NotificationHook(msrest.serialization.Model):
+class NotificationHook(_serialization.Model):
     """NotificationHook.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2385,7 +2385,7 @@ class EmailNotificationHook(NotificationHook):
         self.emails_to_alert = emails_to_alert
 
 
-class EnrichmentStatus(msrest.serialization.Model):
+class EnrichmentStatus(_serialization.Model):
     """EnrichmentStatus.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2418,7 +2418,7 @@ class EnrichmentStatus(msrest.serialization.Model):
         self.message = None
 
 
-class EnrichmentStatusList(msrest.serialization.Model):
+class EnrichmentStatusList(_serialization.Model):
     """EnrichmentStatusList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2446,7 +2446,7 @@ class EnrichmentStatusList(msrest.serialization.Model):
         self.value = None
 
 
-class HardThresholdCondition(msrest.serialization.Model):
+class HardThresholdCondition(_serialization.Model):
     """HardThresholdCondition.
 
     :ivar lower_bound: lower bound
@@ -2504,7 +2504,7 @@ class HardThresholdCondition(msrest.serialization.Model):
         self.suppress_condition = suppress_condition
 
 
-class HookList(msrest.serialization.Model):
+class HookList(_serialization.Model):
     """HookList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2532,7 +2532,7 @@ class HookList(msrest.serialization.Model):
         self.value = None
 
 
-class IncidentResultList(msrest.serialization.Model):
+class IncidentResultList(_serialization.Model):
     """IncidentResultList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2565,7 +2565,7 @@ class IncidentResultList(msrest.serialization.Model):
         self.value = value
 
 
-class IncidentRootCause(msrest.serialization.Model):
+class IncidentRootCause(_serialization.Model):
     """IncidentRootCause.
 
     All required parameters must be populated in order to send to Azure.
@@ -2614,7 +2614,7 @@ class IncidentRootCause(msrest.serialization.Model):
         self.description = description
 
 
-class InfluxDbDataFeedSource(msrest.serialization.Model):
+class InfluxDbDataFeedSource(_serialization.Model):
     """InfluxDbDataFeedSource.
 
     All required parameters must be populated in order to send to Azure.
@@ -2673,7 +2673,7 @@ class InfluxDbDataFeedSource(msrest.serialization.Model):
         self.query = query
 
 
-class IngestionStatusList(msrest.serialization.Model):
+class IngestionStatusList(_serialization.Model):
     """IngestionStatusList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2701,7 +2701,7 @@ class IngestionStatusList(msrest.serialization.Model):
         self.value = None
 
 
-class MetricAlertConfiguration(msrest.serialization.Model):
+class MetricAlertConfiguration(_serialization.Model):
     """MetricAlertConfiguration.
 
     All required parameters must be populated in order to send to Azure.
@@ -2787,7 +2787,7 @@ class MetricAlertConfiguration(msrest.serialization.Model):
         self.value_filter = value_filter
 
 
-class MetricAnomalyAlertSnoozeCondition(msrest.serialization.Model):
+class MetricAnomalyAlertSnoozeCondition(_serialization.Model):
     """MetricAnomalyAlertSnoozeCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -2829,7 +2829,7 @@ class MetricAnomalyAlertSnoozeCondition(msrest.serialization.Model):
         self.only_for_successive = only_for_successive
 
 
-class MetricBoundaryCondition(msrest.serialization.Model):
+class MetricBoundaryCondition(_serialization.Model):
     """MetricBoundaryCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -2902,7 +2902,7 @@ class MetricBoundaryCondition(msrest.serialization.Model):
         self.trigger_for_missing = trigger_for_missing
 
 
-class MetricDataList(msrest.serialization.Model):
+class MetricDataList(_serialization.Model):
     """MetricDataList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2925,7 +2925,7 @@ class MetricDataList(msrest.serialization.Model):
         self.value = None
 
 
-class MetricDetectionCondition(msrest.serialization.Model):
+class MetricDetectionCondition(_serialization.Model):
     """MetricDetectionCondition.
 
     :ivar condition_operator: condition operator
@@ -2978,7 +2978,7 @@ class MetricDetectionCondition(msrest.serialization.Model):
         self.change_threshold_condition = change_threshold_condition
 
 
-class MetricDimensionList(msrest.serialization.Model):
+class MetricDimensionList(_serialization.Model):
     """MetricDimensionList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3006,7 +3006,7 @@ class MetricDimensionList(msrest.serialization.Model):
         self.value = None
 
 
-class MetricEnrichedSeriesData(msrest.serialization.Model):
+class MetricEnrichedSeriesData(_serialization.Model):
     """MetricEnrichedSeriesData.
 
     All required parameters must be populated in order to send to Azure.
@@ -3093,7 +3093,7 @@ class MetricEnrichedSeriesData(msrest.serialization.Model):
         self.series_key = series_key
 
 
-class MetricFeedbackList(msrest.serialization.Model):
+class MetricFeedbackList(_serialization.Model):
     """MetricFeedbackList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3121,7 +3121,7 @@ class MetricFeedbackList(msrest.serialization.Model):
         self.value = None
 
 
-class MetricSeriesData(msrest.serialization.Model):
+class MetricSeriesData(_serialization.Model):
     """MetricSeriesData.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3161,7 +3161,7 @@ class MetricSeriesData(msrest.serialization.Model):
         self.metric_id = None
 
 
-class MetricSeriesDefinition(msrest.serialization.Model):
+class MetricSeriesDefinition(_serialization.Model):
     """MetricSeriesDefinition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3189,7 +3189,7 @@ class MetricSeriesDefinition(msrest.serialization.Model):
         self.dimension = None
 
 
-class MetricSeriesGroupDetectionCondition(msrest.serialization.Model):
+class MetricSeriesGroupDetectionCondition(_serialization.Model):
     """MetricSeriesGroupDetectionCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -3255,7 +3255,7 @@ class MetricSeriesGroupDetectionCondition(msrest.serialization.Model):
         self.series_group_key = series_group_key
 
 
-class MetricSeriesList(msrest.serialization.Model):
+class MetricSeriesList(_serialization.Model):
     """MetricSeriesList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3283,7 +3283,7 @@ class MetricSeriesList(msrest.serialization.Model):
         self.value = None
 
 
-class MetricSingleSeriesDetectionCondition(msrest.serialization.Model):
+class MetricSingleSeriesDetectionCondition(_serialization.Model):
     """MetricSingleSeriesDetectionCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -3349,7 +3349,7 @@ class MetricSingleSeriesDetectionCondition(msrest.serialization.Model):
         self.series_key = series_key
 
 
-class MongoDbDataFeedSource(msrest.serialization.Model):
+class MongoDbDataFeedSource(_serialization.Model):
     """MongoDbDataFeedSource.
 
     All required parameters must be populated in order to send to Azure.
@@ -3464,7 +3464,7 @@ class PeriodFeedback(MetricFeedback):
         self.value = value
 
 
-class RootCauseList(msrest.serialization.Model):
+class RootCauseList(_serialization.Model):
     """RootCauseList.
 
     All required parameters must be populated in order to send to Azure.
@@ -3490,7 +3490,7 @@ class RootCauseList(msrest.serialization.Model):
         self.value = value
 
 
-class SeriesIdentity(msrest.serialization.Model):
+class SeriesIdentity(_serialization.Model):
     """SeriesIdentity.
 
     All required parameters must be populated in order to send to Azure.
@@ -3516,7 +3516,7 @@ class SeriesIdentity(msrest.serialization.Model):
         self.dimension = dimension
 
 
-class SeriesResultList(msrest.serialization.Model):
+class SeriesResultList(_serialization.Model):
     """SeriesResultList.
 
     All required parameters must be populated in order to send to Azure.
@@ -3542,7 +3542,7 @@ class SeriesResultList(msrest.serialization.Model):
         self.value = value
 
 
-class SeverityCondition(msrest.serialization.Model):
+class SeverityCondition(_serialization.Model):
     """SeverityCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -3585,7 +3585,7 @@ class SeverityCondition(msrest.serialization.Model):
         self.max_alert_severity = max_alert_severity
 
 
-class SeverityFilterCondition(msrest.serialization.Model):
+class SeverityFilterCondition(_serialization.Model):
     """SeverityFilterCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -3624,7 +3624,7 @@ class SeverityFilterCondition(msrest.serialization.Model):
         self.max = max
 
 
-class SmartDetectionCondition(msrest.serialization.Model):
+class SmartDetectionCondition(_serialization.Model):
     """SmartDetectionCondition.
 
     :ivar sensitivity: sensitivity, value range : (0, 100].
@@ -3667,7 +3667,7 @@ class SmartDetectionCondition(msrest.serialization.Model):
         self.suppress_condition = suppress_condition
 
 
-class SuppressCondition(msrest.serialization.Model):
+class SuppressCondition(_serialization.Model):
     """SuppressCondition.
 
     :ivar min_number: min point number, value range : [1, +∞).
@@ -3693,7 +3693,7 @@ class SuppressCondition(msrest.serialization.Model):
         self.min_ratio = min_ratio
 
 
-class TopNGroupScope(msrest.serialization.Model):
+class TopNGroupScope(_serialization.Model):
     """TopNGroupScope.
 
     All required parameters must be populated in order to send to Azure.

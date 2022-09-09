@@ -22,7 +22,6 @@ from . import models
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-
 _API_KEY_HEADER_NAME = "Ocp-Apim-Subscription-Key"
 _X_API_KEY_HEADER_NAME = "x-api-key"
 
@@ -112,7 +111,6 @@ def get_authentication_policy(credential):
             "Unsupported credential: {}. Use an instance of MetricsAdvisorKeyCredential "
             "or a token credential from azure.identity".format(type(credential))
         )
-
     return authentication_policy
 
 
@@ -135,7 +133,6 @@ class MetricsAdvisorClient:  # pylint: disable=client-accepts-api-version-keywor
             endpoint = endpoint.rstrip("/")
         except AttributeError:
             raise ValueError("Base URL must be a string.")
-
         self._endpoint = endpoint
         authentication_policy = get_authentication_policy(credential)
         self._client = _Client(
@@ -693,7 +690,6 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
             endpoint = endpoint.rstrip("/")
         except AttributeError:
             raise ValueError("Base URL must be a string.")
-
         self._endpoint = endpoint
         authentication_policy = get_authentication_policy(credential)
         self._client = _Client(

@@ -78,7 +78,6 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
             endpoint = endpoint.rstrip("/")
         except AttributeError:
             raise ValueError("Base URL must be a string.")
-
         self._endpoint = endpoint
         authentication_policy = get_authentication_policy(credential)
         self._client = _ClientAsync(
@@ -964,7 +963,6 @@ class MetricsAdvisorClient:  # pylint: disable=client-accepts-api-version-keywor
             endpoint = endpoint.rstrip("/")
         except AttributeError:
             raise ValueError("Base URL must be a string.")
-
         self._endpoint = endpoint
         authentication_policy = get_authentication_policy(credential)
         self._client = _ClientAsync(

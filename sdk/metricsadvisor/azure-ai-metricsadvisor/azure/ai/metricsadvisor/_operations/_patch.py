@@ -141,7 +141,6 @@ class OperationMixinHelpers:
         )
         if cls:
             return cls(pipeline_response, deserialized, {})
-
         return models.AnomalyAlertConfiguration._from_generated(deserialized)  # pylint: disable=protected-access
 
     @staticmethod
@@ -227,7 +226,6 @@ class OperationMixinHelpers:
                 update["credentialId"] = update["dataSourceParameter"].credential_id
                 update["dataSourceParameter"] = update["dataSourceParameter"]
             data_feed_patch = update
-
         else:
             data_feed_id = cast(str, data_feed.id)
             data_feed_patch = data_feed._to_generated(**update).serialize()  # pylint: disable=protected-access
@@ -603,7 +601,6 @@ class OperationMixinHelpers:
                     else None
                 )
             alert_configuration_patch = update
-
         else:
             alert_configuration_id = cast(str, alert_configuration.id)
             alert_configuration_patch = alert_configuration._to_generated(  # pylint: disable=protected-access
@@ -636,14 +633,12 @@ class OperationMixinHelpers:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)  # type: ignore  # pylint: disable=no-member
             raise HttpResponseError(response=response, model=error)
-
         deserialized = self._deserialize(  # type: ignore  # pylint: disable=no-member
             generated_models.AnomalyAlertConfiguration, pipeline_response
         )
 
         if cls:
             return cls(pipeline_response, deserialized, {})
-
         return deserialized
 
     def _get_feedback_request(self, feedback_id: str) -> HttpRequest:
@@ -670,7 +665,6 @@ class OperationMixinHelpers:
 
         if cls:
             return cls(pipeline_response, deserialized, {})
-
         return deserialized
 
     @staticmethod
@@ -699,7 +693,6 @@ class OperationMixinHelpers:
                 raise ValueError("hook_type must be passed with a hook ID.")
             hook_class = models.EmailNotificationHook if hook_type.lower() == "email" else models.WebNotificationHook
             hook_patch = hook_class.from_dict(passed_kwargs).serialize()  # type: ignore
-
         else:
             hook_id = cast(str, hook.id)
             hook_patch = hook.serialize()
@@ -797,7 +790,6 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
                 raise HttpResponseError(response=response, model=error)
-
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
@@ -915,7 +907,6 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
             raise HttpResponseError(response=response, model=error)
-
         if cls:
             return cls(pipeline_response, self._deserialize(generated_models.DataFeed, pipeline_response), {})
         return self._deserialize_data_feed(response.json())
@@ -944,7 +935,6 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
             raise HttpResponseError(response=response, model=error)
-
         return self._deserialize_anomaly_alert_configuration(pipeline_response, **kwargs)
 
     @distributed_trace
@@ -967,28 +957,24 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
     def delete_alert_configuration(self, *alert_configuration_id: str, **kwargs: Any) -> None:
         if len(alert_configuration_id) != 1:
             raise TypeError("Alert configuration requires exactly one id.")
-
         super().delete_alert_configuration(alert_configuration_id[0], **kwargs)
 
     @distributed_trace
     def delete_detection_configuration(self, *detection_configuration_id: str, **kwargs: Any) -> None:
         if len(detection_configuration_id) != 1:
             raise TypeError("Detection configuration requires exactly one id.")
-
         super().delete_detection_configuration(detection_configuration_id[0], **kwargs)
 
     @distributed_trace
     def delete_data_feed(self, *data_feed_id: str, **kwargs: Any) -> None:
         if len(data_feed_id) != 1:
             raise TypeError("Data feed requires exactly one id.")
-
         super().delete_data_feed(data_feed_id[0], **kwargs)
 
     @distributed_trace
     def delete_hook(self, *hook_id: str, **kwargs: Any) -> None:
         if len(hook_id) != 1:
             raise TypeError("Hook requires exactly one id.")
-
         super().delete_hook(hook_id[0], **kwargs)
 
     @distributed_trace
@@ -1127,7 +1113,6 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
     def delete_datasource_credential(self, *credential_id: str, **kwargs: Any) -> None:
         if len(credential_id) != 1:
             raise TypeError("Credential requires exactly one id.")
-
         super().delete_datasource_credential(credential_id=credential_id[0], **kwargs)
 
     @distributed_trace

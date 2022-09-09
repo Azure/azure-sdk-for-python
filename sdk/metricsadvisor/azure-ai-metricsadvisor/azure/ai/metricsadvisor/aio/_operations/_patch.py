@@ -90,7 +90,6 @@ class MetricsAdvisorClientOperationsMixin(
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
                 raise HttpResponseError(response=response, model=error)
-
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
@@ -179,7 +178,6 @@ class MetricsAdvisorClientOperationsMixin(
         for attr in dir(config):
             if attr in kwargs:
                 kwargs.pop(attr)
-
         response_headers = await super().create_detection_configuration(
             config, cls=lambda pipeline_response, _, response_headers: response_headers, **kwargs
         )
@@ -210,7 +208,6 @@ class MetricsAdvisorClientOperationsMixin(
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
             raise HttpResponseError(response=response, model=error)
-
         if cls:
             return cls(pipeline_response, self._deserialize(generated_models.DataFeed, pipeline_response), {})
         json_response = response.json()
@@ -240,7 +237,6 @@ class MetricsAdvisorClientOperationsMixin(
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
             raise HttpResponseError(response=response, model=error)
-
         return self._deserialize_anomaly_alert_configuration(pipeline_response, **kwargs)
 
     @distributed_trace_async
@@ -263,28 +259,24 @@ class MetricsAdvisorClientOperationsMixin(
     async def delete_alert_configuration(self, *alert_configuration_id: str, **kwargs: Any) -> None:
         if len(alert_configuration_id) != 1:
             raise TypeError("Alert configuration requires exactly one id.")
-
         await super().delete_alert_configuration(alert_configuration_id[0], **kwargs)
 
     @distributed_trace_async
     async def delete_detection_configuration(self, *detection_configuration_id: str, **kwargs: Any) -> None:
         if len(detection_configuration_id) != 1:
             raise TypeError("Detection configuration requires exactly one id.")
-
         await super().delete_detection_configuration(detection_configuration_id[0], **kwargs)
 
     @distributed_trace_async
     async def delete_data_feed(self, *data_feed_id: str, **kwargs: Any) -> None:
         if len(data_feed_id) != 1:
             raise TypeError("Data feed requires exactly one id.")
-
         await super().delete_data_feed(data_feed_id[0], **kwargs)
 
     @distributed_trace_async
     async def delete_hook(self, *hook_id: str, **kwargs: Any) -> None:
         if len(hook_id) != 1:
             raise TypeError("Hook requires exactly one id.")
-
         await super().delete_hook(hook_id[0], **kwargs)
 
     @distributed_trace_async
@@ -420,7 +412,6 @@ class MetricsAdvisorClientOperationsMixin(
     async def delete_datasource_credential(self, *credential_id: str, **kwargs: Any) -> None:
         if len(credential_id) != 1:
             raise TypeError("Credential requires exactly one id.")
-
         await super().delete_datasource_credential(credential_id=credential_id[0], **kwargs)
 
     @distributed_trace_async

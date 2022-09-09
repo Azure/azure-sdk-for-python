@@ -14,6 +14,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -70,25 +71,6 @@ from ..._operations._operations import (
     build_update_detection_configuration_request,
     build_update_hook_request,
 )
-from ...models._models import (
-    AlertResultList,
-    AnomalyAlertingConfigurationList,
-    AnomalyDetectionConfigurationList,
-    AnomalyDimensionList,
-    AnomalyResultList,
-    DataFeedList,
-    DataSourceCredentialList,
-    EnrichmentStatusList,
-    HookList,
-    IncidentResultList,
-    IngestionStatusList,
-    MetricDataList,
-    MetricDimensionList,
-    MetricFeedbackList,
-    MetricSeriesList,
-    RootCauseList,
-    SeriesResultList,
-)
 from .._vendor import MixinABC
 
 T = TypeVar("T")
@@ -108,7 +90,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -160,7 +147,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -217,7 +209,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -302,7 +299,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -350,13 +352,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def list_alerts(
-        self,
-        configuration_id: str,
-        body: Any,
-        *,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, configuration_id: str, body: Any, *, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.AnomalyAlert"]:
         """Query alerts under anomaly alerting configuration.
 
@@ -368,8 +364,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type body: any
         :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of AnomalyAlert
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyAlert]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -378,9 +372,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[AlertResultList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.AlertResultList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -390,7 +389,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request = build_list_alerts_request(
                     configuration_id=configuration_id,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     content_type=content_type,
                     json=_json,
                     headers=_headers,
@@ -404,32 +402,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _json = self._serialize.body(body, "object")
-
-                request = build_list_alerts_request(
-                    configuration_id=configuration_id,
-                    content_type=content_type,
-                    json=_json,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AlertResultList", pipeline_response)
+            deserialized = self._deserialize("_models.AlertResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -454,13 +438,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def list_anomalies_for_alert(
-        self,
-        alert_configuration_id: str,
-        alert_id: str,
-        *,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, alert_configuration_id: str, alert_id: str, *, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.DataPointAnomaly"]:
         """Query anomalies under a specific alert.
 
@@ -472,8 +450,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type alert_id: str
         :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of DataPointAnomaly
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
@@ -482,9 +458,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[AnomalyResultList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.AnomalyResultList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -494,7 +475,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     alert_configuration_id=alert_configuration_id,
                     alert_id=alert_id,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     headers=_headers,
                     params=_params,
                 )
@@ -506,30 +486,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-
-                request = build_list_anomalies_for_alert_request(
-                    alert_configuration_id=alert_configuration_id,
-                    alert_id=alert_id,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AnomalyResultList", pipeline_response)
+            deserialized = self._deserialize("_models.AnomalyResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -554,13 +522,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def list_incidents_for_alert(
-        self,
-        alert_configuration_id: str,
-        alert_id: str,
-        *,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, alert_configuration_id: str, alert_id: str, *, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.AnomalyIncident"]:
         """Query incidents under a specific alert.
 
@@ -572,8 +534,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type alert_id: str
         :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of AnomalyIncident
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
@@ -582,9 +542,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[IncidentResultList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.IncidentResultList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -594,7 +559,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     alert_configuration_id=alert_configuration_id,
                     alert_id=alert_id,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     headers=_headers,
                     params=_params,
                 )
@@ -606,30 +570,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-
-                request = build_list_incidents_for_alert_request(
-                    alert_configuration_id=alert_configuration_id,
-                    alert_id=alert_id,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("IncidentResultList", pipeline_response)
+            deserialized = self._deserialize("_models.IncidentResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -666,7 +618,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -718,7 +675,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -775,7 +737,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -860,7 +827,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -908,7 +880,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def list_alert_configurations(
-        self, configuration_id: str, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
+        self, configuration_id: str, *, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.AnomalyAlertConfiguration"]:
         """List all anomaly alerting configurations for specific anomaly detection configuration.
 
@@ -918,8 +890,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type configuration_id: str
         :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of AnomalyAlertConfiguration
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration]
@@ -928,9 +898,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[AnomalyAlertingConfigurationList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.AnomalyAlertingConfigurationList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -939,7 +914,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request = build_list_alert_configurations_request(
                     configuration_id=configuration_id,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     headers=_headers,
                     params=_params,
                 )
@@ -951,29 +925,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-
-                request = build_list_alert_configurations_request(
-                    configuration_id=configuration_id,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AnomalyAlertingConfigurationList", pipeline_response)
+            deserialized = self._deserialize("_models.AnomalyAlertingConfigurationList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1017,9 +980,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[SeriesResultList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.SeriesResultList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -1041,32 +1009,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _json = self._serialize.body(body, "object")
-
-                request = build_list_metric_enriched_series_data_request(
-                    configuration_id=configuration_id,
-                    content_type=content_type,
-                    json=_json,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("SeriesResultList", pipeline_response)
+            deserialized = self._deserialize("_models.SeriesResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1091,13 +1045,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def get_anomalies_by_anomaly_detection_configuration(
-        self,
-        configuration_id: str,
-        body: Any,
-        *,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, configuration_id: str, body: Any, *, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.DataPointAnomaly"]:
         """Query anomalies under anomaly detection configuration.
 
@@ -1109,8 +1057,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type body: any
         :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of DataPointAnomaly
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
@@ -1120,9 +1066,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[AnomalyResultList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.AnomalyResultList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -1132,7 +1083,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request = build_get_anomalies_by_anomaly_detection_configuration_request(
                     configuration_id=configuration_id,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     content_type=content_type,
                     json=_json,
                     headers=_headers,
@@ -1146,32 +1096,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _json = self._serialize.body(body, "object")
-
-                request = build_get_anomalies_by_anomaly_detection_configuration_request(
-                    configuration_id=configuration_id,
-                    content_type=content_type,
-                    json=_json,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AnomalyResultList", pipeline_response)
+            deserialized = self._deserialize("_models.AnomalyResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1196,13 +1132,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def list_anomaly_dimension_values(
-        self,
-        configuration_id: str,
-        body: Any,
-        *,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, configuration_id: str, body: Any, *, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[str]:
         """Query dimension values of anomalies.
 
@@ -1214,8 +1144,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type body: any
         :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of str
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1224,9 +1152,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[AnomalyDimensionList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.AnomalyDimensionList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -1236,7 +1169,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request = build_list_anomaly_dimension_values_request(
                     configuration_id=configuration_id,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     content_type=content_type,
                     json=_json,
                     headers=_headers,
@@ -1250,32 +1182,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _json = self._serialize.body(body, "object")
-
-                request = build_list_anomaly_dimension_values_request(
-                    configuration_id=configuration_id,
-                    content_type=content_type,
-                    json=_json,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AnomalyDimensionList", pipeline_response)
+            deserialized = self._deserialize("_models.AnomalyDimensionList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1300,7 +1218,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def get_incidents_by_anomaly_detection_configuration(
-        self, configuration_id: str, body: Any, *, maxpagesize: Optional[int] = None, **kwargs: Any
+        self, configuration_id: str, body: Any, **kwargs: Any
     ) -> AsyncIterable["_models.AnomalyIncident"]:
         """Query incidents under anomaly detection configuration.
 
@@ -1310,8 +1228,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type configuration_id: str
         :param body: query detection incident result request. Required.
         :type body: any
-        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of AnomalyIncident
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
@@ -1321,9 +1237,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[IncidentResultList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.IncidentResultList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -1332,7 +1253,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
                 request = build_get_incidents_by_anomaly_detection_configuration_request(
                     configuration_id=configuration_id,
-                    maxpagesize=maxpagesize,
                     content_type=content_type,
                     json=_json,
                     headers=_headers,
@@ -1346,32 +1266,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _json = self._serialize.body(body, "object")
-
-                request = build_get_incidents_by_anomaly_detection_configuration_request(
-                    configuration_id=configuration_id,
-                    content_type=content_type,
-                    json=_json,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("IncidentResultList", pipeline_response)
+            deserialized = self._deserialize("_models.IncidentResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1396,7 +1302,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def get_incidents_by_anomaly_detection_configuration_next_pages(
-        self, configuration_id: str, *, maxpagesize: Optional[int] = None, token: Optional[str] = None, **kwargs: Any
+        self, configuration_id: str, *, token: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable["_models.AnomalyIncident"]:
         """Query incidents under anomaly detection configuration.
 
@@ -1404,8 +1310,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
         :param configuration_id: anomaly detection configuration unique id. Required.
         :type configuration_id: str
-        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
-        :paramtype maxpagesize: int
         :keyword token: the token for getting the next page. Default value is None.
         :paramtype token: str
         :return: An iterator like instance of AnomalyIncident
@@ -1416,9 +1320,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[IncidentResultList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.IncidentResultList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -1426,7 +1335,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
                 request = build_get_incidents_by_anomaly_detection_configuration_next_pages_request(
                     configuration_id=configuration_id,
-                    maxpagesize=maxpagesize,
                     token=token,
                     headers=_headers,
                     params=_params,
@@ -1439,29 +1347,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-
-                request = build_get_incidents_by_anomaly_detection_configuration_next_pages_request(
-                    configuration_id=configuration_id,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("IncidentResultList", pipeline_response)
+            deserialized = self._deserialize("_models.IncidentResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1504,9 +1401,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[RootCauseList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.RootCauseList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -1526,30 +1428,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-
-                request = build_list_incident_root_causes_request(
-                    detection_configuration_id=detection_configuration_id,
-                    incident_id=incident_id,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("RootCauseList", pipeline_response)
+            deserialized = self._deserialize("_models.RootCauseList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1626,7 +1516,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1674,7 +1569,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def list_datasource_credentials(
-        self, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
+        self, *, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.DatasourceCredential"]:
         """List all credentials.
 
@@ -1682,8 +1577,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
         :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of DatasourceCredential
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DatasourceCredential]
@@ -1692,9 +1585,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[DataSourceCredentialList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.DataSourceCredentialList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -1702,7 +1600,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
                 request = build_list_datasource_credentials_request(
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     headers=_headers,
                     params=_params,
                 )
@@ -1714,28 +1611,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-
-                request = build_list_datasource_credentials_request(
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("DataSourceCredentialList", pipeline_response)
+            deserialized = self._deserialize("_models.DataSourceCredentialList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1772,7 +1659,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: any
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1829,7 +1721,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1873,7 +1770,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: any
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1919,7 +1821,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         status: Optional[Union[str, "_models.DataFeedStatus"]] = None,
         creator: Optional[str] = None,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.DataFeed"]:
         """List all data feeds.
@@ -1943,8 +1844,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype creator: str
         :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of DataFeed
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataFeed]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1952,9 +1851,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[DataFeedList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.DataFeedList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -1967,7 +1871,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     status=status,
                     creator=creator,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     headers=_headers,
                     params=_params,
                 )
@@ -1979,28 +1882,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-
-                request = build_list_data_feeds_request(
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("DataFeedList", pipeline_response)
+            deserialized = self._deserialize("_models.DataFeedList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -2076,7 +1969,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2134,7 +2032,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -2184,7 +2087,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: any
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2241,7 +2149,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -2285,7 +2198,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.metricsadvisor.models.MetricFeedback
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -2323,7 +2241,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def list_feedback(
-        self, body: Any, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
+        self, body: Any, *, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.MetricFeedback"]:
         """List feedback on the given metric.
 
@@ -2333,8 +2251,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type body: any
         :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of MetricFeedback
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricFeedback]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2343,9 +2259,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[MetricFeedbackList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.MetricFeedbackList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -2354,7 +2275,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
                 request = build_list_feedback_request(
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     content_type=content_type,
                     json=_json,
                     headers=_headers,
@@ -2368,31 +2288,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _json = self._serialize.body(body, "object")
-
-                request = build_list_feedback_request(
-                    content_type=content_type,
-                    json=_json,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("MetricFeedbackList", pipeline_response)
+            deserialized = self._deserialize("_models.MetricFeedbackList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -2468,7 +2375,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2516,12 +2428,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def list_hooks(
-        self,
-        *,
-        hook_name: Optional[str] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, *, hook_name: Optional[str] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.NotificationHook"]:
         """List all hooks.
 
@@ -2531,8 +2438,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype hook_name: str
         :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of NotificationHook
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.NotificationHook]
@@ -2541,9 +2446,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[HookList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.HookList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -2552,7 +2462,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request = build_list_hooks_request(
                     hook_name=hook_name,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     headers=_headers,
                     params=_params,
                 )
@@ -2564,28 +2473,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-
-                request = build_list_hooks_request(
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("HookList", pipeline_response)
+            deserialized = self._deserialize("_models.HookList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -2661,7 +2560,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2719,7 +2623,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.metricsadvisor.models.NotificationHook
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -2769,7 +2678,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.metricsadvisor.models.NotificationHook
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2824,7 +2738,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -2858,13 +2777,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def list_data_feed_ingestion_status(
-        self,
-        data_feed_id: str,
-        body: Any,
-        *,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, data_feed_id: str, body: Any, *, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.DataFeedIngestionStatus"]:
         """Get data ingestion status by data feed.
 
@@ -2876,8 +2789,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type body: any
         :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of DataFeedIngestionStatus
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataFeedIngestionStatus]
@@ -2887,9 +2798,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[IngestionStatusList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.IngestionStatusList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -2899,7 +2815,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request = build_list_data_feed_ingestion_status_request(
                     data_feed_id=data_feed_id,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     content_type=content_type,
                     json=_json,
                     headers=_headers,
@@ -2913,32 +2828,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _json = self._serialize.body(body, "object")
-
-                request = build_list_data_feed_ingestion_status_request(
-                    data_feed_id=data_feed_id,
-                    content_type=content_type,
-                    json=_json,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("IngestionStatusList", pipeline_response)
+            deserialized = self._deserialize("_models.IngestionStatusList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -2977,7 +2878,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3028,7 +2934,12 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.metricsadvisor.models.DataFeedIngestionProgress
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -3085,9 +2996,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[MetricDataList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.MetricDataList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -3109,32 +3025,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _json = self._serialize.body(body, "object")
-
-                request = build_list_metric_series_data_request(
-                    metric_id=metric_id,
-                    content_type=content_type,
-                    json=_json,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("MetricDataList", pipeline_response)
+            deserialized = self._deserialize("_models.MetricDataList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -3159,7 +3061,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def list_metric_series_definitions(
-        self, metric_id: str, body: Any, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
+        self, metric_id: str, body: Any, *, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.MetricSeriesDefinition"]:
         """List series (dimension combinations) from metric.
 
@@ -3171,8 +3073,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type body: any
         :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of MetricSeriesDefinition
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesDefinition]
@@ -3182,9 +3082,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[MetricSeriesList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.MetricSeriesList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -3194,7 +3099,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request = build_list_metric_series_definitions_request(
                     metric_id=metric_id,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     content_type=content_type,
                     json=_json,
                     headers=_headers,
@@ -3208,32 +3112,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _json = self._serialize.body(body, "object")
-
-                request = build_list_metric_series_definitions_request(
-                    metric_id=metric_id,
-                    content_type=content_type,
-                    json=_json,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("MetricSeriesList", pipeline_response)
+            deserialized = self._deserialize("_models.MetricSeriesList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -3258,7 +3148,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def list_metric_dimension_values(
-        self, metric_id: str, body: Any, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
+        self, metric_id: str, body: Any, *, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[str]:
         """List dimension from certain metric.
 
@@ -3270,8 +3160,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type body: any
         :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of str
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3280,9 +3168,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[MetricDimensionList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.MetricDimensionList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -3292,7 +3185,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request = build_list_metric_dimension_values_request(
                     metric_id=metric_id,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     content_type=content_type,
                     json=_json,
                     headers=_headers,
@@ -3306,32 +3198,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _json = self._serialize.body(body, "object")
-
-                request = build_list_metric_dimension_values_request(
-                    metric_id=metric_id,
-                    content_type=content_type,
-                    json=_json,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("MetricDimensionList", pipeline_response)
+            deserialized = self._deserialize("_models.MetricDimensionList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -3356,7 +3234,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def list_detection_configurations(
-        self, metric_id: str, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
+        self, metric_id: str, *, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.AnomalyDetectionConfiguration"]:
         """List all anomaly detection configurations for specific metric.
 
@@ -3366,8 +3244,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type metric_id: str
         :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of AnomalyDetectionConfiguration
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration]
@@ -3376,9 +3252,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[AnomalyDetectionConfigurationList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.AnomalyDetectionConfigurationList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -3387,7 +3268,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request = build_list_detection_configurations_request(
                     metric_id=metric_id,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     headers=_headers,
                     params=_params,
                 )
@@ -3399,29 +3279,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-
-                request = build_list_detection_configurations_request(
-                    metric_id=metric_id,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AnomalyDetectionConfigurationList", pipeline_response)
+            deserialized = self._deserialize("_models.AnomalyDetectionConfigurationList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -3446,7 +3315,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def list_metric_enrichment_status(
-        self, metric_id: str, body: Any, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
+        self, metric_id: str, body: Any, *, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.EnrichmentStatus"]:
         """Query anomaly detection status.
 
@@ -3458,8 +3327,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type body: any
         :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
-        :paramtype maxpagesize: int
         :return: An iterator like instance of EnrichmentStatus
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.EnrichmentStatus]
@@ -3469,9 +3336,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[EnrichmentStatusList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.EnrichmentStatusList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -3481,7 +3353,6 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request = build_list_metric_enrichment_status_request(
                     metric_id=metric_id,
                     skip=skip,
-                    maxpagesize=maxpagesize,
                     content_type=content_type,
                     json=_json,
                     headers=_headers,
@@ -3495,32 +3366,18 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _json = self._serialize.body(body, "object")
-
-                request = build_list_metric_enrichment_status_request(
-                    metric_id=metric_id,
-                    content_type=content_type,
-                    json=_json,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("EnrichmentStatusList", pipeline_response)
+            deserialized = self._deserialize("_models.EnrichmentStatusList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
