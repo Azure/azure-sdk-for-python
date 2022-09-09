@@ -259,6 +259,7 @@ class DatabaseProxy(object):
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
         :keyword offer_throughput: The provisioned throughput for this offer.
+        :paramtype offer_throughput: int or ~azure.cosmos.ThroughputProperties.
         :keyword dict[str, str] unique_key_policy: The unique key policy to apply to the container.
         :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
