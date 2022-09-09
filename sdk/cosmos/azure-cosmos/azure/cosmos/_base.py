@@ -733,3 +733,19 @@ def _deserialize_throughput(throughput: list) -> Any:
         offer_throughput=throughput,
         properties=throughput_properties[0]
     )
+
+
+def _replace_throughput(throughput: Union[int, ThroughputProperties], new_throughput_properties: list):
+    max_throughput = throughput.auto_scale_max_throughput
+    increment_percent = throughput.auto_scale_increment_percent
+
+    if isinstance(throughput, object):
+        if max_throughput is not None:
+            new_throughput_properties['content']['offerAutopilotSettings'][
+                'maxThroughput'] = max_throughput
+            if increment_percent:
+                new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
+                    'incrementPercent'] = increment_percent
+
+    if isinstance(throughput, int):
+        new_throughput_properties["content"]["offerThroughput"] = throughput
