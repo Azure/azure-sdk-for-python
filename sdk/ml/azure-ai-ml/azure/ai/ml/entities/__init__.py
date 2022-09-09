@@ -70,6 +70,12 @@ from ._job.sweep.search_space import (
     Randint,
     Uniform,
 )
+from ._registry.registry import Registry
+from ._registry.registry_support_classes import (
+    RegistryRegionArmDetails,
+    SystemCreatedAcrAccount,
+    SystemCreatedStorageAccount,
+)
 from ._resource import Resource
 from ._schedule.schedule import JobSchedule
 from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
@@ -180,6 +186,10 @@ __all__ = [
     "VirtualMachineSshSettings",
     "AmlComputeSshSettings",
     "AmlComputeNodeInfo",
+    "SystemCreatedAcrAccount",
+    "SystemCreatedStorageAccount",
+    "RegistryRegionArmDetails",
+    "Registry",
     "SynapseSparkCompute",
     "AutoScaleSettings",
     "AutoPauseSettings",

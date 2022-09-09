@@ -122,6 +122,7 @@ class TestComputeEntity:
     def test_compute_instance_schedules_from_yaml(self):
         compute_instance: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci-schedules.yaml")
         assert len(compute_instance.schedules.compute_start_stop) == 2
+        assert compute_instance.idle_time_before_shutdown == "PT15M"
 
         compute_resource = compute_instance._to_rest_object()
         compute_instance2: ComputeInstance = ComputeInstance._load_from_rest(compute_resource)

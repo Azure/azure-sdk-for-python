@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
+from msrest import Deserializer, Serializer
 
 from .. import models
-from .._serialization import Deserializer, Serializer
 from ._configuration import AzureMachineLearningWorkspacesConfiguration
 from .operations import BatchDeploymentsOperations, BatchEndpointsOperations, CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, ComputeOperations, DataContainersOperations, DataVersionsOperations, DatastoresOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, JobsOperations, LabelingJobsOperations, ModelContainersOperations, ModelVersionsOperations, OnlineDeploymentsOperations, OnlineEndpointsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, QuotasOperations, RegistriesOperations, RegistryCodeContainersOperations, RegistryCodeVersionsOperations, RegistryComponentContainersOperations, RegistryComponentVersionsOperations, RegistryEnvironmentContainersOperations, RegistryEnvironmentVersionsOperations, RegistryModelContainersOperations, RegistryModelVersionsOperations, SchedulesOperations, UsagesOperations, VirtualMachineSizesOperations, WorkspaceConnectionsOperations, WorkspaceFeaturesOperations, WorkspacesOperations
 
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class AzureMachineLearningWorkspaces:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class AzureMachineLearningWorkspaces:
     """These APIs allow end users to operate on Azure Machine Learning Workspace resources.
 
     :ivar operations: Operations operations
@@ -126,14 +126,14 @@ class AzureMachineLearningWorkspaces:  # pylint: disable=client-accepts-api-vers
      azure.mgmt.machinelearningservices.aio.operations.OnlineDeploymentsOperations
     :ivar schedules: SchedulesOperations operations
     :vartype schedules: azure.mgmt.machinelearningservices.aio.operations.SchedulesOperations
-    :param credential: Credential needed for the client to connect to Azure. Required.
+    :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is 'https://management.azure.com'.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-10-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+     overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -153,117 +153,43 @@ class AzureMachineLearningWorkspaces:  # pylint: disable=client-accepts-api-vers
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.workspaces = WorkspacesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.usages = UsagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.virtual_machine_sizes = VirtualMachineSizesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.quotas = QuotasOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.compute = ComputeOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.private_link_resources = PrivateLinkResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.workspace_connections = WorkspaceConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.registries = RegistriesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.workspace_features = WorkspaceFeaturesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.registry_code_containers = RegistryCodeContainersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.registry_code_versions = RegistryCodeVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.registry_component_containers = RegistryComponentContainersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.registry_component_versions = RegistryComponentVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.registry_environment_containers = RegistryEnvironmentContainersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.registry_environment_versions = RegistryEnvironmentVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.registry_model_containers = RegistryModelContainersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.registry_model_versions = RegistryModelVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.batch_endpoints = BatchEndpointsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.batch_deployments = BatchDeploymentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.code_containers = CodeContainersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.code_versions = CodeVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.component_containers = ComponentContainersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.component_versions = ComponentVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.data_containers = DataContainersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.data_versions = DataVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.datastores = DatastoresOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.environment_containers = EnvironmentContainersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.environment_versions = EnvironmentVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.jobs = JobsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.labeling_jobs = LabelingJobsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.model_containers = ModelContainersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.model_versions = ModelVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.online_endpoints = OnlineEndpointsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.online_deployments = OnlineDeploymentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.schedules = SchedulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.workspaces = WorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.virtual_machine_sizes = VirtualMachineSizesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.quotas = QuotasOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.compute = ComputeOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.workspace_connections = WorkspaceConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registries = RegistriesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.workspace_features = WorkspaceFeaturesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_code_containers = RegistryCodeContainersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_code_versions = RegistryCodeVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_component_containers = RegistryComponentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_component_versions = RegistryComponentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_environment_containers = RegistryEnvironmentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_environment_versions = RegistryEnvironmentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_model_containers = RegistryModelContainersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_model_versions = RegistryModelVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.batch_endpoints = BatchEndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.batch_deployments = BatchDeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.code_containers = CodeContainersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.code_versions = CodeVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.component_containers = ComponentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.component_versions = ComponentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.data_containers = DataContainersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.data_versions = DataVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.datastores = DatastoresOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.environment_containers = EnvironmentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.environment_versions = EnvironmentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.labeling_jobs = LabelingJobsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.model_containers = ModelContainersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.model_versions = ModelVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.online_endpoints = OnlineEndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.online_deployments = OnlineDeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.schedules = SchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(
@@ -279,7 +205,7 @@ class AzureMachineLearningWorkspaces:  # pylint: disable=client-accepts-api-vers
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

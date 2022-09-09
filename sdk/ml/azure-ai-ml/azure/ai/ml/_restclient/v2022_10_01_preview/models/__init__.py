@@ -857,141 +857,141 @@ except (SyntaxError, ImportError):
     from ._models import WorkspaceListResult  # type: ignore
     from ._models import WorkspaceUpdateParameters  # type: ignore
 
-from ._azure_machine_learning_workspaces_enums import AllocationState
-from ._azure_machine_learning_workspaces_enums import ApplicationSharingPolicy
-from ._azure_machine_learning_workspaces_enums import AssetProvisioningState
-from ._azure_machine_learning_workspaces_enums import Autosave
-from ._azure_machine_learning_workspaces_enums import BatchLoggingLevel
-from ._azure_machine_learning_workspaces_enums import BatchOutputAction
-from ._azure_machine_learning_workspaces_enums import BillingCurrency
-from ._azure_machine_learning_workspaces_enums import BlockedTransformers
-from ._azure_machine_learning_workspaces_enums import Caching
-from ._azure_machine_learning_workspaces_enums import ClassificationModels
-from ._azure_machine_learning_workspaces_enums import ClassificationMultilabelPrimaryMetrics
-from ._azure_machine_learning_workspaces_enums import ClassificationPrimaryMetrics
-from ._azure_machine_learning_workspaces_enums import ClusterPurpose
-from ._azure_machine_learning_workspaces_enums import ComputeInstanceAuthorizationType
-from ._azure_machine_learning_workspaces_enums import ComputeInstanceState
-from ._azure_machine_learning_workspaces_enums import ComputePowerAction
-from ._azure_machine_learning_workspaces_enums import ComputeProvisioningState
-from ._azure_machine_learning_workspaces_enums import ComputeType
-from ._azure_machine_learning_workspaces_enums import ConnectionAuthType
-from ._azure_machine_learning_workspaces_enums import ConnectionCategory
-from ._azure_machine_learning_workspaces_enums import ContainerType
-from ._azure_machine_learning_workspaces_enums import CreatedByType
-from ._azure_machine_learning_workspaces_enums import CredentialsType
-from ._azure_machine_learning_workspaces_enums import DataType
-from ._azure_machine_learning_workspaces_enums import DatastoreType
-from ._azure_machine_learning_workspaces_enums import DeploymentProvisioningState
-from ._azure_machine_learning_workspaces_enums import DiagnoseResultLevel
-from ._azure_machine_learning_workspaces_enums import DistributionType
-from ._azure_machine_learning_workspaces_enums import EarlyTerminationPolicyType
-from ._azure_machine_learning_workspaces_enums import EgressPublicNetworkAccessType
-from ._azure_machine_learning_workspaces_enums import EncryptionStatus
-from ._azure_machine_learning_workspaces_enums import EndpointAuthMode
-from ._azure_machine_learning_workspaces_enums import EndpointComputeType
-from ._azure_machine_learning_workspaces_enums import EndpointProvisioningState
-from ._azure_machine_learning_workspaces_enums import EnvironmentType
-from ._azure_machine_learning_workspaces_enums import EnvironmentVariableType
-from ._azure_machine_learning_workspaces_enums import ExportFormatType
-from ._azure_machine_learning_workspaces_enums import FeatureLags
-from ._azure_machine_learning_workspaces_enums import FeaturizationMode
-from ._azure_machine_learning_workspaces_enums import ForecastHorizonMode
-from ._azure_machine_learning_workspaces_enums import ForecastingModels
-from ._azure_machine_learning_workspaces_enums import ForecastingPrimaryMetrics
-from ._azure_machine_learning_workspaces_enums import Goal
-from ._azure_machine_learning_workspaces_enums import IdentityConfigurationType
-from ._azure_machine_learning_workspaces_enums import ImageAnnotationType
-from ._azure_machine_learning_workspaces_enums import ImageType
-from ._azure_machine_learning_workspaces_enums import InputDeliveryMode
-from ._azure_machine_learning_workspaces_enums import InstanceSegmentationPrimaryMetrics
-from ._azure_machine_learning_workspaces_enums import JobInputType
-from ._azure_machine_learning_workspaces_enums import JobLimitsType
-from ._azure_machine_learning_workspaces_enums import JobOutputType
-from ._azure_machine_learning_workspaces_enums import JobProvisioningState
-from ._azure_machine_learning_workspaces_enums import JobStatus
-from ._azure_machine_learning_workspaces_enums import JobType
-from ._azure_machine_learning_workspaces_enums import KeyType
-from ._azure_machine_learning_workspaces_enums import LearningRateScheduler
-from ._azure_machine_learning_workspaces_enums import ListViewType
-from ._azure_machine_learning_workspaces_enums import LoadBalancerType
-from ._azure_machine_learning_workspaces_enums import LogVerbosity
-from ._azure_machine_learning_workspaces_enums import MLAssistConfigurationType
-from ._azure_machine_learning_workspaces_enums import MLFlowAutologgerState
-from ._azure_machine_learning_workspaces_enums import ManagedServiceIdentityType
-from ._azure_machine_learning_workspaces_enums import MediaType
-from ._azure_machine_learning_workspaces_enums import ModelSize
-from ._azure_machine_learning_workspaces_enums import MountAction
-from ._azure_machine_learning_workspaces_enums import MountState
-from ._azure_machine_learning_workspaces_enums import NCrossValidationsMode
-from ._azure_machine_learning_workspaces_enums import Network
-from ._azure_machine_learning_workspaces_enums import NlpLearningRateScheduler
-from ._azure_machine_learning_workspaces_enums import NodeState
-from ._azure_machine_learning_workspaces_enums import NodesValueType
-from ._azure_machine_learning_workspaces_enums import ObjectDetectionPrimaryMetrics
-from ._azure_machine_learning_workspaces_enums import OperatingSystemType
-from ._azure_machine_learning_workspaces_enums import OperationName
-from ._azure_machine_learning_workspaces_enums import OperationStatus
-from ._azure_machine_learning_workspaces_enums import OperationTrigger
-from ._azure_machine_learning_workspaces_enums import OrderString
-from ._azure_machine_learning_workspaces_enums import OsType
-from ._azure_machine_learning_workspaces_enums import OutputDeliveryMode
-from ._azure_machine_learning_workspaces_enums import PrivateEndpointConnectionProvisioningState
-from ._azure_machine_learning_workspaces_enums import PrivateEndpointServiceConnectionStatus
-from ._azure_machine_learning_workspaces_enums import Protocol
-from ._azure_machine_learning_workspaces_enums import ProvisioningStatus
-from ._azure_machine_learning_workspaces_enums import PublicNetworkAccess
-from ._azure_machine_learning_workspaces_enums import PublicNetworkAccessType
-from ._azure_machine_learning_workspaces_enums import QuotaUnit
-from ._azure_machine_learning_workspaces_enums import RandomSamplingAlgorithmRule
-from ._azure_machine_learning_workspaces_enums import RecurrenceFrequency
-from ._azure_machine_learning_workspaces_enums import ReferenceType
-from ._azure_machine_learning_workspaces_enums import RegressionModels
-from ._azure_machine_learning_workspaces_enums import RegressionPrimaryMetrics
-from ._azure_machine_learning_workspaces_enums import RemoteLoginPortPublicAccess
-from ._azure_machine_learning_workspaces_enums import SamplingAlgorithmType
-from ._azure_machine_learning_workspaces_enums import ScaleType
-from ._azure_machine_learning_workspaces_enums import ScheduleActionType
-from ._azure_machine_learning_workspaces_enums import ScheduleListViewType
-from ._azure_machine_learning_workspaces_enums import ScheduleProvisioningState
-from ._azure_machine_learning_workspaces_enums import ScheduleProvisioningStatus
-from ._azure_machine_learning_workspaces_enums import ScheduleStatus
-from ._azure_machine_learning_workspaces_enums import SeasonalityMode
-from ._azure_machine_learning_workspaces_enums import SecretsType
-from ._azure_machine_learning_workspaces_enums import ServiceDataAccessAuthIdentity
-from ._azure_machine_learning_workspaces_enums import ShortSeriesHandlingConfiguration
-from ._azure_machine_learning_workspaces_enums import SkuScaleType
-from ._azure_machine_learning_workspaces_enums import SkuTier
-from ._azure_machine_learning_workspaces_enums import SourceType
-from ._azure_machine_learning_workspaces_enums import SparkJobEntryType
-from ._azure_machine_learning_workspaces_enums import SshPublicAccess
-from ._azure_machine_learning_workspaces_enums import SslConfigStatus
-from ._azure_machine_learning_workspaces_enums import StackMetaLearnerType
-from ._azure_machine_learning_workspaces_enums import Status
-from ._azure_machine_learning_workspaces_enums import StatusMessageLevel
-from ._azure_machine_learning_workspaces_enums import StochasticOptimizer
-from ._azure_machine_learning_workspaces_enums import StorageAccountType
-from ._azure_machine_learning_workspaces_enums import TargetAggregationFunction
-from ._azure_machine_learning_workspaces_enums import TargetLagsMode
-from ._azure_machine_learning_workspaces_enums import TargetRollingWindowSizeMode
-from ._azure_machine_learning_workspaces_enums import TaskType
-from ._azure_machine_learning_workspaces_enums import TextAnnotationType
-from ._azure_machine_learning_workspaces_enums import TriggerType
-from ._azure_machine_learning_workspaces_enums import UnderlyingResourceAction
-from ._azure_machine_learning_workspaces_enums import UnitOfMeasure
-from ._azure_machine_learning_workspaces_enums import UsageUnit
-from ._azure_machine_learning_workspaces_enums import UseStl
-from ._azure_machine_learning_workspaces_enums import VMPriceOSType
-from ._azure_machine_learning_workspaces_enums import VMTier
-from ._azure_machine_learning_workspaces_enums import ValidationMetricType
-from ._azure_machine_learning_workspaces_enums import ValueFormat
-from ._azure_machine_learning_workspaces_enums import VmPriority
-from ._azure_machine_learning_workspaces_enums import VolumeDefinitionType
-from ._azure_machine_learning_workspaces_enums import WeekDay
-from ._azure_machine_learning_workspaces_enums import WorkspaceProvisioningState
-from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
-from ._patch import patch_sdk as _patch_sdk
+from ._azure_machine_learning_workspaces_enums import (
+    AllocationState,
+    ApplicationSharingPolicy,
+    AssetProvisioningState,
+    Autosave,
+    BatchLoggingLevel,
+    BatchOutputAction,
+    BillingCurrency,
+    BlockedTransformers,
+    Caching,
+    ClassificationModels,
+    ClassificationMultilabelPrimaryMetrics,
+    ClassificationPrimaryMetrics,
+    ClusterPurpose,
+    ComputeInstanceAuthorizationType,
+    ComputeInstanceState,
+    ComputePowerAction,
+    ComputeProvisioningState,
+    ComputeType,
+    ConnectionAuthType,
+    ConnectionCategory,
+    ContainerType,
+    CreatedByType,
+    CredentialsType,
+    DataType,
+    DatastoreType,
+    DeploymentProvisioningState,
+    DiagnoseResultLevel,
+    DistributionType,
+    EarlyTerminationPolicyType,
+    EgressPublicNetworkAccessType,
+    EncryptionStatus,
+    EndpointAuthMode,
+    EndpointComputeType,
+    EndpointProvisioningState,
+    EnvironmentType,
+    EnvironmentVariableType,
+    ExportFormatType,
+    FeatureLags,
+    FeaturizationMode,
+    ForecastHorizonMode,
+    ForecastingModels,
+    ForecastingPrimaryMetrics,
+    Goal,
+    IdentityConfigurationType,
+    ImageAnnotationType,
+    ImageType,
+    InputDeliveryMode,
+    InstanceSegmentationPrimaryMetrics,
+    JobInputType,
+    JobLimitsType,
+    JobOutputType,
+    JobProvisioningState,
+    JobStatus,
+    JobType,
+    KeyType,
+    LearningRateScheduler,
+    ListViewType,
+    LoadBalancerType,
+    LogVerbosity,
+    MLAssistConfigurationType,
+    MLFlowAutologgerState,
+    ManagedServiceIdentityType,
+    MediaType,
+    ModelSize,
+    MountAction,
+    MountState,
+    NCrossValidationsMode,
+    Network,
+    NlpLearningRateScheduler,
+    NodeState,
+    NodesValueType,
+    ObjectDetectionPrimaryMetrics,
+    OperatingSystemType,
+    OperationName,
+    OperationStatus,
+    OperationTrigger,
+    OrderString,
+    OsType,
+    OutputDeliveryMode,
+    PrivateEndpointConnectionProvisioningState,
+    PrivateEndpointServiceConnectionStatus,
+    Protocol,
+    ProvisioningStatus,
+    PublicNetworkAccess,
+    PublicNetworkAccessType,
+    QuotaUnit,
+    RandomSamplingAlgorithmRule,
+    RecurrenceFrequency,
+    ReferenceType,
+    RegressionModels,
+    RegressionPrimaryMetrics,
+    RemoteLoginPortPublicAccess,
+    SamplingAlgorithmType,
+    ScaleType,
+    ScheduleActionType,
+    ScheduleListViewType,
+    ScheduleProvisioningState,
+    ScheduleProvisioningStatus,
+    ScheduleStatus,
+    SeasonalityMode,
+    SecretsType,
+    ServiceDataAccessAuthIdentity,
+    ShortSeriesHandlingConfiguration,
+    SkuScaleType,
+    SkuTier,
+    SourceType,
+    SparkJobEntryType,
+    SshPublicAccess,
+    SslConfigStatus,
+    StackMetaLearnerType,
+    Status,
+    StatusMessageLevel,
+    StochasticOptimizer,
+    StorageAccountType,
+    TargetAggregationFunction,
+    TargetLagsMode,
+    TargetRollingWindowSizeMode,
+    TaskType,
+    TextAnnotationType,
+    TriggerType,
+    UnderlyingResourceAction,
+    UnitOfMeasure,
+    UsageUnit,
+    UseStl,
+    VMPriceOSType,
+    VMTier,
+    ValidationMetricType,
+    ValueFormat,
+    VmPriority,
+    VolumeDefinitionType,
+    WeekDay,
+    WorkspaceProvisioningState,
+)
+
 __all__ = [
     'AKS',
     'AKSSchema',
@@ -1550,5 +1550,3 @@ __all__ = [
     'WeekDay',
     'WorkspaceProvisioningState',
 ]
-__all__.extend([p for p in _patch_all if p not in __all__])
-_patch_sdk()

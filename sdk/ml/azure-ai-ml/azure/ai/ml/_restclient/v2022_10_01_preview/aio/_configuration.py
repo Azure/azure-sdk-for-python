@@ -19,18 +19,17 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureMachineLearningWorkspacesConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class AzureMachineLearningWorkspacesConfiguration(Configuration):
     """Configuration for AzureMachineLearningWorkspaces.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credential: Credential needed for the client to connect to Azure. Required.
+    :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2022-10-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
