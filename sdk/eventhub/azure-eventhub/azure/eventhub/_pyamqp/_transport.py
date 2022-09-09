@@ -203,7 +203,7 @@ class _AbstractTransport(object):
                 if "timed out" in str(exc):
                     # http://bugs.python.org/issue10272
                     raise socket.timeout()
-                elif "The operation did not complete" in str(exc):
+                if "The operation did not complete" in str(exc):
                     # Non-blocking SSL sockets can throw SSLError
                     raise socket.timeout()
                 raise
@@ -253,7 +253,7 @@ class _AbstractTransport(object):
             if "timed out" in str(exc):
                 # http://bugs.python.org/issue10272
                 raise socket.timeout()
-            elif "The operation did not complete" in str(exc):
+            if "The operation did not complete" in str(exc):
                 # Non-blocking SSL sockets can throw SSLError
                 raise socket.timeout()
             raise
@@ -290,7 +290,7 @@ class _AbstractTransport(object):
                     # if getaddrinfo succeeded before for another address
                     # family, reraise the previous socket.error since it's more
                     # relevant to users
-                    raise (e if e is not None else socket.error("failed to resolve broker hostname"))
+                    raise e if e is not None else socket.error("failed to resolve broker hostname")
                 continue  # pragma: no cover
 
             # now that we have address(es) for the hostname, connect to broker

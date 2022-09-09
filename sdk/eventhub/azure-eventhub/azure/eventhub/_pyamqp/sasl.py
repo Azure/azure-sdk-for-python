@@ -83,8 +83,7 @@ class SASLTransportMixin():
             raise NotImplementedError("Unsupported SASL challenge")
         if fields[0] == SASLCode.Ok:  # code
             return
-        else:
-            raise ValueError("SASL negotiation failed.\nOutcome: {}\nDetails: {}".format(*fields))
+        raise ValueError("SASL negotiation failed.\nOutcome: {}\nDetails: {}".format(*fields))
 
 
 class SASLTransport(SSLTransport, SASLTransportMixin):

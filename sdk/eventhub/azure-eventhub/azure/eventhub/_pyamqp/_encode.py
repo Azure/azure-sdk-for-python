@@ -513,11 +513,11 @@ def encode_message_id(value):
     """
     if isinstance(value, int):
         return {TYPE: AMQPTypes.ulong, VALUE: value}
-    elif isinstance(value, uuid.UUID):
+    if isinstance(value, uuid.UUID):
         return {TYPE: AMQPTypes.uuid, VALUE: value}
-    elif isinstance(value, six.binary_type):
+    if isinstance(value, six.binary_type):
         return {TYPE: AMQPTypes.binary, VALUE: value}
-    elif isinstance(value, six.text_type):
+    if isinstance(value, six.text_type):
         return {TYPE: AMQPTypes.string, VALUE: value}
     raise TypeError("Unsupported Message ID type.")
 

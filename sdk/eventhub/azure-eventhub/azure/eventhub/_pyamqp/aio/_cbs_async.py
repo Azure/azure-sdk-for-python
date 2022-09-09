@@ -191,33 +191,33 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
         )
 
     async def handle_token(self):
-        if not (await self._cbs_link_ready()):
+        if not await self._cbs_link_ready():
             return False
         await self._update_status()
         if self.auth_state == CbsAuthState.IDLE:
             await self.update_token()
             return False
-        elif self.auth_state == CbsAuthState.IN_PROGRESS:
+        if self.auth_state == CbsAuthState.IN_PROGRESS:
             return False
-        elif self.auth_state == CbsAuthState.OK:
+        if self.auth_state == CbsAuthState.OK:
             return True
-        elif self.auth_state == CbsAuthState.REFRESH_REQUIRED:
+        if self.auth_state == CbsAuthState.REFRESH_REQUIRED:
             _LOGGER.info(
                 "Token on connection %r will expire soon - attempting to refresh.", self._connection._container_id
             )  # pylint:disable=protected-access
             await self.update_token()
             return False
-        elif self.auth_state == CbsAuthState.FAILURE:
+        if self.auth_state == CbsAuthState.FAILURE:
             raise AuthenticationException(
                 condition=ErrorCondition.InternalError, description="Failed to open CBS authentication link."
             )
-        elif self.auth_state == CbsAuthState.ERROR:
+        if self.auth_state == CbsAuthState.ERROR:
             raise TokenAuthFailure(
                 self._token_status_code,
                 self._token_status_description,
                 encoding=self._encoding,  # TODO: drop off all the encodings
             )
-        elif self.auth_state == CbsAuthState.TIMEOUT:
+        if self.auth_state == CbsAuthState.TIMEOUT:
             raise TimeoutError("Authentication attempt timed-out.")
-        elif self.auth_state == CbsAuthState.EXPIRED:
+        if self.auth_state == CbsAuthState.EXPIRED:
             raise TokenExpired(condition=ErrorCondition.InternalError, description="CBS Authentication Expired.")

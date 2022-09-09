@@ -164,7 +164,7 @@ class Link(object):
             _LOGGER.info("<- %r", AttachFrame(*frame), extra=self.network_trace_params)
         if self._is_closed:
             raise ValueError("Invalid link")
-        elif not frame[5] or not frame[6]:
+        if not frame[5] or not frame[6]:
             _LOGGER.info("Cannot get source or target. Detaching link")
             await self._set_state(LinkState.DETACHED)
             raise ValueError("Invalid link")

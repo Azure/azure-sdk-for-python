@@ -242,7 +242,7 @@ class AMQPClientAsync(AMQPClientSync):
 
         :rtype: bool
         """
-        if self._cbs_authenticator and not (await self._cbs_authenticator.handle_token()):
+        if self._cbs_authenticator and not await self._cbs_authenticator.handle_token():
             await self._connection.listen(wait=self._socket_timeout)
             return False
         return True
