@@ -6,7 +6,8 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Any
+import asyncio
+from typing import List, Any, Optional
 from ._operations import MonitorIngestionClientOperationsMixin as GeneratedOps
 from ..._models import UploadLogsStatus, UploadLogsResult
 from ..._helpers import _create_gzip_requests
@@ -14,7 +15,13 @@ from ..._helpers import _create_gzip_requests
 
 class MonitorIngestionClientOperationsMixin(GeneratedOps):
     async def upload( # pylint: disable=arguments-renamed, arguments-differ
-        self, rule_id: str, stream_name: str, logs: List[Any], **kwargs: Any
+        self,
+        rule_id: str,
+        stream_name: str,
+        logs: List[Any],
+        *,
+        max_concurrency: Optional[int] = None,
+        **kwargs: Any
     ) -> UploadLogsResult:
         """Ingestion API used to directly ingest data using Data Collection Rules.
 
@@ -26,6 +33,8 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
         :type stream: str
         :param body: An array of objects matching the schema defined by the provided stream.
         :type body: list[any]
+        :keyword max_concurrency: Number of parallel threads to use when logs size is > 1mb.
+        :paramtype max_concurrency: int
         :return: UploadLogsResult
         :rtype: UploadLogsResult
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -33,6 +42,36 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
         requests = _create_gzip_requests(logs)
         results = []
         status = UploadLogsStatus.SUCCESS
+        parallel = max_concurrency and max_concurrency > 1 and len(requests) > 1
+        if parallel:
+            tasks = set()
+            results = []
+            for request in requests:
+                if len(tasks) >= max_concurrency:
+                    done, tasks = await asyncio.wait(
+                        tasks, return_when=asyncio.FIRST_COMPLETED
+                    )
+                    for task in done:
+                        res = task.result()
+                        if res is not None:
+                            results.append(res)
+                            status = UploadLogsStatus.PARTIAL_FAILURE
+                tasks.add(asyncio.create_task(
+                    super(MonitorIngestionClientOperationsMixin, self).upload(
+                        rule_id,
+                        stream=stream_name,
+                        body=request,
+                        content_encoding="gzip",
+                        **kwargs
+                    )
+                ))
+            done, _pending = await asyncio.wait(tasks)
+            for task in done:
+                res = task.result()
+                if res is not None:
+                    results.append(res)
+                    status = UploadLogsStatus.PARTIAL_FAILURE
+            return UploadLogsResult(failed_logs=results, status=status)
         for request in requests:
             response = await super().upload(
                 rule_id,
