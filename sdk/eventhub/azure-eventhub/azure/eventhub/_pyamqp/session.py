@@ -80,7 +80,7 @@ class Session(object):
         self.state = new_state
         _LOGGER.info("Session state changed: %r -> %r", previous_state, new_state, extra=self.network_trace_params)
         for link in self.links.values():
-            link._on_session_state_change()
+            link._on_session_state_change() # pylint: disable=protected-access
 
     def _on_connection_state_change(self):
         if self._connection.state in [ConnectionState.CLOSE_RCVD, ConnectionState.END]:
