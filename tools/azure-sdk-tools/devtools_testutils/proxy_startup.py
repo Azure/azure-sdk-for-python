@@ -37,20 +37,8 @@ def get_image_tag(repo_root: str) -> str:
     version_file_location = os.path.relpath("eng/common/testproxy/target_version.txt")
     version_file_location_from_root = os.path.abspath(os.path.join(repo_root, version_file_location))
 
-    try:
-        with open(version_file_location_from_root, "r") as f:
-            image_tag = f.read().strip()
-    # In live pipeline tests the root of the repo is in a different location relative to this file
-    except FileNotFoundError:
-        # repo_root only gets us to /sdk/{service}/{package}/.tox/whl on Windows
-        # repo_root only gets us to /sdk/{service}/{package}/.tox/whl/lib on Ubuntu
-        head, tail = os.path.split(repo_root)
-        while tail != "sdk":
-            head, tail = os.path.split(head)
-
-        version_file_location_from_root = os.path.abspath(os.path.join(head, version_file_location))
-        with open(version_file_location_from_root, "r") as f:
-            image_tag = f.read().strip()
+    with open(version_file_location_from_root, "r") as f:
+        image_tag = f.read().strip()
 
     return image_tag
 
