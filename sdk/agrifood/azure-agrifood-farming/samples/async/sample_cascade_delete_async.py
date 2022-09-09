@@ -78,4 +78,4 @@ if __name__ == "__main__":
 
     load_dotenv()
 
-    asyncio.get_event_loop().run_until_complete(sample_cascade_delete_async())
+    asyncio.run(sample_cascade_delete_async())
