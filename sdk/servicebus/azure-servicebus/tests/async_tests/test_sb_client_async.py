@@ -526,7 +526,7 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
-    async def test_connection_verify_exception(self,
+    async def test_connection_verify_exception_async(self,
                                    servicebus_queue,
                                    servicebus_namespace,
                                    servicebus_namespace_key_name,
