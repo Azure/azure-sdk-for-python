@@ -34,10 +34,9 @@ class AzurePowerShellCredential(AsyncContextManager):
             any tenant the application is installed.
     """
 
-    def __init__(self, *, additionally_allowed_tenant_ids: List[str] = []):
-        object.__init__(self)
+    def __init__(self, *, additionally_allowed_tenant_ids: List[str] = None):
 
-        self._additionally_allowed_tenant_ids = additionally_allowed_tenant_ids
+        self._additionally_allowed_tenant_ids = additionally_allowed_tenant_ids or []
 
     @log_get_token_async
     async def get_token(

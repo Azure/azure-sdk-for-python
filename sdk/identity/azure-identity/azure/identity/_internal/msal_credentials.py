@@ -12,11 +12,6 @@ from .._constants import EnvironmentVariables
 from .._internal import get_default_authority, normalize_authority, resolve_tenant, validate_tenant_id
 from .._persistent_cache import _load_persistent_cache
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports,unused-import
     from typing import Any
@@ -30,7 +25,7 @@ class MsalCredential(object):
             client_id: str,
             client_credential: Union[str, Dict] = None,
             *,
-            additionally_allowed_tenant_ids: List[str] = [],
+            additionally_allowed_tenant_ids: List[str] = None,
             **kwargs
     ) -> None:
         authority = kwargs.pop("authority", None)
@@ -43,7 +38,7 @@ class MsalCredential(object):
         self._client_applications = {}  # type: Dict[str, msal.ClientApplication]
         self._client_credential = client_credential
         self._client_id = client_id
-        self._additionally_allowed_tenant_ids = additionally_allowed_tenant_ids
+        self._additionally_allowed_tenant_ids = additionally_allowed_tenant_ids or []
 
         self._cache = kwargs.pop("_cache", None)
         if not self._cache:

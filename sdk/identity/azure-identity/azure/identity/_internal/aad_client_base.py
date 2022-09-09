@@ -7,9 +7,9 @@ import base64
 import json
 import time
 from uuid import uuid4
+from typing import TYPE_CHECKING, List
 
 import six
-from typing import TYPE_CHECKING, List
 from msal import TokenCache
 
 from azure.core.pipeline.policies import ContentDecodePolicy
@@ -44,7 +44,7 @@ class AadClientBase(abc.ABC):
             authority: str = None,
             cache: TokenCache = None,
             *,
-            additionally_allowed_tenant_ids: List[str] = [],
+            additionally_allowed_tenant_ids: List[str] = None,
             **kwargs
     ) -> None:
         self._authority = normalize_authority(authority) if authority else get_default_authority()
@@ -53,7 +53,7 @@ class AadClientBase(abc.ABC):
 
         self._cache = cache or TokenCache()
         self._client_id = client_id
-        self._additionally_allowed_tenant_ids = additionally_allowed_tenant_ids
+        self._additionally_allowed_tenant_ids = additionally_allowed_tenant_ids or []
         self._pipeline = self._build_pipeline(**kwargs)
 
     def get_cached_access_token(self, scopes, **kwargs):

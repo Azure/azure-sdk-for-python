@@ -5,10 +5,10 @@
 import os
 import logging
 from typing import List
-from azure.core.exceptions import ClientAuthenticationError
 
 from six.moves.urllib_parse import urlparse
 
+from azure.core.exceptions import ClientAuthenticationError
 from .._constants import EnvironmentVariables, KnownAuthorities
 
 

@@ -40,10 +40,10 @@ class AzureCliCredential(object):
             may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
             any tenant the application is installed.
     """
-    def __init__(self, *, additionally_allowed_tenant_ids: List[str] = []):
+    def __init__(self, *, additionally_allowed_tenant_ids: List[str] = None):
         object.__init__(self)
 
-        self._additionally_allowed_tenant_ids = additionally_allowed_tenant_ids
+        self._additionally_allowed_tenant_ids = additionally_allowed_tenant_ids or []
 
     def __enter__(self):
         return self

@@ -37,10 +37,10 @@ class AzureCliCredential(AsyncContextManager):
             any tenant the application is installed.
     """
 
-    def __init__(self, *, additionally_allowed_tenant_ids: List[str] = []):
+    def __init__(self, *, additionally_allowed_tenant_ids: List[str] = None):
         object.__init__(self)
 
-        self._additionally_allowed_tenant_ids = additionally_allowed_tenant_ids
+        self._additionally_allowed_tenant_ids = additionally_allowed_tenant_ids or []
 
     @log_get_token_async
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
