@@ -32,6 +32,26 @@ config = AzureAppConfigurationProvider.load(endpoint="your-endpoint", credential
 
 these providers will by default load all configurations with `(No Label)` from your configuration store.
 
+### Features
+
+Currently the Azure App Configuration Provider enables:
+
+* Connecting to an App Configuration Store using a connection string or Azure Active Directory.
+* Selecting multiple sets of configurations using `SettingSelector`.
+* Trim prefixes off key names.
+* Resolving Key Vault References, requires AAD.
+* Secret Resolver, resolve Key Vault References locally without connecting to Key Vault.
+* Json Content Type
+
+#### Future Features
+
+List of features we are going to add to the Python Provider in the future.
+
+* Geo-Replication support
+* Feature Management
+* Dynamic Refresh
+* Configuration Placeholders
+
 ## Examples
 
 ### Selecting configurations
