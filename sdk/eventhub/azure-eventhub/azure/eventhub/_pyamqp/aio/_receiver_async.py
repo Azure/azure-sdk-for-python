@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 import uuid
 import logging
@@ -10,35 +10,25 @@ from typing import Optional, Union
 
 from .._decode import decode_payload
 from ._link_async import Link
-from ..constants import (
-    LinkState,
-    Role
-)
+from ..constants import LinkState, Role
 from ..performatives import (
     TransferFrame,
     DispositionFrame,
 )
-from ..outcomes import (
-    Received,
-    Accepted,
-    Rejected,
-    Released,
-    Modified
-)
+from ..outcomes import Received, Accepted, Rejected, Released, Modified
 
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class ReceiverLink(Link):
-
     def __init__(self, session, handle, source_address, **kwargs):
-        name = kwargs.pop('name', None) or str(uuid.uuid4())
+        name = kwargs.pop("name", None) or str(uuid.uuid4())
         role = Role.Receiver
-        if 'target_address' not in kwargs:
-            kwargs['target_address'] = "receiver-link-{}".format(name)
+        if "target_address" not in kwargs:
+            kwargs["target_address"] = "receiver-link-{}".format(name)
         super(ReceiverLink, self).__init__(session, handle, name, role, source_address=source_address, **kwargs)
-        self._on_transfer = kwargs.pop('on_transfer')
+        self._on_transfer = kwargs.pop("on_transfer")
         self._received_payload = bytearray()
 
     async def _process_incoming_message(self, frame, message):
@@ -83,27 +73,22 @@ class ReceiverLink(Link):
         if wait == True:
             await self._session._connection.listen(wait=False)
             if self.state == LinkState.ERROR:
-                raise self._error    
+                raise self._error
         elif wait:
             await self._session._connection.listen(wait=wait)
             if self.state == LinkState.ERROR:
-                raise self._error   
+                raise self._error
 
     async def _outgoing_disposition(
-            self,
-            first: int,
-            last: Optional[int],
-            settled: Optional[bool],
-            state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
-            batchable: Optional[bool]
+        self,
+        first: int,
+        last: Optional[int],
+        settled: Optional[bool],
+        state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
+        batchable: Optional[bool],
     ):
         disposition_frame = DispositionFrame(
-            role=self.role,
-            first=first,
-            last=last,
-            settled=settled,
-            state=state,
-            batchable=batchable
+            role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
         if self.network_trace:
             _LOGGER.info("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
@@ -114,22 +99,16 @@ class ReceiverLink(Link):
         self._received_payload = bytearray()
 
     async def send_disposition(
-            self,
-            *,
-            wait: Union[bool, float] = False,
-            first_delivery_id: int,
-            last_delivery_id: Optional[int] = None,
-            settled: Optional[bool] = None,
-            delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
-            batchable: Optional[bool] = None
-        ):
+        self,
+        *,
+        wait: Union[bool, float] = False,
+        first_delivery_id: int,
+        last_delivery_id: Optional[int] = None,
+        settled: Optional[bool] = None,
+        delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
+        batchable: Optional[bool] = None
+    ):
         if self._is_closed:
             raise ValueError("Link already closed.")
-        await self._outgoing_disposition(
-            first_delivery_id,
-            last_delivery_id,
-            settled,
-            delivery_state,
-            batchable
-        )
+        await self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable)
         await self._wait_for_response(wait)

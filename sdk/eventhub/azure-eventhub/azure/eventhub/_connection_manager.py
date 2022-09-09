@@ -23,7 +23,11 @@ if TYPE_CHECKING:
 
     class ConnectionManager(Protocol):
         def get_connection(
-            self, *, host: Optional[str] = None, auth: Optional[Union[JWTTokenAuth, uamqp_JWTTokenAuth]] = None, endpoint: Optional[str] = None
+            self,
+            *,
+            host: Optional[str] = None,
+            auth: Optional[Union[JWTTokenAuth, uamqp_JWTTokenAuth]] = None,
+            endpoint: Optional[str] = None,
         ) -> Union[Connection, uamqp_Connection]:
             pass
 
@@ -55,13 +59,15 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
         self._max_frame_size = kwargs.get("max_frame_size")
         self._channel_max = kwargs.get("channel_max")
         self._idle_timeout = kwargs.get("idle_timeout")
-        self._remote_idle_timeout_empty_frame_send_ratio = kwargs.get(
-            "remote_idle_timeout_empty_frame_send_ratio"
-        )
+        self._remote_idle_timeout_empty_frame_send_ratio = kwargs.get("remote_idle_timeout_empty_frame_send_ratio")
         self._amqp_transport = kwargs.get("amqp_transport")
 
     def get_connection(
-        self, *, host: Optional[str] = None, auth: Optional[Union[JWTTokenAuth, uamqp_JWTTokenAuth]] = None, endpoint: Optional[str] = None
+        self,
+        *,
+        host: Optional[str] = None,
+        auth: Optional[Union[JWTTokenAuth, uamqp_JWTTokenAuth]] = None,
+        endpoint: Optional[str] = None,
     ) -> Union[Connection, uamqp_Connection]:
         with self._lock:
             if self._conn is None:
@@ -102,7 +108,11 @@ class _SeparateConnectionManager(object):
         pass
 
     def get_connection(  # pylint:disable=unused-argument, no-self-use
-        self, *, host: Optional[str] = None, auth: Optional[Union[JWTTokenAuth, uamqp_JWTTokenAuth]] = None, endpoint: Optional[str] = None
+        self,
+        *,
+        host: Optional[str] = None,
+        auth: Optional[Union[JWTTokenAuth, uamqp_JWTTokenAuth]] = None,
+        endpoint: Optional[str] = None,
     ) -> None:
         return None
 
@@ -117,7 +127,7 @@ class _SeparateConnectionManager(object):
 
 def get_connection_manager(**kwargs):
     # type: (...) -> 'ConnectionManager'
-    connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection) # type: ignore
+    connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)  # type: ignore
     if connection_mode == _ConnectionMode.ShareConnection:
         return _SharedConnectionManager(**kwargs)
     return _SeparateConnectionManager(**kwargs)

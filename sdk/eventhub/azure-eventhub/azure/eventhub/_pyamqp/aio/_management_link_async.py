@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 import time
 import logging
@@ -19,7 +19,7 @@ from ..constants import (
     ManagementExecuteOperationResult,
     ManagementOpenResult,
     SEND_DISPOSITION_REJECT,
-    MessageDeliveryState
+    MessageDeliveryState,
 )
 from ..error import AMQPException, ErrorCondition
 from ..message import Properties, _MessageDelivery
@@ -27,10 +27,11 @@ from ..message import Properties, _MessageDelivery
 _LOGGER = logging.getLogger(__name__)
 
 
-class ManagementLink(object): # pylint:disable=too-many-instance-attributes
+class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
     """
-       # TODO: Fill in docstring
+    # TODO: Fill in docstring
     """
+
     def __init__(self, session, endpoint, **kwargs):
         self.next_message_id = 0
         self.state = ManagementLinkState.IDLE
@@ -41,7 +42,7 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
             source_address=endpoint,
             on_link_state_change=self._on_sender_state_change,
             send_settle_mode=SenderSettleMode.Unsettled,
-            rcv_settle_mode=ReceiverSettleMode.First
+            rcv_settle_mode=ReceiverSettleMode.First,
         )
         self._response_link: ReceiverLink = session.create_receiver_link(
             endpoint,
@@ -49,13 +50,13 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
             on_link_state_change=self._on_receiver_state_change,
             on_transfer=self._on_message_received,
             send_settle_mode=SenderSettleMode.Unsettled,
-            rcv_settle_mode=ReceiverSettleMode.First
+            rcv_settle_mode=ReceiverSettleMode.First,
         )
-        self._on_amqp_management_error = kwargs.get('on_amqp_management_error')
-        self._on_amqp_management_open_complete = kwargs.get('on_amqp_management_open_complete')
+        self._on_amqp_management_error = kwargs.get("on_amqp_management_error")
+        self._on_amqp_management_open_complete = kwargs.get("on_amqp_management_open_complete")
 
-        self._status_code_field = kwargs.get('status_code_field', b'statusCode')
-        self._status_description_field = kwargs.get('status_description_field', b'statusDescription')
+        self._status_code_field = kwargs.get("status_code_field", b"statusCode")
+        self._status_description_field = kwargs.get("status_description_field", b"statusDescription")
 
         self._sender_connected = False
         self._receiver_connected = False
@@ -131,14 +132,13 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
                 to_remove_operation = operation
                 break
         if to_remove_operation:
-            mgmt_result = ManagementExecuteOperationResult.OK \
-                if 200 <= status_code <= 299 else ManagementExecuteOperationResult.FAILED_BAD_STATUS
+            mgmt_result = (
+                ManagementExecuteOperationResult.OK
+                if 200 <= status_code <= 299
+                else ManagementExecuteOperationResult.FAILED_BAD_STATUS
+            )
             await to_remove_operation.on_execute_operation_complete(
-                mgmt_result,
-                status_code,
-                status_description,
-                message,
-                response_detail.get(b'error-condition')
+                mgmt_result, status_code, status_description, message, response_detail.get(b"error-condition")
             )
             self._pending_operations.remove(to_remove_operation)
 
@@ -163,7 +163,7 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
                     condition=state[SEND_DISPOSITION_REJECT][0][0],  # 0 is error condition
                     description=state[SEND_DISPOSITION_REJECT][0][1],  # 1 is error description
                     info=state[SEND_DISPOSITION_REJECT][0][2],  # 2 is error info
-                )
+                ),
             )
 
     async def open(self):
@@ -173,12 +173,7 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
         await self._response_link.attach()
         await self._request_link.attach()
 
-    async def execute_operation(
-        self,
-        message,
-        on_execute_operation_complete,
-        **kwargs
-    ):
+    async def execute_operation(self, message, on_execute_operation_complete, **kwargs):
         """Execute a request and wait on a response.
 
         :param message: The message to send in the management request.
@@ -213,19 +208,11 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
             new_properties = Properties(message_id=self.next_message_id)
         message = message._replace(properties=new_properties)
         expire_time = (time.time() + timeout) if timeout else None
-        message_delivery = _MessageDelivery(
-            message,
-            MessageDeliveryState.WaitingToBeSent,
-            expire_time
-        )
+        message_delivery = _MessageDelivery(message, MessageDeliveryState.WaitingToBeSent, expire_time)
 
         on_send_complete = partial(self._on_send_complete, message_delivery)
 
-        await self._request_link.send_transfer(
-            message,
-            on_send_complete=on_send_complete,
-            timeout=timeout
-        )
+        await self._request_link.send_transfer(message, on_send_complete=on_send_complete, timeout=timeout)
         self.next_message_id += 1
         self._pending_operations.append(PendingManagementOperation(message, on_execute_operation_complete))
 
@@ -240,7 +227,7 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
                     None,
                     None,
                     pending_operation.message,
-                    AMQPException(condition=ErrorCondition.ClientError, description="Management link already closed.")
+                    AMQPException(condition=ErrorCondition.ClientError, description="Management link already closed."),
                 )
             self._pending_operations = []
         self.state = ManagementLinkState.IDLE

@@ -55,6 +55,7 @@ from .amqp import (
 from ._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
 from ._pyamqp.message import Message, BatchMessage
 from ._transport._pyamqp_transport import PyamqpTransport
+
 try:
     from ._transport._uamqp_transport import UamqpTransport
 except ImportError:
@@ -234,11 +235,7 @@ class EventData(object):
         event_data = cls(body="")
         # pylint: disable=protected-access
         event_data._message = message
-        event_data._raw_amqp_message = (
-            raw_amqp_message
-            if raw_amqp_message
-            else AmqpAnnotatedMessage(message=message)
-        )
+        event_data._raw_amqp_message = raw_amqp_message if raw_amqp_message else AmqpAnnotatedMessage(message=message)
         return event_data
 
     def _decode_non_data_body_as_str(self, encoding: str = "UTF-8") -> str:
@@ -251,7 +248,7 @@ class EventData(object):
 
         seq_list = [d for seq_section in body for d in seq_section]
         return str(decode_with_recurse(seq_list, encoding))
-    
+
     @property
     def message(self) -> LegacyMessage:
         if not self._uamqp_message:
@@ -515,13 +512,11 @@ class EventDataBatch(object):
         max_size_in_bytes: Optional[int] = None,
         partition_id: Optional[str] = None,
         partition_key: Optional[Union[str, bytes]] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
 
-        if partition_key and not isinstance(
-            partition_key, (str, bytes)
-        ):
+        if partition_key and not isinstance(partition_key, (str, bytes)):
             _LOGGER.info(
                 "WARNING: Setting partition_key of non-string value on the events to be sent is discouraged "
                 "as the partition_key will be ignored by the Event Hub service and events will be assigned "
@@ -533,19 +528,15 @@ class EventDataBatch(object):
         self._partition_key = partition_key
 
         self._message = self._amqp_transport.build_batch_message(data=[])
-        self._message = self._amqp_transport.set_message_partition_key(
-            self._message, self._partition_key
-        )
+        self._message = self._amqp_transport.set_message_partition_key(self._message, self._partition_key)
         self._size = self._amqp_transport.get_batch_message_encoded_size(self._message)
-        self.max_size_in_bytes = (
-            max_size_in_bytes or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
-        )
+        self.max_size_in_bytes = max_size_in_bytes or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
 
         self._count = 0
-        self._internal_events: List[
-            Union[EventData, AmqpAnnotatedMessage]
-        ] = []
-        self._uamqp_message = None if PyamqpTransport.TIMEOUT_FACTOR == self._amqp_transport.TIMEOUT_FACTOR else self._message
+        self._internal_events: List[Union[EventData, AmqpAnnotatedMessage]] = []
+        self._uamqp_message = (
+            None if PyamqpTransport.TIMEOUT_FACTOR == self._amqp_transport.TIMEOUT_FACTOR else self._message
+        )
 
     def __repr__(self) -> str:
         batch_repr = (
@@ -568,16 +559,13 @@ class EventDataBatch(object):
         partition_id: Optional[str] = None,
     ) -> EventDataBatch:
         outgoing_batch_data = [
-            transform_outbound_single_message(
-                m, EventData, amqp_transport.to_outgoing_amqp_message
-            )
-            for m in batch_data
+            transform_outbound_single_message(m, EventData, amqp_transport.to_outgoing_amqp_message) for m in batch_data
         ]
         batch_data_instance = cls(
             partition_key=partition_key,
             amqp_transport=amqp_transport,
             max_size_in_bytes=max_size_in_bytes,
-            partition_id=partition_id
+            partition_id=partition_id,
         )
 
         for event_data in outgoing_batch_data:
@@ -594,12 +582,14 @@ class EventDataBatch(object):
                     "the Event Hub frame size limit. Please send a smaller collection of EventData "
                     "or use EventDataBatch, which is guaranteed to be under the frame size limit"
                 )
-    
+
     @property
     def message(self) -> Union["uamqp_BatchMessage", LegacyBatchMessage]:
         if not self._uamqp_message:
             message = AmqpAnnotatedMessage(message=Message(*self._message))
-            self._uamqp_message = LegacyBatchMessage(message, to_outgoing_amqp_message=PyamqpTransport().to_outgoing_amqp_message)
+            self._uamqp_message = LegacyBatchMessage(
+                message, to_outgoing_amqp_message=PyamqpTransport().to_outgoing_amqp_message
+            )
         return self._uamqp_message
 
     @message.setter
@@ -613,7 +603,7 @@ class EventDataBatch(object):
         :rtype: int
         """
         return self._size
-    
+
     def add(self, event_data: Union[EventData, AmqpAnnotatedMessage]) -> None:
         """Try to add an EventData to the batch.
 
@@ -632,13 +622,8 @@ class EventDataBatch(object):
         )
 
         if self._partition_key:
-            if (
-                outgoing_event_data.partition_key
-                and outgoing_event_data.partition_key != self._partition_key
-            ):
-                raise ValueError(
-                    "The partition key of event_data does not match the partition key of this batch."
-                )
+            if outgoing_event_data.partition_key and outgoing_event_data.partition_key != self._partition_key:
+                raise ValueError("The partition key of event_data does not match the partition key of this batch.")
             if not outgoing_event_data.partition_key:
                 outgoing_event_data._message = self._amqp_transport.set_message_partition_key(
                     outgoing_event_data._message,  # pylint: disable=protected-access
@@ -652,15 +637,11 @@ class EventDataBatch(object):
         # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
         # message into the BatchMessage would be 5 bytes, if >= 256, it would be 8 bytes.
         size_after_add = (
-            self._size
-            + event_data_size
-            + _BATCH_MESSAGE_OVERHEAD_COST[0 if (event_data_size < 256) else 1]
+            self._size + event_data_size + _BATCH_MESSAGE_OVERHEAD_COST[0 if (event_data_size < 256) else 1]
         )
 
         if size_after_add > self.max_size_in_bytes:
-            raise ValueError(
-                f"EventDataBatch has reached its size limit: {self.max_size_in_bytes}"
-            )
+            raise ValueError(f"EventDataBatch has reached its size limit: {self.max_size_in_bytes}")
 
         self._amqp_transport.add_batch(self, outgoing_event_data, event_data)
         self._size = size_after_add

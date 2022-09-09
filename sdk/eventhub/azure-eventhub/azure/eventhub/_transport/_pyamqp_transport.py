@@ -20,20 +20,15 @@ from .._pyamqp.authentication import JWTTokenAuth
 from .._pyamqp.endpoints import Source, ApacheFilters
 from .._pyamqp._connection import Connection, _CLOSING_STATES
 
-from .._constants import (
-    NO_RETRY_ERRORS,
-    CUSTOM_CONDITION_BACKOFF,
-)
-
 from ._base import AmqpTransport
 from .._constants import (
     NO_RETRY_ERRORS,
     PROP_PARTITION_KEY,
+    CUSTOM_CONDITION_BACKOFF,
 )
 
 from ..exceptions import (
     ConnectError,
-    EventDataSendError,
     EventHubError,
     AuthenticationError,
     ConnectionLostError,
@@ -50,7 +45,7 @@ class PyamqpTransport(AmqpTransport):
 
     # define constants
     MAX_FRAME_SIZE_BYTES = constants.MAX_FRAME_SIZE_BYTES
-    MAX_MESSAGE_LENGTH_BYTES = constants.MAX_FRAME_SIZE_BYTES # TODO: define actual value in pyamqp 
+    MAX_MESSAGE_LENGTH_BYTES = constants.MAX_FRAME_SIZE_BYTES  # TODO: define actual value in pyamqp
     TIMEOUT_FACTOR = 1
     CONNECTION_CLOSING_STATES: Tuple = _CLOSING_STATES
 
@@ -109,9 +104,7 @@ class PyamqpTransport(AmqpTransport):
                 creation_time=int(annotated_message.properties.creation_time)
                 if annotated_message.properties.creation_time
                 else None,
-                absolute_expiry_time=int(
-                    annotated_message.properties.absolute_expiry_time
-                )
+                absolute_expiry_time=int(annotated_message.properties.absolute_expiry_time)
                 if annotated_message.properties.absolute_expiry_time
                 else None,
                 group_id=annotated_message.properties.group_id,
@@ -125,10 +118,10 @@ class PyamqpTransport(AmqpTransport):
             "application_properties": annotated_message.application_properties,
             "message_annotations": annotated_message.annotations,
             "delivery_annotations": annotated_message.delivery_annotations,
-            "data": annotated_message._data_body,   # pylint: disable=protected-access
-            "sequence": annotated_message._sequence_body,   # pylint: disable=protected-access
-            "value": annotated_message._value_body, # pylint: disable=protected-access
-            "footer": annotated_message.footer
+            "data": annotated_message._data_body,  # pylint: disable=protected-access
+            "sequence": annotated_message._sequence_body,  # pylint: disable=protected-access
+            "value": annotated_message._value_body,  # pylint: disable=protected-access
+            "footer": annotated_message.footer,
         }
 
         return Message(**message_dict)
@@ -182,10 +175,7 @@ class PyamqpTransport(AmqpTransport):
         :param dict[bytes, int] link_properties: The dict of symbols and corresponding values.
         :rtype: dict
         """
-        return {
-            symbol: utils.amqp_long_value(value)
-            for (symbol, value) in link_properties.items()
-        }
+        return {symbol: utils.amqp_long_value(value) for (symbol, value) in link_properties.items()}
 
     @staticmethod
     def create_connection(**kwargs):
@@ -205,14 +195,10 @@ class PyamqpTransport(AmqpTransport):
         :keyword str encoding: Required.
         """
         endpoint = kwargs.pop("endpoint")
-        host = kwargs.pop("host") # pylint:disable=unused-variable
-        auth = kwargs.pop("auth") # pylint:disable=unused-variable
+        host = kwargs.pop("host")  # pylint:disable=unused-variable
+        auth = kwargs.pop("auth")  # pylint:disable=unused-variable
         network_trace = kwargs.pop("debug")
-        return Connection(
-            endpoint,
-            network_trace=network_trace,
-            **kwargs
-        )
+        return Connection(endpoint, network_trace=network_trace, **kwargs)
 
     @staticmethod
     def close_connection(connection):
@@ -249,9 +235,7 @@ class PyamqpTransport(AmqpTransport):
 
         target = kwargs.pop("target")
         # TODO: extra passed in to pyamqp, but not used. should be used?
-        msg_timeout = kwargs.pop(   # pylint: disable=unused-variable
-            "msg_timeout"
-        )  # TODO: not used by pyamqp?
+        msg_timeout = kwargs.pop("msg_timeout")  # pylint: disable=unused-variable  # TODO: not used by pyamqp?
 
         return SendClient(
             config.hostname,
@@ -278,27 +262,25 @@ class PyamqpTransport(AmqpTransport):
         producer._handler.send_message(producer._unsent_events[0], timeout=timeout)
         producer._unsent_events = None
         # TODO: figure out if we want to use below, and see if it affects error story
-        #try:
+        # try:
         #    producer._open()
         #    producer._handler.send_message(
         #        producer._unsent_events[0], timeout=timeout_time
         #    )
-        #except TimeoutError as exc:
+        # except TimeoutError as exc:
         #    raise OperationTimeoutError(message=str(exc), details=exc)
-        #except Exception as exc:
+        # except Exception as exc:
         #    raise producer._handle_exception(exc)
 
     @staticmethod
-    def set_message_partition_key(
-        message, partition_key, **kwargs
-    ):
+    def set_message_partition_key(message, partition_key, **kwargs):
         # type: (Message, Optional[Union[bytes, str]], Any) -> Message
         """Set the partition key as an annotation on a uamqp message.
         :param Message message: The message to update.
         :param str partition_key: The partition key value.
         :rtype: Message
         """
-        encoding = kwargs.pop("encoding", 'utf-8')
+        encoding = kwargs.pop("encoding", "utf-8")
         if partition_key:
             annotations = message.message_annotations
             if annotations is None:
@@ -307,15 +289,13 @@ class PyamqpTransport(AmqpTransport):
                 partition_key = partition_key.decode(encoding)
             except AttributeError:
                 pass
-            annotations[
-                PROP_PARTITION_KEY
-            ] = partition_key  # pylint:disable=protected-access
+            annotations[PROP_PARTITION_KEY] = partition_key  # pylint:disable=protected-access
             header = Header(durable=True)
             return message._replace(message_annotations=annotations, header=header)
         return message
 
     @staticmethod
-    def add_batch(event_data_batch, outgoing_event_data, event_data):    # pylint: disable=unused-argument
+    def add_batch(event_data_batch, outgoing_event_data, event_data):  # pylint: disable=unused-argument
         """
         Add EventData to the data body of the BatchMessage.
         :param event_data_batch: EventDataBatch to add data to.
@@ -324,7 +304,7 @@ class PyamqpTransport(AmqpTransport):
         :rtype: None
         """
         event_data_batch._internal_events.append(event_data)
-        utils.add_batch(event_data_batch._message, outgoing_event_data._message)   # pylint: disable=protected-access
+        utils.add_batch(event_data_batch._message, outgoing_event_data._message)  # pylint: disable=protected-access
 
     @staticmethod
     def create_source(source, offset, selector):
@@ -338,10 +318,7 @@ class PyamqpTransport(AmqpTransport):
         source = Source(address=source, filters={})
         if offset is not None:
             filter_key = ApacheFilters.selector_filter
-            source.filters[filter_key] = (
-                filter_key,
-                utils.amqp_string_value(selector)
-            )
+            source.filters[filter_key] = (filter_key, utils.amqp_string_value(selector))
         return source
 
     @staticmethod
@@ -390,11 +367,7 @@ class PyamqpTransport(AmqpTransport):
         :rtype: bool
         """
         # pylint:disable=protected-access
-        handler.open(
-            connection=client._conn_manager.get_connection(
-                client._address.hostname, auth
-            )
-        )
+        handler.open(connection=client._conn_manager.get_connection(client._address.hostname, auth))
 
     @staticmethod
     def check_link_stolen(consumer, exception):
@@ -404,10 +377,7 @@ class PyamqpTransport(AmqpTransport):
         :param exception: Exception to check.
         """
 
-        if (
-            isinstance(exception, errors.AMQPLinkError)
-            and exception.condition == errors.ErrorCondition.LinkStolen
-        ):
+        if isinstance(exception, errors.AMQPLinkError) and exception.condition == errors.ErrorCondition.LinkStolen:
             raise consumer._handle_exception(exception)  # pylint: disable=protected-access
 
     @staticmethod
@@ -423,15 +393,11 @@ class PyamqpTransport(AmqpTransport):
         :keyword bool update_token: Whether to update token. If not updating token, then pass 300 to refresh_window.
         """
         # TODO: figure out why we're passing all these args to pyamqp JWTTokenAuth, which aren't being used
-        update_token = kwargs.pop("update_token") # pylint: disable=unused-variable
+        update_token = kwargs.pop("update_token")  # pylint: disable=unused-variable
         if update_token:
             # update_token not actually needed by pyamqp
             # just using to detect wh
-            return JWTTokenAuth(
-                auth_uri,
-                auth_uri,
-                get_token
-            )
+            return JWTTokenAuth(auth_uri, auth_uri, get_token)
         return JWTTokenAuth(
             auth_uri,
             auth_uri,
@@ -442,11 +408,11 @@ class PyamqpTransport(AmqpTransport):
             port=config.connection_port,
             verify=config.connection_verify,
         )
-        #if update_token:
+        # if update_token:
         #    token_auth.update_token()  # TODO: why don't we need to update in pyamqp?
 
     @staticmethod
-    def create_mgmt_client(address, mgmt_auth, config): # pylint: disable=unused-argument
+    def create_mgmt_client(address, mgmt_auth, config):  # pylint: disable=unused-argument
         """
         Creates and returns the mgmt AMQP client.
         :param _Address address: Required. The Address.
@@ -461,7 +427,7 @@ class PyamqpTransport(AmqpTransport):
             transport_type=config.transport_type,
             http_proxy=config.http_proxy,
             custom_endpoint_address=config.custom_endpoint_address,
-            connection_verify=config.connection_verify
+            connection_verify=config.connection_verify,
         )
 
     @staticmethod
@@ -500,16 +466,16 @@ class PyamqpTransport(AmqpTransport):
         if status_code in [401]:
             return errors.AuthenticationException(
                 errors.ErrorCondition.UnauthorizedAccess,
-                f"Management authentication failed. Status code: {status_code}, Description: {description!r}"
+                f"Management authentication failed. Status code: {status_code}, Description: {description!r}",
             )
         if status_code in [404]:
             return errors.AMQPConnectionError(
                 errors.ErrorCondition.NotFound,
-                f"Management connection failed. Status code: {status_code}, Description: {description!r}"
+                f"Management connection failed. Status code: {status_code}, Description: {description!r}",
             )
         return errors.AMQPConnectionError(
             errors.ErrorCondition.UnknownError,
-            f"Management request error. Status code: {status_code}, Description: {description!r}"
+            f"Management request error. Status code: {status_code}, Description: {description!r}",
         )
 
     @staticmethod
@@ -519,12 +485,9 @@ class PyamqpTransport(AmqpTransport):
         :param base: ClientBase.
         :param exception: Exception to check.
         """
-        if not base.running and isinstance(
-            exception, TimeoutError
-        ):
+        if not base.running and isinstance(exception, TimeoutError):
             exception = errors.AuthenticationException(
-                errors.ErrorCondition.InternalError,
-                description="Authorization timeout."
+                errors.ErrorCondition.InternalError, description="Authorization timeout."
             )
         return exception
 
@@ -546,11 +509,8 @@ class PyamqpTransport(AmqpTransport):
             error = EventHubError(str(exception), exception)
         return error
 
-
     @staticmethod
-    def _handle_exception(
-        exception, closable
-    ):  # pylint:disable=too-many-branches, too-many-statements
+    def _handle_exception(exception, closable):  # pylint:disable=too-many-branches, too-many-statements
         try:  # closable is a producer/consumer object
             name = closable._name  # pylint: disable=protected-access
         except AttributeError:  # closable is an client object

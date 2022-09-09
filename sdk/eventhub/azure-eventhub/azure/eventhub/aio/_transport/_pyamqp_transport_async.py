@@ -28,6 +28,7 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
+
 class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     """
     Class which defines pyamqp-based methods used by the producer and consumer.
@@ -51,14 +52,10 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword str encoding: Required.
         """
         endpoint = kwargs.pop("endpoint")
-        host = kwargs.pop("host") # pylint:disable=unused-variable
-        auth = kwargs.pop("auth") # pylint:disable=unused-variable
+        host = kwargs.pop("host")  # pylint:disable=unused-variable
+        auth = kwargs.pop("auth")  # pylint:disable=unused-variable
         network_trace = kwargs.pop("debug")
-        return ConnectionAsync(
-            endpoint,
-            network_trace=network_trace,
-            **kwargs
-        )
+        return ConnectionAsync(endpoint, network_trace=network_trace, **kwargs)
 
     @staticmethod
     async def close_connection(connection):
@@ -69,7 +66,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         await connection.close()
 
     @staticmethod
-    def create_send_client(*, config, **kwargs): # pylint:disable=unused-argument
+    def create_send_client(*, config, **kwargs):  # pylint:disable=unused-argument
         """
         Creates and returns the pyamqp SendClient.
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -86,9 +83,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         """
         target = kwargs.pop("target")
         # TODO: extra passed in to pyamqp, but not used. should be used?
-        msg_timeout = kwargs.pop(   # pylint: disable=unused-variable
-            "msg_timeout"
-        )  # TODO: not used by pyamqp?
+        msg_timeout = kwargs.pop("msg_timeout")  # pylint: disable=unused-variable  # TODO: not used by pyamqp?
 
         return SendClientAsync(
             config.hostname,
@@ -116,7 +111,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         producer._unsent_events = None
 
     @staticmethod
-    def create_receive_client(*, config, **kwargs): # pylint:disable=unused-argument
+    def create_receive_client(*, config, **kwargs):  # pylint:disable=unused-argument
         """
         Creates and returns the receive client.
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -143,7 +138,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         return ReceiveClientAsync(
             config.hostname,
             source,
-            receive_settle_mode=constants.ReceiverSettleMode.First, # TODO: make more descriptive in pyamqp?
+            receive_settle_mode=constants.ReceiverSettleMode.First,  # TODO: make more descriptive in pyamqp?
             http_proxy=config.http_proxy,
             transport_type=config.transport_type,
             custom_endpoint_address=config.custom_endpoint_address,
@@ -156,7 +151,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         while consumer._callback_task_run:
             async with consumer._message_buffer_lock:
                 messages = [
-                    consumer._message_buffer.popleft() for _ in range(min(max_batch_size, len(consumer._message_buffer)))
+                    consumer._message_buffer.popleft()
+                    for _ in range(min(max_batch_size, len(consumer._message_buffer)))
                 ]
             events = [EventData._from_message(message) for message in messages]
             now_time = time.time()
@@ -173,9 +169,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
     @staticmethod
     async def _receive_task(consumer):
-        max_retries = (
-            consumer._client._config.max_retries  # pylint:disable=protected-access
-        )
+        max_retries = consumer._client._config.max_retries  # pylint:disable=protected-access
         retried_times = 0
         while retried_times <= max_retries:
             try:
@@ -185,8 +179,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 raise
             except Exception as exception:  # pylint: disable=broad-except
                 if (
-                        isinstance(exception, errors.AMQPLinkError)
-                        and exception.condition == errors.ErrorCondition.LinkStolen  # pylint: disable=no-member
+                    isinstance(exception, errors.AMQPLinkError)
+                    and exception.condition == errors.ErrorCondition.LinkStolen  # pylint: disable=no-member
                 ):
                     raise await consumer._handle_exception(exception)
                 if not consumer.running:  # exit by close
@@ -220,7 +214,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         # pylint:disable=protected-access
         consumer._callback_task_run = True
         consumer._last_callback_called_time = time.time()
-        callback_task = asyncio.ensure_future(PyamqpTransportAsync._callback_task(consumer, batch, max_batch_size, max_wait_time))
+        callback_task = asyncio.ensure_future(
+            PyamqpTransportAsync._callback_task(consumer, batch, max_batch_size, max_wait_time)
+        )
         receive_task = asyncio.ensure_future(PyamqpTransportAsync._receive_task(consumer))
 
         try:
@@ -243,15 +239,11 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         then pass 300 to refresh_window.
         """
         # TODO: figure out why we're passing all these args to pyamqp JWTTokenAuth, which aren't being used
-        update_token = kwargs.pop("update_token") # pylint: disable=unused-variable
+        update_token = kwargs.pop("update_token")  # pylint: disable=unused-variable
         if update_token:
             # update_token not actually needed by pyamqp
             # just using to detect wh
-            return JWTTokenAuthAsync(
-                auth_uri,
-                auth_uri,
-                get_token
-            )
+            return JWTTokenAuthAsync(auth_uri, auth_uri, get_token)
         return JWTTokenAuthAsync(
             auth_uri,
             auth_uri,
@@ -262,11 +254,11 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             port=config.connection_port,
             verify=config.connection_verify,
         )
-        #if update_token:
+        # if update_token:
         #    token_auth.update_token()  # TODO: why don't we need to update in pyamqp?
 
     @staticmethod
-    def create_mgmt_client(address, mgmt_auth, config): # pylint: disable=unused-argument
+    def create_mgmt_client(address, mgmt_auth, config):  # pylint: disable=unused-argument
         """
         Creates and returns the mgmt AMQP client.
         :param _Address address: Required. The Address.
@@ -281,7 +273,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             transport_type=config.transport_type,
             http_proxy=config.http_proxy,
             custom_endpoint_address=config.custom_endpoint_address,
-            connection_verify=config.connection_verify
+            connection_verify=config.connection_verify,
         )
 
     @staticmethod

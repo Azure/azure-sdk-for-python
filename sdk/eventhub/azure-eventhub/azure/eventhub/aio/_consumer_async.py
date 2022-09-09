@@ -18,6 +18,7 @@ from .._constants import EPOCH_SYMBOL, TIMEOUT_SYMBOL, RECEIVER_RUNTIME_METRIC_S
 
 if TYPE_CHECKING:
     from typing import Deque
+
     try:
         from uamqp import ReceiveClientAsync as uamqp_ReceiveClientAsync, Message as uamqp_Message
         from uamqp.types import AMQPType as uamqp_AMQPType
@@ -27,7 +28,7 @@ if TYPE_CHECKING:
         uamqp_ReceiveClientAsync = None
         uamqp_AMQPType = None
         uamqp_JWTTokenAsync = None
-        
+
     from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
     from .._pyamqp.aio._client_async import ReceiveClientAsync
     from .._pyamqp import types
@@ -37,9 +38,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubConsumer(
-    ConsumerProducerMixin
-):  # pylint:disable=too-many-instance-attributes
+class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instance-attributes
     """
     A consumer responsible for reading EventData from a specific Event Hub
     partition and as a member of a specific consumer group.
@@ -80,9 +79,7 @@ class EventHubConsumer(
         owner_level = kwargs.get("owner_level", None)
         keep_alive = kwargs.get("keep_alive", None)
         auto_reconnect = kwargs.get("auto_reconnect", True)
-        track_last_enqueued_event_properties = kwargs.get(
-            "track_last_enqueued_event_properties", False
-        )
+        track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
         idle_timeout = kwargs.get("idle_timeout", None)
 
         self.running = False
@@ -111,15 +108,12 @@ class EventHubConsumer(
         if owner_level is not None:
             link_properties[EPOCH_SYMBOL] = int(owner_level)
         link_property_timeout_ms = (
-            self._client._config.receive_timeout
-            or self._timeout  # pylint:disable=protected-access
+            self._client._config.receive_timeout or self._timeout  # pylint:disable=protected-access
         ) * self._amqp_transport.TIMEOUT_FACTOR
         link_properties[TIMEOUT_SYMBOL] = int(link_property_timeout_ms)
         self._link_properties = self._amqp_transport.create_link_properties(link_properties)
         self._handler: Optional[ReceiveClientAsync] = None
-        self._track_last_enqueued_event_properties = (
-            track_last_enqueued_event_properties
-        )
+        self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
         self._message_buffer: Deque[uamqp_Message] = deque()
         self._last_received_event: Optional[EventData] = None
         self._message_buffer_lock = asyncio.Lock()
@@ -128,14 +122,12 @@ class EventHubConsumer(
 
     def _create_handler(self, auth: Union[uamqp_JWTTokenAsync, JWTTokenAuthAsync]) -> None:
         source = self._amqp_transport.create_source(
-            self._source,
-            self._offset,
-            event_position_selector(self._offset, self._offset_inclusive)
+            self._source, self._offset, event_position_selector(self._offset, self._offset_inclusive)
         )
         desired_capabilities = [RECEIVER_RUNTIME_METRIC_SYMBOL] if self._track_last_enqueued_event_properties else None
 
         self._handler = self._amqp_transport.create_receive_client(
-            config=self._client._config,    # pylint:disable=protected-access
+            config=self._client._config,  # pylint:disable=protected-access
             source=source,
             auth=auth,
             network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
@@ -163,7 +155,5 @@ class EventHubConsumer(
         self._last_received_event = event_data
         return event_data
 
-    async def receive(
-        self, batch=False, max_batch_size=300, max_wait_time=None
-    ) -> None:
+    async def receive(self, batch=False, max_batch_size=300, max_wait_time=None) -> None:
         await self._amqp_transport.receive_messages_async(self, batch, max_batch_size, max_wait_time)
