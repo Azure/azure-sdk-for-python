@@ -113,7 +113,7 @@ def test_tenant_id():
         responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
     )
 
-    credential = CertificateCredential("tenant-id", "client-id", PEM_CERT_PATH, transport=transport)
+    credential = CertificateCredential("tenant-id", "client-id", PEM_CERT_PATH, transport=transport, additionally_allowed_tenant_ids=['*'])
 
     credential.get_token("scope", tenant_id="tenant_id")
 
@@ -381,6 +381,7 @@ def test_multitenant_authentication(cert_path, cert_password):
         cert_path,
         password=cert_password,
         transport=Mock(send=send),
+        additionally_allowed_tenant_ids=['*']
     )
     token = credential.get_token("scope")
     assert token.token == first_token
@@ -411,7 +412,7 @@ def test_multitenant_authentication_backcompat(cert_path, cert_password):
         return mock_response(json_payload=build_aad_response(access_token=token))
 
     credential = CertificateCredential(
-        expected_tenant, "client-id", cert_path, password=cert_password, transport=Mock(send=send)
+        expected_tenant, "client-id", cert_path, password=cert_password, transport=Mock(send=send), additionally_allowed_tenant_ids=['*']
     )
 
     token = credential.get_token("scope")

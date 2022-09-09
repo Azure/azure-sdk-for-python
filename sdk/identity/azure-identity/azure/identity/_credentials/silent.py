@@ -37,6 +37,7 @@ class SilentAuthenticationCredential(object):
         validate_tenant_id(self._tenant_id)
         self._cache = kwargs.pop("_cache", None)
         self._client_applications = {}  # type: Dict[str, PublicClientApplication]
+        self._additionally_allowed_tenant_ids = kwargs.pop("additionally_allowed_tenant_ids", [])
         self._client = MsalClient(**kwargs)
         self._initialized = False
 
@@ -73,7 +74,11 @@ class SilentAuthenticationCredential(object):
         self._initialized = True
 
     def _get_client_application(self, **kwargs):
-        tenant_id = resolve_tenant(self._tenant_id, **kwargs)
+        tenant_id = resolve_tenant(
+            self._tenant_id,
+            additionally_allowed_tenant_ids=self._additionally_allowed_tenant_ids,
+            **kwargs
+        )
         if tenant_id not in self._client_applications:
             # CP1 = can handle claims challenges (CAE)
             capabilities = None if "AZURE_IDENTITY_DISABLE_CP1" in os.environ else ["CP1"]

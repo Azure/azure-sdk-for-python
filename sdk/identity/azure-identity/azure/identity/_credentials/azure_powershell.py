@@ -7,7 +7,7 @@ import logging
 import platform
 import subprocess
 import sys
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 import six
 
@@ -21,7 +21,7 @@ from .._internal.decorators import log_get_token
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
-    from typing import Any, List, Tuple
+    from typing import Any, Tuple
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -51,7 +51,14 @@ class AzurePowerShellCredential(object):
     """Authenticates by requesting a token from Azure PowerShell.
 
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.
+
+    :keyword list[str] additionally_allowed_tenant_ids: optional additional tenant ids for which the credential
+            may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
+            any tenant the application is installed.
     """
+    def __init__(self, *, additionally_allowed_tenant_ids: List[str] = None):
+
+        self._additionally_allowed_tenant_ids = additionally_allowed_tenant_ids or []
 
     def __enter__(self):
         return self
@@ -81,7 +88,11 @@ class AzurePowerShellCredential(object):
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked Azure PowerShell but didn't
           receive an access token
         """
-        tenant_id = resolve_tenant("", **kwargs)
+        tenant_id = resolve_tenant(
+            "",
+            additionally_allowed_tenant_ids=self._additionally_allowed_tenant_ids,
+            **kwargs
+        )
         command_line = get_command_line(scopes, tenant_id)
         output = run_command_line(command_line)
         token = parse_token(output)

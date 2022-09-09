@@ -138,7 +138,9 @@ async def test_tenant_id():
     )
 
     credential = SharedTokenCacheCredential(
-        _cache=populated_cache(get_account_event("test@user", "uid", "utid")), transport=transport
+        _cache=populated_cache(get_account_event("test@user", "uid", "utid")),
+        transport=transport,
+        additionally_allowed_tenant_ids=['*']
     )
 
     await credential.get_token("scope", tenant_id="tenant_id")
@@ -642,7 +644,7 @@ async def test_multitenant_authentication():
     cache = populated_cache(expected_account)
 
     credential = SharedTokenCacheCredential(
-        authority=authority, transport=Mock(send=send), _cache=cache
+        authority=authority, transport=Mock(send=send), _cache=cache, additionally_allowed_tenant_ids=['*']
     )
     token = await credential.get_token("scope")
     assert token.token == first_token

@@ -152,35 +152,6 @@ def test_timeout():
             AzureCliCredential().get_token("scope")
 
 
-def test_multitenant_authentication_class():
-    default_tenant = "first-tenant"
-    first_token = "***"
-    second_tenant = "second-tenant"
-    second_token = first_token * 2
-
-    def fake_check_output(command_line, **_):
-        match = re.search("--tenant (.*)", command_line[-1])
-        tenant = match.groups()[0] if match else default_tenant
-        assert tenant in (default_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
-        return json.dumps(
-            {
-                "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
-                "accessToken": first_token if tenant == default_tenant else second_token,
-                "subscription": "some-guid",
-                "tenant": tenant,
-                "tokenType": "Bearer",
-            }
-        )
-
-    with mock.patch(CHECK_OUTPUT, fake_check_output):
-        token = AzureCliCredential().get_token("scope")
-        assert token.token == first_token
-
-        token = AzureCliCredential(tenant_id= default_tenant).get_token("scope")
-        assert token.token == first_token
-
-        token = AzureCliCredential(tenant_id= second_tenant).get_token("scope")
-        assert token.token == second_token
         
 def test_multitenant_authentication():
     default_tenant = "first-tenant"
@@ -223,7 +194,6 @@ def test_multitenant_authentication_not_allowed():
 
     def fake_check_output(command_line, **_):
         match = re.search("--tenant (.*)", command_line[-1])
-        assert match is None or match[1] == expected_tenant
         return json.dumps(
             {
                 "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
@@ -239,8 +209,5 @@ def test_multitenant_authentication_not_allowed():
         token = credential.get_token("scope")
         assert token.token == expected_token
 
-        with mock.patch.dict(
-            "os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}
-        ):
-            token = credential.get_token("scope", tenant_id="un" + expected_tenant)
+        token = credential.get_token("scope", tenant_id="un" + expected_tenant)
         assert token.token == expected_token
