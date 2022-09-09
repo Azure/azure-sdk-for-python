@@ -29,7 +29,7 @@ import warnings
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
-from ._base import build_options, validate_cache_staleness_value
+from ._base import build_options, validate_cache_staleness_value, _deserialize_throughput
 from .exceptions import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
 from .offer import ThroughputProperties
@@ -665,8 +665,7 @@ class ContainerProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, throughput_properties)
 
-        return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
-                                    properties=throughput_properties[0])
+        return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace
     def replace_throughput(self, throughput, **kwargs):
