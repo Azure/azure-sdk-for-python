@@ -27,6 +27,9 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
     :keyword str tenant_id: ID of the tenant the credential should authenticate in. Defaults to the "Azure: Tenant"
         setting in VS Code's user settings or, when that setting has no value, the "organizations" tenant, which
         supports only Azure Active Directory work or school accounts.
+    :keyword list[str] additionally_allowed_tenant_ids: optional additional tenant ids for which the credential
+            may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
+            any tenant the application is installed.
     """
 
     async def __aenter__(self) -> "VisualStudioCodeCredential":

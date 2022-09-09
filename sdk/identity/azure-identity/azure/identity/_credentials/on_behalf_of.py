@@ -48,6 +48,9 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass
         appropriately encoded bytes instead.
     :paramtype password: str or bytes
+    :keyword list[str] additionally_allowed_tenant_ids: optional additional tenant ids for which the credential
+            may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
+            any tenant the application is installed.
     """
 
     def __init__(self, tenant_id, client_id, **kwargs):

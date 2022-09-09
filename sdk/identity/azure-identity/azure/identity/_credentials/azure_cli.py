@@ -10,7 +10,7 @@ import re
 import subprocess
 import sys
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 import six
 
@@ -35,7 +35,15 @@ class AzureCliCredential(object):
     """Authenticates by requesting a token from the Azure CLI.
 
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
+
+    :keyword list[str] additionally_allowed_tenant_ids: optional additional tenant ids for which the credential
+            may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
+            any tenant the application is installed.
     """
+    def __init__(self, *, additionally_allowed_tenant_ids: List[str] = []):
+        object.__init__(self)
+
+        self._additionally_allowed_tenant_ids = additionally_allowed_tenant_ids
 
     def __enter__(self):
         return self
@@ -67,7 +75,11 @@ class AzureCliCredential(object):
 
         resource = _scopes_to_resource(*scopes)
         command = COMMAND_LINE.format(resource)
-        tenant = resolve_tenant("", **kwargs)
+        tenant = resolve_tenant(
+            "",
+            additionally_allowed_tenant_ids=self._additionally_allowed_tenant_ids,
+            **kwargs
+        )
         if tenant:
             command += " --tenant " + tenant
         output = _run_command(command)

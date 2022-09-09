@@ -1,5 +1,11 @@
 # Release History
 
+## 1.11.0 (2022-09-13)
+
+### Features Added
+
+- Added `additionally_allowed_tenant_ids` support.
+
 ## 1.10.0 (2022-04-28)
 
 ### Breaking Changes

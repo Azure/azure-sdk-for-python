@@ -61,7 +61,7 @@ def test_tenant_id():
     )
 
     credential = AuthorizationCodeCredential(
-        "tenant-id", "client-id", "auth-code", "http://localhost", transport=transport
+        "tenant-id", "client-id", "auth-code", "http://localhost", transport=transport, additionally_allowed_tenant_ids=['*']
     )
 
     credential.get_token("scope", tenant_id="tenant_id")
@@ -148,6 +148,7 @@ def test_multitenant_authentication():
         "authcode",
         "https://localhost",
         transport=Mock(send=send),
+        additionally_allowed_tenant_ids=['*']
     )
     token = credential.get_token("scope")
     assert token.token == first_token
@@ -173,7 +174,7 @@ def test_multitenant_authentication_not_allowed():
         return mock_response(json_payload=build_aad_response(access_token=token, refresh_token="**"))
 
     credential = AuthorizationCodeCredential(
-        expected_tenant, "client-id", "authcode", "https://localhost", transport=Mock(send=send)
+        expected_tenant, "client-id", "authcode", "https://localhost", transport=Mock(send=send), additionally_allowed_tenant_ids=['*']
     )
 
     token = credential.get_token("scope")

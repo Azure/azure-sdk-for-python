@@ -85,7 +85,7 @@ async def test_multitenant_authentication():
 
     transport = Mock(send=Mock(wraps=send))
     credential = OnBehalfOfCredential(
-        first_tenant, "client-id", client_secret="secret", user_assertion="assertion", transport=transport
+        first_tenant, "client-id", client_secret="secret", user_assertion="assertion", transport=transport, additionally_allowed_tenant_ids=['*']
     )
     token = await credential.get_token("scope")
     assert token.token == first_token

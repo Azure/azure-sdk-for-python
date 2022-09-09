@@ -30,6 +30,9 @@ class AuthorizationCodeCredential(GetTokenMixin):
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
     :keyword str client_secret: One of the application's client secrets. Required only for web apps and web APIs.
+    :keyword list[str] additionally_allowed_tenant_ids: optional additional tenant ids for which the credential
+            may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
+            any tenant the application is installed.
     """
 
     def __init__(self, tenant_id, client_id, authorization_code, redirect_uri, **kwargs):

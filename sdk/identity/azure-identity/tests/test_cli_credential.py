@@ -193,7 +193,6 @@ def test_multitenant_authentication_not_allowed():
 
     def fake_check_output(command_line, **_):
         match = re.search("--tenant (.*)", command_line[-1])
-        assert match is None or match[1] == expected_tenant
         return json.dumps(
             {
                 "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
@@ -209,8 +208,5 @@ def test_multitenant_authentication_not_allowed():
         token = credential.get_token("scope")
         assert token.token == expected_token
 
-        with mock.patch.dict(
-            "os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}
-        ):
-            token = credential.get_token("scope", tenant_id="un" + expected_tenant)
+        token = credential.get_token("scope", tenant_id="un" + expected_tenant)
         assert token.token == expected_token

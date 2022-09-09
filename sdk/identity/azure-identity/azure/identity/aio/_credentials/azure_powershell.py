@@ -4,7 +4,7 @@
 # ------------------------------------
 import asyncio
 import sys
-from typing import cast, TYPE_CHECKING
+from typing import cast, TYPE_CHECKING, List
 
 from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
@@ -20,7 +20,7 @@ from ..._internal import resolve_tenant
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
-    from typing import Any, List
+    from typing import Any
     from azure.core.credentials import AccessToken
 
 
@@ -28,7 +28,16 @@ class AzurePowerShellCredential(AsyncContextManager):
     """Authenticates by requesting a token from Azure PowerShell.
 
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.
+
+    :keyword list[str] additionally_allowed_tenant_ids: optional additional tenant ids for which the credential
+            may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
+            any tenant the application is installed.
     """
+
+    def __init__(self, *, additionally_allowed_tenant_ids: List[str] = []):
+        object.__init__(self)
+
+        self._additionally_allowed_tenant_ids = additionally_allowed_tenant_ids
 
     @log_get_token_async
     async def get_token(
@@ -53,7 +62,11 @@ class AzurePowerShellCredential(AsyncContextManager):
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
             return _SyncCredential().get_token(*scopes, **kwargs)
 
-        tenant_id = resolve_tenant("", **kwargs)
+        tenant_id = resolve_tenant(
+            "",
+            additionally_allowed_tenant_ids=self._additionally_allowed_tenant_ids,
+            **kwargs
+        )
         command_line = get_command_line(scopes, tenant_id)
         output = await run_command_line(command_line)
         token = parse_token(output)

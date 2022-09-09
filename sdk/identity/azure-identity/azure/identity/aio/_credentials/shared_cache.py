@@ -87,4 +87,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
         raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))
 
     def _get_auth_client(self, **kwargs: "Any") -> "AadClientBase":
-        return AadClient(client_id=DEVELOPER_SIGN_ON_CLIENT_ID, **kwargs)
+        return AadClient(
+            client_id=DEVELOPER_SIGN_ON_CLIENT_ID,
+            **kwargs
+        )
