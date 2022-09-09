@@ -67,12 +67,12 @@ class ReceiverLink(Link):
                 self._outgoing_disposition(first=frame[1], settled=True, state=delivery_state)
 
     def _wait_for_response(self, wait: Union[bool, float]) -> None:
-        if wait == True:
-            self._session._connection.listen(wait=False)
+        if wait is True:
+            self._session._connection.listen(wait=False) # pylint: disable=protected-access
             if self.state == LinkState.ERROR:
                 raise self._error
         elif wait:
-            self._session._connection.listen(wait=wait)
+            self._session._connection.listen(wait=wait) # pylint: disable=protected-access
             if self.state == LinkState.ERROR:
                 raise self._error
 
@@ -89,7 +89,7 @@ class ReceiverLink(Link):
         )
         if self.network_trace:
             _LOGGER.info("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
-        self._session._outgoing_disposition(disposition_frame)
+        self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
 
     def attach(self):
         super().attach()

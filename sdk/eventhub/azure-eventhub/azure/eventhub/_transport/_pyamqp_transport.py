@@ -303,7 +303,7 @@ class PyamqpTransport(AmqpTransport):
         :param event_data: EventData to add to internal batch events. uamqp use only.
         :rtype: None
         """
-        event_data_batch._internal_events.append(event_data)
+        event_data_batch._internal_events.append(event_data) # pylint: disable=protected-access
         utils.add_batch(event_data_batch._message, outgoing_event_data._message)  # pylint: disable=protected-access
 
     @staticmethod

@@ -177,7 +177,7 @@ class AMQPClient(object):
         self._connection.listen(wait=self._socket_timeout)
 
     def _close_link(self, **kwargs):
-        if self._link and not self._link._is_closed:
+        if self._link and not self._link._is_closed: # pylint: disable=protected-access
             self._link.detach(close=True)
             self._link = None
 

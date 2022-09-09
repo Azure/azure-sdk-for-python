@@ -103,7 +103,7 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
             self.state = CbsState.OPEN if management_open_result == ManagementOpenResult.OK else CbsState.CLOSED
             _LOGGER.info(
                 "CBS for connection %r completed opening with status: %r",
-                self._connection._container_id,
+                self._connection._container_id, # pylint: disable=protected-access
                 management_open_result,
             )  # pylint:disable=protected-access
 

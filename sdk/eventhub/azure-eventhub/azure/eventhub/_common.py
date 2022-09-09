@@ -625,7 +625,7 @@ class EventDataBatch(object):
             if outgoing_event_data.partition_key and outgoing_event_data.partition_key != self._partition_key:
                 raise ValueError("The partition key of event_data does not match the partition key of this batch.")
             if not outgoing_event_data.partition_key:
-                outgoing_event_data._message = self._amqp_transport.set_message_partition_key(
+                outgoing_event_data._message = self._amqp_transport.set_message_partition_key( # pylint: disable=protected-access
                     outgoing_event_data._message,  # pylint: disable=protected-access
                     self._partition_key,
                 )

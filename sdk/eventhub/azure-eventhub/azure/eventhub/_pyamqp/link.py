@@ -153,7 +153,7 @@ class Link(object):
         )
         if self.network_trace:
             _LOGGER.info("-> %r", attach_frame, extra=self.network_trace_params)
-        self._session._outgoing_attach(attach_frame)
+        self._session._outgoing_attach(attach_frame) # pylint: disable=protected-access
 
     def _incoming_attach(self, frame):
         if self.network_trace:
@@ -195,7 +195,7 @@ class Link(object):
             "echo": kwargs.get("echo"),
             "properties": kwargs.get("properties"),
         }
-        self._session._outgoing_flow(flow_frame)
+        self._session._outgoing_flow(flow_frame) # pylint: disable=protected-access
 
     def _incoming_flow(self, frame):
         pass
@@ -207,7 +207,7 @@ class Link(object):
         detach_frame = DetachFrame(handle=self.handle, closed=close, error=error)
         if self.network_trace:
             _LOGGER.info("-> %r", detach_frame, extra=self.network_trace_params)
-        self._session._outgoing_detach(detach_frame)
+        self._session._outgoing_detach(detach_frame) # pylint: disable=protected-access
         if close:
             self._is_closed = True
 

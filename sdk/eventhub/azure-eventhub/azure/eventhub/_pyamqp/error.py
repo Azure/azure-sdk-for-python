@@ -183,8 +183,8 @@ class RetryPolicy:
 
 AMQPError = namedtuple('error', ['condition', 'description', 'info'])
 AMQPError.__new__.__defaults__ = (None,) * len(AMQPError._fields)
-AMQPError._code = 0x0000001d
-AMQPError._definition = (
+AMQPError._code = 0x0000001d # pylint: disable=protected-access
+AMQPError._definition = ( # pylint: disable=protected-access
     FIELD('condition', AMQPTypes.symbol, True, None, False),
     FIELD('description', AMQPTypes.string, False, None, False),
     FIELD('info', FieldDefinition.fields, False, None, False),

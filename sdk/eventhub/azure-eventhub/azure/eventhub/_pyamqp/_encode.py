@@ -672,7 +672,7 @@ def describe_performative(performative):
     # type: (Performative) -> Tuple(bytes, bytes)
     body = []
     for index, value in enumerate(performative):
-        field = performative._definition[index]
+        field = performative._definition[index] # pylint: disable=protected-access
         if value is None:
             body.append({TYPE: AMQPTypes.null, VALUE: None})
         elif field is None:
@@ -692,7 +692,7 @@ def describe_performative(performative):
 
     return {
         TYPE: AMQPTypes.described,
-        VALUE: ({TYPE: AMQPTypes.ulong, VALUE: performative._code}, {TYPE: AMQPTypes.list, VALUE: body}),
+        VALUE: ({TYPE: AMQPTypes.ulong, VALUE: performative._code}, {TYPE: AMQPTypes.list, VALUE: body}), # pylint: disable=protected-access
     }
 
 

@@ -133,7 +133,7 @@ class AMQPClientAsync(AMQPClientSync):
         await self._connection.listen(wait=self._socket_timeout)
 
     async def _close_link_async(self, **kwargs):
-        if self._link and not self._link._is_closed:
+        if self._link and not self._link._is_closed: # pylint: disable=protected-access
             await self._link.detach(close=True)
             self._link = None
 
