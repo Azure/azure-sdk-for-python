@@ -59,7 +59,6 @@ class AutoScaleTest(unittest.TestCase):
         self.assertEqual(
             created_container_properties.auto_scale_max_throughput, 7000)
         self.assertEqual(created_container_properties.auto_scale_increment_percent, 0)
-        self.assertEqual(created_container_properties.offer_throughput, None)
 
         self.created_database.delete_container(created_container)
 
@@ -85,8 +84,6 @@ class AutoScaleTest(unittest.TestCase):
         # Testing the input value of the increment_percentage
         self.assertEqual(
             created_container_properties.auto_scale_increment_percent, 3)
-
-        self.client.delete_database(test_config._test_config.TEST_DATABASE_ID)
 
     def test_create_database(self):
         # Testing auto_scale_settings for the create_database method
@@ -120,7 +117,7 @@ class AutoScaleTest(unittest.TestCase):
 
     def test_replace_throughput(self):
         created_container = self.created_database.create_container(
-            id='container_with_auto_scale_settings',
+            id='container_with_replace_functionality',
             partition_key=PartitionKey(path="/id"),
             offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
 
@@ -133,3 +130,5 @@ class AutoScaleTest(unittest.TestCase):
             created_container_properties.auto_scale_max_throughput, 7000)
         self.assertEqual(
             created_container_properties.auto_scale_increment_percent, 20)
+
+        self.client.delete_database(test_config._test_config.TEST_DATABASE_ID)
