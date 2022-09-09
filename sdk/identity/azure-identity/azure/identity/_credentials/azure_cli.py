@@ -41,7 +41,6 @@ class AzureCliCredential(object):
             any tenant the application is installed.
     """
     def __init__(self, *, additionally_allowed_tenant_ids: List[str] = None):
-        object.__init__(self)
 
         self._additionally_allowed_tenant_ids = additionally_allowed_tenant_ids or []
 
