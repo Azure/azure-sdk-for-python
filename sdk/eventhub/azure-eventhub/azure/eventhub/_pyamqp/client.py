@@ -481,7 +481,7 @@ class SendClient(AMQPClient):
             MessageDeliveryState.Timeout,
         ):
             try:
-                raise message_delivery.error
+                raise message_delivery.error # pylint: disable=raising-bad-type
             except TypeError:
                 # This is a default handler
                 raise MessageException(condition=ErrorCondition.UnknownError, description="Send failed.")

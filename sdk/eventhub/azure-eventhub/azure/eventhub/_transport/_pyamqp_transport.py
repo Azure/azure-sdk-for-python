@@ -303,7 +303,7 @@ class PyamqpTransport(AmqpTransport):
         :param event_data: EventData to add to internal batch events. uamqp use only.
         :rtype: None
         """
-        event_data_batch._internal_events.append(event_data) # pylint: disable=protected-access
+        event_data_batch._internal_events.append(event_data)  # pylint: disable=protected-access
         utils.add_batch(event_data_batch._message, outgoing_event_data._message)  # pylint: disable=protected-access
 
     @staticmethod
@@ -466,16 +466,16 @@ class PyamqpTransport(AmqpTransport):
         if status_code in [401]:
             return errors.AuthenticationException(
                 errors.ErrorCondition.UnauthorizedAccess,
-                f"Management authentication failed. Status code: {status_code}, Description: {description!r}",
+                description=f"Management authentication failed. Status code: {status_code}, Description: {description!r}",
             )
         if status_code in [404]:
             return errors.AMQPConnectionError(
                 errors.ErrorCondition.NotFound,
-                f"Management connection failed. Status code: {status_code}, Description: {description!r}",
+                description=f"Management connection failed. Status code: {status_code}, Description: {description!r}",
             )
         return errors.AMQPConnectionError(
             errors.ErrorCondition.UnknownError,
-            f"Management request error. Status code: {status_code}, Description: {description!r}",
+            description=f"Management request error. Status code: {status_code}, Description: {description!r}",
         )
 
     @staticmethod

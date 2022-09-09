@@ -96,7 +96,7 @@ class SenderLink(Link):
         if self.network_trace:
             _LOGGER.info(
                 "-> %r", TransferFrame(delivery_id="<pending>", **delivery.frame), extra=self.network_trace_params
-            )  # pylint:disable=line-to-long
+            )
             _LOGGER.info("   %r", delivery.message, extra=self.network_trace_params)
         self._session._outgoing_transfer(delivery)  # pylint:disable=protected-access
         sent_and_settled = False

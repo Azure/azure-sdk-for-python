@@ -345,7 +345,6 @@ def encode_list(output, value, with_constructor=True, use_smallest=True):
             raise ValueError("List is too large or too long to be encoded.")
     output.extend(encoded_values)
 
-
 def encode_map(output, value, with_constructor=True, use_smallest=True):
     # type: (bytearray, Union[Dict[Any, Any], Iterable[Tuple[Any, Any]]], bool, bool) -> None
     """
