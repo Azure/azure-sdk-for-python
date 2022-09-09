@@ -697,7 +697,7 @@ def _set_throughput_options(offer: Union[int, ThroughputProperties], request_opt
             max_throughput = offer.auto_scale_max_throughput
             increment_percent = offer.auto_scale_increment_percent
 
-            if max_throughput:
+            if max_throughput is not None:
                 request_options['autoUpgradePolicy'] = _stringify_auto_scale(offer=offer)
             elif increment_percent:
                 raise ValueError("auto_scale_max_throughput must be supplied in "
