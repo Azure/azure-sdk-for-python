@@ -23,6 +23,8 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
     """Manages role-based access to Azure Key Vault.
 
     :param str vault_url: URL of the vault the client will manage. This is also called the vault's "DNS Name".
+        You should validate that this URL references a valid Key Vault or Managed HSM resource.
+        See https://aka.ms/azsdk/blog/vault-uri for details.
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
     :type credential: :class:`~azure.core.credentials.TokenCredential`

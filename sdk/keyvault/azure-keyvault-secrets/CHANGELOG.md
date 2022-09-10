@@ -1,5 +1,11 @@
 # Release History
 
+## 4.6.0 (2022-09-13)
+
+### Breaking Changes
+- Clients verify the challenge resource matches the vault domain. This should affect few customers,
+  who can provide `verify_challenge_resource=False` to client constructors to disable.
+
 ## 4.5.1 (2022-08-11)
 
 ### Other Changes

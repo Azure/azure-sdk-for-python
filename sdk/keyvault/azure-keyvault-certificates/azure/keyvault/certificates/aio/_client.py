@@ -32,7 +32,9 @@ from .._shared.exceptions import error_map as _error_map
 class CertificateClient(AsyncKeyVaultClientBase):
     """A high-level asynchronous interface for managing a vault's certificates.
 
-    :param str vault_url: URL of the vault the client will access
+    :param str vault_url: URL of the vault the client will access. This is also called the vault's "DNS Name".
+        You should validate that this URL references a valid Key Vault resource. See https://aka.ms/azsdk/blog/vault-uri
+        for details.
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
     :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
