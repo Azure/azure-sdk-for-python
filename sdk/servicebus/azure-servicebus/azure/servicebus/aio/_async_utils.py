@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
+from __future__ import annotations
 import sys
 
 import asyncio
@@ -42,7 +42,7 @@ def get_running_loop():
         return asyncio.get_event_loop()
 
 
-async def create_authentication(client: "ServiceBusClient"):
+async def create_authentication(client: ServiceBusClient):
     # pylint: disable=protected-access
     try:
         # ignore mypy's warning because token_type is Optional

@@ -3,10 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
 import time
 import six
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.core.pipeline import PipelineRequest
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineRequest
 from ...aio._base_handler_async import ServiceBusSharedKeyCredential
 
 
