@@ -78,6 +78,11 @@ class QuestionAnsweringProjectsClient(QuestionAnsweringProjectsClientGenerated):
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any) -> None:
+        try:
+            endpoint = endpoint.rstrip("/")
+        except AttributeError:
+            raise ValueError("Parameter 'endpoint' must be a string.")
+
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore
@@ -87,5 +92,5 @@ class QuestionAnsweringProjectsClient(QuestionAnsweringProjectsClientGenerated):
 
 
 def patch_sdk():
-    curr_package = importlib.import_module("azure.ai.language.questionanswering.projects.aio")
-    curr_package.QuestionAnsweringProjectsClient = QuestionAnsweringProjectsClient
+    current_package = importlib.import_module("azure.ai.language.questionanswering.projects.aio")
+    current_package.QuestionAnsweringProjectsClient = QuestionAnsweringProjectsClient

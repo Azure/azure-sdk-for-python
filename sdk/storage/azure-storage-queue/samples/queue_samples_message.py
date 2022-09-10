@@ -41,7 +41,7 @@ class QueueMessageSamples(object):
         queue.create_queue()
 
         # Send a message
-        queue.send_message(u"hello world")
+        queue.send_message("hello world")
 
         try:
             # [START set_access_policy]
@@ -115,11 +115,11 @@ class QueueMessageSamples(object):
 
         try:
             # [START send_messages]
-            queue.send_message(u"message1")
-            queue.send_message(u"message2", visibility_timeout=30)  # wait 30s before becoming visible
-            queue.send_message(u"message3")
-            queue.send_message(u"message4")
-            queue.send_message(u"message5")
+            queue.send_message("message1")
+            queue.send_message("message2", visibility_timeout=30)  # wait 30s before becoming visible
+            queue.send_message("message3")
+            queue.send_message("message4")
+            queue.send_message("message5")
             # [END send_messages]
 
             # [START receive_messages]
@@ -155,12 +155,12 @@ class QueueMessageSamples(object):
         queue.create_queue()
 
         try:
-            queue.send_message(u"message1")
-            queue.send_message(u"message2")
-            queue.send_message(u"message3")
-            queue.send_message(u"message4")
-            queue.send_message(u"message5")
-            queue.send_message(u"message6")
+            queue.send_message("message1")
+            queue.send_message("message2")
+            queue.send_message("message3")
+            queue.send_message("message4")
+            queue.send_message("message5")
+            queue.send_message("message6")
 
             # [START receive_messages_listing]
             # Store two messages in each page
@@ -188,9 +188,9 @@ class QueueMessageSamples(object):
         queue.create_queue()
 
         try:
-            queue.send_message(u"message1")
-            queue.send_message(u"message2")
-            queue.send_message(u"message3")
+            queue.send_message("message1")
+            queue.send_message("message2")
+            queue.send_message("message3")
 
             # [START receive_one_message]
             # Pop two messages from the front of the queue
@@ -217,11 +217,11 @@ class QueueMessageSamples(object):
 
         try:
             # Send messages
-            queue.send_message(u"message1")
-            queue.send_message(u"message2")
-            queue.send_message(u"message3")
-            queue.send_message(u"message4")
-            queue.send_message(u"message5")
+            queue.send_message("message1")
+            queue.send_message("message2")
+            queue.send_message("message3")
+            queue.send_message("message4")
+            queue.send_message("message5")
 
             # [START delete_message]
             # Get the message at the front of the queue
@@ -249,11 +249,11 @@ class QueueMessageSamples(object):
 
         try:
             # Send messages
-            queue.send_message(u"message1")
-            queue.send_message(u"message2")
-            queue.send_message(u"message3")
-            queue.send_message(u"message4")
-            queue.send_message(u"message5")
+            queue.send_message("message1")
+            queue.send_message("message2")
+            queue.send_message("message3")
+            queue.send_message("message4")
+            queue.send_message("message5")
 
             # [START peek_message]
             # Peek at one message at the front of the queue
@@ -282,7 +282,7 @@ class QueueMessageSamples(object):
         try:
             # [START update_message]
             # Send a message
-            queue.send_message(u"update me")
+            queue.send_message("update me")
 
             # Receive the message
             messages = queue.receive_messages()
@@ -293,7 +293,7 @@ class QueueMessageSamples(object):
                 list_result.id,
                 pop_receipt=list_result.pop_receipt,
                 visibility_timeout=0,
-                content=u"updated")
+                content="updated")
             # [END update_message]
 
         finally:
@@ -309,16 +309,16 @@ class QueueMessageSamples(object):
         queue.create_queue()
 
         try:
-            queue.send_message(u"message1")
-            queue.send_message(u"message2")
-            queue.send_message(u"message3")
-            queue.send_message(u"message4")
-            queue.send_message(u"message5")
-            queue.send_message(u"message6")
-            queue.send_message(u"message7")
-            queue.send_message(u"message8")
-            queue.send_message(u"message9")
-            queue.send_message(u"message10")
+            queue.send_message("message1")
+            queue.send_message("message2")
+            queue.send_message("message3")
+            queue.send_message("message4")
+            queue.send_message("message5")
+            queue.send_message("message6")
+            queue.send_message("message7")
+            queue.send_message("message8")
+            queue.send_message("message9")
+            queue.send_message("message10")
 
             # Receive messages one-by-one
             messages = queue.receive_messages(max_messages=5)

@@ -1,11 +1,19 @@
 # Release History
 
-## 11.3.0b9 (Unreleased)
+## 11.4.0b1 (2022-09-08)
+
+### Features Added
+- Added support to create, update and delete aliases via the `SearchIndexClient`.
+
+## 11.3.0 (2022-09-06)
+
+### Note
+
+- Some of the features that were available in the `11.3.0b8` version are not available in this GA. They would be available in the upcoming beta release.
 
 ### Features Added
 - Added support for other national clouds.
-
-### Breaking Changes
+- Added support for TokenCredential
 
 ### Bugs Fixed
 - Fixed issue where async `search` call would fail with a 403 error when retrieving large number of documents.

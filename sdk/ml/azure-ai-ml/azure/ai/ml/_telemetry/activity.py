@@ -18,6 +18,7 @@ import logging
 import os
 import uuid
 from datetime import datetime
+from uuid import uuid4
 
 from marshmallow import ValidationError
 
@@ -172,6 +173,7 @@ def log_activity(
         activity_type=activity_type,
     )
     custom_dimensions = custom_dimensions or {}
+    custom_dimensions.update({"client_request_id": str(uuid4())})
     activity_info.update(custom_dimensions)
 
     start_time = datetime.utcnow()

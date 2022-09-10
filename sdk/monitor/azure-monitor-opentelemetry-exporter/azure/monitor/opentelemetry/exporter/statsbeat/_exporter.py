@@ -1,7 +1,5 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-import logging
-
 from typing import Optional
 from opentelemetry.sdk.metrics.export import DataPointT
 from opentelemetry.sdk.resources import Resource
@@ -9,9 +7,7 @@ from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
 from azure.monitor.opentelemetry.exporter import AzureMonitorMetricExporter
-from azure.monitor.opentelemetry.exporter.statsbeat._state import _STATSBEAT_METRIC_NAME_MAPPINGS
-
-_logger = logging.getLogger(__name__)
+from azure.monitor.opentelemetry.exporter._constants import _STATSBEAT_METRIC_NAME_MAPPINGS
 
 
 class _StatsBeatExporter(AzureMonitorMetricExporter):
@@ -25,7 +21,7 @@ class _StatsBeatExporter(AzureMonitorMetricExporter):
         scope: Optional[InstrumentationScope] = None
     ) -> TelemetryItem:
         # map statsbeat name from OpenTelemetry name
-        name = _STATSBEAT_METRIC_NAME_MAPPINGS.get(name, "")
+        name = _STATSBEAT_METRIC_NAME_MAPPINGS[name]
         return super()._point_to_envelope(
             point,
             name,

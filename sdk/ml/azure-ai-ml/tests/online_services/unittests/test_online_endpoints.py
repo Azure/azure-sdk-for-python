@@ -1,47 +1,37 @@
 from pathlib import Path
 from typing import Callable
+from unittest.mock import Mock, patch
 
+import pytest
+from pytest_mock import MockFixture
 from requests import Response
 
-from unittest.mock import patch, Mock
-import pytest
-
-from azure.core.polling import LROPoller
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.ai.ml.operations import (
-    DatastoreOperations,
-    OnlineEndpointOperations,
-    EnvironmentOperations,
-    ModelOperations,
-    WorkspaceOperations,
-)
-from azure.ai.ml.operations._code_operations import CodeOperations
-from azure.ai.ml.operations._online_endpoint_operations import _strip_zeroes_from_traffic
-
-from azure.identity import DefaultAzureCredential
-from azure.ai.ml._restclient.v2021_10_01.models import (
-    EndpointAuthKeys,
-)
+from azure.ai.ml import load_online_endpoint
+from azure.ai.ml._restclient.v2021_10_01.models import EndpointAuthKeys
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    OnlineEndpointDetails as RestOnlineEndpoint,
     OnlineDeploymentData,
-    OnlineEndpointData,
     OnlineDeploymentDetails,
+    OnlineEndpointData,
 )
+from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.constants import (
-    AzureMLResourceType,
-    HttpResponseStatusCode,
+from azure.ai.ml.constants._common import AzureMLResourceType, HttpResponseStatusCode
+from azure.ai.ml.entities import OnlineEndpoint
+from azure.ai.ml.operations import (
+    DatastoreOperations,
+    EnvironmentOperations,
+    ModelOperations,
+    OnlineEndpointOperations,
+    WorkspaceOperations,
 )
-from azure.ai.ml.entities import (
-    OnlineEndpoint,
-)
-from azure.ai.ml import load_online_endpoint
-
-from pytest_mock import MockFixture
+from azure.ai.ml.operations._code_operations import CodeOperations
+from azure.ai.ml.operations._online_endpoint_operations import _strip_zeroes_from_traffic
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
+from azure.core.polling import LROPoller
+from azure.identity import DefaultAzureCredential
 
 
 @pytest.fixture()
@@ -215,6 +205,7 @@ def mock_online_endpoint_operations(
         service_client_09_2020_dataplanepreview=mock_aml_services_2020_09_01_dataplanepreview,
         all_operations=mock_machinelearning_client._operation_container,
         local_endpoint_helper=mock_local_endpoint_helper,
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
@@ -393,7 +384,8 @@ class TestOnlineEndpointsOperations:
         mockresponse = Mock()
         mockresponse.text = '{"key": "value"}'
         mockresponse.status_code = 200
-        mocker.patch("requests.post", return_value=mockresponse)
+
+        mocker.patch.object(mock_online_endpoint_operations._requests_pipeline, "post", return_value=mockresponse)
         assert mock_online_endpoint_operations.invoke(endpoint_name=random_name, request_file=request_file)
         mock_online_endpoint_operations._online_operation.get.assert_called_once()
         mock_online_endpoint_operations._online_operation.list_keys.assert_called_once()

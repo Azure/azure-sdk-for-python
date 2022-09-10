@@ -1,5 +1,11 @@
 # Azure Event Grid client library for Python (conda)
 
+## 2022.09.01
+
+### Packages included
+
+- azure-eventgrid-4.9.0
+
 ## 2022.06.01
 
 ### Packages included

@@ -52,7 +52,7 @@ class AsyncDocumentModelAdministrationClientLROPoller(AsyncLROPoller[PollingRetu
     """Custom poller for model build operations. Call `result()` on the poller to return
     a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
 
-    .. versionadded:: 2022-06-30-preview
+    .. versionadded:: 2022-08-31
         The *AsyncDocumentModelAdministrationClientLROPoller* poller object
     """
 

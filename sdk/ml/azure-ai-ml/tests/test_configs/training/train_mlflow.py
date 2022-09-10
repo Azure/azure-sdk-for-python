@@ -2,19 +2,18 @@
 # P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis.
 # Modeling wine preferences by data mining from physicochemical properties. In Decision Support Systems, Elsevier, 47(4):547-553, 2009.
 
-import warnings
 import argparse
-
-import pandas as pd
-import numpy as np
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import ElasticNet
+import logging
+import warnings
 from urllib.parse import urlparse
+
 import mlflow
 import mlflow.sklearn
-
-import logging
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import ElasticNet
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
 
 logging.basicConfig(level=logging.WARN)
 logger = logging.getLogger(__name__)
@@ -41,16 +40,16 @@ def main(args):
     train_x = train.drop(["quality"], axis=1)
     test_x = test.drop(["quality"], axis=1)
     train_y = train[["quality"]]
-    test_y = test[["quality"]]
+    _ = test[["quality"]]
 
     alpha = args.alpha
     l1_ratio = args.l1_ratio
 
-    with mlflow.start_run() as run:
+    with mlflow.start_run():
         lr = ElasticNet(alpha=alpha, l1_ratio=l1_ratio, random_state=42)
         lr.fit(train_x, train_y)
 
-        predicted_qualities = lr.predict(test_x)
+        _ = lr.predict(test_x)
 
 
 def parse_args():

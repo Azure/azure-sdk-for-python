@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates how to list/get all document model operations (succeeded, in-progress, failed)
     associated with the Form Recognizer resource. Kinds of operations returned are "documentModelBuild",
     "documentModelCompose", and "documentModelCopyTo". Note that operation information only persists for
-    24 hours. If the operation was successful, the document model can be accessed using get_model or list_models APIs.
+    24 hours. If the operation was successful, the document model can be accessed using get_document_model or list_document_models APIs.
 
 USAGE:
     python sample_get_operations_async.py

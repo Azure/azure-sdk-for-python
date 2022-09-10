@@ -1,13 +1,15 @@
 from typing import Callable
+from unittest.mock import Mock
+
 import pytest
 import vcr
 from pytest_mock import MockFixture
-from unittest.mock import Mock
+
+from azure.ai.ml import load_compute
+from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml.entities import AmlCompute, Compute, ComputeInstance, IdentityConfiguration, UserAssignedIdentity
 from azure.ai.ml.operations import ComputeOperations
 from azure.identity import DefaultAzureCredential
-from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.entities import Compute, AmlCompute, ComputeInstance, IdentityConfiguration, UserAssignedIdentity
-from azure.ai.ml import load_compute
 
 
 @pytest.fixture
@@ -85,7 +87,7 @@ class TestComputeOperation:
                 type="UserAssigned",
                 user_assigned_identities=[
                     UserAssignedIdentity(
-                        resoure_id="/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/MC_banibatch_bani-aks_eastus/providers/Microsoft.ManagedIdentity/userAssignedIdentities/omsagent-bani-aks"
+                        resource_id="/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/MC_banibatch_bani-aks_eastus/providers/Microsoft.ManagedIdentity/userAssignedIdentities/omsagent-bani-aks"
                     )
                 ],
             ),

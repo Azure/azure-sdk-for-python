@@ -7,21 +7,31 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
+from .._serialization import Deserializer, Serializer
 from ._configuration import RedisManagementClientConfiguration
-from .operations import FirewallRulesOperations, LinkedServerOperations, Operations, PatchSchedulesOperations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, RedisOperations
+from .operations import (
+    AsyncOperationStatusOperations,
+    FirewallRulesOperations,
+    LinkedServerOperations,
+    Operations,
+    PatchSchedulesOperations,
+    PrivateEndpointConnectionsOperations,
+    PrivateLinkResourcesOperations,
+    RedisOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class RedisManagementClient:
+
+class RedisManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """REST API for Azure Redis Cache Service.
 
     :ivar operations: Operations operations
@@ -39,13 +49,18 @@ class RedisManagementClient:
      azure.mgmt.redis.aio.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources: azure.mgmt.redis.aio.operations.PrivateLinkResourcesOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :ivar async_operation_status: AsyncOperationStatusOperations operations
+    :vartype async_operation_status: azure.mgmt.redis.aio.operations.AsyncOperationStatusOperations
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Gets subscription credentials which uniquely identify the Microsoft
-     Azure subscription. The subscription ID forms part of the URI for every service call.
+     Azure subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-05-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -57,7 +72,9 @@ class RedisManagementClient:
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = RedisManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = RedisManagementClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -69,15 +86,17 @@ class RedisManagementClient:
         self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.patch_schedules = PatchSchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.linked_server = LinkedServerOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.async_operation_status = AsyncOperationStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -86,7 +105,7 @@ class RedisManagementClient:
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

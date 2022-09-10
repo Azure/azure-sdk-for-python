@@ -17,12 +17,18 @@ from azure.ai.ml._azure_environments import (
 )
 from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
-from azure.ai.ml._utils.utils import from_iso_duration_format_min_sec, initialize_logger_info
+from azure.ai.ml._utils._logger_utils import initialize_logger_info
+from azure.ai.ml._utils.utils import from_iso_duration_format_min_sec
 from azure.ai.ml._vendor.azure_resources._resource_management_client import ResourceManagementClient
 from azure.ai.ml._vendor.azure_resources.models import Deployment, DeploymentProperties
-from azure.ai.ml.constants import ENDPOINT_DEPLOYMENT_START_MSG, ArmConstants, LROConfigurations, OperationStatus
+from azure.ai.ml.constants._common import (
+    ENDPOINT_DEPLOYMENT_START_MSG,
+    ArmConstants,
+    LROConfigurations,
+    OperationStatus,
+)
+from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
-from azure.identity import ChainedTokenCredential
 
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")
@@ -31,7 +37,7 @@ initialize_logger_info(module_logger, terminator="")
 class ArmDeploymentExecutor(object):
     def __init__(
         self,
-        credentials: ChainedTokenCredential,
+        credentials: TokenCredential,
         resource_group_name: str,
         subscription_id: str,
         deployment_name: str,

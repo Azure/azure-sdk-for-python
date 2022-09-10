@@ -1,10 +1,10 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from azure.ai.ml._utils.utils import dump_yaml
-
 from abc import abstractmethod
 from typing import Any, Dict
+
+from azure.ai.ml._utils.utils import dump_yaml
 
 
 class RestTranslatableMixin:
@@ -81,7 +81,7 @@ class DictMixin(object):
 
 
 class TelemetryMixin:
-    def _get_telemetry_values(self, *args, **kwargs):
+    def _get_telemetry_values(self, *args, **kwargs):  # pylint: disable=unused-argument
         """Return the telemetry values of object."""
         return {}
 

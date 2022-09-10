@@ -8,9 +8,9 @@ import logging
 
 from marshmallow import ValidationError, fields, post_load, pre_dump
 
-from azure.ai.ml._schema.core.schema import PatchedSchemaMeta, PathAwareSchema
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, StringTransformedEnum, UnionField
-from azure.ai.ml.constants import AssetTypes, AzureMLResourceType, InputOutputModes, LOCAL_PATH
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta, PathAwareSchema
+from azure.ai.ml.constants._common import LOCAL_PATH, AssetTypes, AzureMLResourceType, InputOutputModes
 
 module_logger = logging.getLogger(__name__)
 
@@ -61,6 +61,7 @@ class ModelInputSchema(InputSchema):
         ]
     )
     path = InputSchema.generate_path_property(azureml_type=AzureMLResourceType.MODEL)
+    datastore = fields.Str(metadata={"description": "Name of the datastore to upload local paths to."}, required=False)
 
 
 class DataInputSchema(InputSchema):
@@ -79,6 +80,7 @@ class DataInputSchema(InputSchema):
         ]
     )
     path = InputSchema.generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    datastore = fields.Str(metadata={"description": "Name of the datastore to upload local paths to."}, required=False)
 
 
 class MLTableInputSchema(InputSchema):
@@ -94,6 +96,7 @@ class MLTableInputSchema(InputSchema):
     )
     type = StringTransformedEnum(allowed_values=[AssetTypes.MLTABLE])
     path = InputSchema.generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    datastore = fields.Str(metadata={"description": "Name of the datastore to upload to."}, required=False)
 
 
 class InputLiteralValueSchema(metaclass=PatchedSchemaMeta):
