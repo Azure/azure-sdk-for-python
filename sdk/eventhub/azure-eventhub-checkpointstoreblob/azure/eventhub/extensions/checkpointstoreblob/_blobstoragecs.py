@@ -10,7 +10,7 @@ import copy
 from datetime import datetime
 from collections import defaultdict
 
-from azure.eventhub import CheckpointStore  # type: ignore  # pylint: disable=no-name-in-module
+from azure.eventhub.aio import CheckpointStore  # type: ignore  # pylint: disable=no-name-in-module
 from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError  # type: ignore
 from ._vendor.storage.blob import BlobClient, ContainerClient
