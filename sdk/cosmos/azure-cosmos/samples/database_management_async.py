@@ -72,6 +72,17 @@ async def create_database(client, id):
     except exceptions.CosmosResourceExistsError:
         print('A database with id \'{0}\' already exists'.format(id))
 
+    print("\n2.8 Create Database - With auto scale settings")
+
+    try:
+        await client.create_database(
+            id=id,
+            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0))
+        print('Database with id \'{0}\' created'.format(id))
+
+    except exceptions.CosmosResourceExistsError:
+        print('A database with id \'{0}\' already exists'.format(id))
+
     # Alternatively, you can also use the create_database_if_not_exists method to avoid using a try catch
     # This method attempts to read the database first, and based on the result either creates or returns
     # the existing database. Due to the additional overhead from attempting a read, it is recommended

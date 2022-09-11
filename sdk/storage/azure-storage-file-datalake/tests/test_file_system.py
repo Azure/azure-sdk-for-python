@@ -739,7 +739,7 @@ class FileSystemTest(StorageTestCase):
 
             # create a file under the current directory
             file_client = subdir.create_file("file")
-            file_client.append_data(b"abced", 0, 5)
+            file_client.append_data(b"abced", 0, 5) # cspell:disable-line
             file_client.flush_data(5)
 
         generator1 = file_system.get_paths(path="dir10/subdir", max_results=2, upn=True).by_page()
@@ -852,7 +852,7 @@ class FileSystemTest(StorageTestCase):
     def test_file_system_sessions_closes_properly(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        file_system_client = self._create_file_system("fenrhxsbfvsdvdsvdsadb")
+        file_system_client = self._create_file_system("fenrhxsbfvsdvdsvdsadb") # cspell:disable-line
         with file_system_client as fs_client:
             with fs_client.get_file_client("file1.txt") as f_client:
                 f_client.create_file()

@@ -117,7 +117,7 @@ class StorageQuickQueryTest(StorageTestCase):
         url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=account_key, logging_enable=True)
         self.config = self.dsc._config
-        self.filesystem_name = self.get_resource_name('utqqcontainer')
+        self.filesystem_name = self.get_resource_name('utqqcontainer') # cspell:disable-line
 
         if not self.is_playback():
             try:
@@ -898,7 +898,7 @@ class StorageQuickQueryTest(StorageTestCase):
         file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
 
         expression = "select * from blobstorage where id < 1;"
-        expected_data = b"0,mdifjt55.ea3,mdifjt55.ea3\n"
+        expected_data = b"0,mdifjt55.ea3,mdifjt55.ea3\n" # cspell:disable-line
 
         parquet_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet"))
         with open(parquet_path, "rb") as parquet_data:
