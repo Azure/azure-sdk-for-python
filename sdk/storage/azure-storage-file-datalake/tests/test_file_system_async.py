@@ -751,7 +751,7 @@ class FileSystemTest(StorageTestCase):
 
             # create a file under the current directory
             file_client = await subdir.create_file("file")
-            await file_client.append_data(b"abced", 0, 5)
+            await file_client.append_data(b"abced", 0, 5) # cspell:disable-line
             await file_client.flush_data(5)
 
         generator1 = file_system.get_paths(path="dir10/subdir", max_results=2, upn=True).by_page()

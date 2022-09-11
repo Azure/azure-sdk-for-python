@@ -17,7 +17,7 @@ class StorageStreamDownloader(object):
         The properties of the file being downloaded. If only a range of the data is being
         downloaded, this will be reflected in the properties.
     :ivar int size:
-        The size of the total data in the stream. This will be the byte range if speficied,
+        The size of the total data in the stream. This will be the byte range if specified,
         otherwise the total size of the file.
     """
 
@@ -43,10 +43,10 @@ class StorageStreamDownloader(object):
         is unspecified or is -1, all bytes will be read.
 
         :param size:
-            The number of bytes to download from the stream. Leave unsepcified
+            The number of bytes to download from the stream. Leave unspecified
             or set to -1 to download all bytes.
         :returns:
-            The requsted data as bytes. If the return value is empty, there is no more data to read.
+            The requested data as bytes. If the return value is empty, there is no more data to read.
         :rtype: bytes
         """
         return await self._downloader.read(size)

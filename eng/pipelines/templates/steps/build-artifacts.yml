@@ -65,6 +65,7 @@ steps:
   - pwsh: |
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}}
     displayName: 'Generate Packages'
+    condition: succeededOrFailed()
 
   - script: |
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
