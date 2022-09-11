@@ -5,7 +5,6 @@
 # pylint:skip-file (avoids crash due to six.with_metaclass https://github.com/PyCQA/astroid/issues/713)
 from typing import TYPE_CHECKING
 from enum import Enum
-from six import with_metaclass
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline.policies import HttpLoggingPolicy
@@ -20,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ApiVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Key Vault API versions supported by this package"""
 
     #: this is the default version

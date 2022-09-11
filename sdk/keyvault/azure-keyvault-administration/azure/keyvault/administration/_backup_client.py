@@ -7,8 +7,7 @@ import functools
 import pickle
 from typing import TYPE_CHECKING
 
-from six import raise_from
-from six.moves.urllib_parse import urlparse
+from urllib.parse import urlparse
 
 from ._models import KeyVaultBackupResult
 from ._internal import KeyVaultClientBase, parse_folder_url
@@ -65,13 +64,10 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             try:
                 job_id = _parse_status_url(status_url)
             except Exception as ex:  # pylint: disable=broad-except
-                raise_from(
-                    ValueError(
-                        "The provided continuation_token is malformed. A valid token can be obtained from the "
-                        + "operation poller's continuation_token() method"
-                    ),
-                    ex,
-                )
+                raise ValueError(
+                    "The provided continuation_token is malformed. A valid token can be obtained from the "
+                    + "operation poller's continuation_token() method"
+                ) from ex
 
             pipeline_response = self._client.full_backup_status(
                 vault_base_url=self._vault_url, job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response
@@ -130,13 +126,10 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             try:
                 job_id = _parse_status_url(status_url)
             except Exception as ex:  # pylint: disable=broad-except
-                raise_from(
-                    ValueError(
-                        "The provided continuation_token is malformed. A valid token can be obtained from the "
-                        + "operation poller's continuation_token() method"
-                    ),
-                    ex,
-                )
+                raise ValueError(
+                    "The provided continuation_token is malformed. A valid token can be obtained from the "
+                    + "operation poller's continuation_token() method"
+                ) from ex
 
             pipeline_response = self._client.restore_status(
                 vault_base_url=self._vault_url, job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response
