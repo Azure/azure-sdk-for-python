@@ -41,7 +41,7 @@ def get_release_policy(attestation_uri, **kwargs):
 def get_test_parameters(only_hsm=False, only_vault=False, api_versions=None):
     """generates a list of parameter pairs for test case parameterization, where [x, y] = [api_version, is_hsm]"""
     combinations = []
-    versions = api_versions or ApiVersion
+    versions = api_versions or pytest.api_version
     hsm_supported_versions = {ApiVersion.V7_2, ApiVersion.V7_3}
 
     for api_version in versions:
