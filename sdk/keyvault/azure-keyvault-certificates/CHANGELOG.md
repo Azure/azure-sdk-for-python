@@ -15,6 +15,7 @@
 ### Other Changes
 - Documentation improvements 
   ([#25039](https://github.com/Azure/azure-sdk-for-python/issues/25039))
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later.
 
 ## 4.5.0b1 (2022-06-07)
 
