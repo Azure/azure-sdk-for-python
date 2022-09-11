@@ -4,7 +4,7 @@
 # ------------------------------------
 from collections import namedtuple
 
-from six.moves.urllib_parse import urlparse
+from urllib_parse import urlparse
 
 from .challenge_auth_policy import ChallengeAuthPolicy
 from .client_base import KeyVaultClientBase

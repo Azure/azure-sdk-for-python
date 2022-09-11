@@ -3,11 +3,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
-# pylint: skip-file (avoids crash due to six.with_metaclass https://github.com/PyCQA/astroid/issues/713)
-
 from enum import Enum, EnumMeta
 import msrest.serialization
-from six import with_metaclass
 
 
 class Attributes(msrest.serialization.Model):
@@ -584,7 +581,7 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class DeletionRecoveryLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DeletionRecoveryLevel(str, Enum, metaclass=_CaseInsensitiveEnumMeta):
     """Reflects the deletion recovery level currently in effect for secrets in the current vault. If
     it contains 'Purgeable', the secret can be permanently deleted by a privileged user; otherwise,
     only the system can purge the secret, at the end of the retention interval.

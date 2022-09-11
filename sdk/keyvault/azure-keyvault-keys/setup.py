@@ -70,6 +70,5 @@ setup(
         "cryptography>=2.1.4",
         "msrest>=0.7.1",
         "azure-common~=1.1",
-        "six>=1.12.0"
     ],
 )
