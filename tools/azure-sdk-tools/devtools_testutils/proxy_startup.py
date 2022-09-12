@@ -87,6 +87,16 @@ def check_availability() -> None:
         return 404
 
 
+def check_system_proxy_availability() -> None:
+    ssl_cert = "SSL_CERT_DIR"
+    ca_bundle = "REQUESTS_CA_BUNDLE"
+
+    if not os.environ.get(ssl_cert):
+        _LOGGER.error(f"Please check '{ssl_cert}' path")
+    if not os.environ.get(ca_bundle):
+        _LOGGER.error(f"Please check '{ca_bundle}' path")
+
+
 def check_proxy_availability() -> None:
     """Waits for the availability of the test-proxy."""
     start = time.time()
@@ -128,6 +138,7 @@ def start_test_proxy(request) -> None:
     function will start the test-proxy .NET tool."""
 
     repo_root = ascend_to_root(request.node.items[0].module.__file__)
+    check_system_proxy_availability()
 
     if not PROXY_MANUALLY_STARTED:
         if os.getenv("TF_BUILD"):
