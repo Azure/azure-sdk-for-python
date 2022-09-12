@@ -9,7 +9,7 @@ import time
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.identity.aio import EnvironmentCredential
-from azure.eventhub import EventData
+from azure.eventhub import EventData 
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient, EventHubSharedKeyCredential
 from azure.eventhub.aio._client_base_async import EventHubSASTokenCredential
 
