@@ -5,6 +5,7 @@
 from __future__ import unicode_literals, annotations
 
 import json
+import warnings
 import datetime
 import logging
 import uuid
@@ -251,6 +252,12 @@ class EventData(object):
 
     @property
     def message(self) -> LegacyMessage:
+        """
+        DEPRECATED: Get the underlying LegacyMessage.
+         This is deprecated and will be removed in a later release.
+        :rtype: LegacyMessage
+        """
+        warnings.warn("The `message` property is deprecated and will be removed in future versions.", DeprecationWarning)
         if not self._uamqp_message:
             self._uamqp_message = LegacyMessage(
                 self._raw_amqp_message,
@@ -260,6 +267,11 @@ class EventData(object):
 
     @message.setter
     def message(self, value: "uamqp_Message") -> None:
+        """
+        DEPRECATED: Set the underlying Message.
+         This is deprecated and will be removed in a later release.
+        """
+        warnings.warn("The `message` property is deprecated and will be removed in future versions.", DeprecationWarning)
         self._uamqp_message = value
 
     @property
@@ -585,6 +597,12 @@ class EventDataBatch(object):
 
     @property
     def message(self) -> Union["uamqp_BatchMessage", LegacyBatchMessage]:
+        """
+        DEPRECATED: Get the underlying BatchMessage or LegacyBatchMessage.
+         This is deprecated and will be removed in a later release.
+        :rtype: uamqp.BatchMessage or LegacyBatchMessage
+        """
+        warnings.warn("The `message` property is deprecated and will be removed in future versions.", DeprecationWarning)
         if not self._uamqp_message:
             message = AmqpAnnotatedMessage(message=Message(*self._message))
             self._uamqp_message = LegacyBatchMessage(
@@ -594,6 +612,11 @@ class EventDataBatch(object):
 
     @message.setter
     def message(self, value: "uamqp_BatchMessage") -> None:
+        """
+        DEPRECATED: Set the underlying BatchMessage.
+         This is deprecated and will be removed in a later release.
+        """
+        warnings.warn("The `message` property is deprecated and will be removed in future versions.", DeprecationWarning)
         self._uamqp_message = value
 
     @property

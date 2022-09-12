@@ -5,7 +5,8 @@
 # --------------------------------------------------------------------------
 
 from ._connection_async import Connection, ConnectionState
-from ._link_async import Link, LinkDeliverySettleReason, LinkState
+from ._link_async import Link, LinkState
+from ..constants import LinkDeliverySettleReason
 from ._receiver_async import ReceiverLink
 from ._sasl_async import SASLPlainCredential, SASLTransport
 from ._sender_async import SenderLink
