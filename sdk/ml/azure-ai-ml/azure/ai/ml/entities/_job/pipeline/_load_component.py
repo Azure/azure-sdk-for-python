@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
-
+from functools import partial
 from typing import Any, Callable, Dict, List, Mapping, Union
 
 from marshmallow import INCLUDE
@@ -78,13 +78,22 @@ class _PipelineNodeFactory:
     @classmethod
     def _get_func(cls, _type: str, funcs):
         _type, _ = extract_label(_type)
+        exception = partial(
+            ValidationException,
+            target=ErrorTarget.COMPONENT,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+        if _type == NodeType._CONTAINER:
+            msg = "Component returned by 'list' is abbreviated and can not be used directly, please use result from 'get'."
+            raise exception(
+                message=msg,
+                no_personal_data_message=msg,
+            )
         if _type not in funcs:
             msg = f"Unsupported component type: {_type}."
-            raise ValidationException(
+            raise exception(
                 message=msg,
-                target=ErrorTarget.COMPONENT,
                 no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
             )
         return funcs[_type]
 

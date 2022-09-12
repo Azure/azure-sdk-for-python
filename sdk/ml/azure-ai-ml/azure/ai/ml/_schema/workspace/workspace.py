@@ -2,12 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields
+from marshmallow import fields, post_dump, post_load, pre_dump, pre_load
 
 from azure.ai.ml._schema._utils.utils import validate_arm_str
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.workspace.customer_managed_key import CustomerManagedKeySchema
+from azure.ai.ml._schema.workspace.identity import IdentitySchema
 from azure.ai.ml._utils.utils import snake_to_pascal
 from azure.ai.ml.constants._common import PublicNetworkAccess
 
@@ -33,3 +34,5 @@ class WorkspaceSchema(PathAwareSchema):
         allowed_values=[PublicNetworkAccess.DISABLED, PublicNetworkAccess.ENABLED],
         casing_transform=snake_to_pascal,
     )
+    identity = NestedField(IdentitySchema)
+    primary_user_assigned_identity = fields.Str()

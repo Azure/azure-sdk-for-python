@@ -22,23 +22,8 @@ from azure.ai.ml import (
     load_workspace_connection,
 )
 from azure.ai.ml._azure_environments import AzureEnvironments
-from azure.ai.ml._utils.utils import DEVELOPER_URL_MFE_ENV_VAR
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
-from azure.ai.ml.entities import (
-    BatchDeployment,
-    BatchEndpoint,
-    CommandJob,
-    Component,
-    Compute,
-    Datastore,
-    Environment,
-    Model,
-    OnlineDeployment,
-    OnlineEndpoint,
-    PipelineJob,
-    Workspace,
-)
-from azure.ai.ml.sweep import SweepJob
+from azure.identity import DefaultAzureCredential
 
 
 @pytest.mark.unittest
@@ -86,6 +71,14 @@ class TestMachineLearningClient:
         new_client = mock_machinelearning_client._get_new_client(new_ws)
         assert new_ws == new_client.workspace_name
         assert previous_ws == mock_machinelearning_client.workspace_name
+
+    def test_get_sub_and_rg(self) -> None:
+        client = MLClient(
+            credential=DefaultAzureCredential(), subscription_id="fake-sub-id", resource_group_name="fake-rg-name"
+        )
+
+        assert "fake-sub-id" == client.subscription_id
+        assert "fake-rg-name" == client.resource_group_name
 
     @patch("azure.ai.ml._ml_client._get_base_url_from_metadata")
     def test_mfe_url_overwrite(self, mock_get_mfe_url_override, mock_credential):

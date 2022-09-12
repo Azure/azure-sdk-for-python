@@ -29,6 +29,7 @@ from azure.ai.ml._utils._asset_utils import get_ignore_file, get_object_hash
 from azure.ai.ml._utils.utils import dump_yaml, is_url, load_file, load_yaml
 from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ArmConstants
 from azure.ai.ml.entities._assets.asset import Asset
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import get_md5_string, load_from_dict
 
 
@@ -223,7 +224,9 @@ class Environment(Asset):
             version=arm_id.asset_version,
             description=rest_env_version.description,
             tags=rest_env_version.tags,
-            creation_context=env_rest_object.system_data,
+            creation_context=SystemData._from_rest_object(env_rest_object.system_data)
+            if env_rest_object.system_data
+            else None,
             is_anonymous=rest_env_version.is_anonymous,
             image=rest_env_version.image,
             os_type=rest_env_version.os_type,
@@ -243,7 +246,7 @@ class Environment(Asset):
             name=env_container_rest_object.name,
             version="1",
             id=env_container_rest_object.id,
-            creation_context=env_container_rest_object.system_data,
+            creation_context=SystemData._from_rest_object(env_container_rest_object.system_data),
         )
         env.latest_version = env_container_rest_object.properties.latest_version
 

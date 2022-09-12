@@ -195,15 +195,13 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
     @classmethod
     def _create_instance_from_schema_dict(cls, loaded_data: Dict) -> "ImageClassificationMultilabelJob":
         loaded_data.pop(AutoMLConstants.TASK_TYPE_YAML, None)
-        search_space_val = loaded_data.pop("search_space", None)
-        search_space = ImageClassificationMultilabelJob._get_search_space_from_str(search_space_val)
         data_settings = {
             "training_data": loaded_data.pop("training_data"),
             "target_column_name": loaded_data.pop("target_column_name"),
             "validation_data": loaded_data.pop("validation_data", None),
             "validation_data_size": loaded_data.pop("validation_data_size", None),
         }
-        job = ImageClassificationMultilabelJob(search_space=search_space, **loaded_data)
+        job = ImageClassificationMultilabelJob(**loaded_data)
         job.set_data(**data_settings)
         return job
 
@@ -212,7 +210,9 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
         from azure.ai.ml._schema.pipeline.automl_node import ImageClassificationMultilabelNodeSchema
 
         if inside_pipeline:
-            schema_dict = ImageClassificationMultilabelNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = ImageClassificationMultilabelNodeSchema(
+                context={BASE_PATH_CONTEXT_KEY: "./", "inside_pipeline": True}
+            ).dump(self)
         else:
             schema_dict = ImageClassificationMultilabelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
