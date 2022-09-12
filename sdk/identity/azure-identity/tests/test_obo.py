@@ -113,7 +113,7 @@ def test_multitenant_authentication():
         client_secret="secret",
         user_assertion="assertion",
         transport=transport,
-        additionally_allowed_tenant_ids=['*']
+        additionally_allowed_tenants=['*']
     )
     token = credential.get_token("scope")
     assert token.token == first_token

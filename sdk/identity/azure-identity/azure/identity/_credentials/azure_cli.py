@@ -36,13 +36,13 @@ class AzureCliCredential(object):
 
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
 
-    :keyword list[str] additionally_allowed_tenant_ids: optional additional tenant ids for which the credential
+    :keyword list[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
             may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
             any tenant the application is installed.
     """
-    def __init__(self, *, additionally_allowed_tenant_ids: List[str] = None):
+    def __init__(self, *, additionally_allowed_tenants: List[str] = None):
 
-        self._additionally_allowed_tenant_ids = additionally_allowed_tenant_ids or []
+        self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
     def __enter__(self):
         return self
@@ -76,7 +76,7 @@ class AzureCliCredential(object):
         command = COMMAND_LINE.format(resource)
         tenant = resolve_tenant(
             "",
-            additionally_allowed_tenant_ids=self._additionally_allowed_tenant_ids,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
             **kwargs
         )
         if tenant:

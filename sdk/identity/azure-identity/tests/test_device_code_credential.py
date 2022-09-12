@@ -263,7 +263,7 @@ def test_tenant_id():
 
     callback = Mock()
     credential = DeviceCodeCredential(
-        client_id=client_id, prompt_callback=callback, transport=transport, instance_discovery=False, additionally_allowed_tenant_ids=['*']
+        client_id=client_id, prompt_callback=callback, transport=transport, instance_discovery=False, additionally_allowed_tenants=['*']
     )
 
     now = datetime.datetime.utcnow()

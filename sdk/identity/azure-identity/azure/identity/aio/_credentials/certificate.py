@@ -42,7 +42,7 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
           will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword list[str] additionally_allowed_tenant_ids: optional additional tenant ids for which the credential
+    :keyword list[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
             may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
             any tenant the application is installed.
     """

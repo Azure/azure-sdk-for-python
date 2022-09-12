@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added `additionally_allowed_tenant_ids` support.
+- Added `additionally_allowed_tenants` support.
 
 ## 1.10.0 (2022-04-28)
 

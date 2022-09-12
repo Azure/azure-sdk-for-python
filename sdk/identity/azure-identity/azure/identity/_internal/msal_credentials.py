@@ -25,7 +25,7 @@ class MsalCredential(object):
             client_id: str,
             client_credential: Union[str, Dict] = None,
             *,
-            additionally_allowed_tenant_ids: List[str] = None,
+            additionally_allowed_tenants: List[str] = None,
             **kwargs
     ) -> None:
         authority = kwargs.pop("authority", None)
@@ -38,7 +38,7 @@ class MsalCredential(object):
         self._client_applications = {}  # type: Dict[str, msal.ClientApplication]
         self._client_credential = client_credential
         self._client_id = client_id
-        self._additionally_allowed_tenant_ids = additionally_allowed_tenant_ids or []
+        self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
         self._cache = kwargs.pop("_cache", None)
         if not self._cache:
@@ -65,7 +65,7 @@ class MsalCredential(object):
         # type: (**Any) -> msal.ClientApplication
         tenant_id = resolve_tenant(
             self._tenant_id,
-            additionally_allowed_tenant_ids=self._additionally_allowed_tenant_ids,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
             **kwargs
         )
         if tenant_id not in self._client_applications:

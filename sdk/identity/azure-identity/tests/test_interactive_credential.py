@@ -312,7 +312,7 @@ def test_multitenant_authentication():
         tenant_id=first_tenant,
         request_token=request_token,
         transport=Mock(send=send),
-        additionally_allowed_tenant_ids = ['*']
+        additionally_allowed_tenants = ['*']
     )
     token = credential.get_token("scope")
     assert token.token == first_token

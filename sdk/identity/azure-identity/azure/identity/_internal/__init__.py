@@ -69,7 +69,7 @@ def resolve_tenant(
         default_tenant: str,
         tenant_id: str = None,
         *,
-        additionally_allowed_tenant_ids: List[str] = [],
+        additionally_allowed_tenants: List[str] = [],
         **_) -> str:
     """Returns the correct tenant for a token request given a credential's configuration"""
     if tenant_id is None or tenant_id == default_tenant:
@@ -84,15 +84,15 @@ def resolve_tenant(
                      "but the configured value was used since multi tenant authentication has been disabled. "
                      "Configured tenant ID: %s, Requested tenant ID %s", default_tenant, tenant_id)
         return default_tenant
-    if additionally_allowed_tenant_ids == ['*'] or tenant_id in additionally_allowed_tenant_ids:
+    if additionally_allowed_tenants == ['*'] or tenant_id in additionally_allowed_tenants:
         _LOGGER.info("A token was requested for a different tenant than was configured on the credential, "
                      "and the requested tenant ID was used to authenticate. Configured tenant ID: %s, "
                      "Requested tenant ID %s", default_tenant, tenant_id)
         return tenant_id
     raise ClientAuthenticationError(
                 message='The current credential is not configured to acquire tokens for tenant {}. '
-                        'To enable acquiring tokens for this tenant add it to the additionally_allowed_tenant_ids '
-                        'when creating the credential, or add "*" to additionally_allowed_tenant_ids to allow '
+                        'To enable acquiring tokens for this tenant add it to the additionally_allowed_tenants '
+                        'when creating the credential, or add "*" to additionally_allowed_tenants to allow '
                         'acquiring tokens for any tenant.'.format(tenant_id)
             )
 

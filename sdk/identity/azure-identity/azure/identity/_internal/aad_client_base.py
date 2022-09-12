@@ -44,7 +44,7 @@ class AadClientBase(abc.ABC):
             authority: str = None,
             cache: TokenCache = None,
             *,
-            additionally_allowed_tenant_ids: List[str] = None,
+            additionally_allowed_tenants: List[str] = None,
             **kwargs
     ) -> None:
         self._authority = normalize_authority(authority) if authority else get_default_authority()
@@ -53,14 +53,14 @@ class AadClientBase(abc.ABC):
 
         self._cache = cache or TokenCache()
         self._client_id = client_id
-        self._additionally_allowed_tenant_ids = additionally_allowed_tenant_ids or []
+        self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._pipeline = self._build_pipeline(**kwargs)
 
     def get_cached_access_token(self, scopes, **kwargs):
         # type: (Iterable[str], **Any) -> Optional[AccessToken]
         tenant = resolve_tenant(
             self._tenant_id,
-            additionally_allowed_tenant_ids=self._additionally_allowed_tenant_ids,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
             **kwargs
         )
         tokens = self._cache.find(
@@ -280,7 +280,7 @@ class AadClientBase(abc.ABC):
         # type: (**Any) -> str
         tenant = resolve_tenant(
             self._tenant_id,
-            additionally_allowed_tenant_ids=self._additionally_allowed_tenant_ids,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
             **kwargs
         )
         return "/".join((self._authority, tenant, "oauth2/v2.0/token"))
