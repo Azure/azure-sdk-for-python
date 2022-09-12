@@ -29,7 +29,6 @@
 
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/appconfiguration/azure-appconfiguration/**",
-    "sdk/attestation/azure-security-attestation/**",
     "sdk/batch/azure-batch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
@@ -790,6 +789,22 @@
       ]
     },
     {
+      "filename": "sdk/attestation/azure-security-attestation/**",
+      "words": [
+        "MRENCLAVE",
+        "ECDS",
+        "kwtype",
+        "clist",
+        "mrsigner",
+        "ECDH",
+        "TPMs",
+        "getopenidmetadata",
+        "getopenidmetadataasync",
+        "aikcert",
+        "shareduks"
+      ]
+    },
+    { 
       "filename": "sdk/deviceupdate/azure-iot-deviceupdate/**",
       "words": [
         "wday",
