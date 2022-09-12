@@ -6,7 +6,7 @@ import uuid
 from datetime import datetime
 from os import getenv
 from pathlib import Path
-from typing import Callable, Tuple
+from typing import Callable, Tuple, Union
 from unittest.mock import Mock
 
 import pytest
@@ -25,7 +25,7 @@ from azure.ai.ml.entities._datastore.credentials import NoneCredentials
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.core.exceptions import ResourceNotFoundError
-from azure.identity import ClientSecretCredential, DefaultAzureCredential
+from azure.identity import ClientSecretCredential, DefaultAzureCredential, AzureCliCredential
 from azure.mgmt.storage import StorageManagementClient
 
 from devtools_testutils import (
@@ -426,12 +426,14 @@ def _get_week_format() -> str:
 
 
 @pytest.fixture
-def auth() -> ClientSecretCredential:
+def auth() -> Union[AzureCliCredential, ClientSecretCredential, FakeTokenCredential]:
 
     if is_live():
         tenant_id = os.environ.get("ML_TENANT_ID")
         sp_id = os.environ.get("ML_CLIENT_ID")
         sp_secret = os.environ.get("ML_CLIENT_SECRET")
+        if not (tenant_id or sp_id or sp_secret):
+            return AzureCliCredential()
         return ClientSecretCredential(tenant_id, sp_id, sp_secret)
 
     return FakeTokenCredential()
