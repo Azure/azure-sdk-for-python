@@ -535,7 +535,7 @@ def test_long_wait_small_buffer(connection_str):
         retry_total=3, 
         retry_mode='fixed',
         retry_backoff_factor=0.01,
-        max_wait_time=10,
+        max_wait_time=20,
         max_buffer_length=100
     )
 
