@@ -4,7 +4,6 @@
 # ------------------------------------
 # pylint: skip-file
 # skipping because of https://github.com/PyCQA/astroid/issues/713
-from sre_constants import FAILURE
 from typing import List, Any
 from six import with_metaclass
 from enum import Enum

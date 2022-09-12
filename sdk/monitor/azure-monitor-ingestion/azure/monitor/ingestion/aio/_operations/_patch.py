@@ -6,12 +6,19 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import sys
 import asyncio
-from typing import List, Any, Optional
+from typing import List, Any, Optional, Union
 from ._operations import MonitorIngestionClientOperationsMixin as GeneratedOps
 from ..._models import UploadLogsStatus, UploadLogsResult, UploadLogsError
 from ..._helpers import _create_gzip_requests
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 class MonitorIngestionClientOperationsMixin(GeneratedOps):
     async def upload( # pylint: disable=arguments-renamed, arguments-differ
@@ -32,7 +39,7 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
         :param stream: The streamDeclaration name as defined in the Data Collection Rule.
         :type stream: str
         :param body: An array of objects matching the schema defined by the provided stream.
-        :type body: list[any]
+        :type body: list[Any] or IO
         :keyword max_concurrency: Number of parallel threads to use when logs size is > 1mb.
         :paramtype max_concurrency: int
         :return: UploadLogsResult
