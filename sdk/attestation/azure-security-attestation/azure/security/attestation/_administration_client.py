@@ -222,7 +222,7 @@ class AttestationAdministrationClient(object):
                 :caption: Setting a security policy without a signing key.
 
         .. admonition:: Example: Setting the attestation policy and verifying
-            that the policy was recieved by the service.
+            that the policy was received by the service.
 
             .. literalinclude:: ../samples/sample_get_set_policy.py
                 :start-after: [START validate_policy_hash]
