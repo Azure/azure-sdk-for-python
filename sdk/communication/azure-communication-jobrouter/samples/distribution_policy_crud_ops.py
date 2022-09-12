@@ -100,6 +100,21 @@ class DistributionPolicySamples(object):
 
         router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
+        distribution_policy_iterator = router_admin_client.list_distribution_policies()
+
+        for dp in distribution_policy_iterator:
+            print(f"Retrieved distribution policy with id: {dp.distribution_policy.id}")
+
+        print(f"Successfully completed fetching distribution policies")
+        # [END list_distribution_policies]
+
+    def list_distribution_policies_batched(self):
+        connection_string = self.endpoint
+        # [START list_distribution_policies_batched]
+        from azure.communication.jobrouter import RouterAdministrationClient
+
+        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+
         distribution_policy_iterator = router_admin_client.list_distribution_policies(results_per_page = 10)
 
         for policy_page in distribution_policy_iterator.by_page():
@@ -110,7 +125,7 @@ class DistributionPolicySamples(object):
                 print(f"Retrieved distribution policy with id: {dp.distribution_policy.id}")
 
         print(f"Successfully completed fetching distribution policies")
-        # [END list_distribution_policies]
+        # [END list_distribution_policies_batched]
 
     def clean_up(self):
         connection_string = self.endpoint
@@ -132,4 +147,5 @@ if __name__ == '__main__':
     sample.update_distribution_policy()
     sample.get_distribution_policy()
     sample.list_distribution_policies()
+    sample.list_distribution_policies_batched()
     sample.clean_up()

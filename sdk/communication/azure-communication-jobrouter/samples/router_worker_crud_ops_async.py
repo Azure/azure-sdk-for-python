@@ -100,7 +100,7 @@ class RouterWorkerSamplesAsync(object):
 
         # set `connection_string` to an existing ACS endpoint
         router_client = RouterClient.from_connection_string(conn_str = connection_string)
-        print("RouterAdministrationClient created successfully!")
+        print("RouterClient created successfully!")
 
         async with router_client:
             router_worker: RouterWorker = await router_client.create_worker(
@@ -146,7 +146,7 @@ class RouterWorkerSamplesAsync(object):
 
         # set `connection_string` to an existing ACS endpoint
         router_client: RouterClient = RouterClient.from_connection_string(conn_str = connection_string)
-        print("RouterAdministrationClient created successfully!")
+        print("RouterClient created successfully!")
 
         # we are going to
         # 1. Assign the worker to another queue
@@ -231,6 +231,22 @@ class RouterWorkerSamplesAsync(object):
         router_client = RouterClient.from_connection_string(conn_str = connection_string)
 
         async with router_client:
+            router_worker_iterator = router_client.list_workers()
+
+            async for w in router_worker_iterator:
+                print(f"Retrieved worker with id: {w.router_worker.id}")
+
+            print(f"Successfully completed fetching workers")
+        # [END list_workers_async]
+
+    async def list_workers_batched(self):
+        connection_string = self.endpoint
+        # [START list_workers_batched_async]
+        from azure.communication.jobrouter.aio import RouterClient
+
+        router_client = RouterClient.from_connection_string(conn_str = connection_string)
+
+        async with router_client:
             router_worker_iterator = router_client.list_workers(results_per_page = 10)
 
             async for worker_page in router_worker_iterator.by_page():
@@ -241,7 +257,7 @@ class RouterWorkerSamplesAsync(object):
                     print(f"Retrieved worker with id: {w.router_worker.id}")
 
             print(f"Successfully completed fetching workers")
-        # [END list_workers_async]
+        # [END list_workers_batched_async]
 
     async def clean_up(self):
         connection_string = self.endpoint
@@ -268,6 +284,7 @@ async def main():
     await sample.register_worker()
     await sample.deregister_worker()
     await sample.list_workers()
+    await sample.list_workers_batched()
     await sample.clean_up()
 
 if __name__ == '__main__':

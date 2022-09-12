@@ -195,6 +195,21 @@ class ExceptionPolicySamples(object):
 
         router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
+        exception_policy_iterator = router_admin_client.list_exception_policies()
+
+        for ep in exception_policy_iterator:
+            print(f"Retrieved exception policy with id: {ep.exception_policy.id}")
+
+        print(f"Successfully completed fetching exception policies")
+        # [END list_exception_policies]
+
+    def list_exception_policies_batched(self):
+        connection_string = self.endpoint
+        # [START list_exception_policies_batched]
+        from azure.communication.jobrouter import RouterAdministrationClient
+
+        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+
         exception_policy_iterator = router_admin_client.list_exception_policies(results_per_page = 10)
 
         for policy_page in exception_policy_iterator.by_page():
@@ -205,7 +220,7 @@ class ExceptionPolicySamples(object):
                 print(f"Retrieved exception policy with id: {ep.exception_policy.id}")
 
         print(f"Successfully completed fetching exception policies")
-        # [END list_exception_policies]
+        # [END list_exception_policies_batched]
 
     def clean_up(self):
         connection_string = self.endpoint
@@ -227,4 +242,5 @@ if __name__ == '__main__':
     sample.update_exception_policy()
     sample.get_exception_policy()
     sample.list_exception_policies()
+    sample.list_exception_policies_batched()
     sample.clean_up()

@@ -339,6 +339,21 @@ class RouterJobSamples(object):
 
         router_client = RouterClient.from_connection_string(conn_str = connection_string)
 
+        router_job_iterator = router_client.list_jobs()
+
+        for j in router_job_iterator:
+            print(f"Retrieved job with id: {j.router_job.id}")
+
+        print(f"Successfully completed fetching jobs")
+        # [END list_jobs]
+
+    def list_jobs_batched(self):
+        connection_string = self.endpoint
+        # [START list_jobs_batched]
+        from azure.communication.jobrouter import RouterClient
+
+        router_client = RouterClient.from_connection_string(conn_str = connection_string)
+
         router_job_iterator = router_client.list_jobs(results_per_page = 10)
 
         for job_page in router_job_iterator.by_page():
@@ -349,7 +364,7 @@ class RouterJobSamples(object):
                 print(f"Retrieved job with id: {j.router_job.id}")
 
         print(f"Successfully completed fetching jobs")
-        # [END list_jobs]
+        # [END list_jobs_batched]
 
     def cancel_job(self):
         connection_string = self.endpoint
@@ -392,4 +407,5 @@ if __name__ == '__main__':
     sample.get_job_position()
     sample.complete_and_close_job()
     sample.list_jobs()
+    sample.list_jobs_batched()
     sample.clean_up()

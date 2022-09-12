@@ -135,6 +135,21 @@ class JobQueueSamples(object):
 
         router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
+        job_queue_iterator = router_admin_client.list_queues()
+
+        for q in job_queue_iterator:
+            print(f"Retrieved queue policy with id: {q.job_queue.id}")
+
+        print(f"Successfully completed fetching job queues")
+        # [END list_queues]
+
+    def list_queues_batched(self):
+        connection_string = self.endpoint
+        # [START list_queues_batched]
+        from azure.communication.jobrouter import RouterAdministrationClient
+
+        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+
         job_queue_iterator = router_admin_client.list_queues(results_per_page = 10)
 
         for queue_page in job_queue_iterator.by_page():
@@ -145,7 +160,7 @@ class JobQueueSamples(object):
                 print(f"Retrieved queue policy with id: {q.job_queue.id}")
 
         print(f"Successfully completed fetching job queues")
-        # [END list_queues]
+        # [END list_queues_batched]
 
     def clean_up(self):
         connection_string = self.endpoint
@@ -169,4 +184,5 @@ if __name__ == '__main__':
     sample.get_queue()
     sample.get_queue_statistics()
     sample.list_queues()
+    sample.list_queues_batched()
     sample.clean_up()

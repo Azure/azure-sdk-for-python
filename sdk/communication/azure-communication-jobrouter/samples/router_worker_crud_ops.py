@@ -95,7 +95,7 @@ class RouterWorkerSamples(object):
 
         # set `connection_string` to an existing ACS endpoint
         router_client = RouterClient.from_connection_string(conn_str = connection_string)
-        print("RouterAdministrationClient created successfully!")
+        print("RouterClient created successfully!")
 
         router_worker: RouterWorker = router_client.create_worker(
             worker_id = worker_id,
@@ -140,7 +140,7 @@ class RouterWorkerSamples(object):
 
         # set `connection_string` to an existing ACS endpoint
         router_client: RouterClient = RouterClient.from_connection_string(conn_str = connection_string)
-        print("RouterAdministrationClient created successfully!")
+        print("RouterClient created successfully!")
 
         # we are going to
         # 1. Assign the worker to another queue
@@ -219,6 +219,21 @@ class RouterWorkerSamples(object):
 
         router_client = RouterClient.from_connection_string(conn_str = connection_string)
 
+        router_worker_iterator = router_client.list_workers()
+
+        for w in router_worker_iterator:
+            print(f"Retrieved worker with id: {w.router_worker.id}")
+
+        print(f"Successfully completed fetching workers")
+        # [END list_workers]
+
+    def list_workers_batched(self):
+        connection_string = self.endpoint
+        # [START list_workers_batched]
+        from azure.communication.jobrouter import RouterClient
+
+        router_client = RouterClient.from_connection_string(conn_str = connection_string)
+
         router_worker_iterator = router_client.list_workers(results_per_page = 10)
 
         for worker_page in router_worker_iterator.by_page():
@@ -229,7 +244,7 @@ class RouterWorkerSamples(object):
                 print(f"Retrieved worker with id: {w.router_worker.id}")
 
         print(f"Successfully completed fetching workers")
-        # [END list_workers]
+        # [END list_workers_batched]
 
     def clean_up(self):
         connection_string = self.endpoint
@@ -255,4 +270,5 @@ if __name__ == '__main__':
     sample.register_worker()
     sample.deregister_worker()
     sample.list_workers()
+    sample.list_workers_batched()
     sample.clean_up()

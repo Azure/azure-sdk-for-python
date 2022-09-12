@@ -317,6 +317,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
                 :language: python
                 :dedent: 8
                 :caption: Using a RouterAdministrationClient to list exception policies
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/exception_policy_crud_ops.py
+                :start-after: [START list_exception_policies_batched]
+                :end-before: [END list_exception_policies_batched]
+                :language: python
+                :dedent: 8
+                :caption: Using a RouterAdministrationClient to list exception policies in batches
         """
 
         results_per_page = kwargs.pop("results_per_page", None)
@@ -557,6 +566,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
                 :language: python
                 :dedent: 8
                 :caption: Use a RouterAdministrationClient to list distribution policies
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/distribution_policy_crud_ops.py
+                :start-after: [START list_distribution_policies_batched]
+                :end-before: [END list_distribution_policies_batched]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to list distribution policies in batches
         """
 
         results_per_page = kwargs.pop("results_per_page", None)
@@ -803,6 +821,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
                 :language: python
                 :dedent: 8
                 :caption: Use a RouterAdministrationClient to list queues
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/job_queue_crud_ops.py
+                :start-after: [START list_queues_batched]
+                :end-before: [END list_queues_batched]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to list queues in batches
         """
 
         results_per_page = kwargs.pop("results_per_page", None)
@@ -1072,6 +1099,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
                 :language: python
                 :dedent: 8
                 :caption: Use a RouterAdministrationClient to list classification policies
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/classification_policy_crud_ops.py
+                :start-after: [START list_classification_policies_batched]
+                :end-before: [END list_classification_policies_batched]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to list classification policies in batches
         """
         results_per_page = kwargs.pop("results_per_page", None)
 

@@ -82,17 +82,10 @@ from azure.communication.jobrouter import (
     RouterClient,
     RouterAdministrationClient
 )
-from azure.identity import DefaultAzureCredential
 
 connection_string = "endpoint=ENDPOINT;accessKey=KEY"
 router_client = RouterClient.from_connection_string(conn_str = connection_string)
 router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
-
-# To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have
-# AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
-endpoint = "https://<RESOURCE_NAME>.communication.azure.com"
-router_client = RouterClient(endpoint, DefaultAzureCredential())
-router_admin_client = RouterAdministrationClient(endpoint, DefaultAzureCredential())
 ```
 
 ### Distribution Policy
@@ -104,13 +97,17 @@ from azure.communication.jobrouter import (
     DistributionPolicy
 )
 
-distribution_policy: DistributionPolicy = router_admin_client.create_distribution_policy(
-    distribution_policy_id = "distribution-policy-1",
+distribution_policy: DistributionPolicy = DistributionPolicy(
     offer_ttl_seconds = 24 * 60 * 60,
     mode = LongestIdleMode(
         min_concurrent_offers = 1,
         max_concurrent_offers = 1
     )
+)
+
+distribution_policy: DistributionPolicy = router_admin_client.create_distribution_policy(
+    distribution_policy_id = "distribution-policy-1",
+    distribution_policy = distribution_policy
 )
 ```
 ### Queue
@@ -120,9 +117,14 @@ Next, we can create the queue.
 from azure.communication.jobrouter import (
     JobQueue
 )
+
+queue: JobQueue = JobQueue(
+    distribution_policy_id = "distribution-policy-1"
+)
+
 queue: JobQueue = router_admin_client.create_queue(
     queue_id = "queue-1",
-    distribution_policy_id = "distribution-policy-1"
+    queue = queue
 )
 ```
 
@@ -135,8 +137,7 @@ from azure.communication.jobrouter import (
     LabelOperator
 )
 
-job: RouterJob = router_client.create_job(
-    job_id = "jobId-1",
+router_job: RouterJob = RouterJob(
     channel_id = "my-channel",
     queue_id = "queue-1",
     channel_reference = "12345",
@@ -144,6 +145,11 @@ job: RouterJob = router_client.create_job(
     requested_worker_selectors = [
         WorkerSelector(key = "Some-Skill", label_operator = LabelOperator.EQUAL, value = 10)
     ]
+)
+
+job: RouterJob = router_client.create_job(
+    job_id = "jobId-1",
+    router_job = router_job
 )
 ```
 
@@ -156,8 +162,7 @@ from azure.communication.jobrouter import (
     ChannelConfiguration
 )
 
-worker = router_client.create_worker(
-    worker_id = "worker-1",
+router_worker: RouterWorker = RouterWorker(
     total_capacity = 1,
     queue_assignments = {
         "queue-1": QueueAssignment()
@@ -169,6 +174,11 @@ worker = router_client.create_worker(
         "my-channel": ChannelConfiguration(capacity_cost_per_job = 1)
     },
     available_for_offers = True
+)
+
+worker = router_client.create_worker(
+    worker_id = "worker-1",
+    router_worker = router_worker
 )
 ```
 
@@ -241,9 +251,6 @@ Once the worker is done with the job, the worker has to mark the job as `complet
 ```python
 import datetime
 from azure.communication.jobrouter import (
-    JobOffer,
-    AcceptJobOfferResult,
-    RouterJobStatus,
     CompleteJobResult
 )
 

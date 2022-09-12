@@ -423,17 +423,20 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
                 :language: python
                 :dedent: 8
                 :caption: Use a RouterClient to retrieve workers
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_worker_crud_ops.py
+                :start-after: [START list_workers_batched]
+                :end-before: [END list_workers_batched]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to retrieve workers in batches
         """
 
         params = {}
         if results_per_page is not None:
             params['maxpagesize'] = _SERIALIZER.query("maxpagesize", results_per_page, 'int')
-
-        if not isinstance(status, WorkerStateSelector):
-            try:
-                status = WorkerStateSelector.__getattr__(status)
-            except Exception:
-                raise ValueError(f"status: {status} is not acceptable")
 
         return self._client.job_router.list_workers(
             params = params,
@@ -755,17 +758,20 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
                 :language: python
                 :dedent: 8
                 :caption: Use a RouterClient to retrieve jobs
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops.py
+                :start-after: [START list_jobs_batched]
+                :end-before: [END list_jobs_batched]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to retrieve jobs in batches
         """
 
         params = {}
         if results_per_page is not None:
             params['maxpagesize'] = _SERIALIZER.query("maxpagesize", results_per_page, 'int')
-
-        if not isinstance(status, JobStateSelector):
-            try:
-                status = JobStateSelector.__getattr__(status)
-            except Exception:
-                raise ValueError(f"status: {status} is not acceptable")
 
         return self._client.job_router.list_jobs(
             params = params,

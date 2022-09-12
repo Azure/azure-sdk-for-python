@@ -140,9 +140,9 @@ class ClassificationPolicySamplesAsync(object):
             print(f"Successfully fetched classification policy with id: {classification_policy.id}")
         # [END get_classification_policy_async]
 
-    async def list_classification_policies(self):
+    async def list_classification_policies_batched(self):
         connection_string = self.endpoint
-        # [START list_classification_policies_async]
+        # [START list_classification_policies_batched_async]
         from azure.communication.jobrouter.aio import RouterAdministrationClient
 
         router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
@@ -156,6 +156,22 @@ class ClassificationPolicySamplesAsync(object):
 
                 for cp in policies_in_page:
                     print(f"Retrieved classification policy with id: {cp.classification_policy.id}")
+
+            print(f"Successfully completed fetching classification policies")
+        # [END list_classification_policies_batched_async]
+
+    async def list_classification_policies(self):
+        connection_string = self.endpoint
+        # [START list_classification_policies_async]
+        from azure.communication.jobrouter.aio import RouterAdministrationClient
+
+        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+
+        async with router_admin_client:
+            classification_policy_iterator = router_admin_client.list_classification_policies()
+
+            async for cp in classification_policy_iterator:
+                print(f"Retrieved classification policy with id: {cp.classification_policy.id}")
 
             print(f"Successfully completed fetching classification policies")
         # [END list_classification_policies_async]
@@ -181,6 +197,7 @@ async def main():
     await sample.get_classification_policy()
     await sample.update_classification_policy()
     await sample.list_classification_policies()
+    await sample.list_classification_policies_batched()
     await sample.clean_up()
 
 

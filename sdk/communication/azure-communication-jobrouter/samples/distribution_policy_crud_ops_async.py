@@ -105,6 +105,22 @@ class DistributionPolicySamplesAsync(object):
         router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
         async with router_admin_client:
+            distribution_policy_iterator = router_admin_client.list_distribution_policies()
+
+            async for dp in distribution_policy_iterator:
+                print(f"Retrieved distribution policy with id: {dp.distribution_policy.id}")
+
+            print(f"Successfully completed fetching distribution policies")
+        # [END list_distribution_policies_async]
+
+    async def list_distribution_policies_batched(self):
+        connection_string = self.endpoint
+        # [START list_distribution_policies_batched_async]
+        from azure.communication.jobrouter.aio import RouterAdministrationClient
+
+        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+
+        async with router_admin_client:
             distribution_policy_iterator = router_admin_client.list_distribution_policies(results_per_page = 10)
 
             async for policy_page in distribution_policy_iterator.by_page():
@@ -115,7 +131,7 @@ class DistributionPolicySamplesAsync(object):
                     print(f"Retrieved distribution policy with id: {dp.distribution_policy.id}")
 
             print(f"Successfully completed fetching distribution policies")
-        # [END list_distribution_policies_async]
+        # [END list_distribution_policies_batched_async]
 
     async def clean_up(self):
         connection_string = self.endpoint
@@ -138,6 +154,7 @@ async def main():
     await sample.update_distribution_policy()
     await sample.get_distribution_policy()
     await sample.list_distribution_policies()
+    await sample.list_distribution_policies_batched()
     await sample.clean_up()
 
 if __name__ == '__main__':

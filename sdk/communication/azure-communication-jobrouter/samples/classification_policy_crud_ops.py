@@ -134,9 +134,9 @@ class ClassificationPolicySamples(object):
         print(f"Successfully fetched classification policy with id: {classification_policy.id}")
         # [END get_classification_policy]
 
-    def list_classification_policies(self):
+    def list_classification_policies_batched(self):
         connection_string = self.endpoint
-        # [START list_classification_policies]
+        # [START list_classification_policies_batched]
         from azure.communication.jobrouter import RouterAdministrationClient
 
         router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
@@ -149,6 +149,21 @@ class ClassificationPolicySamples(object):
 
             for cp in policies_in_page:
                 print(f"Retrieved classification policy with id: {cp.classification_policy.id}")
+
+        print(f"Successfully completed fetching classification policies")
+        # [END list_classification_policies_batched]
+
+    def list_classification_policies(self):
+        connection_string = self.endpoint
+        # [START list_classification_policies]
+        from azure.communication.jobrouter import RouterAdministrationClient
+
+        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+
+        classification_policy_iterator = router_admin_client.list_classification_policies()
+
+        for cp in classification_policy_iterator:
+            print(f"Retrieved classification policy with id: {cp.classification_policy.id}")
 
         print(f"Successfully completed fetching classification policies")
         # [END list_classification_policies]
@@ -173,4 +188,5 @@ if __name__ == '__main__':
     sample.update_classification_policy()
     sample.get_classification_policy()
     sample.list_classification_policies()
+    sample.list_classification_policies_batched()
     sample.clean_up()

@@ -351,6 +351,22 @@ class RouterJobSamplesAsync(object):
         router_client = RouterClient.from_connection_string(conn_str = connection_string)
 
         async with router_client:
+            router_job_iterator = router_client.list_jobs()
+
+            async for j in router_job_iterator:
+                print(f"Retrieved job with id: {j.router_job.id}")
+
+            print(f"Successfully completed fetching jobs")
+        # [END list_jobs_async]
+
+    async def list_jobs_batched(self):
+        connection_string = self.endpoint
+        # [START list_jobs_batched_async]
+        from azure.communication.jobrouter.aio import RouterClient
+
+        router_client = RouterClient.from_connection_string(conn_str = connection_string)
+
+        async with router_client:
             router_job_iterator = router_client.list_jobs(results_per_page = 10)
 
             async for job_page in router_job_iterator.by_page():
@@ -361,7 +377,7 @@ class RouterJobSamplesAsync(object):
                     print(f"Retrieved job with id: {j.router_job.id}")
 
             print(f"Successfully completed fetching jobs")
-        # [END list_jobs_async]
+        # [END list_jobs_batched_async]
 
     async def cancel_job(self):
         connection_string = self.endpoint
@@ -406,6 +422,7 @@ async def main():
     await sample.get_job_position()
     await sample.complete_and_close_job()
     await sample.list_jobs()
+    await sample.list_jobs_batched()
     await sample.clean_up()
 
 if __name__ == '__main__':

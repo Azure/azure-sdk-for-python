@@ -199,6 +199,22 @@ class ExceptionPolicySamplesAsync(object):
         router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
         async with router_admin_client:
+            exception_policy_iterator = router_admin_client.list_exception_policies()
+
+            async for ep in exception_policy_iterator:
+                print(f"Retrieved exception policy with id: {ep.exception_policy.id}")
+
+            print(f"Successfully completed fetching exception policies")
+        # [END list_exception_policies_async]
+
+    async def list_exception_policies_batched(self):
+        connection_string = self.endpoint
+        # [START list_exception_policies_batched_async]
+        from azure.communication.jobrouter.aio import RouterAdministrationClient
+
+        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+
+        async with router_admin_client:
             exception_policy_iterator = router_admin_client.list_exception_policies(results_per_page = 10)
 
             async for policy_page in exception_policy_iterator.by_page():
@@ -209,7 +225,7 @@ class ExceptionPolicySamplesAsync(object):
                     print(f"Retrieved exception policy with id: {ep.exception_policy.id}")
 
             print(f"Successfully completed fetching exception policies")
-        # [END list_exception_policies_async]
+        # [END list_exception_policies_batched_async]
 
     async def clean_up(self):
         connection_string = self.endpoint
@@ -232,6 +248,7 @@ async def main():
     await sample.get_exception_policy()
     await sample.update_exception_policy()
     await sample.list_exception_policies()
+    await sample.list_exception_policies_batched()
     await sample.clean_up()
 
 if __name__ == '__main__':
