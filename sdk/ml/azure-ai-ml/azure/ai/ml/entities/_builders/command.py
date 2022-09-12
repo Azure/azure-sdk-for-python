@@ -41,6 +41,7 @@ from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConf
 from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
+from azure.ai.ml.entities._system_data import SystemData
 
 from ..._schema import PathAwareSchema
 from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
@@ -516,7 +517,7 @@ class Command(BaseNode):
             experiment_name=rest_command_job.experiment_name,
             services=rest_command_job.services,
             status=rest_command_job.status,
-            creation_context=obj.system_data,
+            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
             code=rest_command_job.code_id,
             compute=rest_command_job.compute_id,
             environment=rest_command_job.environment_id,

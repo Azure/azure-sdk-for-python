@@ -46,6 +46,7 @@ from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._job.pipeline._io import InputsAttrDict, OutputsAttrDict, PipelineInput, PipelineIOMixin
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
 
 module_logger = logging.getLogger(__name__)
@@ -454,7 +455,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             properties=properties.properties,
             experiment_name=properties.experiment_name,
             status=properties.status,
-            creation_context=obj.system_data,
+            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
             services=properties.services,
             compute=get_resource_name_from_arm_id_safe(properties.compute_id),
             settings=settings_sdk,

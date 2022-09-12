@@ -729,6 +729,8 @@
         "fstring",
         "vals",
         "reprlib",
+        "gzrs",
+        "ragzrs",
         "wsid"
       ]
     },

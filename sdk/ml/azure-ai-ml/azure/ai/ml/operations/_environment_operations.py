@@ -5,6 +5,7 @@
 # pylint: disable=protected-access
 
 from typing import Any, Iterable, Union
+
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
@@ -100,7 +101,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                         environment.version,
                     ),
                 )
-                if not sas_uri:
+                if not sas_uri:  # This means the env already exists and we just get the env
                     module_logger.debug(
                         "Getting the existing asset name: %s, version: %s", environment.name, environment.version
                     )

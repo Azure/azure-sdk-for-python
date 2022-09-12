@@ -590,6 +590,8 @@ class Output(_InputOutputBase):
 
         self.path = path
         self.mode = mode
+        # use this field to determine the Output is control or not, currently hide in kwargs
+        self.is_control = kwargs.pop("is_control", None)
 
     def _get_hint(self, new_line_style=False):
         comment_str = self.description.replace('"', '\\"') if self.description else self.type
@@ -597,7 +599,7 @@ class Output(_InputOutputBase):
 
     def _to_dict(self, remove_name=True):
         """Convert the Output object to a dict."""
-        keys = ["name", "path", "type", "mode", "description"]
+        keys = ["name", "path", "type", "mode", "description", "is_control"]
         if remove_name:
             keys.remove("name")
         result = {key: getattr(self, key) for key in keys}

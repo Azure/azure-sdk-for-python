@@ -73,6 +73,9 @@ class CodeVersionsOperations:
         :type top: int
         :param skip: Continuation token for pagination.
         :type skip: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CodeVersionResourceArmPaginatedResult or the
          result of cls(response)
@@ -80,6 +83,8 @@ class CodeVersionsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.CodeVersionResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CodeVersionResourceArmPaginatedResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -93,6 +98,7 @@ class CodeVersionsOperations:
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
                     name=name,
+                    api_version=api_version,
                     order_by=order_by,
                     top=top,
                     skip=skip,
@@ -108,6 +114,7 @@ class CodeVersionsOperations:
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
                     name=name,
+                    api_version=api_version,
                     order_by=order_by,
                     top=top,
                     skip=skip,
@@ -165,6 +172,9 @@ class CodeVersionsOperations:
         :type name: str
         :param version: Version identifier. This is case-sensitive.
         :type version: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -176,6 +186,8 @@ class CodeVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_delete_request(
             subscription_id=self._config.subscription_id,
@@ -183,6 +195,7 @@ class CodeVersionsOperations:
             workspace_name=workspace_name,
             name=name,
             version=version,
+            api_version=api_version,
             template_url=self.delete.metadata['url'],
         )
         request = _convert_request(request)
@@ -223,6 +236,9 @@ class CodeVersionsOperations:
         :type name: str
         :param version: Version identifier. This is case-sensitive.
         :type version: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CodeVersion, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.CodeVersion
@@ -234,6 +250,8 @@ class CodeVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_get_request(
             subscription_id=self._config.subscription_id,
@@ -241,6 +259,7 @@ class CodeVersionsOperations:
             workspace_name=workspace_name,
             name=name,
             version=version,
+            api_version=api_version,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -288,6 +307,9 @@ class CodeVersionsOperations:
         :type version: str
         :param body: Version entity to create or update.
         :type body: ~azure.mgmt.machinelearningservices.models.CodeVersion
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CodeVersion, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.CodeVersion
@@ -299,6 +321,7 @@ class CodeVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'CodeVersion')
@@ -309,6 +332,7 @@ class CodeVersionsOperations:
             workspace_name=workspace_name,
             name=name,
             version=version,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self.create_or_update.metadata['url'],
