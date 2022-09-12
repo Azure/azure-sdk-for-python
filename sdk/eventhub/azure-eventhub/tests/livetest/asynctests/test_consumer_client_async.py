@@ -6,7 +6,7 @@ from azure.eventhub.aio._eventprocessor.in_memory_checkpoint_store import InMemo
 from azure.eventhub._constants import ALL_PARTITIONS
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_receive_no_partition_async(connstr_senders):
     connection_str, senders = connstr_senders
@@ -47,7 +47,7 @@ async def test_receive_no_partition_async(connstr_senders):
     await task
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_receive_partition_async(connstr_senders):
     connection_str, senders = connstr_senders
@@ -70,7 +70,7 @@ async def test_receive_partition_async(connstr_senders):
     await task
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_receive_load_balancing_async(connstr_senders):
     connection_str, senders = connstr_senders
@@ -96,7 +96,7 @@ async def test_receive_load_balancing_async(connstr_senders):
     await task2
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_receive_batch_no_max_wait_time_async(connstr_senders):
     '''Test whether callback is called when max_wait_time is None and max_batch_size has reached
@@ -142,7 +142,7 @@ async def test_receive_batch_no_max_wait_time_async(connstr_senders):
                          [(3, 10, []),
                           (3, 2, None),
                           ])
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_receive_batch_empty_with_max_wait_time_async(connection_str, max_wait_time, sleep_time, expected_result):
     '''Test whether event handler is called when max_wait_time > 0 and no event is received
@@ -161,7 +161,7 @@ async def test_receive_batch_empty_with_max_wait_time_async(connection_str, max_
     await task
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_receive_batch_early_callback_async(connstr_senders):
     ''' Test whether the callback is called once max_batch_size reaches and before max_wait_time reaches.

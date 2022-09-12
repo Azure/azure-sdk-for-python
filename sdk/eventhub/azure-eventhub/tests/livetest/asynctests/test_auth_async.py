@@ -10,11 +10,25 @@ import time
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.identity.aio import EnvironmentCredential
 from azure.eventhub import EventData
+from azure.eventhub.exceptions import EventHubError
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient, EventHubSharedKeyCredential
 from azure.eventhub.aio._client_base_async import EventHubSASTokenCredential
 
 
 @pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_invalid_proxy_server(connection_str, uamqp_transport):
+    HTTP_PROXY = {
+    'proxy_hostname': 'fakeproxy',  # proxy hostname.
+    'proxy_port': 3128,  # proxy port.
+    }
+
+    client = EventHubProducerClient.from_connection_string(connection_str, http_proxy=HTTP_PROXY, uamqp_transport=uamqp_transport)
+    async with client:
+        with pytest.raises(EventHubError):
+            batch = await client.create_batch()
+
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_client_secret_credential_async(live_eventhub):
     credential = EnvironmentCredential()
@@ -47,7 +61,7 @@ async def test_client_secret_credential_async(live_eventhub):
     assert list(on_event.event.body)[0] == 'A single message'.encode('utf-8')
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_client_sas_credential_async(live_eventhub):
     # This should "just work" to validate known-good.
@@ -84,7 +98,7 @@ async def test_client_sas_credential_async(live_eventhub):
         await conn_str_producer_client.send_batch(batch)
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_client_azure_sas_credential_async(live_eventhub):
     # This should "just work" to validate known-good.
@@ -109,7 +123,7 @@ async def test_client_azure_sas_credential_async(live_eventhub):
         await producer_client.send_batch(batch)
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_client_azure_named_key_credential_async(live_eventhub):
 

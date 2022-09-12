@@ -25,7 +25,7 @@ except (ImportError, ModuleNotFoundError):
     UamqpTransport = None
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_send_batch_with_invalid_hostname(invalid_hostname, uamqp_transport):
     amqp_transport = UamqpTransport if uamqp_transport else None
     if sys.platform.startswith('darwin'):
@@ -59,7 +59,7 @@ def test_send_batch_with_invalid_hostname(invalid_hostname, uamqp_transport):
     assert isinstance(on_error.err, ConnectError)
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_receive_with_invalid_hostname_sync(invalid_hostname, uamqp_transport):
     def on_event(partition_context, event):
         pass
@@ -76,7 +76,7 @@ def test_receive_with_invalid_hostname_sync(invalid_hostname, uamqp_transport):
     thread.join()
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_send_batch_with_invalid_key(invalid_key, uamqp_transport):
     client = EventHubProducerClient.from_connection_string(invalid_key, uamqp_transport=uamqp_transport)
     amqp_transport = UamqpTransport if uamqp_transport else None
@@ -89,7 +89,7 @@ def test_send_batch_with_invalid_key(invalid_key, uamqp_transport):
         client.close()
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_send_batch_to_invalid_partitions(connection_str, uamqp_transport):
     partitions = ["XYZ", "-1", "1000", "-"]
     for p in partitions:
@@ -103,7 +103,7 @@ def test_send_batch_to_invalid_partitions(connection_str, uamqp_transport):
             client.close()
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_send_batch_too_large_message(connection_str, uamqp_transport):
     if sys.platform.startswith('darwin'):
         pytest.skip("Skipping on OSX - open issue regarding message size")
@@ -117,7 +117,7 @@ def test_send_batch_too_large_message(connection_str, uamqp_transport):
         client.close()
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_send_batch_null_body(connection_str, uamqp_transport):
     client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
     try:
@@ -130,7 +130,7 @@ def test_send_batch_null_body(connection_str, uamqp_transport):
         client.close()
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_create_batch_with_invalid_hostname_sync(invalid_hostname, uamqp_transport):
     if sys.platform.startswith('darwin'):
         pytest.skip("Skipping on OSX - it keeps reporting 'Unable to set external certificates' "
@@ -141,7 +141,7 @@ def test_create_batch_with_invalid_hostname_sync(invalid_hostname, uamqp_transpo
             client.create_batch(max_size_in_bytes=300)
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_create_batch_with_too_large_size_sync(connection_str, uamqp_transport):
     client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
     with client:

@@ -20,7 +20,7 @@ from uamqp import compat
 from azure.eventhub._transport._uamqp_transport import UamqpTransport
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_send_with_long_interval_sync(live_eventhub, sleep, uamqp_transport, timeout_factor):
     test_partition = "0"
     sender = EventHubProducerClient(live_eventhub['hostname'], live_eventhub['event_hub'],
@@ -68,7 +68,7 @@ def test_send_with_long_interval_sync(live_eventhub, sleep, uamqp_transport, tim
     assert list(received[0].body)[0] == b"A single event"
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_send_connection_idle_timeout_and_reconnect_sync(connstr_receivers, uamqp_transport, timeout_factor):
     connection_str, receivers = connstr_receivers
     amqp_transport = UamqpTransport
@@ -120,7 +120,7 @@ def test_send_connection_idle_timeout_and_reconnect_sync(connstr_receivers, uamq
             retry += 1
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_receive_connection_idle_timeout_and_reconnect_sync(connstr_senders, uamqp_transport):
     connection_str, senders = connstr_senders
     client = EventHubConsumerClient.from_connection_string(

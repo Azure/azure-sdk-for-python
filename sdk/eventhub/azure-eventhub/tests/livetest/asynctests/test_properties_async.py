@@ -10,7 +10,7 @@ from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient, E
 from azure.eventhub.exceptions import AuthenticationError, ConnectError, EventHubError
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_get_properties(live_eventhub):
     client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'], '$default',
@@ -20,7 +20,7 @@ async def test_get_properties(live_eventhub):
         properties = await client.get_eventhub_properties()
         assert properties['eventhub_name'] == live_eventhub['event_hub'] and properties['partition_ids'] == ['0', '1']
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_get_properties_with_auth_error_async(live_eventhub):
     client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'], '$default',
@@ -37,7 +37,7 @@ async def test_get_properties_with_auth_error_async(live_eventhub):
         with pytest.raises(AuthenticationError) as e:
             await client.get_eventhub_properties()
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_get_properties_with_connect_error(live_eventhub):
     client = EventHubConsumerClient(live_eventhub['hostname'], "invalid", '$default',
@@ -54,7 +54,7 @@ async def test_get_properties_with_connect_error(live_eventhub):
         with pytest.raises(EventHubError) as e:  # This can be either ConnectError or ConnectionLostError
             await client.get_eventhub_properties()
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_get_partition_ids(live_eventhub):
     client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'], '$default',
@@ -65,7 +65,7 @@ async def test_get_partition_ids(live_eventhub):
         assert partition_ids == ['0', '1']
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_get_partition_properties(live_eventhub):
     client = EventHubProducerClient(live_eventhub['hostname'], live_eventhub['event_hub'],

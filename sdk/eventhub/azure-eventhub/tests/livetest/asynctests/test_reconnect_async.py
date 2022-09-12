@@ -17,7 +17,7 @@ import uamqp
 from uamqp import authentication, errors, c_uamqp, compat
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_with_long_interval_async(live_eventhub, sleep):
     test_partition = "0"
@@ -62,7 +62,7 @@ async def test_send_with_long_interval_async(live_eventhub, sleep):
     assert list(received[0].body)[0] == b"A single event"
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_connection_idle_timeout_and_reconnect_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
@@ -92,7 +92,7 @@ async def test_send_connection_idle_timeout_and_reconnect_async(connstr_receiver
             retry += 1
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_receive_connection_idle_timeout_and_reconnect_async(connstr_senders):
     connection_str, senders = connstr_senders

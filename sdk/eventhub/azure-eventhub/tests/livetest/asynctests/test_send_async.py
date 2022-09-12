@@ -23,7 +23,7 @@ from azure.eventhub.amqp import (
 )
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_amqp_annotated_message(connstr_receivers, uamqp_transport):
     connection_str, receivers = connstr_receivers
@@ -143,7 +143,7 @@ async def test_send_amqp_annotated_message(connstr_receivers, uamqp_transport):
     assert received_count["normal_msg"] == 3
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_with_partition_key_async(connstr_receivers, live_eventhub):
     connection_str, receivers = connstr_receivers
@@ -218,7 +218,7 @@ async def test_send_with_partition_key_async(connstr_receivers, live_eventhub):
 
 
 @pytest.mark.parametrize("payload", [b"", b"A single event"])
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_and_receive_small_body_async(connstr_receivers, payload):
     connection_str, receivers = connstr_receivers
@@ -237,7 +237,7 @@ async def test_send_and_receive_small_body_async(connstr_receivers, payload):
     assert list(received[1].body)[0] == payload
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_partition_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
@@ -279,7 +279,7 @@ async def test_send_partition_async(connstr_receivers):
     assert len(partition_0) + len(partition_1) == 4
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_non_ascii_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
@@ -305,7 +305,7 @@ async def test_send_non_ascii_async(connstr_receivers):
     assert partition_0[3].body_as_json() == {"foo": u"漢字"}
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_multiple_partition_with_app_prop_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
@@ -338,7 +338,7 @@ async def test_send_multiple_partition_with_app_prop_async(connstr_receivers):
     assert partition_0[1].properties[b"raw_prop"] == b"raw_value"
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_over_websocket_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
@@ -357,7 +357,7 @@ async def test_send_over_websocket_async(connstr_receivers):
     assert len(received) == 2
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_with_create_event_batch_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
@@ -383,7 +383,7 @@ async def test_send_with_create_event_batch_async(connstr_receivers):
         assert EventData._from_message(received[0]).properties[b"raw_prop"] == b"raw_value"
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_list_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
@@ -399,7 +399,7 @@ async def test_send_list_async(connstr_receivers):
     assert received[0].body_as_str() == payload
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_list_partition_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
@@ -416,7 +416,7 @@ async def test_send_list_partition_async(connstr_receivers):
                          [([EventData("A"*1024)]*1100, ValueError),
                           ("any str", AttributeError)
                           ])
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_list_wrong_data_async(connection_str, to_send, exception_type):
     client = EventHubProducerClient.from_connection_string(connection_str)
@@ -426,7 +426,7 @@ async def test_send_list_wrong_data_async(connection_str, to_send, exception_typ
 
 
 @pytest.mark.parametrize("partition_id, partition_key", [("0", None), (None, "pk")])
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_batch_pid_pk_async(invalid_hostname, partition_id, partition_key):
     # Use invalid_hostname because this is not a live test.
@@ -437,7 +437,7 @@ async def test_send_batch_pid_pk_async(invalid_hostname, partition_id, partition
             await client.send_batch(batch, partition_id=partition_id, partition_key=partition_key)
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_with_callback_async(connstr_receivers):
 

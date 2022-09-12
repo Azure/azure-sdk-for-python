@@ -15,7 +15,7 @@ from azure.eventhub import EventData, TransportType, EventHubConsumerClient
 from azure.eventhub.exceptions import EventHubError
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_receive_end_of_stream(connstr_senders, uamqp_transport):
     def on_event(partition_context, event):
         if partition_context.partition_id == "0":
@@ -52,7 +52,7 @@ def test_receive_end_of_stream(connstr_senders, uamqp_transport):
                           ("sequence", False, "Exclusive"),
                           ("sequence", True, "Inclusive"),
                           ("enqueued_time", False, "Exclusive")])
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_receive_with_event_position_sync(uamqp_transport, connstr_senders, position, inclusive, expected_result):
     def on_event(partition_context, event):
         assert partition_context.last_enqueued_event_properties.get('sequence_number') == event.sequence_number
@@ -103,7 +103,7 @@ def test_receive_with_event_position_sync(uamqp_transport, connstr_senders, posi
     thread.join()
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_receive_owner_level(connstr_senders, uamqp_transport):
     def on_event(partition_context, event):
         pass
@@ -135,7 +135,7 @@ def test_receive_owner_level(connstr_senders, uamqp_transport):
     assert isinstance(on_error.error, EventHubError)
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_receive_over_websocket_sync(connstr_senders, uamqp_transport):
     app_prop = {"raw_prop": "raw_value"}
     content_type = "text/plain"

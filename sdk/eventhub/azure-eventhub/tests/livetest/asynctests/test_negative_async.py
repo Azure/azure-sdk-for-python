@@ -21,7 +21,7 @@ from azure.eventhub.exceptions import (
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receivers):
     if sys.platform.startswith('darwin'):
@@ -58,7 +58,7 @@ async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receiv
 
 @pytest.mark.parametrize("invalid_place",
                          ["hostname", "key_name", "access_key", "event_hub", "partition"])
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_receive_with_invalid_param_async(live_eventhub, invalid_place):
     eventhub_config = live_eventhub.copy()
@@ -87,7 +87,7 @@ async def test_receive_with_invalid_param_async(live_eventhub, invalid_place):
     await task
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_with_invalid_key_async(invalid_key):
     client = EventHubProducerClient.from_connection_string(invalid_key)
@@ -98,7 +98,7 @@ async def test_send_with_invalid_key_async(invalid_key):
             await client.send_batch(batch)
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_with_invalid_policy_async(invalid_policy):
     client = EventHubProducerClient.from_connection_string(invalid_policy)
@@ -109,7 +109,7 @@ async def test_send_with_invalid_policy_async(invalid_policy):
             await client.send_batch(batch)
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_non_existing_entity_sender_async(connection_str):
     client = EventHubProducerClient.from_connection_string(connection_str, eventhub_name="nemo")
@@ -120,7 +120,7 @@ async def test_non_existing_entity_sender_async(connection_str):
             await client.send_batch(batch)
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_to_invalid_partitions_async(connection_str):
     partitions = ["XYZ", "-1", "1000", "-"]
@@ -135,7 +135,7 @@ async def test_send_to_invalid_partitions_async(connection_str):
             await client.close()
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_too_large_message_async(connection_str):
     if sys.platform.startswith('darwin'):
@@ -150,7 +150,7 @@ async def test_send_too_large_message_async(connection_str):
         await client.close()
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_null_body_async(connection_str):
     client = EventHubProducerClient.from_connection_string(connection_str)
@@ -164,7 +164,7 @@ async def test_send_null_body_async(connection_str):
         await client.close()
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_create_batch_with_invalid_hostname_async(invalid_hostname):
     if sys.platform.startswith('darwin'):
@@ -176,7 +176,7 @@ async def test_create_batch_with_invalid_hostname_async(invalid_hostname):
             await client.create_batch(max_size_in_bytes=300)
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_create_batch_with_too_large_size_async(connection_str):
     client = EventHubProducerClient.from_connection_string(connection_str)

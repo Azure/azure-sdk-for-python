@@ -39,7 +39,7 @@ def random_pkey_generation(partitions):
     return dic
 
 
-@pytest.mark.liveTest()
+@pytest.mark.skip()
 def test_producer_client_constructor(connection_str, uamqp_transport):
     def on_success(events, pid):
         pass
@@ -72,7 +72,7 @@ def test_producer_client_constructor(connection_str, uamqp_transport):
         )
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.parametrize(
     "flush_after_sending, close_after_sending",
     [
@@ -81,7 +81,7 @@ def test_producer_client_constructor(connection_str, uamqp_transport):
         (False, True)
     ]
 )
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_basic_send_single_events_round_robin(connection_str, flush_after_sending, close_after_sending, uamqp_transport):
     received_events = defaultdict(list)
 
@@ -179,7 +179,7 @@ def test_basic_send_single_events_round_robin(connection_str, flush_after_sendin
     receive_thread.join()
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.parametrize(
     "flush_after_sending, close_after_sending",
     [
@@ -295,7 +295,7 @@ def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending
     receive_thread.join()
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_send_with_hybrid_partition_assignment(connection_str, uamqp_transport):
     received_events = defaultdict(list)
 
@@ -463,7 +463,7 @@ def test_send_with_timing_configuration(connection_str, uamqp_transport):
     receive_thread.join()
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_long_sleep(connection_str, uamqp_transport):
     received_events = defaultdict(list)
 
@@ -505,7 +505,7 @@ def test_long_sleep(connection_str, uamqp_transport):
     consumer.close()
     receive_thread.join()
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_long_wait_small_buffer(connection_str):
     received_events = defaultdict(list)
 

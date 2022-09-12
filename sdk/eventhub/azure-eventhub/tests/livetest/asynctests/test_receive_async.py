@@ -13,7 +13,7 @@ from azure.eventhub.exceptions import EventHubError
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_receive_end_of_stream_async(connstr_senders):
     async def on_event(partition_context, event):
@@ -59,7 +59,7 @@ async def test_receive_end_of_stream_async(connstr_senders):
                           ("sequence", False, "Exclusive"),
                           ("sequence", True, "Inclusive"),
                           ("enqueued_time", False, "Exclusive")])
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_receive_with_event_position_async(connstr_senders, position, inclusive, expected_result):
     async def on_event(partition_context, event):
@@ -100,7 +100,7 @@ async def test_receive_with_event_position_async(connstr_senders, position, incl
     await task
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_receive_owner_level_async(connstr_senders):
     app_prop = {"raw_prop": "raw_value"}
@@ -134,7 +134,7 @@ async def test_receive_owner_level_async(connstr_senders):
     assert isinstance(on_error.error, EventHubError)
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_receive_over_websocket_async(connstr_senders):
     app_prop = {"raw_prop": "raw_value"}

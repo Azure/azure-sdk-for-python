@@ -8,7 +8,7 @@ from azure.eventhub._eventprocessor.in_memory_checkpoint_store import InMemoryCh
 from azure.eventhub._constants import ALL_PARTITIONS
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_receive_no_partition(connstr_senders, uamqp_transport):
     connection_str, senders = connstr_senders
     senders[0].send(EventData("Test EventData"))
@@ -50,7 +50,7 @@ def test_receive_no_partition(connstr_senders, uamqp_transport):
         assert len([checkpoint for checkpoint in checkpoints if checkpoint["sequence_number"] == on_event.sequence_number]) > 0
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_receive_partition(connstr_senders, uamqp_transport):
     connection_str, senders = connstr_senders
     senders[0].send(EventData("Test EventData"))
@@ -80,7 +80,7 @@ def test_receive_partition(connstr_senders, uamqp_transport):
         assert on_event.eventhub_name == senders[0]._client.eventhub_name
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 def test_receive_load_balancing(connstr_senders, uamqp_transport):
     if sys.platform.startswith('darwin'):
         pytest.skip("Skipping on OSX - test code using multiple threads. Sometimes OSX aborts python process")

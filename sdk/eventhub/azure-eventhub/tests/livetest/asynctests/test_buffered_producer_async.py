@@ -36,7 +36,7 @@ async def random_pkey_generation(partitions):
     return dic
 
 
-@pytest.mark.liveTest()
+@pytest.mark.skip()
 @pytest.mark.asyncio
 async def test_producer_client_constructor(connection_str):
     async def on_success(events, pid):
@@ -68,7 +68,7 @@ async def test_producer_client_constructor(connection_str):
         )
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "flush_after_sending, close_after_sending",
@@ -172,7 +172,7 @@ async def test_basic_send_single_events_round_robin(connection_str, flush_after_
     await receive_thread
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "flush_after_sending, close_after_sending",
@@ -286,7 +286,7 @@ async def test_basic_send_batch_events_round_robin(connection_str, flush_after_s
     await receive_thread
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_with_hybrid_partition_assignment(connection_str):
     received_events = defaultdict(list)
@@ -375,7 +375,7 @@ async def test_send_with_hybrid_partition_assignment(connection_str):
     await receive_thread
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_send_with_timing_configuration(connection_str):
     received_events = defaultdict(list)
@@ -450,7 +450,7 @@ async def test_send_with_timing_configuration(connection_str):
     await receive_thread
 
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_long_sleep(connection_str):
     received_events = defaultdict(list)
@@ -491,7 +491,7 @@ async def test_long_sleep(connection_str):
     await consumer.close()
     await receive_thread
 
-@pytest.mark.liveTest
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_long_wait_small_buffer(connection_str):
     received_events = defaultdict(list)
