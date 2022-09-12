@@ -11,7 +11,7 @@ parameters:
   - name: Version
     type: string
     default: ''
-          
+
 steps:
   - pwsh: |
       $targetPath = "$(Agent.TempDirectory)/${{ parameters.Package }}"
@@ -28,11 +28,11 @@ steps:
         - Name: "Azure/azure-sdk-for-python"
           Commitish: "${{ parameters.Package }}_${{ parameters.Version }}"
           WorkingDirectory: "$(Package.Clone)"
-      SkipDefaultCheckout: true
+      SkipCheckoutNone: true
 
   - pwsh: |
       $pathForCopy = Join-Path -Path "$(Package.Clone)" -ChildPath "${{ parameters.CheckoutPath }}/${{ parameters.Package }}"
-      
+
       Write-Host $pathForCopy
       Write-Host ${{ parameters.DestinationDirectory }}
 

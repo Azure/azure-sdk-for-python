@@ -78,6 +78,13 @@ class StringTransformedEnum(Field):
         raise ValidationError(f"Value {value} passed is not in set {self.allowed_values}")
 
 
+class DumpableEnumField(StringTransformedEnum):
+    def __init__(self, **kwargs):
+        """Enum field that will raise exception when dumping."""
+        kwargs.pop("casing_transform", None)
+        super(DumpableEnumField, self).__init__(casing_transform=lambda x: x, **kwargs)
+
+
 class LocalPathField(fields.Str):
     """A field that validates that the input is a local path.
 

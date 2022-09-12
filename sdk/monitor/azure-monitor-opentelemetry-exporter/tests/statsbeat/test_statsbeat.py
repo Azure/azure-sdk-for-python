@@ -25,6 +25,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat import _statsbeat
 from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
+    _STATSBEAT_STATE,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import (
     _shorten_host,
@@ -145,6 +146,16 @@ class TestStatsbeat(unittest.TestCase):
             stats_exporter._endpoint,
             _statsbeat._DEFAULT_EU_STATS_CONNECTION_STRING.split(";")[1].split("=")[1]   # noqa: E501
         )
+
+    @mock.patch.object(MeterProvider, 'shutdown')
+    def test_shutdown_statsbeat_metrics(self, shutdown_mock):
+        _STATSBEAT_STATE["SHUTDOWN"] = False
+        _statsbeat._STATSBEAT_METER_PROVIDER = MeterProvider(metric_readers=[])
+        _statsbeat.shutdown_statsbeat_metrics()
+        self.assertIsNone(_statsbeat._STATSBEAT_METER_PROVIDER)
+        self.assertTrue(_STATSBEAT_STATE["SHUTDOWN"])
+        shutdown_mock.assert_called_once()
+
 
 _StatsbeatMetrics_COMMON_ATTRS = dict(
     _StatsbeatMetrics._COMMON_ATTRIBUTES

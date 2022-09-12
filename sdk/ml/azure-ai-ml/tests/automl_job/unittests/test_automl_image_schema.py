@@ -159,12 +159,30 @@ def expected_image_search_space_settings() -> List[RestImageClassificationSearch
 def expected_image_object_detection_search_space_settings() -> List[RestImageObjectDetectionSearchSpace]:
     return [
         RestImageObjectDetectionSearchSpace(
-            model_name="choice('maskrcnn_resnet50_fpn')",
+            model_name="choice('yolov5')",
+            learning_rate="uniform(0.0001,0.01)",
+            model_size="choice('small','medium')",
+        ),
+        RestImageObjectDetectionSearchSpace(
+            model_name="choice('fasterrcnn_resnet50_fpn')",
             learning_rate="uniform(0.005,0.05)",
             warmup_cosine_lr_warmup_epochs="choice(0,3)",
             optimizer="choice('sgd','adam','adamw')",
             min_size="choice(600,800)",
         ),
+    ]
+
+
+@pytest.fixture
+def expected_image_instance_segmentation_search_space_settings() -> List[RestImageObjectDetectionSearchSpace]:
+    return [
+        RestImageObjectDetectionSearchSpace(
+            model_name="choice('maskrcnn_resnet50_fpn')",
+            learning_rate="uniform(0.005,0.05)",
+            warmup_cosine_lr_warmup_epochs="choice(0,3)",
+            optimizer="choice('sgd','adam','adamw')",
+            min_size="choice(600,800)",
+        )
     ]
 
 
@@ -268,7 +286,7 @@ def expected_image_instance_segmentation_job(
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
     expected_image_model_settings_object_detection: ImageModelSettingsObjectDetection,
-    expected_image_object_detection_search_space_settings: List[RestImageObjectDetectionSearchSpace],
+    expected_image_instance_segmentation_search_space_settings: List[RestImageObjectDetectionSearchSpace],
     compute_binding_expected: str,
 ) -> JobBase:
     return _get_rest_automl_job(
@@ -279,7 +297,7 @@ def expected_image_instance_segmentation_job(
             limit_settings=expected_image_limits,
             sweep_settings=expected_image_sweep_settings if run_type == "sweep" else None,
             model_settings=expected_image_model_settings_object_detection,
-            search_space=expected_image_object_detection_search_space_settings if run_type == "sweep" else None,
+            search_space=expected_image_instance_segmentation_search_space_settings if run_type == "sweep" else None,
             primary_metric=InstanceSegmentationPrimaryMetrics.MEAN_AVERAGE_PRECISION,
             log_verbosity=LogVerbosity.DEBUG,
         ),

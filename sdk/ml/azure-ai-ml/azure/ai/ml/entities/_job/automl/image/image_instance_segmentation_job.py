@@ -193,15 +193,13 @@ class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
     @classmethod
     def _create_instance_from_schema_dict(cls, loaded_data: Dict) -> "ImageInstanceSegmentationJob":
         loaded_data.pop(AutoMLConstants.TASK_TYPE_YAML, None)
-        search_space_val = loaded_data.pop("search_space", None)
-        search_space = ImageInstanceSegmentationJob._get_search_space_from_str(search_space_val)
         data_settings = {
             "training_data": loaded_data.pop("training_data"),
             "target_column_name": loaded_data.pop("target_column_name"),
             "validation_data": loaded_data.pop("validation_data", None),
             "validation_data_size": loaded_data.pop("validation_data_size", None),
         }
-        job = ImageInstanceSegmentationJob(search_space=search_space, **loaded_data)
+        job = ImageInstanceSegmentationJob(**loaded_data)
         job.set_data(**data_settings)
         return job
 
@@ -210,7 +208,9 @@ class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
         from azure.ai.ml._schema.pipeline.automl_node import ImageInstanceSegmentationNodeSchema
 
         if inside_pipeline:
-            schema_dict = ImageInstanceSegmentationNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = ImageInstanceSegmentationNodeSchema(
+                context={BASE_PATH_CONTEXT_KEY: "./", "inside_pipeline": True}
+            ).dump(self)
         else:
             schema_dict = ImageInstanceSegmentationSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 

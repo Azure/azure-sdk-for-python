@@ -109,17 +109,21 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
     return data
 
 
+def _resolve_pipeline_component_inputs(component, **kwargs):
+    # Try resolve object's inputs & outputs and return a resolved new object
+    result = copy.copy(component)
+    # Flatten group inputs
+    result._inputs = component._get_flattened_inputs()
+    return result
+
+
 class PipelineComponentSchema(ComponentSchema):
     type = StringTransformedEnum(allowed_values=[NodeType.PIPELINE])
     jobs = PipelineJobsField()
 
     @pre_dump
     def resolve_pipeline_component_inputs(self, component, **kwargs):  # pylint: disable=unused-argument, no-self-use
-        # Try resolve object's inputs & outputs and return a resolved new object
-        result = copy.copy(component)
-        # Flatten group inputs
-        result._inputs = component._get_flattened_inputs()
-        return result
+        return _resolve_pipeline_component_inputs(component, **kwargs)
 
     @post_load
     def make(self, data, **kwargs):
@@ -163,6 +167,7 @@ class PipelineComponentFileRefField(FileRefField):
         # Update base_path to parent path of component file.
         component_schema_context = deepcopy(self.context)
         # pylint: disable=no-member
+        value = _resolve_pipeline_component_inputs(value)
         return _AnonymousPipelineComponentSchema(context=component_schema_context)._serialize(value, **kwargs)
 
     def _deserialize(self, value, attr, data, **kwargs):
