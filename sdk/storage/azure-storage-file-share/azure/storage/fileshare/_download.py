@@ -201,7 +201,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         The properties of the file being downloaded. If only a range of the data is being
         downloaded, this will be reflected in the properties.
     :ivar int size:
-        The size of the total data in the stream. This will be the byte range if speficied,
+        The size of the total data in the stream. This will be the byte range if specified,
         otherwise the total size of the file.
     """
 
@@ -323,7 +323,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 self.size = self._file_size
 
         except HttpResponseError as error:
-            if self._start_range is None and error.response.status_code == 416:
+            if self._start_range is None and error.response and error.response.status_code == 416:
                 # Get range will fail on an empty file. If the user did not
                 # request a range, do a regular get request in order to get
                 # any properties.

@@ -252,14 +252,14 @@
 #
 #         # Upsert the document after 3 secs to reset the document's ttl
 #         document_definition['key'] = 'value2'
-#         upserted_docment = await created_collection.upsert_item(body=document_definition)
+#         upserted_document = await created_collection.upsert_item(body=document_definition)
 #
 #         time.sleep(7)
 #
 #         # Upserted document still exists after 10 secs from document creation time(with collection's
 #         # analyticalStorageTtl set to 8) since its ttl was reset after 3 secs by upserting it
-#         read_document = await created_collection.read_item(item=upserted_docment['id'], partition_key=upserted_docment['id'])
-#         self.assertEqual(upserted_docment['id'], read_document['id'])
+#         read_document = await created_collection.read_item(item=upserted_document['id'], partition_key=upserted_document['id'])
+#         self.assertEqual(upserted_document['id'], read_document['id'])
 #
 #         time.sleep(3)
 #
