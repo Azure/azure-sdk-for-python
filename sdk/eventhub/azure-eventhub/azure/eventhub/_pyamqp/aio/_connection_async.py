@@ -30,6 +30,7 @@ from ..constants import (
 )
 
 from ..error import (
+    AMQPException,
     ErrorCondition,
     AMQPConnectionError,
     AMQPError
@@ -349,7 +350,7 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
             _LOGGER.info("<- %r", OpenFrame(*frame), extra=self._network_trace_params)
         if channel != 0:
             _LOGGER.error("OPEN frame received on a channel that is not 0.")
-            await self.close(error=AMQPConnectionError(
+            await self.close(error=AMQPError(
                 condition=ErrorCondition.NotAllowed, 
                 description="OPEN frame received on a channel that is not 0"))
             await self._set_state(ConnectionState.END)
