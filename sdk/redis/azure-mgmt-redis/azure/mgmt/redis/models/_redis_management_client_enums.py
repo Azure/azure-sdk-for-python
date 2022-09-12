@@ -7,13 +7,11 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class DayOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Day of the week when a cache can be patched.
-    """
+class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Day of the week when a cache can be patched."""
 
     MONDAY = "Monday"
     TUESDAY = "Tuesday"
@@ -25,11 +23,14 @@ class DayOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     EVERYDAY = "Everyday"
     WEEKEND = "Weekend"
 
-class DefaultName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class DefaultName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DefaultName."""
 
     DEFAULT = "default"
 
-class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
     allowed).
     """
@@ -39,26 +40,26 @@ class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, En
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
 
-class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current provisioning state.
-    """
+
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
     DELETING = "Deleting"
     FAILED = "Failed"
 
-class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The private endpoint connection status.
-    """
+
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private endpoint connection status."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Redis instance provisioning status.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Redis instance provisioning status."""
 
     CREATING = "Creating"
     DELETING = "Deleting"
@@ -73,55 +74,57 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNPROVISIONING = "Unprovisioning"
     UPDATING = "Updating"
 
-class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether or not public endpoint access is allowed for this cache.  Value is optional but if
     passed in, must be 'Enabled' or 'Disabled'. If 'Disabled', private endpoints are the exclusive
-    access method. Default value is 'Enabled'
+    access method. Default value is 'Enabled'.
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class RebootType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Which Redis node(s) to reboot. Depending on this value data loss is possible.
-    """
+
+class RebootType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Which Redis node(s) to reboot. Depending on this value data loss is possible."""
 
     PRIMARY_NODE = "PrimaryNode"
     SECONDARY_NODE = "SecondaryNode"
     ALL_NODES = "AllNodes"
 
-class RedisKeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The Redis access key to regenerate.
-    """
+
+class RedisKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Redis access key to regenerate."""
 
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
 
-class ReplicationRole(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Role of the linked server.
-    """
+
+class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Role of the linked server."""
 
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
 
-class SkuFamily(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The SKU family to use. Valid values: (C, P). (C = Basic/Standard, P = Premium).
-    """
+
+class SkuFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SKU family to use. Valid values: (C, P). (C = Basic/Standard, P = Premium)."""
 
     C = "C"
     P = "P"
 
-class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of Redis cache to deploy. Valid values: (Basic, Standard, Premium)
-    """
+
+class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of Redis cache to deploy. Valid values: (Basic, Standard, Premium)."""
 
     BASIC = "Basic"
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class TlsVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class TlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Optional: requires clients to use a specified TLS version (or higher) to connect (e,g, '1.0',
-    '1.1', '1.2')
+    '1.1', '1.2').
     """
 
     ONE0 = "1.0"

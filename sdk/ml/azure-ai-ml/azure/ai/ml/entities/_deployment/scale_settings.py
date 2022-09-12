@@ -27,7 +27,7 @@ class OnlineScaleSettings(RestTranslatableMixin):
     :type scale_type: str
     """
 
-    def __init__(self, scale_type: str, **kwargs):
+    def __init__(self, scale_type: str, **kwargs):  # pylint: disable=unused-argument
         self.scale_type = camel_to_snake(scale_type)
 
     @abstractmethod
@@ -39,19 +39,21 @@ class OnlineScaleSettings(RestTranslatableMixin):
             self.scale_type = other.scale_type or self.scale_type
 
     @classmethod
-    def _from_rest_object(cls, settings: RestOnlineScaleSettings) -> "OnlineScaleSettings":
+    def _from_rest_object(  # pylint: disable=arguments-renamed
+        cls, settings: RestOnlineScaleSettings
+    ) -> "OnlineScaleSettings":
         if isinstance(settings, RestDefaultScaleSettings):
             return DefaultScaleSettings._from_rest_object(settings)
-        elif isinstance(settings, RestTargetUtilizationScaleSettings):
+        if isinstance(settings, RestTargetUtilizationScaleSettings):
             return TargetUtilizationScaleSettings._from_rest_object(settings)
-        else:
-            msg = f"Unsupported online scale setting type {settings.scale_type}."
-            raise DeploymentException(
-                message=msg,
-                target=ErrorTarget.ONLINE_DEPLOYMENT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.SYSTEM_ERROR,
-            )
+
+        msg = f"Unsupported online scale setting type {settings.scale_type}."
+        raise DeploymentException(
+            message=msg,
+            target=ErrorTarget.ONLINE_DEPLOYMENT,
+            no_personal_data_message=msg,
+            error_category=ErrorCategory.SYSTEM_ERROR,
+        )
 
 
 class DefaultScaleSettings(OnlineScaleSettings):
@@ -59,7 +61,7 @@ class DefaultScaleSettings(OnlineScaleSettings):
 
     def __init__(self, **kwargs):
         super(DefaultScaleSettings, self).__init__(
-            scale_type=ScaleType.DEFAULT.value,
+            scale_type=ScaleType.DEFAULT.value,  # pylint: disable=no-member
         )
 
     def _to_rest_object(self) -> RestDefaultScaleSettings:
@@ -105,7 +107,7 @@ class TargetUtilizationScaleSettings(OnlineScaleSettings):
         **kwargs,
     ):
         super(TargetUtilizationScaleSettings, self).__init__(
-            scale_type=ScaleType.TARGET_UTILIZATION.value,
+            scale_type=ScaleType.TARGET_UTILIZATION.value,  # pylint: disable=no-member
         )
         self.min_instances = min_instances
         self.max_instances = max_instances

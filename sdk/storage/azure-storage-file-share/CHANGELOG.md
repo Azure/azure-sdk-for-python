@@ -1,5 +1,17 @@
 # Release History
 
+## 12.10.0 (Unreleased)
+
+### Features Added
+- Stable release of features from 12.10.0b1.
+
+### Bugs Fixed
+- Fixed an issue where calling `download_file` with an invalid base64-encoded account key would raise an
+`AttributeError` rather than the proper `AzureSigningError`.
+
+### Other Changes
+- Changed the default value for `read_timeout` to 60 seconds for all clients.
+
 ## 12.10.0b1 (2022-08-23)
 
 This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
@@ -222,7 +234,7 @@ the following APIs:
   - `path` (str): The full path of the file.
   - `share` (str): The share the file will be downloaded from.
   - `properties` (`FileProperties`): The properties of the file.
-  - `size` (int): The size of the download. Either the total file size, or the length of a subsection if sepcified. Previously called `download_size`.
+  - `size` (int): The size of the download. Either the total file size, or the length of a subsection if specified. Previously called `download_size`.
 - `StorageStreamDownloader` now has new functions:
   - `readall()`: Reads the complete download stream, returning bytes. This replaces the functions `content_as_bytes` and `content_as_text` which have been deprecated.
   - `readinto(stream)`: Download the complete stream into the supplied writable stream, returning the number of bytes written. This replaces the function `download_to_stream` which has been deprecated.

@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 from typing import List, Optional
 
-from azure.ai.ml.constants import LocalEndpointConstants
+from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
 from .dockerfile_instructions import Cmd, Copy, From, Run, Workdir
 

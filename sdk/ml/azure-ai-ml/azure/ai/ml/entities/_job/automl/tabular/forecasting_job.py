@@ -2,27 +2,29 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,no-member
 
 from typing import Dict, List, Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_02_01_preview.models import Forecasting as RestForecasting
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from azure.ai.ml._restclient.v2022_06_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_06_01_preview.models import Forecasting as RestForecasting
+from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     ForecastingPrimaryMetrics,
-    JobBaseData,
+    JobBase,
     StackEnsembleSettings,
     TaskType,
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, AutoMLConstants
+from azure.ai.ml.constants import AutoMLConstants
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
 from azure.ai.ml.entities._job.automl.tabular.automl_tabular import AutoMLTabular
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import TabularFeaturizationSettings
 from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
 from azure.ai.ml.entities._job.automl.training_settings import ForecastingTrainingSettings
+from azure.ai.ml.entities._job.identity import Identity
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -40,14 +42,12 @@ class ForecastingJob(AutoMLTabular):
         **kwargs,
     ) -> None:
         # Extract any task specific settings
-        data = kwargs.pop("data", None)
         featurization = kwargs.pop("featurization", None)
         limits = kwargs.pop("limits", None)
         training = kwargs.pop("training", None)
 
         super().__init__(
             task_type=TaskType.FORECASTING,
-            data=data,
             featurization=featurization,
             limits=limits,
             training=training,
@@ -72,7 +72,7 @@ class ForecastingJob(AutoMLTabular):
             else ForecastingPrimaryMetrics[camel_to_snake(value).upper()]
         )
 
-    @AutoMLTabular.training.getter
+    @property
     def training(self) -> ForecastingTrainingSettings:
         return self._training or ForecastingTrainingSettings()
 
@@ -365,21 +365,27 @@ class ForecastingJob(AutoMLTabular):
         if enable_stack_ensemble is None:
             self._training.enable_stack_ensemble = False
 
-    def _to_rest_object(self) -> JobBaseData:
-        self._resolve_data_inputs()
-        self._validation_data_to_rest()
-
+    def _to_rest_object(self) -> JobBase:
         forecasting_task = RestForecasting(
-            data_settings=self._data,
+            target_column_name=self.target_column_name,
+            training_data=self.training_data,
+            validation_data=self.validation_data,
+            validation_data_size=self.validation_data_size,
+            weight_column_name=self.weight_column_name,
+            cv_split_column_names=self.cv_split_column_names,
+            n_cross_validations=self.n_cross_validations,
+            test_data=self.test_data,
+            test_data_size=self.test_data_size,
             featurization_settings=self._featurization._to_rest_object() if self._featurization else None,
             limit_settings=self._limits._to_rest_object() if self._limits else None,
             training_settings=self._training._to_rest_object() if self._training else None,
             primary_metric=self.primary_metric,
-            allowed_models=self._training.allowed_training_algorithms if self._training else None,
-            blocked_models=self._training.blocked_training_algorithms if self._training else None,
             log_verbosity=self.log_verbosity,
             forecasting_settings=self._forecasting_settings._to_rest_object(),
         )
+
+        self._resolve_data_inputs(forecasting_task)
+        self._validation_data_to_rest(forecasting_task)
 
         properties = RestAutoMLJob(
             display_name=self.display_name,
@@ -394,37 +400,45 @@ class ForecastingJob(AutoMLTabular):
             outputs=to_rest_data_outputs(self.outputs),
             resources=self.resources,
             task_details=forecasting_task,
-            identity=self.identity,
+            identity=self.identity._to_rest_object() if self.identity else None,
         )
 
-        result = JobBaseData(properties=properties)
+        result = JobBase(properties=properties)
         result.name = self.name
         return result
 
     @classmethod
-    def _from_rest_object(cls, obj: JobBaseData) -> "ForecastingJob":
-        properties: RestAutoMLJob = obj.properties
+    def _from_rest_object(cls, job_rest_object: JobBase) -> "ForecastingJob":
+        properties: RestAutoMLJob = job_rest_object.properties
         task_details: RestForecasting = properties.task_details
 
         job_args_dict = {
-            "id": obj.id,
-            "name": obj.name,
+            "id": job_rest_object.id,
+            "name": job_rest_object.name,
             "description": properties.description,
             "tags": properties.tags,
             "properties": properties.properties,
             "experiment_name": properties.experiment_name,
             "services": properties.services,
             "status": properties.status,
-            "creation_context": obj.system_data,
+            "creation_context": job_rest_object.system_data,
             "display_name": properties.display_name,
             "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
             "resources": properties.resources,
-            "identity": properties.identity,
+            "identity": Identity._from_rest_object(properties.identity) if properties.identity else None,
         }
 
         forecasting_job = cls(
-            data=task_details.data_settings,
+            target_column_name=task_details.target_column_name,
+            training_data=task_details.training_data,
+            validation_data=task_details.validation_data,
+            validation_data_size=task_details.validation_data_size,
+            weight_column_name=task_details.weight_column_name,
+            cv_split_column_names=task_details.cv_split_column_names,
+            n_cross_validations=task_details.n_cross_validations,
+            test_data=task_details.test_data,
+            test_data_size=task_details.test_data_size,
             featurization=TabularFeaturizationSettings._from_rest_object(task_details.featurization_settings)
             if task_details.featurization_settings
             else None,
@@ -443,10 +457,6 @@ class ForecastingJob(AutoMLTabular):
         )
 
         forecasting_job._restore_data_inputs()
-        forecasting_job._training_settings_from_rest(
-            task_details.allowed_models,
-            task_details.blocked_models,
-        )
         forecasting_job._validation_data_from_rest()
 
         return forecasting_job

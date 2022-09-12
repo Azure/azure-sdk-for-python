@@ -7,13 +7,14 @@
 import os
 from typing import Callable, Dict, Tuple, Union
 
-from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken, ManagedIdentity, UserIdentity
-from azure.ai.ml.constants import AssetTypes, ComponentSource, LegacyAssetTypes
-from azure.ai.ml.entities._component.command_component import CommandComponent
+from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.constants._common import AssetTypes, LegacyAssetTypes
+from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities._assets.environment import Environment
+from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from azure.ai.ml.entities._job.identity import AmlToken, ManagedIdentity, UserIdentity
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 
@@ -50,7 +51,12 @@ def _parse_input(input_value):
         job_input = input_value
     else:
         msg = f"Unsupported input type: {type(input_value)}, only Input, dict, str, bool, int and float are supported."
-        raise ValidationException(message=msg, no_personal_data_message=msg, target=ErrorTarget.JOB)
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.JOB,
+            error_type=ValidationErrorType.INVALID_VALUE,
+        )
     return component_input, job_input
 
 
@@ -71,7 +77,12 @@ def _parse_output(output_value):
         job_output = output_value
     else:
         msg = f"Unsupported output type: {type(output_value)}, only Output and dict are supported."
-        raise ValidationException(message=msg, no_personal_data_message=msg, target=ErrorTarget.JOB)
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.JOB,
+            error_type=ValidationErrorType.INVALID_VALUE,
+        )
     return component_output, job_output
 
 
@@ -92,7 +103,7 @@ def command(
     tags: Dict = None,
     properties: Dict = None,
     display_name: str = None,
-    command: str = None,
+    command: str = None,  # pylint: disable=redefined-outer-name
     experiment_name: str = None,
     environment: Union[str, Environment] = None,
     environment_variables: Dict = None,
@@ -102,10 +113,13 @@ def command(
     outputs: Dict = None,
     instance_count: int = None,
     instance_type: str = None,
+    docker_args: str = None,
+    shm_size: str = None,
     timeout: int = None,
     code: Union[str, os.PathLike] = None,
     identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
     is_deterministic: bool = True,
+    services: dict = None,
     **kwargs,
 ) -> Command:
     """Create a Command object which can be used inside dsl.pipeline as a
@@ -121,7 +135,8 @@ def command(
     :type properties: dict[str, str]
     :param display_name: a friendly name
     :type display_name: str
-    :param experiment_name:  Name of the experiment the job will be created under, if None is provided, default will be set to current directory name. Will be ignored as a pipeline step.
+    :param experiment_name:  Name of the experiment the job will be created under,
+        if None is provided, default will be set to current directory name. Will be ignored as a pipeline step.
     :type experiment_name: str
     :param command: the command string that will be run
     :type command: str
@@ -130,7 +145,8 @@ def command(
     :param environment_variables: environment variables to set on the compute before this command is executed
     :type environment_variables: dict
     :param distribution: the distribution mode to use for this command
-    :type distribution: Union[Dict, azure.ai.ml.MpiDistribution, azure.ai.ml.TensorFlowDistribution, azure.ai.ml.PyTorchDistribution]
+    :type distribution:
+        Union[Dict, azure.ai.ml.MpiDistribution, azure.ai.ml.TensorFlowDistribution, azure.ai.ml.PyTorchDistribution]
     :param compute: the name of the compute where the command job is executed(
         will not be used if the command is used as a component/function)
     :type compute: str
@@ -142,15 +158,30 @@ def command(
     :vartype instance_count: int
     :param instance_type: Optional type of VM used as supported by the compute target.
     :vartype instance_type: str
+    :param docker_args: Extra arguments to pass to the Docker run command. This would override any
+     parameters that have already been set by the system, or in this section. This parameter is only
+     supported for Azure ML compute types.
+    :vartype docker_args: str
+    :param shm_size: Size of the docker container's shared memory block. This should be in the
+     format of (number)(unit) where number as to be greater than 0 and the unit can be one of
+     b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
+    :vartype shm_size: str
     :param timeout: The number in seconds, after which the job will be cancelled.
     :vartype timeout: int
     :param code: the code folder to run -- typically a local folder that will be uploaded as the job is submitted
     :type code: Union[str, os.PathLike]
     :param identity: Identity that training job will use while running on compute.
     :type identity: Union[azure.ai.ml.ManagedIdentity, azure.ai.ml.AmlToken]
-    :param is_deterministic: Specify whether the command will return same output given same input. If a command (component) is deterministic, when use it as a node/step in a pipeline, it will reuse results from a previous submitted job in current workspace which has same inputs and settings. In this case, this step will not use any compute resource. Default to be True, specify is_deterministic=False if you would like to avoid such reuse behavior.
+    :param is_deterministic: Specify whether the command will return same output given same input.
+        If a command (component) is deterministic, when use it as a node/step in a pipeline,
+        it will reuse results from a previous submitted job in current workspace which has same inputs and settings.
+        In this case, this step will not use any compute resource.
+        Default to be True, specify is_deterministic=False if you would like to avoid such reuse behavior.
     :type is_deterministic: bool
+    :param services: Interactive services for the node.
+    :type services: dict
     """
+    # pylint: disable=too-many-locals
     inputs = inputs or {}
     outputs = outputs or {}
     component_inputs, job_inputs = _parse_inputs_outputs(inputs, parse_func=_parse_input)
@@ -193,11 +224,14 @@ def command(
         distribution=distribution,
         environment=environment,
         environment_variables=environment_variables,
+        services=services,
         **kwargs,
     )
 
-    if instance_count is not None or instance_type is not None:
-        command_obj.set_resources(instance_count=instance_count, instance_type=instance_type)
+    if instance_count is not None or instance_type is not None or docker_args is not None or shm_size is not None:
+        command_obj.set_resources(
+            instance_count=instance_count, instance_type=instance_type, docker_args=docker_args, shm_size=shm_size
+        )
 
     if timeout is not None:
         command_obj.set_limits(timeout=timeout)

@@ -27,6 +27,8 @@ class PipelineJobSettings(object):
         self.default_datastore = default_datastore
         self.continue_on_step_failure = continue_on_step_failure
         self.force_rerun = force_rerun
+        self.on_init = kwargs.get("on_init", None)
+        self.on_finalize = kwargs.get("on_finalize", None)
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -36,4 +38,6 @@ class PipelineJobSettings(object):
             "default_datastore": self.default_datastore,
             "continue_on_step_failure": self.continue_on_step_failure,
             "force_rerun": self.force_rerun,
+            "on_init": self.on_init,
+            "on_finalize": self.on_finalize,
         }

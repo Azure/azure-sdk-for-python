@@ -17,7 +17,9 @@ USAGE:
     python sample_insert_delete_entities.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) TABLES_STORAGE_ENDPOINT_SUFFIX - the Table service account URL suffix
+    2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
+    3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
 from datetime import datetime
@@ -74,7 +76,7 @@ class InsertDeleteEntity(object):
 
     def delete_entity(self):
         from azure.data.tables import TableClient
-        from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
+        from azure.core.exceptions import ResourceExistsError
         from azure.core.credentials import AzureNamedKeyCredential
 
         credential = AzureNamedKeyCredential(self.account_name, self.access_key)
