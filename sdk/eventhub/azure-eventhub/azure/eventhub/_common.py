@@ -54,7 +54,7 @@ from .amqp import (
     AmqpMessageProperties,
 )
 from ._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
-from ._pyamqp.message import Message, BatchMessage
+from ._pyamqp.message import Message
 from ._transport._pyamqp_transport import PyamqpTransport
 
 try:
@@ -64,10 +64,10 @@ except ImportError:
 
 if TYPE_CHECKING:
     try:
-        from uamqp import Message as uamqp_Message, BatchMessage as uamqp_BatchMessage
+        from uamqp import Message as uamqp_Message, BatchMessage
     except ImportError:
         uamqp_Message = None
-        uamqp_BatchMessage = None
+        BatchMessage = None
     from ._transport._base import AmqpTransport
 
 MessageContent = TypedDict("MessageContent", {"content": bytes, "content_type": str})
@@ -596,9 +596,9 @@ class EventDataBatch(object):
                 )
 
     @property
-    def message(self) -> Union["uamqp_BatchMessage", LegacyBatchMessage]:
+    def message(self) -> Union["BatchMessage", LegacyBatchMessage]:
         """
-        DEPRECATED: Get the underlying BatchMessage or LegacyBatchMessage.
+        DEPRECATED: Get the underlying uamqp.BatchMessage or LegacyBatchMessage.
          This is deprecated and will be removed in a later release.
         :rtype: uamqp.BatchMessage or LegacyBatchMessage
         """
@@ -611,7 +611,7 @@ class EventDataBatch(object):
         return self._uamqp_message
 
     @message.setter
-    def message(self, value: "uamqp_BatchMessage") -> None:
+    def message(self, value: "BatchMessage") -> None:
         """
         DEPRECATED: Set the underlying BatchMessage.
          This is deprecated and will be removed in a later release.
