@@ -29,7 +29,8 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
 
 from ._cosmos_client_connection_async import CosmosClientConnection
-from .._base import build_options as _build_options, validate_cache_staleness_value, _deserialize_throughput, _replace_throughput
+from .._base import build_options as _build_options, validate_cache_staleness_value, _deserialize_throughput, \
+    _replace_throughput
 from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes
 from ..offer import ThroughputProperties
@@ -597,7 +598,8 @@ class ContainerProxy(object):
         return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace_async
-    async def replace_throughput(self, throughput: Union[int, ThroughputProperties], **kwargs: Any) -> ThroughputProperties:
+    async def replace_throughput(self, throughput: Union[int, ThroughputProperties], **kwargs: Any) -> \
+            ThroughputProperties:
         """Replace the container's throughput.
 
         If no ThroughputProperties already exist for the container, an exception is raised.

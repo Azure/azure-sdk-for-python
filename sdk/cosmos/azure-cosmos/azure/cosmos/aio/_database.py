@@ -30,7 +30,8 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection
-from .._base import build_options as _build_options, _set_throughput_options, _deserialize_throughput, _replace_throughput
+from .._base import build_options as _build_options, _set_throughput_options, _deserialize_throughput, \
+    _replace_throughput
 from ._container import ContainerProxy
 from ..offer import ThroughputProperties
 from ..http_constants import StatusCodes
@@ -753,7 +754,8 @@ class DatabaseProxy(object):
         return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace_async
-    async def replace_throughput(self, throughput: Union[int, ThroughputProperties], **kwargs: Any) -> ThroughputProperties:
+    async def replace_throughput(self, throughput: Union[int, ThroughputProperties], **kwargs: Any) -> \
+            ThroughputProperties:
         """Replace the database-level throughput.
 
         If no ThroughputProperties already exist for the database, an exception is raised.
