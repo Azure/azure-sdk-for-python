@@ -6,11 +6,15 @@ from pytest_mock import MockFixture
 
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities._workspace.customer_managed_key import CustomerManagedKey
+from azure.ai.ml.entities._workspace.identity import (
+    ManagedServiceIdentity,
+    ManagedServiceIdentityType,
+    UserAssignedIdentity,
+)
 from azure.ai.ml.entities._workspace.workspace import Workspace
 from azure.ai.ml.operations import WorkspaceOperations
 from azure.core.exceptions import ResourceExistsError
 from azure.core.polling import LROPoller
-from azure.identity import DefaultAzureCredential
 
 
 @pytest.fixture
@@ -121,6 +125,11 @@ class TestWorkspaceOperation:
             public_network_access="Enabled",
             container_registry="foo_conntainer_registry",
             application_insights="foo_application_insights",
+            identity=ManagedServiceIdentity(
+                type=ManagedServiceIdentityType.USER_ASSIGNED,
+                user_assigned_identities={"resource1": UserAssignedIdentity(), "resource2": UserAssignedIdentity()},
+            ),
+            primary_user_assigned_identity="resource2",
         )
 
         def outgoing_call(rg, name, params, polling):
@@ -133,6 +142,9 @@ class TestWorkspaceOperation:
             assert params.tags.get("key") == "value"
             assert params.container_registry == "foo_conntainer_registry"
             assert params.application_insights == "foo_application_insights"
+            assert params.identity.type == ManagedServiceIdentityType.USER_ASSIGNED
+            assert len(params.identity.user_assigned_identities) == 2
+            assert params.primary_user_assigned_identity == "resource2"
             assert polling is False
             return DEFAULT
 
@@ -152,6 +164,8 @@ class TestWorkspaceOperation:
             assert params.description == ""  # empty string is supported for description.
             assert params.friendly_name == ""  # empty string is supported for friendly name.
             assert params.image_build_compute == ""  # was set to empty string, for user to remove the property value.
+            assert params.identity is None
+            assert params.primary_user_assigned_identity is None
             assert (
                 params.public_network_access is None
             )  # was not set for update, no change on service side for this property.

@@ -14,6 +14,7 @@ from azure.ai.ml import MLClient, automl
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities import Data
 from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._job.automl import SearchSpace
 from azure.ai.ml.entities._job.automl.image import ImageClassificationJob, ImageClassificationSearchSpace
 from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
@@ -97,12 +98,12 @@ class TestAutoMLImageClassification:
         image_classification_job_sweep.set_training_parameters(early_stopping=True, evaluation_frequency=1)
         image_classification_job_sweep.extend_search_space(
             [
-                ImageClassificationSearchSpace(
+                SearchSpace(
                     model_name=Choice(["vitb16r224"]),
                     learning_rate=Uniform(0.001, 0.01),
                     number_of_epochs=Choice([15, 30]),
                 ),
-                ImageClassificationSearchSpace(
+                SearchSpace(
                     model_name=Choice(["seresnext"]),
                     layers_to_freeze=Choice([0, 2]),
                 ),

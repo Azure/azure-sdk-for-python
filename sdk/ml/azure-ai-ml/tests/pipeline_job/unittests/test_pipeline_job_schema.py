@@ -606,8 +606,10 @@ class TestPipelineJobSchema:
         test_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline.yml"
         job = load_job(test_path)
         # make sure inline component is parsed into component entity
-        spark_component = job.jobs["spark_job"]
-        component_dict = load_yaml("./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/component.yml")
+        spark_component = job.jobs["add_greeting_column"]
+        component_dict = load_yaml(
+            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
+        )
         self.assert_inline_component(spark_component, component_dict)
 
     def test_pipeline_job_inline_component_file_with_complex_path(self):

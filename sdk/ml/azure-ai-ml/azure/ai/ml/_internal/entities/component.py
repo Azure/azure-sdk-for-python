@@ -9,12 +9,13 @@ from typing import Dict, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails, SystemData
+from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities import Component
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 from azure.ai.ml.entities._validation import ValidationResult
 
@@ -63,7 +64,7 @@ class InternalComponent(Component):
     :param _schema: Schema of the component.
     :type _schema: str
     :param creation_context: Creation metadata of the component.
-    :type creation_context: SystemData
+    :type creation_context: ~azure.ai.ml.entities.SystemData
     """
 
     def __init__(

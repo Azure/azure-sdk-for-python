@@ -67,7 +67,6 @@ from azure.ai.ml.constants._common import (
     LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT,
     LOCAL_COMPUTE_TARGET,
     SHORT_URI_FORMAT,
-    SPARK_ENVIRONMENT_WARNING_MESSAGE,
     SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME,
     TID_FMT,
     AssetTypes,
@@ -76,7 +75,6 @@ from azure.ai.ml.constants._common import (
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities import Component, Compute, Job, PipelineJob
-from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._builders import BaseNode, Command, Spark
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
@@ -89,6 +87,7 @@ from azure.ai.ml.entities._job.job_errors import JobParsingError, PipelineChildJ
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
+from azure.ai.ml.entities._validation import SchemaValidatableMixin
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.sweep import SweepJob
 from azure.core.credentials import TokenCredential
@@ -363,14 +362,14 @@ class JobOperations(_ScopeDependentOperations):
                 yaml_path="code",
             )
 
-        if not isinstance(job, PipelineJob):
+        if not isinstance(job, SchemaValidatableMixin):
             return git_code_validation_result.try_raise(error_target=ErrorTarget.JOB, raise_error=raise_on_failure)
 
         validation_result = job._validate(raise_error=raise_on_failure)
         validation_result.merge_with(git_code_validation_result)
         # fast return to avoid remote call if local validation not passed
         # TODO: use remote call to validate the entire job after MFE API is ready
-        if validation_result.passed:
+        if validation_result.passed and isinstance(job, PipelineJob):
             try:
                 job.compute = self.try_get_compute_arm_id(job.compute)
             except Exception as e:
@@ -557,14 +556,14 @@ class JobOperations(_ScopeDependentOperations):
         self,
         name: str,
         *,
-        download_path: Union[PathLike, str] = Path.cwd(),
+        download_path: Union[PathLike, str],
         output_name: str = None,
         all: bool = False,
     ) -> None:
         """Download logs and output of a job.
 
         :param str name: Name of a job.
-        :param Union[PathLike, str] download_path: Local path as download destination, defaults to current working directory.
+        :param Union[PathLike, str] download_path: Local path as download destination.
         :param str output_name: Named output to download, defaults to None.
         :param bool all: Whether to download logs and all named outputs, defaults to False.
         """
@@ -1062,8 +1061,6 @@ class JobOperations(_ScopeDependentOperations):
                 Code(base_path=job._base_path, path=job.code),
                 azureml_type=AzureMLResourceType.CODE,
             )
-        if isinstance(job.component._environment, Environment) and job.component._environment.image is not None:
-            module_logger.warning(msg=SPARK_ENVIRONMENT_WARNING_MESSAGE)
         job.environment = resolver(job.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job

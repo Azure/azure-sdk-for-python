@@ -18,7 +18,7 @@ from azure.ai.ml.entities._job.sweep.search_space import Choice, Randint, SweepD
 
 
 class ComponentTranslatableMixin:
-    PYTHON_SDK_TYPE_MAPPING = {
+    _PYTHON_SDK_TYPE_MAPPING = {
         float: "number",
         int: "integer",
         bool: "boolean",
@@ -37,8 +37,8 @@ class ComponentTranslatableMixin:
                 error_category=ErrorCategory.USER_ERROR,
             )
         input_type = type(pipeline_job_inputs[_input_name])
-        if input_type in cls.PYTHON_SDK_TYPE_MAPPING.keys():
-            return cls.PYTHON_SDK_TYPE_MAPPING[input_type]
+        if input_type in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+            return cls._PYTHON_SDK_TYPE_MAPPING[input_type]
         return getattr(pipeline_job_inputs[_input_name], "type", AssetTypes.URI_FOLDER)
 
     @classmethod
@@ -54,8 +54,8 @@ class ComponentTranslatableMixin:
             )
         output_data = pipeline_job_outputs[_output_name]
         output_type = type(output_data)
-        if output_type in cls.PYTHON_SDK_TYPE_MAPPING.keys():
-            return cls.PYTHON_SDK_TYPE_MAPPING[output_type]
+        if output_type in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+            return cls._PYTHON_SDK_TYPE_MAPPING[output_type]
         if isinstance(output_data, dict):
             if "type" in output_data:
                 return output_data["type"]
@@ -187,22 +187,22 @@ class ComponentTranslatableMixin:
             input_variable = input._to_dict()
         elif isinstance(input, SweepDistribution):
             if isinstance(input, Choice):
-                input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input.values[0])]
+                input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[type(input.values[0])]
             elif isinstance(input, Randint):
-                input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[int]
+                input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[int]
             else:
-                input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[float]
+                input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[float]
 
             input_variable["optional"] = False
-        elif type(input) in cls.PYTHON_SDK_TYPE_MAPPING.keys():
-            input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input)]
+        elif type(input) in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+            input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[type(input)]
             input_variable["default"] = input
         elif isinstance(input, PipelineInput):
             # Infer input type from input data
             input_variable = input._to_input()._to_dict()
         else:
             msg = "'{}' is not supported as component input, supported types are '{}'.".format(
-                type(input), cls.PYTHON_SDK_TYPE_MAPPING.keys()
+                type(input), cls._PYTHON_SDK_TYPE_MAPPING.keys()
             )
             raise JobException(
                 message=msg,
@@ -220,15 +220,15 @@ class ComponentTranslatableMixin:
             input_variable = input._to_dict()
         elif isinstance(input, SweepDistribution):
             if isinstance(input, Choice):
-                input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input.values[0])]
+                input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[type(input.values[0])]
             elif isinstance(input, Randint):
-                input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[int]
+                input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[int]
             else:
-                input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[float]
+                input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[float]
 
             input_variable["optional"] = False
         else:
-            input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input)]
+            input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[type(input)]
             input_variable["default"] = input
         return Input(**input_variable)
 
@@ -262,12 +262,12 @@ class ComponentTranslatableMixin:
         elif isinstance(output, PipelineOutput):
             output_variable = output._to_output()._to_dict()
 
-        elif type(output) in cls.PYTHON_SDK_TYPE_MAPPING.keys():
-            output_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(output)]
+        elif type(output) in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+            output_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[type(output)]
             output_variable["default"] = output
         else:
             msg = "'{}' is not supported as component output, supported types are '{}'.".format(
-                type(output), cls.PYTHON_SDK_TYPE_MAPPING.keys()
+                type(output), cls._PYTHON_SDK_TYPE_MAPPING.keys()
             )
             raise JobException(
                 message=msg,

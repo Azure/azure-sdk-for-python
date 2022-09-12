@@ -9,7 +9,7 @@ import sys
 import warnings
 from io import BytesIO
 from itertools import islice
-from typing import AsyncIterator, Generic, Optional, TypeVar
+from typing import AsyncIterator, Generic, IO, Optional, TypeVar
 
 import asyncio
 
@@ -552,8 +552,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             return data.decode(self._encoding)
         return data
 
-    async def readall(self):
-        # type: () -> T
+    async def readall(self) -> T:
         """
         Read the entire contents of this blob.
         This operation is blocking until all data is downloaded.
@@ -603,7 +602,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._encoding = encoding
         return await self.readall()
 
-    async def readinto(self, stream):
+    async def readinto(self, stream: IO[T]) -> int:
         """Download the contents of this blob to a stream.
 
         :param stream:

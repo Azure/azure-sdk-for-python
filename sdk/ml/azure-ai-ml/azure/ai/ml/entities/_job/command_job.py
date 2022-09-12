@@ -25,6 +25,7 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     validate_inputs_for_command,
 )
 from azure.ai.ml.entities._job.distribution import DistributionConfiguration
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 
 from .identity import AmlToken, Identity, ManagedIdentity, UserIdentity
@@ -169,7 +170,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             experiment_name=rest_command_job.experiment_name,
             services=rest_command_job.services,
             status=rest_command_job.status,
-            creation_context=obj.system_data,
+            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
             code=rest_command_job.code_id,
             compute=rest_command_job.compute_id,
             environment=rest_command_job.environment_id,
