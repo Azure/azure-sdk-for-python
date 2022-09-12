@@ -8,9 +8,9 @@ from typing import TYPE_CHECKING
 import time
 import six
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from ...aio._base_handler_async import ServiceBusSharedKeyCredential
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest
-from ...aio._base_handler_async import ServiceBusSharedKeyCredential
 
 
 class AsyncServiceBusSharedKeyCredentialPolicy(SansIOHTTPPolicy):
