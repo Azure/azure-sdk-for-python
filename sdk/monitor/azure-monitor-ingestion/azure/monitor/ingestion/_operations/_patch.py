@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import concurrent.futures
 from typing import List, Any, Optional
 from ._operations import MonitorIngestionClientOperationsMixin as GeneratedOps
-from .._models import UploadLogsStatus, UploadLogsResult
+from .._models import UploadLogsStatus, UploadLogsResult, UploadLogsError
 from .._helpers import _create_gzip_requests
 
 
@@ -57,25 +57,37 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
                     for request in requests
                 }
                 for future in concurrent.futures.as_completed(future_to_req):
-                    req = future_to_req[future]
-                    response = future.result()
-                    if response is not None:
-                        results.append(req)
-                        status = UploadLogsStatus.PARTIAL_FAILURE
-            return UploadLogsResult(failed_logs=results, status=status)
-        for request in requests:
-            response = super().upload(
-                rule_id,
-                stream=stream_name,
-                body=request,
-                content_encoding="gzip",
-                **kwargs
-            )
-            if response is not None:
-                results.append(request)
-                status = UploadLogsStatus.PARTIAL_FAILURE
-        return UploadLogsResult(failed_logs=results, status=status)
-
+                    try:
+                        req = future_to_req[future]
+                        response = future.result()
+                    except Exception as err: # pylint: disable=bare-exception
+                        results.append(UploadLogsError(
+                            error = err,
+                            failed_logs = req
+                        ))
+        else:
+            for request in requests:
+                try:
+                    response = super().upload(
+                        rule_id,
+                        stream=stream_name,
+                        body=request,
+                        content_encoding="gzip",
+                        **kwargs
+                    )
+                except Exception as err: # pylint: disable=bare-exception
+                    results.append(UploadLogsError(
+                        error = err,
+                        failed_logs = request
+                    ))
+        
+        if len(results) == 0:
+            status = UploadLogsStatus.SUCCESS
+        elif 0 < len(results) < len(requests):
+            status = UploadLogsStatus.PARTIAL_FAILURE
+        else:
+            status = UploadLogsStatus.FAILURE
+        return UploadLogsResult(errors=results, status=status)
 
 __all__: List[str] = [
     "MonitorIngestionClientOperationsMixin"

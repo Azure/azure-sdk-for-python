@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import asyncio
 from typing import List, Any, Optional
 from ._operations import MonitorIngestionClientOperationsMixin as GeneratedOps
-from ..._models import UploadLogsStatus, UploadLogsResult
+from ..._models import UploadLogsStatus, UploadLogsResult, UploadLogsError
 from ..._helpers import _create_gzip_requests
 
 
@@ -52,10 +52,13 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
                         tasks, return_when=asyncio.FIRST_COMPLETED
                     )
                     for task in done:
-                        res = task.result()
-                        if res is not None:
-                            results.append(res)
-                            status = UploadLogsStatus.PARTIAL_FAILURE
+                        try:
+                            res = task.result()
+                        except Exception as err: # pylint: disable=bare-exception
+                            results.append(UploadLogsError(
+                                error = err,
+                                failed_logs = request
+                            ))
                 tasks.add(asyncio.create_task(
                     super(MonitorIngestionClientOperationsMixin, self).upload(
                         rule_id,
@@ -67,23 +70,35 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
                 ))
             done, _pending = await asyncio.wait(tasks)
             for task in done:
-                res = task.result()
-                if res is not None:
-                    results.append(res)
-                    status = UploadLogsStatus.PARTIAL_FAILURE
-            return UploadLogsResult(failed_logs=results, status=status)
-        for request in requests:
-            response = await super().upload(
-                rule_id,
-                stream=stream_name,
-                body=request,
-                content_encoding="gzip",
-                **kwargs
-            )
-            if response is not None:
-                results.append(request)
-                status = UploadLogsStatus.PARTIAL_FAILURE
-        return UploadLogsResult(failed_logs=results, status=status)
+                try:
+                    res = task.result()
+                except Exception as err: # pylint: disable=bare-exception
+                    results.append(UploadLogsError(
+                        error = err,
+                        failed_logs = request
+                    ))
+        else:
+            for request in requests:
+                try:
+                    await super().upload(
+                        rule_id,
+                        stream=stream_name,
+                        body=request,
+                        content_encoding="gzip",
+                        **kwargs
+                    )
+                except Exception as err: # pylint: disable=bare-exception
+                    results.append(UploadLogsError(
+                        error = err,
+                        failed_logs = request
+                    ))
+        if len(results) == 0:
+            status = UploadLogsStatus.SUCCESS
+        elif 0 < len(results) < len(requests):
+            status = UploadLogsStatus.PARTIAL_FAILURE
+        else:
+            status = UploadLogsStatus.FAILURE
+        return UploadLogsResult(errors=results, status=status)
 
 
 __all__: List[str] = [
