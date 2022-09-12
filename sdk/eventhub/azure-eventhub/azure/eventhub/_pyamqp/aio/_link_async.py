@@ -35,6 +35,7 @@ from ..performatives import (
 )
 
 from ..error import (
+    AMQPError,
     ErrorCondition,
     AMQPLinkError,
     AMQPLinkRedirect,
@@ -185,8 +186,9 @@ class Link(object):
             raise AMQPLinkError(condition=ErrorCondition.ClientError, description="Invalid link", info=None)
         elif not frame[5] or not frame[6]: 
             _LOGGER.info("Cannot get source or target. Detaching link")
-            await self._set_state(LinkState.DETACHED) 
-            raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced, description="Invalid link", info=None)
+            await self.detach(
+                error= AMQPError(condition=ErrorCondition.LinkDetachForced,
+                                 description="Cannot get source or target from the frame. Detaching link", info=None))
         self.remote_handle = frame[1]  # handle
         self.remote_max_message_size = frame[10]  # max_message_size
         self.offered_capabilities = frame[11]  # offered_capabilities
