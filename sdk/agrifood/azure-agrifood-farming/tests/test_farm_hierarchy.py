@@ -10,7 +10,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from testcase import FarmBeatsPowerShellPreparer, FarmBeatsTest
 
 
-class FarmHeirarchyTestCase(FarmBeatsTest):
+class FarmHierarchyTestCase(FarmBeatsTest):
 
     @FarmBeatsPowerShellPreparer()
     def test_farmer_operations(self, agrifood_endpoint):
