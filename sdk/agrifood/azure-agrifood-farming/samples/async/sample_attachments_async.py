@@ -188,4 +188,4 @@ if __name__ == "__main__":
 
     load_dotenv()
 
-    asyncio.get_event_loop().run_until_complete(sample_attachments_async())
+    asyncio.run(sample_attachments_async())
