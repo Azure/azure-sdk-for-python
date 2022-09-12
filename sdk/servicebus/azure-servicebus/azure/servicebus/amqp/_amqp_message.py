@@ -8,7 +8,8 @@ import time
 import uuid
 from datetime import datetime
 import warnings
-from typing import Optional, Any, cast, Mapping, Union, Dict
+from typing import Optional, Any, cast, Mapping, Union, Dict, List
+from __future__ import annotations
 
 from msrest.serialization import TZ_UTC
 import uamqp
@@ -55,10 +56,10 @@ class DictMixin(object):
     def keys(self) -> List:
         return [k for k in self.__dict__ if not k.startswith("_")]
 
-    def values(self) -> list:
+    def values(self) -> List:
         return [v for k, v in self.__dict__.items() if not k.startswith("_")]
 
-    def items(self) -> list:
+    def items(self) -> List:
         return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
 
     def get(self, key: Any, default: Optional[Any] = None) -> Any:
@@ -319,7 +320,7 @@ class AmqpAnnotatedMessage(object):
         )
 
     @property
-    def properties(self) -> Optional["AmqpMessageProperties"]:
+    def properties(self) -> Optional[AmqpMessageProperties]:
         """
         Properties to add to the message.
 
@@ -328,7 +329,7 @@ class AmqpAnnotatedMessage(object):
         return self._properties
 
     @properties.setter
-    def properties(self, value: "AmqpMessageProperties") -> None:
+    def properties(self, value: AmqpMessageProperties) -> None:
         self._properties = value
 
     @property
@@ -372,7 +373,7 @@ class AmqpAnnotatedMessage(object):
         self._delivery_annotations = value
 
     @property
-    def header(self) -> Optional["AmqpMessageHeader"]:
+    def header(self) -> Optional[AmqpMessageHeader]:
         """
         The message header.
 
@@ -381,7 +382,7 @@ class AmqpAnnotatedMessage(object):
         return self._header
 
     @header.setter
-    def header(self, value: "AmqpMessageHeader") -> None:
+    def header(self, value: AmqpMessageHeader) -> None:
         self._header = value
 
     @property
