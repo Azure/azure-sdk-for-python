@@ -79,7 +79,6 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    @mock.patch('os.urandom', mock_urandom)
     async def test_validate_encryption(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -92,7 +91,8 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         content = b'Hello World Encrypted!'
 
         # Act
-        await blob.upload_blob(content, overwrite=True)
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(content, overwrite=True)
 
         blob.require_encryption = False
         blob.key_encryption_key = None
@@ -125,60 +125,60 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    @mock.patch('os.urandom', mock_urandom)
     async def test_validate_encryption_chunked_upload(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
+        with mock.patch('os.urandom', mock_urandom):
+            storage_account_name = kwargs.pop("storage_account_name")
+            storage_account_key = kwargs.pop("storage_account_key")
 
-        await self._setup(storage_account_name, storage_account_key)
-        kek = KeyWrapper('key1')
-        bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
-            max_single_put_size=1024,
-            max_block_size=1024,
-            require_encryption=True,
-            encryption_version='2.0',
-            key_encryption_key=kek)
+            await self._setup(storage_account_name, storage_account_key)
+            kek = KeyWrapper('key1')
+            bsc = BlobServiceClient(
+                self.account_url(storage_account_name, "blob"),
+                credential=storage_account_key,
+                max_single_put_size=1024,
+                max_block_size=1024,
+                require_encryption=True,
+                encryption_version='2.0',
+                key_encryption_key=kek)
 
-        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'a' * 5 * 1024
+            blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+            content = b'a' * 5 * 1024
 
-        # Act
-        await blob.upload_blob(content, overwrite=True)
+            # Act
+            with mock.patch('os.urandom', mock_urandom):
+                await blob.upload_blob(content, overwrite=True)
 
-        blob.require_encryption = False
-        blob.key_encryption_key = None
-        metadata = (await blob.get_blob_properties()).metadata
-        encrypted_data = await (await blob.download_blob()).readall()
+            blob.require_encryption = False
+            blob.key_encryption_key = None
+            metadata = (await blob.get_blob_properties()).metadata
+            encrypted_data = await (await blob.download_blob()).readall()
 
-        encryption_data = _dict_to_encryption_data(loads(metadata['encryptiondata']))
+            encryption_data = _dict_to_encryption_data(loads(metadata['encryptiondata']))
 
-        encryption_agent = encryption_data.encryption_agent
-        assert '2.0' == encryption_agent.protocol
-        assert 'AES_GCM_256' == encryption_agent.encryption_algorithm
+            encryption_agent = encryption_data.encryption_agent
+            assert '2.0' == encryption_agent.protocol
+            assert 'AES_GCM_256' == encryption_agent.encryption_algorithm
 
-        encrypted_region_info = encryption_data.encrypted_region_info
-        assert _GCM_NONCE_LENGTH == encrypted_region_info.nonce_length
-        assert _GCM_TAG_LENGTH == encrypted_region_info.tag_length
+            encrypted_region_info = encryption_data.encrypted_region_info
+            assert _GCM_NONCE_LENGTH == encrypted_region_info.nonce_length
+            assert _GCM_TAG_LENGTH == encrypted_region_info.tag_length
 
-        content_encryption_key = _validate_and_unwrap_cek(encryption_data, kek, None)
+            content_encryption_key = _validate_and_unwrap_cek(encryption_data, kek, None)
 
-        nonce_length = encrypted_region_info.nonce_length
+            nonce_length = encrypted_region_info.nonce_length
 
-        # First bytes are the nonce
-        nonce = encrypted_data[:nonce_length]
-        ciphertext_with_tag = encrypted_data[nonce_length:]
+            # First bytes are the nonce
+            nonce = encrypted_data[:nonce_length]
+            ciphertext_with_tag = encrypted_data[nonce_length:]
 
-        aesgcm = AESGCM(content_encryption_key)
-        decrypted_data = aesgcm.decrypt(nonce, ciphertext_with_tag, None)
+            aesgcm = AESGCM(content_encryption_key)
+            decrypted_data = aesgcm.decrypt(nonce, ciphertext_with_tag, None)
 
-        # Assert
-        assert content == decrypted_data
+            # Assert
+            assert content == decrypted_data
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    @mock.patch('os.urandom', mock_urandom)
     async def test_encryption_kek(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -191,7 +191,8 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         content = b'Hello World Encrypted!'
 
         # Act
-        await blob.upload_blob(content, overwrite=True)
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(content, overwrite=True)
         data = await (await blob.download_blob()).readall()
 
         # Assert
@@ -221,7 +222,6 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    @mock.patch('os.urandom', mock_urandom)
     async def test_encryption_kek_resolver(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -238,7 +238,8 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
         # Act
         self.bsc.key_encryption_key = None
-        await blob.upload_blob(content, overwrite=True)
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(content, overwrite=True)
         data = await (await blob.download_blob()).readall()
 
         # Assert
@@ -246,7 +247,6 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    @mock.patch('os.urandom', mock_urandom)
     async def test_encryption_with_blob_lease(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -258,11 +258,13 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         content = b'Hello World Encrypted!'
 
-        await blob.upload_blob(b'', overwrite=True)
-        lease = await blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(b'', overwrite=True)
+            lease = await blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
-        # Act
-        await blob.upload_blob(content, overwrite=True, lease=lease)
+            # Act
+            await blob.upload_blob(content, overwrite=True, lease=lease)
+
         with pytest.raises(HttpResponseError):
             await blob.download_blob(lease='00000000-1111-2222-3333-444444444445')
 
@@ -273,7 +275,6 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    @mock.patch('os.urandom', mock_urandom)
     async def test_encryption_with_if_match(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -285,12 +286,13 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         content = b'Hello World Encrypted!'
 
-        resp = await blob.upload_blob(b'', overwrite=True)
-        etag = resp['etag']
+        with mock.patch('os.urandom', mock_urandom):
+            resp = await blob.upload_blob(b'', overwrite=True)
+            etag = resp['etag']
 
-        # Act
-        resp = await blob.upload_blob(content, overwrite=True, etag=etag, match_condition=MatchConditions.IfNotModified)
-        etag = resp['etag']
+            # Act
+            resp = await blob.upload_blob(content, overwrite=True, etag=etag, match_condition=MatchConditions.IfNotModified)
+            etag = resp['etag']
 
         with pytest.raises(HttpResponseError):
             await blob.download_blob(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
@@ -302,7 +304,6 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    @mock.patch('os.urandom', mock_urandom)
     async def test_decryption_on_non_encrypted_blob(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -328,7 +329,6 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    @mock.patch('os.urandom', mock_urandom)
     async def test_encryption_v2_v1_downgrade(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -341,16 +341,17 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         content = b'Hello World Encrypted!'
 
         # Upload blob with encryption V2
-        await blob.upload_blob(content, overwrite=True)
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(content, overwrite=True)
 
-        # Modify metadata to look like V1
-        metadata = (await blob.get_blob_properties()).metadata
-        encryption_data = loads(metadata['encryptiondata'])
-        encryption_data['EncryptionAgent']['Protocol'] = '1.0'
-        encryption_data['EncryptionAgent']['EncryptionAlgorithm'] = 'AES_CBC_256'
-        iv = base64.b64encode(os.urandom(16))
-        encryption_data['ContentEncryptionIV'] = iv.decode('utf-8')
-        metadata = {'encryptiondata': dumps(encryption_data)}
+            # Modify metadata to look like V1
+            metadata = (await blob.get_blob_properties()).metadata
+            encryption_data = loads(metadata['encryptiondata'])
+            encryption_data['EncryptionAgent']['Protocol'] = '1.0'
+            encryption_data['EncryptionAgent']['EncryptionAlgorithm'] = 'AES_CBC_256'
+            iv = base64.b64encode(os.urandom(16))
+            encryption_data['ContentEncryptionIV'] = iv.decode('utf-8')
+            metadata = {'encryptiondata': dumps(encryption_data)}
 
         # Act / Assert
         await blob.set_blob_metadata(metadata)
@@ -361,7 +362,6 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    @mock.patch('os.urandom', mock_urandom)
     async def test_encryption_modify_cek(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -373,7 +373,8 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         content = b'Hello World Encrypted!'
 
-        await blob.upload_blob(content, overwrite=True)
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(content, overwrite=True)
 
         # Modify cek to not include the version
         metadata = (await blob.get_blob_properties()).metadata
@@ -394,7 +395,6 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    @mock.patch('os.urandom', mock_urandom)
     async def test_put_blob_empty(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -407,7 +407,8 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         content = b''
 
         # Act
-        await blob.upload_blob(content, overwrite=True)
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(content, overwrite=True)
         data = await (await blob.download_blob()).readall()
 
         # Assert
@@ -415,7 +416,6 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    @mock.patch('os.urandom', mock_urandom)
     async def test_put_blob_single_region_chunked(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -435,7 +435,8 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         content = b'abcde' * 1024
 
         # Act
-        await blob.upload_blob(content, overwrite=True)
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(content, overwrite=True)
         data = await (await blob.download_blob()).readall()
 
         # Assert
