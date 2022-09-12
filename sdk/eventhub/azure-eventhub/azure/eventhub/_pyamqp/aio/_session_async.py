@@ -329,7 +329,7 @@ class Session(object):
             #     self._output_handles.pop(link.handle, None)
         except KeyError:
             await self._set_state(SessionState.DISCARDING)
-            await self._connection.close(error=AMQPSessionError(
+            await self._connection.close(error=AMQPError(
                 condition=ErrorCondition.SessionUnattachedHandle,
                 description="Invalid handle reference in received frame: Handle is not currently associated with an attached link"))
 
