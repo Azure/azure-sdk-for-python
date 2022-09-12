@@ -52,7 +52,7 @@ class DictMixin(object):
     def update(self, *args: Any, **kwargs: Any) -> None:
         return self.__dict__.update(*args, **kwargs)
 
-    def keys(self) -> list:
+    def keys(self) -> List:
         return [k for k in self.__dict__ if not k.startswith("_")]
 
     def values(self) -> list:
