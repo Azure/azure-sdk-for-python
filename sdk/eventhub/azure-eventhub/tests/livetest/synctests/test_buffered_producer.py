@@ -515,7 +515,6 @@ def test_long_wait_small_buffer(connection_str):
     consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default")
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True
-    receive_thread.start()
 
     sent_events = defaultdict(list)
 
@@ -535,7 +534,7 @@ def test_long_wait_small_buffer(connection_str):
         retry_total=3, 
         retry_mode='fixed',
         retry_backoff_factor=0.01,
-        max_wait_time=20,
+        max_wait_time=10,
         max_buffer_length=100
     )
 
@@ -544,6 +543,8 @@ def test_long_wait_small_buffer(connection_str):
             producer.send_event(EventData("test"))
 
     time.sleep(60)
+    receive_thread.start()
+    time.sleep(90)
 
     assert not on_error.err
     assert sum([len(sent_events[key]) for key in sent_events]) == 100
