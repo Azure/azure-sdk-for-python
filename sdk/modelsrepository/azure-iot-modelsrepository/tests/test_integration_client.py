@@ -443,7 +443,7 @@ class TestGetModelsDependencyModeTryFromExpanded(AzureRecordedTestCase):
             assert model["@id"] == dtmi
 
     @skip_remote
-    def test_multiple_dtmis_with_component_deps_extends_deps_mixed_expanded_json(self, client):
+    def test_dtmis_component_deps_extends_deps_mixed_expanded_json(self, client):
         root_dtmi1 = "dtmi:com:example:ColdStorage;1"  # no expanded doc
         root_dtmi2 = "dtmi:com:example:TemperatureController;1"  # has expanded doc
         expected_deps = [
