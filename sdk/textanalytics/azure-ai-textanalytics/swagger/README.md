@@ -40,7 +40,7 @@ batch:
 
 ```yaml $(multiapiscript)
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/
-default-api: v3.1
+default-api: 2022-10-01-preview
 clear-output-folder: true
 perform-load: false
 ```
@@ -80,7 +80,7 @@ output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/
 These settings apply only when `--tag=release_2022_10_01_preview` is specified on the command line.
 
 ```yaml $(tag) == 'release_2022_10_01_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/dev/cognitiveservices/data-plane/Language/analyzetext.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/bfbabddc83d6e5d800be4f08760249e7be9b22cc/dev/cognitiveservices/data-plane/Language/analyzetext.json
 namespace: azure.ai.textanalytics.v2022_10_01_preview
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2022_10_01_preview
 ```
