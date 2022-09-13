@@ -88,6 +88,7 @@ def check_availability() -> None:
 
 
 def check_system_proxy_availability() -> None:
+    """Checks for SSL_CERT_DIR and REQUESTS_CA_BUNDLE environment variables."""
     ssl_cert = "SSL_CERT_DIR"
     ca_bundle = "REQUESTS_CA_BUNDLE"
 
