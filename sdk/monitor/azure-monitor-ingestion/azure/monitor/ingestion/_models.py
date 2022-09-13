@@ -18,6 +18,10 @@ class UploadLogsStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
 class UploadLogsError:
     """The errors for any failed logs
+
+    :ivar List[Any] failed_logs: The list of the failed logs.
+    :ivar ~azure.core.exceptions.HttpResponseError The error with which
+     the logs failed.
     """
     def __init__(self, **kwargs) -> None:
         self.failed_logs: List[Any] = kwargs.get("failed_logs", None)

@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import sys
 import asyncio
-from typing import List, Any, Optional, Union
+from typing import List, Any, Optional, Union, IO
 from ._operations import MonitorIngestionClientOperationsMixin as GeneratedOps
 from ..._models import UploadLogsStatus, UploadLogsResult, UploadLogsError
 from ..._helpers import _create_gzip_requests
@@ -25,7 +25,7 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
         self,
         rule_id: str,
         stream_name: str,
-        logs: List[Any],
+        logs: Union[List[JSON], IO],
         *,
         max_concurrency: Optional[int] = None,
         **kwargs: Any
@@ -38,8 +38,8 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
         :type rule_id: str
         :param stream: The streamDeclaration name as defined in the Data Collection Rule.
         :type stream: str
-        :param body: An array of objects matching the schema defined by the provided stream.
-        :type body: list[Any] or IO
+        :param logs: An array of objects matching the schema defined by the provided stream.
+        :type logs: list[JSON] or IO
         :keyword max_concurrency: Number of parallel threads to use when logs size is > 1mb.
         :paramtype max_concurrency: int
         :return: UploadLogsResult
@@ -99,7 +99,7 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
                         error = err,
                         failed_logs = request
                     ))
-        if len(results) == 0:
+        if not results:
             status = UploadLogsStatus.SUCCESS
         elif 0 < len(results) < len(requests):
             status = UploadLogsStatus.PARTIAL_FAILURE
