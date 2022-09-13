@@ -25,6 +25,7 @@ from azure.ai.ml._schema.workspace.connections.workspace_connection import Works
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._workspace.connections.credentials import (
     ManagedIdentityCredentials,
@@ -199,7 +200,7 @@ class WorkspaceConnection(Resource):
             id=rest_obj.id,
             name=rest_obj.name,
             target=properties.target,
-            creation_context=rest_obj.system_data,
+            creation_context=SystemData._from_rest_object(rest_obj.system_data) if rest_obj.system_data else None,
             type=camel_to_snake(properties.category),
             credentials=credentials,
             metadata=properties.metadata,

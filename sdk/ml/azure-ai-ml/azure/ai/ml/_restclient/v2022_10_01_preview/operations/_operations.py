@@ -35,7 +35,8 @@ def build_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2022-10-01-preview"
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/providers/Microsoft.MachineLearningServices/operations')
@@ -87,6 +88,9 @@ class Operations(object):
         # type: (...) -> Iterable["_models.AmlOperationListResult"]
         """Lists all of the available Azure Machine Learning Services REST API operations.
 
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AmlOperationListResult or the result of
          cls(response)
@@ -94,6 +98,8 @@ class Operations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.AmlOperationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AmlOperationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -103,6 +109,7 @@ class Operations(object):
             if not next_link:
                 
                 request = build_list_request(
+                    api_version=api_version,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -111,6 +118,7 @@ class Operations(object):
             else:
                 
                 request = build_list_request(
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)

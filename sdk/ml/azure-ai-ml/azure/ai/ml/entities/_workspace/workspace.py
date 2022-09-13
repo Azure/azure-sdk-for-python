@@ -8,12 +8,13 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Union
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2022_05_01.models import Workspace as RestWorkspace
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._workspace.identity import ManagedServiceIdentity
 
 from .customer_managed_key import CustomerManagedKey
 
@@ -36,6 +37,8 @@ class Workspace(Resource):
         customer_managed_key: CustomerManagedKey = None,
         image_build_compute: str = None,
         public_network_access: str = None,
+        identity: ManagedServiceIdentity = None,
+        primary_user_assigned_identity: str = None,
         **kwargs,
     ):
 
@@ -78,6 +81,10 @@ class Workspace(Resource):
         :param public_network_access: Whether to allow public endpoint connectivity
             when a workspace is private link enabled.
         :type public_network_access: str
+        :param identity: workspace's Managed Identity (user assigned, or system assigned)
+        :type identity: WorkspaceIdentity
+        :param primary_user_assigned_identity: The workspace's primary user assigned identity
+        :type primary_user_assigned_identity: str
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
@@ -96,6 +103,8 @@ class Workspace(Resource):
         self.customer_managed_key = customer_managed_key
         self.image_build_compute = image_build_compute
         self.public_network_access = public_network_access
+        self.identity = identity
+        self.primary_user_assigned_identity = primary_user_assigned_identity
 
     @property
     def discovery_url(self) -> str:
@@ -107,7 +116,7 @@ class Workspace(Resource):
         return self._discovery_url
 
     @property
-    def mlflow_tracking_uri(self) -> bool:
+    def mlflow_tracking_uri(self) -> str:
         """MLflow tracking uri for the workspace.
 
         :return: Returns mlflow tracking uri of the workspace.
@@ -198,4 +207,6 @@ class Workspace(Resource):
             image_build_compute=rest_obj.image_build_compute,
             public_network_access=rest_obj.public_network_access,
             mlflow_tracking_uri=mlflow_tracking_uri,
+            identity=rest_obj.identity,
+            primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
         )

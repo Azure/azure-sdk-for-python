@@ -1,6 +1,7 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
 
-description: 'submit a spark job using component sdk'
+description: 'submit a pipeline with spark job'
 
 inputs:
   iris_data:
@@ -14,12 +15,19 @@ outputs:
     mode: direct
 
 jobs:
-  spark_job:
+  add_greeting_column:
     type: spark
-    component: file:./component.yml
+    component: ./add_greeting_column_component.yml
     inputs:
-      file_input1: ${{parent.inputs.iris_data}}
-      file_input2: ${{parent.inputs.iris_data}}
+      file_input: ${{parent.inputs.iris_data}}
+
+    compute: azureml:spark31
+
+  count_by_row:
+    type: spark
+    component: ./count_by_row_component.yml
+    inputs:
+      file_input: ${{parent.inputs.iris_data}}
 
     outputs:
       output: ${{parent.outputs.output}}

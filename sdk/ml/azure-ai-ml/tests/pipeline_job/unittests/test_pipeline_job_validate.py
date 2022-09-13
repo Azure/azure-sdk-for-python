@@ -419,18 +419,31 @@ class TestDSLPipelineJobValidate:
         )
 
         @dsl.pipeline()
-        def sub_pipeline(component_in_number, component_in_path):
+        def sub_pipeline0(component_in_number, component_in_path, node_compute_name="cpu-cluster"):
             node1 = component_func1(component_in_number=component_in_number, component_in_path=component_in_path)
+            node2 = component_func1(component_in_number=component_in_number, component_in_path=component_in_path)
+            node2.compute = node_compute_name
+            return node1.outputs
+
+        @dsl.pipeline()
+        def sub_pipeline1(component_in_number, component_in_path):
+            node1 = component_func1(component_in_number=component_in_number, component_in_path=component_in_path)
+            sub_pipeline0(component_in_number=component_in_number, component_in_path=component_in_path)
             return node1.outputs
 
         @dsl.pipeline()
         def root_pipeline(component_in_number, component_in_path):
-            sub_graph = sub_pipeline(component_in_number=component_in_number, component_in_path=component_in_path)
+            sub_graph = sub_pipeline0(component_in_number=component_in_number, component_in_path=component_in_path)
+            sub_pipeline1(component_in_number=component_in_number, component_in_path=component_in_path)
             return sub_graph.outputs
 
         pipeline_job: PipelineJob = root_pipeline(10, job_input)
         validate_result = pipeline_job._validate()
-        assert validate_result.messages == {"jobs.sub_graph.jobs.node1.compute": "Compute not set"}
+        assert validate_result.messages == {
+            "jobs.sub_graph.jobs.node1.compute": "Compute not set",
+            "jobs.sub_pipeline1.jobs.node1.compute": "Compute not set",
+            "jobs.sub_pipeline1.jobs.sub_pipeline0.jobs.node1.compute": "Compute not set",
+        }
         pipeline_job.settings.default_compute = "cpu-cluster"
         validate_result = pipeline_job._validate()
         assert validate_result.passed is True

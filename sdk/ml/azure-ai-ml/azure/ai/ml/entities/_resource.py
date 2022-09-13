@@ -12,7 +12,8 @@ from typing import IO, AnyStr, Dict, Optional, Union
 from msrest import Serializer
 
 from azure.ai.ml._restclient.v2021_10_01 import models
-from azure.ai.ml._restclient.v2021_10_01.models import SystemData
+
+from ._system_data import SystemData
 
 
 class Resource(ABC):
@@ -82,7 +83,7 @@ class Resource(ABC):
         """Creation context.
 
         :return: Creation metadata of the resource.
-        :rtype: Optional[SystemData]
+        :rtype: Optional[~azure.ai.ml.entities.SystemData]
         """
         return self._creation_context
 
