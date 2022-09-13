@@ -176,9 +176,8 @@ class Session(object):
             try:
                 outgoing_handle = self._get_next_output_handle()
             except ValueError:
-                self._connection.close(error=AMQPSessionError(
-                    condition=ErrorCondition.ResourceLimitExceeded, 
-                    description="Maximum number of handles ({}) has been reached.".format(self.handle_max)))
+                # detach the link that would have been set.
+                self.links[frame[0].decode('utf-8')].detach()
                 return
             if frame[2] == Role.Sender:  # role
                 new_link = ReceiverLink.from_incoming_frame(self, outgoing_handle, frame)
