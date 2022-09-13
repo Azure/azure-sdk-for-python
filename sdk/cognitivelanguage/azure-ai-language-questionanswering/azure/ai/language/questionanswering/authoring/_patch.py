@@ -9,8 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, Union, Any
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
-from ._client import QuestionAnsweringAuthoringClient \
-    as QuestionAnsweringAuthoringClientGenerated
+from ._client import QuestionAnsweringAuthoringClient as QuestionAnsweringAuthoringClientGenerated
 
 
 def _authentication_policy(credential, **kwargs):
@@ -58,7 +57,6 @@ class QuestionAnsweringAuthoringClient(QuestionAnsweringAuthoringClientGenerated
             endpoint = endpoint.rstrip("/")
         except AttributeError:
             raise ValueError("Parameter 'endpoint' must be a string.")
-
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore
@@ -67,7 +65,9 @@ class QuestionAnsweringAuthoringClient(QuestionAnsweringAuthoringClientGenerated
         )
 
 
-__all__: List[str] = ["QuestionAnsweringAuthoringClient"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "QuestionAnsweringAuthoringClient"
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

@@ -10,8 +10,7 @@ from typing import List, Union, Any
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, AsyncBearerTokenCredentialPolicy
-from ._client import QuestionAnsweringAuthoringClient \
-    as QuestionAnsweringAuthoringClientGenerated
+from ._client import QuestionAnsweringAuthoringClient as QuestionAnsweringAuthoringClientGenerated
 
 
 def _authentication_policy(credential, **kwargs):
@@ -54,12 +53,13 @@ class QuestionAnsweringAuthoringClient(QuestionAnsweringAuthoringClientGenerated
      Retry-After header is present.
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
+    ) -> None:
         try:
             endpoint = endpoint.rstrip("/")
         except AttributeError:
             raise ValueError("Parameter 'endpoint' must be a string.")
-
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore
@@ -68,7 +68,9 @@ class QuestionAnsweringAuthoringClient(QuestionAnsweringAuthoringClientGenerated
         )
 
 
-__all__: List[str] = ["QuestionAnsweringAuthoringClient"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "QuestionAnsweringAuthoringClient"
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

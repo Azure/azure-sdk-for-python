@@ -15,6 +15,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
@@ -169,12 +170,12 @@ def build_export_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_import_assets_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_import_assets_request(
+    project_name: str, *, format: str = "json", asset_kind: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    format = kwargs.pop("format", _params.pop("format", "json"))  # type: str
-    asset_kind = kwargs.pop("asset_kind", _params.pop("assetKind", None))  # type: Optional[str]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
     accept = _headers.pop("Accept", "application/json")
@@ -508,7 +509,12 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -602,7 +608,12 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
                     }
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -785,7 +796,12 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
                     }
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -846,7 +862,12 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     def _delete_project_initial(  # pylint: disable=inconsistent-return-statements
         self, project_name: str, **kwargs: Any
     ) -> None:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -941,7 +962,12 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     def _export_initial(
         self, project_name: str, *, format: str = "json", asset_kind: Optional[str] = None, **kwargs: Any
     ) -> Optional[JSON]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1123,7 +1149,12 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         asset_kind: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1479,7 +1510,12 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     def _deploy_project_initial(  # pylint: disable=inconsistent-return-statements
         self, project_name: str, deployment_name: str, **kwargs: Any
     ) -> None:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1614,7 +1650,12 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -1708,7 +1749,12 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -1841,7 +1887,12 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1927,7 +1978,12 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -1989,7 +2045,12 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     def _update_sources_initial(  # pylint: disable=inconsistent-return-statements
         self, project_name: str, sources: Union[List[JSON], IO], **kwargs: Any
     ) -> None:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2313,7 +2374,12 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -2376,7 +2442,12 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     def _update_qnas_initial(  # pylint: disable=inconsistent-return-statements
         self, project_name: str, qnas: Union[List[JSON], IO], **kwargs: Any
     ) -> None:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2683,7 +2754,12 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
