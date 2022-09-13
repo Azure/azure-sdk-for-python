@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,no-member
 
 from pathlib import Path
 from typing import Dict, Union
@@ -13,7 +13,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import AzureDataLakeGen2Datastor
 from azure.ai.ml._restclient.v2022_05_01.models import AzureFileDatastore as RestAzureFileDatastore
 from azure.ai.ml._restclient.v2022_05_01.models import DatastoreData, DatastoreType
 from azure.ai.ml._schema._datastore import AzureBlobSchema, AzureDataLakeGen2Schema, AzureFileSchema
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, TYPE
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._datastore.credentials import (
     AccountKeyCredentials,
     CertificateCredentials,
@@ -156,7 +156,7 @@ class AzureBlobDatastore(Datastore):
         container_name: str,
         description: str = None,
         tags: Dict = None,
-        endpoint: str = _get_storage_endpoint_from_metadata(),
+        endpoint: str = None,
         protocol: str = HTTPS,
         properties: Dict = None,
         credentials: Union[AccountKeyCredentials, SasTokenCredentials] = None,
@@ -169,7 +169,7 @@ class AzureBlobDatastore(Datastore):
 
         self.container_name = container_name
         self.account_name = account_name
-        self.endpoint = endpoint
+        self.endpoint = endpoint if endpoint else _get_storage_endpoint_from_metadata()
         self.protocol = protocol
 
     def _to_rest_object(self) -> DatastoreData:

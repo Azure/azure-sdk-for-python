@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b2 (2022-08-30)
+## 1.0.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b2 (2022-08-31)
 
 ### Bugs Fixed
  - Invalid datestrings for `valid_from` and `valid_until` raises exception

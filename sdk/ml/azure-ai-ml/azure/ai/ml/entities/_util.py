@@ -12,7 +12,9 @@ from unittest import mock
 
 from marshmallow.exceptions import ValidationError
 
-from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationException
+from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInputType as JobInputType06
 from azure.ai.ml._schema._datastore import (
     AzureBlobSchema,
     AzureDataLakeGen1Schema,
@@ -43,13 +45,13 @@ from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
 from azure.ai.ml._schema.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
-from azure.ai.ml.constants import (
+from azure.ai.ml.constants._common import (
     REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT,
     CommonYamlFields,
-    EndpointYamlFields,
     YAMLRefDocLinks,
     YAMLRefDocSchemaNames,
 )
+from azure.ai.ml.constants._endpoint import EndpointYamlFields
 
 # Maps schema class name to formatted error message pointing to Microsoft docs reference page for a schema's YAML
 REF_DOC_ERROR_MESSAGE_MAP = {
@@ -183,6 +185,7 @@ def validate_attribute_type(attrs_to_check: dict, attr_type_map: dict):
                 message=msg.format(expecting_type, attr, type(attr_val)),
                 no_personal_data_message=msg.format(expecting_type, "[attr]", type(attr_val)),
                 target=ErrorTarget.GENERAL,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
 
@@ -307,3 +310,99 @@ def get_rest_dict(target_obj, clear_empty_value=False):
         if key in result:
             del result[key]
     return result
+
+
+def extract_label(input_str: str):
+    if "@" in input_str:
+        return input_str.rsplit("@", 1)
+    else:
+        return input_str, None
+
+
+def resolve_pipeline_parameters(pipeline_parameters: dict, remove_empty=False):
+    """Resolve pipeline parameters.
+
+    1. Resolve BaseNode and OutputsAttrDict type to PipelineOutputBase.
+    2. Remove empty value (optional).
+    """
+
+    if pipeline_parameters is None:
+        return
+    if not isinstance(pipeline_parameters, dict):
+        raise ValidationException(
+            message="pipeline_parameters must in dict {parameter: value} format.",
+            no_personal_data_message="pipeline_parameters must in dict {parameter: value} format.",
+            target=ErrorTarget.PIPELINE,
+        )
+
+    updated_parameters = {}
+    for k, v in pipeline_parameters.items():
+        v = resolve_pipeline_parameter(v)
+        if v is None and remove_empty:
+            continue
+        updated_parameters[k] = v
+    pipeline_parameters = updated_parameters
+    return pipeline_parameters
+
+
+def resolve_pipeline_parameter(data):
+    from azure.ai.ml.entities._builders.base_node import BaseNode
+    from azure.ai.ml.entities._builders.pipeline import Pipeline
+    from azure.ai.ml.entities._job.pipeline._io import OutputsAttrDict
+
+    if isinstance(data, (BaseNode, Pipeline)):
+        # For the case use a node/pipeline node as the input, we use its only one output as the real input.
+        # Here we set node = node.outputs, then the following logic will get the output object.
+        data = data.outputs
+    if isinstance(data, OutputsAttrDict):
+        # For the case that use the outputs of another component as the input,
+        # we use the only one output as the real input,
+        # if multiple outputs are provided, an exception is raised.
+        output_len = len(data)
+        if output_len != 1:
+            raise ValidationException(
+                message="Setting input failed: Exactly 1 output is required, got %d. (%s)" % (output_len, data),
+                no_personal_data_message="multiple output(s) found of specified outputs, exactly 1 output required.",
+                target=ErrorTarget.PIPELINE,
+            )
+        data = list(data.values())[0]
+    return data
+
+
+def normalize_job_input_output_type(input_output_value):
+    """
+    We have change api to v2022_06_01_preview version and there are some api interface changes, which will result in
+    pipeline submitted by v2022_02_01_preview can't be parsed correctly. And this will block az ml job list/show.
+    So we convert the input/output type of camel to snake to be compatible with the Jun api.
+    """
+
+    FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING = {
+        JobInputType02.CUSTOM_MODEL: JobInputType06.CUSTOM_MODEL,
+        JobInputType02.LITERAL: JobInputType06.LITERAL,
+        JobInputType02.ML_FLOW_MODEL: JobInputType06.MLFLOW_MODEL,
+        JobInputType02.ML_TABLE: JobInputType06.MLTABLE,
+        JobInputType02.TRITON_MODEL: JobInputType06.TRITON_MODEL,
+        JobInputType02.URI_FILE: JobInputType06.URI_FILE,
+        JobInputType02.URI_FOLDER: JobInputType06.URI_FOLDER,
+    }
+    if (
+        hasattr(input_output_value, "job_input_type")
+        and input_output_value.job_input_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING
+    ):
+        input_output_value.job_input_type = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[input_output_value.job_input_type]
+    elif (
+        hasattr(input_output_value, "job_output_type")
+        and input_output_value.job_output_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING
+    ):
+        input_output_value.job_output_type = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[input_output_value.job_output_type]
+    elif isinstance(input_output_value, dict):
+        job_output_type = input_output_value.get("job_output_type", None)
+        job_input_type = input_output_value.get("job_input_type", None)
+        job_type = input_output_value.get("type", None)
+
+        if job_output_type and job_output_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING:
+            input_output_value["job_output_type"] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_output_type]
+        if job_input_type and job_input_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING:
+            input_output_value["job_input_type"] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_input_type]
+        if job_type and job_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING:
+            input_output_value["type"] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_type]

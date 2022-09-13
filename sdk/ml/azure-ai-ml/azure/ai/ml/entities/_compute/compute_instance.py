@@ -2,26 +2,28 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,too-many-instance-attributes
 
 from typing import Dict, List, Optional
 
 from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_01_01_preview.models import AssignedUser
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeInstance as CIRest
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeInstanceProperties
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeInstanceSshSettings as CiSShSettings
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     ComputeResource,
     PersonalComputeInstanceSettings,
     ResourceId,
 )
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstanceProperties
 from azure.ai.ml._schema._utils.utils import get_subnet_str
 from azure.ai.ml._schema.compute.compute_instance import ComputeInstanceSchema
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, TYPE, ComputeDefaults, ComputeType
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
+from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._compute.compute import Compute, NetworkSettings
 from azure.ai.ml.entities._util import load_from_dict
 
+from ._identity import IdentityConfiguration
 from ._schedule import ComputeSchedules
 
 
@@ -35,7 +37,7 @@ class ComputeInstanceSshSettings:
     def __init__(
         self,
         *,
-        ssh_key_value: str,
+        ssh_key_value: str = None,
         **kwargs,
     ):
         """[summary]
@@ -116,6 +118,11 @@ class ComputeInstance(Compute):
     :type ssh_public_access_enabled: Optional[bool], optional
     :param schedules: Compute instance schedules, defaults to None
     :type schedules: Optional[ComputeSchedules], optional
+    :param identity:  The identity configuration, identities that are associated with the compute cluster.
+    :type identity: IdentityConfiguration, optional
+    :param idle_time_before_shutdown: Stops compute instance after user defined period of
+        inactivity. Time is defined in ISO8601 format. Minimum is 15 min, maximum is 3 days.
+    :type idle_time_before_shutdown: Optional[str], optional
     """
 
     def __init__(
@@ -129,6 +136,8 @@ class ComputeInstance(Compute):
         network_settings: Optional[NetworkSettings] = None,
         ssh_settings: Optional[ComputeInstanceSshSettings] = None,
         schedules: Optional[ComputeSchedules] = None,
+        identity: IdentityConfiguration = None,
+        idle_time_before_shutdown: Optional[str] = None,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
@@ -148,6 +157,9 @@ class ComputeInstance(Compute):
         self.network_settings = network_settings
         self.ssh_settings = ssh_settings
         self.schedules = schedules
+        self.identity = identity
+        self.idle_time_before_shutdown = idle_time_before_shutdown
+        self.subnet = None
 
     @property
     def services(self) -> List[Dict[str, str]]:
@@ -175,15 +187,6 @@ class ComputeInstance(Compute):
         rtype: str
         """
         return self._state
-
-    @staticmethod
-    def _ssh_public_access_to_bool(value: str) -> bool:
-        if value.lower() == "disabled":
-            return False
-        elif value.lower() == "enabled":
-            return True
-        else:
-            return None
 
     def _to_rest_object(self) -> ComputeResource:
         if self.network_settings and self.network_settings.subnet:
@@ -221,16 +224,22 @@ class ComputeInstance(Compute):
             subnet=subnet_resource,
             ssh_settings=ssh_settings,
             personal_compute_instance_settings=personal_compute_instance_settings,
-            schedules=self.schedules._to_rest_object() if self.schedules else None,
+            idle_time_before_shutdown=self.idle_time_before_shutdown,
         )
+        compute_instance_prop.schedules = self.schedules._to_rest_object() if self.schedules else None
         compute_instance = CIRest(
             description=self.description,
             compute_type=self.type,
             properties=compute_instance_prop,
         )
-        return ComputeResource(location=self.location, properties=compute_instance)
+        return ComputeResource(
+            location=self.location,
+            properties=compute_instance,
+            identity=(self.identity._to_rest_object() if self.identity else None),
+        )
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return ComputeInstanceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     def _set_full_subnet_name(self, subscription_id: str, rg: str) -> None:
@@ -302,12 +311,13 @@ class ComputeInstance(Compute):
             create_on_behalf_of=create_on_behalf_of,
             network_settings=network_settings,
             ssh_settings=ssh_settings,
-            ssh_public_access_enabled=cls._ssh_public_access_to_bool(prop.properties.ssh_settings.ssh_public_access)
+            ssh_public_access_enabled=_ssh_public_access_to_bool(prop.properties.ssh_settings.ssh_public_access)
             if (prop.properties and prop.properties.ssh_settings and prop.properties.ssh_settings.ssh_public_access)
             else None,
             schedules=ComputeSchedules._from_rest_object(prop.properties.schedules)
             if prop.properties and prop.properties.schedules and prop.properties.schedules.compute_start_stop
             else None,
+            identity=IdentityConfiguration._from_rest_object(rest_obj.identity) if rest_obj.identity else None,
         )
         return response
 
@@ -315,3 +325,11 @@ class ComputeInstance(Compute):
     def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "ComputeInstance":
         loaded_data = load_from_dict(ComputeInstanceSchema, data, context, **kwargs)
         return ComputeInstance(**loaded_data)
+
+
+def _ssh_public_access_to_bool(value: str) -> bool:
+    if value.lower() == "disabled":
+        return False
+    if value.lower() == "enabled":
+        return True
+    return None

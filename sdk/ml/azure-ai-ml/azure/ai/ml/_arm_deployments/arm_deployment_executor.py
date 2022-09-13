@@ -17,21 +17,28 @@ from azure.ai.ml._azure_environments import (
 )
 from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
-from azure.ai.ml._utils.utils import from_iso_duration_format_min_sec, initialize_logger_info
+from azure.ai.ml._utils._logger_utils import initialize_logger_info
+from azure.ai.ml._utils.utils import from_iso_duration_format_min_sec
 from azure.ai.ml._vendor.azure_resources._resource_management_client import ResourceManagementClient
 from azure.ai.ml._vendor.azure_resources.models import Deployment, DeploymentProperties
-from azure.ai.ml.constants import ENDPOINT_DEPLOYMENT_START_MSG, ArmConstants, LROConfigurations, OperationStatus
+from azure.ai.ml.constants._common import (
+    ENDPOINT_DEPLOYMENT_START_MSG,
+    ArmConstants,
+    LROConfigurations,
+    OperationStatus,
+)
+from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
-from azure.identity import ChainedTokenCredential
 
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")
 
 
+# pylint: disable=too-many-instance-attributes
 class ArmDeploymentExecutor(object):
     def __init__(
         self,
-        credentials: ChainedTokenCredential,
+        credentials: TokenCredential,
         resource_group_name: str,
         subscription_id: str,
         deployment_name: str,
@@ -78,25 +85,25 @@ class ArmDeploymentExecutor(object):
                 error_category=ErrorCategory.USER_ERROR,
             )
         error = None
+        # pylint: disable=too-many-nested-blocks
         try:
             poller = self._get_poller(template=template, parameters=parameters)
             module_logger.info(
-                f"The deployment request {self._deployment_name} was accepted. ARM deployment URI for reference: \n"
+                "The deployment request %s was accepted. ARM deployment URI for reference: \n", self._deployment_name
             )
-            module_logger.info(
-                ENDPOINT_DEPLOYMENT_START_MSG.format(
-                    _get_azure_portal_id_from_metadata(),
-                    self._subscription_id,
-                    self._resource_group_name,
-                    self._deployment_name,
-                )
+            endpoint_deployment_start_message = ENDPOINT_DEPLOYMENT_START_MSG.format(
+                _get_azure_portal_id_from_metadata(),
+                self._subscription_id,
+                self._resource_group_name,
+                self._deployment_name,
             )
+            module_logger.info(endpoint_deployment_start_message)
             if wait:
                 try:
                     while not poller.done():
                         try:
                             time.sleep(LROConfigurations.SLEEP_TIME)
-                            self._check_deployment_status(resources_being_deployed)
+                            self._check_deployment_status()
                         except KeyboardInterrupt as e:
                             self._client.close()
                             error = e
@@ -104,26 +111,25 @@ class ArmDeploymentExecutor(object):
 
                     if poller._exception is not None:
                         error = poller._exception
-                except Exception as e:
+                except Exception as e:  # pylint: disable=broad-except
                     error = e
                 finally:
                     # one last check to make sure all print statements make it
                     if not isinstance(error, KeyboardInterrupt):
-                        self._check_deployment_status(resources_being_deployed)
+                        self._check_deployment_status()
                         total_duration = poller.result().properties.duration
             else:
                 return poller
         except Exception as ex:
-            module_logger.debug(f"Polling hit the exception {ex}\n")
+            module_logger.debug("Polling hit the exception %s\n", ex)
             raise ex
 
         if error is not None:
             error_msg = f"Unable to create resource. \n {error}\n"
             module_logger.error(error_msg)
             raise error
-        else:
-            if len(resources_being_deployed) > 1 and total_duration:
-                module_logger.info(f"Total time : {from_iso_duration_format_min_sec(total_duration)}\n")
+        if len(resources_being_deployed) > 1 and total_duration:
+            module_logger.info("Total time : %s\n", from_iso_duration_format_min_sec(total_duration))
 
     def _get_poller(self, template: str, parameters: Dict = None, wait: bool = True) -> None:
         # deploy the template
@@ -136,7 +142,8 @@ class ArmDeploymentExecutor(object):
             polling_interval=LROConfigurations.POLL_INTERVAL,
         )
 
-    def _check_deployment_status(self, resources_deployed: Dict[str, Any]) -> None:
+    # pylint: disable=too-many-statements
+    def _check_deployment_status(self) -> None:
         deployment_operations = self._deployment_operations_client.list(
             resource_group_name=self._resource_group_name,
             deployment_name=self._deployment_name,
@@ -148,7 +155,9 @@ class ArmDeploymentExecutor(object):
             target_resource = properties.target_resource
 
             module_logger.debug(
-                f"\n Received deployment operation: {target_resource}, with status {properties.provisioning_state}\n\n"
+                "\n Received deployment operation: %s, with status %s\n\n",
+                target_resource,
+                properties.provisioning_state,
             )
 
             if properties.provisioning_operation == "EvaluateDeploymentOutput":
@@ -171,10 +180,14 @@ class ArmDeploymentExecutor(object):
                 and (not self._lock or self._lock == target_resource.resource_name)
                 and target_resource.resource_name not in self._printed_set
             ):
+                status_in_resource_dict = self._resources_being_deployed[target_resource.resource_name][1]
                 module_logger.debug(
-                    f"\n LOCK STATUS :  {self._lock},  Status in the resources dict : {self._resources_being_deployed[target_resource.resource_name][1]} ,  Already in printed set: {self._printed_set}\n"
+                    ("\n LOCK STATUS :  %s,  " "Status in the resources dict : %s ,  " "Already in printed set: %s\n"),
+                    self._lock,
+                    status_in_resource_dict,
+                    self._printed_set,
                 )
-                module_logger.debug(f"Locking with the deployment : {target_resource.resource_name}\n\n")
+                module_logger.debug("Locking with the deployment : %s\n\n", target_resource.resource_name)
                 self._lock = target_resource.resource_name
                 provisioning_state = properties.provisioning_state
                 request_id = properties.service_request_id
@@ -192,7 +205,7 @@ class ArmDeploymentExecutor(object):
                 # duration comes in format: "PT1M56.3454108S"
                 try:
                     duration_in_min_sec = from_iso_duration_format_min_sec(duration)
-                except Exception:
+                except Exception:  # pylint: disable=broad-except
                     duration_in_min_sec = ""
 
                 self._resources_being_deployed[resource_name] = (
@@ -204,15 +217,25 @@ class ArmDeploymentExecutor(object):
                     status_code = properties.status_code
                     status_message = properties.status_message
                     module_logger.debug(
-                        f"{resource_type}: Failed with operation id= {operation_id}, service request id={request_id}, status={status_code}, error message = {status_message.error}.\n"
+                        (
+                            "%s: Failed with operation id= %s, "
+                            "service request id=%s, status=%s, "
+                            "error message = %s.\n"
+                        ),
+                        resource_type,
+                        operation_id,
+                        request_id,
+                        status_code,
+                        status_message.error,
                     )
                     module_logger.debug(
-                        f"More details: {status_message.error.details[0].message if status_message.error.details else None}\n"
+                        "More details: %s\n",
+                        status_message.error.details[0].message if status_message.error.details else None,
                     )
                     # self._lock = None
                 # First time we're seeing this so let the user know it's being deployed
                 elif properties.provisioning_state == OperationStatus.RUNNING and previous_state is None:
-                    module_logger.info(f"{resource_type} ")
+                    module_logger.info("%s ", resource_type)
                 elif (
                     properties.provisioning_state == OperationStatus.RUNNING
                     and previous_state == OperationStatus.RUNNING
@@ -222,16 +245,16 @@ class ArmDeploymentExecutor(object):
                 # (really quick deployment - so probably never happening) let user know resource
                 # is being deployed and then let user know it has been deployed
                 elif properties.provisioning_state == OperationStatus.SUCCEEDED and previous_state is None:
-                    module_logger.info(f"{resource_type}  Done ({duration_in_min_sec})\n")
+                    module_logger.info("%s  Done (%s)\n", resource_type, duration_in_min_sec)
                     self._lock = None
                     self._printed_set.add(resource_name)
-                    module_logger.debug(f"Releasing lock for deployment: {target_resource.resource_name}\n\n")
+                    module_logger.debug("Releasing lock for deployment: %s\n\n", target_resource.resource_name)
                 # Finally, deployment has succeeded and was previously running, so mark it as finished
                 elif (
                     properties.provisioning_state == OperationStatus.SUCCEEDED
                     and previous_state != OperationStatus.SUCCEEDED
                 ):
-                    module_logger.info(f"  Done ({duration_in_min_sec})\n")
+                    module_logger.info("  Done (%s)\n", duration_in_min_sec)
                     self._lock = None
                     self._printed_set.add(resource_name)
-                    module_logger.debug(f"Releasing lock for deployment: {target_resource.resource_name}\n\n")
+                    module_logger.debug("Releasing lock for deployment: %s\n\n", target_resource.resource_name)

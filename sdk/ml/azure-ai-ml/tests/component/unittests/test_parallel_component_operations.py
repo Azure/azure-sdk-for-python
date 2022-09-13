@@ -1,10 +1,11 @@
-import pytest
 from typing import Callable
 from unittest.mock import Mock, patch
 
+import pytest
+
+from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.operations import ComponentOperations
-from azure.ai.ml._scope_dependent_operations import OperationScope
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 

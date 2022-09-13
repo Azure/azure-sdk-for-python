@@ -1,8 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=unused-import
+from ._util import enable_internal_components_in_pipeline
 
-from ._util import _enable_internal_components_in_pipeline
-
-# enable internal components on importing this package
-_enable_internal_components_in_pipeline()
+# enable internal components if users has imported this module directly
+enable_internal_components_in_pipeline()

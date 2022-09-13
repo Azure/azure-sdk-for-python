@@ -22,8 +22,8 @@ from azure.ai.ml._local_endpoints.errors import (
 )
 from azure.ai.ml._local_endpoints.local_endpoint_mode import LocalEndpointMode
 from azure.ai.ml._local_endpoints.vscode_debug.vscode_client import VSCodeClient
-from azure.ai.ml._utils.utils import initialize_logger_info
-from azure.ai.ml.constants import LocalEndpointConstants
+from azure.ai.ml._utils._logger_utils import initialize_logger_info
+from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")

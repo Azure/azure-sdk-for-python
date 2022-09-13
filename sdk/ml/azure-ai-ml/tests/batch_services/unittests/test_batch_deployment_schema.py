@@ -1,11 +1,13 @@
 from pathlib import Path
+
 import pytest
 import yaml
 
 from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, BatchDeploymentOutputAction
-from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities import BatchDeployment
+from azure.ai.ml.entities._util import load_from_dict
 
 
 def load_batch_deployment_entity_from_yaml(path: str, context={}) -> BatchDeployment:

@@ -46,14 +46,10 @@ class AzureAgriFoodRPService(object):
     """
 
     def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        subscription_id: str,
-        base_url: Optional[str] = None,
-        **kwargs: Any
+        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
     ) -> None:
         if not base_url:
-            base_url = 'https://management.azure.com'
+            base_url = "https://management.azure.com"
         self._config = AzureAgriFoodRPServiceConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
@@ -62,16 +58,15 @@ class AzureAgriFoodRPService(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.extensions = ExtensionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+        self.extensions = ExtensionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.farm_beats_extensions = FarmBeatsExtensionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.farm_beats_models = FarmBeatsModelsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.locations = LocationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.locations = LocationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
 
     async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
         """Runs the network request through the client's chained policies.
@@ -83,7 +78,9 @@ class AzureAgriFoodRPService(object):
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
         """
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", min_length=1
+            ),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream = kwargs.pop("stream", True)

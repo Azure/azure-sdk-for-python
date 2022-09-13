@@ -1,12 +1,18 @@
 from typing import Callable
-from azure.ai.ml.entities._workspace.workspace import Workspace
-from azure.ai.ml.entities._workspace.customer_managed_key import CustomerManagedKey
+from unittest.mock import DEFAULT, Mock, call, patch
+
 import pytest
 from pytest_mock import MockFixture
-from unittest.mock import Mock, call, DEFAULT, patch
-from azure.ai.ml.operations import WorkspaceOperations
-from azure.identity import DefaultAzureCredential
+
 from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml.entities._workspace.customer_managed_key import CustomerManagedKey
+from azure.ai.ml.entities._workspace.identity import (
+    ManagedServiceIdentity,
+    ManagedServiceIdentityType,
+    UserAssignedIdentity,
+)
+from azure.ai.ml.entities._workspace.workspace import Workspace
+from azure.ai.ml.operations import WorkspaceOperations
 from azure.core.exceptions import ResourceExistsError
 from azure.core.polling import LROPoller
 
@@ -68,9 +74,7 @@ class TestWorkspaceOperation:
         mocker: MockFixture,
     ):
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", return_value=None)
-        mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=None)
-        mock_workspace_operation.template = None
-        mock_workspace_operation.param = None
+        mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=({}, {}, {}))
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=None)
         mock_workspace_operation.begin_create(workspace=Workspace(name="name"))
 
@@ -79,9 +83,7 @@ class TestWorkspaceOperation:
             name="name",
             resource_group="another_resource_group",
         )
-        mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=None)
-        mock_workspace_operation.template = None
-        mock_workspace_operation.param = None
+        mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=({}, {}, {}))
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=None)
 
         def outgoing_call(rg, name):
@@ -99,9 +101,7 @@ class TestWorkspaceOperation:
         mocker: MockFixture,
     ):
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", side_effect=Exception)
-        mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=None)
-        mock_workspace_operation.template = None
-        mock_workspace_operation.param = None
+        mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=({}, {}, {}))
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=None)
         mock_workspace_operation.begin_create(workspace=Workspace(name="name"), no_wait=True)
 
@@ -125,6 +125,11 @@ class TestWorkspaceOperation:
             public_network_access="Enabled",
             container_registry="foo_conntainer_registry",
             application_insights="foo_application_insights",
+            identity=ManagedServiceIdentity(
+                type=ManagedServiceIdentityType.USER_ASSIGNED,
+                user_assigned_identities={"resource1": UserAssignedIdentity(), "resource2": UserAssignedIdentity()},
+            ),
+            primary_user_assigned_identity="resource2",
         )
 
         def outgoing_call(rg, name, params, polling):
@@ -137,6 +142,9 @@ class TestWorkspaceOperation:
             assert params.tags.get("key") == "value"
             assert params.container_registry == "foo_conntainer_registry"
             assert params.application_insights == "foo_application_insights"
+            assert params.identity.type == ManagedServiceIdentityType.USER_ASSIGNED
+            assert len(params.identity.user_assigned_identities) == 2
+            assert params.primary_user_assigned_identity == "resource2"
             assert polling is False
             return DEFAULT
 
@@ -156,6 +164,8 @@ class TestWorkspaceOperation:
             assert params.description == ""  # empty string is supported for description.
             assert params.friendly_name == ""  # empty string is supported for friendly name.
             assert params.image_build_compute == ""  # was set to empty string, for user to remove the property value.
+            assert params.identity is None
+            assert params.primary_user_assigned_identity is None
             assert (
                 params.public_network_access is None
             )  # was not set for update, no change on service side for this property.

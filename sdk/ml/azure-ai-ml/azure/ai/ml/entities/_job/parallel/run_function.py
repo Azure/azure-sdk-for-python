@@ -4,9 +4,11 @@
 
 
 from typing import Union
-from .parallel_task import ParallelTask
-from azure.ai.ml.entities._assets import Environment
+
 from azure.ai.ml.constants import ParallelTaskType
+from azure.ai.ml.entities._assets import Environment
+
+from .parallel_task import ParallelTask
 
 
 class RunFunction(ParallelTask):

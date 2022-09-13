@@ -33,7 +33,7 @@ USAGE:
 import os
 
 def sample_copy_model_to(custom_model_id):
-    # [START begin_copy_model_to]
+    # [START begin_copy_document_model_to]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer import DocumentModelAdministrationClient
 
@@ -50,7 +50,7 @@ def sample_copy_model_to(custom_model_id):
     )
 
     source_client = DocumentModelAdministrationClient(endpoint=source_endpoint, credential=AzureKeyCredential(source_key))
-    poller = source_client.begin_copy_model_to(
+    poller = source_client.begin_copy_document_model_to(
         model_id=source_model_id,
         target=target  # output from target client's call to get_copy_authorization()
     )
@@ -66,7 +66,7 @@ def sample_copy_model_to(custom_model_id):
             print("Field: '{}' has type '{}' and confidence score {}".format(
                 field_name, field["type"], doc_type.field_confidence[field_name]
             ))
-    # [END begin_copy_model_to]
+    # [END begin_copy_document_model_to]
 
 
 if __name__ == '__main__':
@@ -85,7 +85,7 @@ if __name__ == '__main__':
         document_model_admin_client = DocumentModelAdministrationClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
-        model = document_model_admin_client.begin_build_model(ModelBuildMode.TEMPLATE, blob_container_url=os.getenv("CONTAINER_SAS_URL")).result()
+        model = document_model_admin_client.begin_build_document_model(ModelBuildMode.TEMPLATE, blob_container_url=os.getenv("CONTAINER_SAS_URL")).result()
         model_id = model.model_id
 
     sample_copy_model_to(model_id)
