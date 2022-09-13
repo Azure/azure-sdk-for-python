@@ -78,7 +78,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
     def test_default_http_logging_policy(self):
         #Test if we can log into from creating a database
-        test_db = self.client_default.create_database_if_not_exists(id="DBTEST")
+        test_db = self.client_default.create_database_if_not_exists(id="database_test")
         assert all(m.levelname == 'INFO' for m in self.mock_handler_default.messages)
         messages_request = self.mock_handler_default.messages[0].message.split("\n")
         messages_response = self.mock_handler_default.messages[1].message.split("\n")
@@ -92,7 +92,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         self.mock_handler_default.reset()
         #now test in case of an error
         try:
-            test_db_error = self.client_default.create_database(id="DBTEST")
+            test_db_error = self.client_default.create_database(id="database_test")
         except:
             pass
         assert all(m.levelname == 'INFO' for m in self.mock_handler_default.messages)
@@ -106,13 +106,13 @@ class TestCosmosHttpLogger(unittest.TestCase):
         assert 'Response headers:' in messages_response[1]
 
         #delete database
-        self.client_default.delete_database("DBTEST")
+        self.client_default.delete_database("database_test")
 
         self.mock_handler_default.reset()
 
     def test_cosmos_http_logging_policy(self):
         # Test if we can log into from creating a database
-        test_db = self.client_diagnostic.create_database_if_not_exists(id="DBTEST")
+        test_db = self.client_diagnostic.create_database_if_not_exists(id="database_test")
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
         messages_request = self.mock_handler_diagnostic.messages[0].message.split("\n")
         messages_response = self.mock_handler_diagnostic.messages[1].message.split("\n")
@@ -128,7 +128,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         self.mock_handler_diagnostic.reset()
         # now test in case of an error
         try:
-            test_db_error = self.client_diagnostic.create_database(id="DBTEST")
+            test_db_error = self.client_diagnostic.create_database(id="database_test")
         except:
             pass
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
@@ -144,7 +144,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         assert "Response headers" in messages_response[3]
 
         # delete database
-        self.client_diagnostic.delete_database("DBTEST")
+        self.client_diagnostic.delete_database("database_test")
 
         self.mock_handler_diagnostic.reset()
 
