@@ -18,7 +18,6 @@ from azure.core.polling.base_polling import (
     OperationFailed,
     BadStatus,
 )
-from ._generated.v2022_05_01.models import JobState
 
 _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted", "partiallysucceeded"])
 _FAILED = frozenset(["failed"])
@@ -219,6 +218,7 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def _current_body(self):
+        from ._generated.models import JobState
         return JobState.deserialize(self._pipeline_response)
 
     @property
@@ -384,6 +384,7 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def _current_body(self):
+        from ._generated.models import JobState
         return JobState.deserialize(self._pipeline_response)
 
     @property

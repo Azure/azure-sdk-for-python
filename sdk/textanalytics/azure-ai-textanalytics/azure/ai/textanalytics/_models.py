@@ -13,7 +13,7 @@ from ._generated.models import (
 )
 from ._generated.v3_0 import models as _v3_0_models
 from ._generated.v3_1 import models as _v3_1_models
-from ._generated.v2022_05_01 import models as _v2022_05_01_models
+from ._generated.v2022_10_01_preview import models as _v2022_10_01_preview_models
 from ._check import is_language_api, string_index_type_compatibility
 
 
@@ -1846,9 +1846,9 @@ class RecognizeEntitiesAction(DictMixin):
 
     def _to_generated(self, api_version, task_id):
         if is_language_api(api_version):
-            return _v2022_05_01_models.EntitiesLROTask(
+            return _v2022_10_01_preview_models.EntitiesLROTask(
                 task_name=task_id,
-                parameters=_v2022_05_01_models.EntitiesTaskParameters(
+                parameters=_v2022_10_01_preview_models.EntitiesTaskParameters(
                     model_version=self.model_version,
                     string_index_type=string_index_type_compatibility(self.string_index_type),
                     logging_opt_out=self.disable_service_logs,
@@ -1930,9 +1930,9 @@ class AnalyzeSentimentAction(DictMixin):
 
     def _to_generated(self, api_version, task_id):
         if is_language_api(api_version):
-            return _v2022_05_01_models.SentimentAnalysisLROTask(
+            return _v2022_10_01_preview_models.SentimentAnalysisLROTask(
                 task_name=task_id,
-                parameters=_v2022_05_01_models.SentimentAnalysisTaskParameters(
+                parameters=_v2022_10_01_preview_models.SentimentAnalysisTaskParameters(
                     model_version=self.model_version,
                     opinion_mining=self.show_opinion_mining,
                     string_index_type=string_index_type_compatibility(self.string_index_type),
@@ -2019,9 +2019,9 @@ class RecognizePiiEntitiesAction(DictMixin):
 
     def _to_generated(self, api_version, task_id):
         if is_language_api(api_version):
-            return _v2022_05_01_models.PiiLROTask(
+            return _v2022_10_01_preview_models.PiiLROTask(
                 task_name=task_id,
-                parameters=_v2022_05_01_models.PiiTaskParameters(
+                parameters=_v2022_10_01_preview_models.PiiTaskParameters(
                     model_version=self.model_version,
                     domain=self.domain_filter,
                     pii_categories=self.categories_filter,
@@ -2083,9 +2083,9 @@ class ExtractKeyPhrasesAction(DictMixin):
 
     def _to_generated(self, api_version, task_id):
         if is_language_api(api_version):
-            return _v2022_05_01_models.KeyPhraseLROTask(
+            return _v2022_10_01_preview_models.KeyPhraseLROTask(
                 task_name=task_id,
-                parameters=_v2022_05_01_models.KeyPhraseTaskParameters(
+                parameters=_v2022_10_01_preview_models.KeyPhraseTaskParameters(
                     model_version=self.model_version,
                     logging_opt_out=self.disable_service_logs,
                 )
@@ -2151,9 +2151,9 @@ class RecognizeLinkedEntitiesAction(DictMixin):
 
     def _to_generated(self, api_version, task_id):
         if is_language_api(api_version):
-            return _v2022_05_01_models.EntityLinkingLROTask(
+            return _v2022_10_01_preview_models.EntityLinkingLROTask(
                 task_name=task_id,
-                parameters=_v2022_05_01_models.EntityLinkingTaskParameters(
+                parameters=_v2022_10_01_preview_models.EntityLinkingTaskParameters(
                     model_version=self.model_version,
                     string_index_type=string_index_type_compatibility(self.string_index_type),
                     logging_opt_out=self.disable_service_logs,
@@ -2229,9 +2229,9 @@ class RecognizeCustomEntitiesAction(DictMixin):
         )[:1024]
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        return _v2022_05_01_models.CustomEntitiesLROTask(
+        return _v2022_10_01_preview_models.CustomEntitiesLROTask(
             task_name=task_id,
-            parameters=_v2022_05_01_models.CustomEntitiesTaskParameters(
+            parameters=_v2022_10_01_preview_models.CustomEntitiesTaskParameters(
                 project_name=self.project_name,
                 deployment_name=self.deployment_name,
                 string_index_type=string_index_type_compatibility(self.string_index_type),
@@ -2348,9 +2348,9 @@ class MultiLabelClassifyAction(DictMixin):
         )[:1024]
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        return _v2022_05_01_models.CustomMultiLabelClassificationLROTask(
+        return _v2022_10_01_preview_models.CustomMultiLabelClassificationLROTask(
             task_name=task_id,
-            parameters=_v2022_05_01_models.CustomMultiLabelClassificationTaskParameters(
+            parameters=_v2022_10_01_preview_models.CustomMultiLabelClassificationTaskParameters(
                 project_name=self.project_name,
                 deployment_name=self.deployment_name,
                 logging_opt_out=self.disable_service_logs,
@@ -2467,9 +2467,9 @@ class SingleLabelClassifyAction(DictMixin):
         )[:1024]
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        return _v2022_05_01_models.CustomSingleLabelClassificationLROTask(
+        return _v2022_10_01_preview_models.CustomSingleLabelClassificationLROTask(
             task_name=task_id,
-            parameters=_v2022_05_01_models.CustomSingleLabelClassificationTaskParameters(
+            parameters=_v2022_10_01_preview_models.CustomSingleLabelClassificationTaskParameters(
                 project_name=self.project_name,
                 deployment_name=self.deployment_name,
                 logging_opt_out=self.disable_service_logs,
@@ -2559,9 +2559,9 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         )
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        return _v2022_05_01_models.HealthcareLROTask(
+        return _v2022_10_01_preview_models.HealthcareLROTask(
             task_name=task_id,
-            parameters=_v2022_05_01_models.HealthcareTaskParameters(
+            parameters=_v2022_10_01_preview_models.HealthcareTaskParameters(
                 model_version=self.model_version,
                 string_index_type=string_index_type_compatibility(self.string_index_type),
                 logging_opt_out=self.disable_service_logs,
