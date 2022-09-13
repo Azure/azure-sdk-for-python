@@ -19,7 +19,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 
 
 def _to_str(value):
-    return str if value is not None else None
+    return str(value) if value is not None else None
 
 
 _ERROR_TYPE_NOT_SUPPORTED = "Type not supported when sending data to the service: {0}."
@@ -217,7 +217,9 @@ def _reprocess_error(decoded_error, identifiers=None):
         error_code == "PropertiesNeedValue" and properties_need_value in message or
         error_code =="TableNotFound" and table_does_not_exist in message
         ):
-        raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint if it has.")
+        decoded_error.message = message + "\nA possible cause of this error could be that the account URL used to"\
+            "create the Client includes an invalid path, for example the table name. Please check your account URL."
+        raise decoded_error
     if (identifiers is not None and error_code == "InvalidXmlDocument" and len(identifiers) > 5):
         raise ValueError(
             "Too many access policies provided. The server does not support setting more than 5 access policies"\
