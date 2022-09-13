@@ -2,13 +2,12 @@
 
 ## 1.1.1 (Unreleased)
 
+This version and all future versions will require Python 3.7+, Python 3.6 is no longer supported.
+
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- `get_schema_by_version` method has been added to the sync and async `SchemaRegistryClient`.
+- `version` has been added to `SchemaProperties`.
 
 ## 1.1.0 (2022-05-10)
 
