@@ -89,9 +89,7 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
         :return: CommunicationUserIdentifier
         :rtype: ~azure.communication.identity.CommunicationUserIdentifier
         """
-        api_version = kwargs.pop("api_version", self._api_version)
         return await self._identity_service_client.communication_identity.create(
-            api_version=api_version,
             cls=lambda pr, u, e: CommunicationUserIdentifier(u['identity']['id'], raw_id=u['identity']['id']),
             **kwargs)
 
@@ -112,7 +110,6 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
         :rtype:
             tuple of (~azure.communication.identity.CommunicationUserIdentifier, ~azure.core.credentials.AccessToken)
         """
-        api_version = kwargs.pop("api_version", self._api_version)
         token_expiry = kwargs.pop('token_expiry', None)
 
         expires_after_in_minutes = 0
@@ -129,7 +126,6 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
 
         return await self._identity_service_client.communication_identity.create(
             body=body,
-            api_version=api_version,
             cls=lambda pr, u, e: (CommunicationUserIdentifier(u['identity']['id'], raw_id=u['identity']['id']),
                 AccessToken(u['accessToken']['token'], u['accessToken']['expiresOn'])),
             **kwargs)
@@ -148,10 +144,8 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
         :return: None
         :rtype: None
         """
-        api_version = kwargs.pop("api_version", self._api_version)
         await self._identity_service_client.communication_identity.delete(
             user.properties['id'],
-            api_version=api_version,
             **kwargs)
 
     @distributed_trace_async
@@ -174,7 +168,6 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
         :return: AccessToken
         :rtype: ~azure.core.credentials.AccessToken
         """
-        api_version = kwargs.pop("api_version", self._api_version)
         token_expiry = kwargs.pop('token_expiry', None)
         expires_after_in_minutes = 0
         if token_expiry is not None:
@@ -191,7 +184,6 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
         return await self._identity_service_client.communication_identity.issue_access_token(
             user.properties['id'],
             body=body,
-            api_version=api_version,
             cls=lambda pr, u, e: AccessToken(u['token'], u['expiresOn']),
             **kwargs)
 
@@ -208,10 +200,8 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
         :return: None
         :rtype: None
         """
-        api_version = kwargs.pop("api_version", self._api_version)
         return await self._identity_service_client.communication_identity.revoke_access_tokens(
             user.properties['id'] if user else None,
-            api_version=api_version,
             **kwargs)
 
     @distributed_trace_async
@@ -236,7 +226,6 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
         :return: AccessToken
         :rtype: ~azure.core.credentials.AccessToken
         """
-        api_version = kwargs.pop("api_version", self._api_version)
         body = {
             "token": aad_token,
             "appId": client_id,
@@ -244,7 +233,6 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
         }
         return await self._identity_service_client.communication_identity.exchange_teams_user_access_token(
             body=body,
-            api_version=api_version,
             cls=lambda pr, u, e: AccessToken(u['token'], u['expiresOn']),
             **kwargs)
 
