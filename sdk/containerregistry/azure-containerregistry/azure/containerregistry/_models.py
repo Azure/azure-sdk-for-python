@@ -40,7 +40,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     :ivar operating_system: Operating system for the artifact.
     :vartype operating_system: Optional[~azure.containerregistry.ArtifactOperatingSystem]
     :ivar Optional[str] repository_name: Repository name the artifact belongs to.
-    :ivar Optional[str] size_in_bytes: Size of the artifact.
+    :ivar Optional[int] size_in_bytes: Size of the artifact.
     :ivar Optional[List[str]] tags: Tags associated with a registry artifact.
     """
 
