@@ -61,6 +61,14 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             assert returned_schema.properties.name == name
             assert returned_schema.definition == schema_str
 
+            returned_version_schema = await client.get_schema_by_version(schemaregistry_group, name, schema_properties.version, logging_enable=True)
+
+            assert returned_version_schema.properties.id == schema_properties.id
+            assert returned_version_schema.properties.format == "Avro"
+            assert returned_version_schema.properties.group_name == schemaregistry_group
+            assert returned_version_schema.properties.name == name
+            assert returned_version_schema.definition == schema_str
+
             returned_schema_properties = await client.get_schema_properties(schemaregistry_group, name, schema_str, format, logging_enable=True)
 
             assert returned_schema_properties.id == schema_properties.id
@@ -99,6 +107,15 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             assert new_schema.properties.group_name == schemaregistry_group
             assert new_schema.properties.name == name
 
+            new_schema = await client.get_schema_by_version(schemaregistry_group, name, new_schema_properties.version, logging_enable=True)
+
+            assert new_schema.properties.id != schema_properties.id
+            assert new_schema.properties.id == new_schema_properties.id
+            assert new_schema.definition == schema_str_new
+            assert new_schema.properties.format == "Avro"
+            assert new_schema.properties.group_name == schemaregistry_group
+            assert new_schema.properties.name == name
+
         await client._generated_client._config.credential.close()
 
     @SchemaRegistryEnvironmentVariableLoader()
@@ -126,7 +143,6 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             with pytest.raises(ClientAuthenticationError):
                 await client.register_schema(schemaregistry_group, name, schema_str, format)
 
-    @pytest.mark.skip("Figure out why live_test_only mark not working for non-live mode")
     @pytest.mark.live_test_only
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy_async
@@ -141,7 +157,7 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
                 await client.register_schema(schemaregistry_group, name, schema_str, format)
             if exc_info.type is HttpResponseError:
                 response_content = json.loads(exc_info.value.response.content)
-                assert "Name does not resolve" in response_content["Message"]
+                assert any([(m in response_content["Message"]) for m in ["Name does not resolve", "Unable to find a record"]])
 
         await client._generated_client._config.credential.close()
 
@@ -155,6 +171,22 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
 
             with pytest.raises(HttpResponseError):
                 await client.get_schema('a' * 32)
+        await client._generated_client._config.credential.close()
+
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy_async
+    async def test_schema_negative_no_schema_version_async(self, **kwargs):
+        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
+        client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        name = self.get_resource_name('test-schema-negative-version')
+        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}"""
+        format = "Avro"
+        async with client:
+            schema_properties = await client.register_schema(schemaregistry_group, name, schema_str, format)
+            version = schema_properties.version + 1
+            with pytest.raises(HttpResponseError):
+                await client.get_schema_by_version(schemaregistry_group, name, version)
         await client._generated_client._config.credential.close()
 
     @SchemaRegistryEnvironmentVariableLoader()

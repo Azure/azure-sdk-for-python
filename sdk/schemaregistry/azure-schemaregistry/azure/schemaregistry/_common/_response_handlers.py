@@ -32,7 +32,7 @@ def _parse_schema_properties_dict(response):
         "id": response.headers.get("schema-id"),
         "group_name": response.headers.get("schema-group-name"),
         "name": response.headers.get("schema-name"),
-        "version": response.headers.get("schema-version")
+        "version": int(response.headers.get("schema-version"))
     }
 
 
