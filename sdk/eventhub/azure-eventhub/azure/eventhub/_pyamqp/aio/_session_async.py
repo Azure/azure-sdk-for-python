@@ -10,7 +10,15 @@ import time
 import asyncio
 from typing import Optional, Union
 
-from ..constants import ConnectionState, SessionState, SessionTransferState, Role
+from ..constants import (
+    INCOMING_WINDOW,
+    OUTGOING_WINDOW,
+    ConnectionState,
+    SessionState,
+    SessionTransferState,
+    Role
+)
+from ..endpoints import Source, Target
 from ._sender_async import SenderLink
 from ._receiver_async import ReceiverLink
 from ._management_link_async import ManagementLink
