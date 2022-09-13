@@ -383,14 +383,13 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
         with pytest.raises(InvalidSchemaError):
             await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_invalid_name_in_fullname) 
 
-        # Commenting out as this passes with avro==1.11.0, but fails with avro==1.11.1
-        #schema_invalid_name_reserved_type = """{
-        #    "name":"record",
-        #    "type":"record",
-        #    "fields":[{"name":"name","type":"string"}]
-        #}"""
-        #with pytest.raises(InvalidSchemaError):
-        #    await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_invalid_name_reserved_type)
+        schema_invalid_name_reserved_type = """{
+            "name":"long",
+            "type":"record",
+            "fields":[{"name":"name","type":"string"}]
+        }"""
+        with pytest.raises(InvalidSchemaError):
+            await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_invalid_name_reserved_type)
 
         schema_wrong_type_name = """{
             "name":1,

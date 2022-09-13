@@ -34,7 +34,7 @@ with open('CHANGELOG.md', encoding='utf-8') as f:
 
 install_packages = [
     'azure-schemaregistry>=1.0.0,<2.0.0',
-    'avro>=1.11.0',
+    'avro>=1.11.1',
     "typing-extensions>=4.0.1",
 ]
 

@@ -26,7 +26,6 @@
 import functools
 import pytest
 import json
-import pdb
 
 from azure.schemaregistry import SchemaRegistryClient
 from azure.schemaregistry.encoder.avroencoder import AvroEncoder
@@ -37,7 +36,7 @@ import avro
 from avro.errors import AvroTypeException
 from azure.schemaregistry.encoder.avroencoder._apache_avro_encoder import ApacheAvroObjectEncoder as AvroObjectEncoder
 
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureTestCase
 
 SchemaRegistryEnvironmentVariableLoader = functools.partial(EnvironmentVariableLoader, "schemaregistry", schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net/", schemaregistry_group="fakegroup")
 
@@ -433,14 +432,13 @@ class TestAvroEncoder(AzureRecordedTestCase):
         with pytest.raises(InvalidSchemaError):
             sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_invalid_name_in_fullname) 
 
-        # Commenting out as this passes with avro==1.11.0, but fails with avro==1.11.1
-        #schema_invalid_name_reserved_type = """{
-        #    "name":"record",
-        #    "type":"record",
-        #    "fields":[{"name":"name","type":"string"}]
-        #}"""
-        #with pytest.raises(InvalidSchemaError):
-        #    sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_invalid_name_reserved_type)
+        schema_invalid_name_reserved_type = """{
+            "name":"long",
+            "type":"record",
+            "fields":[{"name":"name","type":"string"}]
+        }"""
+        with pytest.raises(InvalidSchemaError):
+            sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_invalid_name_reserved_type)
 
         schema_wrong_type_name = """{
             "name":1,
