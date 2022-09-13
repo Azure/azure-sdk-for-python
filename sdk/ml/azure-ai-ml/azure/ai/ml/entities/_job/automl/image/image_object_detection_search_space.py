@@ -2,13 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=R0902,too-many-locals
+
 from typing import Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ImageModelDistributionSettingsObjectDetection
+from azure.ai.ml._restclient.v2022_06_01_preview.models import ImageModelDistributionSettingsObjectDetection
 from azure.ai.ml.entities._job.automl.image.image_search_space_utils import (
     _convert_from_rest_object,
     _convert_to_rest_object,
 )
+from azure.ai.ml.entities._job.automl.search_space import SearchSpace
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -54,7 +57,7 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
         For instance, passing 2 as value for 'seresnext' means
         freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
         please
-        see: https://docs.microsoft.com/en-us/azure/machine-learning/reference-automl-images-hyperparameters#model-agnostic-hyperparameters.
+        see: https://docs.microsoft.com/en-us/azure/machine-learning/reference-automl-images-hyperparameters#model-agnostic-hyperparameters.    # pylint: disable=line-too-long
     :type layers_to_freeze: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
     :param learning_rate: Initial learning rate. Must be a float in the range [0, 1].
     :type learning_rate: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
@@ -448,6 +451,60 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
                 if obj.validation_metric_type is not None
                 else None
             ),
+        )
+
+    @classmethod
+    def _from_search_space_object(cls, obj: SearchSpace) -> "ImageObjectDetectionSearchSpace":
+        return cls(
+            ams_gradient=obj.ams_gradient if hasattr(obj, "ams_gradient") else None,
+            augmentations=obj.augmentations if hasattr(obj, "augmentations") else None,
+            beta1=obj.beta1 if hasattr(obj, "beta1") else None,
+            beta2=obj.beta2 if hasattr(obj, "beta2") else None,
+            distributed=obj.distributed if hasattr(obj, "distributed") else None,
+            early_stopping=obj.early_stopping if hasattr(obj, "early_stopping") else None,
+            early_stopping_delay=obj.early_stopping_delay if hasattr(obj, "early_stopping_delay") else None,
+            early_stopping_patience=obj.early_stopping_patience if hasattr(obj, "early_stopping_patience") else None,
+            enable_onnx_normalization=obj.enable_onnx_normalization
+            if hasattr(obj, "enable_onnx_normalization")
+            else None,
+            evaluation_frequency=obj.evaluation_frequency if hasattr(obj, "evaluation_frequency") else None,
+            gradient_accumulation_step=obj.gradient_accumulation_step
+            if hasattr(obj, "gradient_accumulation_step")
+            else None,
+            layers_to_freeze=obj.layers_to_freeze if hasattr(obj, "layers_to_freeze") else None,
+            learning_rate=obj.learning_rate if hasattr(obj, "learning_rate") else None,
+            learning_rate_scheduler=obj.learning_rate_scheduler if hasattr(obj, "learning_rate_scheduler") else None,
+            model_name=obj.model_name if hasattr(obj, "model_name") else None,
+            momentum=obj.momentum if hasattr(obj, "momentum") else None,
+            nesterov=obj.nesterov if hasattr(obj, "nesterov") else None,
+            number_of_epochs=obj.number_of_epochs if hasattr(obj, "number_of_epochs") else None,
+            number_of_workers=obj.number_of_workers if hasattr(obj, "number_of_workers") else None,
+            optimizer=obj.optimizer if hasattr(obj, "optimizer") else None,
+            random_seed=obj.random_seed if hasattr(obj, "random_seed") else None,
+            step_lr_gamma=obj.step_lr_gamma if hasattr(obj, "step_lr_gamma") else None,
+            step_lr_step_size=obj.step_lr_step_size if hasattr(obj, "step_lr_step_size") else None,
+            training_batch_size=obj.training_batch_size if hasattr(obj, "training_batch_size") else None,
+            validation_batch_size=obj.validation_batch_size if hasattr(obj, "validation_batch_size") else None,
+            warmup_cosine_lr_cycles=obj.warmup_cosine_lr_cycles if hasattr(obj, "warmup_cosine_lr_cycles") else None,
+            warmup_cosine_lr_warmup_epochs=obj.warmup_cosine_lr_warmup_epochs
+            if hasattr(obj, "warmup_cosine_lr_warmup_epochs")
+            else None,
+            weight_decay=obj.weight_decay if hasattr(obj, "weight_decay") else None,
+            box_detections_per_image=obj.box_detections_per_image if hasattr(obj, "box_detections_per_image") else None,
+            box_score_threshold=obj.box_score_threshold if hasattr(obj, "box_score_threshold") else None,
+            image_size=obj.image_size if hasattr(obj, "image_size") else None,
+            max_size=obj.max_size if hasattr(obj, "max_size") else None,
+            min_size=obj.min_size if hasattr(obj, "min_size") else None,
+            model_size=obj.model_size if hasattr(obj, "model_size") else None,
+            multi_scale=obj.multi_scale if hasattr(obj, "multi_scale") else None,
+            nms_iou_threshold=obj.nms_iou_threshold if hasattr(obj, "nms_iou_threshold") else None,
+            tile_grid_size=obj.tile_grid_size if hasattr(obj, "tile_grid_size") else None,
+            tile_overlap_ratio=obj.tile_overlap_ratio if hasattr(obj, "tile_overlap_ratio") else None,
+            tile_predictions_nms_threshold=obj.tile_predictions_nms_threshold
+            if hasattr(obj, "tile_predictions_nms_threshold")
+            else None,
+            validation_iou_threshold=obj.validation_iou_threshold if hasattr(obj, "validation_iou_threshold") else None,
+            validation_metric_type=obj.validation_metric_type if hasattr(obj, "validation_metric_type") else None,
         )
 
     def __eq__(self, other: object) -> bool:

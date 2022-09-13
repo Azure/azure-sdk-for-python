@@ -1,7 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
 # pylint: disable=protected-access
 
 import logging
@@ -11,37 +10,39 @@ from enum import Enum
 from functools import wraps
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationException
+from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
-from azure.ai.ml.constants import ComponentSource, JobType
+from azure.ai.ml.constants import JobType
 from azure.ai.ml.entities._component.component import Component
-from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import build_input_output
+from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
 from azure.ai.ml.entities._job.pipeline._io import (
     InputsAttrDict,
-    NodeIOMixin,
     OutputsAttrDict,
     PipelineInput,
+    PipelineNodeIOMixin,
     PipelineOutputBase,
 )
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
-from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
+from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, resolve_pipeline_parameters
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
 
 module_logger = logging.getLogger(__name__)
 
 
 def parse_inputs_outputs(data):
-    data["inputs"] = {key: build_input_output(val) for key, val in data.get("inputs", {}).items()}
-    data["outputs"] = {key: build_input_output(val, inputs=False) for key, val in data.get("outputs", {}).items()}
+    if "inputs" in data:
+        data["inputs"] = {key: build_input_output(val) for key, val in data["inputs"].items()}
+    if "outputs" in data:
+        data["outputs"] = {key: build_input_output(val, inputs=False) for key, val in data["outputs"].items()}
     return data
 
 
 def pipeline_node_decorator(func):
-    """Warp func and add it return value to current DSL pipeline."""
+    """Wrap func and add it return value to current DSL pipeline."""
 
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -60,7 +61,7 @@ def pipeline_node_decorator(func):
     return wrapper
 
 
-class BaseNode(Job, NodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin):
+class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin):
     """Base class for node in pipeline, used for component version consumption.
     Can't be instantiated directly.
 
@@ -84,14 +85,15 @@ class BaseNode(Job, NodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidat
     :type display_name: str
     :param compute: Compute definition containing the compute information for the step
     :type compute: str
-    :param experiment_name:  Name of the experiment the job will be created under, if None is provided, default will be set to current directory name. Will be ignored as a pipeline step.
+    :param experiment_name:  Name of the experiment the job will be created under,
+        if None is provided, default will be set to current directory name. Will be ignored as a pipeline step.
     :type experiment_name: str
     """
 
     def __init__(
         self,
         *,
-        type: str = JobType.COMPONENT,
+        type: str = JobType.COMPONENT,  # pylint: disable=redefined-builtin
         component: Component,
         inputs: Dict[
             str,
@@ -134,6 +136,7 @@ class BaseNode(Job, NodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidat
         )
 
         # initialize io
+        inputs = resolve_pipeline_parameters(inputs)
         inputs, outputs = inputs or {}, outputs or {}
         self._validate_io(inputs, self._get_supported_inputs_types(), Input)
         self._validate_io(outputs, self._get_supported_outputs_types(), Output)
@@ -163,6 +166,11 @@ class BaseNode(Job, NodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidat
             # add current component in pipeline stack for dsl scenario
             self._register_in_current_pipeline_component_builder()
 
+        self._source = (
+            self._component._source
+            if isinstance(self._component, Component)
+            else Component._resolve_component_source_from_id(id=self._component)
+        )
         self._init = False
 
     @classmethod
@@ -172,6 +180,10 @@ class BaseNode(Job, NodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidat
     @classmethod
     def _get_supported_outputs_types(cls):
         return None
+
+    @property
+    def _skip_required_compute_missing_validation(self):
+        return False
 
     @classmethod
     def _validate_io(cls, io_dict: dict, allowed_types: Optional[tuple], parse_cls):
@@ -195,6 +207,7 @@ class BaseNode(Job, NodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidat
                     message=msg.format(allowed_types, key, type(value)),
                     no_personal_data_message=msg.format(allowed_types, "[key]", type(value)),
                     target=ErrorTarget.PIPELINE,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )
 
     def _initializing(self) -> bool:
@@ -217,19 +230,17 @@ class BaseNode(Job, NodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidat
         if isinstance(self._component, Component) and self._component.id:
             # If component is remote, return it's asset id
             return self._component.id
-        else:
-            # Otherwise, return the component version or arm id.
-            return self._component
+        # Otherwise, return the component version or arm id.
+        return self._component
 
     def _get_component_name(self):
         # first use component version/job's display name or name as component name
         # make it unique when pipeline build finished.
         if self._component is None:
             return None
-        elif isinstance(self._component, str):
+        if isinstance(self._component, str):
             return self._component
-        else:
-            return self._component.name
+        return self._component.name
 
     def _to_dict(self) -> Dict:
         return self._dump_for_validation()
@@ -305,8 +316,6 @@ class BaseNode(Job, NodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidat
         as stand alone job dict base on context.
         """
 
-        pass
-
     @classmethod
     def _from_rest_object(cls, obj: dict) -> "BaseNode":
         from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
@@ -341,7 +350,7 @@ class BaseNode(Job, NodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidat
         """
         return []
 
-    def _to_rest_object(self, **kwargs) -> dict:
+    def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
         """Convert self to a rest object for remote call."""
         base_dict, rest_obj = self._to_dict(), {}
         for key in self._picked_fields_from_dict_to_rest_object():
@@ -353,6 +362,7 @@ class BaseNode(Job, NodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidat
         rest_obj.update(
             dict(
                 name=self.name,
+                type=self.type,
                 display_name=self.display_name,
                 tags=self.tags,
                 computeId=self.compute,
@@ -374,19 +384,10 @@ class BaseNode(Job, NodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidat
     def outputs(self) -> OutputsAttrDict:
         return self._outputs
 
-    @property
-    def _source(self) -> ComponentSource:
-        # if self._component is component id, node should be rest type.
-        return (
-            self._component._source
-            if isinstance(self._component, Component)
-            else Component._resolve_component_source_from_id(id=self._component)
-        )
-
     def __str__(self):
         try:
             return str(self._to_yaml())
-        except BaseException:
+        except BaseException:  # pylint: disable=broad-except
             # add try catch in case component job failed in schema parse
             return _AttrDict.__str__()
 
@@ -423,7 +424,8 @@ class BaseNode(Job, NodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidat
         built_inputs = self._build_inputs()
         return input_name in built_inputs and built_inputs[input_name] is not None
 
-    def _refine_optional_inputs_with_no_value(self, node, kwargs):
+    @classmethod
+    def _refine_optional_inputs_with_no_value(cls, node, kwargs):
         """Refine optional inputs that have no default value and no value is
         provided when calling command/parallel function This is to align with
         behavior of calling component to generate a pipeline node."""

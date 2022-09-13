@@ -1,23 +1,24 @@
-from azure.core.paging import ItemPaged
-from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.operations import DataOperations, DatastoreOperations
-from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml._ml_exceptions import DataException
-from azure.ai.ml.entities._assets import Data
-from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
+from pathlib import Path
+from typing import Callable, Iterable
+from unittest.mock import Mock, patch
+
+import pytest
+from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
+
+from azure.ai.ml import load_data
+from azure.ai.ml._ml_exceptions import ErrorTarget
 from azure.ai.ml._restclient.v2021_10_01.models._models_py3 import (
     DatasetContainerData,
     DatasetContainerDetails,
     DatasetVersionData,
     DatasetVersionDetails,
 )
-
-import pytest
-from unittest.mock import Mock, patch
-from pathlib import Path
-from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
-from typing import Callable, Iterable
-from azure.ai.ml import load_data
+from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.entities._assets import Data
+from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
+from azure.ai.ml.operations import DataOperations, DatastoreOperations
+from azure.core.paging import ItemPaged
 
 
 @pytest.fixture
@@ -32,12 +33,16 @@ def mock_datastore_operation(
 
 @pytest.fixture
 def mock_data_operations(
-    mock_workspace_scope: OperationScope, mock_aml_services_2022_05_01: Mock, mock_datastore_operation: Mock
+    mock_workspace_scope: OperationScope,
+    mock_aml_services_2022_05_01: Mock,
+    mock_datastore_operation: Mock,
+    mock_machinelearning_client: Mock,
 ) -> DataOperations:
     yield DataOperations(
         operation_scope=mock_workspace_scope,
         service_client=mock_aml_services_2022_05_01,
         datastore_operations=mock_datastore_operation,
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
@@ -100,7 +105,7 @@ class TestDataOperations:
             "azure.ai.ml.operations._data_operations.Data._from_rest_object",
             return_value=None,
         ):
-            data = load_data(path=data_path)
+            data = load_data(source=data_path)
             path = Path(data._base_path, data.path).resolve()
             mock_data_operations.create_or_update(data)
             mock_thing.assert_called_once_with(
@@ -112,6 +117,7 @@ class TestDataOperations:
                 datastore_name=None,
                 asset_hash=None,
                 sas_uri=None,
+                artifact_type=ErrorTarget.DATA,
             )
         mock_data_operations._operation.create_or_update.assert_called_once()
         assert "version='1'" in str(mock_data_operations._operation.create_or_update.call_args)
@@ -136,7 +142,7 @@ class TestDataOperations:
             return_value=None,
         ):
             params_override = [{"path": "./pattern-mltable"}]
-            data = load_data(path=data_path, params_override=params_override)
+            data = load_data(source=data_path, params_override=params_override)
             path = Path(data._base_path, data.path).resolve()
             assert str(data.path).endswith("pattern-mltable")
             mock_data_operations.create_or_update(data)
@@ -149,20 +155,21 @@ class TestDataOperations:
                 datastore_name=None,
                 asset_hash=None,
                 sas_uri=None,
+                artifact_type=ErrorTarget.DATA,
             )
         mock_data_operations._operation.create_or_update.assert_called_once()
         assert "version='1'" in str(mock_data_operations._operation.create_or_update.call_args)
 
     def test_create_or_update_missing_path(self, mock_data_operations: DataOperations, randstr: Callable[[], str]):
         """
-        Expect to raise DataException for missing path
+        Expect to raise ValidationException for missing path
         """
         name = randstr()
         data = Data(name=name, version="1", description="this is an mltable dataset", type=AssetTypes.MLTABLE)
 
-        with pytest.raises(DataException) as ex:
+        with pytest.raises(Exception) as ex:
             mock_data_operations.create_or_update(data)
-        assert "Missing data path" in str(ex)
+        assert "At least one required parameter is missing" in str(ex.value)
         mock_data_operations._operation.create_or_update.assert_not_called()
 
     @patch("azure.ai.ml.operations._data_operations.read_local_mltable_metadata_contents")
@@ -192,7 +199,9 @@ class TestDataOperations:
         mock_data_operations.create_or_update(data)
 
         _mock_read_remote_mltable_metadata_contents.assert_called_once_with(
-            path=data_path, datastore_operations=mock_datastore_operation
+            path=data_path,
+            datastore_operations=mock_datastore_operation,
+            requests_pipeline=mock_data_operations._requests_pipeline,
         )
         _mock_read_local_mltable_metadata_contents.assert_not_called()
         _mock_download_jsonschema.assert_not_called()
@@ -418,3 +427,40 @@ class TestDataOperations:
             body=dataset_container,
             resource_group_name=mock_data_operations._resource_group_name,
         )
+
+    def test_create_with_datastore(
+        self,
+        mock_workspace_scope: OperationScope,
+        mock_data_operations: DataOperations,
+        randstr: Callable[[], str],
+    ) -> None:
+        data_path = "./tests/test_configs/dataset/data_with_datastore.yaml"
+        data_name = f"data_{randstr()}"
+
+        with patch(
+            "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
+            return_value=ArtifactStorageInfo(
+                name=data_name,
+                version="3",
+                relative_path="path",
+                datastore_arm_id="/subscriptions/mock/resourceGroups/mock/providers/Microsoft.MachineLearningServices/workspaces/mock/datastores/datastore_id",
+                container_name="containerName",
+            ),
+        ) as mock_thing, patch(
+            "azure.ai.ml.operations._data_operations.Data._from_rest_object",
+            return_value=None,
+        ):
+            data = load_data(path=data_path)
+            path = Path(data._base_path, data.path).resolve()
+            mock_data_operations.create_or_update(data)
+            mock_thing.assert_called_once_with(
+                mock_workspace_scope,
+                mock_data_operations._datastore_operation,
+                path,
+                asset_name=data.name,
+                asset_version=data.version,
+                datastore_name="workspaceartifactstore",
+                asset_hash=None,
+                sas_uri=None,
+                artifact_type=ErrorTarget.DATA,
+            )

@@ -1,10 +1,12 @@
 from typing import Callable
-from azure.ai.ml.entities._datastore.datastore import Datastore
-import pytest
 from unittest.mock import Mock, patch
-from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.operations import DatastoreOperations
+
+import pytest
+
 from azure.ai.ml import load_datastore
+from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml.entities._datastore.datastore import Datastore
+from azure.ai.ml.operations import DatastoreOperations
 
 
 @pytest.fixture

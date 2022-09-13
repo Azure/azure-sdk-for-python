@@ -30,7 +30,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection
-from .._base import build_options as _build_options
+from .._base import build_options as _build_options, _set_throughput_options, _deserialize_throughput
 from ._container import ContainerProxy
 from ..offer import ThroughputProperties
 from ..http_constants import StatusCodes
@@ -164,7 +164,8 @@ class DatabaseProxy(object):
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
-        :keyword int offer_throughput: The provisioned throughput for this offer.
+        :keyword offer_throughput: The provisioned throughput for this offer.
+        :paramtype offer_throughput: int or ~azure.cosmos.ThroughputProperties.
         :keyword dict[str, str] unique_key_policy: The unique key policy to apply to the container.
         :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
@@ -227,8 +228,7 @@ class DatabaseProxy(object):
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         offer_throughput = kwargs.pop('offer_throughput', None)
-        if offer_throughput is not None:
-            request_options["offerThroughput"] = offer_throughput
+        _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
         data = await self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
@@ -258,7 +258,8 @@ class DatabaseProxy(object):
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
-        :keyword int offer_throughput: The provisioned throughput for this offer.
+        :keyword offer_throughput: The provisioned throughput for this offer.
+        :paramtype offer_throughput: int or ~azure.cosmos.ThroughputProperties.
         :keyword dict[str, str] unique_key_policy: The unique key policy to apply to the container.
         :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
@@ -437,6 +438,9 @@ class DatabaseProxy(object):
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
+        :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
+            note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :returns: A `ContainerProxy` instance representing the container after replace completed.
         :rtype: ~azure.cosmos.aio.ContainerProxy
 
@@ -458,6 +462,7 @@ class DatabaseProxy(object):
         indexing_policy = kwargs.pop('indexing_policy', None)
         default_ttl = kwargs.pop('default_ttl', None)
         conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
+        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         parameters = {
             key: value
             for key, value in {
@@ -466,6 +471,7 @@ class DatabaseProxy(object):
                 "indexingPolicy": indexing_policy,
                 "defaultTtl": default_ttl,
                 "conflictResolutionPolicy": conflict_resolution_policy,
+                "analyticalStorageTtl": analytical_storage_ttl,
             }.items()
             if value is not None
         }
@@ -744,9 +750,7 @@ class DatabaseProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, throughput_properties)
 
-        return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
-                                    properties=throughput_properties[0])
-
+        return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace_async
     async def replace_throughput(self, throughput: int, **kwargs: Any) -> ThroughputProperties:

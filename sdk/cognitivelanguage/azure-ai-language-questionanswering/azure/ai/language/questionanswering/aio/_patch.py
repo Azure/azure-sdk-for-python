@@ -52,6 +52,11 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
     ) -> None:
+        try:
+            endpoint = endpoint.rstrip("/")
+        except AttributeError:
+            raise ValueError("Parameter 'endpoint' must be a string.")
+
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore

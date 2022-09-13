@@ -14,8 +14,15 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
 from azure.ai.ml._schema import ModelSchema
 from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId, AMLVersionedArmId
 from azure.ai.ml._utils._asset_utils import get_ignore_file, get_object_hash
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, LONG_URI_FORMAT, PARAMS_OVERRIDE_KEY, ArmConstants, AssetTypes
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    LONG_URI_FORMAT,
+    PARAMS_OVERRIDE_KEY,
+    ArmConstants,
+    AssetTypes,
+)
 from azure.ai.ml.entities._assets import Artifact
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import get_md5_string, load_from_dict
 
 from .artifact import ArtifactStorageInfo
@@ -35,10 +42,10 @@ class Model(Artifact):
         UTC ISO 8601 format. (e.g. '2020-10-19 17:44:02.096572')
     :type utc_time_created: str
     :param flavors: The flavors in which the model can be interpreted.
-        (e.g. {sklearn: {sklearn_version: 0.23.2}, python_function: {loader_module: office.plrmodel, python_version: 3.6})
+        e.g. {sklearn: {sklearn_version: 0.23.2}, python_function: {loader_module: office.plrmodel, python_version: 3.6}
     :type flavors: Dict[str, Any]
     :param path: A remote uri or a local path pointing at a model.
-        Example: "azureml://subscriptions/my-sub-id/resourcegroups/my-rg/workspaces/myworkspace/datastores/mydatastore/paths/path_on_datastore/"
+        Example: "azureml://subscriptions/{}/resourcegroups/{}/workspaces/{}/datastores/{}/paths/path_on_datastore/"
     :type path: str
     :param description: Description of the resource.
     :type description: str
@@ -55,7 +62,7 @@ class Model(Artifact):
         *,
         name: str = None,
         version: str = None,
-        type: str = None,
+        type: str = None,  # pylint: disable=redefined-builtin
         path: Union[str, PathLike] = None,
         utc_time_created: str = None,
         flavors: Dict[str, Dict[str, Any]] = None,
@@ -100,7 +107,7 @@ class Model(Artifact):
         return load_from_dict(ModelSchema, data, context, **kwargs)
 
     def _to_dict(self) -> Dict:
-        return ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
     @classmethod
     def _from_rest_object(cls, model_rest_object: ModelVersionData) -> "Model":
@@ -116,7 +123,7 @@ class Model(Artifact):
             tags=rest_model_version.tags,
             flavors=flavors,
             properties=rest_model_version.properties,
-            creation_context=model_rest_object.system_data,
+            creation_context=SystemData._from_rest_object(model_rest_object.system_data),
             type=rest_model_version.model_type,
             job_name=rest_model_version.job_name,
         )
@@ -128,7 +135,7 @@ class Model(Artifact):
             name=model_container_rest_object.name,
             version="1",
             id=model_container_rest_object.id,
-            creation_context=model_container_rest_object.system_data,
+            creation_context=SystemData._from_rest_object(model_container_rest_object.system_data),
         )
         model.latest_version = model_container_rest_object.properties.latest_version
 
@@ -168,7 +175,7 @@ class Model(Artifact):
                 asset_artifact.relative_path,
             )
 
-    def _to_arm_resource_param(self, **kwargs):
+    def _to_arm_resource_param(self, **kwargs):  # pylint: disable=unused-argument
         properties = self._to_rest_object().properties
 
         return {

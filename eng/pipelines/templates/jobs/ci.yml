@@ -93,6 +93,9 @@ jobs:
 
   - job: 'Analyze'
     condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
+
+    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+
     variables:
     - template: ../variables/globals.yml
 
@@ -130,6 +133,7 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
+
   - job: Compliance
     pool:
       name: azsdk-pool-mms-win-2019-general
@@ -191,15 +195,15 @@ jobs:
     parameters:
       JobTemplatePath: /eng/pipelines/templates/jobs/regression.yml
       GenerateJobName: generate_regression_matrix
-      SparseCheckoutPaths: [ "scripts/", "sdk/" ]
+      SparseCheckoutPaths: [ "scripts/", "sdk/", "tools/azure-sdk-tools/" ]
       MatrixConfigs:
           - Name: Python_regression_envs
             Path: eng/pipelines/templates/stages/regression-job-matrix.json
             Selection: sparse
             GenerateVMJobs: true
       PreGenerationSteps:
-        - script: |
-            pip install packaging==20.4
+        - pwsh: |
+            pip install "./tools/azure-sdk-tools[build]"
           displayName: 'Prep Environment'
         - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
           parameters:

@@ -1,5 +1,31 @@
 # Release History
 
+## 8.0.0 (2022-09-08)
+
+### Features Added
+
+  - Added operation MongoDBResourcesOperations.begin_create_update_mongo_role_definition
+  - Added operation MongoDBResourcesOperations.begin_create_update_mongo_user_definition
+  - Added operation MongoDBResourcesOperations.begin_delete_mongo_role_definition
+  - Added operation MongoDBResourcesOperations.begin_delete_mongo_user_definition
+  - Added operation MongoDBResourcesOperations.get_mongo_role_definition
+  - Added operation MongoDBResourcesOperations.get_mongo_user_definition
+  - Added operation MongoDBResourcesOperations.list_mongo_role_definitions
+  - Added operation MongoDBResourcesOperations.list_mongo_user_definitions
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_partition_merge
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter keys_metadata
+  - Model DatabaseAccountGetResults has a new parameter enable_partition_merge
+  - Model DatabaseAccountGetResults has a new parameter keys_metadata
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_partition_merge
+  - Model DatabaseAccountUpdateParameters has a new parameter keys_metadata
+
+## 8.0.0b2 (2022-08-11)
+
+### Breaking Changes
+
+  - Renamed model `ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems` to `CassandraClusterDataCenterNodeItem`
+  - Renamed model `Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties` to `ManagedServiceIdentityUserAssignedIdentity`
+
 ## 8.0.0b1 (2022-08-03)
 
 **Features**

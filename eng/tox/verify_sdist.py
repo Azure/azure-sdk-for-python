@@ -14,11 +14,12 @@ import shutil
 from unicodedata import name
 from xmlrpc.client import Boolean
 from tox_helper_tasks import (
-    get_package_details,
     unzip_file_to_directory,
 )
 from verify_whl import cleanup, should_verify_package
 from typing import List, Mapping, Any
+
+from ci_tools.parsing import ParsedSetup
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -136,22 +137,20 @@ if __name__ == "__main__":
 
     # get target package name from target package path
     pkg_dir = os.path.abspath(args.target_package)
-    pkg_name, namespace, ver, package_data, include_package_data = get_package_details(
-        os.path.join(pkg_dir, "setup.py")
-    )
+    pkg_details = ParsedSetup.from_path(pkg_dir)
 
-    if should_verify_package(pkg_name):
-        logging.info("Verifying sdist for package [%s]", pkg_name)
-        if verify_sdist(pkg_dir, args.dist_dir, ver):
-            logging.info("Verified sdist for package [%s]", pkg_name)
+    if should_verify_package(pkg_details.name):
+        logging.info("Verifying sdist for package [%s]", pkg_details.name)
+        if verify_sdist(pkg_dir, args.dist_dir, pkg_details.version):
+            logging.info("Verified sdist for package [%s]", pkg_details.name)
         else:
-            logging.info("Failed to verify sdist for package [%s]", pkg_name)
+            logging.info("Failed to verify sdist for package [%s]", pkg_details.name)
             exit(1)
 
-    if pkg_name not in EXCLUDED_PYTYPE_PACKAGES and "-nspkg" not in pkg_name and "-mgmt" not in pkg_name:
-        logging.info("Verifying presence of py.typed: [%s]", pkg_name)
-        if verify_sdist_pytyped(pkg_dir, namespace, package_data, include_package_data):
-            logging.info("Py.typed setup.py kwargs are set properly: [%s]", pkg_name)
+    if pkg_details.name not in EXCLUDED_PYTYPE_PACKAGES and "-nspkg" not in pkg_details.name and "-mgmt" not in pkg_details.name:
+        logging.info("Verifying presence of py.typed: [%s]", pkg_details.name)
+        if verify_sdist_pytyped(pkg_dir, pkg_details.namespace, pkg_details.package_data, pkg_details.include_package_data):
+            logging.info("Py.typed setup.py kwargs are set properly: [%s]", pkg_details.name)
         else:
-            logging.info("Verified py.typed [%s]. Check messages above.", pkg_name)
+            logging.info("Verified py.typed [%s]. Check messages above.", pkg_details.name)
             exit(1)

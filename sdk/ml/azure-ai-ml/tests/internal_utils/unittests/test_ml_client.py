@@ -1,13 +1,12 @@
 import os
 from unittest.mock import Mock, patch
-from azure.ai.ml._utils.utils import DEVELOPER_URL_MFE_ENV_VAR
-import mock
 
+import mock
 import pytest
+from test_utilities.constants import Test_Resource_Group, Test_Subscription
+
 from azure.ai.ml import (
     MLClient,
-    load_job,
-    load_workspace,
     load_batch_deployment,
     load_batch_endpoint,
     load_component,
@@ -15,29 +14,16 @@ from azure.ai.ml import (
     load_data,
     load_datastore,
     load_environment,
+    load_job,
     load_model,
     load_online_deployment,
     load_online_endpoint,
+    load_workspace,
     load_workspace_connection,
 )
-from azure.ai.ml.entities import (
-    BatchDeployment,
-    BatchEndpoint,
-    CommandJob,
-    Component,
-    Compute,
-    Datastore,
-    Environment,
-    Model,
-    OnlineDeployment,
-    OnlineEndpoint,
-    PipelineJob,
-    Workspace,
-)
-from azure.ai.ml.sweep import SweepJob
-from test_utilities.constants import Test_Resource_Group, Test_Subscription
-from azure.ai.ml.constants import AZUREML_CLOUD_ENV_NAME
 from azure.ai.ml._azure_environments import AzureEnvironments
+from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
+from azure.identity import DefaultAzureCredential
 
 
 @pytest.mark.unittest
@@ -86,6 +72,14 @@ class TestMachineLearningClient:
         assert new_ws == new_client.workspace_name
         assert previous_ws == mock_machinelearning_client.workspace_name
 
+    def test_get_sub_and_rg(self) -> None:
+        client = MLClient(
+            credential=DefaultAzureCredential(), subscription_id="fake-sub-id", resource_group_name="fake-rg-name"
+        )
+
+        assert "fake-sub-id" == client.subscription_id
+        assert "fake-rg-name" == client.resource_group_name
+
     @patch("azure.ai.ml._ml_client._get_base_url_from_metadata")
     def test_mfe_url_overwrite(self, mock_get_mfe_url_override, mock_credential):
         mock_url = "http://localhost:65535/mferp/managementfrontend"
@@ -97,7 +91,7 @@ class TestMachineLearningClient:
 
         assert ml_client.workspaces._operation._client._base_url == mock_url
         assert ml_client.compute._operation._client._base_url == mock_url
-        assert ml_client.jobs._operation_2022_02_preview._client._base_url == mock_url
+        assert ml_client.jobs._operation_2022_06_preview._client._base_url == mock_url
         assert ml_client.jobs._kwargs["enforce_https"] is False
 
     @patch("azure.ai.ml._ml_client.ComputeOperations", Mock())
@@ -179,6 +173,14 @@ class TestMachineLearningClient:
         else:
             ml_client.create_or_update(*args, **kwargs)
             ml_client.__getattribute__(ops_name).__getattr__(create_method_name).assert_called_with(*args, **kwargs)
+        # trying to change this whole file to use assertRaises caused half the existing test to fail
+        no_second_impl = False
+        try:
+            ml_client.begin_create_or_update(*args, **kwargs)
+        except TypeError:
+            no_second_impl = True
+        finally:
+            assert no_second_impl
 
     @patch("azure.ai.ml._ml_client.ComputeOperations", Mock())
     @patch("azure.ai.ml._ml_client.DatastoreOperations", Mock())
@@ -266,6 +268,14 @@ class TestMachineLearningClient:
         else:
             ml_client.begin_create_or_update(*args, **kwargs)
             ml_client.__getattribute__(ops_name).__getattr__(create_method_name).assert_called_with(*args, **kwargs)
+        # trying to change this whole file to use assertRaises caused half the existing test to fail
+        no_second_impl = False
+        try:
+            ml_client.create_or_update(*args, **kwargs)
+        except TypeError:
+            no_second_impl = True
+        finally:
+            assert no_second_impl
 
     def test_load_config(self, tmp_path, mock_credential):
         root = tmp_path

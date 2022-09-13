@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes,client-method-missing-type-annotations,missing-client-constructor-parameter-kwargs
+
 import logging
 import os
 import sys
@@ -170,13 +172,13 @@ class FileStorageClient:
         prefix += os.path.basename(source) + "/"
 
         upload_paths = []
-        for root, dirs, files in os.walk(source_path):
+        for root, _, files in os.walk(source_path):
             upload_paths += list(traverse_directory(root, files, source_path, prefix, ignore_file))
 
         upload_paths = sorted(upload_paths)
         self.total_file_count = len(upload_paths)
 
-        for root, dirs, files in os.walk(source):
+        for root, _, files in os.walk(source):
             if sys.platform.startswith(("win32", "cygwin")):
                 split_char = "\\"
             else:
@@ -186,20 +188,20 @@ class FileStorageClient:
 
         if show_progress:
             with DirectoryUploadProgressBar(dir_size=get_directory_size(source_path), msg=msg) as pbar:
-                for src, dest in upload_paths:
+                for src, destination in upload_paths:
                     self.upload_file(
                         src,
-                        dest,
+                        destination,
                         in_directory=True,
                         subdirectory_client=subdir,
                         show_progress=show_progress,
                         callback=pbar.update_to,
                     )
         else:
-            for src, dest in upload_paths:
+            for src, destination in upload_paths:
                 self.upload_file(
                     src,
-                    dest,
+                    destination,
                     in_directory=True,
                     subdirectory_client=subdir,
                     show_progress=show_progress,
@@ -231,7 +233,7 @@ class FileStorageClient:
                 self.name = metadata.get("name")
                 self.version = metadata.get("version")
                 return True
-            elif not self.legacy:
+            if not self.legacy:
                 delete(client)  # If past upload never reached upload confirmation, delete and proceed to upload
         return False
 
@@ -264,7 +266,8 @@ class FileStorageClient:
         default_items: Dict[str, bool],
         legacy_items: Dict[str, bool],
     ) -> Tuple[Union[ShareDirectoryClient, ShareFileClient], Dict]:
-        # if asset_id key's value doesn't match either bool, it's not in the dictionary and we check "LocalUpload" dictionary below.
+        # if asset_id key's value doesn't match either bool,
+        # it's not in the dictionary and we check "LocalUpload" dictionary below.
 
         client, properties = None, None
 

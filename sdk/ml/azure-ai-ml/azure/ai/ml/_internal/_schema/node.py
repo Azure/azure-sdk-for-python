@@ -1,14 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from marshmallow import INCLUDE, post_load, pre_dump
+
+from marshmallow import INCLUDE, fields, post_load, pre_dump
 
 from azure.ai.ml._schema import ArmVersionedStr, NestedField, RegistryStr, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.pipeline.component_job import BaseNodeSchema, _resolve_inputs_outputs
-from azure.ai.ml.constants import AzureMLResourceType
-from .component import NodeType
-from .component import InternalBaseComponentSchema
-from ..._schema.resource_configuration import ResourceConfigurationSchema
+from azure.ai.ml.constants._common import AzureMLResourceType
+
+from .component import InternalBaseComponentSchema, NodeType
 
 
 class InternalBaseNodeSchema(BaseNodeSchema):
@@ -28,17 +28,42 @@ class InternalBaseNodeSchema(BaseNodeSchema):
         casing_transform=lambda x: x,
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     @post_load
-    def make(self, data, **kwargs):
+    def make(self, data, **kwargs):  # pylint: disable=unused-argument, no-self-use
         from azure.ai.ml.entities._builders import parse_inputs_outputs
 
         # parse inputs/outputs
         data = parse_inputs_outputs(data)
-        return data
+
+        # dict to node object
+        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+
+        return pipeline_node_factory.load_from_dict(data)  # pylint: disable=E1125, too-many-function-args
 
     @pre_dump
-    def resolve_inputs_outputs(self, job, **kwargs):
+    def resolve_inputs_outputs(self, job, **kwargs):  # pylint: disable=unused-argument, no-self-use
         return _resolve_inputs_outputs(job)
+
+
+class ScopeSchema(InternalBaseNodeSchema):
+    type = StringTransformedEnum(allowed_values=[NodeType.SCOPE], casing_transform=lambda x: x)
+    adla_account_name = fields.Str(required=True)
+    scope_param = fields.Str()
+    custom_job_name_suffix = fields.Str()
+    priority = fields.Int()
+
+
+class HDInsightSchema(InternalBaseNodeSchema):
+    type = StringTransformedEnum(allowed_values=[NodeType.HDI], casing_transform=lambda x: x)
+
+    queue = fields.Str()
+    driver_memory = fields.Str()
+    driver_cores = fields.Int()
+    executor_memory = fields.Str()
+    executor_cores = fields.Int()
+    number_executors = fields.Int()
+    conf = UnionField(
+        # dictionary or json string
+        union_fields=[fields.Dict(keys=fields.Str()), fields.Str()],
+    )
+    hdinsight_spark_job_name = fields.Str()

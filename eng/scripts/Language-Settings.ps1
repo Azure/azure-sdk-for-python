@@ -22,7 +22,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
   try
   {
     Push-Location $RepoRoot
-    pip install packaging==20.4 setuptools==44.1.1 -q -I
+    pip install "./tools/azure-sdk-tools[build]" -q -I
     $allPkgPropLines = python (Join-path eng scripts get_package_properties.py) -s $searchPath
   }
   catch
@@ -523,8 +523,8 @@ function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseD
   {
     $ReleaseDate = Get-Date -Format "yyyy-MM-dd"
   }
-  pip install -r "$EngDir/versioning/requirements.txt" -q -I
-  python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version `
+  pip install "$RepoRoot/tools/azure-sdk-tools[build]" -q -I
+  sdk_set_version --package-name $PackageName --new-version $Version `
   --service $ServiceDirectory --release-date $ReleaseDate --replace-latest-entry-title $ReplaceLatestEntryTitle
 }
 
@@ -574,7 +574,7 @@ function Import-Dev-Cert-python
   Write-Host "Python Trust Methodology"
 
   $pathToScript = Resolve-Path (Join-Path -Path $PSScriptRoot -ChildPath "../../scripts/devops_tasks/trust_proxy_cert.py")
-
+  python -m pip install requests
   python $pathToScript
 }
 

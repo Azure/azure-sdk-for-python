@@ -6,14 +6,15 @@
 
 import base64
 import json
-from typing import (  # pylint: disable=unused-import
-    cast,
-    Tuple,
-)
-from datetime import datetime
 import calendar
+from typing import (cast,
+                    Tuple,
+                    )
+from datetime import datetime
+import isodate
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
+
 
 def _convert_datetime_to_utc_int(input_datetime):
     """
@@ -25,6 +26,7 @@ def _convert_datetime_to_utc_int(input_datetime):
     :rtype: int
     """
     return int(calendar.timegm(input_datetime.utctimetuple()))
+
 
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]
@@ -53,15 +55,31 @@ def parse_connection_str(conn_str):
 
     return host, str(shared_access_key)
 
+
 def get_current_utc_time():
     # type: () -> str
-    return str(datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S ")) + "GMT"
+    return str(datetime.now(tz=TZ_UTC).strftime("%a, %d %b %Y %H:%M:%S ")) + "GMT"
 
 
 def get_current_utc_as_int():
     # type: () -> int
     current_utc_datetime = datetime.utcnow()
     return _convert_datetime_to_utc_int(current_utc_datetime)
+
+
+def verify_datetime_format(input_datetime):
+    #type: (datetime) -> bool
+    if input_datetime is None:
+        return True
+    try:
+        if isinstance(input_datetime, str):
+            input_datetime = isodate.parse_datetime(input_datetime)
+        if isinstance(input_datetime, datetime):
+            return True
+    except:
+        raise ValueError("{} is not a valid ISO-8601 datetime format".format(input_datetime)) from None
+    return True
+
 
 def create_access_token(token):
     # type: (str) -> azure.core.credentials.AccessToken
@@ -84,18 +102,20 @@ def create_access_token(token):
         raise ValueError(token_parse_err_msg)
 
     try:
-        padded_base64_payload = base64.b64decode(parts[1] + "==").decode('ascii')
+        padded_base64_payload = base64.b64decode(
+            parts[1] + '==').decode('ascii')
         payload = json.loads(padded_base64_payload)
         return AccessToken(token,
                            _convert_datetime_to_utc_int(datetime.fromtimestamp(payload['exp'], TZ_UTC)))
-    except ValueError:
-        raise ValueError(token_parse_err_msg)
+    except ValueError as val_error:
+        raise ValueError(token_parse_err_msg) from val_error
+
 
 def get_authentication_policy(
-        endpoint, # type: str
-        credential, # type: TokenCredential or str
-        decode_url=False, # type: bool
-        is_async=False, # type: bool
+        endpoint,  # type: str
+        credential,  # type: TokenCredential or str
+        decode_url=False,  # type: bool
+        is_async=False,  # type: bool
 ):
     # type: (...) -> BearerTokenCredentialPolicy or HMACCredentialPolicy
     """Returns the correct authentication policy based
