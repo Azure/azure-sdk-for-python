@@ -74,7 +74,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
                                                 consistency_level="Session", connection_policy=cls.connectionPolicy, logger=cls.logger_default)
         cls.client_diagnostic = cosmos_client.CosmosClient(cls.host, cls.masterKey,
                                                         consistency_level="Session",
-                                                        connection_policy=cls.connectionPolicy, logger=cls.logger_default, enable_diagnostic_logging=True)
+                                                        connection_policy=cls.connectionPolicy, logger=cls.logger_default, enable_diagnostics_logging=True)
 
     def test_default_http_logging_policy(self):
         #Test if we can log into from creating a database
