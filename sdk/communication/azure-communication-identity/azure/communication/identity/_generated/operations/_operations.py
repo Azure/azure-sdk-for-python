@@ -14,6 +14,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -279,10 +280,14 @@ class CommunicationIdentityOperations:
                     }
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        api_version = kwargs.pop("api_version", self._config.api_version)
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
@@ -302,7 +307,7 @@ class CommunicationIdentityOperations:
 
         request = build_communication_identity_create_request(
             content_type=content_type,
-            api_version=api_version,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
@@ -345,10 +350,14 @@ class CommunicationIdentityOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        api_version = kwargs.pop("api_version", self._config.api_version)
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -356,7 +365,7 @@ class CommunicationIdentityOperations:
 
         request = build_communication_identity_delete_request(
             id=id,
-            api_version=api_version,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -390,10 +399,14 @@ class CommunicationIdentityOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        api_version = kwargs.pop("api_version", self._config.api_version)
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -401,7 +414,7 @@ class CommunicationIdentityOperations:
 
         request = build_communication_identity_revoke_access_tokens_request(
             id=id,
-            api_version=api_version,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -521,10 +534,14 @@ class CommunicationIdentityOperations:
                     "token": "str"  # The access token issued for the identity. Required.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        api_version = kwargs.pop("api_version", self._config.api_version)
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
@@ -541,7 +558,7 @@ class CommunicationIdentityOperations:
 
         request = build_communication_identity_exchange_teams_user_access_token_request(
             content_type=content_type,
-            api_version=api_version,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
@@ -665,10 +682,14 @@ class CommunicationIdentityOperations:
                     "token": "str"  # The access token issued for the identity. Required.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        api_version = kwargs.pop("api_version", self._config.api_version)
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
@@ -686,7 +707,7 @@ class CommunicationIdentityOperations:
         request = build_communication_identity_issue_access_token_request(
             id=id,
             content_type=content_type,
-            api_version=api_version,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
