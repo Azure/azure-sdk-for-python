@@ -18,7 +18,6 @@
 #
 # --------------------------------------------------------------------------
 import functools
-from msilib import schema
 import pytest
 import json
 
