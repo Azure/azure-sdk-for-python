@@ -8,7 +8,15 @@ import uuid
 import logging
 import time
 
-from .constants import ConnectionState, SessionState, SessionTransferState, Role
+from .constants import (
+    INCOMING_WINDOW,
+    OUTGOING_WINDOW,
+    ConnectionState,
+    SessionState,
+    SessionTransferState,
+    Role
+)
+from .endpoints import Source, Target
 from .sender import SenderLink
 from .receiver import ReceiverLink
 from .management_link import ManagementLink

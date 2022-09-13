@@ -56,8 +56,8 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
             raise ValueError("get_token must be a callable object.")
 
         self._auth = auth
-        self._encoding = "UTF-8"
-        self._auth_timeout = kwargs.pop("auth_timeout", DEFAULT_AUTH_TIMEOUT)
+        self._encoding = 'UTF-8'
+        self._auth_timeout = kwargs.get('auth_timeout')
         self._token_put_time = None
         self._expires_on = None
         self._token = None
