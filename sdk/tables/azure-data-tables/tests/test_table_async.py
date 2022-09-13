@@ -11,7 +11,7 @@ from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
-from azure.core.exceptions import ResourceExistsError
+from azure.core.exceptions import ResourceExistsError, HttpResponseError
 from azure.data.tables import (
     TableAccessPolicy,
     TableSasPermissions,
@@ -405,12 +405,12 @@ class TestTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
     
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_unicode_create_table_unicode_name(self, tables_storage_account_name, tables_primary_storage_account_key):
+    async def test_unicode_create_table_unicode_name(self, tables_storage_account_name, tables_primary_storage_account_key, **kwargs):
         account_url = self.account_url(tables_storage_account_name, "table")
         tsc = TableServiceClient(account_url, credential=tables_primary_storage_account_key)
         invalid_table_name = u'啊齄丂狛狜'
 
-        with pytest.raises(ValueError) as excinfo:
+        with pytest.raises(HttpResponseError) as excinfo:
             async with tsc:
                 await tsc.create_table(invalid_table_name)
             assert "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
@@ -418,12 +418,12 @@ class TestTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
     
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_create_table_invalid_name(self, tables_storage_account_name, tables_primary_storage_account_key):
+    async def test_create_table_invalid_name(self, tables_storage_account_name, tables_primary_storage_account_key, **kwargs):
         account_url = self.account_url(tables_storage_account_name, "table")
         tsc = TableServiceClient(account_url, credential=tables_primary_storage_account_key)
         invalid_table_name = "my_table"
 
-        with pytest.raises(ValueError) as excinfo:
+        with pytest.raises(HttpResponseError) as excinfo:
             async with tsc:
                 await tsc.create_table(table_name=invalid_table_name)
             assert "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(

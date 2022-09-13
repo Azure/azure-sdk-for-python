@@ -17,7 +17,9 @@ USAGE:
     python sample_insert_delete_entities_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) TABLES_STORAGE_ENDPOINT_SUFFIX - the Table service account URL suffix
+    2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
+    3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
 import os
@@ -48,7 +50,7 @@ class InsertDeleteEntity(object):
             "last_updated": datetime.today(),
             "product_id": uuid4(),
             "inventory_count": 42,
-            "barcode": b"135aefg8oj0ld58"
+            "barcode": b"135aefg8oj0ld58" # cspell:disable-line
         }
 
     async def create_entity(self):
@@ -73,7 +75,7 @@ class InsertDeleteEntity(object):
 
     async def delete_entity(self):
         from azure.data.tables.aio import TableClient
-        from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
+        from azure.core.exceptions import ResourceExistsError
         from azure.core.credentials import AzureNamedKeyCredential
 
         credential = AzureNamedKeyCredential(self.account_name, self.access_key)

@@ -30,7 +30,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection
-from .._base import build_options as _build_options
+from .._base import build_options as _build_options, _set_throughput_options, _deserialize_throughput
 from ._container import ContainerProxy
 from ..offer import ThroughputProperties
 from ..http_constants import StatusCodes
@@ -164,7 +164,8 @@ class DatabaseProxy(object):
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
-        :keyword int offer_throughput: The provisioned throughput for this offer.
+        :keyword offer_throughput: The provisioned throughput for this offer.
+        :paramtype offer_throughput: int or ~azure.cosmos.ThroughputProperties.
         :keyword dict[str, str] unique_key_policy: The unique key policy to apply to the container.
         :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
@@ -227,8 +228,7 @@ class DatabaseProxy(object):
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         offer_throughput = kwargs.pop('offer_throughput', None)
-        if offer_throughput is not None:
-            request_options["offerThroughput"] = offer_throughput
+        _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
         data = await self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
@@ -258,7 +258,8 @@ class DatabaseProxy(object):
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
-        :keyword int offer_throughput: The provisioned throughput for this offer.
+        :keyword offer_throughput: The provisioned throughput for this offer.
+        :paramtype offer_throughput: int or ~azure.cosmos.ThroughputProperties.
         :keyword dict[str, str] unique_key_policy: The unique key policy to apply to the container.
         :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
@@ -749,9 +750,7 @@ class DatabaseProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, throughput_properties)
 
-        return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
-                                    properties=throughput_properties[0])
-
+        return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace_async
     async def replace_throughput(self, throughput: int, **kwargs: Any) -> ThroughputProperties:

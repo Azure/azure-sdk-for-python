@@ -247,7 +247,7 @@ class TestCommandComponentEntity:
 
         yaml_component._component = "fake_component"
         rest_yaml_component = yaml_component._to_rest_object()
-        print(rest_yaml_component)
+
         assert expected_rest_component == rest_yaml_component
 
     def test_command_component_help_function(self):
@@ -369,3 +369,55 @@ class TestCommandComponentEntity:
         validation_result = component._customized_validate()
         assert not validation_result.passed
         assert validation_result.invalid_fields[0] == "inputs.COMPONENT_IN_NUMBER"
+
+    def test_primitive_output(self):
+        expected_rest_component = {
+            "command": "echo Hello World",
+            "description": "This is the basic command component",
+            "display_name": "CommandComponentBasic",
+            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            "inputs": {},
+            "is_deterministic": True,
+            "name": "sample_command_component_basic",
+            "outputs": {
+                "component_out_boolean": {"description": "A boolean", "type": "boolean", "is_control": True},
+                "component_out_integer": {"description": "A integer", "type": "integer", "is_control": True},
+                "component_out_number": {"description": "A ranged number", "type": "number"},
+                "component_out_string": {"description": "A string", "type": "string"},
+            },
+            "tags": {"owner": "sdkteam", "tag": "tagvalue"},
+            "type": "command",
+            "version": "1",
+        }
+        omits = ["$schema", "_source", "code"]
+
+        # from YAML
+        yaml_path = "./tests/test_configs/components/helloworld_component_primitive_outputs.yml"
+        component1 = load_component(path=yaml_path)
+        actual_component_dict1 = pydash.omit(
+            component1._to_rest_object().as_dict()["properties"]["component_spec"], *omits
+        )
+
+        assert actual_component_dict1 == expected_rest_component
+
+        # from CLASS
+        component2 = CommandComponent(
+            name="sample_command_component_basic",
+            display_name="CommandComponentBasic",
+            description="This is the basic command component",
+            version="1",
+            tags={"tag": "tagvalue", "owner": "sdkteam"},
+            outputs={
+                "component_out_boolean": {"description": "A boolean", "type": "boolean", "is_control": True},
+                "component_out_integer": {"description": "A integer", "type": "integer", "is_control": True},
+                "component_out_number": {"description": "A ranged number", "type": "number"},
+                "component_out_string": {"description": "A string", "type": "string"},
+            },
+            command="echo Hello World",
+            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            code="./helloworld_components_with_env",
+        )
+        actual_component_dict2 = pydash.omit(
+            component2._to_rest_object().as_dict()["properties"]["component_spec"], *omits
+        )
+        assert actual_component_dict2 == expected_rest_component

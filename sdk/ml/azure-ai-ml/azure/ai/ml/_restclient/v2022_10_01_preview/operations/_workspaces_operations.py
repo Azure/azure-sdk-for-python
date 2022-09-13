@@ -40,7 +40,8 @@ def build_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2022-10-01-preview"
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}')
@@ -76,9 +77,9 @@ def build_create_or_update_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-10-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}')
@@ -116,7 +117,8 @@ def build_delete_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2022-10-01-preview"
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}')
@@ -152,9 +154,9 @@ def build_update_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-10-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}')
@@ -191,9 +193,9 @@ def build_list_by_resource_group_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
     skip = kwargs.pop('skip', None)  # type: Optional[str]
 
-    api_version = "2022-10-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces')
@@ -230,9 +232,9 @@ def build_diagnose_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-10-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/diagnose')
@@ -270,7 +272,8 @@ def build_list_keys_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2022-10-01-preview"
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/listKeys')
@@ -306,7 +309,8 @@ def build_resync_keys_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2022-10-01-preview"
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/resyncKeys')
@@ -340,9 +344,9 @@ def build_list_by_subscription_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
     skip = kwargs.pop('skip', None)  # type: Optional[str]
 
-    api_version = "2022-10-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/workspaces')
@@ -378,7 +382,8 @@ def build_list_notebook_access_token_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2022-10-01-preview"
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/listNotebookAccessToken')
@@ -414,7 +419,8 @@ def build_prepare_notebook_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2022-10-01-preview"
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/prepareNotebook')
@@ -450,7 +456,8 @@ def build_list_storage_account_keys_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2022-10-01-preview"
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/listStorageAccountKeys')
@@ -486,7 +493,8 @@ def build_list_notebook_keys_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2022-10-01-preview"
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/listNotebookKeys')
@@ -522,7 +530,8 @@ def build_list_outbound_network_dependencies_endpoints_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2022-10-01-preview"
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/outboundNetworkDependenciesEndpoints')
@@ -587,6 +596,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Workspace, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.Workspace
@@ -598,11 +610,14 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
+            api_version=api_version,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -640,6 +655,7 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(parameters, 'Workspace')
@@ -648,6 +664,7 @@ class WorkspacesOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self._create_or_update_initial.metadata['url'],
@@ -691,6 +708,9 @@ class WorkspacesOperations(object):
         :type workspace_name: str
         :param parameters: The parameters for creating or updating a machine learning workspace.
         :type parameters: ~azure.mgmt.machinelearningservices.models.Workspace
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -703,6 +723,7 @@ class WorkspacesOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.Workspace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Workspace"]
@@ -716,6 +737,7 @@ class WorkspacesOperations(object):
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 parameters=parameters,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -758,11 +780,14 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_delete_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
+            api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -795,6 +820,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -807,6 +835,7 @@ class WorkspacesOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -818,6 +847,7 @@ class WorkspacesOperations(object):
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -857,6 +887,7 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(parameters, 'WorkspaceUpdateParameters')
@@ -865,6 +896,7 @@ class WorkspacesOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self._update_initial.metadata['url'],
@@ -908,6 +940,9 @@ class WorkspacesOperations(object):
         :type workspace_name: str
         :param parameters: The parameters for updating a machine learning workspace.
         :type parameters: ~azure.mgmt.machinelearningservices.models.WorkspaceUpdateParameters
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -920,6 +955,7 @@ class WorkspacesOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.Workspace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Workspace"]
@@ -933,6 +969,7 @@ class WorkspacesOperations(object):
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 parameters=parameters,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -976,12 +1013,17 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param skip: Continuation token for pagination.
         :type skip: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either WorkspaceListResult or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.WorkspaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkspaceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -993,6 +1035,7 @@ class WorkspacesOperations(object):
                 request = build_list_by_resource_group_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
+                    api_version=api_version,
                     skip=skip,
                     template_url=self.list_by_resource_group.metadata['url'],
                 )
@@ -1004,6 +1047,7 @@ class WorkspacesOperations(object):
                 request = build_list_by_resource_group_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
+                    api_version=api_version,
                     skip=skip,
                     template_url=next_link,
                 )
@@ -1052,6 +1096,7 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         if parameters is not None:
@@ -1063,6 +1108,7 @@ class WorkspacesOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self._diagnose_initial.metadata['url'],
@@ -1114,6 +1160,9 @@ class WorkspacesOperations(object):
         :type workspace_name: str
         :param parameters: The parameter of diagnosing workspace health.
         :type parameters: ~azure.mgmt.machinelearningservices.models.DiagnoseWorkspaceParameters
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -1128,6 +1177,7 @@ class WorkspacesOperations(object):
          ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.DiagnoseResponseResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnoseResponseResult"]
@@ -1141,6 +1191,7 @@ class WorkspacesOperations(object):
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 parameters=parameters,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -1185,6 +1236,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListWorkspaceKeysResult, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ListWorkspaceKeysResult
@@ -1196,11 +1250,14 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_list_keys_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
+            api_version=api_version,
             template_url=self.list_keys.metadata['url'],
         )
         request = _convert_request(request)
@@ -1237,11 +1294,14 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_resync_keys_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
+            api_version=api_version,
             template_url=self._resync_keys_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -1275,6 +1335,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -1287,6 +1350,7 @@ class WorkspacesOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -1298,6 +1362,7 @@ class WorkspacesOperations(object):
             raw_result = self._resync_keys_initial(
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -1334,12 +1399,17 @@ class WorkspacesOperations(object):
 
         :param skip: Continuation token for pagination.
         :type skip: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either WorkspaceListResult or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.WorkspaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkspaceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1350,6 +1420,7 @@ class WorkspacesOperations(object):
                 
                 request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     skip=skip,
                     template_url=self.list_by_subscription.metadata['url'],
                 )
@@ -1360,6 +1431,7 @@ class WorkspacesOperations(object):
                 
                 request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     skip=skip,
                     template_url=next_link,
                 )
@@ -1408,6 +1480,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NotebookAccessTokenResult, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.NotebookAccessTokenResult
@@ -1419,11 +1494,14 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_list_notebook_access_token_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
+            api_version=api_version,
             template_url=self.list_notebook_access_token.metadata['url'],
         )
         request = _convert_request(request)
@@ -1460,11 +1538,14 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_prepare_notebook_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
+            api_version=api_version,
             template_url=self._prepare_notebook_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -1503,6 +1584,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -1517,6 +1601,7 @@ class WorkspacesOperations(object):
          ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.NotebookResourceInfo]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotebookResourceInfo"]
         lro_delay = kwargs.pop(
@@ -1528,6 +1613,7 @@ class WorkspacesOperations(object):
             raw_result = self._prepare_notebook_initial(
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -1570,6 +1656,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListStorageAccountKeysResult, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ListStorageAccountKeysResult
@@ -1581,11 +1670,14 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_list_storage_account_keys_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
+            api_version=api_version,
             template_url=self.list_storage_account_keys.metadata['url'],
         )
         request = _convert_request(request)
@@ -1623,6 +1715,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListNotebookKeysResult, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ListNotebookKeysResult
@@ -1634,11 +1729,14 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_list_notebook_keys_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
+            api_version=api_version,
             template_url=self.list_notebook_keys.metadata['url'],
         )
         request = _convert_request(request)
@@ -1680,6 +1778,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExternalFQDNResponse, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ExternalFQDNResponse
@@ -1691,11 +1792,14 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_list_outbound_network_dependencies_endpoints_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
+            api_version=api_version,
             template_url=self.list_outbound_network_dependencies_endpoints.metadata['url'],
         )
         request = _convert_request(request)

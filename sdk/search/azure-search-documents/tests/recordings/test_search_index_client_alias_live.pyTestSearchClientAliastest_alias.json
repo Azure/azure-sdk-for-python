@@ -1,0 +1,1006 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b8 Python/3.9.9 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "86cea95c-94bc-11ec-9f81-a04a5ed0778b"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "6700",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 23 Feb 2022 15:23:20 GMT",
+        "elapsed-time": "36",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "86cea95c-94bc-11ec-9f81-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#indexes",
+        "value": [
+          {
+            "@odata.etag": "\u00220x8D9F6E06AAC056D\u0022",
+            "name": "drgqefsg",
+            "defaultScoringProfile": null,
+            "fields": [
+              {
+                "name": "hotelId",
+                "type": "Edm.String",
+                "searchable": false,
+                "filterable": true,
+                "retrievable": true,
+                "sortable": true,
+                "facetable": true,
+                "key": true,
+                "indexAnalyzer": null,
+                "searchAnalyzer": null,
+                "analyzer": null,
+                "normalizer": null,
+                "synonymMaps": []
+              },
+              {
+                "name": "hotelName",
+                "type": "Edm.String",
+                "searchable": true,
+                "filterable": true,
+                "retrievable": true,
+                "sortable": true,
+                "facetable": false,
+                "key": false,
+                "indexAnalyzer": null,
+                "searchAnalyzer": null,
+                "analyzer": null,
+                "normalizer": null,
+                "synonymMaps": []
+              },
+              {
+                "name": "description",
+                "type": "Edm.String",
+                "searchable": true,
+                "filterable": false,
+                "retrievable": true,
+                "sortable": false,
+                "facetable": false,
+                "key": false,
+                "indexAnalyzer": null,
+                "searchAnalyzer": null,
+                "analyzer": "en.lucene",
+                "normalizer": null,
+                "synonymMaps": []
+              },
+              {
+                "name": "descriptionFr",
+                "type": "Edm.String",
+                "searchable": true,
+                "filterable": false,
+                "retrievable": true,
+                "sortable": false,
+                "facetable": false,
+                "key": false,
+                "indexAnalyzer": null,
+                "searchAnalyzer": null,
+                "analyzer": "fr.lucene",
+                "normalizer": null,
+                "synonymMaps": []
+              },
+              {
+                "name": "category",
+                "type": "Edm.String",
+                "searchable": true,
+                "filterable": true,
+                "retrievable": true,
+                "sortable": true,
+                "facetable": true,
+                "key": false,
+                "indexAnalyzer": null,
+                "searchAnalyzer": null,
+                "analyzer": null,
+                "normalizer": null,
+                "synonymMaps": []
+              },
+              {
+                "name": "tags",
+                "type": "Collection(Edm.String)",
+                "searchable": true,
+                "filterable": true,
+                "retrievable": true,
+                "sortable": false,
+                "facetable": true,
+                "key": false,
+                "indexAnalyzer": null,
+                "searchAnalyzer": null,
+                "analyzer": null,
+                "normalizer": null,
+                "synonymMaps": []
+              },
+              {
+                "name": "parkingIncluded",
+                "type": "Edm.Boolean",
+                "searchable": false,
+                "filterable": true,
+                "retrievable": true,
+                "sortable": true,
+                "facetable": true,
+                "key": false,
+                "indexAnalyzer": null,
+                "searchAnalyzer": null,
+                "analyzer": null,
+                "normalizer": null,
+                "synonymMaps": []
+              },
+              {
+                "name": "smokingAllowed",
+                "type": "Edm.Boolean",
+                "searchable": false,
+                "filterable": true,
+                "retrievable": true,
+                "sortable": true,
+                "facetable": true,
+                "key": false,
+                "indexAnalyzer": null,
+                "searchAnalyzer": null,
+                "analyzer": null,
+                "normalizer": null,
+                "synonymMaps": []
+              },
+              {
+                "name": "lastRenovationDate",
+                "type": "Edm.DateTimeOffset",
+                "searchable": false,
+                "filterable": true,
+                "retrievable": true,
+                "sortable": true,
+                "facetable": true,
+                "key": false,
+                "indexAnalyzer": null,
+                "searchAnalyzer": null,
+                "analyzer": null,
+                "normalizer": null,
+                "synonymMaps": []
+              },
+              {
+                "name": "rating",
+                "type": "Edm.Int32",
+                "searchable": false,
+                "filterable": true,
+                "retrievable": true,
+                "sortable": true,
+                "facetable": true,
+                "key": false,
+                "indexAnalyzer": null,
+                "searchAnalyzer": null,
+                "analyzer": null,
+                "normalizer": null,
+                "synonymMaps": []
+              },
+              {
+                "name": "location",
+                "type": "Edm.GeographyPoint",
+                "searchable": false,
+                "filterable": true,
+                "retrievable": true,
+                "sortable": true,
+                "facetable": false,
+                "key": false,
+                "indexAnalyzer": null,
+                "searchAnalyzer": null,
+                "analyzer": null,
+                "normalizer": null,
+                "synonymMaps": []
+              },
+              {
+                "name": "address",
+                "type": "Edm.ComplexType",
+                "fields": [
+                  {
+                    "name": "streetAddress",
+                    "type": "Edm.String",
+                    "searchable": true,
+                    "filterable": false,
+                    "retrievable": true,
+                    "sortable": false,
+                    "facetable": false,
+                    "key": false,
+                    "indexAnalyzer": null,
+                    "searchAnalyzer": null,
+                    "analyzer": null,
+                    "normalizer": null,
+                    "synonymMaps": []
+                  },
+                  {
+                    "name": "city",
+                    "type": "Edm.String",
+                    "searchable": true,
+                    "filterable": true,
+                    "retrievable": true,
+                    "sortable": true,
+                    "facetable": true,
+                    "key": false,
+                    "indexAnalyzer": null,
+                    "searchAnalyzer": null,
+                    "analyzer": null,
+                    "normalizer": null,
+                    "synonymMaps": []
+                  },
+                  {
+                    "name": "stateProvince",
+                    "type": "Edm.String",
+                    "searchable": true,
+                    "filterable": true,
+                    "retrievable": true,
+                    "sortable": true,
+                    "facetable": true,
+                    "key": false,
+                    "indexAnalyzer": null,
+                    "searchAnalyzer": null,
+                    "analyzer": null,
+                    "normalizer": null,
+                    "synonymMaps": []
+                  },
+                  {
+                    "name": "country",
+                    "type": "Edm.String",
+                    "searchable": true,
+                    "filterable": true,
+                    "retrievable": true,
+                    "sortable": true,
+                    "facetable": true,
+                    "key": false,
+                    "indexAnalyzer": null,
+                    "searchAnalyzer": null,
+                    "analyzer": null,
+                    "normalizer": null,
+                    "synonymMaps": []
+                  },
+                  {
+                    "name": "postalCode",
+                    "type": "Edm.String",
+                    "searchable": true,
+                    "filterable": true,
+                    "retrievable": true,
+                    "sortable": true,
+                    "facetable": true,
+                    "key": false,
+                    "indexAnalyzer": null,
+                    "searchAnalyzer": null,
+                    "analyzer": null,
+                    "normalizer": null,
+                    "synonymMaps": []
+                  }
+                ]
+              },
+              {
+                "name": "rooms",
+                "type": "Collection(Edm.ComplexType)",
+                "fields": [
+                  {
+                    "name": "description",
+                    "type": "Edm.String",
+                    "searchable": true,
+                    "filterable": false,
+                    "retrievable": true,
+                    "sortable": false,
+                    "facetable": false,
+                    "key": false,
+                    "indexAnalyzer": null,
+                    "searchAnalyzer": null,
+                    "analyzer": "en.lucene",
+                    "normalizer": null,
+                    "synonymMaps": []
+                  },
+                  {
+                    "name": "descriptionFr",
+                    "type": "Edm.String",
+                    "searchable": true,
+                    "filterable": false,
+                    "retrievable": true,
+                    "sortable": false,
+                    "facetable": false,
+                    "key": false,
+                    "indexAnalyzer": null,
+                    "searchAnalyzer": null,
+                    "analyzer": "fr.lucene",
+                    "normalizer": null,
+                    "synonymMaps": []
+                  },
+                  {
+                    "name": "type",
+                    "type": "Edm.String",
+                    "searchable": true,
+                    "filterable": true,
+                    "retrievable": true,
+                    "sortable": false,
+                    "facetable": true,
+                    "key": false,
+                    "indexAnalyzer": null,
+                    "searchAnalyzer": null,
+                    "analyzer": null,
+                    "normalizer": null,
+                    "synonymMaps": []
+                  },
+                  {
+                    "name": "baseRate",
+                    "type": "Edm.Double",
+                    "searchable": false,
+                    "filterable": true,
+                    "retrievable": true,
+                    "sortable": false,
+                    "facetable": true,
+                    "key": false,
+                    "indexAnalyzer": null,
+                    "searchAnalyzer": null,
+                    "analyzer": null,
+                    "normalizer": null,
+                    "synonymMaps": []
+                  },
+                  {
+                    "name": "bedOptions",
+                    "type": "Edm.String",
+                    "searchable": true,
+                    "filterable": true,
+                    "retrievable": true,
+                    "sortable": false,
+                    "facetable": true,
+                    "key": false,
+                    "indexAnalyzer": null,
+                    "searchAnalyzer": null,
+                    "analyzer": null,
+                    "normalizer": null,
+                    "synonymMaps": []
+                  },
+                  {
+                    "name": "sleepsCount",
+                    "type": "Edm.Int32",
+                    "searchable": false,
+                    "filterable": true,
+                    "retrievable": true,
+                    "sortable": false,
+                    "facetable": true,
+                    "key": false,
+                    "indexAnalyzer": null,
+                    "searchAnalyzer": null,
+                    "analyzer": null,
+                    "normalizer": null,
+                    "synonymMaps": []
+                  },
+                  {
+                    "name": "smokingAllowed",
+                    "type": "Edm.Boolean",
+                    "searchable": false,
+                    "filterable": true,
+                    "retrievable": true,
+                    "sortable": false,
+                    "facetable": true,
+                    "key": false,
+                    "indexAnalyzer": null,
+                    "searchAnalyzer": null,
+                    "analyzer": null,
+                    "normalizer": null,
+                    "synonymMaps": []
+                  },
+                  {
+                    "name": "tags",
+                    "type": "Collection(Edm.String)",
+                    "searchable": true,
+                    "filterable": true,
+                    "retrievable": true,
+                    "sortable": false,
+                    "facetable": true,
+                    "key": false,
+                    "indexAnalyzer": null,
+                    "searchAnalyzer": null,
+                    "analyzer": null,
+                    "normalizer": null,
+                    "synonymMaps": []
+                  }
+                ]
+              }
+            ],
+            "scoringProfiles": [
+              {
+                "name": "nearest",
+                "functionAggregation": "sum",
+                "text": null,
+                "functions": [
+                  {
+                    "fieldName": "location",
+                    "interpolation": "linear",
+                    "type": "distance",
+                    "boost": 2.0,
+                    "freshness": null,
+                    "magnitude": null,
+                    "distance": {
+                      "referencePointParameter": "myloc",
+                      "boostingDistance": 100.0
+                    },
+                    "tag": null
+                  }
+                ]
+              }
+            ],
+            "corsOptions": null,
+            "suggesters": [
+              {
+                "name": "sg",
+                "searchMode": "analyzingInfixMatching",
+                "sourceFields": [
+                  "description",
+                  "hotelName"
+                ]
+              }
+            ],
+            "analyzers": [],
+            "normalizers": [],
+            "tokenizers": [],
+            "tokenFilters": [],
+            "charFilters": [],
+            "encryptionKey": null,
+            "similarity": {
+              "@odata.type": "#Microsoft.Azure.Search.BM25Similarity",
+              "k1": null,
+              "b": null
+            },
+            "semantic": null
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/aliases?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b8 Python/3.9.9 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "871f63b1-94bc-11ec-ac20-a04a5ed0778b"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "95",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 23 Feb 2022 15:23:20 GMT",
+        "elapsed-time": "4",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "871f63b1-94bc-11ec-ac20-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#aliases",
+        "value": []
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/aliases?api-version=2021-04-30-Preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "43",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b8 Python/3.9.9 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "872b0ef9-94bc-11ec-b0bf-a04a5ed0778b"
+      },
+      "RequestBody": {
+        "name": "resort",
+        "indexes": [
+          "drgqefsg"
+        ]
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "131",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 23 Feb 2022 15:23:20 GMT",
+        "elapsed-time": "42",
+        "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/aliases(\u0027resort\u0027)?api-version=2021-04-30-Preview",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "872b0ef9-94bc-11ec-b0bf-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#aliases/$entity",
+        "name": "resort",
+        "indexes": [
+          "drgqefsg"
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/aliases(\u0027motel\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "42",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b8 Python/3.9.9 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "873c52d9-94bc-11ec-9216-a04a5ed0778b"
+      },
+      "RequestBody": {
+        "name": "motel",
+        "indexes": [
+          "drgqefsg"
+        ]
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "130",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 23 Feb 2022 15:23:21 GMT",
+        "elapsed-time": "42",
+        "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/aliases(\u0027motel\u0027)?api-version=2021-04-30-Preview",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "873c52d9-94bc-11ec-9216-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#aliases/$entity",
+        "name": "motel",
+        "indexes": [
+          "drgqefsg"
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes?api-version=2021-04-30-Preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "456",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b8 Python/3.9.9 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "874e2b17-94bc-11ec-90d3-a04a5ed0778b"
+      },
+      "RequestBody": {
+        "name": "hotel",
+        "fields": [
+          {
+            "name": "hotelId",
+            "type": "Edm.String",
+            "key": true,
+            "retrievable": true,
+            "searchable": false,
+            "filterable": false,
+            "sortable": false,
+            "facetable": false
+          },
+          {
+            "name": "baseRate",
+            "type": "Edm.Double",
+            "key": false,
+            "retrievable": true,
+            "searchable": false,
+            "filterable": false,
+            "sortable": false,
+            "facetable": false
+          }
+        ],
+        "scoringProfiles": [
+          {
+            "name": "MyProfile"
+          }
+        ],
+        "corsOptions": {
+          "allowedOrigins": [
+            "*"
+          ],
+          "maxAgeInSeconds": 60
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1039",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 23 Feb 2022 15:23:21 GMT",
+        "elapsed-time": "549",
+        "ETag": "W/\u00220x8D9F6E06DDF8F79\u0022",
+        "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotel\u0027)?api-version=2021-04-30-Preview",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "874e2b17-94bc-11ec-90d3-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#indexes/$entity",
+        "@odata.etag": "\u00220x8D9F6E06DDF8F79\u0022",
+        "name": "hotel",
+        "defaultScoringProfile": null,
+        "fields": [
+          {
+            "name": "hotelId",
+            "type": "Edm.String",
+            "searchable": false,
+            "filterable": false,
+            "retrievable": true,
+            "sortable": false,
+            "facetable": false,
+            "key": true,
+            "indexAnalyzer": null,
+            "searchAnalyzer": null,
+            "analyzer": null,
+            "normalizer": null,
+            "synonymMaps": []
+          },
+          {
+            "name": "baseRate",
+            "type": "Edm.Double",
+            "searchable": false,
+            "filterable": false,
+            "retrievable": true,
+            "sortable": false,
+            "facetable": false,
+            "key": false,
+            "indexAnalyzer": null,
+            "searchAnalyzer": null,
+            "analyzer": null,
+            "normalizer": null,
+            "synonymMaps": []
+          }
+        ],
+        "scoringProfiles": [
+          {
+            "name": "MyProfile",
+            "functionAggregation": null,
+            "text": null,
+            "functions": []
+          }
+        ],
+        "corsOptions": {
+          "allowedOrigins": [
+            "*"
+          ],
+          "maxAgeInSeconds": 60
+        },
+        "suggesters": [],
+        "analyzers": [],
+        "normalizers": [],
+        "tokenizers": [],
+        "tokenFilters": [],
+        "charFilters": [],
+        "encryptionKey": null,
+        "similarity": {
+          "@odata.type": "#Microsoft.Azure.Search.BM25Similarity",
+          "k1": null,
+          "b": null
+        },
+        "semantic": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/aliases(\u0027motel\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "39",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b8 Python/3.9.9 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "87ad2696-94bc-11ec-8b41-a04a5ed0778b"
+      },
+      "RequestBody": {
+        "name": "motel",
+        "indexes": [
+          "hotel"
+        ]
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "127",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 23 Feb 2022 15:23:21 GMT",
+        "elapsed-time": "72",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "87ad2696-94bc-11ec-8b41-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#aliases/$entity",
+        "name": "motel",
+        "indexes": [
+          "hotel"
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/aliases(\u0027resort\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b8 Python/3.9.9 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "87c2ae96-94bc-11ec-809d-a04a5ed0778b"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "131",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 23 Feb 2022 15:23:21 GMT",
+        "elapsed-time": "18",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "87c2ae96-94bc-11ec-809d-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#aliases/$entity",
+        "name": "resort",
+        "indexes": [
+          "drgqefsg"
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/aliases(\u0027motel\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b8 Python/3.9.9 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "87d0c0a4-94bc-11ec-ac5e-a04a5ed0778b"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "127",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 23 Feb 2022 15:23:21 GMT",
+        "elapsed-time": "5",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "87d0c0a4-94bc-11ec-ac5e-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#aliases/$entity",
+        "name": "motel",
+        "indexes": [
+          "hotel"
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/aliases?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b8 Python/3.9.9 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "87dc07c7-94bc-11ec-babb-a04a5ed0778b"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "172",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 23 Feb 2022 15:23:23 GMT",
+        "elapsed-time": "8",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "87dc07c7-94bc-11ec-babb-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#aliases",
+        "value": [
+          {
+            "name": "motel",
+            "indexes": [
+              "hotel"
+            ]
+          },
+          {
+            "name": "resort",
+            "indexes": [
+              "drgqefsg"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/aliases?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b8 Python/3.9.9 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "87e891a2-94bc-11ec-b70b-a04a5ed0778b"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "172",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 23 Feb 2022 15:23:23 GMT",
+        "elapsed-time": "5",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "87e891a2-94bc-11ec-b70b-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#aliases",
+        "value": [
+          {
+            "name": "motel",
+            "indexes": [
+              "hotel"
+            ]
+          },
+          {
+            "name": "resort",
+            "indexes": [
+              "drgqefsg"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/aliases(\u0027motel\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b8 Python/3.9.9 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "87f3f262-94bc-11ec-8f71-a04a5ed0778b"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Wed, 23 Feb 2022 15:23:23 GMT",
+        "elapsed-time": "26",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "87f3f262-94bc-11ec-8f71-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/aliases(\u0027{%27additional_properties%27%3A {}%2C %27name%27%3A %27motel%27%2C %27indexes%27%3A %5B%27hotel%27%5D%2C %27e_tag%27%3A None}\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b8 Python/3.9.9 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "88029d7e-94bc-11ec-a565-a04a5ed0778b"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Wed, 23 Feb 2022 15:23:23 GMT",
+        "elapsed-time": "3",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "88029d7e-94bc-11ec-a565-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/aliases(\u0027resort\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b8 Python/3.9.9 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "880e24e9-94bc-11ec-8586-a04a5ed0778b"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Wed, 23 Feb 2022 15:23:23 GMT",
+        "elapsed-time": "16",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "880e24e9-94bc-11ec-8586-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/aliases(\u0027{%27additional_properties%27%3A {}%2C %27name%27%3A %27resort%27%2C %27indexes%27%3A %5B%27drgqefsg%27%5D%2C %27e_tag%27%3A None}\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b8 Python/3.9.9 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "881bbca1-94bc-11ec-b52a-a04a5ed0778b"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Wed, 23 Feb 2022 15:23:23 GMT",
+        "elapsed-time": "1",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "881bbca1-94bc-11ec-b52a-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

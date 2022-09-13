@@ -59,6 +59,9 @@ class PrivateEndpointConnectionsOperations:
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PrivateEndpointConnectionListResult or the result
          of cls(response)
@@ -66,6 +69,8 @@ class PrivateEndpointConnectionsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.PrivateEndpointConnectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -78,6 +83,7 @@ class PrivateEndpointConnectionsOperations:
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -89,6 +95,7 @@ class PrivateEndpointConnectionsOperations:
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -139,6 +146,9 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the workspace.
         :type private_endpoint_connection_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.PrivateEndpointConnection
@@ -150,12 +160,15 @@ class PrivateEndpointConnectionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
+            api_version=api_version,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -199,6 +212,9 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection_name: str
         :param properties: The private endpoint connection properties.
         :type properties: ~azure.mgmt.machinelearningservices.models.PrivateEndpointConnection
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.PrivateEndpointConnection
@@ -210,6 +226,7 @@ class PrivateEndpointConnectionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(properties, 'PrivateEndpointConnection')
@@ -219,6 +236,7 @@ class PrivateEndpointConnectionsOperations:
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self.create_or_update.metadata['url'],
@@ -261,6 +279,9 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the workspace.
         :type private_endpoint_connection_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -272,12 +293,15 @@ class PrivateEndpointConnectionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_delete_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
+            api_version=api_version,
             template_url=self.delete.metadata['url'],
         )
         request = _convert_request(request)

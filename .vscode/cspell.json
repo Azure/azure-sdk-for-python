@@ -6,6 +6,7 @@
     "powershell",
     "python",
     "softwareTerms",
+    "lorem-ipsum",
     "en_us",
     "en-gb"
   ],
@@ -26,11 +27,8 @@
     "sdk/**/_generated/**",
     "**/*requirement*.txt",
 
-    "sdk/anomalydetector/azure-ai-anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/appconfiguration/azure-appconfiguration/**",
-    "sdk/agrifood/azure-agrifood-farming/**",
-    "sdk/attestation/azure-security-attestation/**",
     "sdk/batch/azure-batch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
@@ -56,9 +54,7 @@
     "sdk/core/azure/**",
     "sdk/core/azure-common/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
-    "sdk/core/azure-core/**",
     "sdk/core/azure-servicemanagement-legacy/**",
-    "sdk/deviceupdate/azure-iot-deviceupdate/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventgrid/azure-eventgrid/**",
@@ -75,20 +71,15 @@
     "sdk/keyvault/azure-keyvault-keys/tests/keys.py",
     "sdk/modelsrepository/azure-iot-modelsrepository/**",
     "sdk/monitor/azure-monitor-query/**",
-    "sdk/purview/azure-purview-catalog/**",
     "sdk/servicefabric/azure-servicefabric/**",
     "sdk/search/azure-search-documents/**",
     "sdk/storage/azure-storage-blob-changefeed/**",
     "sdk/servicebus/azure-servicebus/**",
     "sdk/storage/azure-storage-queue/**",
-    "sdk/synapse/azure-synapse-managedprivateendpoints/**",
-    "sdk/storage/azure-storage-file-datalake/**",
     "sdk/synapse/azure-synapse/**",
     "sdk/synapse/azure-synapse-artifacts/**",
-    "sdk/webpubsub/azure-messaging-webpubsubservice/**",
     "sdk/translation/azure-ai-translation-document/samples/assets/**",
     "sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv",
-    "sdk/tables/azure-data-tables/**",
     "sdk/storage/azure-storage-blob/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
@@ -121,6 +112,8 @@
     "amqps",
     "apim",
     "Asal",
+    "astimezone",
+    "AsyncIterable",
     "asyncio",
     "avroencoder",
     "azcmagent",
@@ -134,6 +127,7 @@
     "cdll",
     "certprg",
     "certver",
+    "cchardet",
     "clientid",
     "cname",
     "conda",
@@ -145,6 +139,7 @@
     "creds",
     "ctoring",
     "ctypes",
+    "curr",
     "dateutil",
     "ddos",
     "decryptor",
@@ -154,6 +149,7 @@
     "deserialization",
     "disablecov",
     "docfx",
+    "dont",
     "dotenv",
     "dpkg",
     "dtlk",
@@ -189,6 +185,7 @@
     "imds",
     "inotify",
     "iohttp",
+    "IOHTTP",
     "inprogress",
     "ipconfiguration",
     "ipconfigurations",
@@ -197,6 +194,7 @@
     "iscoroutine",
     "iscoroutinefunction",
     "iscsi",
+    "iterrows",
     "ivar",
     "jwks",
     "keybak",
@@ -232,6 +230,8 @@
     "MSSQL",
     "mutex",
     "myacr",
+    "mydirectory",
+    "myfile",
     "nazsdk",
     "noarch",
     "NOPERM",
@@ -362,6 +362,33 @@
       ]
     },
     {
+      "filename": "sdk/tables/azure-data-tables/tests/**/*.py",
+      "words": [
+        "tzutc",
+        "tzoffset",
+        "BRST",
+        "uttable",
+        "pytablesync",
+        "pytableasync",
+        "mydomain",
+        "myaccount",
+        "testid",
+        "clsid",
+        "doesnt",
+        "doesntexist"
+      ]
+    },
+    {
+      "filename": "sdk/tables/azure-data-tables/**/*.py",
+      "words": [
+        "astimezone",
+        "myasynctable",
+        "mytableasync",
+        "mytable",
+        "edmtypes"
+      ]
+    },
+    {
       "filename": "sdk/translation/azure-ai-translation-document/tests/*.py",
       "words": [
         "essai"
@@ -373,10 +400,8 @@
         "Forndexter",
         "ESDNI",
         "dinero",
-        "IOHTTP",
         "Zocor",
         "dann",
-        "dont",
         "UMLS",
         "nach",
         "año",
@@ -545,6 +570,43 @@
       ]
     },
     {
+      "filename": "sdk/storage/azure-storage-file-datalake/**",
+      "words": [
+        "dlake",
+        "rwxrwxrwx",
+        "rwxrw",
+        "rwxr",
+        "ABFS",
+        "mynewfile",
+        "mynewdirectory",
+        "mynewfilesystem",
+        "mynewfilesystems",
+        "myfilesystem",
+        "myfilesystemforlistpaths",
+        "myfilesystemforgetclient",
+        "myclientfilesystem",
+        "mydirectoryfilesystem",
+        "myleasefilesystem",
+        "mypathfilesystem",
+        "mymetadatafilesystemsync",
+        "fpath",
+        "fsname",
+        "dname",
+        "filesys",
+        "testfs",
+        "nonexistentfs",
+        "saoid",
+        "testid",
+        "deletionid",
+        "cpkfile",
+        "cpkdirectory",
+        "cpksubdirectory",
+        "thead",
+        "tbody",
+        "racwdlmeop"
+      ]
+    },
+    {
       "filename": "sdk/loadtestservice/azure-developer-loadtesting/azure/developer/loadtesting/**",
       "words":[
         "vusers"
@@ -642,7 +704,6 @@
         "mkdtemp",
         "runit",
         "delim",
-        "curr",
         "vendored",
         "wasb",
         "cgitb",
@@ -663,6 +724,8 @@
         "fstring",
         "vals",
         "reprlib",
+        "gzrs",
+        "ragzrs",
         "wsid"
       ]
     },
@@ -673,14 +736,19 @@
       ]
     },
     {
+      "filename": "sdk/agrifood/azure-agrifood-farming/**",
+      "words": [
+        "NDVI",
+        "Unhandleable"
+      ]
+     },
+     {
       "filename": "sdk/storage/azure-storage-file-share/**",
       "words": [
         "XSMB",
         "rcwd",
         "rcwdl",
         "prevsharesnapshot",
-        "mydirectory",
-        "myfile",
         "mydir",
         "amet",
         "consectetur",
@@ -719,6 +787,34 @@
       ]
     },
     {
+      "filename": "sdk/attestation/azure-security-attestation/**",
+      "words": [
+        "MRENCLAVE",
+        "ECDS",
+        "kwtype",
+        "clist",
+        "mrsigner",
+        "ECDH",
+        "TPMs",
+        "getopenidmetadata",
+        "getopenidmetadataasync",
+        "aikcert",
+        "shareduks"
+      ]
+    },
+    { 
+      "filename": "sdk/deviceupdate/azure-iot-deviceupdate/**",
+      "words": [
+        "wday",
+        "mday",
+        "unflattened",
+        "deseralize",
+        "astimezone",
+        "ctxt",
+        "Nify"
+      ]
+    },
+    {
       "filename": "sdk/cosmos/azure-cosmos/**",
       "words": [
         "colls",
@@ -742,7 +838,6 @@
         "Strin'g",
         "Strin",
         "qlist",
-        "curr",
         "DBA's",
         "myval",
         "mytext",
@@ -777,6 +872,68 @@
         "adreadonly",
         "Shenzen",
         "myusername"
+      ]
+    },
+    {
+      "filename": "sdk/core/azure-core/**",
+      "words": [
+        "odatav",
+        "unpicklable",
+        "reinvesitgate",
+        "sansio",
+        "ctxt",
+        "azcore",
+        "cafile",
+        "wbits",
+        "ctype",
+        "hdrs",
+        "rdap",
+        "chardet",
+        "redef",
+        "cvar",
+        "ryohji",
+        "jiasli",
+        "vbarbaresi",
+        "undoc",
+        "myuseragent",
+        "azconfig",
+        "killpg",
+        "getpgid",
+        "Chocolat",
+        "myusergant",
+        "nocover",
+        "Patiño",
+        "oooooold",
+        "mytools",
+        "myattr",
+        "myvalue",
+        "Oopsy",
+        "datav",
+        "mybytes",
+        "myid",
+        "jsonify",
+        "ints"
+      ]
+    },
+    {
+      "filename": "sdk/purview/azure-purview-catalog/azure/purview/catalog/aio/operations/*.py",
+      "words": [
+        "struct",
+        "STRUCT",
+        "nonly",
+        "nthe",
+        "reques"
+      ]
+    },
+    {
+      "filename": "sdk/purview/azure-purview-catalog/azure/purview/catalog/operations/*.py",
+      "words": [
+        "struct",
+        "structdef",
+        "STRUCT",
+        "nonly",
+        "nthe",
+        "reques"
       ]
     },
     {

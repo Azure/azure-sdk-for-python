@@ -566,7 +566,7 @@ implementation should mention that this keyword argument will not be used when m
 potential consequences of this. For example, if a `TokenCredential` implementation doesn't use `tenant_id`, it should
 document that fetched tokens may not authorize requests made to the specified tenant.
 
-There is also an async protocol -- the `AsyncTokenCredential` protocol -- that specifies a class with an aysnc
+There is also an async protocol -- the `AsyncTokenCredential` protocol -- that specifies a class with an async
 `get_token` method with the same arguments. An `AsyncTokenCredential` implementation additionally needs to be a context
 manager, with `__aenter__`, `__aexit__`, and `close` methods.
 
