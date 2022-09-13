@@ -778,6 +778,12 @@
         "Shenzen",
         "myusername"
       ]
+    },
+    {
+      "filename": "sdk/videoanalyzer/azure-media-videoanalyzer-edge/CHANGELOG.md",
+      "words": [
+        "ONVIF"
+      ]
     }
   ],
   "allowCompoundWords": true
