@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2021-04-30-Preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=none",
@@ -1730,11 +1730,11 @@
             "rooms": []
           }
         ],
-        "@odata.nextLink": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2020-06-30"
+        "@odata.nextLink": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2021-04-30-Preview"
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2021-04-30-Preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=none",

@@ -135,7 +135,7 @@
 /sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
 
 # PRLabel: %Synapse
-/sdk/synapse/                                                        @wonner @idear1203 @xiangyan99
+/sdk/synapse/                                                        @wonner @yanjungao718 @xiangyan99
 
 # PRLabel: %EngSys
 /sdk/template/                                                       @scbedd @weshaggard @benbp

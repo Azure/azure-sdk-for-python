@@ -39,7 +39,10 @@ class ComponentSchema(AssetSchema):
             ]
         ),
     )
-    outputs = fields.Dict(keys=fields.Str(), values=NestedField(OutputPortSchema))
+    outputs = fields.Dict(
+        keys=fields.Str(),
+        values=NestedField(OutputPortSchema),
+    )
 
     def __init__(self, *args, **kwargs):
         # Remove schema_ignored to enable serialize and deserialize schema.

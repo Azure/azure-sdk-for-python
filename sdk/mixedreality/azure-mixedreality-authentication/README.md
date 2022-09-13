@@ -12,7 +12,7 @@ token from the STS that can be used to access Mixed Reality services.
 
 ## Currently supported environments
 
-This package has been tested with Python 3.6+.
+This package has been tested with Python 3.7+.
 
 ## Prerequisites
 
@@ -21,7 +21,7 @@ This package has been tested with Python 3.6+.
   - [Azure Remote Rendering](https://docs.microsoft.com/azure/remote-rendering/)
   - [Azure Spatial Anchors](https://docs.microsoft.com/azure/spatial-anchors/)
 - Familiarity with the authentication and credential concepts from the [Azure Identity library][azure_identity].
-- Python 3.6 or later is required to use this package.
+- Python 3.7 or later is required to use this package.
 
 ## Install the package
 
@@ -61,7 +61,7 @@ Once you have an account key, you can use the `AzureKeyCredential` class to auth
 from azure.core.credentials import AzureKeyCredential
 from azure.mixedreality.authentication import MixedRealityStsClient
 
-account_id = "<ACCOUNTD ID>"
+account_id = "<ACCOUNT_ID>"
 account_domain = "<ACCOUNT_DOMAIN>"
 account_key = "<ACCOUNT_KEY>"
 key_credential = AzureKeyCredential(account_key)
@@ -85,7 +85,7 @@ by assigning the appropriate role for your Mixed Reality service to your service
 from azure.identity import DefaultAzureCredential
 from azure.mixedreality.authentication import MixedRealityStsClient
 
-account_id = "<ACCOUNTD ID>"
+account_id = "<ACCOUNT_ID>"
 account_domain = "<ACCOUNT_DOMAIN>"
 default_credential = DefaultAzureCredential()
 
@@ -114,7 +114,7 @@ authentication scenarios.
 from azure.core.credentials import AzureKeyCredential
 from azure.mixedreality.authentication import MixedRealityStsClient
 
-account_id = "<ACCOUNTD ID>"
+account_id = "<ACCOUNT_ID>"
 account_domain = "<ACCOUNT_DOMAIN>"
 account_key = "<ACCOUNT_KEY>"
 key_credential = AzureKeyCredential(account_key)
@@ -130,7 +130,7 @@ token = client.get_token()
 from azure.core.credentials import AzureKeyCredential
 from azure.mixedreality.authentication.aio import MixedRealityStsClient
 
-account_id = "<ACCOUNTD ID>"
+account_id = "<ACCOUNT_ID>"
 account_domain = "<ACCOUNT_DOMAIN>"
 account_key = "<ACCOUNT_KEY>"
 key_credential = AzureKeyCredential(account_key)

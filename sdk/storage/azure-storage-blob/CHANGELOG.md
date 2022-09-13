@@ -5,6 +5,13 @@
 ### Features Added
 - Stable release of features from 12.14.0b1 and 12.14.0b2.
 
+### Bugs Fixed
+- Fixed an issue where calling `download_blob` with an invalid base64-encoded account key would cause an
+`AttributeError` rather than the proper `AzureSigningError`.
+
+### Other Changes
+- Changed the default value for `read_timeout` to 60 seconds for all clients.
+
 ## 12.14.0b2 (2022-08-30)
 
 ### Features Added

@@ -6,7 +6,7 @@ from azure.ai.ml import AmlToken, MLClient
 from azure.ai.ml.entities import CronTrigger, PipelineJob
 from azure.ai.ml.entities._load_functions import load_job, load_schedule
 
-from .._util import _SCHEDULE_TIMEOUT_SECOND
+from .._util import _SCHEDULE_TIMEOUT_SECOND, TRIGGER_ENDTIME, TRIGGER_ENDTIME_DICT
 
 from devtools_testutils import AzureRecordedTestCase
 
@@ -18,6 +18,7 @@ from devtools_testutils import AzureRecordedTestCase
 class TestSchedule(AzureRecordedTestCase):
     def test_schedule_lifetime(self, client: MLClient, randstr: Callable[[], str]):
         params_override = [{"name": randstr("name")}]
+        params_override.extend(TRIGGER_ENDTIME_DICT)
         test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml"
         schedule = load_schedule(test_path, params_override=params_override)
         # create
@@ -27,7 +28,6 @@ class TestSchedule(AzureRecordedTestCase):
         rest_schedule_list = [item for item in client.schedules.list()]
         assert rest_schedule_list != []
         # update
-        schedule.trigger.end_time = "2022-06-09 10:15:00"
         schedule.create_job.experiment_name = "test_schedule_exp"
         schedule.create_job.identity = AmlToken()
         rest_schedule = client.schedules.begin_create_or_update(schedule)
@@ -53,7 +53,7 @@ class TestSchedule(AzureRecordedTestCase):
 
     def test_load_cron_schedule_with_job_updates(self, client: MLClient):
         test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_job_updates.yml"
-        schedule = load_schedule(test_path)
+        schedule = load_schedule(test_path, params_override=TRIGGER_ENDTIME_DICT)
         rest_schedule = client.schedules.begin_create_or_update(schedule)
         assert rest_schedule.name == schedule.name
         client.schedules.begin_disable(schedule.name, no_wait=True)
@@ -82,7 +82,6 @@ class TestSchedule(AzureRecordedTestCase):
             == CronTrigger(time_zone="UTC", expression="15 10 * * 1")._to_rest_object()
         )
 
-    @pytest.mark.skip("Skip for not supported now.")
     def test_load_cron_schedule_with_arm_id_and_updates(self, client: MLClient, randstr: Callable[[], str]):
         params_override = [{"name": randstr()}]
         test_job_path = "./tests/test_configs/pipeline_jobs/hello-pipeline-abc.yml"
@@ -109,12 +108,12 @@ class TestSchedule(AzureRecordedTestCase):
 
     def test_load_recurrence_schedule_no_pattern(self, client: MLClient):
         test_path = "./tests/test_configs/schedule/hello_recurrence_schedule_no_pattern.yml"
-        schedule = load_schedule(test_path)
+        schedule = load_schedule(test_path, params_override=TRIGGER_ENDTIME_DICT)
         rest_schedule = client.schedules.begin_create_or_update(schedule)
         assert rest_schedule.name == schedule.name
         client.schedules.begin_disable(schedule.name, no_wait=True)
         assert rest_schedule.trigger._to_rest_object().as_dict() == {
-            "end_time": "2022-05-12 10:15:00",
+            "end_time": TRIGGER_ENDTIME,
             "start_time": "2022-05-10 10:15:00",
             "time_zone": "Pacific Standard Time",
             "trigger_type": "Recurrence",

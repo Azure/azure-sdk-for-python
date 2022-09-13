@@ -22,6 +22,8 @@
 ### Bugs Fixed
 * Fixed bug where odmtype tag was not being included for boolean and int32 types even when a full EdmProperty tuple was passed in. This is needed for CLI compatibility.
 
+[comment]: # ( cspell:ignore odmtype )
+
 ## 12.3.0 (2022-03-10)
 
 ### Bugs Fixed
@@ -44,6 +46,8 @@
 
 ### Features Added
 * Added support for async iterators in `aio.TableClient.submit_transaction (#21083, thank you yashbhutoria).
+
+[comment]: # ( cspell:ignore yashbhutoria )
 
 ### Other Changes
 * Bumped dependency on `msrest` to `>=0.6.21`

@@ -10,7 +10,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio import SearchClient as _SearchServiceClient
-from .._generated.models import SearchIndexerSkillset
+from ..models import SearchIndexerSkillset
 from .._utils import (
     get_access_conditions,
     normalize_endpoint,
@@ -25,7 +25,7 @@ from ..._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from .._generated.models import SearchIndexer, SearchIndexerStatus
+    from .._generated.models import SearchIndexer, SearchIndexerStatus, DocumentKeysOrIds
     from typing import Any, Optional, Sequence
     from azure.core.credentials_async import AsyncTokenCredential
 
@@ -118,6 +118,11 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         :param indexer: The definition of the indexer to create or update.
         :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
+        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
+        :paramtype skip_indexer_reset_requirement_for_cache: bool
+        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection.
+        :paramtype disable_cache_reprocessing_change_detection: bool
         :return: The created SearchIndexer
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
         """
@@ -277,6 +282,31 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         await self._client.indexers.reset(name, **kwargs)
 
     @distributed_trace_async
+    async def reset_documents(self, indexer, keys_or_ids, **kwargs):
+        # type: (Union[str, SearchIndexer], DocumentKeysOrIds, **Any) -> None
+        """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
+
+        :param indexer: The indexer to reset documents for.
+        :type indexer: str or ~azure.search.documents.indexes.models.SearchIndexer
+        :param keys_or_ids:
+        :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds
+        :return: None, or the result of cls(response)
+        :keyword overwrite: If false, keys or ids will be appended to existing ones. If true, only the
+         keys or ids in this payload will be queued to be re-ingested. The default is false.
+        :paramtype overwrite: bool
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        kwargs["keys_or_ids"] = keys_or_ids
+        try:
+            name = indexer.name
+        except AttributeError:
+            name = indexer
+        result = await self._client.indexers.reset_docs(name, **kwargs)
+        return result
+
+    @distributed_trace_async
     async def get_indexer_status(self, name, **kwargs):
         # type: (str, **Any) -> SearchIndexerStatus
         """Get the status of the indexer.
@@ -333,6 +363,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
+        :paramtype skip_indexer_reset_requirement_for_cache: bool
         :return: The created SearchIndexerDataSourceConnection
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         """
@@ -483,7 +515,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         if kwargs.get('select', None):
             kwargs['select'] = ','.join(kwargs['select'])
         result = await self._client.skillsets.list(**kwargs)
-        return result
+        return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets] # pylint:disable=protected-access
+
     @distributed_trace_async
     async def get_skillset_names(self, **kwargs):
         # type: (**Any) -> List[str]
@@ -520,7 +553,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        return await self._client.skillsets.get(name, **kwargs)
+        result = await self._client.skillsets.get(name, **kwargs)
+        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
 
     @distributed_trace_async
     async def delete_skillset(self, skillset, **kwargs):
@@ -576,8 +610,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-
-        return await self._client.skillsets.create(skillset, **kwargs)
+        skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset # pylint:disable=protected-access
+        result = await self._client.skillsets.create(skillset, **kwargs)
+        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
 
     @distributed_trace_async
     async def create_or_update_skillset(self, skillset, **kwargs):
@@ -589,6 +624,11 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type skillset: :class:`~azure.search.documents.indexes.models.SearchIndexerSkillset`
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
+        :paramtype skip_indexer_reset_requirement_for_cache: bool
+        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection.
+        :paramtype disable_cache_reprocessing_change_detection: bool
         :return: The created or updated SearchIndexerSkillset
         :rtype: :class:`~azure.search.documents.indexes.models.SearchIndexerSkillset`
 
@@ -598,7 +638,33 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             skillset, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
+        skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset # pylint:disable=protected-access
 
-        return await self._client.skillsets.create_or_update(
-            skillset_name=skillset.name, skillset=skillset, error_map=error_map, **kwargs
+        result = await self._client.skillsets.create_or_update(
+            skillset_name=skillset.name,
+            skillset=skillset,
+            error_map=error_map,
+            **kwargs
         )
+        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
+
+    @distributed_trace_async
+    async def reset_skills(self, skillset, skill_names, **kwargs):
+        # type: (Union[str, SearchIndexerSkillset], List[str], **Any) -> None
+        """Reset an existing skillset in a search service.
+
+        :param skillset: The SearchIndexerSkillset to reset
+        :type skillset: str or ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :param skill_names: the names of skills to be reset.
+        :type skill_names: list[str]
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        try:
+            name = skillset.name
+        except AttributeError:
+            name = skillset
+        result = await self._client.skillsets.reset_skills(name, skill_names, **kwargs)
+        return result

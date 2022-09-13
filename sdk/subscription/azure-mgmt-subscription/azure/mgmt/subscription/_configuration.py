@@ -34,6 +34,7 @@ class SubscriptionClientConfiguration(Configuration):  # pylint: disable=too-man
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
 
+        self.api_version = "2021-10-01"
         self.credential = credential
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-subscription/{}".format(VERSION))

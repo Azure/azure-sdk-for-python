@@ -40,10 +40,10 @@ def build_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
     skip = kwargs.pop('skip', None)  # type: Optional[str]
     count = kwargs.pop('count', None)  # type: Optional[int]
 
-    api_version = "2022-10-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/labelingJobs')
@@ -84,7 +84,8 @@ def build_delete_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2022-10-01-preview"
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/labelingJobs/{id}')
@@ -122,10 +123,10 @@ def build_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
     include_job_instructions = kwargs.pop('include_job_instructions', False)  # type: Optional[bool]
     include_label_categories = kwargs.pop('include_label_categories', False)  # type: Optional[bool]
 
-    api_version = "2022-10-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/labelingJobs/{id}')
@@ -167,9 +168,9 @@ def build_create_or_update_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-10-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/labelingJobs/{id}')
@@ -209,9 +210,9 @@ def build_export_labels_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-10-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/labelingJobs/{id}/exportLabels')
@@ -251,7 +252,8 @@ def build_pause_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2022-10-01-preview"
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/labelingJobs/{id}/pause')
@@ -289,7 +291,8 @@ def build_resume_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2022-10-01-preview"
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/labelingJobs/{id}/resume')
@@ -363,6 +366,9 @@ class LabelingJobsOperations(object):
         :type skip: str
         :param count: Number of labeling jobs to return.
         :type count: int
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LabelingJobResourceArmPaginatedResult or the
          result of cls(response)
@@ -370,6 +376,8 @@ class LabelingJobsOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.LabelingJobResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LabelingJobResourceArmPaginatedResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -382,6 +390,7 @@ class LabelingJobsOperations(object):
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
+                    api_version=api_version,
                     skip=skip,
                     count=count,
                     template_url=self.list.metadata['url'],
@@ -395,6 +404,7 @@ class LabelingJobsOperations(object):
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
+                    api_version=api_version,
                     skip=skip,
                     count=count,
                     template_url=next_link,
@@ -449,6 +459,9 @@ class LabelingJobsOperations(object):
         :type workspace_name: str
         :param id: The name and identifier for the LabelingJob.
         :type id: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -460,12 +473,15 @@ class LabelingJobsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_delete_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             id=id,
+            api_version=api_version,
             template_url=self.delete.metadata['url'],
         )
         request = _convert_request(request)
@@ -512,6 +528,9 @@ class LabelingJobsOperations(object):
         :param include_label_categories: Boolean value to indicate Whether to include LabelCategories
          in response.
         :type include_label_categories: bool
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LabelingJob, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.LabelingJob
@@ -523,12 +542,15 @@ class LabelingJobsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             id=id,
+            api_version=api_version,
             include_job_instructions=include_job_instructions,
             include_label_categories=include_label_categories,
             template_url=self.get.metadata['url'],
@@ -569,6 +591,7 @@ class LabelingJobsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'LabelingJob')
@@ -578,6 +601,7 @@ class LabelingJobsOperations(object):
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             id=id,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self._create_or_update_initial.metadata['url'],
@@ -632,6 +656,9 @@ class LabelingJobsOperations(object):
         :type id: str
         :param body: LabelingJob definition object.
         :type body: ~azure.mgmt.machinelearningservices.models.LabelingJob
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -645,6 +672,7 @@ class LabelingJobsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.LabelingJob]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LabelingJob"]
@@ -659,6 +687,7 @@ class LabelingJobsOperations(object):
                 workspace_name=workspace_name,
                 id=id,
                 body=body,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -703,6 +732,7 @@ class LabelingJobsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'ExportSummary')
@@ -712,6 +742,7 @@ class LabelingJobsOperations(object):
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             id=id,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self._export_labels_initial.metadata['url'],
@@ -766,6 +797,9 @@ class LabelingJobsOperations(object):
         :type id: str
         :param body: The export summary.
         :type body: ~azure.mgmt.machinelearningservices.models.ExportSummary
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -779,6 +813,7 @@ class LabelingJobsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.ExportSummary]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExportSummary"]
@@ -793,6 +828,7 @@ class LabelingJobsOperations(object):
                 workspace_name=workspace_name,
                 id=id,
                 body=body,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -841,6 +877,9 @@ class LabelingJobsOperations(object):
         :type workspace_name: str
         :param id: The name and identifier for the LabelingJob.
         :type id: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -852,12 +891,15 @@ class LabelingJobsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_pause_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             id=id,
+            api_version=api_version,
             template_url=self.pause.metadata['url'],
         )
         request = _convert_request(request)
@@ -891,12 +933,15 @@ class LabelingJobsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_resume_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             id=id,
+            api_version=api_version,
             template_url=self._resume_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -940,6 +985,9 @@ class LabelingJobsOperations(object):
         :type workspace_name: str
         :param id: The name and identifier for the LabelingJob.
         :type id: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -952,6 +1000,7 @@ class LabelingJobsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -964,6 +1013,7 @@ class LabelingJobsOperations(object):
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 id=id,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )

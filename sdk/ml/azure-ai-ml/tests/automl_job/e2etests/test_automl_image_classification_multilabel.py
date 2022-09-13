@@ -14,6 +14,7 @@ from azure.ai.ml import MLClient, automl
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities import Data
 from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._job.automl import SearchSpace
 from azure.ai.ml.entities._job.automl.image import ImageClassificationMultilabelJob, ImageClassificationSearchSpace
 from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
@@ -106,13 +107,13 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
         image_classification_multilabel_job_sweep.set_training_parameters(early_stopping=True, evaluation_frequency=1)
         image_classification_multilabel_job_sweep.extend_search_space(
             [
-                ImageClassificationSearchSpace(
+                SearchSpace(
                     model_name=Choice(["vitb16r224"]),
                     learning_rate=Uniform(0.005, 0.05),
                     number_of_epochs=Choice([15, 30]),
                     gradient_accumulation_step=Choice([1, 2]),
                 ),
-                ImageClassificationSearchSpace(
+                SearchSpace(
                     model_name=Choice(["seresnext"]),
                     learning_rate=Uniform(0.005, 0.05),
                     # model-specific, valid_resize_size should be larger or equal than valid_crop_size

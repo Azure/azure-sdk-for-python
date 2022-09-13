@@ -20,7 +20,6 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import CommandComponent, Component
-from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
@@ -229,6 +228,39 @@ class TestComponent(AzureRecordedTestCase):
             recorded_component_name="registry_component_name",
         )
 
+    @pytest.mark.skip("Skip for compute resource not ready.")
+    def test_spark_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        expected_dict = {
+            "entry": {"file": "add_greeting_column.py"},
+            "py_files": ["utils.zip"],
+            "files": ["my_files.txt"],
+            "conf": {
+                "spark.driver.cores": 2,
+                "spark.driver.memory": "1g",
+                "spark.executor.cores": 1,
+                "spark.executor.instances": 1,
+                "spark.executor.memory": "1g",
+            },
+            "args": "--file_input ${{inputs.file_input}}",
+            "description": "Aml Spark add greeting column test module",
+            "tags": {},
+            "version": "1",
+            "$schema": "https://azuremlschemas.azureedge.net/latest/sparkComponent.schema.json",
+            "display_name": "Aml Spark add greeting column test module",
+            "is_deterministic": True,
+            "inputs": {"file_input": {"type": "uri_file"}},
+            "outputs": {},
+            "type": "spark",
+        }
+        assert_component_basic_workflow(
+            client=client,
+            randstr=randstr,
+            path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml",
+            expected_dict=expected_dict,
+            omit_fields=["name", "creation_context", "id", "code", "environment"],
+            recorded_component_name="spark_component_name"
+        )
+
     @pytest.mark.parametrize(
         "component_path",
         [
@@ -280,7 +312,7 @@ class TestComponent(AzureRecordedTestCase):
 
         # list component containers
         component_containers = client.components.list()
-        assert isinstance(component_containers.next(), ComponentContainerData)
+        assert isinstance(component_containers.next(), Component)
 
         # there might be delay so getting latest version immediately after creation might get wrong result
         sleep(5)
@@ -684,7 +716,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
 
     @pytest.mark.skip(reason="flaky test")
     def test_component_create_get_list_from_registry(
-        self, registry_client: MLClient, only_registry_client: MLClient, randstr: Callable[[str], str]
+        self, only_registry_client: MLClient, randstr: Callable[[str], str]
     ) -> None:
         component_name = randstr("component_name")
 
@@ -705,6 +737,16 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
 
     def test_simple_pipeline_component_create(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_path = "./tests/test_configs/components/helloworld_inline_pipeline_component.yml"
+
+        component = load_component(
+            source=component_path,
+        )
+        # Assert binding on compute not changed after resolve dependencies
+        client.components._resolve_arm_id_for_pipeline_component_jobs(
+            component.jobs, resolver=client.components._orchestrators.get_asset_arm_id
+        )
+        assert component.jobs["component_a_job"].compute == "${{parent.inputs.node_compute}}"
+        # Assert E2E
         rest_pipeline_component = create_component(
             client,
             component_name=randstr("component_name"),
@@ -734,6 +776,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
                     "default": "10.99",
                     "description": "A number",
                 },
+                "node_compute": {"type": "string", "default": "azureml:cpu-cluster"},
             },
             "outputs": {},
             "type": "pipeline",

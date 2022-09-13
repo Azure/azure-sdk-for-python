@@ -108,5 +108,4 @@ async def search_inside_geometry():
     # [END search_point_of_interest]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(search_inside_geometry())
+    asyncio.run(search_inside_geometry())

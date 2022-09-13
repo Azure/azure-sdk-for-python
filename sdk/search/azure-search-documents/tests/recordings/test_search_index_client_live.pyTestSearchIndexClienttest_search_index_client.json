@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/servicestats?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/servicestats?api-version=2021-04-30-Preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -68,7 +68,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes?api-version=2021-04-30-Preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -100,7 +100,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes?api-version=2021-04-30-Preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -156,7 +156,7 @@
         "elapsed-time": "515",
         "ETag": "W/\u00220x8D9E1E64D5E1021\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels\u0027)?api-version=2020-06-30",
+        "Location": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -230,7 +230,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes?api-version=2021-04-30-Preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -327,7 +327,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -421,7 +421,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels\u0027)/search.stats?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels\u0027)/search.stats?api-version=2021-04-30-Preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -454,7 +454,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes?api-version=2021-04-30-Preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -502,7 +502,7 @@
         "elapsed-time": "609",
         "ETag": "W/\u00220x8D9E1E64E0C10DC\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-del-unchanged\u0027)?api-version=2020-06-30",
+        "Location": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-del-unchanged\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -576,7 +576,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-del-unchanged\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-del-unchanged\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -689,7 +689,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-del-unchanged\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-del-unchanged\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -724,7 +724,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-cou\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-cou\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -777,7 +777,7 @@
         "elapsed-time": "619",
         "ETag": "W/\u00220x8D9E1E64EB9C387\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-cou\u0027)?api-version=2020-06-30",
+        "Location": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-cou\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -844,7 +844,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-cou\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-cou\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -976,7 +976,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes?api-version=2021-04-30-Preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -1024,7 +1024,7 @@
         "elapsed-time": "567",
         "ETag": "W/\u00220x8D9E1E64F459B43\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-coa-unchanged\u0027)?api-version=2020-06-30",
+        "Location": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-coa-unchanged\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -1098,7 +1098,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-coa-unchanged\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-coa-unchanged\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -1211,7 +1211,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-coa-unchanged\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-coa-unchanged\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -1272,7 +1272,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels\u0027)/search.analyze?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels\u0027)/search.analyze?api-version=2021-04-30-Preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -1322,7 +1322,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes?api-version=2021-04-30-Preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -1597,7 +1597,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-coa-unchanged\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-coa-unchanged\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -1621,7 +1621,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-cou\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-cou\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -1645,7 +1645,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-del-unchanged\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-del-unchanged\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -1669,7 +1669,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",

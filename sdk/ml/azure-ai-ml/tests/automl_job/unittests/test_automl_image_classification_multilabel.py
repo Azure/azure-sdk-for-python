@@ -17,6 +17,7 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity as R
 from azure.ai.ml.automl import image_classification_multilabel
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._job.automl import SearchSpace
 from azure.ai.ml.entities._job.automl.image import ImageClassificationMultilabelJob, ImageClassificationSearchSpace
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
@@ -80,13 +81,13 @@ class TestAutoMLImageClassificationMultilabel:
                 },
             ]
             """
-            search_sub_space_1 = ImageClassificationSearchSpace(
+            search_sub_space_1 = SearchSpace(
                 model_name="vitb16r224",
                 learning_rate=Uniform(0.005, 0.05),
                 number_of_epochs=Choice([15, 30]),
                 gradient_accumulation_step=Choice([1, 2]),
             )
-            search_sub_space_2 = ImageClassificationSearchSpace(
+            search_sub_space_2 = SearchSpace(
                 model_name="seresnext",
                 learning_rate=Uniform(0.005, 0.05),
                 validation_resize_size=Choice([288, 320, 352]),

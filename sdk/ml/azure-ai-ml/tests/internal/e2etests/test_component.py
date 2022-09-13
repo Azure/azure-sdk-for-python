@@ -4,13 +4,13 @@
 import json
 from typing import Callable, Dict, List
 
+from devtools_testutils import AzureRecordedTestCase
 import pydash
 import pytest
-from tests.internal._utils import PARAMETERS_TO_TEST
 
 from azure.ai.ml import MLClient, load_component
 
-from devtools_testutils import AzureRecordedTestCase
+from .._utils import PARAMETERS_TO_TEST
 
 
 def create_component(

@@ -5,6 +5,9 @@
 ### Features Added
 - Stable release of features from 12.9.0b1.
 
+### Other Changes
+- Changed the default value for `read_timeout` to 60 seconds for all clients.
+
 ## 12.9.0b1 (2022-08-23)
 
 This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.

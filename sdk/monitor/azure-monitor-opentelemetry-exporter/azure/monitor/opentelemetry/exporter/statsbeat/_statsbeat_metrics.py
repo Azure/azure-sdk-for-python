@@ -16,6 +16,7 @@ from opentelemetry.sdk.metrics import MeterProvider
 from azure.monitor.opentelemetry.exporter import VERSION
 from azure.monitor.opentelemetry.exporter._constants import (
     _ATTACH_METRIC_NAME,
+    _FEATURE_METRIC_NAME,
     _REQ_DURATION_NAME,
     _REQ_EXCEPTION_NAME,
     _REQ_FAILURE_NAME,
@@ -27,6 +28,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP_LOCK,
     _REQUESTS_MAP,
 )
+from azure.monitor.opentelemetry.exporter import _utils
 
 
 _AIMS_URI = "http://169.254.169.254/metadata/instance/compute"
@@ -37,6 +39,18 @@ _ENDPOINT_TYPES = ["breeze"]
 _RP_NAMES = ["appsvc", "functions", "vm", "unknown"]
 
 _HOST_PATTERN = re.compile('^https?://(?:www\\.)?([^/.]+)')
+
+
+class _FEATURE_TYPES:
+    FEATURE = 0
+    INSTRUMENTATION = 1
+
+
+class _StatsbeatFeature:
+    NONE = 0
+    DISK_RETRY = 1
+    AAD = 2
+
 
 # cSpell:disable
 
@@ -58,21 +72,42 @@ class _StatsbeatMetrics:
         "host": None,
     }
 
+    _FEATURE_ATTRIBUTES = {
+        "feature": None,  # 64-bit long, bits represent features enabled
+        "type": _FEATURE_TYPES.FEATURE,
+    }
+
+    _INSTRUMENTATION_ATTRIBUTES = {
+        "feature": 0,  # 64-bit long, bits represent instrumentations used
+        "type": _FEATURE_TYPES.INSTRUMENTATION,
+    }
+
     def __init__(
         self,
         meter_provider: MeterProvider,
         instrumentation_key: str,
         endpoint: str,
+        enable_local_storage: bool,
         long_interval_threshold: int,
     ) -> None:
         self._ikey = instrumentation_key
+        self._feature = _StatsbeatFeature.NONE
+        if enable_local_storage:
+            self._feature |= _StatsbeatFeature.DISK_RETRY
+        # TODO: AAD
+        self._ikey = instrumentation_key
         self._meter = meter_provider.get_meter(__name__)
         self._long_interval_threshold = long_interval_threshold
-        # Start interal count at the max size for initial statsbeat export
-        self._long_interval_count = sys.maxsize
+        # Start internal count at the max size for initial statsbeat export
+        self._long_interval_count_map = {
+            _ATTACH_METRIC_NAME[0]: sys.maxsize,
+            _FEATURE_METRIC_NAME[0]: sys.maxsize,
+        }
         self._long_interval_lock = threading.Lock()
         _StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"] = instrumentation_key
         _StatsbeatMetrics._NETWORK_ATTRIBUTES["host"] = _shorten_host(endpoint)
+        _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
+        _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"] = _utils.get_instrumentations()
 
         self._vm_retry = True  # True if we want to attempt to find if in VM
         self._vm_data = {}
@@ -87,17 +122,21 @@ class _StatsbeatMetrics:
             description="Statsbeat metric tracking tracking rp information"
         )
 
+        # Feature metrics - metrics related to features/instrumentations being used
+        self._feature_metric = self._meter.create_observable_gauge(
+            _FEATURE_METRIC_NAME[0],
+            callbacks=[self._get_feature_metric],
+            unit="",
+            description="Statsbeat metric tracking tracking enabled features"
+        )
+
     # pylint: disable=unused-argument
     # pylint: disable=protected-access
     def _get_attach_metric(self, options: CallbackOptions) -> Iterable[Observation]:
         observations = []
-        with self._long_interval_lock:
-            # if long interval theshold not met, it is not time to export
-            # statsbeat metrics that are long intervals
-            if self._long_interval_count < self._long_interval_threshold:
-                return observations
-            # reset the count if long interval theshold is met
-            self._long_interval_count = 0
+        # Check if it is time to observe long interval metrics
+        if not self._meets_long_interval_threshold(_ATTACH_METRIC_NAME[0]):
+            return observations
         rp = ''
         rpId = ''
         os_type = platform.system()
@@ -158,6 +197,42 @@ class _StatsbeatMetrics:
         self._vm_retry = True
         return True
 
+    # pylint: disable=unused-argument
+    # pylint: disable=protected-access
+    def _get_feature_metric(self, options: CallbackOptions) -> Iterable[Observation]:
+        observations = []
+        # Check if it is time to observe long interval metrics
+        if not self._meets_long_interval_threshold(_FEATURE_METRIC_NAME[0]):
+            return observations
+        # Feature metric
+        # Don't send observation if no features enabled
+        if self._feature is not _StatsbeatFeature.NONE:
+            attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+            attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
+            observations.append(Observation(1, dict(attributes)))
+
+        # instrumentation metric
+        # Don't send observation if no instrumentations enabled
+        instrumentation_bits = _utils.get_instrumentations()
+        if instrumentation_bits != 0:
+            _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"] = instrumentation_bits
+            attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+            attributes.update(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)
+            observations.append(Observation(1, dict(attributes)))
+
+        return observations
+
+    def _meets_long_interval_threshold(self, name) -> bool:
+        with self._long_interval_lock:
+            # if long interval theshold not met, it is not time to export
+            # statsbeat metrics that are long intervals
+            count = self._long_interval_count_map.get(name, sys.maxsize)
+            if count < self._long_interval_threshold:
+                return False
+            # reset the count if long interval theshold is met
+            self._long_interval_count_map[name] = 0
+            return True
+
     # pylint: disable=W0201
     def init_non_initial_metrics(self):
         # Network metrics - metrics related to request calls to ingestion service
@@ -205,7 +280,8 @@ class _StatsbeatMetrics:
         # a short interval collection has happened, which is why we increment
         # the long_interval_count when it is called
         with self._long_interval_lock:
-            self._long_interval_count = self._long_interval_count + 1
+            for name, count in self._long_interval_count_map.items():
+                self._long_interval_count_map[name] = count + 1
         observations = []
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
@@ -219,7 +295,6 @@ class _StatsbeatMetrics:
                 )
                 _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 0
         return observations
-
 
     # pylint: disable=unused-argument
     # pylint: disable=protected-access
@@ -238,7 +313,6 @@ class _StatsbeatMetrics:
                     )
                     _REQUESTS_MAP[_REQ_FAILURE_NAME[1]][code] = 0
         return observations
-
 
     # pylint: disable=unused-argument
     # pylint: disable=protected-access
@@ -260,7 +334,6 @@ class _StatsbeatMetrics:
                 _REQUESTS_MAP["count"] = 0
         return observations
 
-
     # pylint: disable=unused-argument
     # pylint: disable=protected-access
     # pylint: disable=no-self-use
@@ -279,7 +352,6 @@ class _StatsbeatMetrics:
                     _REQUESTS_MAP[_REQ_RETRY_NAME[1]][code] = 0
         return observations
 
-
     # pylint: disable=unused-argument
     # pylint: disable=protected-access
     # pylint: disable=no-self-use
@@ -297,7 +369,6 @@ class _StatsbeatMetrics:
                     )
                     _REQUESTS_MAP[_REQ_THROTTLE_NAME[1]][code] = 0
         return observations
-
 
     # pylint: disable=unused-argument
     # pylint: disable=protected-access

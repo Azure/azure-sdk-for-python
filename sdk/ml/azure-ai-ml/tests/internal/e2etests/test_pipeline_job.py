@@ -8,7 +8,6 @@ from typing import Callable
 from devtools_testutils import AzureRecordedTestCase, is_live
 import pydash
 import pytest
-from tests.internal._utils import DATA_VERSION, PARAMETERS_TO_TEST, set_run_settings
 
 from azure.ai.ml import Input, MLClient, Output, load_component
 from azure.ai.ml._internal.entities.component import InternalComponent
@@ -16,6 +15,8 @@ from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import Data, PipelineJob
 from azure.core.exceptions import HttpResponseError
+
+from .._utils import DATA_VERSION, PARAMETERS_TO_TEST, set_run_settings
 
 
 @pytest.fixture
@@ -135,7 +136,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
         PARAMETERS_TO_TEST,
     )
-    def test_data_as_pipeline_inputs(
+    def test_data_as_node_inputs(
         self,
         client: MLClient,
         yaml_path,
@@ -151,6 +152,25 @@ class TestPipelineJob(AzureRecordedTestCase):
                 inputs[input_name] = client.data.get(data_name, version=DATA_VERSION)
 
         self._test_component(node_func, inputs, runsettings_dict, pipeline_runsettings_dict, client)
+
+    def test_data_as_pipeline_inputs(self, client: MLClient, randstr: Callable[[], str]):
+        yaml_path = "./tests/test_configs/internal/distribution-component/component_spec.yaml"
+        node_func: InternalComponent = load_component(yaml_path)
+
+        @pipeline()
+        def pipeline_func(pipeline_input):
+            node = node_func(input_path=pipeline_input)
+            node.compute = "cpu-cluster"
+
+        dsl_pipeline: PipelineJob = pipeline_func(
+            pipeline_input=client.data.get("mltable_imdb_reviews_train", label="latest")
+        )
+
+        created_pipeline: PipelineJob = client.jobs.create_or_update(dsl_pipeline)
+        try:
+            client.jobs.cancel(created_pipeline.name)
+        except HttpResponseError as ex:
+            assert "CancelPipelineRunInTerminalStatus" in str(ex)
 
     @pytest.mark.skip(
         reason="Skip for pipeline component compute bug: https://msdata.visualstudio.com/Vienna/_workitems/edit/1920464"

@@ -9,6 +9,7 @@
 from enum import Enum, EnumMeta
 from six import with_metaclass
 
+
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(self, name):
         return super().__getitem__(name.upper())
@@ -27,26 +28,26 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
 
 
 class ActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
-    """
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
 
     INTERNAL = "Internal"
 
+
 class CheckNameAvailabilityReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The reason why the given name is not available.
-    """
+    """The reason why the given name is not available."""
 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
+
 class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
+
 
 class Origin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
@@ -57,9 +58,9 @@ class Origin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
 
+
 class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """FarmBeats instance provisioning state.
-    """
+    """FarmBeats instance provisioning state."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"

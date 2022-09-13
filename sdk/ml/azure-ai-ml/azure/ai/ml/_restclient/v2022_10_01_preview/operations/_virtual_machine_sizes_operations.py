@@ -36,7 +36,8 @@ def build_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2022-10-01-preview"
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/vmSizes')
@@ -97,6 +98,9 @@ class VirtualMachineSizesOperations(object):
 
         :param location: The location upon which virtual-machine-sizes is queried.
         :type location: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualMachineSizeListResult, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.VirtualMachineSizeListResult
@@ -108,10 +112,13 @@ class VirtualMachineSizesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_list_request(
             location=location,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             template_url=self.list.metadata['url'],
         )
         request = _convert_request(request)

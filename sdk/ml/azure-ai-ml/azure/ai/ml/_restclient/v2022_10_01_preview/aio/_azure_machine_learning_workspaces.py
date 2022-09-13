@@ -15,7 +15,7 @@ from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import AzureMachineLearningWorkspacesConfiguration
-from .operations import BatchDeploymentsOperations, BatchEndpointsOperations, CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, ComputeOperations, DataContainersOperations, DataVersionsOperations, DatastoresOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, JobsOperations, LabelingJobsOperations, ModelContainersOperations, ModelVersionsOperations, OnlineDeploymentsOperations, OnlineEndpointsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, QuotasOperations, RegistriesOperations, SchedulesOperations, UsagesOperations, VirtualMachineSizesOperations, WorkspaceConnectionsOperations, WorkspaceFeaturesOperations, WorkspacesOperations
+from .operations import BatchDeploymentsOperations, BatchEndpointsOperations, CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, ComputeOperations, DataContainersOperations, DataVersionsOperations, DatastoresOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, JobsOperations, LabelingJobsOperations, ModelContainersOperations, ModelVersionsOperations, OnlineDeploymentsOperations, OnlineEndpointsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, QuotasOperations, RegistriesOperations, RegistryCodeContainersOperations, RegistryCodeVersionsOperations, RegistryComponentContainersOperations, RegistryComponentVersionsOperations, RegistryEnvironmentContainersOperations, RegistryEnvironmentVersionsOperations, RegistryModelContainersOperations, RegistryModelVersionsOperations, SchedulesOperations, UsagesOperations, VirtualMachineSizesOperations, WorkspaceConnectionsOperations, WorkspaceFeaturesOperations, WorkspacesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -51,6 +51,30 @@ class AzureMachineLearningWorkspaces:
     :ivar workspace_features: WorkspaceFeaturesOperations operations
     :vartype workspace_features:
      azure.mgmt.machinelearningservices.aio.operations.WorkspaceFeaturesOperations
+    :ivar registry_code_containers: RegistryCodeContainersOperations operations
+    :vartype registry_code_containers:
+     azure.mgmt.machinelearningservices.aio.operations.RegistryCodeContainersOperations
+    :ivar registry_code_versions: RegistryCodeVersionsOperations operations
+    :vartype registry_code_versions:
+     azure.mgmt.machinelearningservices.aio.operations.RegistryCodeVersionsOperations
+    :ivar registry_component_containers: RegistryComponentContainersOperations operations
+    :vartype registry_component_containers:
+     azure.mgmt.machinelearningservices.aio.operations.RegistryComponentContainersOperations
+    :ivar registry_component_versions: RegistryComponentVersionsOperations operations
+    :vartype registry_component_versions:
+     azure.mgmt.machinelearningservices.aio.operations.RegistryComponentVersionsOperations
+    :ivar registry_environment_containers: RegistryEnvironmentContainersOperations operations
+    :vartype registry_environment_containers:
+     azure.mgmt.machinelearningservices.aio.operations.RegistryEnvironmentContainersOperations
+    :ivar registry_environment_versions: RegistryEnvironmentVersionsOperations operations
+    :vartype registry_environment_versions:
+     azure.mgmt.machinelearningservices.aio.operations.RegistryEnvironmentVersionsOperations
+    :ivar registry_model_containers: RegistryModelContainersOperations operations
+    :vartype registry_model_containers:
+     azure.mgmt.machinelearningservices.aio.operations.RegistryModelContainersOperations
+    :ivar registry_model_versions: RegistryModelVersionsOperations operations
+    :vartype registry_model_versions:
+     azure.mgmt.machinelearningservices.aio.operations.RegistryModelVersionsOperations
     :ivar batch_endpoints: BatchEndpointsOperations operations
     :vartype batch_endpoints:
      azure.mgmt.machinelearningservices.aio.operations.BatchEndpointsOperations
@@ -108,6 +132,9 @@ class AzureMachineLearningWorkspaces:
     :type subscription_id: str
     :param base_url: Service URL. Default value is 'https://management.azure.com'.
     :type base_url: str
+    :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+     overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -137,6 +164,14 @@ class AzureMachineLearningWorkspaces:
         self.workspace_connections = WorkspaceConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registries = RegistriesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.workspace_features = WorkspaceFeaturesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_code_containers = RegistryCodeContainersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_code_versions = RegistryCodeVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_component_containers = RegistryComponentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_component_versions = RegistryComponentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_environment_containers = RegistryEnvironmentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_environment_versions = RegistryEnvironmentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_model_containers = RegistryModelContainersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_model_versions = RegistryModelVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.batch_endpoints = BatchEndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.batch_deployments = BatchDeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.code_containers = CodeContainersOperations(self._client, self._config, self._serialize, self._deserialize)
