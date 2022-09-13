@@ -4,6 +4,11 @@
 
 ### Features Added
 
+  - Upgraded api-version for some operation group
+
+### Other Changes
+  
+  - Drop support for python3.6
 
 ## 0.13.0 (2022-04-21)
 
