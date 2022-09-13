@@ -20,7 +20,7 @@
       "type": "string",
       "defaultValue": "eastus",
       "metadata": {
-        "description": "Specifies the location for container registery."
+        "description": "Specifies the location for container registry."
       }
     },
     "computeName": {
@@ -830,7 +830,7 @@
               "name": "[concat('privatelink.api.azureml.ms', '/', uniqueString(variables('vnet')))]",
               "location": "global",
               "dependsOn": [
-                "[resourceid(parameters('vnetResourceGroupName'), 'Microsoft.Network/privateEndpoints', variables('privateEndpointName'))]",
+                "[resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/privateEndpoints', variables('privateEndpointName'))]",
                 "privatelink.api.azureml.ms"
               ],
               "tags": "[parameters('tagValues')]",
@@ -848,7 +848,7 @@
               "name": "[concat('privatelink.notebooks.azure.net', '/', uniqueString(variables('vnet')))]",
               "location": "global",
               "dependsOn": [
-                "[resourceid(parameters('vnetResourceGroupName'), 'Microsoft.Network/privateEndpoints', variables('privateEndpointName'))]",
+                "[resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/privateEndpoints', variables('privateEndpointName'))]",
                 "privatelink.notebooks.azure.net"
               ],
               "tags": "[parameters('tagValues')]",
@@ -866,7 +866,7 @@
               "name": "[concat(variables('privateEndpointName'), '/', 'default')]",
               "location": "[parameters('vnetLocation')]",
               "dependsOn": [
-                "[resourceid(parameters('vnetResourceGroupName'), 'Microsoft.Network/privateEndpoints', variables('privateEndpointName'))]",
+                "[resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/privateEndpoints', variables('privateEndpointName'))]",
                 "privatelink.notebooks.azure.net",
                 "privatelink.api.azureml.ms"
               ],
@@ -875,13 +875,13 @@
                   {
                     "name": "privatelink-api-azureml-ms",
                     "properties": {
-                      "privateDnsZoneId": "[resourceid(parameters('vnetResourceGroupName'), 'Microsoft.Network/privateDnsZones', 'privatelink.api.azureml.ms')]"
+                      "privateDnsZoneId": "[resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/privateDnsZones', 'privatelink.api.azureml.ms')]"
                     }
                   },
                   {
                     "name": "privatelink-notebooks-azure-net",
                     "properties": {
-                      "privateDnsZoneId": "[resourceid(parameters('vnetResourceGroupName'), 'Microsoft.Network/privateDnsZones', 'privatelink.notebooks.azure.net')]"
+                      "privateDnsZoneId": "[resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/privateDnsZones', 'privatelink.notebooks.azure.net')]"
                     }
                   }
                 ]

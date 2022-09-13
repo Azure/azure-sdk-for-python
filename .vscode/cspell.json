@@ -614,6 +614,20 @@
       ]
     },
     {
+      "filename": "sdk/ml/test-resources.json",
+      "words": [
+        "vnext",
+        "sdkvnextcli",
+        "GZRS",
+        "RAGZRS",
+        "kvtest",
+        "amlworkspace",
+        "euap",
+        "automl",
+        "azureml"
+      ]
+    },
+    {
       "filename": "sdk/ml/azure-ai-ml/**",
       "words": [
         "azureml",
@@ -803,7 +817,7 @@
         "shareduks"
       ]
     },
-    { 
+    {
       "filename": "sdk/deviceupdate/azure-iot-deviceupdate/**",
       "words": [
         "wday",
