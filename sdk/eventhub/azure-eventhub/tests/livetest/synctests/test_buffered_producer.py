@@ -93,6 +93,7 @@ def test_basic_send_single_events_round_robin(connection_str, flush_after_sendin
     receive_thread.daemon = True
     receive_thread.start()
 
+    time.sleep(5)
     sent_events = defaultdict(list)
 
     def on_success(events, pid):
@@ -199,6 +200,7 @@ def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending
     receive_thread.daemon = True
     receive_thread.start()
 
+    time.sleep(5)
     sent_events = defaultdict(list)
 
     def on_success(events, pid):
@@ -307,6 +309,7 @@ def test_send_with_hybrid_partition_assignment(connection_str, uamqp_transport):
     receive_thread.daemon = True
     receive_thread.start()
 
+    time.sleep(5)
     sent_events = defaultdict(list)
 
     def on_success(events, pid):
@@ -397,6 +400,7 @@ def test_send_with_timing_configuration(connection_str, uamqp_transport):
     receive_thread.daemon = True
     receive_thread.start()
 
+    time.sleep(5)
     sent_events = defaultdict(list)
 
     def on_success(events, pid):
@@ -475,6 +479,7 @@ def test_long_sleep(connection_str, uamqp_transport):
     receive_thread.daemon = True
     receive_thread.start()
 
+    time.sleep(5)
     sent_events = defaultdict(list)
 
     def on_success(events, pid):
