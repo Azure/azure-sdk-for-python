@@ -8,7 +8,7 @@ import time
 import logging
 import calendar
 from azure.core import MatchConditions
-from azure.eventhub.aio import CheckpointStore  # type: ignore  # pylint: disable=no-name-in-module
+from azure.eventhub._eventprocessor.checkpoint_store import CheckpointStore  # type: ignore  # pylint: disable=no-name-in-module
 from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
 from azure.core.exceptions import (
     ResourceModifiedError,
