@@ -398,6 +398,8 @@ class NginxConfigurationProperties(_serialization.Model):
     :vartype provisioning_state: str or ~azure.mgmt.nginx.models.ProvisioningState
     :ivar files:
     :vartype files: list[~azure.mgmt.nginx.models.NginxConfigurationFile]
+    :ivar protected_files:
+    :vartype protected_files: list[~azure.mgmt.nginx.models.NginxConfigurationFile]
     :ivar package:
     :vartype package: ~azure.mgmt.nginx.models.NginxConfigurationPackage
     :ivar root_file:
@@ -407,6 +409,7 @@ class NginxConfigurationProperties(_serialization.Model):
     _attribute_map = {
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "files": {"key": "files", "type": "[NginxConfigurationFile]"},
+        "protected_files": {"key": "protectedFiles", "type": "[NginxConfigurationFile]"},
         "package": {"key": "package", "type": "NginxConfigurationPackage"},
         "root_file": {"key": "rootFile", "type": "str"},
     }
@@ -416,6 +419,7 @@ class NginxConfigurationProperties(_serialization.Model):
         *,
         provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         files: Optional[List["_models.NginxConfigurationFile"]] = None,
+        protected_files: Optional[List["_models.NginxConfigurationFile"]] = None,
         package: Optional["_models.NginxConfigurationPackage"] = None,
         root_file: Optional[str] = None,
         **kwargs
@@ -426,6 +430,8 @@ class NginxConfigurationProperties(_serialization.Model):
         :paramtype provisioning_state: str or ~azure.mgmt.nginx.models.ProvisioningState
         :keyword files:
         :paramtype files: list[~azure.mgmt.nginx.models.NginxConfigurationFile]
+        :keyword protected_files:
+        :paramtype protected_files: list[~azure.mgmt.nginx.models.NginxConfigurationFile]
         :keyword package:
         :paramtype package: ~azure.mgmt.nginx.models.NginxConfigurationPackage
         :keyword root_file:
@@ -434,6 +440,7 @@ class NginxConfigurationProperties(_serialization.Model):
         super().__init__(**kwargs)
         self.provisioning_state = provisioning_state
         self.files = files
+        self.protected_files = protected_files
         self.package = package
         self.root_file = root_file
 
