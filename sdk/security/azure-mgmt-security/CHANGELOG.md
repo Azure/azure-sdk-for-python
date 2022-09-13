@@ -1,5 +1,102 @@
 # Release History
 
+## 2.0.0 (2022-09-13)
+
+### Features Added
+
+  - Added operation AlertsOperations.begin_simulate
+  - Added operation AlertsOperations.get_resource_group_level
+  - Added operation AlertsOperations.get_subscription_level
+  - Added operation AlertsOperations.list_resource_group_level_by_region
+  - Added operation AlertsOperations.list_subscription_level_by_region
+  - Added operation AlertsOperations.update_resource_group_level_state_to_activate
+  - Added operation AlertsOperations.update_resource_group_level_state_to_dismiss
+  - Added operation AlertsOperations.update_resource_group_level_state_to_in_progress
+  - Added operation AlertsOperations.update_subscription_level_state_to_activate
+  - Added operation AlertsOperations.update_subscription_level_state_to_dismiss
+  - Added operation AlertsOperations.update_subscription_level_state_to_in_progress
+  - Added operation group ApplicationOperations
+  - Added operation group ApplicationsOperations
+  - Added operation group CustomAssessmentAutomationsOperations
+  - Added operation group CustomEntityStoreAssignmentsOperations
+  - Added operation group GovernanceAssignmentsOperations
+  - Added operation group GovernanceRuleOperations
+  - Added operation group GovernanceRulesOperations
+  - Added operation group IngestionSettingsOperations
+  - Added operation group MdeOnboardingsOperations
+  - Added operation group SecurityConnectorApplicationOperations
+  - Added operation group SecurityConnectorApplicationsOperations
+  - Added operation group SecurityConnectorGovernanceRuleOperations
+  - Added operation group SecurityConnectorGovernanceRulesExecuteStatusOperations
+  - Added operation group SecurityConnectorGovernanceRulesOperations
+  - Added operation group SecurityConnectorsOperations
+  - Added operation group SoftwareInventoriesOperations
+  - Added operation group SubscriptionGovernanceRulesExecuteStatusOperations
+  - Model Alert has a new parameter sub_techniques
+  - Model Alert has a new parameter supporting_evidence
+  - Model Alert has a new parameter techniques
+  - Model Alert has a new parameter version
+  - Model IoTSecuritySolutionModel has a new parameter additional_workspaces
+  - Model IoTSecuritySolutionModel has a new parameter system_data
+  - Model Pricing has a new parameter deprecated
+  - Model Pricing has a new parameter replaced_by
+  - Model Pricing has a new parameter sub_plan
+  - Model SecurityAssessmentMetadata has a new parameter categories
+  - Model SecurityAssessmentMetadataProperties has a new parameter categories
+
+### Breaking Changes
+
+  - Model SecurityAssessmentMetadata no longer has parameter category
+  - Model SecurityAssessmentMetadataProperties no longer has parameter category
+  - Operation AdaptiveApplicationControlsOperations.delete has a new parameter asc_location
+  - Operation AdaptiveApplicationControlsOperations.get has a new parameter asc_location
+  - Operation AdaptiveApplicationControlsOperations.put has a new parameter asc_location
+  - Operation AlertsOperations.update_resource_group_level_state_to_resolve has a new parameter asc_location
+  - Operation AlertsOperations.update_subscription_level_state_to_resolve has a new parameter asc_location
+  - Operation AllowedConnectionsOperations.get has a new parameter asc_location
+  - Operation AllowedConnectionsOperations.list_by_home_region has a new parameter asc_location
+  - Operation DiscoveredSecuritySolutionsOperations.get has a new parameter asc_location
+  - Operation DiscoveredSecuritySolutionsOperations.list_by_home_region has a new parameter asc_location
+  - Operation ExternalSecuritySolutionsOperations.get has a new parameter asc_location
+  - Operation ExternalSecuritySolutionsOperations.list_by_home_region has a new parameter asc_location
+  - Operation JitNetworkAccessPoliciesOperations.create_or_update has a new parameter asc_location
+  - Operation JitNetworkAccessPoliciesOperations.delete has a new parameter asc_location
+  - Operation JitNetworkAccessPoliciesOperations.get has a new parameter asc_location
+  - Operation JitNetworkAccessPoliciesOperations.initiate has a new parameter asc_location
+  - Operation JitNetworkAccessPoliciesOperations.list_by_region has a new parameter asc_location
+  - Operation JitNetworkAccessPoliciesOperations.list_by_resource_group_and_region has a new parameter asc_location
+  - Operation LocationsOperations.get has a new parameter asc_location
+  - Operation SecuritySolutionsOperations.get has a new parameter asc_location
+  - Operation SecuritySolutionsReferenceDataOperations.list_by_home_region has a new parameter asc_location
+  - Operation TasksOperations.get_resource_group_level_task has a new parameter asc_location
+  - Operation TasksOperations.get_subscription_level_task has a new parameter asc_location
+  - Operation TasksOperations.list_by_home_region has a new parameter asc_location
+  - Operation TasksOperations.list_by_resource_group has a new parameter asc_location
+  - Operation TasksOperations.update_resource_group_level_task_state has a new parameter asc_location
+  - Operation TasksOperations.update_subscription_level_task_state has a new parameter asc_location
+  - Operation TopologyOperations.get has a new parameter asc_location
+  - Operation TopologyOperations.list_by_home_region has a new parameter asc_location
+  - Removed operation AlertsOperations.get_resource_group_level_alerts
+  - Removed operation AlertsOperations.get_subscription_level_alert
+  - Removed operation AlertsOperations.list_resource_group_level_alerts_by_region
+  - Removed operation AlertsOperations.list_subscription_level_alerts_by_region
+  - Removed operation AlertsOperations.update_resource_group_level_alert_state_to_dismiss
+  - Removed operation AlertsOperations.update_resource_group_level_alert_state_to_reactivate
+  - Removed operation AlertsOperations.update_subscription_level_alert_state_to_dismiss
+  - Removed operation AlertsOperations.update_subscription_level_alert_state_to_reactivate
+  - Removed operation group DeviceOperations
+  - Removed operation group DevicesForHubOperations
+  - Removed operation group DevicesForSubscriptionOperations
+  - Removed operation group IotAlertTypesOperations
+  - Removed operation group IotAlertsOperations
+  - Removed operation group IotDefenderSettingsOperations
+  - Removed operation group IotRecommendationTypesOperations
+  - Removed operation group IotRecommendationsOperations
+  - Removed operation group IotSensorsOperations
+  - Removed operation group IotSitesOperations
+  - Removed operation group OnPremiseIotSensorsOperations
+  - Renamed operation ServerVulnerabilityAssessmentOperations.delete to ServerVulnerabilityAssessmentOperations.begin_delete
+
 ## 2.0.0b1 (2021-08-10)
 
 **Features**
