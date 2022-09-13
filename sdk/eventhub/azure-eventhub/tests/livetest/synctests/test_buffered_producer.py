@@ -93,7 +93,7 @@ def test_basic_send_single_events_round_robin(connection_str, flush_after_sendin
     receive_thread.daemon = True
     receive_thread.start()
 
-    time.sleep(5)
+    time.sleep(10)
     sent_events = defaultdict(list)
 
     def on_success(events, pid):
@@ -200,7 +200,7 @@ def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending
     receive_thread.daemon = True
     receive_thread.start()
 
-    time.sleep(5)
+    time.sleep(10)
     sent_events = defaultdict(list)
 
     def on_success(events, pid):
