@@ -6,8 +6,8 @@ from azure.iot.hub import IoTHubRegistryManager #run pip install azure-iot-hub t
 from azure.iot.hub.models import CloudToDeviceMethod, CloudToDeviceMethodResult
 from datetime import time
 
-device_id = os.getenv("iothub_deviceid"); # cspell: disable-line
-module_d = os.getenv("iothub_moduleid"); # cspell: disable-line
+device_id = os.getenv("iothub_deviceid");
+module_d = os.getenv("iothub_moduleid");
 connection_string = os.getenv("iothub_connectionstring");
 live_pipeline_name = "pipelineInstance1"
 pipeline_topology_name = "pipelineTopology1"
@@ -112,10 +112,10 @@ def sendDeviceRequests(remote_device_adapter):
     remote_device_adapter_delete_response = invoke_method_helper(
         RemoteDeviceAdapterDeleteRequest(name=remote_device_adapter.name))
 
-    onvif_list_response = invoke_method_helper(OnvifDeviceDiscoverRequest()) # cspell: disable-line
+    onvif_list_response = invoke_method_helper(OnvifDeviceDiscoverRequest())
 
-    onvif_get_response = invoke_method_helper( # cspell: disable-line
-        OnvifDeviceGetRequest(endpoint=UnsecuredEndpoint(url="rtsp://camerasimulator:8554"))) # cspell: disable-line
+    onvif_get_response = invoke_method_helper(
+        OnvifDeviceGetRequest(endpoint=UnsecuredEndpoint(url="rtsp://camerasimulator:8554")))
 
 
 def main():

@@ -941,6 +941,15 @@
       "words": [
         "ONVIF"
       ]
+    },
+    {
+      "filename": "sdk/videoanalyzer/azure-media-videoanalyzer-edge/samples/sample_lva.py",
+      "words": [
+        "deviceid",
+        "moduleid",
+        "onvif",
+        "Onvif"
+      ]
     }
   ],
   "allowCompoundWords": true
