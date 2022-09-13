@@ -22,6 +22,7 @@ from azure.ai.ml.constants._common import (
     AssetTypes,
 )
 from azure.ai.ml.entities._assets import Artifact
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import get_md5_string, load_from_dict
 
 from .artifact import ArtifactStorageInfo
@@ -122,7 +123,7 @@ class Model(Artifact):
             tags=rest_model_version.tags,
             flavors=flavors,
             properties=rest_model_version.properties,
-            creation_context=model_rest_object.system_data,
+            creation_context=SystemData._from_rest_object(model_rest_object.system_data),
             type=rest_model_version.model_type,
             job_name=rest_model_version.job_name,
         )
@@ -134,7 +135,7 @@ class Model(Artifact):
             name=model_container_rest_object.name,
             version="1",
             id=model_container_rest_object.id,
-            creation_context=model_container_rest_object.system_data,
+            creation_context=SystemData._from_rest_object(model_container_rest_object.system_data),
         )
         model.latest_version = model_container_rest_object.properties.latest_version
 

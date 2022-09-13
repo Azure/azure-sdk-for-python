@@ -1818,6 +1818,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             )
             await poller.cancel()
 
+    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/26163")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async

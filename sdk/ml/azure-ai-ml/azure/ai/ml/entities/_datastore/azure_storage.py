@@ -156,7 +156,7 @@ class AzureBlobDatastore(Datastore):
         container_name: str,
         description: str = None,
         tags: Dict = None,
-        endpoint: str = _get_storage_endpoint_from_metadata(),
+        endpoint: str = None,
         protocol: str = HTTPS,
         properties: Dict = None,
         credentials: Union[AccountKeyCredentials, SasTokenCredentials] = None,
@@ -169,7 +169,7 @@ class AzureBlobDatastore(Datastore):
 
         self.container_name = container_name
         self.account_name = account_name
-        self.endpoint = endpoint
+        self.endpoint = endpoint if endpoint else _get_storage_endpoint_from_metadata()
         self.protocol = protocol
 
     def _to_rest_object(self) -> DatastoreData:

@@ -13,6 +13,8 @@ from unittest import mock
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInputType as JobInputType06
 from azure.ai.ml._schema._datastore import (
     AzureBlobSchema,
     AzureDataLakeGen1Schema,
@@ -365,3 +367,42 @@ def resolve_pipeline_parameter(data):
             )
         data = list(data.values())[0]
     return data
+
+
+def normalize_job_input_output_type(input_output_value):
+    """
+    We have change api to v2022_06_01_preview version and there are some api interface changes, which will result in
+    pipeline submitted by v2022_02_01_preview can't be parsed correctly. And this will block az ml job list/show.
+    So we convert the input/output type of camel to snake to be compatible with the Jun api.
+    """
+
+    FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING = {
+        JobInputType02.CUSTOM_MODEL: JobInputType06.CUSTOM_MODEL,
+        JobInputType02.LITERAL: JobInputType06.LITERAL,
+        JobInputType02.ML_FLOW_MODEL: JobInputType06.MLFLOW_MODEL,
+        JobInputType02.ML_TABLE: JobInputType06.MLTABLE,
+        JobInputType02.TRITON_MODEL: JobInputType06.TRITON_MODEL,
+        JobInputType02.URI_FILE: JobInputType06.URI_FILE,
+        JobInputType02.URI_FOLDER: JobInputType06.URI_FOLDER,
+    }
+    if (
+        hasattr(input_output_value, "job_input_type")
+        and input_output_value.job_input_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING
+    ):
+        input_output_value.job_input_type = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[input_output_value.job_input_type]
+    elif (
+        hasattr(input_output_value, "job_output_type")
+        and input_output_value.job_output_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING
+    ):
+        input_output_value.job_output_type = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[input_output_value.job_output_type]
+    elif isinstance(input_output_value, dict):
+        job_output_type = input_output_value.get("job_output_type", None)
+        job_input_type = input_output_value.get("job_input_type", None)
+        job_type = input_output_value.get("type", None)
+
+        if job_output_type and job_output_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING:
+            input_output_value["job_output_type"] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_output_type]
+        if job_input_type and job_input_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING:
+            input_output_value["job_input_type"] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_input_type]
+        if job_type and job_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING:
+            input_output_value["type"] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_type]

@@ -29,6 +29,7 @@ from azure.ai.ml.entities._job.command_job import CommandJob
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
 from azure.ai.ml.entities._job.sweep.sampling_algorithm import SamplingAlgorithm
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 
 from ..identity import AmlToken, Identity, ManagedIdentity, UserIdentity
@@ -209,7 +210,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             experiment_name=properties.experiment_name,
             services=properties.services,
             status=properties.status,
-            creation_context=obj.system_data,
+            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
             trial=trial,
             compute=properties.compute_id,
             sampling_algorithm=sampling_algorithm,

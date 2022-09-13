@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Iterator, Optional
+from typing import IO, Iterator, Optional
 
 from ._deserialize import from_blob_properties
 
@@ -59,7 +59,7 @@ class StorageStreamDownloader(object):
         """
         return self._downloader.readall()
 
-    def readinto(self, stream) -> int:
+    def readinto(self, stream: IO[bytes]) -> int:
         """Download the contents of this file to a stream.
 
         :param stream:

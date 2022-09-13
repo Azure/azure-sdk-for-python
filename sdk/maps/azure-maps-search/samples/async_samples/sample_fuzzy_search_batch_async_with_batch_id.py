@@ -64,6 +64,4 @@ async def main():
     await fuzzy_search_batch_with_batch_id(result.batch_id)
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
-    loop.close()
+    asyncio.run(main())

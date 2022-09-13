@@ -50,7 +50,7 @@ class InsertDeleteEntity(object):
             "last_updated": datetime.today(),
             "product_id": uuid4(),
             "inventory_count": 42,
-            "barcode": b"135aefg8oj0ld58"
+            "barcode": b"135aefg8oj0ld58" # cspell:disable-line
         }
 
     async def create_entity(self):
