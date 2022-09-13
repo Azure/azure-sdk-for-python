@@ -151,7 +151,7 @@ def test_basic_send_single_events_round_robin(connection_str, flush_after_sendin
         time.sleep(10)
 
         for pid in partitions:
-            while received_events[pid] < sent_events[pid]:
+            while len(received_events[pid]) < len(sent_events[pid]):
                 consumer.receive(
                     on_event=on_event,
                 )
@@ -282,7 +282,7 @@ def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending
         time.sleep(10)      
     
         for pid in partitions:
-            while received_events[pid] < sent_events[pid]:
+            while len(received_events[pid]) < len(sent_events[pid]):
                 consumer.receive(
                     on_event=on_event,
                 )
@@ -383,7 +383,7 @@ def test_send_with_hybrid_partition_assignment(connection_str, uamqp_transport):
 
         time.sleep(10)
         for pid in partitions:
-            while received_events[pid] < sent_events[pid]:
+            while len(received_events[pid]) < len(sent_events[pid]):
                 consumer.receive(
                     on_event=on_event,
                 )
@@ -484,7 +484,7 @@ def test_send_with_timing_configuration(connection_str, uamqp_transport):
 
     time.sleep(5)
     for pid in partitions:
-        while received_events[pid] < sent_events[pid]:
+        while len(received_events[pid]) < len(sent_events[pid]):
             consumer.receive(
                 on_event=on_event,
             )
@@ -531,7 +531,7 @@ def test_long_sleep(connection_str, uamqp_transport):
         producer.send_event(EventData("test"), partition_id="0")
         time.sleep(5)
 
-    while received_events["0"] < sent_events["0"]:
+    while len(received_events["0"]) < len(sent_events["0"]):
         consumer.receive(
             on_event=on_event,
         )
@@ -587,7 +587,7 @@ def test_long_wait_small_buffer(connection_str):
     time.sleep(60)
 
     for key in sent_events:
-        while received_events[key] < sent_events[key]:
+        while len(received_events[key]) < len(sent_events[key]):
             consumer.receive(
                 on_event=on_event,
             )
