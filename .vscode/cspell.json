@@ -76,7 +76,6 @@
     "sdk/servicebus/azure-servicebus/**",
     "sdk/storage/azure-storage-queue/**",
     "sdk/synapse/azure-synapse/**",
-    "sdk/videoanalyzer/azure-media-videoanalyzer-edge/**",
     "sdk/synapse/azure-synapse-artifacts/**",
     "sdk/translation/azure-ai-translation-document/samples/assets/**",
     "sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv",
@@ -934,6 +933,21 @@
         "nonly",
         "nthe",
         "reques"
+      ]
+    },
+    {
+      "filename": "sdk/videoanalyzer/azure-media-videoanalyzer-edge/CHANGELOG.md",
+      "words": [
+        "ONVIF"
+      ]
+    },
+    {
+      "filename": "sdk/videoanalyzer/azure-media-videoanalyzer-edge/samples/sample_lva.py",
+      "words": [
+        "deviceid",
+        "moduleid",
+        "onvif",
+        "Onvif"
       ]
     },
     {
