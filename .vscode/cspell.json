@@ -50,7 +50,6 @@
     "sdk/communication/azure-communication-chat/**",
     "sdk/communication/azure-communication-phonenumbers/**",
     "sdk/communication/azure-communication-sms/**",
-    "sdk/confidentialledger/azure-confidentialledger/**",
     "sdk/core/azure/**",
     "sdk/core/azure-common/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
@@ -935,6 +934,74 @@
         "nonly",
         "nthe",
         "reques"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/_operations/*.py",
+      "words": [
+        "mrenclave",
+        "MRENCLAVE",
+        "oeverify"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/*.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "ctxt",
+        "wday",
+        "mday",
+        "deseralize",
+        "astimezone"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/aio/_operations/*.py",
+      "words": [
+        "mrenclave",
+        "MRENCLAVE",
+        "oeverify",
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "mday",
+        "deseralize",
+        "astimezone"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/certificate/*.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "mday",
+        "deseralize",
+        "wday",
+        "mday",
+        "deseralize",
+        "astimezone"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/samples/*.py",
+      "words": [
+        "tids",
+        "MRENCLAVE",
+        "mrenclave",
+        "seqno"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/tests/*.py",
+      "words": [
+        "seqno",
+        "mrenclave",
+        "infile"
       ]
     }
   ],
