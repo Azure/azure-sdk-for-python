@@ -19,6 +19,7 @@
 
 """Create throughput properties in the Azure Cosmos DB SQL API service.
 """
+from typing import Dict, Any
 
 
 class ThroughputProperties(object):
@@ -36,11 +37,12 @@ class ThroughputProperties(object):
      the increment percent should be greater than or equal to zero.
     """
 
-    def __init__(self, *args, **kwargs):  # pylint: disable=super-init-not-called
+    def __init__(self, *args, **kwargs): # pylint: disable=super-init-not-called
         self.offer_throughput = args[0] if args else kwargs.get('offer_throughput')
         self.properties = args[1] if len(args) > 1 else kwargs.get('properties')
         self.auto_scale_max_throughput = kwargs.get('auto_scale_max_throughput')
         self.auto_scale_increment_percent = kwargs.get('auto_scale_increment_percent')
+
 
 
 Offer = ThroughputProperties
