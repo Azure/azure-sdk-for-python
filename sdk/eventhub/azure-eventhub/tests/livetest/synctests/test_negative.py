@@ -145,6 +145,8 @@ def test_create_batch_with_too_large_size_sync(connection_str, uamqp_transport):
 
 @pytest.mark.liveTest
 def test_invalid_proxy_server(connection_str, uamqp_transport):
+    if uamqp_transport:
+        pytest.skip()
     HTTP_PROXY = {
     'proxy_hostname': 'fakeproxy',  # proxy hostname.
     'proxy_port': 3128,  # proxy port.
