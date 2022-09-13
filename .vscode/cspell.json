@@ -785,6 +785,12 @@
         "hierarchicals",
         "listprebuilts"
       ]
+    },
+    {
+      "filename": "sdk/cognitiveservices/azure-cognitiveservices-language-luis/CHANGELOG.md",
+      "words": [
+        "hierarchicals"
+      ]
     }
   ],
   "allowCompoundWords": true

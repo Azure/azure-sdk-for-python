@@ -68,7 +68,7 @@
   - Model FeatureInfoObject has a new parameter
     enabled_for_all_models
   - Model LuisApp has a new parameter phraselists
-  - Model LuisApp has a new parameter hierarchicals <!-- cspell: disable-line -->
+  - Model LuisApp has a new parameter hierarchicals
   - Model HierarchicalModel has a new parameter features
   - Added operation ModelOperations.get_intent_features
   - Added operation ModelOperations.replace_intent_features
