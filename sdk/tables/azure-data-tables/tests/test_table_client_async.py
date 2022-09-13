@@ -11,13 +11,12 @@ from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.data.tables.aio import TableServiceClient, TableClient
-from azure.data.tables import TableTransactionError
 from azure.data.tables._version import VERSION
 
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import tables_decorator_async
-from devtools_testutils import AzureTestCase
 # ------------------------------------------------------------------------------
 SERVICES = {
     TableServiceClient: 'table',
@@ -146,30 +145,30 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
         invalid_url = url + "/" + table_name
         # test table client has the same table name as in url
         tc = TableClient(invalid_url, table_name, credential=tables_primary_storage_account_key)
-        with pytest.raises(ValueError) as exc:
+        with pytest.raises(ResourceNotFoundError) as exc:
             await tc.create_table()
         assert ("table specified does not exist") in str(exc.value)
-        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
         # test table client has a different table name as in url
         table_name2 = self.get_resource_name("mytable2")
         tc2 = TableClient(invalid_url, table_name2, credential=tables_primary_storage_account_key)
-        with pytest.raises(ValueError) as exc:
+        with pytest.raises(ResourceNotFoundError) as exc:
             await tc2.create_table()
         assert ("table specified does not exist") in str(exc.value)
-        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
 
         valid_tc = TableClient(url, table_name, credential=tables_primary_storage_account_key)
         await valid_tc.create_table()
         # test creating a table when it already exists
-        with pytest.raises(ValueError) as exc:
+        with pytest.raises(HttpResponseError) as exc:
             await tc.create_table()
         assert ("values are not specified") in str(exc.value)
-        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
         # test deleting a table when it already exists
-        with pytest.raises(ValueError) as exc:
+        with pytest.raises(HttpResponseError) as exc:
             await tc.delete_table()
         assert ("URI does not match number of key properties for the resource") in str(exc.value)
-        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
         await valid_tc.delete_table()
 
 

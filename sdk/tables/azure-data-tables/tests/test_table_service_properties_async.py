@@ -11,7 +11,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 from azure.data.tables import TableAnalyticsLogging, TableMetrics, TableRetentionPolicy, TableCorsRule
 from azure.data.tables.aio import TableServiceClient
@@ -158,25 +158,25 @@ class TestTableServicePropertiesAsync(AzureRecordedTestCase, TableTestCase):
         invalid_url = url + "/" + table_name
         tsc = TableServiceClient(invalid_url, credential=tables_primary_storage_account_key)
 
-        with pytest.raises(ValueError) as exc:
+        with pytest.raises(ResourceNotFoundError) as exc:
             await tsc.create_table(table_name)
         assert ("table specified does not exist") in str(exc.value)
-        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
 
-        with pytest.raises(ValueError) as exc:
+        with pytest.raises(ResourceNotFoundError) as exc:
             await tsc.create_table_if_not_exists(table_name)
         assert ("table specified does not exist") in str(exc.value)
-        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
 
-        with pytest.raises(ValueError) as exc:
+        with pytest.raises(HttpResponseError) as exc:
             await tsc.set_service_properties(analytics_logging=TableAnalyticsLogging(write=True))
         assert ("URI is invalid") in str(exc.value)
-        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
 
-        with pytest.raises(ValueError) as exc:
+        with pytest.raises(HttpResponseError) as exc:
             await tsc.get_service_properties()
         assert ("URI is invalid") in str(exc.value)
-        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
 
         await tsc.delete_table(table_name)
 

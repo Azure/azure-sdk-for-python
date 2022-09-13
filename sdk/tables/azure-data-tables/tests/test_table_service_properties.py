@@ -17,7 +17,7 @@ from azure.data.tables import (
     TableRetentionPolicy,
     TableCorsRule
 )
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 from _shared.testcase import TableTestCase
 from preparers import tables_decorator
@@ -159,25 +159,25 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
         invalid_url = url + "/" + table_name
         tsc = TableServiceClient(invalid_url, credential=tables_primary_storage_account_key)
 
-        with pytest.raises(ValueError) as exc:
+        with pytest.raises(ResourceNotFoundError) as exc:
             tsc.create_table(table_name)
         assert ("table specified does not exist") in str(exc.value)
-        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
 
-        with pytest.raises(ValueError) as exc:
+        with pytest.raises(ResourceNotFoundError) as exc:
             tsc.create_table_if_not_exists(table_name)
         assert ("table specified does not exist") in str(exc.value)
-        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
 
-        with pytest.raises(ValueError) as exc:
+        with pytest.raises(HttpResponseError) as exc:
             tsc.set_service_properties(analytics_logging=TableAnalyticsLogging(write=True))
         assert ("URI is invalid") in str(exc.value)
-        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
 
-        with pytest.raises(ValueError) as exc:
+        with pytest.raises(HttpResponseError) as exc:
             tsc.get_service_properties()
         assert ("URI is invalid") in str(exc.value)
-        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
 
         tsc.delete_table(table_name)
 

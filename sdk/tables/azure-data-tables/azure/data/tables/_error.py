@@ -217,9 +217,11 @@ def _reprocess_error(decoded_error, identifiers=None):
         error_code == "PropertiesNeedValue" and properties_need_value in message or
         error_code =="TableNotFound" and table_does_not_exist in message
         ):
-        decoded_error.message = message + "\nA possible cause of this error could be that the account URL used to"\
+        args_list = list(decoded_error.args)
+        args_list[0] += "\nA possible cause of this error could be that the account URL used to"\
             "create the Client includes an invalid path, for example the table name. Please check your account URL."
-        raise decoded_error
+        decoded_error.args = tuple(args_list)
+
     if (identifiers is not None and error_code == "InvalidXmlDocument" and len(identifiers) > 5):
         raise ValueError(
             "Too many access policies provided. The server does not support setting more than 5 access policies"\
