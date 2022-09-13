@@ -4,12 +4,12 @@
 # license information.
 # -------------------------------------------------------------------------
 
+from __future__ import annotations
 import time
 import uuid
 from datetime import datetime
 import warnings
 from typing import Optional, Any, cast, Mapping, Union, Dict, List
-from __future__ import annotations
 
 from msrest.serialization import TZ_UTC
 import uamqp
