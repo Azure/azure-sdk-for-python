@@ -8,6 +8,7 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Union
 
+from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentity
 from azure.ai.ml._restclient.v2022_05_01.models import Workspace as RestWorkspace
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
@@ -82,7 +83,7 @@ class Workspace(Resource):
             when a workspace is private link enabled.
         :type public_network_access: str
         :param identity: workspace's Managed Identity (user assigned, or system assigned)
-        :type identity: WorkspaceIdentity
+        :type identity: ManagedServiceIdentity
         :param primary_user_assigned_identity: The workspace's primary user assigned identity
         :type primary_user_assigned_identity: str
         :param kwargs: A dictionary of additional configuration parameters.
@@ -189,6 +190,9 @@ class Workspace(Resource):
 
         armid_parts = str(rest_obj.id).split("/")
         group = None if len(armid_parts) < 4 else armid_parts[4]
+        identity = None
+        if rest_obj.identity and isinstance(rest_obj.identity, RestManagedServiceIdentity):
+            identity = ManagedServiceIdentity._from_rest_object(rest_obj.identity)
         return Workspace(
             name=rest_obj.name,
             id=rest_obj.id,
@@ -207,6 +211,6 @@ class Workspace(Resource):
             image_build_compute=rest_obj.image_build_compute,
             public_network_access=rest_obj.public_network_access,
             mlflow_tracking_uri=mlflow_tracking_uri,
-            identity=rest_obj.identity,
+            identity=identity,
             primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
         )

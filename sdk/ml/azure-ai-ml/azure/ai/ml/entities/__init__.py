@@ -10,6 +10,7 @@ from ._assets._artifacts.data import Data
 from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
 from ._assets.environment import BuildContext, Environment
+from ._builders import Command, Parallel, Pipeline, Spark, Sweep
 from ._component.command_component import CommandComponent
 from ._component.component import Component
 from ._component.parallel_component import ParallelComponent
@@ -82,7 +83,8 @@ from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
 from ._system_data import SystemData
 from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.customer_managed_key import CustomerManagedKey
-from ._workspace.identity import ManagedServiceIdentity, ManagedServiceIdentityType
+from ._workspace.identity import ManagedServiceIdentity
+from ._workspace.identity import UserAssignedIdentity as WorkspaceUserAssignedIdentity
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 
@@ -134,7 +136,7 @@ __all__ = [
     "Workspace",
     "WorkspaceConnection",
     "ManagedServiceIdentity",
-    "ManagedServiceIdentityType",
+    "WorkspaceUserAssignedIdentity",
     "PrivateEndpoint",
     "EndpointConnection",
     "CustomerManagedKey",
@@ -193,4 +195,10 @@ __all__ = [
     "SynapseSparkCompute",
     "AutoScaleSettings",
     "AutoPauseSettings",
+    # builders
+    "Command",
+    "Parallel",
+    "Sweep",
+    "Spark",
+    "Pipeline",
 ]

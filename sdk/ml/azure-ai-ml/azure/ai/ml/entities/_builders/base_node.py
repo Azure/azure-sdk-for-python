@@ -65,6 +65,9 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
     """Base class for node in pipeline, used for component version consumption.
     Can't be instantiated directly.
 
+    You should not instantiate this class directly. Instead, you should
+    create from a builder function.
+
     :param type: Type of pipeline node
     :type type: str
     :param component: Id or instance of the component version to be run for the step
@@ -377,11 +380,11 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         return convert_ordered_dict_to_dict(rest_obj)
 
     @property
-    def inputs(self) -> InputsAttrDict:
+    def inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
         return self._inputs
 
     @property
-    def outputs(self) -> OutputsAttrDict:
+    def outputs(self) -> Dict[str, Union[str, Output]]:
         return self._outputs
 
     def __str__(self):

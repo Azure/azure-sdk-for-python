@@ -232,6 +232,7 @@ def expected_classification_job(
     return _get_rest_automl_job(
         RestClassification(
             target_column_name=expected_target_column_name,
+            positive_label="label",
             training_data=expected_training_data,
             validation_data=expected_validation_data,
             test_data=expected_test_data,

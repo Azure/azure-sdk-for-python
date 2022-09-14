@@ -5,15 +5,9 @@ import pytest
 from pytest_mock import MockFixture
 
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.entities._workspace.customer_managed_key import CustomerManagedKey
-from azure.ai.ml.entities._workspace.identity import (
-    ManagedServiceIdentity,
-    ManagedServiceIdentityType,
-    UserAssignedIdentity,
-)
-from azure.ai.ml.entities._workspace.workspace import Workspace
+from azure.ai.ml.constants import ManagedServiceIdentityType
+from azure.ai.ml.entities import CustomerManagedKey, ManagedServiceIdentity, Workspace, WorkspaceUserAssignedIdentity
 from azure.ai.ml.operations import WorkspaceOperations
-from azure.core.exceptions import ResourceExistsError
 from azure.core.polling import LROPoller
 
 
@@ -127,7 +121,10 @@ class TestWorkspaceOperation:
             application_insights="foo_application_insights",
             identity=ManagedServiceIdentity(
                 type=ManagedServiceIdentityType.USER_ASSIGNED,
-                user_assigned_identities={"resource1": UserAssignedIdentity(), "resource2": UserAssignedIdentity()},
+                user_assigned_identities={
+                    "resource1": WorkspaceUserAssignedIdentity(),
+                    "resource2": WorkspaceUserAssignedIdentity(),
+                },
             ),
             primary_user_assigned_identity="resource2",
         )

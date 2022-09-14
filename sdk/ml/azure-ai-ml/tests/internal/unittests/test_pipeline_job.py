@@ -271,3 +271,21 @@ class TestPipelineJob:
             "node": dsl_pipeline.jobs["node"]._to_rest_object(),
             "node_internal": scope_node._to_rest_object(),
         }
+
+    def test_components_in_registry(self):
+        command_func = load_component("./tests/test_configs/components/helloworld_component.yml")
+        registry_code_id = "azureml://feeds/testFeed/codes/hello_component/versions/0.0.1"
+
+        @pipeline()
+        def pipeline_func():
+            node = command_func(component_in_path=Input(path="./tests/test_configs/data"))
+
+            # can't create a component from azureml-components in ci workspace
+            # so just use a local test
+            node._component.code = registry_code_id
+            node.compute = "cpu-cluster"
+
+        dsl_pipeline: PipelineJob = pipeline_func()
+        assert dsl_pipeline._validate().passed
+        regenerated_pipeline_job = PipelineJob._from_rest_object(dsl_pipeline._to_rest_object())
+        assert dsl_pipeline._to_dict() == regenerated_pipeline_job._to_dict()

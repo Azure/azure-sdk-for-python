@@ -138,12 +138,14 @@ def mock_batch_endpoint_operations(
     mock_machinelearning_client._operation_container.add(AzureMLResourceType.DATA, mock_data_operations)
     mock_machinelearning_client._operation_container.add(AzureMLResourceType.WORKSPACE, mock_workspace_operations)
 
+    kwargs = {"service_client_09_2020_dataplanepreview": mock_aml_services_2020_09_01_dataplanepreview}
+
     yield BatchEndpointOperations(
         operation_scope=mock_workspace_scope,
         service_client_05_2022=mock_aml_services_2022_05_01,
-        service_client_09_2020_dataplanepreview=mock_aml_services_2020_09_01_dataplanepreview,
         all_operations=mock_machinelearning_client._operation_container,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
+        **kwargs,
     )
 
 

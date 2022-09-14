@@ -17,13 +17,16 @@ from azure.ai.ml.entities._util import load_from_dict
 
 from .registry_support_classes import RegistryRegionArmDetails
 
+YAML_REGION_DETAILS = "replication_locations"
+YAML_SINGLE_ACR_DETAIL = "container_registry"
+CLASS_REGION_DETAILS = "region_details"
+
 
 class Registry(Resource):
     def __init__(
         self,
         *,
         name: str,
-        id: str,
         location: str,
         description: str = None,
         tags: Dict[str, str] = None,
@@ -42,8 +45,6 @@ class Registry(Resource):
         :type name: str
         :param tags: Tags of the registry.
         :type tags: dict
-        :param id: Registry ID.
-        :type id: str
         :param location: The location this registry resource is located in.
         :type location: str
         :param description: Description of the registry.
@@ -54,8 +55,6 @@ class Registry(Resource):
         :type intellectual_property_publisher: str
         :param managed_resource_group: Managed resource group created for the registry.
         :type managed_resource_group: str
-        :param private_link_count: Private link count.
-        :type private_link_count: int
         :param region_details: Details of each region the registry is in.
         :type region_details: List[RegistryRegionArmDetails]
         :param kwargs: A dictionary of additional configuration parameters.
@@ -64,13 +63,12 @@ class Registry(Resource):
 
         super().__init__(name=name, description=description, tags=tags, **kwargs)
 
-        self.id = id
+        # self.display_name = name # Do we need a top-level visible name value?
         self.location = location
         self.region_details = region_details
         self.public_network_access = public_network_access
         self.intellectual_property_publisher = intellectual_property_publisher
         self.managed_resource_group = managed_resource_group
-        self.private_link_count = private_link_count
         self.discovery_url = discovery_url
         self.mlflow_registry_uri = mlflow_registry_uri
 
@@ -102,6 +100,8 @@ class Registry(Resource):
             PARAMS_OVERRIDE_KEY: params_override,
         }
         loaded_schema = load_from_dict(RegistrySchema, data, context, **kwargs)
+        cls._convert_yaml_dict_to_entity_input(loaded_schema)
+        # https://dev.azure.com/msdata/Vienna/_workitems/edit/1971490/
         # TODO - ensure that top-level location, if set, exists among managed locations, throw error otherwise.
         return Registry(**loaded_schema)
 
@@ -109,5 +109,42 @@ class Registry(Resource):
     def _from_rest_object(cls, rest_obj: RestRegistry) -> "Registry":
         if not rest_obj:
             return None
-        # real_registry = RestRegistry.properties
-        raise NotImplementedError()
+        real_registry = rest_obj.properties
+
+        region_details = []
+        if real_registry.region_details:
+            region_details = [
+                RegistryRegionArmDetails._from_rest_object(details) for details in real_registry.region_details
+            ]
+        return Registry(
+            name=rest_obj.name,
+            description=real_registry.description,
+            tags=real_registry.tags,
+            location=rest_obj.location,
+            public_network_access=real_registry.public_network_access,
+            discovery_url=real_registry.discovery_url,
+            intellectual_property_publisher=real_registry.intellectual_property_publisher,
+            managed_resource_group=real_registry.managed_resource_group,
+            mlflow_registry_uri=real_registry.ml_flow_registry_uri,
+            region_details=region_details,
+        )
+
+    # There are differences between what our registry validation schema
+    # accepts, and how we actually represent things internally.
+    # This is mostly due to the compromise required to balance
+    # the actual shape of registries as they're defined by
+    # autorest with how the spec wanted users to be able to
+    # configure them
+    @classmethod
+    def _convert_yaml_dict_to_entity_input(cls, input: Dict):
+        # change replication_locations to region_details
+        global_acr_exists = False
+        if YAML_REGION_DETAILS in input:
+            input[CLASS_REGION_DETAILS] = input.pop(YAML_REGION_DETAILS)
+        if YAML_SINGLE_ACR_DETAIL in input:
+            acr_input = input.pop(YAML_SINGLE_ACR_DETAIL)
+            global_acr_exists = True
+        for region_detail in input[CLASS_REGION_DETAILS]:
+            if global_acr_exists:
+                if not hasattr(region_detail, "acr_details") or len(region_detail.acr_details) == 0:
+                    region_detail.acr_config = [acr_input]

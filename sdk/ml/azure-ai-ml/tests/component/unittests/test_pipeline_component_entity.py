@@ -88,7 +88,7 @@ class TestPipelineComponentEntity:
                 "component_a_job": {
                     "$schema": "{}",
                     "command": "echo Hello World & echo "
-                    "[${{inputs.component_in_number}}] & "
+                    "$[[${{inputs.component_in_number}}]] & "
                     "echo ${{inputs.component_in_path}} & "
                     "echo ${{outputs.component_out_path}} "
                     "> "
@@ -97,7 +97,7 @@ class TestPipelineComponentEntity:
                         "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json",
                         "command": "echo Hello World & "
                         "echo "
-                        "[${{inputs.component_in_number}}] "
+                        "$[[${{inputs.component_in_number}}]] "
                         "& echo "
                         "${{inputs.component_in_path}} "
                         "& echo "
@@ -186,7 +186,7 @@ class TestPipelineComponentEntity:
                                 "World "
                                 "& "
                                 "echo "
-                                "[${{inputs.component_in_number}}] "
+                                "$[[${{inputs.component_in_number}}]] "
                                 "& "
                                 "echo "
                                 "${{inputs.component_in_path}} "
@@ -202,7 +202,7 @@ class TestPipelineComponentEntity:
                                     "World "
                                     "& "
                                     "echo "
-                                    "[${{inputs.component_in_number}}] "
+                                    "$[[${{inputs.component_in_number}}]] "
                                     "& "
                                     "echo "
                                     "${{inputs.component_in_path}} "

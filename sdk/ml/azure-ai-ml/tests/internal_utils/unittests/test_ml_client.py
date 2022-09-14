@@ -18,6 +18,7 @@ from azure.ai.ml import (
     load_model,
     load_online_deployment,
     load_online_endpoint,
+    load_registry,
     load_workspace,
     load_workspace_connection,
 )
@@ -94,6 +95,7 @@ class TestMachineLearningClient:
         assert ml_client.jobs._operation_2022_06_preview._client._base_url == mock_url
         assert ml_client.jobs._kwargs["enforce_https"] is False
 
+    # @patch("azure.ai.ml._ml_client.RegistryOperations", Mock())
     @patch("azure.ai.ml._ml_client.ComputeOperations", Mock())
     @patch("azure.ai.ml._ml_client.DatastoreOperations", Mock())
     @patch("azure.ai.ml._ml_client.JobOperations", Mock())
@@ -186,6 +188,7 @@ class TestMachineLearningClient:
     @patch("azure.ai.ml._ml_client.DatastoreOperations", Mock())
     @patch("azure.ai.ml._ml_client.JobOperations", Mock())
     @patch("azure.ai.ml._ml_client.WorkspaceOperations", Mock())
+    @patch("azure.ai.ml._ml_client.RegistryOperations", Mock())
     @patch("azure.ai.ml._ml_client.ModelOperations", Mock())
     @patch("azure.ai.ml._ml_client.DataOperations", Mock())
     @patch("azure.ai.ml._ml_client.CodeOperations", Mock())
@@ -200,6 +203,13 @@ class TestMachineLearningClient:
         [
             ([load_compute("tests/test_configs/compute/compute-ci.yaml")], {}, "compute", 1, "begin_create_or_update"),
             ([load_workspace("tests/test_configs/workspace/workspace_full.yaml")], {}, "workspaces", 1, "begin_create"),
+            (
+                [load_registry("tests/test_configs/registry/registry_valid.yaml")],
+                {},
+                "registries",
+                1,
+                "begin_create_or_update",
+            ),
             (
                 [load_online_endpoint("tests/test_configs/endpoints/online/online_endpoint_create_k8s.yml")],
                 {},

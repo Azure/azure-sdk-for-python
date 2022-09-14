@@ -32,12 +32,17 @@ class ClassificationJob(AutoMLTabular):
         self,
         *,
         primary_metric: str = None,
+        positive_label: str = None,
         **kwargs,
     ) -> None:
         """Initialize a new AutoML Classification task.
 
         :param primary_metric: The primary metric to use for optimization
+        :type primary_metric: str, optional
+        :param positive_label: Positive label for binary metrics calculation.
+        :type positive_label: str, optional
         :param kwargs: Job-specific arguments
+        :type kwargs: dict
         """
         # Extract any task specific settings
         featurization = kwargs.pop("featurization", None)
@@ -53,6 +58,7 @@ class ClassificationJob(AutoMLTabular):
         )
 
         self.primary_metric = primary_metric or ClassificationJob._DEFAULT_PRIMARY_METRIC
+        self.positive_label = positive_label
 
     @property
     def primary_metric(self):
@@ -89,6 +95,7 @@ class ClassificationJob(AutoMLTabular):
             limit_settings=self._limits._to_rest_object() if self._limits else None,
             training_settings=self._training._to_rest_object() if self._training else None,
             primary_metric=self.primary_metric,
+            positive_label=self.positive_label,
             log_verbosity=self.log_verbosity,
         )
         self._resolve_data_inputs(classification_task)
@@ -156,6 +163,7 @@ class ClassificationJob(AutoMLTabular):
             if task_details.training_settings
             else None,
             primary_metric=task_details.primary_metric,
+            positive_label=task_details.positive_label,
             log_verbosity=task_details.log_verbosity,
             **job_args_dict,
         )
