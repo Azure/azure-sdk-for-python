@@ -739,13 +739,15 @@ def _replace_throughput(throughput: Union[int, ThroughputProperties], new_throug
     max_throughput = throughput.auto_scale_max_throughput
     increment_percent = throughput.auto_scale_increment_percent
 
-    if isinstance(throughput, object):
+    try:
         if max_throughput is not None:
             new_throughput_properties['content']['offerAutopilotSettings'][
                 'maxThroughput'] = max_throughput
             if increment_percent:
                 new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
                     'incrementPercent'] = increment_percent
-
-    if isinstance(throughput, int):
-        new_throughput_properties["content"]["offerThroughput"] = throughput
+    except AttributeError:
+        if isinstance(throughput, int):
+            new_throughput_properties["content"]["offerThroughput"] = throughput
+        else:
+            raise TypeError("offer_throughput must be int or an instance of ThroughputProperties")
