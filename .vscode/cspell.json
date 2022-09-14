@@ -78,7 +78,6 @@
     "sdk/storage/azure-storage-queue/**",
     "sdk/synapse/azure-synapse/**",
     "sdk/videoanalyzer/azure-media-videoanalyzer-edge/**",
-    "sdk/synapse/azure-synapse-artifacts/**",
     "sdk/translation/azure-ai-translation-document/samples/assets/**",
     "sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv",
     "sdk/storage/azure-storage-blob/**",
@@ -405,7 +404,7 @@
         "dann",
         "UMLS",
         "nach",
-        "año",
+        "an?o",
         "BRCPF",
         "abril",
         "zalgo",
@@ -568,6 +567,57 @@
         "pyspark",
         "ename",
         "evalue"
+      ]
+    },
+    {
+      "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/aio/operations/*.py",
+      "words": [
+        "Syms",
+        "MetastoreUpdation"
+      ]
+    },
+    {
+      "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/models/*.py",
+      "words": [
+        "USQL",
+        "Eloqua",
+        "Hdfs",
+        "Informix",
+        "Magento",
+        "MetastoreUpdation",
+        "Netezza",
+        "Odbc",
+        "Responsys",
+        "Sybase",
+        "Twilio",
+        "Vertica",
+        "Xero",
+        "SASL",
+        "SSISDB",
+        "WTGCTBG",
+        "ilearner",
+        "DBFS",
+        "eloqua",
+        "byoa",
+        "cacerts",
+        "HDFS",
+        "hcatalog",
+        "ondemand",
+        "oozie",
+        "magento",
+        "mktorest",
+        "nbformat",
+        "paramref",
+        "myshopify",
+        "mysquare",
+        "xero"
+      ]
+    },
+    {
+      "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/operations/*.py",
+      "words": [
+        "Syms",
+        "Updation",
       ]
     },
     {
