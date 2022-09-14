@@ -23,6 +23,8 @@ _INTEGER_MIN = Int32.minval
 # Sampler is responsible for the following:
 # Implements same trace id hashing algorithm so that traces are sampled the same across multiple nodes (via AI SDKS)
 # Adds item count to span attribute if span is sampled (needed for ingestion service)
+# Inherits from the Sampler interface as defined by OpenTelemetry
+# https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/sdk.md#sampler
 class ApplicationInsightsSampler(Sampler):
     """Sampler that implements the same probability sampling algorithm as the ApplicationInsights SDKs."""
 
@@ -57,7 +59,6 @@ class ApplicationInsightsSampler(Sampler):
         if attributes is None:
             attributes = {}
         attributes["sampleRate"] = self._sample_rate
-        print(decision.name)
         return SamplingResult(
             decision,
             attributes,
