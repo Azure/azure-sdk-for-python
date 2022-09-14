@@ -14,10 +14,10 @@ from testcase import AppConfigTestCase
 class AsyncAppConfigTestCase(AppConfigTestCase):
     def create_aad_client(self, appconfiguration_endpoint_string):
         cred = self.get_credential(AzureAppConfigurationClient, is_async=True)
-        return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, transport=AioHttpTransport())
+        return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
     
-    def create_client(self, appconfiguration_connection_string, transport=AioHttpTransport()):
-        return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string, transport=transport)
+    def create_client(self, appconfiguration_connection_string):
+        return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
 
     async def add_for_test(self, client, config_setting):
         exist_list = await self.convert_to_list(client.list_configuration_settings(
@@ -34,11 +34,11 @@ class AsyncAppConfigTestCase(AppConfigTestCase):
             list.append(item)
         return list
     
-    async def set_up(self, appconfiguration_string, is_aad=False, transport=AioHttpTransport()):
+    async def set_up(self, appconfiguration_string, is_aad=False):
         if is_aad:
             self.client = self.create_aad_client(appconfiguration_string)
         else:
-            self.client = self.create_client(appconfiguration_string, transport=transport)
+            self.client = self.create_client(appconfiguration_string)
         await self.add_for_test(self.client, self.create_config_setting())
         await self.add_for_test(self.client, self.create_config_setting_no_label())
     
