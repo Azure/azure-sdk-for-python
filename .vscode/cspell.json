@@ -42,14 +42,12 @@
     "sdk/cognitiveservices/azure-cognitiveservices-search-websearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-vision-computervision/**",
     "sdk/cognitiveservices/azure-cognitiveservices-vision-contentmoderator/**",
-    "sdk/cognitiveservices/azure-cognitiveservices-vision-face/**",
     "sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-visualsearch/**",
     "sdk/communication/azure-communication-networktraversal/**",
     "sdk/communication/azure-communication-chat/**",
     "sdk/communication/azure-communication-phonenumbers/**",
     "sdk/communication/azure-communication-sms/**",
-    "sdk/confidentialledger/azure-confidentialledger/**",
     "sdk/core/azure/**",
     "sdk/core/azure-common/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
@@ -76,7 +74,6 @@
     "sdk/servicebus/azure-servicebus/**",
     "sdk/storage/azure-storage-queue/**",
     "sdk/synapse/azure-synapse/**",
-    "sdk/videoanalyzer/azure-media-videoanalyzer-edge/**",
     "sdk/synapse/azure-synapse-artifacts/**",
     "sdk/translation/azure-ai-translation-document/samples/assets/**",
     "sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv",
@@ -613,6 +610,20 @@
       ]
     },
     {
+      "filename": "sdk/ml/test-resources.json",
+      "words": [
+        "vnext",
+        "sdkvnextcli",
+        "GZRS",
+        "RAGZRS",
+        "kvtest",
+        "amlworkspace",
+        "euap",
+        "automl",
+        "azureml"
+      ]
+    },
+    {
       "filename": "sdk/ml/azure-ai-ml/**",
       "words": [
         "azureml",
@@ -802,7 +813,7 @@
         "shareduks"
       ]
     },
-    { 
+    {
       "filename": "sdk/deviceupdate/azure-iot-deviceupdate/**",
       "words": [
         "wday",
@@ -916,6 +927,12 @@
       ]
     },
     {
+      "filename": "sdk/cognitiveservices/azure-cognitiveservices-vision-face/azure/cognitiveservices/vision/face/models/*.py",
+      "words": [
+        "responsed"
+      ]
+    },
+    {
       "filename": "sdk/purview/azure-purview-catalog/azure/purview/catalog/aio/operations/*.py",
       "words": [
         "struct",
@@ -947,6 +964,89 @@
       "filename": "sdk/cognitiveservices/azure-cognitiveservices-language-luis/CHANGELOG.md",
       "words": [
         "hierarchicals"
+      ]
+    },
+    {
+      "filename": "sdk/videoanalyzer/azure-media-videoanalyzer-edge/CHANGELOG.md",
+      "words": [
+        "ONVIF"
+      ]
+    },
+    {
+      "filename": "sdk/videoanalyzer/azure-media-videoanalyzer-edge/samples/sample_lva.py",
+      "words": [
+        "deviceid",
+        "moduleid",
+        "onvif",
+        "Onvif"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/_operations/*.py",
+      "words": [
+        "mrenclave",
+        "MRENCLAVE",
+        "oeverify"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/*.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "ctxt",
+        "wday",
+        "mday",
+        "deseralize",
+        "astimezone"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/aio/_operations/*.py",
+      "words": [
+        "mrenclave",
+        "MRENCLAVE",
+        "oeverify",
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "mday",
+        "deseralize",
+        "astimezone"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/certificate/*.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "mday",
+        "deseralize",
+        "wday",
+        "mday",
+        "deseralize",
+        "astimezone"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/samples/*.py",
+      "words": [
+        "tids",
+        "MRENCLAVE",
+        "mrenclave",
+        "seqno"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/tests/*.py",
+      "words": [
+        "seqno",
+        "mrenclave",
+        "infile"
       ]
     }
   ],
