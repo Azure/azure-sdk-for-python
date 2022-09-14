@@ -42,7 +42,6 @@
     "sdk/cognitiveservices/azure-cognitiveservices-search-videosearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-websearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-vision-computervision/**",
-    "sdk/cognitiveservices/azure-cognitiveservices-vision-contentmoderator/**",
     "sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-visualsearch/**",
     "sdk/communication/azure-communication-networktraversal/**",
@@ -931,6 +930,12 @@
       "filename": "sdk/cognitiveservices/azure-cognitiveservices-vision-face/azure/cognitiveservices/vision/face/models/*.py",
       "words": [
         "responsed"
+      ]
+    },
+    {
+      "filename": "sdk/cognitiveservices/azure-cognitiveservices-vision-contentmoderator/azure/cognitiveservices/vision/contentmoderator/operations/*.py",
+      "words": [
+        "tfile"
       ]
     },
     {
