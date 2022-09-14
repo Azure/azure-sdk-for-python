@@ -74,8 +74,6 @@ def resolve_tenant(
     """Returns the correct tenant for a token request given a credential's configuration"""
     if tenant_id is None or tenant_id == default_tenant:
         return default_tenant
-    if not default_tenant:
-        return tenant_id
     if (
         default_tenant == "adfs"
         or os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH)
@@ -84,6 +82,8 @@ def resolve_tenant(
                      "but the configured value was used since multi tenant authentication has been disabled. "
                      "Configured tenant ID: %s, Requested tenant ID %s", default_tenant, tenant_id)
         return default_tenant
+    if not default_tenant:
+        return tenant_id
     if additionally_allowed_tenants == ['*'] or tenant_id in additionally_allowed_tenants:
         _LOGGER.info("A token was requested for a different tenant than was configured on the credential, "
                      "and the requested tenant ID was used to authenticate. Configured tenant ID: %s, "

@@ -194,6 +194,7 @@ def test_multitenant_authentication_not_allowed():
 
     def fake_check_output(command_line, **_):
         match = re.search("--tenant (.*)", command_line[-1])
+        assert match is None or match[1] == expected_tenant
         return json.dumps(
             {
                 "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
