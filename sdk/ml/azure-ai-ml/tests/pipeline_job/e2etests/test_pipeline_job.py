@@ -155,11 +155,11 @@ class TestPipelineJob:
             ("./tests/test_configs/pipeline_jobs/invalid/non_existent_remote_component.yml", ValidationException),
             (
                 "./tests/test_configs/pipeline_jobs/invalid/non_existent_remote_version.yml",
-                HttpResponseError,
+                Exception,
             ),
             (
                 "./tests/test_configs/pipeline_jobs/invalid/non_existent_compute.yml",
-                ValidationException,
+                Exception,
             ),
         ],
     )
@@ -1428,6 +1428,14 @@ class TestPipelineJob:
             "force_rerun": True,
             "_source": "YAML.JOB",
         }
+
+    @pytest.mark.skip("Skip for Bug https://msdata.visualstudio.com/Vienna/_workitems/edit/1963914/")
+    def test_pipeline_component_job(self, client: MLClient, randstr: Callable[[], str]):
+        test_path = "./tests/test_configs/pipeline_jobs/pipeline_component_job.yml"
+        job: PipelineJob = load_job(source=test_path)
+        rest_job = client.jobs.create_or_update(job)
+        pipeline_dict = rest_job._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict == {}
 
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")

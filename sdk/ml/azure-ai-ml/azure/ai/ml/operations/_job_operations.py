@@ -94,6 +94,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from .._utils._experimental import experimental
+from ..constants._component import ComponentSource
 from ..entities._job.pipeline._io import InputOutputBase, _GroupAttrDict
 from ..entities._validation import ValidationResult, _ValidationResultBuilder
 from ._component_operations import ComponentOperations
@@ -1134,6 +1135,16 @@ class JobOperations(_ScopeDependentOperations):
                     no_personal_data_message=e.no_personal_data_message,
                     error_category=e.error_category,
                 )
+
+        # Create a pipeline component for pipeline job if user specified component in job yaml.
+        if (
+            not isinstance(pipeline_job.component, str)
+            and getattr(pipeline_job.component, "_source", None) == ComponentSource.YAML_COMPONENT
+        ):
+            pipeline_job.component = resolver(
+                pipeline_job._to_component(silent=True),
+                azureml_type=AzureMLResourceType.COMPONENT,
+            )
 
         return pipeline_job
 

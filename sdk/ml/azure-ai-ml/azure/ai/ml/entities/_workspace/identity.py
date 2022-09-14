@@ -2,68 +2,82 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from enum import Enum
 from typing import Dict, Optional, Union
 
-import msrest.serialization
-from six import with_metaclass
+from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2022_05_01.models import UserAssignedIdentity as RestUserAssignedIdentity
+from azure.ai.ml.constants._workspace import ManagedServiceIdentityType
 
-from azure.core import CaseInsensitiveEnumMeta
 
-
-class ManagedServiceIdentity(msrest.serialization.Model):
+class ManagedServiceIdentity:
     """Managed service identity (system assigned and/or user assigned identities)."""
-
-    _validation = {
-        "principal_id": {"readonly": True},
-        "tenant_id": {"readonly": True},
-        "type": {"required": True},
-    }
-
-    _attribute_map = {
-        "principal_id": {"key": "principalId", "type": "str"},
-        "tenant_id": {"key": "tenantId", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
-    }
 
     def __init__(
         self,
         *,
         type: Union[str, "ManagedServiceIdentityType"],
+        principal_id: str = None,
+        tenant_id: str = None,
         user_assigned_identities: Optional[Dict[str, "UserAssignedIdentity"]] = None,
-        **kwargs
     ):
-        super(ManagedServiceIdentity, self).__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
         self.type = type
+        self.principal_id = principal_id
+        self.tenant_id = tenant_id
         self.user_assigned_identities = user_assigned_identities
 
+    def _to_rest_object(self) -> RestManagedServiceIdentity:
+        user_assigned_identities = None
+        if self.user_assigned_identities:
+            user_assigned_identities = {}
+            for k, v in self.user_assigned_identities.items():
+                user_assigned_identities[k] = v._to_rest_object() if v else None
 
-class UserAssignedIdentity(msrest.serialization.Model):
+        return RestManagedServiceIdentity(
+            type=self.type,
+            principal_id=self.principal_id,
+            tenant_id=self.tenant_id,
+            user_assigned_identities=user_assigned_identities,
+        )
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestManagedServiceIdentity) -> "ManagedServiceIdentity":
+        user_assigned_identities = None
+        if obj.user_assigned_identities:
+            user_assigned_identities = {}
+            for k, v in obj.user_assigned_identities.items():
+                metadata = None
+                if v and isinstance(v, RestUserAssignedIdentity):
+                    metadata = UserAssignedIdentity._from_rest_object(v)
+                user_assigned_identities[k] = metadata
+        return cls(
+            type=obj.type,
+            principal_id=obj.principal_id,
+            tenant_id=obj.tenant_id,
+            user_assigned_identities=user_assigned_identities,
+        )
+
+
+class UserAssignedIdentity:
     """User assigned identity properties."""
 
-    _validation = {
-        "principal_id": {"readonly": True},
-        "client_id": {"readonly": True},
-    }
+    def __init__(
+        self,
+        *,
+        principal_id: str = None,
+        client_id: str = None,
+    ):
+        self.principal_id = principal_id
+        self.client_id = client_id
 
-    _attribute_map = {
-        "principal_id": {"key": "principalId", "type": "str"},
-        "client_id": {"key": "clientId", "type": "str"},
-    }
+    def _to_rest_object(self) -> RestUserAssignedIdentity:
+        return RestUserAssignedIdentity(
+            principal_id=self.principal_id,
+            client_id=self.client_id,
+        )
 
-    def __init__(self, **kwargs):
-        super(UserAssignedIdentity, self).__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
-
-
-class ManagedServiceIdentityType(str, Enum):
-    """Type of managed service identity (where both SystemAssigned and UserAssigned types are allowed)."""
-
-    NONE = "None"
-    SYSTEM_ASSIGNED = "SystemAssigned"
-    USER_ASSIGNED = "UserAssigned"
-    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+    @classmethod
+    def _from_rest_object(cls, obj: RestUserAssignedIdentity) -> "UserAssignedIdentity":
+        return cls(
+            principal_id=obj.principal_id,
+            client_id=obj.client_id,
+        )

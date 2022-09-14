@@ -37,6 +37,9 @@ class Parallel(BaseNode):
     """Base class for parallel node, used for parallel component version
     consumption.
 
+    You should not instantiate this class directly. Instead, you should
+    create from builder function: parallel.
+
     :param component: Id or instance of the parallel component/job to be run for the step
     :type component: parallelComponent
     :param name: Name of the parallel.
@@ -343,10 +346,10 @@ class Parallel(BaseNode):
         obj = BaseNode._rest_object_to_init_params(obj)
         # retry_settings
         if "retry_settings" in obj and obj["retry_settings"]:
-            obj["retry_settings"] = RetrySettings.from_dict(obj["retry_settings"])
+            obj["retry_settings"] = RetrySettings._from_dict(obj["retry_settings"])
 
         if "task" in obj and obj["task"]:
-            obj["task"] = ParallelTask.from_dict(obj["task"])
+            obj["task"] = ParallelTask._from_dict(obj["task"])
             task_code = obj["task"].code
             task_env = obj["task"].environment
             # remove azureml: prefix in code and environment which is added in _to_rest_object
