@@ -107,20 +107,20 @@ class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-
 
         :param scopes: List of scopes to be added to the token.
         :type scopes: list[str or ~azure.communication.identity.CommunicationTokenScope]
-        :keyword token_expiry: Custom validity period of the Communication Identity access token
+        :keyword token_expires_in: Custom validity period of the Communication Identity access token
          within [1, 24] hours range. If not provided, the default value of 24 hours will be used.
-        :paramtype token_expiry: ~datetime.timedelta
+        :paramtype token_expires_in: ~datetime.timedelta
         :return: A tuple of a CommunicationUserIdentifier and a AccessToken.
         :rtype:
             tuple of (~azure.communication.identity.CommunicationUserIdentifier, ~azure.core.credentials.AccessToken)
         """
-        token_expiry = kwargs.pop('token_expiry', None)
+        token_expires_in = kwargs.pop('token_expires_in', None)
 
         expires_after_in_minutes = 0
 
-        if token_expiry is not None:
+        if token_expires_in is not None:
 
-            expires_after_in_minutes = int(token_expiry.total_seconds() / 60)
+            expires_after_in_minutes = int(token_expires_in.total_seconds() / 60)
 
             body = {
                 'createTokenWithScopes': scopes,
@@ -169,18 +169,18 @@ class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-
         :type user: ~azure.communication.identity.CommunicationUserIdentifier
         :param scopes: List of scopes to be added to the token.
         :type scopes: list[str or ~azure.communication.identity.CommunicationTokenScope]
-        :keyword token_expiry: Custom validity period of the Communication Identity access token
+        :keyword token_expires_in: Custom validity period of the Communication Identity access token
          within [1, 24] hours range. If not provided, the default value of 24 hours will be used.
-        :paramtype token_expiry: ~datetime.timedelta
+        :paramtype token_expires_in: ~datetime.timedelta
         :return: AccessToken
         :rtype: ~azure.core.credentials.AccessToken
         """
-        token_expiry = kwargs.pop('token_expiry', None)
+        token_expires_in = kwargs.pop('token_expires_in', None)
 
         expires_after_in_minutes = 0
 
-        if token_expiry is not None:
-            expires_after_in_minutes = int(token_expiry.total_seconds() / 60)
+        if token_expires_in is not None:
+            expires_after_in_minutes = int(token_expires_in.total_seconds() / 60)
             body = {
                 'scopes': scopes,
                 'expiresInMinutes': expires_after_in_minutes
