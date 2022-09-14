@@ -29,7 +29,7 @@ python: true
 tag: release_2022_05_15_preview
 openapi-type: data-plane
 version-tolerant: true
-package-version: 1.1.0b2
+package-version: 1.1.0b3
 add-credential: true
 credential-scopes: https://cognitiveservices.azure.com/.default
 black: true
@@ -50,7 +50,7 @@ batch:
 These settings apply only when `--tag=release_runtime_1_1_preview` is specified on the command line.
 
 ```yaml $(tag) == 'release_runtime_1_1_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/e7f37e4e43b1d12fd1988fda3ed39624c4b23303/specification/cognitiveservices/data-plane/Language/preview/2022-05-15-preview/analyzeconversations.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/374bebd0b0764ba8350cb186e010f1fee987d0b7/dev/cognitiveservices/data-plane/Language/analyzeconversations.json
 output-folder: ../azure/ai/language/conversations
 title: ConversationAnalysisClient
 ```

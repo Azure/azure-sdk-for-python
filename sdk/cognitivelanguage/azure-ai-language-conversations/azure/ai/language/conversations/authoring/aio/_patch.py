@@ -18,9 +18,7 @@ def _authentication_policy(credential):
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     if isinstance(credential, AzureKeyCredential):
-        authentication_policy = AzureKeyCredentialPolicy(
-            name="Ocp-Apim-Subscription-Key", credential=credential
-        )
+        authentication_policy = AzureKeyCredentialPolicy(name="Ocp-Apim-Subscription-Key", credential=credential)
     elif credential is not None and not hasattr(credential, "get_token"):
         raise TypeError(
             f"Unsupported credential: {type(credential)}. Use an instance of AzureKeyCredential "
@@ -29,7 +27,9 @@ def _authentication_policy(credential):
     return authentication_policy
 
 
-class ConversationAuthoringClient(GeneratedConversationAuthoringClient): # pylint: disable=client-accepts-api-version-keyword
+class ConversationAuthoringClient(
+    GeneratedConversationAuthoringClient
+):  # pylint: disable=client-accepts-api-version-keyword
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms. The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
@@ -60,12 +60,11 @@ class ConversationAuthoringClient(GeneratedConversationAuthoringClient): # pylin
             endpoint = endpoint.rstrip("/")
         except AttributeError:
             raise ValueError("Parameter 'endpoint' must be a string.")
-
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
-            **kwargs
+            **kwargs,
         )
 
 

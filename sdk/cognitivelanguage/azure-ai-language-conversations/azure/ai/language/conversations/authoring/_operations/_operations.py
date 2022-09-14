@@ -15,6 +15,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
@@ -175,11 +176,12 @@ def build_export_project_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_import_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_import_project_request(
+    project_name: str, *, exported_project_format: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    exported_project_format = kwargs.pop("exported_project_format", _params.pop("format", None))  # type: Optional[str]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
@@ -829,21 +831,21 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # Represents the project creation
                       datetime. Required.
-                    "description": "str",  # Optional. The project description.
                     "language": "str",  # The project language. This is BCP-47 representation of
                       a language. For example, use "en" for English, "en-gb" for English (UK), "es" for
                       Spanish etc. Required.
-                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
-                      project last deployed datetime.
                     "lastModifiedDateTime": "2020-02-20 00:00:00",  # Represents the project
                       creation datetime. Required.
+                    "projectKind": "str",  # Represents the project kind. Required. Known values
+                      are: "Conversation" and "Orchestration".
+                    "projectName": "str",  # The new project name. Required.
+                    "description": "str",  # Optional. The project description.
+                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
+                      project last deployed datetime.
                     "lastTrainedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
                       project last trained datetime.
                     "multilingual": bool,  # Optional. Whether the project would be used for
                       multiple languages or not.
-                    "projectKind": "str",  # Represents the project kind. Required. Known values
-                      are: "Conversation" and "Orchestration".
-                    "projectName": "str",  # The new project name. Required.
                     "settings": {
                         "confidenceThreshold": 0.0  # The threshold of the intent with the
                           highest confidence, at which the prediction will automatically be changed to
@@ -856,7 +858,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -936,15 +943,15 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
                 # JSON input template you can fill out and use as your body input.
                 project = {
-                    "description": "str",  # Optional. The project description.
                     "language": "str",  # The project language. This is BCP-47 representation of
                       a language. For example, use "en" for English, "en-gb" for English (UK), "es" for
                       Spanish etc. Required.
-                    "multilingual": bool,  # Optional. Whether the project would be used for
-                      multiple languages or not.
                     "projectKind": "str",  # Represents the project kind. Required. Known values
                       are: "Conversation" and "Orchestration".
                     "projectName": "str",  # The new project name. Required.
+                    "description": "str",  # Optional. The project description.
+                    "multilingual": bool,  # Optional. Whether the project would be used for
+                      multiple languages or not.
                     "settings": {
                         "confidenceThreshold": 0.0  # The threshold of the intent with the
                           highest confidence, at which the prediction will automatically be changed to
@@ -956,21 +963,21 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # Represents the project creation
                       datetime. Required.
-                    "description": "str",  # Optional. The project description.
                     "language": "str",  # The project language. This is BCP-47 representation of
                       a language. For example, use "en" for English, "en-gb" for English (UK), "es" for
                       Spanish etc. Required.
-                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
-                      project last deployed datetime.
                     "lastModifiedDateTime": "2020-02-20 00:00:00",  # Represents the project
                       creation datetime. Required.
+                    "projectKind": "str",  # Represents the project kind. Required. Known values
+                      are: "Conversation" and "Orchestration".
+                    "projectName": "str",  # The new project name. Required.
+                    "description": "str",  # Optional. The project description.
+                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
+                      project last deployed datetime.
                     "lastTrainedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
                       project last trained datetime.
                     "multilingual": bool,  # Optional. Whether the project would be used for
                       multiple languages or not.
-                    "projectKind": "str",  # Represents the project kind. Required. Known values
-                      are: "Conversation" and "Orchestration".
-                    "projectName": "str",  # The new project name. Required.
                     "settings": {
                         "confidenceThreshold": 0.0  # The threshold of the intent with the
                           highest confidence, at which the prediction will automatically be changed to
@@ -1003,21 +1010,21 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # Represents the project creation
                       datetime. Required.
-                    "description": "str",  # Optional. The project description.
                     "language": "str",  # The project language. This is BCP-47 representation of
                       a language. For example, use "en" for English, "en-gb" for English (UK), "es" for
                       Spanish etc. Required.
-                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
-                      project last deployed datetime.
                     "lastModifiedDateTime": "2020-02-20 00:00:00",  # Represents the project
                       creation datetime. Required.
+                    "projectKind": "str",  # Represents the project kind. Required. Known values
+                      are: "Conversation" and "Orchestration".
+                    "projectName": "str",  # The new project name. Required.
+                    "description": "str",  # Optional. The project description.
+                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
+                      project last deployed datetime.
                     "lastTrainedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
                       project last trained datetime.
                     "multilingual": bool,  # Optional. Whether the project would be used for
                       multiple languages or not.
-                    "projectKind": "str",  # Represents the project kind. Required. Known values
-                      are: "Conversation" and "Orchestration".
-                    "projectName": "str",  # The new project name. Required.
                     "settings": {
                         "confidenceThreshold": 0.0  # The threshold of the intent with the
                           highest confidence, at which the prediction will automatically be changed to
@@ -1048,21 +1055,21 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # Represents the project creation
                       datetime. Required.
-                    "description": "str",  # Optional. The project description.
                     "language": "str",  # The project language. This is BCP-47 representation of
                       a language. For example, use "en" for English, "en-gb" for English (UK), "es" for
                       Spanish etc. Required.
-                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
-                      project last deployed datetime.
                     "lastModifiedDateTime": "2020-02-20 00:00:00",  # Represents the project
                       creation datetime. Required.
+                    "projectKind": "str",  # Represents the project kind. Required. Known values
+                      are: "Conversation" and "Orchestration".
+                    "projectName": "str",  # The new project name. Required.
+                    "description": "str",  # Optional. The project description.
+                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
+                      project last deployed datetime.
                     "lastTrainedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
                       project last trained datetime.
                     "multilingual": bool,  # Optional. Whether the project would be used for
                       multiple languages or not.
-                    "projectKind": "str",  # Represents the project kind. Required. Known values
-                      are: "Conversation" and "Orchestration".
-                    "projectName": "str",  # The new project name. Required.
                     "settings": {
                         "confidenceThreshold": 0.0  # The threshold of the intent with the
                           highest confidence, at which the prediction will automatically be changed to
@@ -1070,7 +1077,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     }
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1145,21 +1157,21 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # Represents the project creation
                       datetime. Required.
-                    "description": "str",  # Optional. The project description.
                     "language": "str",  # The project language. This is BCP-47 representation of
                       a language. For example, use "en" for English, "en-gb" for English (UK), "es" for
                       Spanish etc. Required.
-                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
-                      project last deployed datetime.
                     "lastModifiedDateTime": "2020-02-20 00:00:00",  # Represents the project
                       creation datetime. Required.
+                    "projectKind": "str",  # Represents the project kind. Required. Known values
+                      are: "Conversation" and "Orchestration".
+                    "projectName": "str",  # The new project name. Required.
+                    "description": "str",  # Optional. The project description.
+                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
+                      project last deployed datetime.
                     "lastTrainedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
                       project last trained datetime.
                     "multilingual": bool,  # Optional. Whether the project would be used for
                       multiple languages or not.
-                    "projectKind": "str",  # Represents the project kind. Required. Known values
-                      are: "Conversation" and "Orchestration".
-                    "projectName": "str",  # The new project name. Required.
                     "settings": {
                         "confidenceThreshold": 0.0  # The threshold of the intent with the
                           highest confidence, at which the prediction will automatically be changed to
@@ -1167,7 +1179,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     }
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1207,7 +1224,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         return cast(JSON, deserialized)
 
     def _delete_project_initial(self, project_name: str, **kwargs: Any) -> Optional[JSON]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1278,6 +1300,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -1289,6 +1317,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -1301,26 +1331,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -1382,7 +1404,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         asset_kind: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[JSON]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1472,6 +1499,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -1483,6 +1516,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -1495,28 +1530,20 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
                     "resultUrl": "str",  # Optional. The URL to use in order to download the
                       exported project.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -1584,7 +1611,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         exported_project_format: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[JSON]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1681,19 +1713,110 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         Example:
             .. code-block:: python
 
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "projectKind":
+
+                # JSON input template for discriminator value "Conversation":
+                exported_project_assets = {
+                    "projectKind": "Conversation",
+                    "entities": [
+                        {
+                            "category": "str",  # The category of the entity. Required.
+                            "compositionSetting": "str",  # Optional. The behavior to
+                              follow when the entity's components overlap with each other. Known values
+                              are: "returnLongestOverlap", "requireExactOverlap", "separateComponents",
+                              and "combineComponents".
+                            "list": {
+                                "sublists": [
+                                    {
+                                        "listKey": "str",  # Optional. The
+                                          key of the sub-list.
+                                        "synonyms": [
+                                            {
+                                                "language": "str",  #
+                                                  Optional. Represents the language of the synonyms.
+                                                  This is BCP-47 representation of a language. For
+                                                  example, use "en" for English, "en-gb" for English
+                                                  (UK), "es" for Spanish etc.
+                                                "values": [
+                                                    "str"  #
+                                                      Optional. The list of synonyms.
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            "prebuilts": [
+                                {
+                                    "category": "str"  # The prebuilt entity
+                                      category. Required.
+                                }
+                            ]
+                        }
+                    ],
+                    "intents": [
+                        {
+                            "category": "str"  # The intent category. Required.
+                        }
+                    ],
+                    "utterances": [
+                        {
+                            "intent": "str",  # The intent of the utterance. Required.
+                            "text": "str",  # The utterance text. Required.
+                            "dataset": "str",  # Optional. The dataset for this
+                              utterance. Allowed values are 'Train' and 'Test'.
+                            "entities": [
+                                {
+                                    "category": "str",  # The category of the
+                                      entity label. Required.
+                                    "length": 0,  # Length for the entity text.
+                                      Required.
+                                    "offset": 0  # Start position for the entity
+                                      text. Required.
+                                }
+                            ],
+                            "language": "str"  # Optional. Represents the utterance's
+                              language. This is BCP-47 representation of a language. For example, use
+                              "en" for English, "en-gb" for English (UK), "es" for Spanish etc.
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Orchestration":
+                exported_project_assets = {
+                    "projectKind": "Orchestration",
+                    "intents": [
+                        {
+                            "category": "str",  # The intent category. Required.
+                            "orchestration": exported_orchestration_options
+                        }
+                    ],
+                    "utterances": [
+                        {
+                            "intent": "str",  # The intent of the utterance. Required.
+                            "text": "str",  # The utterance text. Required.
+                            "dataset": "str",  # Optional. The dataset for this
+                              utterance. Allowed values are 'Train' and 'Test'.
+                            "language": "str"  # Optional. Represents the utterance's
+                              language. This is BCP-47 representation of a language. For example, use
+                              "en" for English, "en-gb" for English (UK), "es" for Spanish etc.
+                        }
+                    ]
+                }
+
                 # JSON input template you can fill out and use as your body input.
                 project = {
-                    "assets": exported_project_assets,
                     "metadata": {
-                        "description": "str",  # Optional. The project description.
                         "language": "str",  # The project language. This is BCP-47
                           representation of a language. For example, use "en" for English, "en-gb" for
                           English (UK), "es" for Spanish etc. Required.
-                        "multilingual": bool,  # Optional. Whether the project would be used
-                          for multiple languages or not.
                         "projectKind": "str",  # Represents the project kind. Required. Known
                           values are: "Conversation" and "Orchestration".
                         "projectName": "str",  # The new project name. Required.
+                        "description": "str",  # Optional. The project description.
+                        "multilingual": bool,  # Optional. Whether the project would be used
+                          for multiple languages or not.
                         "settings": {
                             "confidenceThreshold": 0.0  # The threshold of the intent
                               with the highest confidence, at which the prediction will automatically
@@ -1701,15 +1824,22 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         }
                     },
                     "projectFileVersion": "str",  # The version of the exported file. Required.
-                    "stringIndexType": "str"  # Specifies the method used to interpret string
+                    "stringIndexType": "str",  # Specifies the method used to interpret string
                       offsets. For additional information see https://aka.ms/text-analytics-offsets.
                       Required. "Utf16CodeUnit"
+                    "assets": exported_project_assets
                 }
 
                 # response body for status code(s): 200
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -1721,6 +1851,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -1733,26 +1865,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -1803,6 +1927,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -1814,6 +1944,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -1826,26 +1958,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -1895,6 +2019,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -1906,6 +2036,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -1918,26 +2050,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -1999,7 +2123,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     def _train_initial(self, project_name: str, configuration: Union[JSON, IO], **kwargs: Any) -> Optional[JSON]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2087,6 +2216,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
                 # JSON input template you can fill out and use as your body input.
                 configuration = {
+                    "modelLabel": "str",  # Represents the output model label. Required.
+                    "trainingMode": "str",  # Represents the mode of the training operation.
+                      Required. Known values are: "advanced" and "standard".
                     "evaluationOptions": {
                         "kind": "str",  # Optional. Represents the evaluation kind. By
                           default, the evaluation kind is set to percentage. Known values are:
@@ -2098,18 +2230,54 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                           dataset split percentage. Only needed in case the evaluation kind is
                           percentage.
                     },
-                    "modelLabel": "str",  # Represents the output model label. Required.
-                    "trainingConfigVersion": "str",  # Optional. Represents training config
+                    "trainingConfigVersion": "str"  # Optional. Represents training config
                       version. By default, "latest" value is used which uses the latest released
                       training config version.
-                    "trainingMode": "str"  # Represents the mode of the training operation.
-                      Required. Known values are: "advanced" and "standard".
                 }
 
                 # response body for status code(s): 200
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimated end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "trainingMode": "str"  # Optional. Represents the mode of the
+                          training operation. Known values are: "advanced" and "standard".
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -2121,6 +2289,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -2133,59 +2303,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "result": {
-                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
-                          Represents the estimated end date time for training and evaluation.
-                        "evaluationStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        },
-                        "modelLabel": "str",  # Represents trained model label. Required.
-                        "trainingConfigVersion": "str",  # Represents training config
-                          version. Required.
-                        "trainingMode": "str",  # Optional. Represents the mode of the
-                          training operation. Known values are: "advanced" and "standard".
-                        "trainingStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        }
-                    },
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -2226,6 +2355,45 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimated end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "trainingMode": "str"  # Optional. Represents the mode of the
+                          training operation. Known values are: "advanced" and "standard".
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -2237,6 +2405,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -2249,59 +2419,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "result": {
-                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
-                          Represents the estimated end date time for training and evaluation.
-                        "evaluationStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        },
-                        "modelLabel": "str",  # Represents trained model label. Required.
-                        "trainingConfigVersion": "str",  # Represents training config
-                          version. Required.
-                        "trainingMode": "str",  # Optional. Represents the mode of the
-                          training operation. Known values are: "advanced" and "standard".
-                        "trainingStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        }
-                    },
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -2341,6 +2470,45 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimated end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "trainingMode": "str"  # Optional. Represents the mode of the
+                          training operation. Known values are: "advanced" and "standard".
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -2352,6 +2520,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -2364,59 +2534,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "result": {
-                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
-                          Represents the estimated end date time for training and evaluation.
-                        "evaluationStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        },
-                        "modelLabel": "str",  # Represents trained model label. Required.
-                        "trainingConfigVersion": "str",  # Represents training config
-                          version. Required.
-                        "trainingMode": "str",  # Optional. Represents the mode of the
-                          training operation. Known values are: "advanced" and "standard".
-                        "trainingStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        }
-                    },
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -2516,7 +2645,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -2578,7 +2712,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def _swap_deployments_initial(
         self, project_name: str, deployments: Union[JSON, IO], **kwargs: Any
     ) -> Optional[JSON]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2676,6 +2815,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -2687,6 +2832,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -2699,26 +2846,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -2759,6 +2898,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -2770,6 +2915,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -2782,26 +2929,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -2841,6 +2980,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -2852,6 +2997,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -2864,26 +3011,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -2972,7 +3111,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                       version. Required.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -3015,7 +3159,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def _deploy_project_initial(
         self, project_name: str, deployment_name: str, deployment: Union[JSON, IO], **kwargs: Any
     ) -> Optional[JSON]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3276,7 +3425,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     def _delete_deployment_initial(self, project_name: str, deployment_name: str, **kwargs: Any) -> Optional[JSON]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -3350,6 +3504,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -3361,6 +3521,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -3373,26 +3535,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -3471,6 +3625,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -3482,6 +3642,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -3494,26 +3656,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -3522,7 +3676,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -3582,6 +3741,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -3593,6 +3758,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -3605,26 +3772,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -3633,7 +3792,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -3692,6 +3856,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -3703,6 +3873,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -3715,28 +3887,20 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
                     "resultUrl": "str",  # Optional. The URL to use in order to download the
                       exported project.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -3745,7 +3909,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -3804,6 +3973,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -3815,6 +3990,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -3827,26 +4004,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -3855,7 +4024,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -3934,7 +4108,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -4021,7 +4200,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                       Required.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -4075,7 +4259,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -4183,7 +4372,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -4298,17 +4492,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "microPrecision": 0.0,  # Represents the micro precision. Required.
                         "microRecall": 0.0  # Represents the micro recall. Required.
                     },
-                    "evaluationOptions": {
-                        "kind": "str",  # Optional. Represents the evaluation kind. By
-                          default, the evaluation kind is set to percentage. Known values are:
-                          "percentage" and "manual".
-                        "testingSplitPercentage": 0,  # Optional. Represents the testing
-                          dataset split percentage. Only needed in case the evaluation kind is
-                          percentage.
-                        "trainingSplitPercentage": 0  # Optional. Represents the training
-                          dataset split percentage. Only needed in case the evaluation kind is
-                          percentage.
-                    },
                     "intentsEvaluation": {
                         "confusionMatrix": {
                             "str": {
@@ -4344,10 +4527,26 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "microF1": 0.0,  # Represents the micro F1. Required.
                         "microPrecision": 0.0,  # Represents the micro precision. Required.
                         "microRecall": 0.0  # Represents the micro recall. Required.
+                    },
+                    "evaluationOptions": {
+                        "kind": "str",  # Optional. Represents the evaluation kind. By
+                          default, the evaluation kind is set to percentage. Known values are:
+                          "percentage" and "manual".
+                        "testingSplitPercentage": 0,  # Optional. Represents the testing
+                          dataset split percentage. Only needed in case the evaluation kind is
+                          percentage.
+                        "trainingSplitPercentage": 0  # Optional. Represents the training
+                          dataset split percentage. Only needed in case the evaluation kind is
+                          percentage.
                     }
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -4412,6 +4611,45 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimated end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "trainingMode": "str"  # Optional. Represents the mode of the
+                          training operation. Known values are: "advanced" and "standard".
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -4423,6 +4661,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -4435,59 +4675,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "result": {
-                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
-                          Represents the estimated end date time for training and evaluation.
-                        "evaluationStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        },
-                        "modelLabel": "str",  # Represents trained model label. Required.
-                        "trainingConfigVersion": "str",  # Represents training config
-                          version. Required.
-                        "trainingMode": "str",  # Optional. Represents the mode of the
-                          training operation. Known values are: "advanced" and "standard".
-                        "trainingStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        }
-                    },
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -4501,7 +4700,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -4579,6 +4783,45 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimated end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "trainingMode": "str"  # Optional. Represents the mode of the
+                          training operation. Known values are: "advanced" and "standard".
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -4590,6 +4833,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -4602,59 +4847,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "result": {
-                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
-                          Represents the estimated end date time for training and evaluation.
-                        "evaluationStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        },
-                        "modelLabel": "str",  # Represents trained model label. Required.
-                        "trainingConfigVersion": "str",  # Represents training config
-                          version. Required.
-                        "trainingMode": "str",  # Optional. Represents the mode of the
-                          training operation. Known values are: "advanced" and "standard".
-                        "trainingStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        }
-                    },
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -4663,7 +4867,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -4704,7 +4913,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         return cast(JSON, deserialized)
 
     def _cancel_training_job_initial(self, project_name: str, job_id: str, **kwargs: Any) -> Optional[JSON]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -4778,6 +4992,45 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimated end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "trainingMode": "str"  # Optional. Represents the mode of the
+                          training operation. Known values are: "advanced" and "standard".
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -4789,6 +5042,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -4801,59 +5056,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "result": {
-                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
-                          Represents the estimated end date time for training and evaluation.
-                        "evaluationStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        },
-                        "modelLabel": "str",  # Represents trained model label. Required.
-                        "trainingConfigVersion": "str",  # Represents training config
-                          version. Required.
-                        "trainingMode": "str",  # Optional. Represents the mode of the
-                          training operation. Known values are: "advanced" and "standard".
-                        "trainingStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        }
-                    },
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -4928,6 +5142,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -4939,6 +5159,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -4951,26 +5173,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -4979,7 +5193,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -5053,7 +5272,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -5156,7 +5380,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -5251,7 +5480,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):

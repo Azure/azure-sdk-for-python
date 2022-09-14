@@ -10,8 +10,7 @@ from typing import List
 from ._operations import ConversationAnalysisClientOperationsMixin as ConversationAnalysisClientOperationsMixinGenerated
 
 
-ConversationAnalysisClientOperationsMixinGenerated.analyze_conversation.__doc__ = \
-    """Analyzes the input conversation utterance.
+ConversationAnalysisClientOperationsMixinGenerated.analyze_conversation.__doc__ = """Analyzes the input conversation utterance.
 
     See https://docs.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation
     for more information.
@@ -62,19 +61,56 @@ ConversationAnalysisClientOperationsMixinGenerated.analyze_conversation.__doc__ 
             # response body for status code(s): 200
             response.json() == {
                 "kind": "str", # Required. Enumeration of supported conversational task results. Known values are: "ConversationResult".
-                "result": {
-                    "query": "str", # Required. The conversation utterance given by the caller.
-                    "detectedLanguage": "str", # Optional. The system detected language for the query in BCP 47 language representation.
-                    "prediction": {
-                        "topIntent": "str", # Required. The intent with the highest score.
-                        "projectKind": "str", # Required. The type of the project. Known values are: "Conversation" and "Orchestration".
+                    "result": {
+                        "prediction": base_prediction,
+                        "query": "str",  # The conversation utterance given by the caller.
+                          Required.
+                        "detectedLanguage": "str"  # Optional. The system detected language
+                          for the query in BCP 47 language representation..
                     }
                 }
-            }
+
+                # JSON input template for discriminator value "Conversation":
+                base_prediction = {
+                    "entities": [
+                        {
+                            "category": "str",  # The entity category. Required.
+                            "confidenceScore": 0.0,  # The entity confidence score.
+                              Required.
+                            "length": 0,  # The length of the text. Required.
+                            "offset": 0,  # The starting index of this entity in the
+                              query. Required.
+                            "text": "str",  # The predicted entity text. Required.
+                            "extraInformation": [
+                                base_extra_information
+                            ],
+                            "resolutions": [
+                                base_resolution
+                            ]
+                        }
+                    ],
+                    "intents": [
+                        {
+                            "category": "str",  # A predicted class. Required.
+                            "confidenceScore": 0.0  # The confidence score of the class
+                              from 0.0 to 1.0. Required.
+                        }
+                    ],
+                    "projectKind": "Conversation",
+                    "topIntent": "str"  # Optional. The intent with the highest score.
+                }
+
+                # JSON input template for discriminator value "Orchestration":
+                base_prediction = {
+                    "intents": {
+                        "str": target_intent_result
+                    },
+                    "projectKind": "Orchestration",
+                    "topIntent": "str"  # Optional. The intent with the highest score.
+                }
     """
 
-ConversationAnalysisClientOperationsMixinGenerated.begin_conversation_analysis.__doc__ = \
-    """Submit analysis job for conversations.
+ConversationAnalysisClientOperationsMixinGenerated.begin_conversation_analysis.__doc__ = """Submit analysis job for conversations.
 
     Submit a collection of conversations for analysis. Specify one or more unique tasks to be
     executed.

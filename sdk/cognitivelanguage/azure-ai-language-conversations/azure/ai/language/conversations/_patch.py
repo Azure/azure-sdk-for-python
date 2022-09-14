@@ -39,9 +39,7 @@ def _authentication_policy(credential):
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     if isinstance(credential, AzureKeyCredential):
-        authentication_policy = AzureKeyCredentialPolicy(
-            name="Ocp-Apim-Subscription-Key", credential=credential
-        )
+        authentication_policy = AzureKeyCredentialPolicy(name="Ocp-Apim-Subscription-Key", credential=credential)
     elif credential is not None and not hasattr(credential, "get_token"):
         raise TypeError(
             f"Unsupported credential: {type(credential)}. Use an instance of AzureKeyCredential "
@@ -50,7 +48,9 @@ def _authentication_policy(credential):
     return authentication_policy
 
 
-class ConversationAnalysisClient(GeneratedConversationAnalysisClient): # pylint: disable=client-accepts-api-version-keyword
+class ConversationAnalysisClient(
+    GeneratedConversationAnalysisClient
+):  # pylint: disable=client-accepts-api-version-keyword
     """The language service conversations API is a suite of natural language processing (NLP) skills
     that can be used to analyze structured conversations (textual or spoken). The synchronous API
     in this suite accepts a request and mediates among multiple language projects, such as LUIS
@@ -68,8 +68,9 @@ class ConversationAnalysisClient(GeneratedConversationAnalysisClient): # pylint:
         This can be the an instance of AzureKeyCredential if using a Language API key
         or a token credential from :mod:`azure.identity`.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Available values are "2022-05-15-preview" and "2022-05-01". Default
-     value is "2022-05-15-preview". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Available values are "2022-10-01-preview", "2022-05-15-preview",
+     "2022-05-01". Default value is "2022-10-01-preview". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -80,12 +81,11 @@ class ConversationAnalysisClient(GeneratedConversationAnalysisClient): # pylint:
             endpoint = endpoint.rstrip("/")
         except AttributeError:
             raise ValueError("Parameter 'endpoint' must be a string.")
-
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
-            **kwargs
+            **kwargs,
         )
 
 
