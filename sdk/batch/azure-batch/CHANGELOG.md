@@ -169,7 +169,7 @@ This version of the Batch .NET client library targets version 2020-03-01.11.0 of
 ## 3.1.0 (2017-07-24)
 
 - Added a new operation `job.get_task_counts` to retrieve the number of tasks in each state.
-- Added suuport for inbound endpoint configuration on a pool - there is a new `pool_endpoint_configuration` attribute on `NetworkConfiguration`.
+- Added support for inbound endpoint configuration on a pool - there is a new `pool_endpoint_configuration` attribute on `NetworkConfiguration`.
   This property is only supported on pools that use `virtual_machine_configuration`.
 - A `ComputeNode` now also has an `endpoint_configuration` attribute with the details of the applied endpoint configuration for that node.
 

@@ -29,7 +29,6 @@
 
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/appconfiguration/azure-appconfiguration/**",
-    "sdk/batch/azure-batch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customsearch/**",
@@ -1035,6 +1034,23 @@
         "seqno",
         "mrenclave",
         "infile"
+      ]
+    },
+    {
+      "filename": "sdk/batch/azure-batch/**",
+      "words": [
+        "CIFS",
+        "osdisk",
+        "nopublicipaddresses",
+        "noaction",
+        "reimaging",
+        "reimaged",
+        "vray",
+        "dsmax",
+        "paas",
+        "isdirectory",
+        "myaccount",
+        "mytask"
       ]
     }
   ],

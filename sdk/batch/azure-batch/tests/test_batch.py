@@ -67,7 +67,7 @@ class BatchTest(AzureMgmtTestCase):
         except models.BatchErrorException as err:
             self.assertEqual(err.error.code, code)
         except Exception as err:
-            self.fail("Expected BatchErrorExcption, instead got: {!r}".format(err))
+            self.fail("Expected BatchErrorException, instead got: {!r}".format(err))
 
     def assertCreateTasksError(self, code, func, *args, **kwargs):
         try:
@@ -164,10 +164,12 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsNotNone(response[-1].image_reference)
 
         # Test Create Iaas Pool
+        # cSpell:disable
         users = [
             models.UserAccount(name='test-user-1', password='kt#_gahr!@aGERDXA'),
             models.UserAccount(name='test-user-2', password='kt#_gahr!@aGERDXA', elevation_level=models.ElevationLevel.admin)
         ]
+        # cSpell:enable
         test_iaas_pool = models.PoolAddParameter(
             id=self.get_resource_name('batch_iaas_'),
             vm_size=DEFAULT_VM_SIZE,
@@ -185,7 +187,7 @@ class BatchTest(AzureMgmtTestCase):
         response = client.pool.add(test_iaas_pool)
         self.assertIsNone(response)
 
-        # Test list pool node counnt
+        # Test list pool node count
         counts = list(client.account.list_pool_node_counts())
         self.assertIsNotNone(counts)
         self.assertEqual(len(counts), 1)
@@ -670,11 +672,13 @@ class BatchTest(AzureMgmtTestCase):
         # Test Add User
         user_name = 'BatchPythonSDKUser'
         nodes = list(client.compute_node.list(batch_pool.name))
+        # cspell:disable-next-line
         user = models.ComputeNodeUser(name=user_name, password='kt#_gahr!@aGERDXA', is_admin=False)
         response = client.compute_node.add_user(batch_pool.name, nodes[0].id, user)
         self.assertIsNone(response)
 
         # Test Update User
+        # cspell:disable-next-line
         user = models.NodeUpdateUserParameter(password='liilef#$DdRGSa_ewkjh')
         response = client.compute_node.update_user(batch_pool.name, nodes[0].id, user_name, user)
         self.assertIsNone(response)

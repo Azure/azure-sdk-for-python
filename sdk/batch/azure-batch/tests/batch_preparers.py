@@ -171,7 +171,7 @@ class PoolPreparer(AzureMgmtPreparer):
         try:
             return kwargs[self.batch_account_parameter_name]
         except KeyError:
-            template = 'To create a batch poool, a batch account is required. Please add ' \
+            template = 'To create a batch pool, a batch account is required. Please add ' \
                        'decorator @AccountPreparer in front of this pool preparer.'
             raise AzureTestError(template)
 
@@ -182,6 +182,7 @@ class PoolPreparer(AzureMgmtPreparer):
                 base_url=AZURE_ARM_ENDPOINT)
             group = self._get_resource_group(**kwargs)
             batch_account = self._get_batch_account(**kwargs)
+            # cspell:disable-next-line
             user = models.UserAccount(name='task-user', password='kt#_gahr!@aGERDXA', elevation_level=models.ElevationLevel.admin)
             vm_size = 'standard_d2_v2'
 
