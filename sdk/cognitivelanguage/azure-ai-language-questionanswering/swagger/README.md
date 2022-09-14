@@ -59,7 +59,7 @@ title: QuestionAnsweringClient
 These settings apply only when `--tag=release_authoring_1_1_preview` is specified on the command line.
 
 ```yaml $(tag) == 'release_authoring_1_1_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/Language/stable/2021-10-01/questionanswering-authoring.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/59ad2b7dd63e952822aa51e11a26a0af5724f996/specification/cognitiveservices/data-plane/Language/stable/2021-10-01/questionanswering-authoring.json
 output-folder: ../azure/ai/language/questionanswering/authoring
 title: QuestionAnsweringAuthoringClient
 ```
