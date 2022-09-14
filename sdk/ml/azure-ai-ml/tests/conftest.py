@@ -18,7 +18,7 @@ from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorks
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils._asset_utils import get_object_hash
 from azure.ai.ml._utils.utils import hash_dict
-from azure.ai.ml.entities import AzureBlobDatastore, CommandComponent, Component, Job
+from azure.ai.ml.entities import AzureBlobDatastore, Component
 from azure.ai.ml.entities._assets import Data, Model
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._datastore.credentials import NoneCredentials
@@ -26,7 +26,6 @@ from azure.ai.ml.entities._job.job_name_generator import generate_job_name
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import ClientSecretCredential, DefaultAzureCredential, AzureCliCredential
-from azure.mgmt.storage import StorageManagementClient
 
 from devtools_testutils import (
     test_proxy,

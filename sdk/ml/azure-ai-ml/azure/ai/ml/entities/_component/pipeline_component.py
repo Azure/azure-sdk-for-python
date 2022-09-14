@@ -82,6 +82,8 @@ class PipelineComponent(Component):
         self._jobs = self._process_jobs(jobs) if jobs else {}
         # for telemetry
         self._job_types, self._job_sources = self._get_job_type_and_source()
+        # Private support: create pipeline component from pipeline job
+        self._source_job_id = kwargs.pop("source_job_id", None)
         # TODO: set anonymous hash for reuse
 
     def _process_jobs(self, jobs):
@@ -266,8 +268,8 @@ class PipelineComponent(Component):
         return self._jobs
 
     @classmethod
-    def build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
-        component_io = super().build_io(io_dict, is_input)
+    def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
+        component_io = super()._build_io(io_dict, is_input)
         if is_input:
             # Restore flattened parameters to group
             component_io = GroupInput.restore_flattened_inputs(component_io)
@@ -368,6 +370,7 @@ class PipelineComponent(Component):
         # add source type to component rest object
         component["_source"] = self._source
         component["jobs"] = self._build_rest_component_jobs()
+        component["sourceJobId"] = self._source_job_id
         properties = ComponentVersionDetails(
             component_spec=component,
             description=self.description,

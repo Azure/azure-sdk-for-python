@@ -46,7 +46,10 @@ class LocalEndpointInFailedStateError(MlException):
             message=err,
             error_category=error_category,
             target=ErrorTarget.LOCAL_ENDPOINT,
-            no_personal_data_message=f"Local ({resource_type}) is in failed state. Try getting logs to debug scoring script.",
+            no_personal_data_message=(
+                f"Local ({resource_type}) is in failed state. "
+                "Try getting logs to debug scoring script."
+            ),
         )
 
 
@@ -90,7 +93,6 @@ class LocalEndpointImageBuildError(MlException):
     def __init__(self, error: Union[str, Exception], error_category=ErrorCategory.UNKNOWN):
         err = f"Building the local endpoint image failed with error: {str(error)}"
         super().__init__(
-            err,
             message=err,
             target=ErrorTarget.LOCAL_ENDPOINT,
             no_personal_data_message="Building the local endpoint image failed with error.",
@@ -126,7 +128,10 @@ class CloudArtifactsNotSupportedError(MlException):
             if deployment_name
             else f"local endpoint ({endpoint_name})"
         )
-        err = f"Local endpoints only support local artifacts. '{invalid_artifact}' in {resource_name} referenced cloud artifacts."
+        err =(
+            "Local endpoints only support local artifacts. '%s' in '%s' "
+            "referenced cloud artifacts.", invalid_artifact, resource_name
+        )
         super().__init__(
             message=err,
             target=ErrorTarget.LOCAL_ENDPOINT,
@@ -149,7 +154,10 @@ class RequiredLocalArtifactsNotFoundError(MlException):
             if deployment_name
             else f"Local endpoint ({endpoint_name})"
         )
-        err = f"Local endpoints only support local artifacts. {resource_name} did not contain required local artifact '{required_artifact}' of type '{required_artifact_type}'."
+        err =(
+            "Local endpoints only support local artifacts. '%s' did not contain required local artifact '%s'"
+            " of type '%s'.", resource_name, required_artifact, required_artifact_type
+        )
         super().__init__(
             message=err,
             target=ErrorTarget.LOCAL_ENDPOINT,
@@ -175,7 +183,11 @@ class VSCodeCommandNotFound(MlException):
     def __init__(self, output=None, error_category=ErrorCategory.USER_ERROR):
         error_msg = f" due to error: [{output}]" if output else ""
         super().__init__(
-            message=f"Could not start VSCode instance{error_msg}. Please make sure the VSCode command 'code' is installed and accessible from PATH environment variable. See https://code.visualstudio.com/docs/editor/command-line#_common-questions.\n",
+            message=(
+                f"Could not start VSCode instance{error_msg}. Please make sure the VSCode command "
+                "'code' is installed and accessible from PATH environment variable. "
+                "See https://code.visualstudio.com/docs/editor/command-line#_common-questions.\n"
+            ),
             target=ErrorTarget.LOCAL_ENDPOINT,
             no_personal_data_message="Could not start VSCode instance.",
             error_category=error_category,

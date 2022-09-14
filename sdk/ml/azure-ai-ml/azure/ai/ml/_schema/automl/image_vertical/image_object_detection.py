@@ -16,7 +16,10 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import (
 from azure.ai.ml._schema.automl.image_vertical.image_model_distribution_settings import (
     ImageModelDistributionSettingsObjectDetectionSchema,
 )
-from azure.ai.ml._schema.automl.image_vertical.image_model_settings import ImageModelSettingsObjectDetectionSchema
+from azure.ai.ml._schema.automl.image_vertical.image_model_settings import (
+    ImageModelSettingsInstanceSegmentationSchema,
+    ImageModelSettingsObjectDetectionSchema,
+)
 from azure.ai.ml._schema.automl.image_vertical.image_vertical import ImageVerticalSchema
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -24,7 +27,6 @@ from azure.ai.ml.constants import AutoMLConstants
 
 
 class ImageObjectDetectionBaseSchema(ImageVerticalSchema):
-    training_parameters = NestedField(ImageModelSettingsObjectDetectionSchema())
     search_space = fields.List(NestedField(ImageModelDistributionSettingsObjectDetectionSchema()))
 
 
@@ -40,6 +42,7 @@ class ImageObjectDetectionSchema(ImageObjectDetectionBaseSchema):
         casing_transform=camel_to_snake,
         load_default=camel_to_snake(ObjectDetectionPrimaryMetrics.MEAN_AVERAGE_PRECISION),
     )
+    training_parameters = NestedField(ImageModelSettingsObjectDetectionSchema())
 
     @post_load
     def make(self, data, **kwargs) -> Dict[str, Any]:
@@ -59,6 +62,7 @@ class ImageInstanceSegmentationSchema(ImageObjectDetectionBaseSchema):
         casing_transform=camel_to_snake,
         load_default=camel_to_snake(InstanceSegmentationPrimaryMetrics.MEAN_AVERAGE_PRECISION),
     )
+    training_parameters = NestedField(ImageModelSettingsInstanceSegmentationSchema())
 
     @post_load
     def make(self, data, **kwargs) -> Dict[str, Any]:

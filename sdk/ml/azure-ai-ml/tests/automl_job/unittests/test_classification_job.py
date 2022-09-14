@@ -22,6 +22,7 @@ class TestAutoMLClassification:
         classification_job = classification(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
             target_column_name="target",
+            positive_label="label",
             enable_model_explainability=True,
             test_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/test.csv"),
             validation_data_size=0.2,
@@ -59,6 +60,7 @@ class TestAutoMLClassification:
         assert original_obj.identity == identity
         # check if the original job inputs were restored
         assert original_obj.primary_metric == ClassificationPrimaryMetrics.ACCURACY, "Primary metric is not ACCURACY"
+        assert original_obj.positive_label == "label", "Positive label is not label"
         assert isinstance(original_obj.training_data, Input), "Training data is not Input"
         assert original_obj.training_data.type == AssetTypes.MLTABLE, "Training data type not set correctly"
         assert original_obj.training_data.path == "https://foo/bar/train.csv", "Training data path not set correctly"
