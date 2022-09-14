@@ -1,6 +1,8 @@
 # Release History
 
-## 1.0.2 (2022-09-14)
+## 1.0.2 (Unreleased)
+
+### Other Changes
 
 - Python 3.6 is no longer supported. Please use Python version 3.7 or later.
 - Bumped minimum dependency on `azure-mgmt-core` to `>=1.3.2`
