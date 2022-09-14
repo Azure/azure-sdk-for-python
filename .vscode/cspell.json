@@ -41,7 +41,6 @@
     "sdk/cognitiveservices/azure-cognitiveservices-search-newssearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-videosearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-websearch/**",
-    "sdk/cognitiveservices/azure-cognitiveservices-vision-computervision/**",
     "sdk/cognitiveservices/azure-cognitiveservices-vision-contentmoderator/**",
     "sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-visualsearch/**",
@@ -402,7 +401,7 @@
         "dann",
         "UMLS",
         "nach",
-        "año",
+        "an?o",
         "BRCPF",
         "abril",
         "zalgo",
@@ -931,6 +930,18 @@
       "filename": "sdk/cognitiveservices/azure-cognitiveservices-vision-face/azure/cognitiveservices/vision/face/models/*.py",
       "words": [
         "responsed"
+      ]
+    },
+    {
+      "filename": "sdk/cognitiveservices/azure-cognitiveservices-vision-computervision/CHANGELOG.md",
+      "words": [
+        "prefered"
+      ]
+    },
+    {
+      "filename": "sdk/cognitiveservices/azure-cognitiveservices-vision-computervision/README.md",
+      "words": [
+        "cogsrv"
       ]
     },
     {
