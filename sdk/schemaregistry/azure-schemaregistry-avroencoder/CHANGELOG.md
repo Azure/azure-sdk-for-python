@@ -6,7 +6,7 @@ This version and all future versions will require Python 3.7+, Python 3.6 is no 
 
 ### Bugs Fixed
 
-- Updated `avro` minimum dependency to 1.11.1, which fixed a bug that previously restriceted complex types from being used as names.
+- Updated `avro` minimum dependency to 1.11.1, which fixed a bug that previously restricted complex types from being used as names.
 
 ## 1.0.0 (2022-05-10)
 
