@@ -452,6 +452,14 @@ class CodegenTestPR:
         add_certificate()
         start_test_proxy()
 
+    def get_tests_info(self):
+
+
+    def prepare_tests(self):
+        test_path = self.sdk_code_path()+'/tests'
+        if not Path(test_path).exists():
+            os.mkdir('tests')
+
     @return_origin_path
     def run_test_proc(self):
         # run test
@@ -462,8 +470,7 @@ class CodegenTestPR:
             print_check(f'pytest  --collect-only')
         except:
             log('live test run done, do not find any test !!!')
-            self.test_result = succeeded_result
-            return
+            self.prepare_tests()
 
         try:
             print_check(f'pytest -s')
