@@ -38,6 +38,7 @@ from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._validation import ValidationResult
 
 from .._utils._experimental import experimental
+from .._utils.utils import is_data_binding_expression
 from ..entities._component.automl_component import AutoMLComponent
 from ..entities._component.pipeline_component import PipelineComponent
 from ._code_operations import CodeOperations
@@ -98,7 +99,7 @@ class ComponentOperations(_ScopeDependentOperations):
         name: Union[str, None] = None,
         *,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
-    ) -> Iterable[Union[Component, ComponentContainerDetails]]:
+    ) -> Iterable[Component]:
         """List specific component or components of the workspace.
 
         :param name: Component name, if not set, list all components of the workspace
@@ -134,6 +135,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 resource_group_name=self._resource_group_name,
                 registry_name=self._registry_name,
                 **self._init_args,
+                cls=lambda objs: [Component._from_container_rest_object(obj) for obj in objs],
             )
             if self._registry_name
             else self._container_operation.list(
@@ -141,6 +143,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 workspace_name=self._workspace_name,
                 list_view_type=list_view_type,
                 **self._init_args,
+                cls=lambda objs: [Component._from_container_rest_object(obj) for obj in objs],
             )
         )
 
@@ -450,37 +453,52 @@ class ComponentOperations(_ScopeDependentOperations):
 
     def _resolve_arm_id_for_pipeline_component_jobs(self, jobs, resolver: Callable):
 
-        from azure.ai.ml.entities import CommandComponent, ParallelComponent, SparkComponent
         from azure.ai.ml.entities._builders import BaseNode, Sweep
-        from azure.ai.ml.entities._component.import_component import ImportComponent
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+        from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
+        from azure.ai.ml.entities._job.pipeline._io import PipelineInput
+
+        def preprocess_job(node):
+            """Resolve all PipelineInput(binding from sdk) on supported fields to string."""
+            # compute binding to pipeline input is supported on node.
+            supported_fields = ["compute"]
+            for field_name in supported_fields:
+                val = try_get_non_arbitrary_attr_for_potential_attr_dict(node, field_name)
+                if isinstance(val, PipelineInput):
+                    # Put binding string to field
+                    setattr(node, field_name, val._data_binding())
+
+        def resolve_base_node(name, node):
+            """Resolve node name, compute and component for base node."""
+            # Set display name as node name
+            if (
+                isinstance(node.component, Component)
+                and node.component._is_anonymous
+                and not node.component.display_name
+            ):
+                node.component.display_name = name
+            if isinstance(node.component, PipelineComponent):
+                # Resolve nested arm id for pipeline component
+                self._resolve_arm_id_and_inputs(node.component)
+            else:
+                # Resolve compute for other type
+                # Keep data binding expression as they are
+                if not is_data_binding_expression(node.compute):
+                    # Get compute for each job
+                    node.compute = resolver(node.compute, azureml_type=AzureMLResourceType.COMPUTE)
+            # Get the component id for each job's component
+            # Note: do not use node.component as Sweep don't have that
+            node._component = resolver(
+                node._component,
+                azureml_type=AzureMLResourceType.COMPONENT,
+            )
 
         for key, job_instance in jobs.items():
+            preprocess_job(job_instance)
             if isinstance(job_instance, AutoMLJob):
                 self._job_operations._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)
             elif isinstance(job_instance, BaseNode):
-                # Get the default for the specific job type
-                if (
-                    isinstance(
-                        job_instance.component,
-                        (CommandComponent, ParallelComponent, ImportComponent, PipelineComponent, SparkComponent),
-                    )
-                    and job_instance.component._is_anonymous
-                    and not job_instance.component.display_name
-                ):
-                    job_instance.component.display_name = key
-
-                if isinstance(job_instance.component, PipelineComponent):
-                    self._resolve_arm_id_and_inputs(job_instance.component)
-                else:
-                    # Get compute for each job
-                    job_instance.compute = resolver(job_instance.compute, azureml_type=AzureMLResourceType.COMPUTE)
-
-                # Get the component id for each job's component
-                job_instance._component = resolver(
-                    job_instance.trial if isinstance(job_instance, Sweep) else job_instance.component,
-                    azureml_type=AzureMLResourceType.COMPONENT,
-                )
+                resolve_base_node(key, job_instance)
             else:
                 msg = f"Non supported job type in Pipeline: {type(job_instance)}"
                 raise ComponentException(
@@ -530,7 +548,7 @@ def _refine_component(component_func: types.FunctionType) -> Component:
         check_parameter_type(component_func)
         if component_func._job_settings:
             module_logger.warning(
-                "Job settings %s on pipeline function " "%s are ignored when creating PipelineComponent.",
+                "Job settings %s on pipeline function '%s' are ignored when creating PipelineComponent.",
                 component_func._job_settings,
                 component_func.__name__,
             )

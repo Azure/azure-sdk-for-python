@@ -64,6 +64,9 @@ class ComputeOperations:
         :type workspace_name: str
         :param skip: Continuation token for pagination.
         :type skip: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PaginatedComputeResourcesList or the result of
          cls(response)
@@ -71,6 +74,8 @@ class ComputeOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedComputeResourcesList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedComputeResourcesList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -83,6 +88,7 @@ class ComputeOperations:
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
+                    api_version=api_version,
                     skip=skip,
                     template_url=self.list.metadata['url'],
                 )
@@ -95,6 +101,7 @@ class ComputeOperations:
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
+                    api_version=api_version,
                     skip=skip,
                     template_url=next_link,
                 )
@@ -146,6 +153,9 @@ class ComputeOperations:
         :type workspace_name: str
         :param compute_name: Name of the Azure Machine Learning compute.
         :type compute_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ComputeResource, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ComputeResource
@@ -157,12 +167,15 @@ class ComputeOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             compute_name=compute_name,
+            api_version=api_version,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -200,6 +213,7 @@ class ComputeOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(parameters, 'ComputeResource')
@@ -209,6 +223,7 @@ class ComputeOperations:
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             compute_name=compute_name,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self._create_or_update_initial.metadata['url'],
@@ -261,6 +276,9 @@ class ComputeOperations:
         :type compute_name: str
         :param parameters: Payload with Machine Learning compute definition.
         :type parameters: ~azure.mgmt.machinelearningservices.models.ComputeResource
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -275,6 +293,7 @@ class ComputeOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.ComputeResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ComputeResource"]
@@ -289,6 +308,7 @@ class ComputeOperations:
                 workspace_name=workspace_name,
                 compute_name=compute_name,
                 parameters=parameters,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -332,6 +352,7 @@ class ComputeOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(parameters, 'ClusterUpdateParameters')
@@ -341,6 +362,7 @@ class ComputeOperations:
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             compute_name=compute_name,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self._update_initial.metadata['url'],
@@ -385,6 +407,9 @@ class ComputeOperations:
         :type compute_name: str
         :param parameters: Additional parameters for cluster update.
         :type parameters: ~azure.mgmt.machinelearningservices.models.ClusterUpdateParameters
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -399,6 +424,7 @@ class ComputeOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.ComputeResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ComputeResource"]
@@ -413,6 +439,7 @@ class ComputeOperations:
                 workspace_name=workspace_name,
                 compute_name=compute_name,
                 parameters=parameters,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -456,12 +483,15 @@ class ComputeOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_delete_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             compute_name=compute_name,
+            api_version=api_version,
             underlying_resource_action=underlying_resource_action,
             template_url=self._delete_initial.metadata['url'],
         )
@@ -508,6 +538,9 @@ class ComputeOperations:
          underlying compute from workspace if 'Detach'.
         :type underlying_resource_action: str or
          ~azure.mgmt.machinelearningservices.models.UnderlyingResourceAction
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -520,6 +553,7 @@ class ComputeOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -533,6 +567,7 @@ class ComputeOperations:
                 workspace_name=workspace_name,
                 compute_name=compute_name,
                 underlying_resource_action=underlying_resource_action,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -577,6 +612,9 @@ class ComputeOperations:
         :type compute_name: str
         :param custom_services: New list of Custom Services.
         :type custom_services: list[~azure.mgmt.machinelearningservices.models.CustomService]
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -588,6 +626,7 @@ class ComputeOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(custom_services, '[CustomService]')
@@ -597,6 +636,7 @@ class ComputeOperations:
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             compute_name=compute_name,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self.update_custom_services.metadata['url'],
@@ -634,6 +674,9 @@ class ComputeOperations:
         :type workspace_name: str
         :param compute_name: Name of the Azure Machine Learning compute.
         :type compute_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AmlComputeNodesInformation or the result of
          cls(response)
@@ -641,6 +684,8 @@ class ComputeOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.AmlComputeNodesInformation]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AmlComputeNodesInformation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -654,6 +699,7 @@ class ComputeOperations:
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
                     compute_name=compute_name,
+                    api_version=api_version,
                     template_url=self.list_nodes.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -666,6 +712,7 @@ class ComputeOperations:
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
                     compute_name=compute_name,
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -715,6 +762,9 @@ class ComputeOperations:
         :type workspace_name: str
         :param compute_name: Name of the Azure Machine Learning compute.
         :type compute_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ComputeSecrets, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ComputeSecrets
@@ -726,12 +776,15 @@ class ComputeOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_list_keys_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             compute_name=compute_name,
+            api_version=api_version,
             template_url=self.list_keys.metadata['url'],
         )
         request = _convert_request(request)
@@ -768,12 +821,15 @@ class ComputeOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_start_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             compute_name=compute_name,
+            api_version=api_version,
             template_url=self._start_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -808,6 +864,9 @@ class ComputeOperations:
         :type workspace_name: str
         :param compute_name: Name of the Azure Machine Learning compute.
         :type compute_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -820,6 +879,7 @@ class ComputeOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -832,6 +892,7 @@ class ComputeOperations:
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 compute_name=compute_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -870,12 +931,15 @@ class ComputeOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_stop_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             compute_name=compute_name,
+            api_version=api_version,
             template_url=self._stop_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -910,6 +974,9 @@ class ComputeOperations:
         :type workspace_name: str
         :param compute_name: Name of the Azure Machine Learning compute.
         :type compute_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -922,6 +989,7 @@ class ComputeOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -934,6 +1002,7 @@ class ComputeOperations:
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 compute_name=compute_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -972,12 +1041,15 @@ class ComputeOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_restart_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             compute_name=compute_name,
+            api_version=api_version,
             template_url=self._restart_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -1012,6 +1084,9 @@ class ComputeOperations:
         :type workspace_name: str
         :param compute_name: Name of the Azure Machine Learning compute.
         :type compute_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -1024,6 +1099,7 @@ class ComputeOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -1036,6 +1112,7 @@ class ComputeOperations:
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 compute_name=compute_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -1080,6 +1157,9 @@ class ComputeOperations:
         :type compute_name: str
         :param parameters: The object for updating idle shutdown setting of specified ComputeInstance.
         :type parameters: ~azure.mgmt.machinelearningservices.models.IdleShutdownSetting
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1091,6 +1171,7 @@ class ComputeOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(parameters, 'IdleShutdownSetting')
@@ -1100,6 +1181,7 @@ class ComputeOperations:
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             compute_name=compute_name,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self.update_idle_shutdown_setting.metadata['url'],

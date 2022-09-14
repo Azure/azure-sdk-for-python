@@ -14,6 +14,7 @@ from azure.ai.ml import MLClient, automl
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities import Data
 from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._job.automl import SearchSpace
 from azure.ai.ml.entities._job.automl.image import ImageObjectDetectionJob, ImageObjectDetectionSearchSpace
 from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
@@ -129,12 +130,12 @@ class TestAutoMLImageObjectDetection:
         image_object_detection_job_sweep.set_training_parameters(early_stopping=True, evaluation_frequency=1)
         image_object_detection_job_sweep.extend_search_space(
             [
-                ImageObjectDetectionSearchSpace(
+                SearchSpace(
                     model_name=Choice(["yolov5"]),
                     learning_rate=Uniform(0.0001, 0.01),
                     model_size=Choice(["small", "medium"]),  # model-specific
                 ),
-                ImageObjectDetectionSearchSpace(
+                SearchSpace(
                     model_name=Choice(["fasterrcnn_resnet50_fpn"]),
                     learning_rate=Uniform(0.0001, 0.001),
                     optimizer=Choice(["sgd", "adam", "adamw"]),

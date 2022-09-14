@@ -40,9 +40,10 @@ def build_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
     skip = kwargs.pop('skip', None)  # type: Optional[str]
+    list_view_type = kwargs.pop('list_view_type', None)  # type: Optional[Union[str, "_models.ScheduleListViewType"]]
 
-    api_version = "2022-10-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules')
@@ -59,6 +60,8 @@ def build_list_request(
     query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
     if skip is not None:
         query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'str')
+    if list_view_type is not None:
+        query_parameters['listViewType'] = _SERIALIZER.query("list_view_type", list_view_type, 'str')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -81,7 +84,8 @@ def build_delete_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2022-10-01-preview"
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules/{name}')
@@ -119,7 +123,8 @@ def build_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2022-10-01-preview"
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules/{name}')
@@ -157,9 +162,9 @@ def build_create_or_update_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-10-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules/{name}')
@@ -219,6 +224,7 @@ class SchedulesOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         skip=None,  # type: Optional[str]
+        list_view_type=None,  # type: Optional[Union[str, "_models.ScheduleListViewType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.ScheduleResourceArmPaginatedResult"]
@@ -232,6 +238,11 @@ class SchedulesOperations(object):
         :type workspace_name: str
         :param skip: Continuation token for pagination.
         :type skip: str
+        :param list_view_type: Status filter for schedule.
+        :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ScheduleListViewType
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ScheduleResourceArmPaginatedResult or the result
          of cls(response)
@@ -239,6 +250,8 @@ class SchedulesOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.ScheduleResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScheduleResourceArmPaginatedResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -251,7 +264,9 @@ class SchedulesOperations(object):
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
+                    api_version=api_version,
                     skip=skip,
+                    list_view_type=list_view_type,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -263,7 +278,9 @@ class SchedulesOperations(object):
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
+                    api_version=api_version,
                     skip=skip,
+                    list_view_type=list_view_type,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -311,12 +328,15 @@ class SchedulesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_delete_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             name=name,
+            api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -361,6 +381,9 @@ class SchedulesOperations(object):
         :type workspace_name: str
         :param name: Schedule name.
         :type name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -373,6 +396,7 @@ class SchedulesOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -385,6 +409,7 @@ class SchedulesOperations(object):
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 name=name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -429,6 +454,9 @@ class SchedulesOperations(object):
         :type workspace_name: str
         :param name: Schedule name.
         :type name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Schedule, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.Schedule
@@ -440,12 +468,15 @@ class SchedulesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             name=name,
+            api_version=api_version,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -484,6 +515,7 @@ class SchedulesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'Schedule')
@@ -493,6 +525,7 @@ class SchedulesOperations(object):
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             name=name,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self._create_or_update_initial.metadata['url'],
@@ -547,6 +580,9 @@ class SchedulesOperations(object):
         :type name: str
         :param body: Schedule definition.
         :type body: ~azure.mgmt.machinelearningservices.models.Schedule
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -559,6 +595,7 @@ class SchedulesOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.Schedule]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Schedule"]
@@ -573,6 +610,7 @@ class SchedulesOperations(object):
                 workspace_name=workspace_name,
                 name=name,
                 body=body,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs

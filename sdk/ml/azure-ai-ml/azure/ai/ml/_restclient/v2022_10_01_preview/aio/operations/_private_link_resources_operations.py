@@ -57,6 +57,9 @@ class PrivateLinkResourcesOperations:
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateLinkResourceListResult, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.PrivateLinkResourceListResult
@@ -68,11 +71,14 @@ class PrivateLinkResourcesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_list_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
+            api_version=api_version,
             template_url=self.list.metadata['url'],
         )
         request = _convert_request(request)

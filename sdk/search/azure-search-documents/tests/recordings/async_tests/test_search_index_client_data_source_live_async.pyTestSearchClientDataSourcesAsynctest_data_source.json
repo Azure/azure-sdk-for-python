@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2021-04-30-Preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -30,7 +30,7 @@
         "elapsed-time": "35",
         "ETag": "W/\u00220x8D9E1E775E9F68A\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027create\u0027)?api-version=2020-06-30",
+        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027create\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -58,7 +58,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2021-04-30-Preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -87,7 +87,7 @@
         "elapsed-time": "36",
         "ETag": "W/\u00220x8D9E1E776020EDE\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027delete\u0027)?api-version=2020-06-30",
+        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027delete\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -115,7 +115,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2021-04-30-Preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -183,7 +183,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources(\u0027delete\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources(\u0027delete\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -206,7 +206,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2021-04-30-Preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -256,7 +256,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2021-04-30-Preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -285,7 +285,7 @@
         "elapsed-time": "34",
         "ETag": "W/\u00220x8D9E1E7764F3914\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027get\u0027)?api-version=2020-06-30",
+        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027get\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -313,7 +313,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources(\u0027get\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources(\u0027get\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -360,7 +360,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2021-04-30-Preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -389,7 +389,7 @@
         "elapsed-time": "42",
         "ETag": "W/\u00220x8D9E1E77677067F\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027list\u0027)?api-version=2020-06-30",
+        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027list\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -417,7 +417,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2021-04-30-Preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -446,7 +446,7 @@
         "elapsed-time": "39",
         "ETag": "W/\u00220x8D9E1E776942726\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027list2\u0027)?api-version=2020-06-30",
+        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027list2\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -474,7 +474,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2021-04-30-Preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -578,7 +578,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2021-04-30-Preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -607,7 +607,7 @@
         "elapsed-time": "39",
         "ETag": "W/\u00220x8D9E1E776C875D9\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027cou\u0027)?api-version=2020-06-30",
+        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027cou\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -635,7 +635,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2021-04-30-Preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -757,7 +757,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources(\u0027cou\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources(\u0027cou\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -817,7 +817,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2021-04-30-Preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -939,7 +939,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources(\u0027cou\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources(\u0027cou\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -986,7 +986,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2021-04-30-Preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -1015,7 +1015,7 @@
         "elapsed-time": "37",
         "ETag": "W/\u00220x8D9E1E777383E18\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027couunch\u0027)?api-version=2020-06-30",
+        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027couunch\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -1043,7 +1043,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources(\u0027couunch\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources(\u0027couunch\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -1103,7 +1103,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources(\u0027couunch\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources(\u0027couunch\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -1150,7 +1150,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2021-04-30-Preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -1179,7 +1179,7 @@
         "elapsed-time": "36",
         "ETag": "W/\u00220x8D9E1E7778B33D5\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027delunch\u0027)?api-version=2020-06-30",
+        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027delunch\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
@@ -1207,7 +1207,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources(\u0027delunch\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources(\u0027delunch\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -1267,7 +1267,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources(\u0027delunch\u0027)?api-version=2020-06-30",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources(\u0027delunch\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",

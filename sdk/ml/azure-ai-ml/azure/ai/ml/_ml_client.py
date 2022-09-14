@@ -50,6 +50,7 @@ from azure.ai.ml.entities import (
     OnlineEndpoint,
     Workspace,
 )
+from azure.ai.ml.entities._assets import WorkspaceModelReference
 from azure.ai.ml.operations import (
     BatchDeploymentOperations,
     BatchEndpointOperations,
@@ -88,6 +89,7 @@ class MLClient(object):
         subscription_id: str,  # type: str
         resource_group_name: str,  # type: str
         workspace_name: str = None,  # type: str
+        registry_name: str = None,  # type: str
         **kwargs: Any,  # type: Any
     ):
         """Initiate Azure ML client.
@@ -101,6 +103,9 @@ class MLClient(object):
         :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations.
             Defaults to None
         :type workspace_name: str, optional
+        :param registry_name: Registry to use in the client, optional for non registry dependent operations.
+            Defaults to None
+        :type registry_name: str, optional
         :param kwargs: A dictionary of additional configuration parameters.
             For e.g. kwargs = {"cloud": "AzureUSGovernment"}
         :type kwargs: dict
@@ -152,10 +157,7 @@ class MLClient(object):
                 cloud_name,
             )
         module_logger.debug("Cloud configured in MLClient: '%s'.", cloud_name)
-        self._registry_name = kwargs.pop("registry_name", None)
-        self._operation_scope = OperationScope(
-            subscription_id, resource_group_name, workspace_name, self._registry_name
-        )
+        self._operation_scope = OperationScope(subscription_id, resource_group_name, workspace_name, registry_name)
 
         # Cannot send multiple base_url as azure-cli sets the base_url automatically.
         kwargs.pop("base_url", None)
@@ -168,6 +170,8 @@ class MLClient(object):
         }
         if workspace_name:
             properties.update({"workspace_name": workspace_name})
+        if registry_name:
+            properties.update({"registry_name": registry_name})
         if "user_agent" in kwargs:
             user_agent = kwargs.get("user_agent")
         app_insights_handler = get_appinsights_log_handler(user_agent, **{"properties": properties})
@@ -246,7 +250,7 @@ class MLClient(object):
             **app_insights_handler_kwargs,
         )
 
-        if self._registry_name:
+        if registry_name:
             # This will come back later
             # _get_mfe_base_url_from_registry_discovery_service(self._workspaces, workspace_name)
             base_url = REGISTRY_DISCOVERY_BASE_URI
@@ -257,7 +261,7 @@ class MLClient(object):
             )
             self._service_client_10_2021_dataplanepreview = get_registry_service_client(
                 subscription_id=self._operation_scope._subscription_id,
-                registry_name=self._registry_name,
+                registry_name=registry_name,
                 credential=self._credential,
                 service_client_registry_discovery_client=self._service_client_registry_discovery_client,
                 **kwargs_registry,
@@ -284,21 +288,21 @@ class MLClient(object):
         self._operation_container.add(AzureMLResourceType.DATASTORE, self._datastores)
         self._models = ModelOperations(
             self._operation_scope,
-            self._service_client_10_2021_dataplanepreview if self._registry_name else self._service_client_05_2022,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_05_2022,
             self._datastores,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.MODEL, self._models)
         self._code = CodeOperations(
             self._operation_scope,
-            self._service_client_10_2021_dataplanepreview if self._registry_name else self._service_client_05_2022,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_05_2022,
             self._datastores,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.CODE, self._code)
         self._environments = EnvironmentOperations(
             self._operation_scope,
-            self._service_client_10_2021_dataplanepreview if self._registry_name else self._service_client_05_2022,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_05_2022,
             self._operation_container,
             **ops_kwargs,
         )
@@ -355,7 +359,7 @@ class MLClient(object):
         self._operation_container.add(AzureMLResourceType.DATA, self._data)
         self._components = ComponentOperations(
             self._operation_scope,
-            self._service_client_10_2021_dataplanepreview if self._registry_name else self._service_client_05_2022,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_05_2022,
             self._operation_container,
             **ops_kwargs,
         )
@@ -384,8 +388,9 @@ class MLClient(object):
     def from_config(
         cls,
         credential: TokenCredential,
+        *,
         path: Union[PathLike, str] = None,
-        _file_name=None,
+        file_name=None,
         **kwargs,
     ) -> "MLClient":
         """Return a workspace object from an existing Azure Machine Learning Workspace.
@@ -403,8 +408,8 @@ class MLClient(object):
         :param path: The path to the config file or starting directory to search.
             The parameter defaults to starting the search in the current directory.
         :type path: str
-        :param _file_name: Allows overriding the config file name to search for when path is a directory path.
-        :type _file_name: str
+        :param file_name: Allows overriding the config file name to search for when path is a directory path.
+        :type file_name: str
         :param kwargs: A dictionary of additional configuration parameters.
             For e.g. kwargs = {"cloud": "AzureUSGovernment"}
         :type kwargs: dict
@@ -423,8 +428,8 @@ class MLClient(object):
             # Look in config dirs like .azureml, aml_config or plain directory
             # with None
             directories_to_look = [".azureml", "aml_config", None]
-            if _file_name:
-                files_to_look = [_file_name]
+            if file_name:
+                files_to_look = [file_name]
             else:
                 files_to_look = ["config.json", "project.json"]
 
@@ -609,6 +614,24 @@ class MLClient(object):
         return self._schedules
 
     @property
+    def subscription_id(self) -> str:
+        """Get the subscription Id of a MLClient object.
+
+        :return: An Azure subscription Id.
+        :rtype: str
+        """
+        return self._operation_scope.subscription_id
+
+    @property
+    def resource_group_name(self) -> str:
+        """Get the resource group name of a MLClient object.
+
+        :return: An Azure resource group name.
+        :rtype: str
+        """
+        return self._operation_scope.resource_group_name
+
+    @property
     def workspace_name(self) -> Optional[str]:
         """The workspace where workspace dependent operations will be executed
         in.
@@ -679,7 +702,7 @@ class MLClient(object):
 
     # T = valid inputs/outputs for create_or_update
     # Each entry here requires a registered _create_or_update function below
-    T = TypeVar("T", Job, Model, Environment, Component, Datastore)
+    T = TypeVar("T", Job, Model, Environment, Component, Datastore, WorkspaceModelReference)
 
     def create_or_update(
         self,
@@ -693,7 +716,8 @@ class MLClient(object):
             azure.ai.ml.entities.Model,
             azure.ai.ml.entities.Environment,
             azure.ai.ml.entities.Component,
-            azure.ai.ml.entities.Datastore]
+            azure.ai.ml.entities.Datastore,
+            azure.ai.ml.entities.WorkspaceModelReference]
         :return: The created or updated resource
         :rtype: Union[azure.ai.ml.entities.Job,
             azure.ai.ml.entities.Model,
@@ -762,6 +786,12 @@ def _(entity: Job, operations, **kwargs):
 @_create_or_update.register(Model)
 def _(entity: Model, operations):
     module_logger.debug("Creating or updating model")
+    return operations[AzureMLResourceType.MODEL].create_or_update(entity)
+
+
+@_create_or_update.register(WorkspaceModelReference)
+def _(entity: WorkspaceModelReference, operations):
+    module_logger.debug("Promoting model to registry")
     return operations[AzureMLResourceType.MODEL].create_or_update(entity)
 
 

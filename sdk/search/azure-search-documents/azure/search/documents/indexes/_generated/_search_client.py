@@ -6,29 +6,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from copy import deepcopy
 from typing import TYPE_CHECKING
 
-from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
+
+from azure.core import PipelineClient
+
+from . import models
+from ._configuration import SearchClientConfiguration
+from .operations import AliasesOperations, DataSourcesOperations, IndexersOperations, IndexesOperations, SearchClientOperationsMixin, SkillsetsOperations, SynonymMapsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+    from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import SearchClientConfiguration
-from .operations import DataSourcesOperations
-from .operations import IndexersOperations
-from .operations import SkillsetsOperations
-from .operations import SynonymMapsOperations
-from .operations import IndexesOperations
-from .operations import SearchClientOperationsMixin
-from . import models
-
-
-class SearchClient(SearchClientOperationsMixin):
-    """Client that can be used to manage and query indexes and documents, as well as manage other resources, on a search service.
+class SearchClient(SearchClientOperationsMixin):    # pylint: disable=too-many-instance-attributes
+    """Client that can be used to manage and query indexes and documents, as well as manage other
+    resources, on a search service.
 
     :ivar data_sources: DataSourcesOperations operations
     :vartype data_sources: azure.search.documents.indexes.operations.DataSourcesOperations
@@ -40,8 +37,13 @@ class SearchClient(SearchClientOperationsMixin):
     :vartype synonym_maps: azure.search.documents.indexes.operations.SynonymMapsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.search.documents.indexes.operations.IndexesOperations
+    :ivar aliases: AliasesOperations operations
+    :vartype aliases: azure.search.documents.indexes.operations.AliasesOperations
     :param endpoint: The endpoint URL of the search service.
     :type endpoint: str
+    :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+     overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -50,43 +52,52 @@ class SearchClient(SearchClientOperationsMixin):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{endpoint}'
-        self._config = SearchClientConfiguration(endpoint, **kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _base_url = '{endpoint}'
+        self._config = SearchClientConfiguration(endpoint=endpoint, **kwargs)
+        self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
+        self.data_sources = DataSourcesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.indexers = IndexersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.skillsets = SkillsetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.synonym_maps = SynonymMapsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.aliases = AliasesOperations(self._client, self._config, self._serialize, self._deserialize)
 
-        self.data_sources = DataSourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.indexers = IndexersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.skillsets = SkillsetsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.synonym_maps = SynonymMapsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.indexes = IndexesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+    def _send_request(
+        self,
+        request,  # type: HttpRequest
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> HttpResponse
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
+
+        request_copy = deepcopy(request)
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

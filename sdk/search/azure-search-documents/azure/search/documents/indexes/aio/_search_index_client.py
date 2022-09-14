@@ -22,7 +22,8 @@ from ..._utils import get_authentication_policy
 from ..._version import SDK_MONIKER
 from ..models import (
     SearchIndex,
-    SynonymMap
+    SynonymMap,
+    SearchAlias
 )
 
 if TYPE_CHECKING:
@@ -392,8 +393,8 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         the SynonymMap model must be provided instead of the name. It is enough to provide
         the name of the synonym map to delete unconditionally.
 
-        :param synonym_map: The synonym map name or object to delete
-        :type synonym_map: str or ~azure.search.documents.indexes.models.SynonymMap
+        :param name: The synonym map name or object to delete
+        :type name: str or ~azure.search.documents.indexes.models.SynonymMap
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
@@ -487,3 +488,150 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.get_service_statistics(**kwargs)
         return result.as_dict()
+
+    @distributed_trace
+    def list_aliases(self, **kwargs):
+        # type: (**Any) -> AsyncItemPaged[SearchAlias]
+        """List the aliases in an Azure Search service.
+
+        :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
+         list of JSON property names, or '*' for all properties. The default is all
+         properties.
+        :paramtype select: list[str]
+        :return: List of Aliases
+        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchAlias]
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        if kwargs.get('select', None):
+            kwargs['select'] = ','.join(kwargs['select'])
+        # pylint:disable=protected-access
+        return self._client.aliases.list(**kwargs)
+
+    @distributed_trace
+    def list_alias_names(self, **kwargs):
+        # type: (**Any) -> AsyncItemPaged[str]
+        """List the alias names in an Azure Search service.
+
+        :return: List of alias names
+        :rtype: ~azure.core.paging.AsyncItemPaged[str]
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+
+        return self._client.aliases.list(
+            cls=lambda objs: [x.name for x in objs], **kwargs
+        )
+
+    @distributed_trace
+    async def get_alias(self, name, **kwargs):
+        # type: (str, **Any) -> SearchAlias
+        """
+
+        :param name: The name of the alias to retrieve.
+        :type name: str
+        :return: SearchAlias object
+        :rtype: ~azure.search.documents.indexes.models.SearchAlias
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = await self._client.aliases.get(name, **kwargs)
+        return result
+
+    @distributed_trace
+    async def delete_alias(self, alias, **kwargs):
+        # type: (Union[str, SearchAlias], **Any) -> None
+        """Deletes a search alias and its associated mapping to an index.
+        This operation is permanent, with no recovery option. The mapped index is untouched by this operation
+        :param alias: The alias name or object to delete.
+        :type alias: str or ~azure.search.documents.indexes.models.SearchAlias
+        :keyword match_condition: The match condition to use upon the etag
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_index_alias_crud_operations_async.py
+                :start-after: [START delete_alias_async]
+                :end-before: [END delete_alias_async]
+                :language: python
+                :dedent: 4
+                :caption: Delete an alias.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        error_map, access_condition = get_access_conditions(
+            alias, kwargs.pop("match_condition", MatchConditions.Unconditionally)
+        )
+        kwargs.update(access_condition)
+        try:
+            alias_name = alias.name
+        except AttributeError:
+            alias_name = alias
+        await self._client.aliases.delete(
+            alias_name=alias_name, error_map=error_map, **kwargs
+        )
+
+    @distributed_trace
+    async def create_alias(self, alias, **kwargs):
+        # type: (SearchIndex, **Any) -> SearchAlias
+        """Creates a new search alias.
+        :param alias: The alias object.
+        :type alias: ~azure.search.documents.indexes.models.SearchAlias
+        :return: The alias created
+        :rtype: ~azure.search.documents.indexes.models.SearchAlias
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_index_alias_crud_operations_async.py
+                :start-after: [START create_alias_async]
+                :end-before: [END create_alias_async]
+                :language: python
+                :dedent: 4
+                :caption: Create an alias.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = await self._client.aliases.create(alias, **kwargs)
+        return result  # pylint:disable=protected-access
+
+    @distributed_trace
+    async def create_or_update_alias(self, alias, **kwargs):
+        # type: (str, SearchAlias, **Any) -> SearchAlias
+        """Creates a new search alias or updates an alias if it already exists.
+
+        :param alias: The definition of the alias to create or update.
+        :type alias: ~azure.search.documents.indexes.models.SearchAlias
+        :keyword match_condition: The match condition to use upon the etag
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: The index created or updated
+        :rtype: ~azure.search.documents.indexes.models.SearchAlias
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`, \
+        :class:`~azure.core.exceptions.ResourceModifiedError`, \
+        :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
+        :class:`~azure.core.exceptions.ResourceNotFoundError`, \
+        :class:`~azure.core.exceptions.ResourceExistsError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_index_alias_crud_operations_async.py
+                :start-after: [START update_alias_async]
+                :end-before: [END update_alias_async]
+                :language: python
+                :dedent: 4
+                :caption: Update an alias.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        error_map, access_condition = get_access_conditions(
+            alias, kwargs.pop("match_condition", MatchConditions.Unconditionally)
+        )
+        kwargs.update(access_condition)
+        result = await self._client.aliases.create_or_update(
+            alias_name=alias.name,
+            alias=alias,
+            error_map=error_map,
+            **kwargs
+        )
+        return result  # pylint:disable=protected-access
+        

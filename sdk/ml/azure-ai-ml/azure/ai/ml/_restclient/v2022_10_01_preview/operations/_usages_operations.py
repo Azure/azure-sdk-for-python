@@ -37,7 +37,8 @@ def build_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2022-10-01-preview"
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/usages')
@@ -99,12 +100,17 @@ class UsagesOperations(object):
 
         :param location: The location for which resource usage is queried.
         :type location: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ListUsagesResult or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.ListUsagesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListUsagesResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -116,6 +122,7 @@ class UsagesOperations(object):
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     location=location,
+                    api_version=api_version,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -126,6 +133,7 @@ class UsagesOperations(object):
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     location=location,
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
