@@ -32,6 +32,9 @@ class Import(BaseNode):
     """Base class for import node, used for import component version
     consumption.
 
+    You should not instantiate this class directly. Instead, you should
+    create from a builder function.
+
     :param component: Id or instance of the import component/job to be run for the step
     :type component: ImportComponent
     :param inputs: Input parameters to the import.

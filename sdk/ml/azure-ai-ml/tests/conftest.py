@@ -15,7 +15,7 @@ from test_utilities.constants import Test_Resource_Group, Test_Subscription, Tes
 from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.entities import AzureBlobDatastore, CommandComponent, Component, Job
+from azure.ai.ml.entities import AzureBlobDatastore, Component
 from azure.ai.ml.entities._assets import Data, Model
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._datastore.credentials import NoneCredentials

@@ -12,6 +12,7 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 
 from ..._schema import PathAwareSchema
 from .._job.pipeline._io import PipelineInput, PipelineOutputBase
+from .._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
 from .base_node import BaseNode
 
@@ -20,7 +21,11 @@ module_logger = logging.getLogger(__name__)
 
 class Pipeline(BaseNode):
     """Base class for pipeline node, used for pipeline component version
-    consumption.
+    consumption. You should not instantiate this class directly. Instead, you should
+    use @pipeline decorator to create a pipeline node.
+
+    You should not instantiate this class directly. Instead, you should
+    create from @pipeline decorator.
 
     :param component: Id or instance of the pipeline component/job to be run for the step
     :type component: PipelineComponent
@@ -30,6 +35,8 @@ class Pipeline(BaseNode):
     :type inputs: dict
     :param outputs: Outputs of the pipeline node.
     :type outputs: dict
+    :param settings: Setting of pipeline node, only taking effect for root pipeline job.
+    :type settings: ~azure.ai.ml.entities.PipelineJobSettings
     """
 
     def __init__(
@@ -39,8 +46,6 @@ class Pipeline(BaseNode):
         inputs: Dict[
             str,
             Union[
-                PipelineInput,
-                PipelineOutputBase,
                 Input,
                 str,
                 bool,
@@ -51,6 +56,7 @@ class Pipeline(BaseNode):
             ],
         ] = None,
         outputs: Dict[str, Union[str, Output, "Output"]] = None,
+        settings: PipelineJobSettings = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -65,15 +71,27 @@ class Pipeline(BaseNode):
             outputs=outputs,
             **kwargs,
         )
+        self._settings = settings if settings else PipelineJobSettings()
 
     @property
     def component(self) -> Union[str, Component]:
         return self._component
 
     @property
-    def jobs(self):
-        """Return inner pipeline component's jobs."""
-        return self._component.jobs
+    def settings(self) -> PipelineJobSettings:
+        """Settings of the pipeline.
+
+        Note: settings is available only when create node as a job.
+            i.e. ml_client.jobs.create_or_update(node).
+
+        :return: Settings of the pipeline.
+        :rtype: ~azure.ai.ml.entities.PipelineJobSettings
+        """
+        return self._settings
+
+    @settings.setter
+    def settings(self, value):
+        self._settings = value
 
     @property
     def _skip_required_compute_missing_validation(self):
@@ -100,7 +118,21 @@ class Pipeline(BaseNode):
             inputs=self._job_inputs,
             outputs=self._job_outputs,
             jobs=self.component.jobs,
+            settings=self.settings,
         )
+
+    def _customized_validate(self):
+        """Check unsupported settings when use as a node."""
+        # Note: settings is not supported on node,
+        # jobs.create_or_update(node) will call node._to_job() at first,
+        # thus won't reach here.
+        from azure.ai.ml.entities import PipelineComponent
+
+        validation_result = super(Pipeline, self)._customized_validate()
+        ignored_keys = PipelineComponent._check_ignored_keys(self)
+        if ignored_keys:
+            validation_result.append_warning(message=f"{ignored_keys} ignored on node {self.name!r}.")
+        return validation_result
 
     @classmethod
     def _from_rest_object(cls, obj: dict) -> "Pipeline":
@@ -136,27 +168,3 @@ class Pipeline(BaseNode):
         from azure.ai.ml._schema.pipeline.pipeline_component import PipelineSchema
 
         return PipelineSchema(context=context)
-
-    def __call__(self, *args, **kwargs) -> "Pipeline":
-        """Call Pipeline as a function will return a new instance each time."""
-        if isinstance(self._component, PipelineComponent):
-            # call this to validate inputs
-            node = self._component(*args, **kwargs)
-            # merge inputs
-            for name, original_input in self.inputs.items():
-                if name not in kwargs.keys():
-                    # use setattr here to make sure owner of input won't change
-                    setattr(node.inputs, name, original_input._data)
-                # get outputs
-            for name, original_output in self.outputs.items():
-                # use setattr here to make sure owner of input won't change
-                setattr(node.outputs, name, original_output._data)
-            self._refine_optional_inputs_with_no_value(node, kwargs)
-            node._name = self.name
-            node.tags = self.tags
-            node.display_name = self.display_name
-            return node
-        raise Exception(
-            f"Pipeline can be called as a function only when referenced component is {type(Component)}, "
-            f"currently got {self._component}."
-        )

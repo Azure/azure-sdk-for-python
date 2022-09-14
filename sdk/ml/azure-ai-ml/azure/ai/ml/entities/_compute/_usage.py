@@ -98,7 +98,7 @@ class Usage(RestTranslatableMixin):
         return UsageSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
-    def load(
+    def _load(
         cls,
         path: Union[PathLike, str],
         params_override: list = None,

@@ -29,8 +29,9 @@ from azure.ai.ml._utils._workspace_utils import (
     get_resource_group_location,
 )
 from azure.ai.ml._version import VERSION
+from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants
-from azure.ai.ml.entities import ManagedServiceIdentity, ManagedServiceIdentityType, Workspace
+from azure.ai.ml.entities import ManagedServiceIdentity, Workspace
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 
@@ -173,7 +174,6 @@ class WorkspaceOperations:
                 update_dependent_resources=update_dependent_resources,
                 kwargs=kwargs,
             )
-
         # add tag in the workspace to indicate which sdk version the workspace is created from
         if workspace.tags is None:
             workspace.tags = {}
@@ -209,7 +209,7 @@ class WorkspaceOperations:
         update_dependent_resources: bool = False,
         **kwargs: Dict,
     ) -> Union[LROPoller, Workspace]:
-        """Update friendly name, description or tags of a workspace.
+        """Update friendly name, description, managed identities or tags of a workspace.
 
         :param workspace: Workspace resource.
         :param update_dependent_resources: gives your consent to update the workspace dependent resources.
@@ -225,13 +225,16 @@ class WorkspaceOperations:
         :return: A poller to track the operation status.
         :rtype: LROPoller
         """
+        identity = kwargs.get("identity", workspace.identity)
+        if identity:
+            identity = identity._to_rest_object()
         update_param = WorkspaceUpdateParameters(
             tags=workspace.tags,
             description=kwargs.get("description", workspace.description),
             friendly_name=kwargs.get("display_name", workspace.display_name),
             public_network_access=kwargs.get("public_network_access", workspace.public_network_access),
             image_build_compute=kwargs.get("image_build_compute", workspace.image_build_compute),
-            identity=kwargs.get("identity", workspace.identity),
+            identity=identity,
             primary_user_assigned_identity=kwargs.get(
                 "primary_user_assigned_identity", workspace.primary_user_assigned_identity
             ),
@@ -490,11 +493,12 @@ class WorkspaceOperations:
             for key, val in workspace.tags.items():
                 param["tagValues"]["value"][key] = val
 
+        identity = None
         if workspace.identity:
-            _set_val(param["identity"], workspace.identity)
+            identity = workspace.identity._to_rest_object()
         else:
-            default_identity = ManagedServiceIdentity(type=ManagedServiceIdentityType.SYSTEM_ASSIGNED)
-            _set_val(param["identity"], default_identity)
+            identity = ManagedServiceIdentity(type=ManagedServiceIdentityType.SYSTEM_ASSIGNED)._to_rest_object()
+        _set_val(param["identity"], identity)
 
         if workspace.primary_user_assigned_identity:
             _set_val(param["primaryUserAssignedIdentity"], workspace.primary_user_assigned_identity)
