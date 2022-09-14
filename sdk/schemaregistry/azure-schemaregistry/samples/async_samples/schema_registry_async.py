@@ -44,7 +44,18 @@ SCHEMA_JSON = {
         {"name": "favorite_color", "type": ["string", "null"]},
     ],
 }
+NEW_SCHEMA_JSON = {
+    "namespace": "example.avro",
+    "type": "record",
+    "name": "User2",
+    "fields": [
+        {"name": "name", "type": "string"},
+        {"name": "favorite_number", "type": ["int", "null"]},
+        {"name": "favorite_color", "type": ["string", "null"]},
+    ],
+}
 DEFINITION = json.dumps(SCHEMA_JSON, separators=(",", ":"))
+NEW_DEFINITION = json.dumps(NEW_SCHEMA_JSON, separators=(",", ":"))
 
 
 async def register_schema(client, group_name, name, definition, format):
@@ -77,6 +88,16 @@ async def get_schema_by_version(client, group_name, name, version):
     print("Schema properties are {}".format(schema.properties))
     return schema.definition
 
+async def get_old_schema_by_version(client, group_name, name, new_definition):
+    updated_schema_properties = await client.register_schema(
+        group_name, name, new_definition, FORMAT
+    )
+    print(f"Registered new schema of version: {updated_schema_properties.version}")
+    old_version = updated_schema_properties.version - 1
+    schema = await client.get_schema_by_version(group_name, name, old_version)
+    print(f"Retrieving old schema v{schema.properties.version}: {schema.definition}")
+    return schema.definition
+
 async def get_schema_id(client, group_name, name, definition, format):
     print("Getting schema id...")
     schema_properties = await client.get_schema_properties(
@@ -98,10 +119,10 @@ async def main():
         )
         schema_str = await get_schema_by_id(schema_registry_client, schema_properties.id)
         schema_str = await get_schema_by_version(schema_registry_client, GROUP_NAME, NAME, schema_properties.version)
+        schema_str = await get_old_schema_by_version(schema_registry_client, GROUP_NAME, NAME, NEW_DEFINITION)
         schema_id = await get_schema_id(
             schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT
         )
 
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+asyncio.run(main())

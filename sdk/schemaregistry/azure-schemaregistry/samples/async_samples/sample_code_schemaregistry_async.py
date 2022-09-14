@@ -105,6 +105,29 @@ async def get_schema_by_version(schema_registry_client, version):
     print(properties)
     return schema
 
+async def get_old_schema_by_version(schema_registry_client):
+    GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
+    NAME = "your-schema-name"
+    FORMAT = "Avro"
+    NEW_SCHEMA_JSON = {
+        "namespace": "example.avro",
+        "type": "record",
+        "name": "User2",
+        "fields": [
+            {"name": "name", "type": "string"},
+            {"name": "favorite_number", "type": ["int", "null"]},
+            {"name": "favorite_color", "type": ["string", "null"]},
+        ],
+    }
+    NEW_DEFINITION = json.dumps(NEW_SCHEMA_JSON, separators=(",", ":"))
+    updated_schema_properties = await schema_registry_client.register_schema(
+        GROUP_NAME, NAME, NEW_DEFINITION, FORMAT
+    )
+    print(f"Updated schema v{updated_schema_properties.version}: {NEW_SCHEMA_JSON}")
+    old_version = updated_schema_properties.version - 1
+    schema = await schema_registry_client.get_schema_by_version(GROUP_NAME, NAME, old_version)
+    print(f"Retrieving old schema v{schema.properties.version}: {schema.definition}")
+    return schema
 
 async def get_schema_id(schema_registry_client):
     # [START get_schema_id_async]
@@ -136,9 +159,9 @@ async def main():
         schema_properties = await register_schema(client)
         schema = await get_schema(client, schema_properties.id)
         schema = await get_schema_by_version(client, schema_properties.version)
+        schema = await get_old_schema_by_version(client)
         schema_id = await get_schema_id(client)
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

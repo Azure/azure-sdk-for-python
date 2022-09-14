@@ -67,6 +67,7 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             assert returned_version_schema.properties.format == "Avro"
             assert returned_version_schema.properties.group_name == schemaregistry_group
             assert returned_version_schema.properties.name == name
+            assert returned_version_schema.properties.version == schema_properties.version
             assert returned_version_schema.definition == schema_str
 
             returned_schema_properties = await client.get_schema_properties(schemaregistry_group, name, schema_str, format, logging_enable=True)
@@ -107,14 +108,15 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             assert new_schema.properties.group_name == schemaregistry_group
             assert new_schema.properties.name == name
 
-            new_schema = await client.get_schema_by_version(schemaregistry_group, name, new_schema_properties.version, logging_enable=True)
+            old_schema = await client.get_schema_by_version(schemaregistry_group, name, schema_properties.version, logging_enable=True)
 
-            assert new_schema.properties.id != schema_properties.id
-            assert new_schema.properties.id == new_schema_properties.id
-            assert new_schema.definition == schema_str_new
-            assert new_schema.properties.format == "Avro"
-            assert new_schema.properties.group_name == schemaregistry_group
-            assert new_schema.properties.name == name
+            assert old_schema.properties.id != new_schema_properties.id
+            assert old_schema.properties.id == schema_properties.id
+            assert old_schema.definition == schema_str
+            assert old_schema.properties.format == "Avro"
+            assert old_schema.properties.group_name == schemaregistry_group
+            assert old_schema.properties.name == name
+            assert old_schema.properties.version == schema_properties.version
 
         await client._generated_client._config.credential.close()
 

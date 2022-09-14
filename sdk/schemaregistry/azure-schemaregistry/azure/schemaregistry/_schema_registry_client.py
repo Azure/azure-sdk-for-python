@@ -173,9 +173,9 @@ class SchemaRegistryClient(object):
 
     def get_schema_by_version(self, group_name: str, name: str, version: int, **kwargs: Any) -> Schema:
         """
-        Gets a registered schema within the specified schema group, given its name and version.
+        Gets a specific version of a schema within the specified schema group.
 
-        :param str group_name: Schema group under which schema should be registered.
+        :param str group_name: Name of schema group that contains the registered schema.
         :param str name: Name of schema which should be retrieved.
         :param int version: Version of schema which should be retrieved.
         :rtype: ~azure.schemaregistry.Schema
