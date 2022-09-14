@@ -9,7 +9,6 @@ from test_utilities.utils import verify_entity_load_and_dump
 from azure.ai.ml import MLClient, load_workspace
 from azure.ai.ml.constants._common import PublicNetworkAccess
 from azure.ai.ml.entities._workspace.identity import ManagedServiceIdentityType
-from azure.ai.ml.entities._workspace.workspace import Workspace
 from azure.core.paging import ItemPaged
 from azure.mgmt.msi._managed_service_identity_client import ManagedServiceIdentityClient
 

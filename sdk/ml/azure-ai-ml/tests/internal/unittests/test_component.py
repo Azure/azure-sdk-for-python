@@ -49,7 +49,7 @@ class TestComponent:
             successful_return_code="Zero",
             inputs={"train_data": {"type": "path", "optional": False}},
             outputs={"output_dir": {"type": "path", "datastore_mode": "Upload"}},
-            environment={"name": "AzureML-Minimal", "version": "45", "os": "linux"},
+            environment={"name": "AzureML-Minimal", "version": "45", "os": "Linux"},
             command="sh ls.sh {inputs.input_dir} {inputs.file_name} {outputs.output_dir}",
         )
         rest_obj = base_component_internal._to_rest_object()
@@ -65,7 +65,7 @@ class TestComponent:
             "inputs": {"train_data": {"type": "path", "optional": False}},
             "outputs": {"output_dir": {"type": "path", "datastore_mode": "Upload"}},
             "command": "sh ls.sh {inputs.input_dir} {inputs.file_name} {outputs.output_dir}",
-            "environment": {"name": "AzureML-Minimal", "version": "45", "os": "linux"},
+            "environment": {"name": "AzureML-Minimal", "version": "45", "os": "Linux"},
         }
         component = Component._from_rest_object(rest_obj)
         assert component._to_dict() == {
@@ -80,7 +80,7 @@ class TestComponent:
             "inputs": {"train_data": {"type": "path"}},  # optional will be drop if False
             "outputs": {"output_dir": {"type": "path"}},  # TODO: 1871902 "datastore_mode": "Upload"}},
             "command": "sh ls.sh {inputs.input_dir} {inputs.file_name} {outputs.output_dir}",
-            "environment": {"name": "AzureML-Minimal", "version": "45", "os": "linux"},
+            "environment": {"name": "AzureML-Minimal", "version": "45", "os": "Linux"},
         }
 
     def test_load_from_registered_internal_scope_component_rest_obj(self):
@@ -238,12 +238,25 @@ class TestComponent:
                     "os": "Linux",
                 },
             ),
+            (
+                "./tests/test_configs/internal/env-dockerfile-build/component_spec.yaml",
+                {
+                    "docker": {
+                        "build": {
+                            "dockerfile": "FROM mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:20220815.v1\n",
+                        },
+                    },
+                    "python": {
+                        "user_managed_dependencies": True,
+                    },
+                    "os": "Linux",
+                },
+            ),
         ],
     )
     def test_environment_dependencies_resolve(self, yaml_path: str, expected_dict: Dict) -> None:
         component: InternalComponent = load_component(source=yaml_path)
-        component._resolve_local_environment()
-        assert component.environment == expected_dict
+        component.environment.resolve(component._source_path)
         rest_obj = component._to_rest_object()
         assert rest_obj.properties.component_spec["environment"] == expected_dict
 
@@ -268,7 +281,7 @@ class TestComponent:
         assert validation_result.passed
         expected_warning_message = (
             "environment.conda: Duplicated declaration of dependencies, "
-            "will honor in the order conda_dependencies, conda_dependencies_file, pip_requirements_file."
+            "will honor in the order conda_dependencies, conda_dependencies_file and pip_requirements_file."
         )
         assert str(validation_result._warnings[0]) == expected_warning_message
 

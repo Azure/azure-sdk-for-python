@@ -18,6 +18,11 @@ from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField
 from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.constants._job.automl import (
+    ImageClassificationModelNames,
+    ImageInstanceSegmentationModelNames,
+    ImageObjectDetectionModelNames,
+)
 
 
 class ImageModelSettingsSchema(metaclass=PatchedSchemaMeta):
@@ -42,7 +47,6 @@ class ImageModelSettingsSchema(metaclass=PatchedSchemaMeta):
         allowed_values=[o.value for o in LearningRateScheduler],
         casing_transform=camel_to_snake,
     )
-    model_name = fields.Str()
     momentum = fields.Float()
     nesterov = fields.Bool()
     number_of_epochs = fields.Int()
@@ -62,6 +66,9 @@ class ImageModelSettingsSchema(metaclass=PatchedSchemaMeta):
 
 
 class ImageModelSettingsClassificationSchema(ImageModelSettingsSchema):
+    model_name = StringTransformedEnum(
+        allowed_values=[o.value for o in ImageClassificationModelNames],
+    )
     training_crop_size = fields.Int()
     validation_crop_size = fields.Int()
     validation_resize_size = fields.Int()
@@ -72,7 +79,7 @@ class ImageModelSettingsClassificationSchema(ImageModelSettingsSchema):
         return ImageModelSettingsClassification(**data)
 
 
-class ImageModelSettingsObjectDetectionSchema(ImageModelSettingsSchema):
+class ImageDetectionSegmentationCommonSchema(ImageModelSettingsSchema):
     box_detections_per_image = fields.Int()
     box_score_threshold = fields.Float()
     image_size = fields.Int()
@@ -88,6 +95,22 @@ class ImageModelSettingsObjectDetectionSchema(ImageModelSettingsSchema):
     validation_metric_type = StringTransformedEnum(
         allowed_values=[o.value for o in ValidationMetricType],
         casing_transform=camel_to_snake,
+    )
+
+
+class ImageModelSettingsObjectDetectionSchema(ImageDetectionSegmentationCommonSchema):
+    model_name = StringTransformedEnum(
+        allowed_values=[o.value for o in ImageObjectDetectionModelNames],
+    )
+
+    @post_load
+    def make(self, data, **kwargs) -> ImageModelSettingsObjectDetection:
+        return ImageModelSettingsObjectDetection(**data)
+
+
+class ImageModelSettingsInstanceSegmentationSchema(ImageDetectionSegmentationCommonSchema):
+    model_name = StringTransformedEnum(
+        allowed_values=[o.value for o in ImageInstanceSegmentationModelNames],
     )
 
     @post_load

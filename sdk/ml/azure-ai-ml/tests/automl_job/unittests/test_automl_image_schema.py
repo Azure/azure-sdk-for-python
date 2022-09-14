@@ -4,6 +4,7 @@ from typing import List
 from unittest.mock import patch
 
 import pytest
+from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_job
 from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
@@ -514,3 +515,52 @@ class TestAutoMLImageSchema:
         # test expected job when deserialized is same as loaded one.
         from_rest_job = AutoMLJob._from_rest_object(expected_image_classification_job)
         assert from_rest_job == loaded_image_classification_job
+
+    def test_model_name_validation_image_classification(
+        self,
+        tmp_path: Path,
+    ):
+        test_schema_path = Path("./tests/test_configs/automl_job/automl_image_classification_job_mock.yaml")
+
+        test_config = load_yaml(test_schema_path)
+
+        # Add model name which is not supported for classification
+        test_config["training_parameters"]["model_name"] = "yolov5"
+
+        test_yaml_path = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_path, test_config)
+
+        with pytest.raises(ValidationError):
+            load_job(test_yaml_path)
+
+    def test_model_name_validation_image_object_detection(
+        self,
+        tmp_path: Path,
+    ):
+        test_schema_path = Path("./tests/test_configs/automl_job/automl_image_object_detection_job_mock.yaml")
+
+        test_config = load_yaml(test_schema_path)
+        # Add model name which is not supported for image object detection
+        test_config["training_parameters"]["model_name"] = "maskrcnn_resnet101_fpn"
+
+        test_yaml_path = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_path, test_config)
+
+        with pytest.raises(ValidationError):
+            load_job(test_yaml_path)
+
+    def test_model_name_validation_image_instance_segmentation(
+        self,
+        tmp_path: Path,
+    ):
+        test_schema_path = Path("./tests/test_configs/automl_job/automl_image_instance_segmentation_job_mock.yaml")
+
+        test_config = load_yaml(test_schema_path)
+        # Add model name which is not supported for image instance segmentation
+        test_config["training_parameters"]["model_name"] = "vitb16r224"
+
+        test_yaml_path = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_path, test_config)
+
+        with pytest.raises(ValidationError):
+            load_job(test_yaml_path)

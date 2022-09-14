@@ -38,7 +38,7 @@ class RetrySettings(RestTranslatableMixin, DictMixin):
         return RetrySettingsSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
     @classmethod
-    def load(
+    def _load(
         cls,
         path: Union[PathLike, str] = None,
         params_override: list = None,
@@ -46,10 +46,10 @@ class RetrySettings(RestTranslatableMixin, DictMixin):
     ) -> "RetrySettings":
         params_override = params_override or []
         data = load_yaml(path)
-        return RetrySettings.load_from_dict(data=data, path=path, params_override=params_override)
+        return RetrySettings._load_from_dict(data=data, path=path, params_override=params_override)
 
     @classmethod
-    def load_from_dict(
+    def _load_from_dict(
         cls,
         data: dict,
         path: Union[PathLike, str] = None,
@@ -64,7 +64,7 @@ class RetrySettings(RestTranslatableMixin, DictMixin):
         return load_from_dict(RetrySettingsSchema, data, context, **kwargs)
 
     @classmethod
-    def from_dict(cls, dct: dict):
+    def _from_dict(cls, dct: dict):
         """Convert a dict to an Input object."""
         obj = cls(**dict(dct.items()))
         return obj

@@ -59,6 +59,9 @@ class Command(BaseNode):
     """Base class for command node, used for command component version
     consumption.
 
+    You should not instantiate this class directly. Instead, you should
+    create from builder function: command.
+
     :param component: Id or instance of the command component/job to be run for the step
     :type component: CommandComponent
     :param inputs: Inputs to the command.
@@ -107,18 +110,15 @@ class Command(BaseNode):
         inputs: Dict[
             str,
             Union[
-                PipelineInput,
-                PipelineOutputBase,
                 Input,
                 str,
                 bool,
                 int,
                 float,
                 Enum,
-                "Input",
             ],
         ] = None,
-        outputs: Dict[str, Union[str, Output, "Output"]] = None,
+        outputs: Dict[str, Union[str, Output]] = None,
         limits: CommandJobLimits = None,
         identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
         distribution: Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution] = None,
@@ -337,8 +337,8 @@ class Command(BaseNode):
         component. A command node can sweep for multiple times, and the
         generated sweep node will share the same trial component.
 
-        :param primary_metric: primary metric of the sweep objective, AUC e.g. The metric must be logged in
-        running the trial component.
+        :param primary_metric: primary metric of the sweep objective, AUC e.g. The metric must be logged in running
+            the trial component.
         :type primary_metric: str
         :param goal: goal of the sweep objective.
         :type goal: str, valid values: maximize or minimize
@@ -352,13 +352,13 @@ class Command(BaseNode):
         :type max_concurrent_trials: int
         :param max_total_trials: Sweep Job max total trials.
         :type max_total_trials: int
-        :param timeout: The max run duration in seconds , after which the job will be cancelled.
+        :param timeout: The max run duration in seconds, after which the job will be cancelled.
         :type timeout: int
         :param trial_timeout: Sweep Job Trial timeout value in seconds.
         :type trial_timeout: int
         :param early_termination_policy: early termination policy of the sweep node:
-        :type early_termination_policy: Union[EarlyTerminationPolicy, str], valid values: bandit, median_stopping or
-        truncation_selection.
+        :type early_termination_policy: Union[EarlyTerminationPolicy, str], valid values: bandit, median_stopping
+            or truncation_selection.
         :param identity: Identity that training job will use while running on compute.
         :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
         :return: A sweep node with component from current Command node as its trial component.

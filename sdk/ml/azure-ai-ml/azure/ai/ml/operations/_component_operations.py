@@ -422,11 +422,20 @@ class ComponentOperations(_ScopeDependentOperations):
 
         # resolve component's code
         _try_resolve_code_for_component(component=component, get_arm_id_and_fill_back=get_arm_id_and_fill_back)
-
-        if hasattr(component, "environment") and not isinstance(component.environment, dict):
-            component.environment = get_arm_id_and_fill_back(
-                component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
-            )
+        # resolve component's environment
+        if hasattr(component, "environment"):
+            # for internal component, environment may be a dict or InternalEnvironment object
+            # in these two scenarios, we don't need to resolve the environment;
+            # Note for not directly importing InternalEnvironment and check with `isinstance`:
+            #   import from azure.ai.ml._internal will enable internal component feature for all users,
+            #   therefore, use type().__name__ to avoid import and execute type check
+            if (
+                not isinstance(component.environment, dict)
+                and not type(component.environment).__name__ == "InternalEnvironment"
+            ):
+                component.environment = get_arm_id_and_fill_back(
+                    component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
+                )
 
         self._resolve_arm_id_and_inputs(component)
 

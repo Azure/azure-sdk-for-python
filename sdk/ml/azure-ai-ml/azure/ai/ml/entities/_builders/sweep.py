@@ -37,6 +37,9 @@ class Sweep(ParameterizedSweep, BaseNode):
     """Base class for sweep node, used for command component version
     consumption.
 
+    You should not instantiate this class directly. Instead, you should
+    create from builder function: sweep.
+
     :param trial: Id or instance of the command component/job to be run for the step
     :type trial: Union[CommandComponent, str]
     :param compute: Compute definition containing the compute information for the step

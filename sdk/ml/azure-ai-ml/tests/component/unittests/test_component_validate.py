@@ -141,7 +141,7 @@ class TestComponentValidate:
                     "message": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
                     "path": "command",
                     "value": "echo Hello World & echo "
-                    "[${{inputs.component_in_number}}] & echo "
+                    "$[[${{inputs.component_in_number}}]] & echo "
                     "${{inputs.component_in_path}} & echo "
                     "${{outputs.component_out_path}} > "
                     "${{outputs.component_out_path}}/component_in_number & "
