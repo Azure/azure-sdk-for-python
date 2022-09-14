@@ -746,6 +746,9 @@ def _replace_throughput(throughput: Union[int, ThroughputProperties], new_throug
             if increment_percent:
                 new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
                     'incrementPercent'] = increment_percent
+            if throughput.offer_throughput:
+                new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
+
     except AttributeError:
         if isinstance(throughput, int):
             new_throughput_properties["content"]["offerThroughput"] = throughput
