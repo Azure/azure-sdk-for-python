@@ -31,8 +31,8 @@ class AuthorizationCodeCredential(GetTokenMixin):
         defines authorities for other clouds.
     :keyword str client_secret: One of the application's client secrets. Required only for web apps and web APIs.
     :keyword list[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
-            may acquire tokens. Add the wildcard value "*" to allow the credential to attempt to acquire tokens
-            for any tenant.
+        may acquire tokens. Add the wildcard value "*" to allow the credential to attempt to acquire tokens
+        for any tenant.
     """
 
     def __init__(self, tenant_id, client_id, authorization_code, redirect_uri, **kwargs):
