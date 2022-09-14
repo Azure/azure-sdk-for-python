@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-
+from __future__ import annotations
 from datetime import datetime
 from contextlib import contextmanager
 from typing import (
@@ -49,8 +49,11 @@ class EventProcessorMixin(object):
         {}
     )  # type: Union[int, str, datetime, Dict[str, Union[int, str, datetime]]]
 
-    def get_init_event_position(self, partition_id, checkpoint):
-        # type: (str, Optional[Dict[str, Any]]) -> Tuple[Union[str, int, datetime], bool]
+    def get_init_event_position(
+        self, 
+        partition_id: str, 
+        checkpoint: Optional[Dict[str, Any]]
+        ) -> Tuple[Union[str, int, datetime], bool]:
         checkpoint_offset = checkpoint.get("offset") if checkpoint else None
 
         event_position_inclusive = False
@@ -75,13 +78,12 @@ class EventProcessorMixin(object):
 
     def create_consumer(
         self,
-        partition_id,  # type: str
-        initial_event_position,  # type: Union[str, int, datetime]
-        initial_event_position_inclusive,  # type: bool
-        on_event_received,  # type: Callable[[Union[Optional[EventData], List[EventData]]], None]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Union[EventHubConsumer, EventHubConsumerAsync]
+        partition_id: str,
+        initial_event_position: Union[str, int, datetime],  
+        initial_event_position_inclusive: bool,
+        on_event_received: Callable[[Union[Optional[EventData], List[EventData]]], None], 
+        **kwargs: Any
+    ) -> Union[EventHubConsumer, EventHubConsumerAsync]:
         consumer = self._eventhub_client._create_consumer(  # type: ignore  # pylint: disable=protected-access
             self._consumer_group,
             partition_id,
@@ -96,8 +98,7 @@ class EventProcessorMixin(object):
         return consumer
 
     @contextmanager
-    def _context(self, links=None):
-        # type: (List[Link]) -> Iterator[None]
+    def _context(self, links: List[Link]=None) -> Iterator[None]:
         """Tracing"""
         span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
         if span_impl_type is None:
