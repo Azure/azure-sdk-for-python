@@ -838,6 +838,10 @@ class Subscription(_serialization.Model):
     :ivar state: The subscription state. Possible values are Enabled, Warned, PastDue, Disabled,
      and Deleted. Known values are: "Enabled", "Warned", "PastDue", "Disabled", and "Deleted".
     :vartype state: str or ~azure.mgmt.subscription.models.SubscriptionState
+    :ivar tenant_id: The tenant ID. For example, 00000000-0000-0000-0000-000000000000.
+    :vartype tenant_id: str
+    :ivar tags: Tags for the subscription.
+    :vartype tags: dict[str, str]
     :ivar subscription_policies: The subscription policies.
     :vartype subscription_policies: ~azure.mgmt.subscription.models.SubscriptionPolicies
     :ivar authorization_source: The authorization source of the request. Valid values are one or
@@ -851,6 +855,7 @@ class Subscription(_serialization.Model):
         "subscription_id": {"readonly": True},
         "display_name": {"readonly": True},
         "state": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -858,6 +863,8 @@ class Subscription(_serialization.Model):
         "subscription_id": {"key": "subscriptionId", "type": "str"},
         "display_name": {"key": "displayName", "type": "str"},
         "state": {"key": "state", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
         "subscription_policies": {"key": "subscriptionPolicies", "type": "SubscriptionPolicies"},
         "authorization_source": {"key": "authorizationSource", "type": "str"},
     }
@@ -865,11 +872,14 @@ class Subscription(_serialization.Model):
     def __init__(
         self,
         *,
+        tags: Optional[Dict[str, str]] = None,
         subscription_policies: Optional["_models.SubscriptionPolicies"] = None,
         authorization_source: Optional[str] = None,
         **kwargs
     ):
         """
+        :keyword tags: Tags for the subscription.
+        :paramtype tags: dict[str, str]
         :keyword subscription_policies: The subscription policies.
         :paramtype subscription_policies: ~azure.mgmt.subscription.models.SubscriptionPolicies
         :keyword authorization_source: The authorization source of the request. Valid values are one or
@@ -882,6 +892,8 @@ class Subscription(_serialization.Model):
         self.subscription_id = None
         self.display_name = None
         self.state = None
+        self.tenant_id = None
+        self.tags = tags
         self.subscription_policies = subscription_policies
         self.authorization_source = authorization_source
 
