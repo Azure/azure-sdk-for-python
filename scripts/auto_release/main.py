@@ -196,12 +196,14 @@ class CodegenTestPR:
         self.autorest_result = str(Path(os.getenv('TEMP_FOLDER')) / 'temp.json')
         with open(self.autorest_result, 'w') as file:
             json.dump(input_data, file)
+        print(f"*** input_data: {input_data}")
 
         # generate code(be careful about the order)
         print_exec('python scripts/dev_setup.py -p azure-core')
         print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
 
         generate_result = self.get_autorest_result()
+        print(f"***** generate_result: {generate_result}")
         self.tag_is_stable = list(generate_result.values())[0]['tagIsStable']
         log(f"tag_is_stable is {self.tag_is_stable}")
         
