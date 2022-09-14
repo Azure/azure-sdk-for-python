@@ -57,11 +57,11 @@ def sample_multiple_translation():
                 targets=[
                     TranslationTarget(
                         target_url=target_container_url_fr,
-                        language_code="fr"
+                        language="fr"
                     ),
                     TranslationTarget(
                         target_url=target_container_url_ar,
-                        language_code="ar"
+                        language="ar"
                     )
                 ]
             ),
@@ -70,7 +70,7 @@ def sample_multiple_translation():
                 targets=[
                     TranslationTarget(
                         target_url=target_container_url_es,
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )

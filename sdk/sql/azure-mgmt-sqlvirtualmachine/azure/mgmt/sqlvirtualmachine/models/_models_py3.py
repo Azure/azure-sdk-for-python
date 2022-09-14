@@ -193,7 +193,7 @@ class AutoBackupSettings(msrest.serialization.Model):
     :vartype full_backup_frequency: str or
      ~azure.mgmt.sqlvirtualmachine.models.FullBackupFrequencyType
     :ivar days_of_week: Days of the week for the backups when FullBackupFrequency is set to Weekly.
-    :vartype days_of_week: list[str or ~azure.mgmt.sqlvirtualmachine.models.DaysOfWeek]
+    :vartype days_of_week: list[str or ~azure.mgmt.sqlvirtualmachine.models.AutoBackupDaysOfWeek]
     :ivar full_backup_start_time: Start time of a given day during which full backups can take
      place. 0-23 hours.
     :vartype full_backup_start_time: int
@@ -234,7 +234,7 @@ class AutoBackupSettings(msrest.serialization.Model):
         backup_system_dbs: Optional[bool] = None,
         backup_schedule_type: Optional[Union[str, "BackupScheduleType"]] = None,
         full_backup_frequency: Optional[Union[str, "FullBackupFrequencyType"]] = None,
-        days_of_week: Optional[List[Union[str, "DaysOfWeek"]]] = None,
+        days_of_week: Optional[List[Union[str, "AutoBackupDaysOfWeek"]]] = None,
         full_backup_start_time: Optional[int] = None,
         full_backup_window_hours: Optional[int] = None,
         log_backup_frequency: Optional[int] = None,
@@ -266,7 +266,7 @@ class AutoBackupSettings(msrest.serialization.Model):
          ~azure.mgmt.sqlvirtualmachine.models.FullBackupFrequencyType
         :keyword days_of_week: Days of the week for the backups when FullBackupFrequency is set to
          Weekly.
-        :paramtype days_of_week: list[str or ~azure.mgmt.sqlvirtualmachine.models.DaysOfWeek]
+        :paramtype days_of_week: list[str or ~azure.mgmt.sqlvirtualmachine.models.AutoBackupDaysOfWeek]
         :keyword full_backup_start_time: Start time of a given day during which full backups can take
          place. 0-23 hours.
         :paramtype full_backup_start_time: int
@@ -298,8 +298,8 @@ class AutoPatchingSettings(msrest.serialization.Model):
 
     :ivar enable: Enable or disable autopatching on SQL virtual machine.
     :vartype enable: bool
-    :ivar day_of_week: Day of week to apply the patch on. Possible values include: "Monday",
-     "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday".
+    :ivar day_of_week: Day of week to apply the patch on. Possible values include: "Everyday",
+     "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday".
     :vartype day_of_week: str or ~azure.mgmt.sqlvirtualmachine.models.DayOfWeek
     :ivar maintenance_window_starting_hour: Hour of the day when patching is initiated. Local VM
      time.
@@ -327,8 +327,8 @@ class AutoPatchingSettings(msrest.serialization.Model):
         """
         :keyword enable: Enable or disable autopatching on SQL virtual machine.
         :paramtype enable: bool
-        :keyword day_of_week: Day of week to apply the patch on. Possible values include: "Monday",
-         "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday".
+        :keyword day_of_week: Day of week to apply the patch on. Possible values include: "Everyday",
+         "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday".
         :paramtype day_of_week: str or ~azure.mgmt.sqlvirtualmachine.models.DayOfWeek
         :keyword maintenance_window_starting_hour: Hour of the day when patching is initiated. Local VM
          time.
@@ -848,7 +848,7 @@ class Schedule(msrest.serialization.Model):
     :vartype monthly_occurrence: int
     :ivar day_of_week: Day of the week to run assessment. Possible values include: "Monday",
      "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday".
-    :vartype day_of_week: str or ~azure.mgmt.sqlvirtualmachine.models.DayOfWeek
+    :vartype day_of_week: str or ~azure.mgmt.sqlvirtualmachine.models.AssessmentDayOfWeek
     :ivar start_time: Time of the day in HH:mm format. Eg. 17:30.
     :vartype start_time: str
     """
@@ -867,7 +867,7 @@ class Schedule(msrest.serialization.Model):
         enable: Optional[bool] = None,
         weekly_interval: Optional[int] = None,
         monthly_occurrence: Optional[int] = None,
-        day_of_week: Optional[Union[str, "DayOfWeek"]] = None,
+        day_of_week: Optional[Union[str, "AssessmentDayOfWeek"]] = None,
         start_time: Optional[str] = None,
         **kwargs
     ):
@@ -882,7 +882,7 @@ class Schedule(msrest.serialization.Model):
         :paramtype monthly_occurrence: int
         :keyword day_of_week: Day of the week to run assessment. Possible values include: "Monday",
          "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday".
-        :paramtype day_of_week: str or ~azure.mgmt.sqlvirtualmachine.models.DayOfWeek
+        :paramtype day_of_week: str or ~azure.mgmt.sqlvirtualmachine.models.AssessmentDayOfWeek
         :keyword start_time: Time of the day in HH:mm format. Eg. 17:30.
         :paramtype start_time: str
         """

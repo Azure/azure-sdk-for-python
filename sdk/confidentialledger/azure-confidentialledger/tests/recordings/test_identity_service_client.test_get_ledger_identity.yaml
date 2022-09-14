@@ -9,28 +9,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-confidentialledger/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+      - azsdk-python-confidentialledger-identity-service/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://eastus.identity.confidential-ledger.core.azure.com/ledgerIdentity/fake-ledger-id?api-version=0.1-preview
+    uri: https://identity.confidential-ledger.core.azure.com/ledgerIdentity/fake?api-version=2022-05-13
   response:
     body:
-      string: '{"ledgerTlsCertificate":"-----BEGIN CERTIFICATE-----\nMIIBezCCASGgAwIBAgIRAL/+TT7iOY+UWa5Uh484vRYwCgYIKoZIzj0EAwIwFjEU\nMBIGA1UEAwwLQ0NGIE5ldHdvcmswHhcNMjEwMzExMDAwMDAwWhcNMjMwNjExMjM1\nOTU5WjAWMRQwEgYDVQQDDAtDQ0YgTmV0d29yazBZMBMGByqGSM49AgEGCCqGSM49\nAwEHA0IABG4t5blH9yUsJB4Ywm0VcsxxiFTdiWffd4w+m8r3GRfV0i6qaHT44dVK\nrMQH7ymSGCtz5PHqUQhy8ZJWAepDDKijUDBOMAwGA1UdEwQFMAMBAf8wHQYDVR0O\nBBYEFD+OVuRiS6dJICYtesS2Shx/KIEEMB8GA1UdIwQYMBaAFD+OVuRiS6dJICYt\nesS2Shx/KIEEMAoGCCqGSM49BAMCA0gAMEUCICrLXfKPC1DmKdcTKnZwhiEoPvMi\nRboMeODv/0hlL67gAiEA5gvNwskSiYefETGihWTouTqL+uyhDb4s3/R5XcIHaQQ=\n-----END
-        CERTIFICATE-----\n\u0000","ledgerId":"fake-ledger-id"}'
+      string: '{"ledgerTlsCertificate":"-----BEGIN CERTIFICATE-----\nMIIBeTCCASCgAwIBAgIQcTrTRLjb9eOoGTXSvOEgxjAKBggqhkjOPQQDAjAWMRQw\nEgYDVQQDDAtDQ0YgTmV0d29yazAeFw0yMjA2MjcxNjA3MjNaFw0yMjA5MjUxNjA3\nMjJaMBYxFDASBgNVBAMMC0NDRiBOZXR3b3JrMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAEyn3oh7/D+m/yuzdWNSEh3ZOupuUiO6U7MIcwiM6RBZ3nsWQHGeVyT0Ai\n+7cYDtPGo/8VRio+Brknl7VALE3q9aNQME4wDAYDVR0TBAUwAwEB/zAdBgNVHQ4E\nFgQUh1gNHgpIlTONmFbFX7HeG1rcT6gwHwYDVR0jBBgwFoAUh1gNHgpIlTONmFbF\nX7HeG1rcT6gwCgYIKoZIzj0EAwIDRwAwRAIgdd7rQszgGJ+jtjuiECigiFxoAvDk\nOPPBwTvMsE8TzsYCIDgYQ1mGHyZ52NXgoxPfqVVFTive8JIsjeQuczMZFq+9\n-----END
+        CERTIFICATE-----\n","ledgerId":"fake"}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 12 May 2021 15:41:17 GMT
+      - Fri, 01 Jul 2022 23:08:13 GMT
       server:
       - Kestrel
       transfer-encoding:
       - chunked
       x-ms-image-digest:
-      - sha256:60f2a1ff266b1862d6547883fa34945b0a60cd1d8a03a720e69fd7fc59283d36
+      - sha256:7a76c9097c3450987501c23e71a3e16b89f727059ab6de727807ac97b808810e
       x-ms-image-tag:
-      - latest-20210511024948901-55150065
+      - 1.0.01999.541-e02672ed644876c9cf10c5494e0203a0dc9da070
       x-ms-machinename:
-      - identityservice-6db5f69478-9ntln
+      - identityservice-6499ffbf45-jh62d
     status:
       code: 200
       message: OK

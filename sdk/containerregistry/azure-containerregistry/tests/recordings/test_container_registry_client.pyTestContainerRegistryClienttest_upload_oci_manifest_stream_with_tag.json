@@ -1,0 +1,1877 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/blobs/uploads/",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "266",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:05 GMT",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo1a584132:push,pull\u0022",
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "c99a27ec-cef0-4eaf-8832-3ef983027caa"
+      },
+      "ResponseBody": {
+        "errors": [
+          {
+            "code": "UNAUTHORIZED",
+            "message": "authentication required, visit https://aka.ms/acr/authorization for more information.",
+            "detail": [
+              {
+                "Type": "repository",
+                "Name": "repo1a584132",
+                "Action": "pull"
+              },
+              {
+                "Type": "repository",
+                "Name": "repo1a584132",
+                "Action": "push"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.10.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1753",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:04 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=Agbl-ocKLdpNuKj9df3cjDahBUEeAwAAAOs1dNoOAAAA; expires=Sat, 27-Aug-2022 07:47:05 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.13355.6 - EUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/kerberos",
+        "tenant_region_scope": "WW",
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Cookie": "fpc=Agbl-ocKLdpNuKj9df3cjDahBUEeAwAAAOs1dNoOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.10.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "945",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:04 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=Agbl-ocKLdpNuKj9df3cjDahBUEeAwAAAOs1dNoOAAAA; expires=Sat, 27-Aug-2022 07:47:05 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.13355.6 - NCUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+        "api-version": "1.1",
+        "metadata": [
+          {
+            "preferred_network": "login.microsoftonline.com",
+            "preferred_cache": "login.windows.net",
+            "aliases": [
+              "login.microsoftonline.com",
+              "login.windows.net",
+              "login.microsoft.com",
+              "sts.windows.net"
+            ]
+          },
+          {
+            "preferred_network": "login.partner.microsoftonline.cn",
+            "preferred_cache": "login.partner.microsoftonline.cn",
+            "aliases": [
+              "login.partner.microsoftonline.cn",
+              "login.chinacloudapi.cn"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.de",
+            "preferred_cache": "login.microsoftonline.de",
+            "aliases": [
+              "login.microsoftonline.de"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.us",
+            "preferred_cache": "login.microsoftonline.us",
+            "aliases": [
+              "login.microsoftonline.us",
+              "login.usgovcloudapi.net"
+            ]
+          },
+          {
+            "preferred_network": "login-us.microsoftonline.com",
+            "preferred_cache": "login-us.microsoftonline.com",
+            "aliases": [
+              "login-us.microsoftonline.com"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "22e16440-4c56-4d62-aefc-408a7f104774",
+        "Connection": "keep-alive",
+        "Content-Length": "238",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Cookie": "fpc=Agbl-ocKLdpNuKj9df3cjDahBUEeAwAAAOs1dNoOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.10.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-client-cpu": "x64",
+        "x-client-current-telemetry": "4|730,0|",
+        "x-client-last-telemetry": "4|0|||",
+        "x-client-os": "win32",
+        "x-client-sku": "MSAL.Python",
+        "x-client-ver": "1.14.0",
+        "x-ms-lib-capability": "retry-after, h429"
+      },
+      "RequestBody": "client_id=client-id\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=client-secret\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "client-request-id": "22e16440-4c56-4d62-aefc-408a7f104774",
+        "Content-Length": "114",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:04 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": [
+          "fpc=Agbl-ocKLdpNuKj9df3cjDahBUEeBAAAAOs1dNoOAAAA; expires=Sat, 27-Aug-2022 07:47:05 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-clitelem": "1,0,0,,",
+        "x-ms-ests-server": "2.1.13355.6 - EUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "refresh_in": 43199,
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "81",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "grant_type=access_token\u0026service=yallacrtests.azurecr.io\u0026access_token=access_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:05 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "8fb71f23-49dc-43ea-940f-e72a5a6a0cf3",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.516667"
+      },
+      "ResponseBody": {
+        "refresh_token": "refresh_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "130",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo1a584132%3Apush%2Cpull\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:05 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "fe22c04d-bb48-4779-b265-bc2e9d7b8d22",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.5"
+      },
+      "ResponseBody": {
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/blobs/uploads/",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Date": "Thu, 28 Jul 2022 07:47:05 GMT",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Docker-Upload-Uuid": "15bce08e-22f2-41fe-9e01-d0704a02b4d5",
+        "Location": "/v2/repo1a584132/blobs/uploads/15bce08e-22f2-41fe-9e01-d0704a02b4d5?_nouploadcache=false\u0026_state=cX0zgVukjIPFwXTmhafAGdkSPe1FKCFr82wr5Xbve3V7Ik5hbWUiOiJyZXBvMWE1ODQxMzIiLCJVVUlEIjoiMTViY2UwOGUtMjJmMi00MWZlLTllMDEtZDA3MDRhMDJiNGQ1IiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDIyLTA3LTI4VDA3OjQ3OjA1LjcwNTc5ODc0N1oifQ%3D%3D",
+        "Range": "0-0",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "52cee2e3-90ee-4ec0-93c4-3da33f835591"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/blobs/uploads/15bce08e-22f2-41fe-9e01-d0704a02b4d5?_nouploadcache=false\u0026_state=cX0zgVukjIPFwXTmhafAGdkSPe1FKCFr82wr5Xbve3V7Ik5hbWUiOiJyZXBvMWE1ODQxMzIiLCJVVUlEIjoiMTViY2UwOGUtMjJmMi00MWZlLTllMDEtZDA3MDRhMDJiNGQ1IiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDIyLTA3LTI4VDA3OjQ3OjA1LjcwNTc5ODc0N1oifQ%3D%3D",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "171",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "H4sIAAAAAAAA/\u002BzRwcrCMBAE4Dn/8L9DD551tulmn6dUq4VioUb06VUsORU8aRQx32VzSjYzi2bYt90WKZGkmU2T5HxOZ6lo6lTNPCjUUlFo0q2i4yHUI8hn75l/7kvE/lf1GLq2bsIynMOr37jn4b1/3L\u002BrYv9lWYkDxYkoireE\u002BOP9Xy87bNCjx4ACJwwY0WONf/x9erUsy7IsoVsAAAD//yO/fykACgAA",
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "266",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:05 GMT",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo1a584132:pull,push\u0022",
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "cc32be0c-0f00-4361-b7ff-ec8b87e4a8b1"
+      },
+      "ResponseBody": {
+        "errors": [
+          {
+            "code": "UNAUTHORIZED",
+            "message": "authentication required, visit https://aka.ms/acr/authorization for more information.",
+            "detail": [
+              {
+                "Type": "repository",
+                "Name": "repo1a584132",
+                "Action": "pull"
+              },
+              {
+                "Type": "repository",
+                "Name": "repo1a584132",
+                "Action": "push"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "81",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "grant_type=access_token\u0026service=yallacrtests.azurecr.io\u0026access_token=access_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:05 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "e83de20b-d6ef-4999-a02b-f0c8f5df2af0",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.483333"
+      },
+      "ResponseBody": {
+        "refresh_token": "refresh_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "130",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo1a584132%3Apull%2Cpush\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:05 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "7865f5a9-27a4-4a42-b960-f3169f5e5806",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.466667"
+      },
+      "ResponseBody": {
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/blobs/uploads/15bce08e-22f2-41fe-9e01-d0704a02b4d5?_nouploadcache=false\u0026_state=cX0zgVukjIPFwXTmhafAGdkSPe1FKCFr82wr5Xbve3V7Ik5hbWUiOiJyZXBvMWE1ODQxMzIiLCJVVUlEIjoiMTViY2UwOGUtMjJmMi00MWZlLTllMDEtZDA3MDRhMDJiNGQ1IiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDIyLTA3LTI4VDA3OjQ3OjA1LjcwNTc5ODc0N1oifQ%3D%3D",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "171",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "H4sIAAAAAAAA/\u002BzRwcrCMBAE4Dn/8L9DD551tulmn6dUq4VioUb06VUsORU8aRQx32VzSjYzi2bYt90WKZGkmU2T5HxOZ6lo6lTNPCjUUlFo0q2i4yHUI8hn75l/7kvE/lf1GLq2bsIynMOr37jn4b1/3L\u002BrYv9lWYkDxYkoireE\u002BOP9Xy87bNCjx4ACJwwY0WONf/x9erUsy7IsoVsAAAD//yO/fykACgAA",
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Date": "Thu, 28 Jul 2022 07:47:06 GMT",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Docker-Upload-Uuid": "15bce08e-22f2-41fe-9e01-d0704a02b4d5",
+        "Location": "/v2/repo1a584132/blobs/uploads/15bce08e-22f2-41fe-9e01-d0704a02b4d5?_nouploadcache=false\u0026_state=yWgPxNxX05bNNfVQOWuM7vKRdRY6sngCa-pRu88dl4B7Ik5hbWUiOiJyZXBvMWE1ODQxMzIiLCJVVUlEIjoiMTViY2UwOGUtMjJmMi00MWZlLTllMDEtZDA3MDRhMDJiNGQ1IiwiT2Zmc2V0IjoxNzEsIlN0YXJ0ZWRBdCI6IjIwMjItMDctMjhUMDc6NDc6MDVaIn0%3D",
+        "Range": "0-170",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "d95bc983-aacd-4094-9e87-062cd3081c97"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/blobs/uploads/15bce08e-22f2-41fe-9e01-d0704a02b4d5?digest=sha256_encoded_stream",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "266",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:06 GMT",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo1a584132:pull,push\u0022",
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "b2232877-1bbd-42be-b29b-69b5ec141e42"
+      },
+      "ResponseBody": {
+        "errors": [
+          {
+            "code": "UNAUTHORIZED",
+            "message": "authentication required, visit https://aka.ms/acr/authorization for more information.",
+            "detail": [
+              {
+                "Type": "repository",
+                "Name": "repo1a584132",
+                "Action": "pull"
+              },
+              {
+                "Type": "repository",
+                "Name": "repo1a584132",
+                "Action": "push"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "81",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "grant_type=access_token\u0026service=yallacrtests.azurecr.io\u0026access_token=access_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:06 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "caaef118-66aa-493a-bb41-2d49490e63af",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.45"
+      },
+      "ResponseBody": {
+        "refresh_token": "refresh_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "130",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo1a584132%3Apull%2Cpush\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:06 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "e54b124f-212f-4d4d-998b-8e41aaf6632d",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.433333"
+      },
+      "ResponseBody": {
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/blobs/uploads/15bce08e-22f2-41fe-9e01-d0704a02b4d5?digest=sha256_encoded_stream",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Date": "Thu, 28 Jul 2022 07:47:06 GMT",
+        "Docker-Content-Digest": "sha256:d25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Location": "/v2/repo1a584132/blobs/sha256:d25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "a9a8215d-4b83-4a0a-9c95-3391a851eb82"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/blobs/uploads/",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "266",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:06 GMT",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo1a584132:pull,push\u0022",
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "2ee372b5-7c5f-41ce-bc6e-021ad6cc83b0"
+      },
+      "ResponseBody": {
+        "errors": [
+          {
+            "code": "UNAUTHORIZED",
+            "message": "authentication required, visit https://aka.ms/acr/authorization for more information.",
+            "detail": [
+              {
+                "Type": "repository",
+                "Name": "repo1a584132",
+                "Action": "pull"
+              },
+              {
+                "Type": "repository",
+                "Name": "repo1a584132",
+                "Action": "push"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "81",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "grant_type=access_token\u0026service=yallacrtests.azurecr.io\u0026access_token=access_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:06 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "5cad6d70-d749-4a95-8727-402fb518cb27",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.416667"
+      },
+      "ResponseBody": {
+        "refresh_token": "refresh_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "130",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo1a584132%3Apull%2Cpush\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:06 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "424553a7-5829-4b53-ab13-bb72c0ebc180",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.4"
+      },
+      "ResponseBody": {
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/blobs/uploads/",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Date": "Thu, 28 Jul 2022 07:47:06 GMT",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Docker-Upload-Uuid": "545cf052-99fc-46e7-9480-18c49dd83920",
+        "Location": "/v2/repo1a584132/blobs/uploads/545cf052-99fc-46e7-9480-18c49dd83920?_nouploadcache=false\u0026_state=3gBYKtN3nmOug853Nh2msVVLn7031O6_jAayuRH1_mp7Ik5hbWUiOiJyZXBvMWE1ODQxMzIiLCJVVUlEIjoiNTQ1Y2YwNTItOTlmYy00NmU3LTk0ODAtMThjNDlkZDgzOTIwIiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDIyLTA3LTI4VDA3OjQ3OjA2LjY5NjQ0OTUzNVoifQ%3D%3D",
+        "Range": "0-0",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "971f77c1-6464-4778-8c1e-e952e38d4f7a"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/blobs/uploads/545cf052-99fc-46e7-9480-18c49dd83920?_nouploadcache=false\u0026_state=3gBYKtN3nmOug853Nh2msVVLn7031O6_jAayuRH1_mp7Ik5hbWUiOiJyZXBvMWE1ODQxMzIiLCJVVUlEIjoiNTQ1Y2YwNTItOTlmYy00NmU3LTk0ODAtMThjNDlkZDgzOTIwIiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDIyLTA3LTI4VDA3OjQ3OjA2LjY5NjQ0OTUzNVoifQ%3D%3D",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "28",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "//5oAGUAbABsAG8AIAB3AG8AcgBsAGQADQAKAA==",
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "266",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:06 GMT",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo1a584132:pull,push\u0022",
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "decf556b-6c1a-461a-be8b-700a5de4062d"
+      },
+      "ResponseBody": {
+        "errors": [
+          {
+            "code": "UNAUTHORIZED",
+            "message": "authentication required, visit https://aka.ms/acr/authorization for more information.",
+            "detail": [
+              {
+                "Type": "repository",
+                "Name": "repo1a584132",
+                "Action": "pull"
+              },
+              {
+                "Type": "repository",
+                "Name": "repo1a584132",
+                "Action": "push"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "81",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "grant_type=access_token\u0026service=yallacrtests.azurecr.io\u0026access_token=access_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:06 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "35f7ec79-489d-417c-a6b9-a7ab1087035f",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.383333"
+      },
+      "ResponseBody": {
+        "refresh_token": "refresh_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "130",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo1a584132%3Apull%2Cpush\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:06 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "be173cf1-57d1-4014-b168-a7f67d8970eb",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.366667"
+      },
+      "ResponseBody": {
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/blobs/uploads/545cf052-99fc-46e7-9480-18c49dd83920?_nouploadcache=false\u0026_state=3gBYKtN3nmOug853Nh2msVVLn7031O6_jAayuRH1_mp7Ik5hbWUiOiJyZXBvMWE1ODQxMzIiLCJVVUlEIjoiNTQ1Y2YwNTItOTlmYy00NmU3LTk0ODAtMThjNDlkZDgzOTIwIiwiT2Zmc2V0IjowLCJTdGFydGVkQXQiOiIyMDIyLTA3LTI4VDA3OjQ3OjA2LjY5NjQ0OTUzNVoifQ%3D%3D",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "28",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "//5oAGUAbABsAG8AIAB3AG8AcgBsAGQADQAKAA==",
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Date": "Thu, 28 Jul 2022 07:47:06 GMT",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Docker-Upload-Uuid": "545cf052-99fc-46e7-9480-18c49dd83920",
+        "Location": "/v2/repo1a584132/blobs/uploads/545cf052-99fc-46e7-9480-18c49dd83920?_nouploadcache=false\u0026_state=0GNvsqwArkggAXXeRcAx4v5Wun40A2gVhXypx0njQVR7Ik5hbWUiOiJyZXBvMWE1ODQxMzIiLCJVVUlEIjoiNTQ1Y2YwNTItOTlmYy00NmU3LTk0ODAtMThjNDlkZDgzOTIwIiwiT2Zmc2V0IjoyOCwiU3RhcnRlZEF0IjoiMjAyMi0wNy0yOFQwNzo0NzowNloifQ%3D%3D",
+        "Range": "0-27",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "e6726229-4fb3-4817-9db7-034bf135c09c"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/blobs/uploads/545cf052-99fc-46e7-9480-18c49dd83920?digest=sha256_encoded_stream",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "266",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:07 GMT",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo1a584132:pull,push\u0022",
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "654f0f4e-3373-4913-97e2-5b7a39609c4f"
+      },
+      "ResponseBody": {
+        "errors": [
+          {
+            "code": "UNAUTHORIZED",
+            "message": "authentication required, visit https://aka.ms/acr/authorization for more information.",
+            "detail": [
+              {
+                "Type": "repository",
+                "Name": "repo1a584132",
+                "Action": "pull"
+              },
+              {
+                "Type": "repository",
+                "Name": "repo1a584132",
+                "Action": "push"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "81",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "grant_type=access_token\u0026service=yallacrtests.azurecr.io\u0026access_token=access_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:07 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "4b46c18a-5625-47f5-8844-f0de643bf726",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.35"
+      },
+      "ResponseBody": {
+        "refresh_token": "refresh_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "130",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo1a584132%3Apull%2Cpush\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:07 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "448a2bff-005b-4ccc-a3e9-c7d10e47094e",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.333333"
+      },
+      "ResponseBody": {
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/blobs/uploads/545cf052-99fc-46e7-9480-18c49dd83920?digest=sha256_encoded_stream",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Date": "Thu, 28 Jul 2022 07:47:07 GMT",
+        "Docker-Content-Digest": "sha256:654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Location": "/v2/repo1a584132/blobs/sha256:654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "9383e642-112a-4d32-a31a-c8a628c74d34"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/manifests/v1",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/vnd.oci.image.manifest.v1\u002Bjson",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "579",
+        "Content-Type": "application/vnd.oci.image.manifest.v1\u002Bjson",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "schemaVersion": 2,
+        "config": {
+          "mediaType": "application/vnd.acme.rocket.config",
+          "digest": "sha256:d25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8",
+          "size": 171
+        },
+        "layers": [
+          {
+            "mediaType": "application/vnd.oci.image.layer.v1.tar",
+            "digest": "sha256:654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed",
+            "size": 28,
+            "annotations": {
+              "org.opencontainers.image.title": "artifact.txt"
+            }
+          }
+        ]
+      },
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "266",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:07 GMT",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo1a584132:pull,push\u0022",
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "7a7e31ca-b17a-45f0-9ade-cc6c8ac2b86c"
+      },
+      "ResponseBody": {
+        "errors": [
+          {
+            "code": "UNAUTHORIZED",
+            "message": "authentication required, visit https://aka.ms/acr/authorization for more information.",
+            "detail": [
+              {
+                "Type": "repository",
+                "Name": "repo1a584132",
+                "Action": "pull"
+              },
+              {
+                "Type": "repository",
+                "Name": "repo1a584132",
+                "Action": "push"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "81",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "grant_type=access_token\u0026service=yallacrtests.azurecr.io\u0026access_token=access_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:07 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "65049119-9fdb-4e63-a45f-08445401b304",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.316667"
+      },
+      "ResponseBody": {
+        "refresh_token": "refresh_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "130",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo1a584132%3Apull%2Cpush\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:07 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "12ed3dd3-92a7-47a6-85cc-7fac3d0039d9",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.3"
+      },
+      "ResponseBody": {
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/manifests/v1",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/vnd.oci.image.manifest.v1\u002Bjson",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "579",
+        "Content-Type": "application/vnd.oci.image.manifest.v1\u002Bjson",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "schemaVersion": 2,
+        "config": {
+          "mediaType": "application/vnd.acme.rocket.config",
+          "digest": "sha256:d25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8",
+          "size": 171
+        },
+        "layers": [
+          {
+            "mediaType": "application/vnd.oci.image.layer.v1.tar",
+            "digest": "sha256:654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed",
+            "size": 28,
+            "annotations": {
+              "org.opencontainers.image.title": "artifact.txt"
+            }
+          }
+        ]
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Date": "Thu, 28 Jul 2022 07:47:07 GMT",
+        "Docker-Content-Digest": "sha256:789f7c67bf495ba14ff8de0c6273f546d7691935c73ae107774979dcb12148b2",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Location": "/v2/repo1a584132/manifests/sha256:789f7c67bf495ba14ff8de0c6273f546d7691935c73ae107774979dcb12148b2",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "3d284278-f42a-4ded-9ae0-a2553e2dbadb"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/manifests/sha256_encoded_stream",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/vnd.oci.image.manifest.v1\u002Bjson",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "206",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:07 GMT",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo1a584132:pull\u0022",
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "46008f25-06a5-4903-88c8-6fd686f131d7"
+      },
+      "ResponseBody": {
+        "errors": [
+          {
+            "code": "UNAUTHORIZED",
+            "message": "authentication required, visit https://aka.ms/acr/authorization for more information.",
+            "detail": [
+              {
+                "Type": "repository",
+                "Name": "repo1a584132",
+                "Action": "pull"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "81",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "grant_type=access_token\u0026service=yallacrtests.azurecr.io\u0026access_token=access_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:07 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "c685a079-0f84-46ba-b3a2-875bdebe42cf",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.283333"
+      },
+      "ResponseBody": {
+        "refresh_token": "refresh_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "123",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo1a584132%3Apull\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:07 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "b6bcbeac-46b3-4a9d-8f89-e4f2f0bcb88f",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.266667"
+      },
+      "ResponseBody": {
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/manifests/sha256_encoded_stream",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/vnd.oci.image.manifest.v1\u002Bjson",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "579",
+        "Content-Type": "application/vnd.oci.image.manifest.v1\u002Bjson",
+        "Date": "Thu, 28 Jul 2022 07:47:08 GMT",
+        "Docker-Content-Digest": "sha256:789f7c67bf495ba14ff8de0c6273f546d7691935c73ae107774979dcb12148b2",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "ETag": "\u0022sha256:789f7c67bf495ba14ff8de0c6273f546d7691935c73ae107774979dcb12148b2\u0022",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "9ee9cdb7-f601-4887-b580-49b0ddcf0672"
+      },
+      "ResponseBody": {
+        "schemaVersion": 2,
+        "config": {
+          "mediaType": "application/vnd.acme.rocket.config",
+          "digest": "sha256:d25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8",
+          "size": 171
+        },
+        "layers": [
+          {
+            "mediaType": "application/vnd.oci.image.layer.v1.tar",
+            "digest": "sha256:654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed",
+            "size": 28,
+            "annotations": {
+              "org.opencontainers.image.title": "artifact.txt"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/manifests/v1",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/vnd.oci.image.manifest.v1\u002Bjson",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "206",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:08 GMT",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo1a584132:pull\u0022",
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "eee7bb78-6327-4fef-add0-35668507cb49"
+      },
+      "ResponseBody": {
+        "errors": [
+          {
+            "code": "UNAUTHORIZED",
+            "message": "authentication required, visit https://aka.ms/acr/authorization for more information.",
+            "detail": [
+              {
+                "Type": "repository",
+                "Name": "repo1a584132",
+                "Action": "pull"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "81",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "grant_type=access_token\u0026service=yallacrtests.azurecr.io\u0026access_token=access_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:08 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "b26e90ce-c9fa-4f5f-9004-7b2f5fb9d58d",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.25"
+      },
+      "ResponseBody": {
+        "refresh_token": "refresh_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "123",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo1a584132%3Apull\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:08 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "8b669036-61d3-4964-954f-163eba79c8f2",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.233333"
+      },
+      "ResponseBody": {
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/manifests/v1",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/vnd.oci.image.manifest.v1\u002Bjson",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "579",
+        "Content-Type": "application/vnd.oci.image.manifest.v1\u002Bjson",
+        "Date": "Thu, 28 Jul 2022 07:47:08 GMT",
+        "Docker-Content-Digest": "sha256:789f7c67bf495ba14ff8de0c6273f546d7691935c73ae107774979dcb12148b2",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "ETag": "\u0022sha256:789f7c67bf495ba14ff8de0c6273f546d7691935c73ae107774979dcb12148b2\u0022",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "6844281d-e8a3-4b51-b731-a32ebbe4f728"
+      },
+      "ResponseBody": {
+        "schemaVersion": 2,
+        "config": {
+          "mediaType": "application/vnd.acme.rocket.config",
+          "digest": "sha256:d25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8",
+          "size": 171
+        },
+        "layers": [
+          {
+            "mediaType": "application/vnd.oci.image.layer.v1.tar",
+            "digest": "sha256:654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed",
+            "size": 28,
+            "annotations": {
+              "org.opencontainers.image.title": "artifact.txt"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/acr/v1/repo1a584132/_manifests/sha256_encoded_stream",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "215",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:08 GMT",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo1a584132:metadata_read\u0022",
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "ce0c0854-8235-4776-85b7-b9859e04d9f0"
+      },
+      "ResponseBody": {
+        "errors": [
+          {
+            "code": "UNAUTHORIZED",
+            "message": "authentication required, visit https://aka.ms/acr/authorization for more information.",
+            "detail": [
+              {
+                "Type": "repository",
+                "Name": "repo1a584132",
+                "Action": "metadata_read"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "81",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "grant_type=access_token\u0026service=yallacrtests.azurecr.io\u0026access_token=access_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:08 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "9c8decd9-b926-4d26-956b-634d063b1e29",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.216667"
+      },
+      "ResponseBody": {
+        "refresh_token": "refresh_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "132",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo1a584132%3Ametadata_read\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:08 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "94d252ba-85d6-40ec-9738-4781ca8dc0b2",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.2"
+      },
+      "ResponseBody": {
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/acr/v1/repo1a584132/_manifests/sha256_encoded_stream",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "442",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:08 GMT",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "a6452e94-7b2a-4e37-a19a-26953547e60c"
+      },
+      "ResponseBody": {
+        "registry": "yallacrtests.azurecr.io",
+        "imageName": "repo1a584132",
+        "manifest": {
+          "digest": "sha256:789f7c67bf495ba14ff8de0c6273f546d7691935c73ae107774979dcb12148b2",
+          "imageSize": 0,
+          "createdTime": "2022-07-28T07:47:07.639371Z",
+          "lastUpdateTime": "2022-07-28T07:47:07.639371Z",
+          "mediaType": "application/vnd.oci.image.manifest.v1\u002Bjson",
+          "tags": [
+            "v1"
+          ],
+          "changeableAttributes": {
+            "deleteEnabled": true,
+            "writeEnabled": true,
+            "readEnabled": true,
+            "listEnabled": true
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/manifests/sha256_encoded_stream",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "208",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:08 GMT",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022repository:repo1a584132:delete\u0022",
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "2d673b4d-ab50-43ed-95d5-c8d817b8e719"
+      },
+      "ResponseBody": {
+        "errors": [
+          {
+            "code": "UNAUTHORIZED",
+            "message": "authentication required, visit https://aka.ms/acr/authorization for more information.",
+            "detail": [
+              {
+                "Type": "repository",
+                "Name": "repo1a584132",
+                "Action": "delete"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "81",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "grant_type=access_token\u0026service=yallacrtests.azurecr.io\u0026access_token=access_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:08 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "4e16d250-5b9b-4a34-b70c-6f14c5c39b7f",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.183333"
+      },
+      "ResponseBody": {
+        "refresh_token": "refresh_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "125",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "service=yallacrtests.azurecr.io\u0026scope=repository%3Arepo1a584132%3Adelete\u0026refresh_token=refresh_token\u0026grant_type=refresh_token",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 28 Jul 2022 07:47:08 GMT",
+        "Server": "openresty",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Ms-Correlation-Request-Id": "4d735bf1-e17b-457a-8307-b81f84e0402f",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.166667"
+      },
+      "ResponseBody": {
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_url.azurecr.io/v2/repo1a584132/manifests/sha256_encoded_stream",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-azure-containerregistry/1.1.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "Docker-Content-Digest",
+          "WWW-Authenticate",
+          "Link",
+          "X-Ms-Correlation-Request-Id"
+        ],
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Date": "Thu, 28 Jul 2022 07:47:09 GMT",
+        "Docker-Distribution-Api-Version": "registry/2.0",
+        "Server": "openresty",
+        "Strict-Transport-Security": [
+          "max-age=31536000; includeSubDomains",
+          "max-age=31536000; includeSubDomains"
+        ],
+        "X-Content-Type-Options": "nosniff",
+        "X-Ms-Correlation-Request-Id": "c5f9d721-40f6-4013-a4af-f1388ce05714",
+        "X-Ms-Ratelimit-Remaining-Calls-Per-Second": "8.000000"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

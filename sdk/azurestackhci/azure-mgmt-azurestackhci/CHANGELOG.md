@@ -1,5 +1,28 @@
 # Release History
 
+## 7.0.0 (2022-05-26)
+
+**Features**
+
+  - Added operation ArcSettingsOperations.begin_create_identity
+  - Added operation ArcSettingsOperations.generate_password
+  - Added operation ArcSettingsOperations.update
+  - Added operation ClustersOperations.begin_create_identity
+  - Added operation ClustersOperations.begin_delete
+  - Added operation ClustersOperations.begin_upload_certificate
+  - Model ArcSetting has a new parameter arc_application_client_id
+  - Model ArcSetting has a new parameter arc_application_object_id
+  - Model ArcSetting has a new parameter arc_application_tenant_id
+  - Model ArcSetting has a new parameter arc_service_principal_object_id
+  - Model ArcSetting has a new parameter connectivity_properties
+  - Model Cluster has a new parameter aad_application_object_id
+  - Model Cluster has a new parameter aad_service_principal_object_id
+  - Model Cluster has a new parameter service_endpoint
+
+**Breaking changes**
+
+  - Removed operation ClustersOperations.delete
+
 ## 6.1.0 (2022-04-08)
 
 **Features**

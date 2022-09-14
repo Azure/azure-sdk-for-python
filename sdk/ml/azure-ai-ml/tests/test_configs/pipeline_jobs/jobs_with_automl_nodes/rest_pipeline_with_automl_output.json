@@ -1,0 +1,92 @@
+{
+  "properties": {
+    "description": "Example of using automl function inside pipeline",
+    "properties": {
+      "mlflow.source.git.repoURL": "https://msdata.visualstudio.com/DefaultCollection/Vienna/_git/sdk-cli-v2",
+      "mlflow.source.git.branch": "wanhan/support_automl_output_binding_in_pipeline",
+      "mlflow.source.git.commit": "687144cea581da056fe4f528488a4339d9b95768",
+      "azureml.git.dirty": "True"
+    },
+    "tags": {},
+    "computeId": "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/test-rg-eastus2euap-v2-t-2022W20/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/computes/cpu-cluster",
+    "displayName": "automl_node_in_pipeline",
+    "experimentName": "sdk-cli-v2",
+    "isArchived": false,
+    "jobType": "Pipeline",
+    "inputs": {
+      "automl_train_data": {
+        "mode": "ReadOnlyMount",
+        "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/bd78e427f4dfc10f2287e268fc69a3b4/train",
+        "jobInputType": "MLTable"
+      },
+      "automl_validate_data": {
+        "mode": "ReadOnlyMount",
+        "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/eefbbf3722a18e7dcbfb0fb6ca14832d/valid",
+        "jobInputType": "MLTable"
+      },
+      "automl_test_data": {
+        "mode": "ReadOnlyMount",
+        "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/8ffa1e4dc82b3f3b17fabf07728f8e46/test",
+        "jobInputType": "MLTable"
+      }
+    },
+    "jobs": {
+      "hello_automl_regression": {
+        "name": "hello_automl_regression",
+        "tags": {},
+        "properties": {
+          "_automl_internal_label": "latest",
+          "_automl_internal_save_mlflow": "true"
+        },
+        "type": "automl",
+        "outputs": {
+          "best_model": {
+            "mode": "ReadWriteMount",
+            "job_output_type": "MLFlowModel"
+          }
+        },
+        "log_verbosity": "info",
+        "limits": {
+          "max_concurrent_trials": 1,
+          "max_trials": 1
+        },
+        "featurization": {
+          "mode": "off"
+        },
+        "task": "regression",
+        "primary_metric": "r2_score",
+        "training": {
+          "enable_model_explainability": true,
+          "enable_stack_ensemble": false,
+          "enable_vote_ensemble": false
+        },
+        "target_column_name": "SalePrice",
+        "test_data": "${{parent.inputs.automl_test_data}}",
+        "training_data": "${{parent.inputs.automl_train_data}}",
+        "validation_data": "${{parent.inputs.automl_validate_data}}"
+      },
+      "show_output": {
+        "environment_variables": {},
+        "name": "show_output",
+        "display_name": null,
+        "tags": {},
+        "computeId": null,
+        "inputs": {
+          "automl_output": {
+            "job_input_type": "Literal",
+            "value": "${{parent.jobs.hello_automl_regression.outputs.best_model}}"
+          }
+        },
+        "outputs": {},
+        "resources": null,
+        "distribution": null,
+        "limits": null,
+        "componentId": "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/test-rg-eastus2euap-v2-t-2022W20/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/components/13586a35-d5f9-78a1-1fbf-f4a7d7d6f88c/versions/1"
+      }
+    },
+    "outputs": {},
+    "settings": {
+      "force_rerun": false
+    }
+  }
+}

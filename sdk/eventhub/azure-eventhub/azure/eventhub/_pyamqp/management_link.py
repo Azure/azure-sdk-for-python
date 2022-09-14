@@ -30,9 +30,9 @@ _LOGGER = logging.getLogger(__name__)
 PendingManagementOperation = namedtuple('PendingManagementOperation', ['message', 'on_execute_operation_complete'])
 
 
-class ManagementLink(object):
+class ManagementLink(object): # pylint:disable=too-many-instance-attributes
     """
-
+       # TODO: Fill in docstring
     """
     def __init__(self, session, endpoint, **kwargs):
         self.next_message_id = 0
@@ -41,14 +41,16 @@ class ManagementLink(object):
         self._session = session
         self._request_link: SenderLink = session.create_sender_link(
             endpoint,
+            source_address=endpoint,
             on_link_state_change=self._on_sender_state_change,
             send_settle_mode=SenderSettleMode.Unsettled,
             rcv_settle_mode=ReceiverSettleMode.First
         )
         self._response_link: ReceiverLink = session.create_receiver_link(
             endpoint,
+            target_address=endpoint,
             on_link_state_change=self._on_receiver_state_change,
-            on_message_received=self._on_message_received,
+            on_transfer=self._on_message_received,
             send_settle_mode=SenderSettleMode.Unsettled,
             rcv_settle_mode=ReceiverSettleMode.First
         )
@@ -118,7 +120,7 @@ class ManagementLink(object):
             # All state transitions shall be ignored.
             return
 
-    def _on_message_received(self, message):
+    def _on_message_received(self, _, message):
         message_properties = message.properties
         correlation_id = message_properties[5]
         response_detail = message.application_properties
@@ -205,7 +207,8 @@ class ManagementLink(object):
         timeout = kwargs.get("timeout")
         message.application_properties["operation"] = kwargs.get("operation")
         message.application_properties["type"] = kwargs.get("type")
-        message.application_properties["locales"] = kwargs.get("locales")
+        if "locales" in kwargs:
+            message.application_properties["locales"] = kwargs.get("locales")
         try:
             # TODO: namedtuple is immutable, which may push us to re-think about the namedtuple approach for Message
             new_properties = message.properties._replace(message_id=self.next_message_id)

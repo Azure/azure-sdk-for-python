@@ -41,6 +41,7 @@ class DeploymentScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Deployment scale type.
     """
 
+    STANDARD = "Standard"
     MANUAL = "Manual"
 
 class HostingModel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):

@@ -182,6 +182,8 @@ def encode_long(output, value, with_constructor=True, use_smallest=True):
     <encoding name="smalllong" code="0x55" category="fixed" width="1" label="8-bit two's-complement integer"/>
     <encoding code="0x81" category="fixed" width="8" label="64-bit two's-complement integer in network byte order"/>
     """
+    if isinstance(value, datetime):
+        value = (calendar.timegm(value.utctimetuple()) * 1000) + (value.microsecond/1000)
     try:
         value = long(value)
     except NameError:
@@ -399,10 +401,10 @@ def _check_element_type(item, element_type):
 def encode_array(output, value, with_constructor=True, use_smallest=True):
     # type: (bytearray, Iterable[Any], bool, bool) -> None
     """
-    <encoding name="map8" code="0xE0" category="compound" width="1"
-        label="up to 2^8 - 1 octets of encoded map data"/>
-    <encoding name="map32" code="0xF0" category="compound" width="4"
-        label="up to 2^32 - 1 octets of encoded map data"/>
+    <encoding name="array8" code="0xe0" category="array" width="1"
+        label="up to 2^8 - 1 array elements with total size less than 2^8 octets"/>
+    <encoding name="array32" code="0xf0" category="array" width="4"
+        label="up to 2^32 - 1 array elements with total size less than 2^32 octets"/>
     """
     count = len(value)
     encoded_size = 0
@@ -474,11 +476,13 @@ def encode_annotations(value):
     fields = {TYPE: AMQPTypes.map, VALUE:[]}
     for key, data in value.items():
         if isinstance(key, int):
-            fields[VALUE].append(({TYPE: AMQPTypes.ulong, VALUE: key}, {TYPE: None, VALUE: data}))
+            field_key = {TYPE: AMQPTypes.ulong, VALUE: key}
         else:
-            if isinstance(key, six.text_type):
-                key = key.encode('utf-8')
-            fields[VALUE].append(({TYPE: AMQPTypes.symbol, VALUE: key}, {TYPE: None, VALUE: data}))
+            field_key = {TYPE: AMQPTypes.symbol, VALUE: key}
+        try:
+            fields[VALUE].append((field_key, {TYPE: data[TYPE], VALUE: data[VALUE]}))
+        except (KeyError, TypeError):
+            fields[VALUE].append((field_key, {TYPE: None, VALUE: data}))
     return fields
 
 
@@ -580,20 +584,24 @@ def encode_filter_set(value):
         else:
             if isinstance(name, six.text_type):
                 name = name.encode('utf-8')
-            descriptor, filter_value = data
-            described_filter = {
-                TYPE: AMQPTypes.described,
-                VALUE: (
-                    {TYPE: AMQPTypes.symbol, VALUE: descriptor},
-                    filter_value
-                )
-            }
+            try:
+                descriptor, filter_value = data
+                described_filter = {
+                    TYPE: AMQPTypes.described,
+                    VALUE: (
+                        {TYPE: AMQPTypes.symbol, VALUE: descriptor},
+                        filter_value
+                    )
+                }
+            except ValueError:
+                described_filter = data
+
         fields[VALUE].append(({TYPE: AMQPTypes.symbol, VALUE: name}, described_filter))
     return fields
 
 
 def encode_unknown(output, value, **kwargs):
-    # type: (bytearray, Optional[Any]) -> None
+    # type: (bytearray, Optional[Any], Any) -> None
     """
     Dynamic encoding according to the type of `value`.
     """
@@ -703,7 +711,16 @@ def encode_payload(output, payload):
     if payload[0]:  # header
         # TODO: Header and Properties encoding can be optimized to
         #  1. not encoding trailing None fields
+        #  Possible fix 1:
+        #  header = payload[0]
+        #  header = header[0:max(i for i, v in enumerate(header) if v is not None) + 1]
+        #  Possible fix 2:
+        #  itertools.dropwhile(lambda x: x is None, header[::-1]))[::-1]
         #  2. encoding bool without constructor
+        #  Possible fix 3:
+        #  header = list(payload[0])
+        #  while header[-1] is None:
+        #      del header[-1]
         encode_value(output, describe_performative(payload[0]))
 
     if payload[2]:  # message annotations
@@ -726,7 +743,7 @@ def encode_payload(output, payload):
             TYPE: AMQPTypes.described,
             VALUE: (
                 {TYPE: AMQPTypes.ulong, VALUE: 0x00000074},
-                {TYPE: AMQPTypes.map, VALUE: payload[4]}
+                encode_application_properties(payload[4])
             )
         })
 

@@ -1,0 +1,46 @@
+type: automl
+
+name: simpleautomlimagejob
+experiment_name: "automl"
+compute: azureml:cpu-cluster
+
+log_verbosity: debug
+task: image_instance_segmentation
+primary_metric: mean_average_precision
+
+limits:
+  timeout_minutes: 60
+  max_concurrent_trials: 1
+  max_trials: 1
+
+target_column_name: label
+training_data:
+  path: azureml:image-training-data:1
+  type: mltable
+validation_data:
+  path: azureml:image-validation-data:1
+  type: mltable
+
+sweep:
+  limits:
+    max_trials: 20
+    max_concurrent_trials: 4
+  sampling_algorithm: Grid
+  early_termination:
+    type: bandit
+    evaluation_interval: 10
+    slack_factor: 0.2
+
+image_model:
+  checkpoint_frequency: 1
+  early_stopping: true
+  early_stopping_delay: 2
+  early_stopping_patience: 2
+  evaluation_frequency: 1
+
+search_space:
+  - model_name: "choice('maskrcnn_resnet50_fpn')"
+    learning_rate: "uniform(0.005,0.05)"
+    warmup_cosine_lr_warmup_epochs: "choice(0,3)"
+    optimizer: "choice('sgd','adam','adamw')"
+    min_size: "choice(600,800)"

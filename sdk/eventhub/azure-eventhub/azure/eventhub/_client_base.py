@@ -10,7 +10,7 @@ import time
 import functools
 import collections
 from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
-from datetime import timedelta
+from datetime import timedelta, datetime
 from urllib.parse import urlparse
 import six
 
@@ -376,7 +376,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             mgmt_client = AMQPClient(
                 hostname,
                 auth=mgmt_auth,
-                debug=self._config.network_tracing,
+                network_trace=self._config.network_tracing,
                 transport_type=self._config.transport_type,
                 http_proxy=self._config.http_proxy,
                 custom_endpoint_address=custom_endpoint_address,
@@ -386,18 +386,27 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 mgmt_client.open()
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)
-                mgmt_msg.application_properties["security_token"] = mgmt_auth.get_token()
-                response = mgmt_client.mgmt_request(
+                access_token = mgmt_auth.get_token()
+
+                if not access_token:
+                    _LOGGER.debug("Management client received an empty access token object")
+
+                elif not access_token.token:
+                    _LOGGER.debug("Management client received an empty token")
+
+                else:
+                    _LOGGER.debug(f"Management client token expires on: {datetime.fromtimestamp(access_token.expires_on)}")
+
+                mgmt_msg.application_properties["security_token"] = access_token.token
+                
+                status_code, description, response = mgmt_client.mgmt_request(
                     mgmt_msg,
                     operation=READ_OPERATION.decode(),
                     operation_type=op_type.decode(),
                     status_code_field=MGMT_STATUS_CODE,
                     description_fields=MGMT_STATUS_DESC,
                 )
-                status_code = int(response.application_properties[MGMT_STATUS_CODE])
-                description = response.application_properties.get(
-                    MGMT_STATUS_DESC
-                )  # type: Optional[Union[str, bytes]]
+                status_code = int(status_code)
                 if description and isinstance(description, six.binary_type):
                     description = description.decode("utf-8")
                 if status_code < 400:

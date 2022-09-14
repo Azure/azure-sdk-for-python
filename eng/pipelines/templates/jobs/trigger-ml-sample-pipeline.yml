@@ -1,0 +1,88 @@
+parameters:
+  - name: ServiceDirectory
+    type: string
+    default: 'ml'
+  - name: Artifacts
+    type: object
+    default: 
+    - name: azure-ai-ml
+      safeName: azureaiml
+      skipVerifyChangeLog: true
+  - name: SamplesRepo
+    type: string
+    default: 'https://github.com/scbedd/azureml-examples'
+
+jobs:
+  - job: 'Build_Upload_PR'
+    displayName: "Build, Upload, and PR Azure ML Changeset"
+    timeoutInMinutes: 90
+    variables:
+    - template: ../variables/globals.yml
+
+    pool:
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
+
+    steps:
+    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+      parameters:
+        BuildTargetingString: "azure-*"
+
+    - script: |
+        echo "##vso[build.addbuildtag]Scheduled"
+      displayName: 'Tag scheduled builds'
+      condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
+
+    - task: UsePythonVersion@0
+      displayName: 'Use Python $(PythonVersion)'
+      inputs:
+        versionSpec: $(PythonVersion)
+
+    - script: |
+        pip install -r eng/ci_tools.txt
+        pip install -r eng/ml_sample_tools.txt
+      displayName: 'Prep Environment'
+
+    - task: PythonScript@0
+      displayName: 'Generate Packages'
+      inputs:
+        scriptPath: 'scripts/devops_tasks/build_packages.py'
+        arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --devbuild="$(SetDevVersion)"'
+
+    - pwsh: |
+        Get-ChildItem "$(Build.ArtifactStagingDirectory)" -R
+      displayName: Output Staging Directory
+
+    - pwsh: |
+        git clone --depth 1 ${{ parameters.SamplesRepo }} $(Agent.BuildDirectory)/ml
+        Write-Host "##vso[task.setvariable variable=mlrepo;]$(Agent.BuildDirectory)/ml"
+      displayName: Clone the ML Samples Repo
+
+    - pwsh: |
+        Get-ChildItem "$(mlrepo)" -R
+      displayName: Output Staging Directory
+
+    - task: PythonScript@0
+      displayName: 'Generate Samples Repo Changes'
+      env:
+        BLOB_CONNECTION_STRING: $(azure-sdk-docsupport-cs)
+      inputs:
+        scriptPath: 'scripts/devops_tasks/generate_ml_sample_update.py'
+        arguments: >-
+          --ml-repo="$(mlrepo)"
+          --ml-wheel-folder="$(Build.ArtifactStagingDirectory)/azure-ai-ml"
+          --build-id="$(Build.BuildId)"
+
+    - pwsh: |
+        cat "$(mlrepo)/sdk/setup.sh"
+      displayName: Display Updated setup.sh
+
+    - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+      parameters:
+        RepoName: azureml-examples
+        PRBranchName: test-ml-sdk-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
+        BaseBranchName: main
+        CommitMsg: "Update sdk/setup.sh to target fresh built azure-ai-ml wheel."
+        PRTitle: "SDK Samples Run generated from $(Build.BuildId)"
+        WorkingDirectory: $(mlrepo)
+        PRBody: "Check azureml samples against azure-sdk build $(Build.BuildId)."

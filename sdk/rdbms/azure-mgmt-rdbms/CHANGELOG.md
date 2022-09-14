@@ -1,5 +1,38 @@
 # Release History
 
+## 10.2.0b3 (2022-08-09)
+
+**Features**
+
+  - Added operation group AzureADAdministratorsOperations
+  - Added operation group CheckNameAvailabilityWithoutLocationOperations
+
+## 10.2.0b2 (2022-08-01)
+
+**Features**
+
+  - Model CapabilityProperties has a new parameter supported_ha_mode
+  - Model Configuration has a new parameter documentation_link
+  - Model Configuration has a new parameter is_config_pending_restart
+  - Model Configuration has a new parameter is_dynamic_config
+  - Model Configuration has a new parameter is_read_only
+  - Model Configuration has a new parameter unit
+  - Model NameAvailability has a new parameter reason
+  - Model VirtualNetworkSubnetUsageResult has a new parameter location
+  - Model VirtualNetworkSubnetUsageResult has a new parameter subscription_id
+
+**Breaking changes**
+
+  - Model Server no longer has parameter tags_properties_tags
+  - Removed operation BackupsOperations.put
+
+## 10.2.0b1 (2022-07-13)
+
+**Features**
+
+  - Added operation BackupsOperations.put
+  - Model ConfigurationListForBatchUpdate has a new parameter reset_all_to_default
+
 ## 10.1.0 (2022-03-07)
 
 **Features**

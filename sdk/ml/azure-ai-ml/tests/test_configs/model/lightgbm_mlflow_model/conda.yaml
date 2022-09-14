@@ -1,0 +1,12 @@
+channels:
+- conda-forge
+dependencies:
+- python=3.6.2
+- pip
+- pip:
+  - mlflow
+  - lightgbm==3.3.2
+  - matplotlib==3.3.4
+  - pandas==1.1.5
+  - typing-extensions==4.0.1
+name: mlflow-env

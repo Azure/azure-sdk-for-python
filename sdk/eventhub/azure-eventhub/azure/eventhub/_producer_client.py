@@ -117,11 +117,12 @@ class EventHubProducerClient(ClientBase):
     def _get_partitions(self):
         # type: () -> None
         if not self._partition_ids:
+            _LOGGER.debug("Populating partition IDs so producers can be started.")
             self._partition_ids = self.get_partition_ids()  # type: ignore
             for p_id in cast(List[str], self._partition_ids):
                 self._producers[p_id] = None
 
-    def _get_max_mesage_size(self):
+    def _get_max_message_size(self):
         # type: () -> None
         # pylint: disable=protected-access,line-too-long
         with self._lock:
@@ -311,7 +312,9 @@ class EventHubProducerClient(ClientBase):
             cast(EventHubProducer, self._producers[partition_id]).send(
                 to_send_batch, timeout=send_timeout
             )
-        except (KeyError, AttributeError, EventHubError):
+        except (KeyError, AttributeError, EventHubError) as e:
+            _LOGGER.debug(
+                "Producer for partition ID '{}' not available: {}. Rebuilding new producer.".format(partition_id, e))
             self._start_producer(partition_id, send_timeout)
             cast(EventHubProducer, self._producers[partition_id]).send(
                 to_send_batch, timeout=send_timeout
@@ -347,7 +350,7 @@ class EventHubProducerClient(ClientBase):
 
         """
         if not self._max_message_size_on_link:
-            self._get_max_mesage_size()
+            self._get_max_message_size()
 
         max_size_in_bytes = kwargs.get("max_size_in_bytes", None)
         partition_id = kwargs.get("partition_id", None)
@@ -431,6 +434,7 @@ class EventHubProducerClient(ClientBase):
                 :caption: Close down the client.
 
         """
+        _LOGGER.info("Closing ProducerClient")
         with self._lock:
             for pid in self._producers:
                 if self._producers[pid]:

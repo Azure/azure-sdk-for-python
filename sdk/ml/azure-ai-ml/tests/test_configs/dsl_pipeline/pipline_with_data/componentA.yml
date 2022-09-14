@@ -1,0 +1,20 @@
+type: command
+
+name: component_a
+display_name: componentA
+version: 1
+
+inputs:
+  componentA_input:
+    type: uri_folder
+
+outputs:
+  componentA_output:
+    type: uri_folder
+
+code: ./componentA_src
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+
+command: >-
+  python hello.py --componentA_input ${{inputs.componentA_input}} --componentA_output ${{outputs.componentA_output}}

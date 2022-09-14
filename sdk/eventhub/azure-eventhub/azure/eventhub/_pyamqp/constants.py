@@ -60,12 +60,13 @@ MIN_MAX_FRAME_SIZE = 512
 MAX_FRAME_SIZE_BYTES = 1024 * 1024
 MAX_CHANNELS = 65535
 INCOMING_WINDOW = 64 * 1024
-OUTGOING_WIDNOW = 64 * 1024
+OUTGOING_WINDOW = 64 * 1024
 
 DEFAULT_LINK_CREDIT = 10000
 
 FIELD = namedtuple('field', 'name, type, mandatory, default, multiple')
 
+STRING_FILTER = b"apache.org:selector-filter:string"
 
 DEFAULT_AUTH_TIMEOUT = 60
 AUTH_DEFAULT_EXPIRATION_SECONDS = 3600
@@ -325,3 +326,9 @@ class TransportType(Enum):
     """
     Amqp = 1
     AmqpOverWebsocket = 2
+
+    def __eq__(self, __o: object) -> bool:
+        try:
+            return self.value == __o.value
+        except AttributeError:
+            return super().__eq__(__o)

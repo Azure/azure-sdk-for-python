@@ -1,31 +1,31 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/97d799b7-11b4-4c1c-a4d6-270196771772",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/c5c5d792-1cec-4aa2-bcc1-fb8a12f7e53a",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "dc0b2283-5e1f-11ec-9416-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.9.7 (macOS-12.2.1-x86_64-i386-64bit)",
+        "x-ms-client-request-id": "cb9a3baa-9f03-11ec-a86a-acde48001122"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "427ee5f5-1b86-4d0d-ac24-a8cf50f77c2e",
-        "Content-Length": "1203",
+        "apim-request-id": "55053dcd-aa27-4c89-bd1c-e5a89dedaf16",
+        "Content-Length": "1230",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 03:25:47 GMT",
+        "Date": "Tue, 08 Mar 2022 17:18:38 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "169",
-        "X-Request-ID": "427ee5f5-1b86-4d0d-ac24-a8cf50f77c2e"
+        "x-envoy-upstream-service-time": "91",
+        "X-Request-ID": "55053dcd-aa27-4c89-bd1c-e5a89dedaf16"
       },
       "ResponseBody": {
-        "anomalyDetectionConfigurationId": "97d799b7-11b4-4c1c-a4d6-270196771772",
-        "name": "detectionconfigeg6tyjwb2",
+        "anomalyDetectionConfigurationId": "c5c5d792-1cec-4aa2-bcc1-fb8a12f7e53a",
+        "name": "detectionconfigb35b0a8e-cc70-4eac-9d82-a5fc3c105912",
         "description": "My test metric anomaly detection configuration",
-        "metricId": "11ae3944-0a18-400e-aafc-62cbb77e9179",
+        "metricId": "97fb2800-e34f-4c50-bc52-6fd8a8b999f3",
         "wholeMetricConfiguration": {
           "conditionOperator": "AND",
           "smartDetectionCondition": {
@@ -94,33 +94,138 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/97d799b7-11b4-4c1c-a4d6-270196771772",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/c5c5d792-1cec-4aa2-bcc1-fb8a12f7e53a",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "1792",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "dc2af6e8-5e1f-11ec-b891-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.9.7 (macOS-12.2.1-x86_64-i386-64bit)",
+        "x-ms-client-request-id": "cbb873b8-9f03-11ec-a86a-acde48001122"
       },
-      "RequestBody": "{\u0022name\u0022: \u0022update6ad49b89-25db-442b-a589-f2aef6b7ff7c\u0022, \u0022description\u0022: \u0022updateMe\u0022, \u0022wholeMetricConfiguration\u0022: {\u0022conditionOperator\u0022: \u0022OR\u0022, \u0022smartDetectionCondition\u0022: {\u0022sensitivity\u0022: 10.0, \u0022anomalyDetectorDirection\u0022: \u0022Up\u0022, \u0022suppressCondition\u0022: {\u0022minNumber\u0022: 5, \u0022minRatio\u0022: 2.0}}, \u0022hardThresholdCondition\u0022: {\u0022upperBound\u0022: 100.0, \u0022anomalyDetectorDirection\u0022: \u0022Up\u0022, \u0022suppressCondition\u0022: {\u0022minNumber\u0022: 5, \u0022minRatio\u0022: 2.0}}, \u0022changeThresholdCondition\u0022: {\u0022changePercentage\u0022: 20.0, \u0022shiftPoint\u0022: 10, \u0022withinRange\u0022: true, \u0022anomalyDetectorDirection\u0022: \u0022Both\u0022, \u0022suppressCondition\u0022: {\u0022minNumber\u0022: 5, \u0022minRatio\u0022: 2.0}}}, \u0022dimensionGroupOverrideConfigurations\u0022: [{\u0022group\u0022: {\u0022dimension\u0022: {\u0022region\u0022: \u0022Shenzen\u0022}}, \u0022conditionOperator\u0022: \u0022AND\u0022, \u0022smartDetectionCondition\u0022: {\u0022sensitivity\u0022: 10.0, \u0022anomalyDetectorDirection\u0022: \u0022Up\u0022, \u0022suppressCondition\u0022: {\u0022minNumber\u0022: 5, \u0022minRatio\u0022: 2.0}}, \u0022hardThresholdCondition\u0022: {\u0022upperBound\u0022: 100.0, \u0022anomalyDetectorDirection\u0022: \u0022Up\u0022, \u0022suppressCondition\u0022: {\u0022minNumber\u0022: 5, \u0022minRatio\u0022: 2.0}}, \u0022changeThresholdCondition\u0022: {\u0022changePercentage\u0022: 20.0, \u0022shiftPoint\u0022: 10, \u0022withinRange\u0022: true, \u0022anomalyDetectorDirection\u0022: \u0022Both\u0022, \u0022suppressCondition\u0022: {\u0022minNumber\u0022: 5, \u0022minRatio\u0022: 2.0}}}], \u0022seriesOverrideConfigurations\u0022: [{\u0022series\u0022: {\u0022dimension\u0022: {\u0022region\u0022: \u0022San Paulo\u0022, \u0022category\u0022: \u0022Jewelry\u0022}}, \u0022conditionOperator\u0022: \u0022AND\u0022, \u0022smartDetectionCondition\u0022: {\u0022sensitivity\u0022: 10.0, \u0022anomalyDetectorDirection\u0022: \u0022Up\u0022, \u0022suppressCondition\u0022: {\u0022minNumber\u0022: 5, \u0022minRatio\u0022: 2.0}}, \u0022hardThresholdCondition\u0022: {\u0022upperBound\u0022: 100.0, \u0022anomalyDetectorDirection\u0022: \u0022Up\u0022, \u0022suppressCondition\u0022: {\u0022minNumber\u0022: 5, \u0022minRatio\u0022: 2.0}}, \u0022changeThresholdCondition\u0022: {\u0022changePercentage\u0022: 20.0, \u0022shiftPoint\u0022: 10, \u0022withinRange\u0022: true, \u0022anomalyDetectorDirection\u0022: \u0022Both\u0022, \u0022suppressCondition\u0022: {\u0022minNumber\u0022: 5, \u0022minRatio\u0022: 2.0}}}]}",
+      "RequestBody": {
+        "name": "update5112e6b1-ae61-4930-b0f4-f29541ccf441",
+        "description": "updateMe",
+        "wholeMetricConfiguration": {
+          "conditionOperator": "OR",
+          "smartDetectionCondition": {
+            "sensitivity": 10.0,
+            "anomalyDetectorDirection": "Up",
+            "suppressCondition": {
+              "minNumber": 5,
+              "minRatio": 2.0
+            }
+          },
+          "hardThresholdCondition": {
+            "upperBound": 100.0,
+            "anomalyDetectorDirection": "Up",
+            "suppressCondition": {
+              "minNumber": 5,
+              "minRatio": 2.0
+            }
+          },
+          "changeThresholdCondition": {
+            "changePercentage": 20.0,
+            "shiftPoint": 10,
+            "withinRange": true,
+            "anomalyDetectorDirection": "Both",
+            "suppressCondition": {
+              "minNumber": 5,
+              "minRatio": 2.0
+            }
+          }
+        },
+        "dimensionGroupOverrideConfigurations": [
+          {
+            "conditionOperator": "AND",
+            "smartDetectionCondition": {
+              "sensitivity": 10.0,
+              "anomalyDetectorDirection": "Up",
+              "suppressCondition": {
+                "minNumber": 5,
+                "minRatio": 2.0
+              }
+            },
+            "hardThresholdCondition": {
+              "upperBound": 100.0,
+              "anomalyDetectorDirection": "Up",
+              "suppressCondition": {
+                "minNumber": 5,
+                "minRatio": 2.0
+              }
+            },
+            "changeThresholdCondition": {
+              "changePercentage": 20.0,
+              "shiftPoint": 10,
+              "withinRange": true,
+              "anomalyDetectorDirection": "Both",
+              "suppressCondition": {
+                "minNumber": 5,
+                "minRatio": 2.0
+              }
+            },
+            "group": {
+              "dimension": {
+                "region": "Shenzen"
+              }
+            }
+          }
+        ],
+        "seriesOverrideConfigurations": [
+          {
+            "conditionOperator": "AND",
+            "smartDetectionCondition": {
+              "sensitivity": 10.0,
+              "anomalyDetectorDirection": "Up",
+              "suppressCondition": {
+                "minNumber": 5,
+                "minRatio": 2.0
+              }
+            },
+            "hardThresholdCondition": {
+              "upperBound": 100.0,
+              "anomalyDetectorDirection": "Up",
+              "suppressCondition": {
+                "minNumber": 5,
+                "minRatio": 2.0
+              }
+            },
+            "changeThresholdCondition": {
+              "changePercentage": 20.0,
+              "shiftPoint": 10,
+              "withinRange": true,
+              "anomalyDetectorDirection": "Both",
+              "suppressCondition": {
+                "minNumber": 5,
+                "minRatio": 2.0
+              }
+            },
+            "series": {
+              "dimension": {
+                "region": "San Paulo",
+                "category": "Jewelry"
+              }
+            }
+          }
+        ]
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "b5c6b602-22cc-4edf-9c17-0c9abc69fabf",
+        "apim-request-id": "252ee78c-ff25-4de6-8ad9-093996453fbb",
         "Content-Length": "1791",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 03:25:47 GMT",
+        "Date": "Tue, 08 Mar 2022 17:18:39 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "295",
-        "X-Request-ID": "b5c6b602-22cc-4edf-9c17-0c9abc69fabf"
+        "x-envoy-upstream-service-time": "294",
+        "X-Request-ID": "252ee78c-ff25-4de6-8ad9-093996453fbb"
       },
       "ResponseBody": {
-        "anomalyDetectionConfigurationId": "97d799b7-11b4-4c1c-a4d6-270196771772",
-        "name": "update6ad49b89-25db-442b-a589-f2aef6b7ff7c",
+        "anomalyDetectionConfigurationId": "c5c5d792-1cec-4aa2-bcc1-fb8a12f7e53a",
+        "name": "update5112e6b1-ae61-4930-b0f4-f29541ccf441",
         "description": "updateMe",
-        "metricId": "11ae3944-0a18-400e-aafc-62cbb77e9179",
+        "metricId": "97fb2800-e34f-4c50-bc52-6fd8a8b999f3",
         "wholeMetricConfiguration": {
           "conditionOperator": "OR",
           "smartDetectionCondition": {
@@ -226,31 +331,31 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/97d799b7-11b4-4c1c-a4d6-270196771772",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/c5c5d792-1cec-4aa2-bcc1-fb8a12f7e53a",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "dc5d7dd5-5e1f-11ec-8f9e-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.9.7 (macOS-12.2.1-x86_64-i386-64bit)",
+        "x-ms-client-request-id": "cbf5e162-9f03-11ec-a86a-acde48001122"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "43e743da-b7be-4ef5-84d2-9c25dbff0245",
+        "apim-request-id": "73d5dc81-d702-40e7-8c0b-b7c2c38e28b5",
         "Content-Length": "1791",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 03:25:47 GMT",
+        "Date": "Tue, 08 Mar 2022 17:18:39 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "96",
-        "X-Request-ID": "43e743da-b7be-4ef5-84d2-9c25dbff0245"
+        "x-envoy-upstream-service-time": "93",
+        "X-Request-ID": "73d5dc81-d702-40e7-8c0b-b7c2c38e28b5"
       },
       "ResponseBody": {
-        "anomalyDetectionConfigurationId": "97d799b7-11b4-4c1c-a4d6-270196771772",
-        "name": "update6ad49b89-25db-442b-a589-f2aef6b7ff7c",
+        "anomalyDetectionConfigurationId": "c5c5d792-1cec-4aa2-bcc1-fb8a12f7e53a",
+        "name": "update5112e6b1-ae61-4930-b0f4-f29541ccf441",
         "description": "updateMe",
-        "metricId": "11ae3944-0a18-400e-aafc-62cbb77e9179",
+        "metricId": "97fb2800-e34f-4c50-bc52-6fd8a8b999f3",
         "wholeMetricConfiguration": {
           "conditionOperator": "OR",
           "smartDetectionCondition": {
@@ -356,35 +461,35 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/62b51307-2dde-4b71-9814-74414b8d4fe6",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/67c93657-6882-4a20-af89-ca6a4b6470eb",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "dc71b1b1-5e1f-11ec-bbd0-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.9.7 (macOS-12.2.1-x86_64-i386-64bit)",
+        "x-ms-client-request-id": "cc133730-9f03-11ec-a86a-acde48001122"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "cb2b9f5a-fb4d-4758-8d2f-eeab5ca61bf1",
+        "apim-request-id": "0f08986e-f89a-4f66-8fb0-2f9a94a7902d",
         "Content-Length": "0",
-        "Date": "Thu, 16 Dec 2021 03:25:47 GMT",
+        "Date": "Tue, 08 Mar 2022 17:18:39 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "288",
-        "X-Request-ID": "cb2b9f5a-fb4d-4758-8d2f-eeab5ca61bf1"
+        "x-envoy-upstream-service-time": "317",
+        "X-Request-ID": "0f08986e-f89a-4f66-8fb0-2f9a94a7902d"
       },
       "ResponseBody": null
     }
   ],
   "Variables": {
-    "data_feed_id": "62b51307-2dde-4b71-9814-74414b8d4fe6",
-    "data_feed_metric_id": "11ae3944-0a18-400e-aafc-62cbb77e9179",
-    "data_feed_name": "datafeedzbmhnccligr6bao3",
-    "data_feed_updated_name": "update6ad49b89-25db-442b-a589-f2aef6b7ff7c",
-    "detection_config_id": "97d799b7-11b4-4c1c-a4d6-270196771772",
-    "detection_config_name": "detectionconfigeg6tyjwb2"
+    "data_feed_id": "67c93657-6882-4a20-af89-ca6a4b6470eb",
+    "data_feed_metric_id": "97fb2800-e34f-4c50-bc52-6fd8a8b999f3",
+    "data_feed_name": "datafeeda01297a8-75c2-461c-9c4f-1f7b4ea4b901",
+    "data_feed_updated_name": "update5112e6b1-ae61-4930-b0f4-f29541ccf441",
+    "detection_config_id": "c5c5d792-1cec-4aa2-bcc1-fb8a12f7e53a",
+    "detection_config_name": "detectionconfigb35b0a8e-cc70-4eac-9d82-a5fc3c105912"
   }
 }

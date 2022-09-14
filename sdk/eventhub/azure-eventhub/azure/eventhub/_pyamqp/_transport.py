@@ -384,12 +384,12 @@ class _AbstractTransport(object):
             except Exception as exc:
                 # TODO: shutdown could raise OSError, Transport endpoint is not connected if the endpoint is already
                 #  disconnected. can we safely ignore the errors since the close operation is initiated by us.
-                _LOGGER.info("An error occurred when shutting down the socket: %r", exc)
+                _LOGGER.info("Transport endpoint is already disconnected: %r", exc)
             self.sock.close()
             self.sock = None
         self.connected = False
 
-    def read(self, verify_frame_type=0, **kwargs):  # TODO: verify frame type?
+    def read(self, verify_frame_type=0, **kwargs): 
         read = self._read
         read_frame_buffer = BytesIO()
         try:
@@ -446,7 +446,6 @@ class _AbstractTransport(object):
                 decoded = decode_empty_frame(header)
             else:
                 decoded = decode_frame(payload)
-            # TODO: Catch decode error and return amqp:decode-error
             return channel, decoded
         except (socket.timeout, TimeoutError):
             return None, None
@@ -508,14 +507,7 @@ class SSLTransport(_AbstractTransport):
         # Setup the right SSL version; default to optimal versions across
         # ssl implementations
         if ssl_version is None:
-            # older versions of python 2.7 and python 2.6 do not have the
-            # ssl.PROTOCOL_TLS defined the equivalent is ssl.PROTOCOL_SSLv23
-            # we default to PROTOCOL_TLS and fallback to PROTOCOL_SSLv23
-            # TODO: Drop this once we drop Python 2.7 support
-            if hasattr(ssl, 'PROTOCOL_TLS'):
                 ssl_version = ssl.PROTOCOL_TLS
-            else:
-                ssl_version = ssl.PROTOCOL_SSLv23
 
         opts = {
             'sock': sock,
@@ -721,6 +713,7 @@ class WebSocketTransport(_AbstractTransport):
             raise TimeoutError()
 
     def _shutdown_transport(self):
+        # TODO Sync and Async close functions named differently
         """Do any preliminary work in shutting down the connection."""
         self.ws.close()
 

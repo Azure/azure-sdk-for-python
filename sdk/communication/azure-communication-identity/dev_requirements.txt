@@ -2,5 +2,6 @@
 -e ../../identity/azure-identity
 ../../core/azure-core
 ../azure-mgmt-communication
-aiohttp>=3.0; python_version >= '3.5'
+aiohttp>=3.0
 -e ../../../tools/azure-devtools
+parameterized>=0.7.3

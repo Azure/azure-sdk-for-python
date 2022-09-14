@@ -43,6 +43,7 @@ class ConversationTest(AzureTestCase):
 
     def __init__(self, method_name):
         super(ConversationTest, self).__init__(method_name)
+        self.vcr.match_on = ["path", "method", "query"]
         self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"), TEST_ENDPOINT)
         self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_KEY"), TEST_KEY)
         self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_PROJECT_NAME"), TEST_CONV_PROJECT_NAME)

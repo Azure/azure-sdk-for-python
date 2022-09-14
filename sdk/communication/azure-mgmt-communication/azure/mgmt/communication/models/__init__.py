@@ -6,80 +6,96 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import CommunicationServiceKeys
-    from ._models_py3 import CommunicationServiceResource
-    from ._models_py3 import CommunicationServiceResourceList
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import LinkNotificationHubParameters
-    from ._models_py3 import LinkedNotificationHub
-    from ._models_py3 import LocationResource
-    from ._models_py3 import NameAvailability
-    from ._models_py3 import NameAvailabilityParameters
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import OperationStatus
-    from ._models_py3 import RegenerateKeyParameters
-    from ._models_py3 import Resource
-    from ._models_py3 import SystemData
-    from ._models_py3 import TaggedResource
-except (SyntaxError, ImportError):
-    from ._models import CommunicationServiceKeys  # type: ignore
-    from ._models import CommunicationServiceResource  # type: ignore
-    from ._models import CommunicationServiceResourceList  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import LinkNotificationHubParameters  # type: ignore
-    from ._models import LinkedNotificationHub  # type: ignore
-    from ._models import LocationResource  # type: ignore
-    from ._models import NameAvailability  # type: ignore
-    from ._models import NameAvailabilityParameters  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import OperationStatus  # type: ignore
-    from ._models import RegenerateKeyParameters  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TaggedResource  # type: ignore
+from ._models_py3 import CheckNameAvailabilityRequest
+from ._models_py3 import CheckNameAvailabilityResponse
+from ._models_py3 import CommunicationServiceKeys
+from ._models_py3 import CommunicationServiceResource
+from ._models_py3 import CommunicationServiceResourceList
+from ._models_py3 import CommunicationServiceResourceUpdate
+from ._models_py3 import DnsRecord
+from ._models_py3 import DomainPropertiesVerificationRecords
+from ._models_py3 import DomainPropertiesVerificationStates
+from ._models_py3 import DomainResource
+from ._models_py3 import DomainResourceList
+from ._models_py3 import EmailServiceResource
+from ._models_py3 import EmailServiceResourceList
+from ._models_py3 import EmailServiceResourceUpdate
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import LinkNotificationHubParameters
+from ._models_py3 import LinkedNotificationHub
+from ._models_py3 import NameAvailabilityParameters
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import RegenerateKeyParameters
+from ._models_py3 import Resource
+from ._models_py3 import SystemData
+from ._models_py3 import TaggedResource
+from ._models_py3 import TrackedResource
+from ._models_py3 import UpdateDomainRequestParameters
+from ._models_py3 import VerificationParameter
+from ._models_py3 import VerificationStatusRecord
+
 
 from ._communication_service_management_client_enums import (
     ActionType,
+    CheckNameAvailabilityReason,
+    CommunicationServicesProvisioningState,
     CreatedByType,
+    DomainManagement,
+    DomainsProvisioningState,
+    EmailServicesProvisioningState,
     KeyType,
     Origin,
-    ProvisioningState,
-    Status,
+    UserEngagementTracking,
+    VerificationStatus,
+    VerificationType,
 )
 
 __all__ = [
+    'CheckNameAvailabilityRequest',
+    'CheckNameAvailabilityResponse',
     'CommunicationServiceKeys',
     'CommunicationServiceResource',
     'CommunicationServiceResourceList',
+    'CommunicationServiceResourceUpdate',
+    'DnsRecord',
+    'DomainPropertiesVerificationRecords',
+    'DomainPropertiesVerificationStates',
+    'DomainResource',
+    'DomainResourceList',
+    'EmailServiceResource',
+    'EmailServiceResourceList',
+    'EmailServiceResourceUpdate',
     'ErrorAdditionalInfo',
     'ErrorDetail',
     'ErrorResponse',
     'LinkNotificationHubParameters',
     'LinkedNotificationHub',
-    'LocationResource',
-    'NameAvailability',
     'NameAvailabilityParameters',
     'Operation',
     'OperationDisplay',
     'OperationListResult',
-    'OperationStatus',
     'RegenerateKeyParameters',
     'Resource',
     'SystemData',
     'TaggedResource',
+    'TrackedResource',
+    'UpdateDomainRequestParameters',
+    'VerificationParameter',
+    'VerificationStatusRecord',
     'ActionType',
+    'CheckNameAvailabilityReason',
+    'CommunicationServicesProvisioningState',
     'CreatedByType',
+    'DomainManagement',
+    'DomainsProvisioningState',
+    'EmailServicesProvisioningState',
     'KeyType',
     'Origin',
-    'ProvisioningState',
-    'Status',
+    'UserEngagementTracking',
+    'VerificationStatus',
+    'VerificationType',
 ]

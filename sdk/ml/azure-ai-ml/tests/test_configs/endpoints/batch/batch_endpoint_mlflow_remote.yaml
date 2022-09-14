@@ -1,0 +1,6 @@
+name: myBatchEndpoint2 # required
+description: my sample batch endpoint
+type: batch # required for batch, the default is online
+auth_mode: aad_token # required
+traffic:
+  blue: 100 # at least one deployment will be 100, others need to 0

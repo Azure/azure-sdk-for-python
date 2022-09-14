@@ -58,7 +58,7 @@ class ValidateOperationOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(parameters, 'ValidateOperationRequest')
@@ -123,7 +123,7 @@ class ValidateOperationOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]

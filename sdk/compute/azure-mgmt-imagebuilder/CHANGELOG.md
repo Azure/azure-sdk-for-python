@@ -1,5 +1,16 @@
 # Release History
 
+## 1.1.0 (2022-06-07)
+
+**Features**
+
+  - Model ImageTemplate has a new parameter exact_staging_resource_group
+  - Model ImageTemplate has a new parameter staging_resource_group
+  - Model ImageTemplate has a new parameter validate
+  - Model Resource has a new parameter system_data
+  - Model RunOutput has a new parameter system_data
+  - Model TrackedResource has a new parameter system_data
+
 ## 1.0.0 (2021-12-07)
 
 **Features**

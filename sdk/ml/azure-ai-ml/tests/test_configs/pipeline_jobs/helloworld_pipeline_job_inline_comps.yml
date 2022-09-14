@@ -1,0 +1,55 @@
+type: pipeline
+
+name: simplePipelineJobWithInlineComps
+description: The hello world pipeline job with inline components
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: azureml:cpu-cluster
+
+inputs:
+  # examples of inputs that take values such as int, string, etc.
+  job_in_number: 10.01
+  job_in_other_number:
+    value: 15
+
+jobs:
+  hello_world_component_inline:
+    type: command
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_number}}
+    compute: azureml:cpu-cluster
+
+    component:
+      command: >-
+        echo Hello World &
+        echo ${{inputs.component_in_number}}
+      environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+      code: "./"
+      inputs:
+        component_in_number:
+          description: Am integer
+          type: integer
+          default: 10
+          optional: false
+
+  hello_world_component_inline_with_schema:
+    type: command
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_number}}
+    compute: azureml:cpu-cluster
+
+    component:
+      $schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+      command: >-
+        echo Hello World &
+        echo ${{inputs.component_in_number}}
+      environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+      code: "./"
+      inputs:
+        component_in_number:
+          description: Am integer
+          type: integer
+          default: 10
+          optional: false

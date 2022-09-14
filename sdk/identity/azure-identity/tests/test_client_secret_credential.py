@@ -129,14 +129,14 @@ def test_regional_authority():
         mock_confidential_client.reset_mock()
 
         # region can be configured via environment variable
-        with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: region}, clear=True):
+        with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: region.value}, clear=True):
             credential = ClientSecretCredential("tenant", "client-id", "secret")
         with patch("msal.ConfidentialClientApplication", mock_confidential_client):
             credential.get_token("scope")
 
         assert mock_confidential_client.call_count == 1
         _, kwargs = mock_confidential_client.call_args
-        assert kwargs["azure_region"] == region
+        assert kwargs["azure_region"] == region.value
 
 
 def test_token_cache():

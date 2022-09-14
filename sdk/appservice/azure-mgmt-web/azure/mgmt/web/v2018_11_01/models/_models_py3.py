@@ -6,10 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class Resource(msrest.serialization.Model):
@@ -129,8 +133,8 @@ class Certificate(Resource):
     :vartype key_vault_id: str
     :ivar key_vault_secret_name: Key Vault secret name.
     :vartype key_vault_secret_name: str
-    :ivar key_vault_secret_status: Status of the Key Vault secret. Possible values include:
-     "Initialized", "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
+    :ivar key_vault_secret_status: Status of the Key Vault secret. Known values are: "Initialized",
+     "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
      "OperationNotPermittedOnKeyVault", "AzureServiceUnauthorizedToAccessKeyVault",
      "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey",
      "Unknown".
@@ -272,7 +276,7 @@ class CertificateCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Certificate"],
+        value: List["_models.Certificate"],
         **kwargs
     ):
         """
@@ -378,8 +382,8 @@ class CertificatePatchResource(ProxyOnlyResource):
     :vartype key_vault_id: str
     :ivar key_vault_secret_name: Key Vault secret name.
     :vartype key_vault_secret_name: str
-    :ivar key_vault_secret_status: Status of the Key Vault secret. Possible values include:
-     "Initialized", "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
+    :ivar key_vault_secret_status: Status of the Key Vault secret. Known values are: "Initialized",
+     "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
      "OperationNotPermittedOnKeyVault", "AzureServiceUnauthorizedToAccessKeyVault",
      "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey",
      "Unknown".
@@ -548,7 +552,7 @@ class DefaultErrorResponseError(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        details: Optional[List["DefaultErrorResponseErrorDetailsItem"]] = None,
+        details: Optional[List["_models.DefaultErrorResponseErrorDetailsItem"]] = None,
         **kwargs
     ):
         """

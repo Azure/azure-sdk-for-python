@@ -1,0 +1,113 @@
+{
+    "location": {
+        "value": ""
+    },
+    "workspaceName": {
+        "value": ""
+    },
+    "resourceGroupName": {
+        "value": ""
+    },
+    "description": {
+        "value": ""
+    },
+    "friendlyName": {
+        "value": ""
+    },
+    "tagValues": {
+        "value": {}
+    },
+    "keyVaultOption": {
+        "value": "new"
+    },
+    "keyVaultName": {
+        "value": ""
+    },
+    "keyVaultResourceGroupName": {
+        "value": ""
+    },
+    "storageAccountOption": {
+        "value": "new"
+    },
+    "storageAccountName": {
+        "value": ""
+    },
+    "storageAccountResourceGroupName": {
+        "value": ""
+    },
+    "applicationInsightsOption": {
+        "value": "new"
+    },
+    "applicationInsightsName": {
+        "value": ""
+    },
+    "applicationInsightsResourceGroupName": {
+        "value": ""
+    },
+    "containerRegistryOption": {
+        "value": "none"
+    },
+    "containerRegistryName": {
+        "value": "name"
+    },
+    "containerRegistryResourceGroupName": {
+        "value": ""
+    },
+    "encryption_status": {
+        "value": "Disabled"
+    },
+    "cmk_keyvault": {
+        "value": ""
+    },
+    "resource_cmk_uri": {
+        "value": ""
+    },
+    "privateEndpointName": {
+        "value": "name"
+    },
+    "subnetOption": {
+        "value": "existing"
+    },
+    "subnetName": {
+        "value": "default"
+    },
+    "vnetOption": {
+        "value": "existing"
+    },
+    "vnetName": {
+        "value": "name"
+    },
+    "vnetResourceGroupName": {
+        "value": "name"
+    },
+    "privateEndpointType": {
+        "value": "none"
+    },
+    "privateEndpointResourceGroupName": {
+        "value": "name"
+    },
+    "confidential_data": {
+        "value": "false"
+    },
+    "imageBuildCompute": {
+        "value": ""
+    },
+    "publicNetworkAccess": {
+        "value": "Enabled"
+    },
+    "soft_delete_enabled": {
+        "value": "false"
+    },
+    "allow_recover_softdeleted_workspace": {
+        "value": "false"
+    },
+    "encryption_cosmosdb_resourceid": {
+        "value": ""
+    },
+    "encryption_storage_resourceid": {
+        "value": ""
+    },
+    "encryption_search_resourceid": {
+        "value": ""
+    }
+}

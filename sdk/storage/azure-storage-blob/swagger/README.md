@@ -16,7 +16,7 @@ autorest --v3 --python
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2021-04-10/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2021-08-06/blob.json
 output-folder: ../azure/storage/blob/_generated
 namespace: azure.storage.blob
 no-namespace-folders: true
@@ -25,6 +25,7 @@ enable-xml: true
 vanilla: true
 clear-output-folder: true
 python: true
+version-tolerant: false
 ```
 
 ### Remove x-ms-pageable

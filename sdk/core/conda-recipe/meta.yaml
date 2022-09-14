@@ -20,10 +20,12 @@ requirements:
     - python
     - requests >=2.18.4
     - six >=1.11.0
+    - typing-extensions>=4.0.1
   run:
     - python
     - requests >=2.18.4
     - six >=1.11.0
+    - typing-extensions>=4.0.1
 
 test:
   imports:

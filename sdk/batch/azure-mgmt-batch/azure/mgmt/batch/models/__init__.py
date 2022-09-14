@@ -49,10 +49,12 @@ from ._models_py3 import DetectorResponse
 from ._models_py3 import DiffDiskSettings
 from ._models_py3 import DiskEncryptionConfiguration
 from ._models_py3 import EncryptionProperties
+from ._models_py3 import EndpointAccessProfile
 from ._models_py3 import EndpointDependency
 from ._models_py3 import EndpointDetail
 from ._models_py3 import EnvironmentSetting
 from ._models_py3 import FixedScaleSettings
+from ._models_py3 import IPRule
 from ._models_py3 import ImageReference
 from ._models_py3 import InboundNatPool
 from ._models_py3 import KeyVaultProperties
@@ -68,6 +70,7 @@ from ._models_py3 import MetadataItem
 from ._models_py3 import MountConfiguration
 from ._models_py3 import NFSMountConfiguration
 from ._models_py3 import NetworkConfiguration
+from ._models_py3 import NetworkProfile
 from ._models_py3 import NetworkSecurityGroupRule
 from ._models_py3 import NodePlacementConfiguration
 from ._models_py3 import OSDisk
@@ -122,6 +125,7 @@ from ._batch_management_client_enums import (
     DiskEncryptionTarget,
     DynamicVNetAssignmentScope,
     ElevationLevel,
+    EndpointAccessDefaultAction,
     IPAddressProvisioningType,
     InboundEndpointProtocol,
     InterNodeCommunicationState,
@@ -186,10 +190,12 @@ __all__ = [
     'DiffDiskSettings',
     'DiskEncryptionConfiguration',
     'EncryptionProperties',
+    'EndpointAccessProfile',
     'EndpointDependency',
     'EndpointDetail',
     'EnvironmentSetting',
     'FixedScaleSettings',
+    'IPRule',
     'ImageReference',
     'InboundNatPool',
     'KeyVaultProperties',
@@ -205,6 +211,7 @@ __all__ = [
     'MountConfiguration',
     'NFSMountConfiguration',
     'NetworkConfiguration',
+    'NetworkProfile',
     'NetworkSecurityGroupRule',
     'NodePlacementConfiguration',
     'OSDisk',
@@ -256,6 +263,7 @@ __all__ = [
     'DiskEncryptionTarget',
     'DynamicVNetAssignmentScope',
     'ElevationLevel',
+    'EndpointAccessDefaultAction',
     'IPAddressProvisioningType',
     'InboundEndpointProtocol',
     'InterNodeCommunicationState',

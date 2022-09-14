@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._models_py3 import AdvancedFilter
-from ._models_py3 import AzureADPartnerClientAuthentication
 from ._models_py3 import AzureFunctionEventSubscriptionDestination
 from ._models_py3 import BoolEqualsAdvancedFilter
 from ._models_py3 import Channel
@@ -27,11 +26,6 @@ from ._models_py3 import DomainTopicsListResult
 from ._models_py3 import DomainUpdateParameters
 from ._models_py3 import DomainsListResult
 from ._models_py3 import DynamicDeliveryAttributeMapping
-from ._models_py3 import EventChannel
-from ._models_py3 import EventChannelDestination
-from ._models_py3 import EventChannelFilter
-from ._models_py3 import EventChannelSource
-from ._models_py3 import EventChannelsListResult
 from ._models_py3 import EventHubEventSubscriptionDestination
 from ._models_py3 import EventSubscription
 from ._models_py3 import EventSubscriptionDestination
@@ -43,7 +37,6 @@ from ._models_py3 import EventSubscriptionsListResult
 from ._models_py3 import EventType
 from ._models_py3 import EventTypeInfo
 from ._models_py3 import EventTypesListResult
-from ._models_py3 import ExtendedLocation
 from ._models_py3 import ExtensionTopic
 from ._models_py3 import HybridConnectionEventSubscriptionDestination
 from ._models_py3 import IdentityInfo
@@ -68,16 +61,10 @@ from ._models_py3 import OperationInfo
 from ._models_py3 import OperationsListResult
 from ._models_py3 import Partner
 from ._models_py3 import PartnerAuthorization
-from ._models_py3 import PartnerClientAuthentication
 from ._models_py3 import PartnerConfiguration
 from ._models_py3 import PartnerConfigurationUpdateParameters
 from ._models_py3 import PartnerConfigurationsListResult
-from ._models_py3 import PartnerDestination
-from ._models_py3 import PartnerDestinationInfo
-from ._models_py3 import PartnerDestinationUpdateParameters
-from ._models_py3 import PartnerDestinationsListResult
 from ._models_py3 import PartnerDetails
-from ._models_py3 import PartnerEventSubscriptionDestination
 from ._models_py3 import PartnerNamespace
 from ._models_py3 import PartnerNamespaceRegenerateKeyRequest
 from ._models_py3 import PartnerNamespaceSharedAccessKeys
@@ -90,7 +77,6 @@ from ._models_py3 import PartnerTopic
 from ._models_py3 import PartnerTopicInfo
 from ._models_py3 import PartnerTopicUpdateParameters
 from ._models_py3 import PartnerTopicsListResult
-from ._models_py3 import PartnerUpdateDestinationInfo
 from ._models_py3 import PartnerUpdateTopicInfo
 from ._models_py3 import PrivateEndpoint
 from ._models_py3 import PrivateEndpointConnection
@@ -98,8 +84,6 @@ from ._models_py3 import PrivateEndpointConnectionListResult
 from ._models_py3 import PrivateLinkResource
 from ._models_py3 import PrivateLinkResourcesListResult
 from ._models_py3 import Resource
-from ._models_py3 import ResourceMoveChangeHistory
-from ._models_py3 import ResourceSku
 from ._models_py3 import RetryPolicy
 from ._models_py3 import ServiceBusQueueEventSubscriptionDestination
 from ._models_py3 import ServiceBusTopicEventSubscriptionDestination
@@ -130,8 +114,6 @@ from ._models_py3 import UserIdentityProperties
 from ._models_py3 import VerifiedPartner
 from ._models_py3 import VerifiedPartnersListResult
 from ._models_py3 import WebHookEventSubscriptionDestination
-from ._models_py3 import WebhookPartnerDestinationInfo
-from ._models_py3 import WebhookUpdatePartnerDestinationInfo
 
 
 from ._event_grid_management_client_enums import (
@@ -145,7 +127,6 @@ from ._event_grid_management_client_enums import (
     DomainProvisioningState,
     DomainTopicProvisioningState,
     EndpointType,
-    EventChannelProvisioningState,
     EventDefinitionKind,
     EventDeliverySchema,
     EventSubscriptionIdentityType,
@@ -154,35 +135,26 @@ from ._event_grid_management_client_enums import (
     InputSchema,
     InputSchemaMappingType,
     IpActionType,
-    ParentType,
-    PartnerClientAuthenticationType,
     PartnerConfigurationProvisioningState,
-    PartnerDestinationActivationState,
-    PartnerDestinationProvisioningState,
-    PartnerEndpointType,
     PartnerNamespaceProvisioningState,
     PartnerRegistrationProvisioningState,
-    PartnerRegistrationVisibilityState,
     PartnerTopicActivationState,
     PartnerTopicProvisioningState,
-    PartnerTopicReadinessState,
     PartnerTopicRoutingMode,
     PersistedConnectionStatus,
+    PrivateEndpointConnectionsParentType,
     PublicNetworkAccess,
     ReadinessState,
-    ResourceKind,
     ResourceProvisioningState,
     ResourceRegionType,
-    Sku,
     TopicProvisioningState,
-    TopicTypePropertiesSupportedScopesForSourceItem,
     TopicTypeProvisioningState,
+    TopicTypeSourceScope,
     VerifiedPartnerProvisioningState,
 )
 
 __all__ = [
     'AdvancedFilter',
-    'AzureADPartnerClientAuthentication',
     'AzureFunctionEventSubscriptionDestination',
     'BoolEqualsAdvancedFilter',
     'Channel',
@@ -202,11 +174,6 @@ __all__ = [
     'DomainUpdateParameters',
     'DomainsListResult',
     'DynamicDeliveryAttributeMapping',
-    'EventChannel',
-    'EventChannelDestination',
-    'EventChannelFilter',
-    'EventChannelSource',
-    'EventChannelsListResult',
     'EventHubEventSubscriptionDestination',
     'EventSubscription',
     'EventSubscriptionDestination',
@@ -218,7 +185,6 @@ __all__ = [
     'EventType',
     'EventTypeInfo',
     'EventTypesListResult',
-    'ExtendedLocation',
     'ExtensionTopic',
     'HybridConnectionEventSubscriptionDestination',
     'IdentityInfo',
@@ -243,16 +209,10 @@ __all__ = [
     'OperationsListResult',
     'Partner',
     'PartnerAuthorization',
-    'PartnerClientAuthentication',
     'PartnerConfiguration',
     'PartnerConfigurationUpdateParameters',
     'PartnerConfigurationsListResult',
-    'PartnerDestination',
-    'PartnerDestinationInfo',
-    'PartnerDestinationUpdateParameters',
-    'PartnerDestinationsListResult',
     'PartnerDetails',
-    'PartnerEventSubscriptionDestination',
     'PartnerNamespace',
     'PartnerNamespaceRegenerateKeyRequest',
     'PartnerNamespaceSharedAccessKeys',
@@ -265,7 +225,6 @@ __all__ = [
     'PartnerTopicInfo',
     'PartnerTopicUpdateParameters',
     'PartnerTopicsListResult',
-    'PartnerUpdateDestinationInfo',
     'PartnerUpdateTopicInfo',
     'PrivateEndpoint',
     'PrivateEndpointConnection',
@@ -273,8 +232,6 @@ __all__ = [
     'PrivateLinkResource',
     'PrivateLinkResourcesListResult',
     'Resource',
-    'ResourceMoveChangeHistory',
-    'ResourceSku',
     'RetryPolicy',
     'ServiceBusQueueEventSubscriptionDestination',
     'ServiceBusTopicEventSubscriptionDestination',
@@ -305,8 +262,6 @@ __all__ = [
     'VerifiedPartner',
     'VerifiedPartnersListResult',
     'WebHookEventSubscriptionDestination',
-    'WebhookPartnerDestinationInfo',
-    'WebhookUpdatePartnerDestinationInfo',
     'AdvancedFilterOperatorType',
     'ChannelProvisioningState',
     'ChannelType',
@@ -317,7 +272,6 @@ __all__ = [
     'DomainProvisioningState',
     'DomainTopicProvisioningState',
     'EndpointType',
-    'EventChannelProvisioningState',
     'EventDefinitionKind',
     'EventDeliverySchema',
     'EventSubscriptionIdentityType',
@@ -326,28 +280,20 @@ __all__ = [
     'InputSchema',
     'InputSchemaMappingType',
     'IpActionType',
-    'ParentType',
-    'PartnerClientAuthenticationType',
     'PartnerConfigurationProvisioningState',
-    'PartnerDestinationActivationState',
-    'PartnerDestinationProvisioningState',
-    'PartnerEndpointType',
     'PartnerNamespaceProvisioningState',
     'PartnerRegistrationProvisioningState',
-    'PartnerRegistrationVisibilityState',
     'PartnerTopicActivationState',
     'PartnerTopicProvisioningState',
-    'PartnerTopicReadinessState',
     'PartnerTopicRoutingMode',
     'PersistedConnectionStatus',
+    'PrivateEndpointConnectionsParentType',
     'PublicNetworkAccess',
     'ReadinessState',
-    'ResourceKind',
     'ResourceProvisioningState',
     'ResourceRegionType',
-    'Sku',
     'TopicProvisioningState',
-    'TopicTypePropertiesSupportedScopesForSourceItem',
     'TopicTypeProvisioningState',
+    'TopicTypeSourceScope',
     'VerifiedPartnerProvisioningState',
 ]

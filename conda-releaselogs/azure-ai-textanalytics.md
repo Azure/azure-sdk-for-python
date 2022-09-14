@@ -1,5 +1,11 @@
 # Azure Text Analytics client library for Python (conda)
 
+## 2022.06.01
+
+### Packages included
+
+- azure-ai-textanalytics-5.1.0
+
 ## 2022.03.01
 
 ### Packages included

@@ -7,23 +7,18 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
-
-from msrest import Deserializer, Serializer
+from typing import Any, Optional
 
 from azure.core import PipelineClient
+from azure.core.rest import HttpRequest, HttpResponse
 
 from . import models
 from ._configuration import AzureDataLakeStorageRESTAPIConfiguration
+from ._serialization import Deserializer, Serializer
 from .operations import FileSystemOperations, PathOperations, ServiceOperations
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
 
-    from azure.core.rest import HttpRequest, HttpResponse
-
-class AzureDataLakeStorageRESTAPI(object):
+class AzureDataLakeStorageRESTAPI:  # pylint: disable=client-accepts-api-version-keyword
     """Azure Data Lake Storage provides storage for Hadoop and other big data workloads.
 
     :ivar service: ServiceOperations operations
@@ -33,10 +28,14 @@ class AzureDataLakeStorageRESTAPI(object):
     :ivar path: PathOperations operations
     :vartype path: azure.storage.filedatalake.operations.PathOperations
     :param url: The URL of the service account, container, or blob that is the target of the
-     desired operation.
+     desired operation. Required.
     :type url: str
-    :param base_url: Service URL. Default value is "".
+    :param base_url: Service URL. Required. Default value is "".
     :type base_url: str
+    :param x_ms_lease_duration: The lease duration is required to acquire a lease, and specifies
+     the duration of the lease in seconds.  The lease duration must be between 15 and 60 seconds or
+     -1 for infinite lease. Default value is None.
+    :type x_ms_lease_duration: int
     :keyword resource: The value must be "filesystem" for all filesystem operations. Default value
      is "filesystem". Note that overriding this default value may result in unsupported behavior.
     :paramtype resource: str
@@ -45,14 +44,12 @@ class AzureDataLakeStorageRESTAPI(object):
     :paramtype version: str
     """
 
-    def __init__(
-        self,
-        url,  # type: str
-        base_url="",  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        self._config = AzureDataLakeStorageRESTAPIConfiguration(url=url, **kwargs)
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+        self, url: str, base_url: str = "", x_ms_lease_duration: Optional[int] = None, **kwargs: Any
+    ) -> None:
+        self._config = AzureDataLakeStorageRESTAPIConfiguration(
+            url=url, x_ms_lease_duration=x_ms_lease_duration, **kwargs
+        )
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -63,13 +60,7 @@ class AzureDataLakeStorageRESTAPI(object):
         self.file_system = FileSystemOperations(self._client, self._config, self._serialize, self._deserialize)
         self.path = PathOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -78,7 +69,7 @@ class AzureDataLakeStorageRESTAPI(object):
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

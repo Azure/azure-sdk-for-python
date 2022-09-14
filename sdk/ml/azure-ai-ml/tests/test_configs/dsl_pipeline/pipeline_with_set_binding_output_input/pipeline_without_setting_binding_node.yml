@@ -1,0 +1,25 @@
+
+type: pipeline
+
+inputs:
+  training_input:
+    path: ./data
+  training_max_epochs: 20
+  training_learning_rate: 1.8
+  learning_rate_schedule: 'time-based'
+
+outputs:
+  trained_model:
+
+jobs:
+  train_job:
+    type: command
+    compute: azureml:cpu-cluster
+    component: file:./train.yml
+    inputs:
+      training_data: ${{parent.inputs.training_input}}
+      max_epochs: ${{parent.inputs.training_max_epochs}}
+      learning_rate: ${{parent.inputs.training_learning_rate}}
+      learning_rate_schedule: ${{parent.inputs.learning_rate_schedule}}
+    outputs:
+      model_output: ${{parent.outputs.trained_model}}

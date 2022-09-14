@@ -228,7 +228,7 @@ class TestHealth(TextAnalyticsTest):
             for task in tasks["items"]:
                 num_tasks += 1
                 task_stats = task['results']['statistics']
-                assert "2022-03-01" == task['results']['modelVersion']
+                # assert "2022-03-01" == task['results']['modelVersion']  https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14685418
                 assert task_stats['documentsCount'] == 5
                 assert task_stats['validDocumentsCount'] == 4
                 assert task_stats['erroneousDocumentsCount'] == 1
@@ -239,7 +239,7 @@ class TestHealth(TextAnalyticsTest):
             response = await (await client.begin_analyze_healthcare_entities(
                 docs,
                 show_stats=True,
-                model_version="2022-03-01",
+                model_version="latest",
                 polling_interval=self._interval(),
                 raw_response_hook=callback,
             )).result()
@@ -321,7 +321,6 @@ class TestHealth(TextAnalyticsTest):
 
             await poller.result()  # need to call this before tearDown runs even though we don't need the response for the test.
 
-    @pytest.mark.skip("service expects modelVersion in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -334,8 +333,8 @@ class TestHealth(TextAnalyticsTest):
                 response = []
                 async for r in result:
                     response.append(r)
-        assert err.error.code == "ModelVersionIncorrect"
-        assert err.error.message is not None
+        assert err.value.error.code == "InvalidParameterValue"
+        assert err.value.error.message is not None
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -550,6 +549,7 @@ class TestHealth(TextAnalyticsTest):
                 continuation_token=cont_token,
                 polling_interval=self._interval(),
             )
+            assert isinstance(poller, AsyncAnalyzeHealthcareEntitiesLROPoller)
             response = await poller.result()
 
             results = []
@@ -627,52 +627,4 @@ class TestHealth(TextAnalyticsTest):
                 show_stats=True,
                 polling_interval=self._interval(),
             )
-        assert str(e.value) == "'display_name' is only available for API version 2022-04-01-preview and up.\n"
-
-        with pytest.raises(ValueError) as e:
-            poller = await client.begin_analyze_healthcare_entities(
-                documents=[
-                    {"id": "1",
-                     "text": "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."},
-                    {"id": "2", "text": "patients must have histologically confirmed NHL"},
-                    {"id": "3", "text": ""},
-                    {"id": "4", "text": "The patient was diagnosed with Parkinsons Disease (PD)"}
-                ],
-                fhir_version="4.0.1",
-                show_stats=True,
-                polling_interval=self._interval(),
-            )
-        assert str(e.value) == "'fhir_version' is only available for API version 2022-04-01-preview and up.\n"
-
-        with pytest.raises(ValueError) as e:
-            poller = await client.begin_analyze_healthcare_entities(
-                documents=[
-                    {"id": "1",
-                     "text": "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."},
-                    {"id": "2", "text": "patients must have histologically confirmed NHL"},
-                    {"id": "3", "text": ""},
-                    {"id": "4", "text": "The patient was diagnosed with Parkinsons Disease (PD)"}
-                ],
-                display_name="this won't work",
-                fhir_version="4.0.1",
-                show_stats=True,
-                polling_interval=self._interval(),
-            )
-        assert str(e.value) == "'display_name' is only available for API version 2022-04-01-preview and up.\n'fhir_version' is only available for API version 2022-04-01-preview and up.\n"
-
-    @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
-    @recorded_by_proxy_async
-    async def test_healthcare_fhir_bundle(self, client):
-        async with client:
-            poller = await client.begin_analyze_healthcare_entities(
-                documents=[
-                    "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."
-                ],
-                fhir_version="4.0.1",
-                polling_interval=self._interval(),
-            )
-
-            response = await poller.result()
-            async for res in response:
-                assert res.fhir_bundle
+        assert str(e.value) == "'display_name' is only available for API version 2022-05-01 and up.\n"

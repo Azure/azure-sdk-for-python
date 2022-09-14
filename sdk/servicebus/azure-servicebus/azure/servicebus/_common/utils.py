@@ -170,7 +170,7 @@ def create_authentication(client):
             functools.partial(client._credential.get_token, client._auth_uri),
             custom_endpoint_hostname=client._config.custom_endpoint_hostname,
             port=client._config.connection_port,
-            verify=client._config.connection_verify,
+            verify=client._config.connection_verify
         )
     return authentication.JWTTokenAuth(
         client._auth_uri,
@@ -180,7 +180,7 @@ def create_authentication(client):
         timeout=client._config.auth_timeout,
         custom_endpoint_hostname=client._config.custom_endpoint_hostname,
         port=client._config.connection_port,
-        verify=client._config.connection_verify,
+        verify=client._config.connection_verify
     )
 
 

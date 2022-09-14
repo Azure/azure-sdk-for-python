@@ -1,0 +1,102 @@
+{
+  "id": "/subscriptions/b8c23406-f9b5-4ccb-8a65-a8cb5dcd6a5a/resourceGroups/rge2etests/providers/Microsoft.MachineLearningServices/workspaces/wse2etests/jobs/test_659111965622",
+  "name": "test_659111965622",
+  "type": "Microsoft.MachineLearningServices/workspaces/jobs",
+  "properties": {
+    "description": "The hello world pipeline job",
+    "tags": {
+      "tag": "tagvalue",
+      "owner": "sdkteam"
+    },
+    "properties": {
+      "mlflow.source.git.repoURL": "https://msdata.visualstudio.com/DefaultCollection/Vienna/_git/sdk-cli-v2",
+      "mlflow.source.git.branch": "wanhan/automl_in_pipeline_cli",
+      "mlflow.source.git.commit": "cd5cd6526169bc2d879ad03de3104a9ca86d0398",
+      "azureml.git.dirty": "True",
+      "azureml.runsource": "azureml.PipelineRun",
+      "runSource": "SDKv2",
+      "runType": "HTTP",
+      "azureml.parameters": "{}",
+      "azureml.continue_on_step_failure": "False",
+      "azureml.enforceRerun": "False",
+      "azureml.pipelineComponent": "pipelinerun"
+    },
+    "displayName": "test_659111965622",
+    "status": "Preparing",
+    "experimentName": "my_first_experiment",
+    "services": {
+      "Tracking": {
+        "jobServiceType": "Tracking",
+        "port": null,
+        "endpoint": "azureml://master.api.azureml-test.ms/mlflow/v1.0/subscriptions/b8c23406-f9b5-4ccb-8a65-a8cb5dcd6a5a/resourceGroups/rge2etests/providers/Microsoft.MachineLearningServices/workspaces/wse2etests?",
+        "status": null,
+        "errorMessage": null,
+        "properties": null
+      },
+      "Studio": {
+        "jobServiceType": "Studio",
+        "port": null,
+        "endpoint": "https://ml.azure.com/runs/test_659111965622?wsid=/subscriptions/b8c23406-f9b5-4ccb-8a65-a8cb5dcd6a5a/resourcegroups/rge2etests/workspaces/wse2etests",
+        "status": null,
+        "errorMessage": null,
+        "properties": null
+      }
+    },
+    "computeId": "/subscriptions/b8c23406-f9b5-4ccb-8a65-a8cb5dcd6a5a/resourceGroups/rge2etests/providers/Microsoft.MachineLearningServices/workspaces/wse2etests/computes/cpu-cluster",
+    "isArchived": false,
+    "schedule": null,
+    "identity": null,
+    "jobType": "Pipeline",
+    "settings": {
+      "ContinueOnStepFailure": false,
+      "ForceRerun": false
+    },
+    "jobs": {
+      "hello_automl_regression": {
+        "validation_data": "azureml://datastores/workspaceblobstore/paths/LocalUpload/7c2ff10b-206b-401c-ad65-a4a9a637fb7a/valid",
+        "test_data": "${{parent.inputs.automl_test_data}}",
+        "training_data": "azureml://datastores/workspaceblobstore/paths/LocalUpload/7c2ff10b-206b-401c-ad65-a4a9a637fb7a/train",
+        "target_column_name": "SalePrice",
+        "name": "913ed862-0cc5-45df-87b9-4124320de868",
+        "display_name": "913ed862-0cc5-45df-87b9-4124320de868",
+        "tags": {},
+        "experiment_name": "sdk-cli-v2",
+        "properties": {
+          "_automl_internal_label": "latest",
+          "_automl_internal_save_mlflow": "true"
+        },
+        "compute": "azureml:/subscriptions/b8c23406-f9b5-4ccb-8a65-a8cb5dcd6a5a/resourceGroups/rge2etests/providers/Microsoft.MachineLearningServices/workspaces/wse2etests/computes/cpu-cluster",
+        "type": "automl",
+        "outputs": {},
+        "log_verbosity": "info",
+        "limits": {
+          "max_concurrent_trials": 1,
+          "max_trials": 1
+        },
+        "featurization": {
+          "mode": "off"
+        },
+        "training": {
+          "enable_stack_ensemble": false,
+          "enable_vote_ensemble": false
+        },
+        "task": "regression",
+        "primary_metric": "r2_score"
+      }
+    },
+    "inputs": {
+      "automl_test_data": {
+        "description": null,
+        "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/7c2ff10b-206b-401c-ad65-a4a9a637fb7a/test",
+        "mode": "ReadOnlyMount",
+        "jobInputType": "MLTable"
+      }
+    },
+    "outputs": {}
+  },
+  "systemData": {
+    "createdAt": "2022-04-18T09:40:00.7459954Z",
+    "createdBy": "Han Wang",
+    "createdByType": "User"
+  }
+}

@@ -1434,7 +1434,7 @@ class DeploymentScaleSettings(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar scale_type: Deployment scale type. Possible values include: "Manual".
+    :ivar scale_type: Deployment scale type. Possible values include: "Standard", "Manual".
     :vartype scale_type: str or ~azure.mgmt.cognitiveservices.models.DeploymentScaleType
     :ivar capacity: Deployment capacity.
     :vartype capacity: int
@@ -1461,7 +1461,7 @@ class DeploymentScaleSettings(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword scale_type: Deployment scale type. Possible values include: "Manual".
+        :keyword scale_type: Deployment scale type. Possible values include: "Standard", "Manual".
         :paramtype scale_type: str or ~azure.mgmt.cognitiveservices.models.DeploymentScaleType
         :keyword capacity: Deployment capacity.
         :paramtype capacity: int

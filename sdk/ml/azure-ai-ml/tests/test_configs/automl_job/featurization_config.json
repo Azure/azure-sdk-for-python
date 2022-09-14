@@ -1,0 +1,63 @@
+{
+    "mode": "custom",
+    "blocked_transformers": ["LabelEncoder", "WordEmbedding"],
+    "column_name_and_types": {
+        "CPWVOL5": "CategoricalHash",
+        "MYCT": "Numeric",
+        "VendorName": "CategoricalHash"
+    },
+    "transformer_params": {
+        "imputer": [
+            {
+                "fields": ["Quantity"],
+                "parameters": {
+                    "strategy": "constant",
+                    "fill_value": 0.0
+                }
+            },
+            {
+                "fields": ["Income", "Age"],
+                "parameters": {
+                    "strategy": "median",
+                    "fill_value": null
+                }
+            },
+            {
+                "fields": ["Surface", "Tax"],
+                "parameters": {
+                    "strategy": "mean",
+                    "fill_value": null
+                }
+            },
+            {
+                "fields": ["Rooms"],
+                "parameters": {
+                    "strategy": "most_frequent",
+                    "fill_value": "test"
+                }
+            },
+            {
+                "fields": ["Price"],
+                "parameters": {
+                    "strategy": "ffill"
+                }
+            }
+        ],
+        "hash_one_hot_encoder": [
+            {
+                "fields": ["Name"],
+                "parameters": {
+                    "number_of_bits": 3.0
+                }
+            },
+            {
+                "fields": ["Hair Color", "Eye Color"],
+                "parameters": {
+                    "number_of_bits": 1.0
+                }
+            }
+        ]
+    },
+    "dataset_language": "English",
+    "enable_dnn_featurization": false
+}

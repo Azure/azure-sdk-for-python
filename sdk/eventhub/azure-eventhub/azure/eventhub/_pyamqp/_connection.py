@@ -57,7 +57,7 @@ def get_local_timeout(now, idle_timeout, last_frame_received_time):
     return False
 
 
-class Connection(object):
+class Connection(object): # pylint:disable=too-many-instance-attributes
     """An AMQP Connection.
 
     :ivar str state: The connection state.
@@ -79,7 +79,7 @@ class Connection(object):
      Default value is `0.1`.
     :keyword bool network_trace: Whether to log the network traffic. Default value is `False`. If enabled, frames
      will be logged at the logging.INFO level.
-    :keyword str transport_type: Determines if the transport type is Amqp or AmqpOverWebSocket. 
+    :keyword str transport_type: Determines if the transport type is Amqp or AmqpOverWebSocket.
      Defaults to TransportType.Amqp. It will be AmqpOverWebSocket if using http_proxy.
     :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value). When using these settings,
@@ -87,7 +87,7 @@ class Connection(object):
      Additionally the following keys may also be present: `'username', 'password'`.
     """
 
-    def __init__(self, endpoint, **kwargs):
+    def __init__(self, endpoint, **kwargs): # pylint:disable=too-many-statements
         # type(str, Any) -> None
         parsed_url = urlparse(endpoint)
         self._hostname = parsed_url.hostname
@@ -140,7 +140,7 @@ class Connection(object):
         self._allow_pipelined_open = kwargs.pop('allow_pipelined_open', True)  # type: bool
         self._remote_idle_timeout = None  # type: Optional[int]
         self._remote_idle_timeout_send_frame = None  # type: Optional[int]
-        self._idle_timeout_empty_frame_send_ratio = kwargs.get('idle_timeout_empty_frame_send_ratio', 0.5)  # type: float
+        self._idle_timeout_empty_frame_send_ratio = kwargs.get('idle_timeout_empty_frame_send_ratio', 0.5)
         self._last_frame_received_time = None  # type: Optional[float]
         self._last_frame_sent_time = None  # type: Optional[float]
         self._idle_wait_time = kwargs.get('idle_wait_time', 0.1)  # type: float
@@ -202,8 +202,8 @@ class Connection(object):
                 description="Failed to initiate the connection due to exception: " + str(exc),
                 error=exc
             )
-        except Exception:
-            raise
+        except Exception: # pylint:disable=try-except-raise
+            raise 
 
     def _disconnect(self):
         # type: () -> None
@@ -231,9 +231,9 @@ class Connection(object):
          descriptor and field values.
         """
         if self._can_read():
-            if wait == False:
+            if wait is False: # pylint:disable=no-else-return
                 return self._transport.receive_frame(**kwargs)
-            elif wait == True:
+            elif wait is True:
                 with self._transport.block():
                     return self._transport.receive_frame(**kwargs)
             else:
@@ -274,7 +274,7 @@ class Connection(object):
                     description="Can not send frame out due to exception: " + str(exc),
                     error=exc
                 )
-            except Exception:
+            except Exception: # pylint:disable=try-except-raise
                 raise
         else:
             _LOGGER.warning("Cannot write frame in current state: %r", self.state)
@@ -311,7 +311,7 @@ class Connection(object):
                 description="Can not send empty frame due to exception: " + str(exc),
                 error=exc
             )
-        except Exception:
+        except Exception: # pylint:disable=try-except-raise
             raise
 
     def _outgoing_header(self):
@@ -395,8 +395,15 @@ class Connection(object):
             self._remote_idle_timeout_send_frame = self._idle_timeout_empty_frame_send_ratio * self._remote_idle_timeout
 
         if frame[2] < 512:  # Ensure minimum max frame size.
-            pass  # TODO: error
-        self._remote_max_frame_size = frame[2]
+            #Close with error
+            #Codes_S_R_S_CONNECTION_01_143: [If any of the values in the received open frame are invalid then the connection shall be closed.]
+            #Codes_S_R_S_CONNECTION_01_220: [The error amqp:invalid-field shall be set in the error.condition field of the CLOSE frame.] 
+            self.close(error=AMQPConnectionError(
+                condition=ErrorCondition.InvalidField, 
+                description="connection_endpoint_frame_received::failed parsing OPEN frame"))
+            _LOGGER.error("connection_endpoint_frame_received::failed parsing OPEN frame")
+        else:
+            self._remote_max_frame_size = frame[2]
         if self.state == ConnectionState.OPEN_SENT:
             self._set_state(ConnectionState.OPENED)
         elif self.state == ConnectionState.HDR_EXCH:
@@ -404,7 +411,10 @@ class Connection(object):
             self._outgoing_open()
             self._set_state(ConnectionState.OPENED)
         else:
-            pass # TODO what now...?
+            self.close(error=AMQPError(
+                condition=ErrorCondition.IllegalState, 
+                description=f"connection is an illegal state: {self.state}"))
+            _LOGGER.error("connection is an illegal state: %r", self.state)
 
     def _outgoing_close(self, error=None):
         # type: (Optional[AMQPError]) -> None
@@ -453,7 +463,7 @@ class Connection(object):
                 description=frame[0][1],
                 info=frame[0][2]
             )
-            _LOGGER.error("Connection error: {}".format(frame[0]))
+            _LOGGER.error("Connection error: {}".format(frame[0])) # pylint:disable=logging-format-interpolation
 
     def _incoming_begin(self, channel, frame):
         # type: (int, Tuple[Any, ...]) -> None
@@ -499,12 +509,14 @@ class Connection(object):
         """
         try:
             self._incoming_endpoints[channel]._incoming_end(frame)  # pylint:disable=protected-access
+            self._incoming_endpoints.pop(channel)
+            self._outgoing_endpoints.pop(channel)
         except KeyError:
-            pass  # TODO: channel error
-        #self._incoming_endpoints.pop(channel)  # TODO
-        #self._outgoing_endpoints.pop(channel)  # TODO
+            end_error = AMQPError(condition=ErrorCondition.InvalidField, description=f"Invalid channel {channel}", info=None)
+            _LOGGER.error(f"Invalid channel {channel} ")
+            self.close(error=end_error)
 
-    def _process_incoming_frame(self, channel, frame):
+    def _process_incoming_frame(self, channel, frame): # pylint:disable=too-many-return-statements
         # type: (int, Optional[Union[bytes, Tuple[int, Tuple[Any, ...]]]]) -> bool
         """Process an incoming frame, either directly or by passing to the necessary Session.
 
@@ -518,7 +530,7 @@ class Connection(object):
          should be interrupted.
         """
         try:
-            performative, fields = frame  # type: int, Tuple[Any, ...]
+            performative, fields = frame
         except TypeError:
             return True  # Empty Frame or socket timeout
         try:
@@ -553,10 +565,10 @@ class Connection(object):
             if performative == 0:
                 self._incoming_header(channel, fields)
                 return True
-            if performative == 1:
+            if performative == 1: # pylint:disable=no-else-return
                 return False  # TODO: incoming EMPTY
             else:
-                _LOGGER.error("Unrecognized incoming frame: {}".format(frame))
+                _LOGGER.error("Unrecognized incoming frame: {}".format(frame)) # pylint:disable=logging-format-interpolation
                 return True
         except KeyError:
             return True  #TODO: channel error
@@ -567,8 +579,6 @@ class Connection(object):
 
         :raises ValueError: If the connection is not open or not in a valid state.
         """
-        if self._network_trace:
-            _LOGGER.info("-> %r", frame, extra=self._network_trace_params)
         if not self._allow_pipelined_open and self.state in [ConnectionState.OPEN_PIPE, ConnectionState.OPEN_SENT]:
             raise ValueError("Connection not configured to allow pipeline send.")
         if self.state not in [ConnectionState.OPEN_PIPE, ConnectionState.OPEN_SENT, ConnectionState.OPENED]:
@@ -649,7 +659,7 @@ class Connection(object):
         try:
             if self.state not in _CLOSING_STATES:
                 now = time.time()
-                if get_local_timeout(now, self._idle_timeout, self._last_frame_received_time) or self._get_remote_timeout(now):
+                if get_local_timeout(now, self._idle_timeout, self._last_frame_received_time) or self._get_remote_timeout(now): # pylint:disable=line-too-long
                     # TODO: check error condition
                     self.close(
                         error=AMQPError(
@@ -676,7 +686,7 @@ class Connection(object):
                 description="Can not send frame out due to exception: " + str(exc),
                 error=exc
             )
-        except Exception:
+        except Exception: # pylint:disable=try-except-raise
             raise
 
     def create_session(self, **kwargs):
@@ -750,7 +760,7 @@ class Connection(object):
             if error:
                 self._error = AMQPConnectionError(
                     condition=error.condition,
-                    description=error.descrption,
+                    description=error.description,
                     info=error.info
                 )
             if self.state == ConnectionState.OPEN_PIPE:
@@ -762,7 +772,7 @@ class Connection(object):
             else:
                 self._set_state(ConnectionState.CLOSE_SENT)
             self._wait_for_response(wait, ConnectionState.END)
-        except Exception as exc:
+        except Exception as exc: # pylint:disable=broad-except
             # If error happened during closing, ignore the error and set state to END
             _LOGGER.info("An error occurred when closing the connection: %r", exc)
             self._set_state(ConnectionState.END)

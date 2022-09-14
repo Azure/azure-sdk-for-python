@@ -37,7 +37,7 @@ def build_trigger_request_initial(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+    api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -106,7 +106,7 @@ class ValidateOperationOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(parameters, 'ValidateOperationRequest')
@@ -171,7 +171,7 @@ class ValidateOperationOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]

@@ -15,7 +15,7 @@ class AnalyzeOperationResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar status: Required. Operation status. Possible values include: "notStarted", "running",
+    :ivar status: Required. Operation status. Known values are: "notStarted", "running",
      "succeeded", "failed".
     :vartype status: str or ~azure.ai.formrecognizer.v2_1.models.OperationStatus
     :ivar created_date_time: Required. Date and time (UTC) when the analyze operation was
@@ -45,7 +45,7 @@ class AnalyzeOperationResult(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword status: Required. Operation status. Possible values include: "notStarted", "running",
+        :keyword status: Required. Operation status. Known values are: "notStarted", "running",
          "succeeded", "failed".
         :paramtype status: str or ~azure.ai.formrecognizer.v2_1.models.OperationStatus
         :keyword created_date_time: Required. Date and time (UTC) when the analyze operation was
@@ -255,7 +255,7 @@ class CopyOperationResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar status: Required. Operation status. Possible values include: "notStarted", "running",
+    :ivar status: Required. Operation status. Known values are: "notStarted", "running",
      "succeeded", "failed".
     :vartype status: str or ~azure.ai.formrecognizer.v2_1.models.OperationStatus
     :ivar created_date_time: Required. Date and time (UTC) when the copy operation was submitted.
@@ -284,7 +284,7 @@ class CopyOperationResult(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword status: Required. Operation status. Possible values include: "notStarted", "running",
+        :keyword status: Required. Operation status. Known values are: "notStarted", "running",
          "succeeded", "failed".
         :paramtype status: str or ~azure.ai.formrecognizer.v2_1.models.OperationStatus
         :keyword created_date_time: Required. Date and time (UTC) when the copy operation was
@@ -653,7 +653,7 @@ class FieldValue(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Type of field value. Possible values include: "string", "date", "time",
+    :ivar type: Required. Type of field value. Known values are: "string", "date", "time",
      "phoneNumber", "number", "integer", "array", "object", "selectionMark", "countryRegion".
     :vartype type: str or ~azure.ai.formrecognizer.v2_1.models.FieldValueType
     :ivar value_string: String value.
@@ -672,8 +672,7 @@ class FieldValue(msrest.serialization.Model):
     :vartype value_array: list[~azure.ai.formrecognizer.v2_1.models.FieldValue]
     :ivar value_object: Dictionary of named field values.
     :vartype value_object: dict[str, ~azure.ai.formrecognizer.v2_1.models.FieldValue]
-    :ivar value_selection_mark: Selection mark value. Possible values include: "selected",
-     "unselected".
+    :ivar value_selection_mark: Selection mark value. Known values are: "selected", "unselected".
     :vartype value_selection_mark: str or
      ~azure.ai.formrecognizer.v2_1.models.FieldValueSelectionMark
     :ivar value_country_region: 3-letter country code (ISO 3166-1 alpha-3).
@@ -722,9 +721,8 @@ class FieldValue(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword type: Required. Type of field value. Possible values include: "string", "date",
-         "time", "phoneNumber", "number", "integer", "array", "object", "selectionMark",
-         "countryRegion".
+        :keyword type: Required. Type of field value. Known values are: "string", "date", "time",
+         "phoneNumber", "number", "integer", "array", "object", "selectionMark", "countryRegion".
         :paramtype type: str or ~azure.ai.formrecognizer.v2_1.models.FieldValueType
         :keyword value_string: String value.
         :paramtype value_string: str
@@ -742,7 +740,7 @@ class FieldValue(msrest.serialization.Model):
         :paramtype value_array: list[~azure.ai.formrecognizer.v2_1.models.FieldValue]
         :keyword value_object: Dictionary of named field values.
         :paramtype value_object: dict[str, ~azure.ai.formrecognizer.v2_1.models.FieldValue]
-        :keyword value_selection_mark: Selection mark value. Possible values include: "selected",
+        :keyword value_selection_mark: Selection mark value. Known values are: "selected",
          "unselected".
         :paramtype value_selection_mark: str or
          ~azure.ai.formrecognizer.v2_1.models.FieldValueSelectionMark
@@ -849,7 +847,7 @@ class KeyValueElement(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Semantic data type of the key value element. Possible values include: "string",
+    :ivar type: Semantic data type of the key value element. Known values are: "string",
      "selectionMark".
     :vartype type: str or ~azure.ai.formrecognizer.v2_1.models.KeyValueType
     :ivar text: Required. The text content of the key or value.
@@ -878,7 +876,7 @@ class KeyValueElement(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword type: Semantic data type of the key value element. Possible values include: "string",
+        :keyword type: Semantic data type of the key value element. Known values are: "string",
          "selectionMark".
         :paramtype type: str or ~azure.ai.formrecognizer.v2_1.models.KeyValueType
         :keyword text: Required. The text content of the key or value.
@@ -999,8 +997,7 @@ class ModelInfo(msrest.serialization.Model):
 
     :ivar model_id: Required. Model identifier.
     :vartype model_id: str
-    :ivar status: Required. Status of the model. Possible values include: "creating", "ready",
-     "invalid".
+    :ivar status: Required. Status of the model. Known values are: "creating", "ready", "invalid".
     :vartype status: str or ~azure.ai.formrecognizer.v2_1.models.ModelStatus
     :ivar created_date_time: Required. Date and time (UTC) when the model was created.
     :vartype created_date_time: ~datetime.datetime
@@ -1035,7 +1032,7 @@ class ModelInfo(msrest.serialization.Model):
         """
         :keyword model_id: Required. Model identifier.
         :paramtype model_id: str
-        :keyword status: Required. Status of the model. Possible values include: "creating", "ready",
+        :keyword status: Required. Status of the model. Known values are: "creating", "ready",
          "invalid".
         :paramtype status: str or ~azure.ai.formrecognizer.v2_1.models.ModelStatus
         :keyword created_date_time: Required. Date and time (UTC) when the model was created.
@@ -1199,8 +1196,7 @@ class ReadResult(msrest.serialization.Model):
     :ivar height: Required. The height of the image/PDF in pixels/inches, respectively.
     :vartype height: float
     :ivar unit: Required. The unit used by the width, height and boundingBox properties. For
-     images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: "pixel",
-     "inch".
+     images, the unit is "pixel". For PDF, the unit is "inch". Known values are: "pixel", "inch".
     :vartype unit: str or ~azure.ai.formrecognizer.v2_1.models.LengthUnit
     :ivar lines: When includeTextDetails is set to true, a list of recognized text lines. The
      maximum number of lines returned is 300 per page. The lines are sorted top to bottom, left to
@@ -1245,8 +1241,7 @@ class ReadResult(msrest.serialization.Model):
         :keyword height: Required. The height of the image/PDF in pixels/inches, respectively.
         :paramtype height: float
         :keyword unit: Required. The unit used by the width, height and boundingBox properties. For
-         images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: "pixel",
-         "inch".
+         images, the unit is "pixel". For PDF, the unit is "inch". Known values are: "pixel", "inch".
         :paramtype unit: str or ~azure.ai.formrecognizer.v2_1.models.LengthUnit
         :keyword lines: When includeTextDetails is set to true, a list of recognized text lines. The
          maximum number of lines returned is 300 per page. The lines are sorted top to bottom, left to
@@ -1276,8 +1271,7 @@ class SelectionMark(msrest.serialization.Model):
     :vartype bounding_box: list[float]
     :ivar confidence: Required. Confidence value.
     :vartype confidence: float
-    :ivar state: Required. State of the selection mark. Possible values include: "selected",
-     "unselected".
+    :ivar state: Required. State of the selection mark. Known values are: "selected", "unselected".
     :vartype state: str or ~azure.ai.formrecognizer.v2_1.models.SelectionMarkState
     """
 
@@ -1302,7 +1296,7 @@ class SelectionMark(msrest.serialization.Model):
         :paramtype bounding_box: list[float]
         :keyword confidence: Required. Confidence value.
         :paramtype confidence: float
-        :keyword state: Required. State of the selection mark. Possible values include: "selected",
+        :keyword state: Required. State of the selection mark. Known values are: "selected",
          "unselected".
         :paramtype state: str or ~azure.ai.formrecognizer.v2_1.models.SelectionMarkState
         """
@@ -1344,8 +1338,8 @@ class Style(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The text line style name, including handwriting and other. Possible
-     values include: "other", "handwriting".
+    :ivar name: Required. The text line style name, including handwriting and other. Known values
+     are: "other", "handwriting".
     :vartype name: str or ~azure.ai.formrecognizer.v2_1.models.TextStyle
     :ivar confidence: Required. The confidence of text line style.
     :vartype confidence: float
@@ -1366,8 +1360,8 @@ class Style(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. The text line style name, including handwriting and other. Possible
-         values include: "other", "handwriting".
+        :keyword name: Required. The text line style name, including handwriting and other. Known
+         values are: "other", "handwriting".
         :paramtype name: str or ~azure.ai.formrecognizer.v2_1.models.TextStyle
         :keyword confidence: Required. The confidence of text line style.
         :paramtype confidence: float
@@ -1480,7 +1474,7 @@ class TrainingDocumentInfo(msrest.serialization.Model):
     :vartype pages: int
     :ivar errors: Required. List of errors.
     :vartype errors: list[~azure.ai.formrecognizer.v2_1.models.ErrorInformation]
-    :ivar status: Required. Status of the training operation. Possible values include: "succeeded",
+    :ivar status: Required. Status of the training operation. Known values are: "succeeded",
      "partiallySucceeded", "failed".
     :vartype status: str or ~azure.ai.formrecognizer.v2_1.models.TrainStatus
     """
@@ -1510,8 +1504,8 @@ class TrainingDocumentInfo(msrest.serialization.Model):
         :paramtype pages: int
         :keyword errors: Required. List of errors.
         :paramtype errors: list[~azure.ai.formrecognizer.v2_1.models.ErrorInformation]
-        :keyword status: Required. Status of the training operation. Possible values include:
-         "succeeded", "partiallySucceeded", "failed".
+        :keyword status: Required. Status of the training operation. Known values are: "succeeded",
+         "partiallySucceeded", "failed".
         :paramtype status: str or ~azure.ai.formrecognizer.v2_1.models.TrainStatus
         """
         super(TrainingDocumentInfo, self).__init__(**kwargs)

@@ -15,7 +15,8 @@ from azure.eventhub import (
 from azure.eventhub.exceptions import (
     ConnectError,
     AuthenticationError,
-    EventDataSendError
+    EventDataSendError,
+    EventHubError
 )
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub import EventHubProducerClient
@@ -119,3 +120,16 @@ def test_create_batch_with_too_large_size_sync(connection_str):
     with client:
         with pytest.raises(ValueError):
             client.create_batch(max_size_in_bytes=5 * 1024 * 1024)
+
+@pytest.mark.liveTest
+def test_invalid_proxy_server(connection_str):
+    HTTP_PROXY = {
+    'proxy_hostname': 'fakeproxy',  # proxy hostname.
+    'proxy_port': 3128,  # proxy port.
+    }
+
+    client = EventHubProducerClient.from_connection_string(connection_str, http_proxy=HTTP_PROXY)
+    with client:
+        with pytest.raises(EventHubError):
+            batch = client.create_batch()
+

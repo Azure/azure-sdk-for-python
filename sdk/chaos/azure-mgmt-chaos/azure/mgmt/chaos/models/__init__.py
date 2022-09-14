@@ -14,6 +14,7 @@ from ._models_py3 import Capability
 from ._models_py3 import CapabilityListResult
 from ._models_py3 import CapabilityType
 from ._models_py3 import CapabilityTypeListResult
+from ._models_py3 import CapabilityTypePropertiesRuntimeProperties
 from ._models_py3 import ContinuousAction
 from ._models_py3 import DelayAction
 from ._models_py3 import DiscreteAction
@@ -56,7 +57,9 @@ from ._chaos_management_client_enums import (
     ResourceIdentityType,
     SelectorType,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'Action',
     'ActionStatus',
@@ -66,6 +69,7 @@ __all__ = [
     'CapabilityListResult',
     'CapabilityType',
     'CapabilityTypeListResult',
+    'CapabilityTypePropertiesRuntimeProperties',
     'ContinuousAction',
     'DelayAction',
     'DiscreteAction',
@@ -105,3 +109,5 @@ __all__ = [
     'ResourceIdentityType',
     'SelectorType',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

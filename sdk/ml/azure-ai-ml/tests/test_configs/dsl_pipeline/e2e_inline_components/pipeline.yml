@@ -1,0 +1,115 @@
+type: pipeline
+description: "E2E dummy train-score-eval pipeline with components defined inline in pipeline job"
+
+inputs:
+  pipeline_job_training_input:
+    path: ./data
+  pipeline_job_test_input:
+    path: ./data
+  pipeline_job_training_max_epocs: 20
+  pipeline_job_training_learning_rate: 1.8
+  pipeline_job_learning_rate_schedule: 'time-based'
+
+outputs:
+  pipeline_job_trained_model:
+
+  pipeline_job_scored_data:
+
+  pipeline_job_evaluation_report:
+
+
+#settings:
+#  datastore: azureml:workspaceblobstore
+
+compute: azureml:cpu-cluster
+
+jobs:
+  train_job:
+    type: command
+    component:
+      name: Train
+      version: 10
+      type: command
+      inputs:
+        training_data:
+          type: uri_folder
+        max_epocs:
+          type: integer
+        learning_rate:
+          type: number
+          default: 0.01
+        learning_rate_schedule:
+          type: string
+          default: time-based
+      outputs:
+        model_output:
+          type: uri_folder
+      code: ./train_src
+      environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+      command: >-
+        python train.py
+        --training_data ${{inputs.training_data}}
+        --max_epocs ${{inputs.max_epocs}}
+        --learning_rate ${{inputs.learning_rate}}
+        --learning_rate_schedule ${{inputs.learning_rate_schedule}}
+        --model_output ${{outputs.model_output}}
+
+    inputs:
+      training_data: ${{parent.inputs.pipeline_job_training_input}}
+      max_epocs: ${{parent.inputs.pipeline_job_training_max_epocs}}
+      learning_rate: ${{parent.inputs.pipeline_job_training_learning_rate}}
+      learning_rate_schedule: ${{parent.inputs.pipeline_job_learning_rate_schedule}}
+    outputs:
+      model_output: ${{parent.outputs.pipeline_job_trained_model}}
+
+  score_job:
+    type: command
+    component:
+      name: Score
+      version: 10
+      type: command
+      inputs:
+        model_input:
+          type: uri_folder
+        test_data:
+          type: uri_folder
+      outputs:
+        score_output:
+          type: uri_folder
+      environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+      code: ./score_src
+      command: >-
+        python score.py
+        --model_input ${{inputs.model_input}}
+        --test_data ${{inputs.test_data}}
+        --score_output ${{outputs.score_output}}
+
+    inputs:
+      model_input: ${{parent.jobs.train_job.outputs.model_output}}
+      test_data: ${{parent.inputs.pipeline_job_test_input}}
+    outputs:
+      score_output: ${{parent.outputs.pipeline_job_scored_data}}
+
+  evaluate_job:
+    type: command
+    component:
+      name: Eval
+      version: 10
+      type: command
+      inputs:
+        scoring_result:
+          type: uri_folder
+      outputs:
+        eval_output:
+          type: uri_folder
+      environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+      code: ./eval_src
+      command: >-
+        python eval.py
+        --scoring_result ${{inputs.scoring_result}}
+        --eval_output ${{outputs.eval_output}}
+
+    inputs:
+      scoring_result: ${{parent.jobs.score_job.outputs.score_output}}
+    outputs:
+      eval_output: ${{parent.outputs.pipeline_job_evaluation_report}}

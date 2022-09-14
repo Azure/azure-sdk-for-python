@@ -1,0 +1,30 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+# not supported yet.
+
+name: microsoft_samples_command_component_ml_table_input_outputs
+display_name: CommandComponentMLTableInputOutputs
+description: This is the command component with input/output types of MLTable
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 1
+
+inputs:
+  component_in_mlflow_model_azure:
+    type: mlflow_model
+
+  component_in_mlflow_model_uri:
+    type: mlflow_model
+
+outputs:
+  component_out_mlflow_model:
+    type: mlflow_model
+
+command: |
+  echo ${{inputs.component_in_mlflow_model_azure}}
+  echo ${{inputs.component_in_mlflow_model_uri}}
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

@@ -1,0 +1,40 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+name: simplepipelinejob
+description: The hello world pipeline job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+experiment_name: my_first_experiment
+
+compute: azureml:cpu-cluster
+
+settings:
+  continue_on_step_failure: false
+inputs:
+  forecasting_train_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/beer_forecasting/train
+
+jobs:
+  hello_automl_forecasting:
+    type: automl
+    task: forecasting
+    primary_metric: normalized_root_mean_squared_error
+    limits:
+      max_trials: 1
+      max_concurrent_trials: 1
+    target_column_name: BeerProduction
+    training_data: ${{parent.inputs.forecasting_train_data}}
+    n_cross_validations: 2
+    featurization:
+      mode: "Auto"
+    training:
+      enable_stack_ensemble: false
+      enable_vote_ensemble: false
+    forecasting:
+       forecast_horizon: 12
+       frequency: MS
+       time_column_name: DATE

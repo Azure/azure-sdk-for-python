@@ -43,4 +43,5 @@ The first preview of the Azure Communication Relay Client has the following feat
 - Added CommunicationRelayClient.get_relay_configuration in preview.
 
 <!-- LINKS -->
+
 [read_me]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/

@@ -5,19 +5,21 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes?api-version=2022-05-31
   response:
     body:
       string: '{"value":[],"nextLink":null}'
     headers:
       content-length: '28'
       content-type: application/json; charset=utf-8
-      date: Tue, 24 Nov 2020 21:09:06 GMT
+      date: Thu, 26 May 2022 07:28:21 GMT
+      mise-correlation-id: 6427d80e-7bf7-43f7-a48a-0761719194fa
       strict-transport-security: max-age=2592000
+      traceresponse: 00-f2e7360950b12247904c4ae2c4c7dc49-9f5874894dcade46-01
     status:
       code: 200
       message: OK
-    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes?api-version=2022-05-31
 version: 1

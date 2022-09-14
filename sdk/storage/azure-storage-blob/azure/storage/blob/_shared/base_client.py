@@ -6,9 +6,12 @@
 import logging
 import uuid
 from typing import (  # pylint: disable=unused-import
-    Optional,
     Any,
+    Dict,
     Tuple,
+    Union,
+    Optional,
+    TYPE_CHECKING
 )
 
 try:
@@ -20,7 +23,7 @@ except ImportError:
 import six
 
 from azure.core.configuration import Configuration
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport, HttpTransport
@@ -53,6 +56,8 @@ from .policies import (
 from .._version import VERSION
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
@@ -68,7 +73,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self,
         parsed_url,  # type: Any
         service,  # type: str
-        credential=None,  # type: Optional[Any]
+        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -104,9 +109,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip('/')
             self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
-        self.require_encryption = kwargs.get("require_encryption", False)
-        self.key_encryption_key = kwargs.get("key_encryption_key")
-        self.key_resolver_function = kwargs.get("key_resolver_function")
         self._config, self._pipeline = self._create_pipeline(self.credential, storage_sdk=service, **kwargs)
 
     def __enter__(self):
@@ -356,6 +358,8 @@ def _format_shared_key_credential(account_name, credential):
         if "account_key" not in credential:
             raise ValueError("Shared key credential missing 'account_key")
         return SharedKeyCredentialPolicy(**credential)
+    if isinstance(credential, AzureNamedKeyCredential):
+        return SharedKeyCredentialPolicy(credential.named_key.name, credential.named_key.key)
     return credential
 
 
@@ -402,7 +406,8 @@ def parse_connection_str(conn_str, credential, service):
             raise ValueError("Connection string missing required connection details.")
     if service == "dfs":
         primary = primary.replace(".blob.", ".dfs.")
-        secondary = secondary.replace(".blob.", ".dfs.")
+        if secondary:
+            secondary = secondary.replace(".blob.", ".dfs.")
     return primary, secondary, credential
 
 

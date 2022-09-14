@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._web_site_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class Address(msrest.serialization.Model):
@@ -137,7 +139,7 @@ directories as per ICANN requirements.
         name_first: str,
         name_last: str,
         phone: str,
-        address_mailing: Optional["Address"] = None,
+        address_mailing: Optional["_models.Address"] = None,
         fax: Optional[str] = None,
         job_title: Optional[str] = None,
         name_middle: Optional[str] = None,
@@ -202,7 +204,7 @@ class CsmOperationCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["CsmOperationDescription"],
+        value: List["_models.CsmOperationDescription"],
         **kwargs
     ):
         """
@@ -238,9 +240,9 @@ class CsmOperationDescription(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["CsmOperationDisplay"] = None,
+        display: Optional["_models.CsmOperationDisplay"] = None,
         origin: Optional[str] = None,
-        properties: Optional["CsmOperationDescriptionProperties"] = None,
+        properties: Optional["_models.CsmOperationDescriptionProperties"] = None,
         **kwargs
     ):
         """
@@ -275,7 +277,7 @@ class CsmOperationDescriptionProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        service_specification: Optional["ServiceSpecification"] = None,
+        service_specification: Optional["_models.ServiceSpecification"] = None,
         **kwargs
     ):
         """
@@ -469,13 +471,13 @@ class Domain(Resource):
     :vartype contact_registrant: ~azure.mgmt.web.v2015_04_01.models.Contact
     :ivar contact_tech: Technical contact.
     :vartype contact_tech: ~azure.mgmt.web.v2015_04_01.models.Contact
-    :ivar registration_status: Domain registration status. Possible values include: "Active",
-     "Awaiting", "Cancelled", "Confiscated", "Disabled", "Excluded", "Expired", "Failed", "Held",
-     "Locked", "Parked", "Pending", "Reserved", "Reverted", "Suspended", "Transferred", "Unknown",
-     "Unlocked", "Unparked", "Updated", "JsonConverterFailed".
+    :ivar registration_status: Domain registration status. Known values are: "Active", "Awaiting",
+     "Cancelled", "Confiscated", "Disabled", "Excluded", "Expired", "Failed", "Held", "Locked",
+     "Parked", "Pending", "Reserved", "Reverted", "Suspended", "Transferred", "Unknown", "Unlocked",
+     "Unparked", "Updated", "JsonConverterFailed".
     :vartype registration_status: str or ~azure.mgmt.web.v2015_04_01.models.DomainStatus
-    :ivar provisioning_state: Domain provisioning state. Possible values include: "Succeeded",
-     "Failed", "Canceled", "InProgress", "Deleting".
+    :ivar provisioning_state: Domain provisioning state. Known values are: "Succeeded", "Failed",
+     "Canceled", "InProgress", "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.web.v2015_04_01.models.ProvisioningState
     :ivar name_servers: Name servers.
     :vartype name_servers: list[str]
@@ -504,12 +506,11 @@ class Domain(Resource):
     :ivar domain_not_renewable_reasons: Reasons why domain is not renewable.
     :vartype domain_not_renewable_reasons: list[str or
      ~azure.mgmt.web.v2015_04_01.models.DomainPropertiesDomainNotRenewableReasonsItem]
-    :ivar dns_type: Current DNS type. Possible values include: "AzureDns",
-     "DefaultDomainRegistrarDns".
+    :ivar dns_type: Current DNS type. Known values are: "AzureDns", "DefaultDomainRegistrarDns".
     :vartype dns_type: str or ~azure.mgmt.web.v2015_04_01.models.DnsType
     :ivar dns_zone_id: Azure DNS Zone to use.
     :vartype dns_zone_id: str
-    :ivar target_dns_type: Target DNS type (would be used for migration). Possible values include:
+    :ivar target_dns_type: Target DNS type (would be used for migration). Known values are:
      "AzureDns", "DefaultDomainRegistrarDns".
     :vartype target_dns_type: str or ~azure.mgmt.web.v2015_04_01.models.DnsType
     :ivar auth_code:
@@ -567,16 +568,16 @@ class Domain(Resource):
         location: str,
         kind: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        contact_admin: Optional["Contact"] = None,
-        contact_billing: Optional["Contact"] = None,
-        contact_registrant: Optional["Contact"] = None,
-        contact_tech: Optional["Contact"] = None,
+        contact_admin: Optional["_models.Contact"] = None,
+        contact_billing: Optional["_models.Contact"] = None,
+        contact_registrant: Optional["_models.Contact"] = None,
+        contact_tech: Optional["_models.Contact"] = None,
         privacy: Optional[bool] = None,
         auto_renew: Optional[bool] = True,
-        consent: Optional["DomainPurchaseConsent"] = None,
-        dns_type: Optional[Union[str, "DnsType"]] = None,
+        consent: Optional["_models.DomainPurchaseConsent"] = None,
+        dns_type: Optional[Union[str, "_models.DnsType"]] = None,
         dns_zone_id: Optional[str] = None,
-        target_dns_type: Optional[Union[str, "DnsType"]] = None,
+        target_dns_type: Optional[Union[str, "_models.DnsType"]] = None,
         auth_code: Optional[str] = None,
         **kwargs
     ):
@@ -603,13 +604,12 @@ class Domain(Resource):
         :paramtype auto_renew: bool
         :keyword consent: Legal agreement consent.
         :paramtype consent: ~azure.mgmt.web.v2015_04_01.models.DomainPurchaseConsent
-        :keyword dns_type: Current DNS type. Possible values include: "AzureDns",
-         "DefaultDomainRegistrarDns".
+        :keyword dns_type: Current DNS type. Known values are: "AzureDns", "DefaultDomainRegistrarDns".
         :paramtype dns_type: str or ~azure.mgmt.web.v2015_04_01.models.DnsType
         :keyword dns_zone_id: Azure DNS Zone to use.
         :paramtype dns_zone_id: str
-        :keyword target_dns_type: Target DNS type (would be used for migration). Possible values
-         include: "AzureDns", "DefaultDomainRegistrarDns".
+        :keyword target_dns_type: Target DNS type (would be used for migration). Known values are:
+         "AzureDns", "DefaultDomainRegistrarDns".
         :paramtype target_dns_type: str or ~azure.mgmt.web.v2015_04_01.models.DnsType
         :keyword auth_code:
         :paramtype auth_code: str
@@ -647,7 +647,7 @@ class DomainAvailablilityCheckResult(msrest.serialization.Model):
     :vartype available: bool
     :ivar domain_type: Valid values are Regular domain: Azure will charge the full price of domain
      registration, SoftDeleted: Purchasing this domain will simply restore it and this operation
-     will not cost anything. Possible values include: "Regular", "SoftDeleted".
+     will not cost anything. Known values are: "Regular", "SoftDeleted".
     :vartype domain_type: str or ~azure.mgmt.web.v2015_04_01.models.DomainType
     """
 
@@ -662,7 +662,7 @@ class DomainAvailablilityCheckResult(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         available: Optional[bool] = None,
-        domain_type: Optional[Union[str, "DomainType"]] = None,
+        domain_type: Optional[Union[str, "_models.DomainType"]] = None,
         **kwargs
     ):
         """
@@ -673,7 +673,7 @@ class DomainAvailablilityCheckResult(msrest.serialization.Model):
         :paramtype available: bool
         :keyword domain_type: Valid values are Regular domain: Azure will charge the full price of
          domain registration, SoftDeleted: Purchasing this domain will simply restore it and this
-         operation will not cost anything. Possible values include: "Regular", "SoftDeleted".
+         operation will not cost anything. Known values are: "Regular", "SoftDeleted".
         :paramtype domain_type: str or ~azure.mgmt.web.v2015_04_01.models.DomainType
         """
         super(DomainAvailablilityCheckResult, self).__init__(**kwargs)
@@ -708,7 +708,7 @@ class DomainCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Domain"],
+        value: List["_models.Domain"],
         **kwargs
     ):
         """
@@ -877,7 +877,7 @@ class DomainOwnershipIdentifierCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["DomainOwnershipIdentifier"],
+        value: List["_models.DomainOwnershipIdentifier"],
         **kwargs
     ):
         """
@@ -910,13 +910,13 @@ class DomainPatchResource(ProxyOnlyResource):
     :vartype contact_registrant: ~azure.mgmt.web.v2015_04_01.models.Contact
     :ivar contact_tech: Technical contact.
     :vartype contact_tech: ~azure.mgmt.web.v2015_04_01.models.Contact
-    :ivar registration_status: Domain registration status. Possible values include: "Active",
-     "Awaiting", "Cancelled", "Confiscated", "Disabled", "Excluded", "Expired", "Failed", "Held",
-     "Locked", "Parked", "Pending", "Reserved", "Reverted", "Suspended", "Transferred", "Unknown",
-     "Unlocked", "Unparked", "Updated", "JsonConverterFailed".
+    :ivar registration_status: Domain registration status. Known values are: "Active", "Awaiting",
+     "Cancelled", "Confiscated", "Disabled", "Excluded", "Expired", "Failed", "Held", "Locked",
+     "Parked", "Pending", "Reserved", "Reverted", "Suspended", "Transferred", "Unknown", "Unlocked",
+     "Unparked", "Updated", "JsonConverterFailed".
     :vartype registration_status: str or ~azure.mgmt.web.v2015_04_01.models.DomainStatus
-    :ivar provisioning_state: Domain provisioning state. Possible values include: "Succeeded",
-     "Failed", "Canceled", "InProgress", "Deleting".
+    :ivar provisioning_state: Domain provisioning state. Known values are: "Succeeded", "Failed",
+     "Canceled", "InProgress", "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.web.v2015_04_01.models.ProvisioningState
     :ivar name_servers: Name servers.
     :vartype name_servers: list[str]
@@ -945,12 +945,11 @@ class DomainPatchResource(ProxyOnlyResource):
     :ivar domain_not_renewable_reasons: Reasons why domain is not renewable.
     :vartype domain_not_renewable_reasons: list[str or
      ~azure.mgmt.web.v2015_04_01.models.DomainPatchResourcePropertiesDomainNotRenewableReasonsItem]
-    :ivar dns_type: Current DNS type. Possible values include: "AzureDns",
-     "DefaultDomainRegistrarDns".
+    :ivar dns_type: Current DNS type. Known values are: "AzureDns", "DefaultDomainRegistrarDns".
     :vartype dns_type: str or ~azure.mgmt.web.v2015_04_01.models.DnsType
     :ivar dns_zone_id: Azure DNS Zone to use.
     :vartype dns_zone_id: str
-    :ivar target_dns_type: Target DNS type (would be used for migration). Possible values include:
+    :ivar target_dns_type: Target DNS type (would be used for migration). Known values are:
      "AzureDns", "DefaultDomainRegistrarDns".
     :vartype target_dns_type: str or ~azure.mgmt.web.v2015_04_01.models.DnsType
     :ivar auth_code:
@@ -1003,16 +1002,16 @@ class DomainPatchResource(ProxyOnlyResource):
         self,
         *,
         kind: Optional[str] = None,
-        contact_admin: Optional["Contact"] = None,
-        contact_billing: Optional["Contact"] = None,
-        contact_registrant: Optional["Contact"] = None,
-        contact_tech: Optional["Contact"] = None,
+        contact_admin: Optional["_models.Contact"] = None,
+        contact_billing: Optional["_models.Contact"] = None,
+        contact_registrant: Optional["_models.Contact"] = None,
+        contact_tech: Optional["_models.Contact"] = None,
         privacy: Optional[bool] = None,
         auto_renew: Optional[bool] = True,
-        consent: Optional["DomainPurchaseConsent"] = None,
-        dns_type: Optional[Union[str, "DnsType"]] = None,
+        consent: Optional["_models.DomainPurchaseConsent"] = None,
+        dns_type: Optional[Union[str, "_models.DnsType"]] = None,
         dns_zone_id: Optional[str] = None,
-        target_dns_type: Optional[Union[str, "DnsType"]] = None,
+        target_dns_type: Optional[Union[str, "_models.DnsType"]] = None,
         auth_code: Optional[str] = None,
         **kwargs
     ):
@@ -1035,13 +1034,12 @@ class DomainPatchResource(ProxyOnlyResource):
         :paramtype auto_renew: bool
         :keyword consent: Legal agreement consent.
         :paramtype consent: ~azure.mgmt.web.v2015_04_01.models.DomainPurchaseConsent
-        :keyword dns_type: Current DNS type. Possible values include: "AzureDns",
-         "DefaultDomainRegistrarDns".
+        :keyword dns_type: Current DNS type. Known values are: "AzureDns", "DefaultDomainRegistrarDns".
         :paramtype dns_type: str or ~azure.mgmt.web.v2015_04_01.models.DnsType
         :keyword dns_zone_id: Azure DNS Zone to use.
         :paramtype dns_zone_id: str
-        :keyword target_dns_type: Target DNS type (would be used for migration). Possible values
-         include: "AzureDns", "DefaultDomainRegistrarDns".
+        :keyword target_dns_type: Target DNS type (would be used for migration). Known values are:
+         "AzureDns", "DefaultDomainRegistrarDns".
         :paramtype target_dns_type: str or ~azure.mgmt.web.v2015_04_01.models.DnsType
         :keyword auth_code:
         :paramtype auth_code: str
@@ -1186,14 +1184,13 @@ class HostName(msrest.serialization.Model):
      assigned to a Traffic Manager then it will be the Traffic Manager name otherwise it will be the
      app name.
     :vartype azure_resource_name: str
-    :ivar azure_resource_type: Type of the Azure resource the hostname is assigned to. Possible
-     values include: "Website", "TrafficManager".
+    :ivar azure_resource_type: Type of the Azure resource the hostname is assigned to. Known values
+     are: "Website", "TrafficManager".
     :vartype azure_resource_type: str or ~azure.mgmt.web.v2015_04_01.models.AzureResourceType
-    :ivar custom_host_name_dns_record_type: Type of the DNS record. Possible values include:
-     "CName", "A".
+    :ivar custom_host_name_dns_record_type: Type of the DNS record. Known values are: "CName", "A".
     :vartype custom_host_name_dns_record_type: str or
      ~azure.mgmt.web.v2015_04_01.models.CustomHostNameDnsRecordType
-    :ivar host_name_type: Type of the hostname. Possible values include: "Verified", "Managed".
+    :ivar host_name_type: Type of the hostname. Known values are: "Verified", "Managed".
     :vartype host_name_type: str or ~azure.mgmt.web.v2015_04_01.models.HostNameType
     """
 
@@ -1212,9 +1209,9 @@ class HostName(msrest.serialization.Model):
         name: Optional[str] = None,
         site_names: Optional[List[str]] = None,
         azure_resource_name: Optional[str] = None,
-        azure_resource_type: Optional[Union[str, "AzureResourceType"]] = None,
-        custom_host_name_dns_record_type: Optional[Union[str, "CustomHostNameDnsRecordType"]] = None,
-        host_name_type: Optional[Union[str, "HostNameType"]] = None,
+        azure_resource_type: Optional[Union[str, "_models.AzureResourceType"]] = None,
+        custom_host_name_dns_record_type: Optional[Union[str, "_models.CustomHostNameDnsRecordType"]] = None,
+        host_name_type: Optional[Union[str, "_models.HostNameType"]] = None,
         **kwargs
     ):
         """
@@ -1227,14 +1224,14 @@ class HostName(msrest.serialization.Model):
          assigned to a Traffic Manager then it will be the Traffic Manager name otherwise it will be the
          app name.
         :paramtype azure_resource_name: str
-        :keyword azure_resource_type: Type of the Azure resource the hostname is assigned to. Possible
-         values include: "Website", "TrafficManager".
+        :keyword azure_resource_type: Type of the Azure resource the hostname is assigned to. Known
+         values are: "Website", "TrafficManager".
         :paramtype azure_resource_type: str or ~azure.mgmt.web.v2015_04_01.models.AzureResourceType
-        :keyword custom_host_name_dns_record_type: Type of the DNS record. Possible values include:
-         "CName", "A".
+        :keyword custom_host_name_dns_record_type: Type of the DNS record. Known values are: "CName",
+         "A".
         :paramtype custom_host_name_dns_record_type: str or
          ~azure.mgmt.web.v2015_04_01.models.CustomHostNameDnsRecordType
-        :keyword host_name_type: Type of the hostname. Possible values include: "Verified", "Managed".
+        :keyword host_name_type: Type of the hostname. Known values are: "Verified", "Managed".
         :paramtype host_name_type: str or ~azure.mgmt.web.v2015_04_01.models.HostNameType
         """
         super(HostName, self).__init__(**kwargs)
@@ -1346,9 +1343,9 @@ class MetricSpecification(msrest.serialization.Model):
         metric_filter_pattern: Optional[str] = None,
         fill_gap_with_zero: Optional[bool] = None,
         is_internal: Optional[bool] = None,
-        dimensions: Optional[List["Dimension"]] = None,
+        dimensions: Optional[List["_models.Dimension"]] = None,
         category: Optional[str] = None,
-        availabilities: Optional[List["MetricAvailability"]] = None,
+        availabilities: Optional[List["_models.MetricAvailability"]] = None,
         **kwargs
     ):
         """
@@ -1452,7 +1449,7 @@ class NameIdentifierCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["NameIdentifier"],
+        value: List["_models.NameIdentifier"],
         **kwargs
     ):
         """
@@ -1478,7 +1475,7 @@ class ServiceSpecification(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        metric_specifications: Optional[List["MetricSpecification"]] = None,
+        metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
         **kwargs
     ):
         """
@@ -1569,7 +1566,7 @@ class TldLegalAgreementCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["TldLegalAgreement"],
+        value: List["_models.TldLegalAgreement"],
         **kwargs
     ):
         """
@@ -1698,7 +1695,7 @@ class TopLevelDomainCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["TopLevelDomain"],
+        value: List["_models.TopLevelDomain"],
         **kwargs
     ):
         """

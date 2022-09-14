@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from typing import Optional, Dict, Any
 from urllib.parse import urlparse
+
 from azure.core.pipeline.policies import RetryMode
 from .._pyamqp.constants import TransportType
 
@@ -56,4 +57,3 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
             self.custom_endpoint_hostname = endpoint.hostname
             # in case proxy and custom endpoint are both provided, we default port to 443 if it's not provided
             self.connection_port = endpoint.port or DEFAULT_AMQP_WSS_PORT
- 

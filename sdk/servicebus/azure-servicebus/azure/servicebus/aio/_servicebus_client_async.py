@@ -127,6 +127,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._custom_endpoint_address = kwargs.get('custom_endpoint_address')
         self._connection_verify = kwargs.get("connection_verify")
 
+        self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
+        self._connection_verify = kwargs.get("connection_verify")
+
     async def __aenter__(self):
         if self._connection_sharing:
             await self._create_uamqp_connection()
@@ -243,6 +246,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         """Get ServiceBusSender for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
+        :keyword str client_identifier: A string-based identifier to uniquely identify the sender instance.
+         Service Bus will associate it with some error messages for easier correlation of errors.
+         If not specified, a unique id will be generated.
         :rtype: ~azure.servicebus.aio.ServiceBusSender
 
         .. admonition:: Example:
@@ -328,6 +334,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          The default value is 0, meaning messages will be received from the service and processed one at a time.
          In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
          (if provided) within its request to the service.
+        :keyword str client_identifier: A string-based identifier to uniquely identify the receiver instance.
+         Service Bus will associate it with some error messages for easier correlation of errors.
+         If not specified, a unique id will be generated.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
         .. admonition:: Example:
@@ -397,6 +406,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         """Get ServiceBusSender for the specific topic.
 
         :param str topic_name: The path of specific Service Bus Topic the client connects to.
+        :keyword str client_identifier: A string-based identifier to uniquely identify the sender instance.
+         Service Bus will associate it with some error messages for easier correlation of errors.
+         If not specified, a unique id will be generated.
         :rtype: ~azure.servicebus.aio.ServiceBusSender
 
         .. admonition:: Example:
@@ -484,6 +496,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          The default value is 0, meaning messages will be received from the service and processed one at a time.
          In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
          (if provided) within its request to the service.
+        :keyword str client_identifier: A string-based identifier to uniquely identify the receiver instance.
+         Service Bus will associate it with some error messages for easier correlation of errors.
+         If not specified, a unique id will be generated.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
         .. admonition:: Example:
@@ -568,6 +583,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
                 prefetch_count=prefetch_count,
+                custom_endpoint_address=self._custom_endpoint_address,
+                connection_verify=self._connection_verify,
                 **kwargs
             )
         self._handlers.add(handler)

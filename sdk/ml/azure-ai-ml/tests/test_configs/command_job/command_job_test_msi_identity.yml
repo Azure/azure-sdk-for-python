@@ -1,0 +1,10 @@
+command: pip freeze
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+name: "test1"
+compute: "azureml:testCompute"
+experiment_name: mfe-test1
+properties:
+   test_property: test_value
+identity:
+  type: Managed
+  client_id: 4e0f6e81-e0e0-4c63-a64e-e916c48c177e

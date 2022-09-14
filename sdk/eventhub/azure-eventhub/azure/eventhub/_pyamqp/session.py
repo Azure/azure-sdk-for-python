@@ -11,7 +11,7 @@ import time
 
 from .constants import (
     INCOMING_WINDOW,
-    OUTGOING_WIDNOW,
+    OUTGOING_WINDOW,
     ConnectionState,
     SessionState,
     SessionTransferState,
@@ -158,7 +158,8 @@ class Session(object):
             _LOGGER.info("<- %r", EndFrame(*frame), extra=self.network_trace_params)
         if self.state not in [SessionState.END_RCVD, SessionState.END_SENT, SessionState.DISCARDING]:
             self._set_state(SessionState.END_RCVD)
-            # TODO: Clean up all links
+            for _, link in self.links.items():
+                link.detach()
             # TODO: handling error
             self._outgoing_end()
         self._set_state(SessionState.UNMAPPED)
@@ -181,7 +182,8 @@ class Session(object):
             self._output_handles[outgoing_handle] = new_link
             self._input_handles[frame[1]] = new_link
         except ValueError:
-            pass  # TODO: Reject link
+            # Reject Link
+            self._input_handles[frame[1]].detach()
     
     def _outgoing_flow(self, frame=None):
         link_flow = frame or {}
@@ -271,6 +273,7 @@ class Session(object):
             self.next_outgoing_id += 1
             self.remote_incoming_window -= 1
             self.outgoing_window -= 1
+            # TODO: We should probably handle an error at the connection and update state accordingly
             delivery.transfer_state = SessionTransferState.OKAY
 
     def _incoming_transfer(self, frame):
@@ -333,11 +336,12 @@ class Session(object):
             raise ValueError("Connection has been configured to not allow piplined-open. Please set 'wait' parameter.")
 
     def end(self, error=None, wait=False):
-        # type: (Optional[AMQPError]) -> None
+        # type: (Optional[AMQPError], bool) -> None
         try:
             if self.state not in [SessionState.UNMAPPED, SessionState.DISCARDING]:
                 self._outgoing_end(error=error)
-            # TODO: destroy all links
+            for _, link in self.links.items():
+                link.detach()
             new_state = SessionState.DISCARDING if error else SessionState.END_SENT
             self._set_state(new_state)
             self._wait_for_response(wait, SessionState.UNMAPPED)

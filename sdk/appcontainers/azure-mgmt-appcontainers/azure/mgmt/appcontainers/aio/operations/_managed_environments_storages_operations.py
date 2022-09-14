@@ -47,7 +47,7 @@ class ManagedEnvironmentsStoragesOperations:
     async def list(
         self,
         resource_group_name: str,
-        env_name: str,
+        environment_name: str,
         **kwargs: Any
     ) -> "_models.ManagedEnvironmentStoragesCollection":
         """Get all storages for a managedEnvironment.
@@ -56,8 +56,8 @@ class ManagedEnvironmentsStoragesOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param env_name: Name of the Environment.
-        :type env_name: str
+        :param environment_name: Name of the Environment.
+        :type environment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedEnvironmentStoragesCollection, or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.ManagedEnvironmentStoragesCollection
@@ -75,7 +75,7 @@ class ManagedEnvironmentsStoragesOperations:
         request = build_list_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            env_name=env_name,
+            environment_name=environment_name,
             api_version=api_version,
             template_url=self.list.metadata['url'],
         )
@@ -101,15 +101,15 @@ class ManagedEnvironmentsStoragesOperations:
 
         return deserialized
 
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{envName}/storages"}  # type: ignore
+    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/storages"}  # type: ignore
 
 
     @distributed_trace_async
     async def get(
         self,
         resource_group_name: str,
-        env_name: str,
-        name: str,
+        environment_name: str,
+        storage_name: str,
         **kwargs: Any
     ) -> "_models.ManagedEnvironmentStorage":
         """Get storage for a managedEnvironment.
@@ -118,10 +118,10 @@ class ManagedEnvironmentsStoragesOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param env_name: Name of the Environment.
-        :type env_name: str
-        :param name: Name of the storage.
-        :type name: str
+        :param environment_name: Name of the Environment.
+        :type environment_name: str
+        :param storage_name: Name of the storage.
+        :type storage_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedEnvironmentStorage, or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.ManagedEnvironmentStorage
@@ -139,8 +139,8 @@ class ManagedEnvironmentsStoragesOperations:
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            env_name=env_name,
-            name=name,
+            environment_name=environment_name,
+            storage_name=storage_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
         )
@@ -166,15 +166,15 @@ class ManagedEnvironmentsStoragesOperations:
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{envName}/storages/{name}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/storages/{storageName}"}  # type: ignore
 
 
     @distributed_trace_async
     async def create_or_update(
         self,
         resource_group_name: str,
-        env_name: str,
-        name: str,
+        environment_name: str,
+        storage_name: str,
         storage_envelope: "_models.ManagedEnvironmentStorage",
         **kwargs: Any
     ) -> "_models.ManagedEnvironmentStorage":
@@ -184,10 +184,10 @@ class ManagedEnvironmentsStoragesOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param env_name: Name of the Environment.
-        :type env_name: str
-        :param name: Name of the storage.
-        :type name: str
+        :param environment_name: Name of the Environment.
+        :type environment_name: str
+        :param storage_name: Name of the storage.
+        :type storage_name: str
         :param storage_envelope: Configuration details of storage.
         :type storage_envelope: ~azure.mgmt.appcontainers.models.ManagedEnvironmentStorage
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -209,8 +209,8 @@ class ManagedEnvironmentsStoragesOperations:
         request = build_create_or_update_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            env_name=env_name,
-            name=name,
+            environment_name=environment_name,
+            storage_name=storage_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -238,15 +238,15 @@ class ManagedEnvironmentsStoragesOperations:
 
         return deserialized
 
-    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{envName}/storages/{name}"}  # type: ignore
+    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/storages/{storageName}"}  # type: ignore
 
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
-        env_name: str,
-        name: str,
+        environment_name: str,
+        storage_name: str,
         **kwargs: Any
     ) -> None:
         """Delete storage for a managedEnvironment.
@@ -255,10 +255,10 @@ class ManagedEnvironmentsStoragesOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param env_name: Name of the Environment.
-        :type env_name: str
-        :param name: Name of the storage.
-        :type name: str
+        :param environment_name: Name of the Environment.
+        :type environment_name: str
+        :param storage_name: Name of the storage.
+        :type storage_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -276,8 +276,8 @@ class ManagedEnvironmentsStoragesOperations:
         request = build_delete_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            env_name=env_name,
-            name=name,
+            environment_name=environment_name,
+            storage_name=storage_name,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
         )
@@ -299,5 +299,5 @@ class ManagedEnvironmentsStoragesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{envName}/storages/{name}"}  # type: ignore
+    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/storages/{storageName}"}  # type: ignore
 
