@@ -18,15 +18,12 @@ class ArmErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ARMErrorResponseBody'},
+        "error": {"key": "error", "type": "ARMErrorResponseBody"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ArmErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = kwargs.get("error", None)
 
 
 class ARMErrorResponseBody(msrest.serialization.Model):
@@ -40,17 +37,14 @@ class ARMErrorResponseBody(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'message': {'key': 'message', 'type': 'str'},
-        'code': {'key': 'code', 'type': 'str'},
+        "message": {"key": "message", "type": "str"},
+        "code": {"key": "code", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ARMErrorResponseBody, self).__init__(**kwargs)
-        self.message = kwargs.get('message', None)
-        self.code = kwargs.get('code', None)
+        self.message = kwargs.get("message", None)
+        self.code = kwargs.get("code", None)
 
 
 class Resource(msrest.serialization.Model):
@@ -67,21 +61,18 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -111,28 +102,25 @@ class ConfigData(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'exclude': {'key': 'properties.exclude', 'type': 'bool'},
-        'low_cpu_threshold': {'key': 'properties.lowCpuThreshold', 'type': 'str'},
-        'digests': {'key': 'properties.digests', 'type': '[DigestConfig]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "exclude": {"key": "properties.exclude", "type": "bool"},
+        "low_cpu_threshold": {"key": "properties.lowCpuThreshold", "type": "str"},
+        "digests": {"key": "properties.digests", "type": "[DigestConfig]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ConfigData, self).__init__(**kwargs)
-        self.exclude = kwargs.get('exclude', None)
-        self.low_cpu_threshold = kwargs.get('low_cpu_threshold', None)
-        self.digests = kwargs.get('digests', None)
+        self.exclude = kwargs.get("exclude", None)
+        self.low_cpu_threshold = kwargs.get("low_cpu_threshold", None)
+        self.digests = kwargs.get("digests", None)
 
 
 class ConfigurationListResult(msrest.serialization.Model):
@@ -145,17 +133,14 @@ class ConfigurationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ConfigData]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ConfigData]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ConfigurationListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class DigestConfig(msrest.serialization.Model):
@@ -181,25 +166,22 @@ class DigestConfig(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'action_group_resource_id': {'key': 'actionGroupResourceId', 'type': 'str'},
-        'frequency': {'key': 'frequency', 'type': 'int'},
-        'categories': {'key': 'categories', 'type': '[str]'},
-        'language': {'key': 'language', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "action_group_resource_id": {"key": "actionGroupResourceId", "type": "str"},
+        "frequency": {"key": "frequency", "type": "int"},
+        "categories": {"key": "categories", "type": "[str]"},
+        "language": {"key": "language", "type": "str"},
+        "state": {"key": "state", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(DigestConfig, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.action_group_resource_id = kwargs.get('action_group_resource_id', None)
-        self.frequency = kwargs.get('frequency', None)
-        self.categories = kwargs.get('categories', None)
-        self.language = kwargs.get('language', None)
-        self.state = kwargs.get('state', None)
+        self.name = kwargs.get("name", None)
+        self.action_group_resource_id = kwargs.get("action_group_resource_id", None)
+        self.frequency = kwargs.get("frequency", None)
+        self.categories = kwargs.get("categories", None)
+        self.language = kwargs.get("language", None)
+        self.state = kwargs.get("state", None)
 
 
 class MetadataEntity(msrest.serialization.Model):
@@ -222,27 +204,24 @@ class MetadataEntity(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'depends_on': {'key': 'properties.dependsOn', 'type': '[str]'},
-        'applicable_scenarios': {'key': 'properties.applicableScenarios', 'type': '[str]'},
-        'supported_values': {'key': 'properties.supportedValues', 'type': '[MetadataSupportedValueDetail]'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "depends_on": {"key": "properties.dependsOn", "type": "[str]"},
+        "applicable_scenarios": {"key": "properties.applicableScenarios", "type": "[str]"},
+        "supported_values": {"key": "properties.supportedValues", "type": "[MetadataSupportedValueDetail]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(MetadataEntity, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.type = kwargs.get('type', None)
-        self.name = kwargs.get('name', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.depends_on = kwargs.get('depends_on', None)
-        self.applicable_scenarios = kwargs.get('applicable_scenarios', None)
-        self.supported_values = kwargs.get('supported_values', None)
+        self.id = kwargs.get("id", None)
+        self.type = kwargs.get("type", None)
+        self.name = kwargs.get("name", None)
+        self.display_name = kwargs.get("display_name", None)
+        self.depends_on = kwargs.get("depends_on", None)
+        self.applicable_scenarios = kwargs.get("applicable_scenarios", None)
+        self.supported_values = kwargs.get("supported_values", None)
 
 
 class MetadataEntityListResult(msrest.serialization.Model):
@@ -255,17 +234,14 @@ class MetadataEntityListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MetadataEntity]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[MetadataEntity]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(MetadataEntityListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class MetadataSupportedValueDetail(msrest.serialization.Model):
@@ -278,17 +254,14 @@ class MetadataSupportedValueDetail(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(MetadataSupportedValueDetail, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.display_name = kwargs.get('display_name', None)
+        self.id = kwargs.get("id", None)
+        self.display_name = kwargs.get("display_name", None)
 
 
 class OperationDisplayInfo(msrest.serialization.Model):
@@ -305,21 +278,18 @@ class OperationDisplayInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OperationDisplayInfo, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.operation = kwargs.get('operation', None)
-        self.provider = kwargs.get('provider', None)
-        self.resource = kwargs.get('resource', None)
+        self.description = kwargs.get("description", None)
+        self.operation = kwargs.get("operation", None)
+        self.provider = kwargs.get("provider", None)
+        self.resource = kwargs.get("resource", None)
 
 
 class OperationEntity(msrest.serialization.Model):
@@ -332,17 +302,14 @@ class OperationEntity(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplayInfo'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplayInfo"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OperationEntity, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
+        self.name = kwargs.get("name", None)
+        self.display = kwargs.get("display", None)
 
 
 class OperationEntityListResult(msrest.serialization.Model):
@@ -355,17 +322,14 @@ class OperationEntityListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[OperationEntity]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[OperationEntity]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OperationEntityListResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class ResourceMetadata(msrest.serialization.Model):
@@ -378,17 +342,14 @@ class ResourceMetadata(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "source": {"key": "source", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourceMetadata, self).__init__(**kwargs)
-        self.resource_id = kwargs.get('resource_id', None)
-        self.source = kwargs.get('source', None)
+        self.resource_id = kwargs.get("resource_id", None)
+        self.source = kwargs.get("source", None)
 
 
 class ResourceRecommendationBase(Resource):
@@ -433,46 +394,43 @@ class ResourceRecommendationBase(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'category': {'key': 'properties.category', 'type': 'str'},
-        'impact': {'key': 'properties.impact', 'type': 'str'},
-        'impacted_field': {'key': 'properties.impactedField', 'type': 'str'},
-        'impacted_value': {'key': 'properties.impactedValue', 'type': 'str'},
-        'last_updated': {'key': 'properties.lastUpdated', 'type': 'iso-8601'},
-        'metadata': {'key': 'properties.metadata', 'type': '{object}'},
-        'recommendation_type_id': {'key': 'properties.recommendationTypeId', 'type': 'str'},
-        'risk': {'key': 'properties.risk', 'type': 'str'},
-        'short_description': {'key': 'properties.shortDescription', 'type': 'ShortDescription'},
-        'suppression_ids': {'key': 'properties.suppressionIds', 'type': '[str]'},
-        'extended_properties': {'key': 'properties.extendedProperties', 'type': '{str}'},
-        'resource_metadata': {'key': 'properties.resourceMetadata', 'type': 'ResourceMetadata'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "category": {"key": "properties.category", "type": "str"},
+        "impact": {"key": "properties.impact", "type": "str"},
+        "impacted_field": {"key": "properties.impactedField", "type": "str"},
+        "impacted_value": {"key": "properties.impactedValue", "type": "str"},
+        "last_updated": {"key": "properties.lastUpdated", "type": "iso-8601"},
+        "metadata": {"key": "properties.metadata", "type": "{object}"},
+        "recommendation_type_id": {"key": "properties.recommendationTypeId", "type": "str"},
+        "risk": {"key": "properties.risk", "type": "str"},
+        "short_description": {"key": "properties.shortDescription", "type": "ShortDescription"},
+        "suppression_ids": {"key": "properties.suppressionIds", "type": "[str]"},
+        "extended_properties": {"key": "properties.extendedProperties", "type": "{str}"},
+        "resource_metadata": {"key": "properties.resourceMetadata", "type": "ResourceMetadata"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourceRecommendationBase, self).__init__(**kwargs)
-        self.category = kwargs.get('category', None)
-        self.impact = kwargs.get('impact', None)
-        self.impacted_field = kwargs.get('impacted_field', None)
-        self.impacted_value = kwargs.get('impacted_value', None)
-        self.last_updated = kwargs.get('last_updated', None)
-        self.metadata = kwargs.get('metadata', None)
-        self.recommendation_type_id = kwargs.get('recommendation_type_id', None)
-        self.risk = kwargs.get('risk', None)
-        self.short_description = kwargs.get('short_description', None)
-        self.suppression_ids = kwargs.get('suppression_ids', None)
-        self.extended_properties = kwargs.get('extended_properties', None)
-        self.resource_metadata = kwargs.get('resource_metadata', None)
+        self.category = kwargs.get("category", None)
+        self.impact = kwargs.get("impact", None)
+        self.impacted_field = kwargs.get("impacted_field", None)
+        self.impacted_value = kwargs.get("impacted_value", None)
+        self.last_updated = kwargs.get("last_updated", None)
+        self.metadata = kwargs.get("metadata", None)
+        self.recommendation_type_id = kwargs.get("recommendation_type_id", None)
+        self.risk = kwargs.get("risk", None)
+        self.short_description = kwargs.get("short_description", None)
+        self.suppression_ids = kwargs.get("suppression_ids", None)
+        self.extended_properties = kwargs.get("extended_properties", None)
+        self.resource_metadata = kwargs.get("resource_metadata", None)
 
 
 class ResourceRecommendationBaseListResult(msrest.serialization.Model):
@@ -485,17 +443,14 @@ class ResourceRecommendationBaseListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ResourceRecommendationBase]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ResourceRecommendationBase]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourceRecommendationBaseListResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class ShortDescription(msrest.serialization.Model):
@@ -508,17 +463,14 @@ class ShortDescription(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'problem': {'key': 'problem', 'type': 'str'},
-        'solution': {'key': 'solution', 'type': 'str'},
+        "problem": {"key": "problem", "type": "str"},
+        "solution": {"key": "solution", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ShortDescription, self).__init__(**kwargs)
-        self.problem = kwargs.get('problem', None)
-        self.solution = kwargs.get('solution', None)
+        self.problem = kwargs.get("problem", None)
+        self.solution = kwargs.get("solution", None)
 
 
 class SuppressionContract(Resource):
@@ -541,28 +493,25 @@ class SuppressionContract(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'expiration_time_stamp': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "expiration_time_stamp": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'suppression_id': {'key': 'properties.suppressionId', 'type': 'str'},
-        'ttl': {'key': 'properties.ttl', 'type': 'str'},
-        'expiration_time_stamp': {'key': 'properties.expirationTimeStamp', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "suppression_id": {"key": "properties.suppressionId", "type": "str"},
+        "ttl": {"key": "properties.ttl", "type": "str"},
+        "expiration_time_stamp": {"key": "properties.expirationTimeStamp", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SuppressionContract, self).__init__(**kwargs)
-        self.suppression_id = kwargs.get('suppression_id', None)
-        self.ttl = kwargs.get('ttl', None)
+        self.suppression_id = kwargs.get("suppression_id", None)
+        self.ttl = kwargs.get("ttl", None)
         self.expiration_time_stamp = None
 
 
@@ -576,14 +525,11 @@ class SuppressionContractListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[SuppressionContract]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[SuppressionContract]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SuppressionContractListResult, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
