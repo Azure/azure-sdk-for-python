@@ -639,6 +639,37 @@ class LinearRetry(StorageRetryPolicy):
         return random_generator.uniform(random_range_start, random_range_end)
 
 
+class StorageRetry(StorageRetryPolicy):
+    """
+    A Storage retry policy that uses the exponetial backoff technique.
+    """
+    def __init__(self, **kwargs):
+        self.backoff_factor = kwargs.pop("backoff_factor", 0.8)
+        self.max_backoff = kwargs.pop("max_backoff", 120)
+        self.retry_mode = kwargs.pop("retry_mode", "exponential")
+        if self.retry_mode not in ('fixed', 'exponential'):
+            raise ValueError("Invalid retry mode specified. Possible values are 'linear' or 'exponential'.")
+
+        super().__init__(**kwargs)
+
+    def get_backoff_time(self, settings):
+        """
+        Calculates how long to sleep before retrying.
+
+        :return:
+            An float indicating how long to wait before retrying the request.
+        :rtype: float
+        """
+        if self.retry_mode == "fixed":
+            backoff_value = self.backoff_factor
+        elif self.retry_mode == "exponential":
+            r = random.Random()
+            backoff_factor = r.uniform(self.backoff_factor * 0.8, self.backoff_factor * 1.2)
+            backoff_value = backoff_factor * (2 ** (settings['count'] - 1))
+
+        return min(backoff_value, self.max_backoff)
+
+
 class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
     """ Custom Bearer token credential policy for following Storage Bearer challenges """
 

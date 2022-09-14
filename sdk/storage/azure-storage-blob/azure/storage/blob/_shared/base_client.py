@@ -43,7 +43,7 @@ from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
 from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .policies import (
-    ExponentialRetry,
+    StorageRetryPolicy,
     StorageBearerTokenCredentialPolicy,
     StorageContentValidation,
     StorageHeadersPolicy,
@@ -417,7 +417,7 @@ def create_configuration(**kwargs):
     config.headers_policy = StorageHeadersPolicy(**kwargs)
     config.user_agent_policy = UserAgentPolicy(
         sdk_moniker="storage-{}/{}".format(kwargs.pop('storage_sdk'), VERSION), **kwargs)
-    config.retry_policy = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
+    config.retry_policy = kwargs.get("retry_policy") or StorageRetryPolicy(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
 
