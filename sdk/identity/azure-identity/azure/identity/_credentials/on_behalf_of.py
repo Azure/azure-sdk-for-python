@@ -49,8 +49,8 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         appropriately encoded bytes instead.
     :paramtype password: str or bytes
     :keyword list[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
-            may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
-            any tenant the application is installed.
+        may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
+        any tenant the application is installed.
     """
 
     def __init__(self, tenant_id, client_id, **kwargs):

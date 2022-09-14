@@ -33,8 +33,8 @@ class AzureCliCredential(AsyncContextManager):
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
 
     :keyword list[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
-            may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
-            any tenant the application is installed.
+        may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
+        any tenant the application is installed.
     """
 
     def __init__(self, *, additionally_allowed_tenants: List[str] = None):
