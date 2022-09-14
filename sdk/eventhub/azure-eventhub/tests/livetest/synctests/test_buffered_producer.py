@@ -184,9 +184,9 @@ def test_basic_send_single_events_round_robin(connection_str, flush_after_sendin
 @pytest.mark.parametrize(
     "flush_after_sending, close_after_sending",
     [
+        (False, False),
         (True, False),
-        (False, True),
-        (False, False)
+        (False, True)
     ]
 )
 def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending, close_after_sending, uamqp_transport):
@@ -272,7 +272,7 @@ def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending
             # ensure all events are sent
             assert sum([len(sent_events[pid]) for pid in partitions]) == total_events_cnt
 
-        time.sleep(10)
+        time.sleep(20)
         assert len(sent_events) == len(received_events) == partitions_cnt
 
         # ensure all events are received in the correct partition
