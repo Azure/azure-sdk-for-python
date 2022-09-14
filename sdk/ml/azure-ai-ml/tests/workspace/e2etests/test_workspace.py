@@ -115,6 +115,10 @@ class TestWorkspace(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     @pytest.mark.mlc
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
     def test_uai_workspace_create_update_and_delete(
         self, client: MLClient, randstr: Callable[[], str], location: str
     ) -> None:

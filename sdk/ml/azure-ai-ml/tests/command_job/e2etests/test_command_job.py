@@ -407,7 +407,7 @@ class TestCommandJob(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_command_job_parsing_error(self, randstr: Callable[[], str]) -> None:
-        job_name = randstr()
+        job_name = randstr("job_name")
         params_override = [{"name": job_name}]
 
         with pytest.raises(Exception) as e:

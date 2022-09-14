@@ -137,7 +137,6 @@ class TestOnlineDeploymentOperations:
     def test_online_deployment_k8s_create(
         self,
         mock_online_deployment_operations: OnlineDeploymentOperations,
-        rand_compute_name: Callable[[], str],
         blue_online_k8s_deployment_yaml: str,
         mocker: MockFixture,
     ) -> None:
@@ -150,7 +149,7 @@ class TestOnlineDeploymentOperations:
         )
 
         def simple_deployment_validation(online_deployment):
-            online_deployment.name = rand_compute_name()
+            online_deployment.name = "random_name"
             assert online_deployment.instance_type
 
         online_deployment = verify_entity_load_and_dump(
@@ -164,10 +163,9 @@ class TestOnlineDeploymentOperations:
         mock_online_deployment_operations: OnlineDeploymentOperations,
         mock_aml_services_2021_10_01: Mock,
         mocker: MockFixture,
-        randstr: Callable[[], str],
         mock_delete_poller: LROPoller,
     ) -> None:
-        random_name = randstr()
+        random_name = "random_string"
         mock_aml_services_2021_10_01.online_deployments.begin_delete.return_value = mock_delete_poller
         mock_online_deployment_operations.delete(endpoint_name="k8sendpoint", name=random_name)
         mock_online_deployment_operations._online_deployment.begin_delete.assert_called_once()

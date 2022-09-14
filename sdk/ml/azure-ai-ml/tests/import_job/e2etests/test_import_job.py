@@ -34,7 +34,6 @@ def import_job_enabled(mocker: MockFixture):
 @pytest.mark.usefixtures("recorded_test", "mock_asset_name", "mock_code_hash", "mock_component_hash")
 class TestImportJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
-    @mock.patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}, clear=True)
     def test_import_job_submit_cancel(self, client: MLClient) -> None:
         # TODO: need to create a workspace under a e2e-testing-only subscription and resource group
 

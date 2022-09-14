@@ -109,6 +109,7 @@ sdk/storage/azure-storage-file-datalake/tests/settings/settings_real.py
 !sdk/ml/azure-ai-ml/tests/test_configs/environment/*
 !sdk/ml/azure-ai-ml/tests/test_configs/*/*/environment*
 !sdk/ml/azure-ai-ml/tests/environment/**
+!sdk/ml/azure-ai-ml/tests/recordings/environment*
 
 
 # The locations below are deprecated - keep to prevent any accidental secrets leakage ==========

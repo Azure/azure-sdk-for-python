@@ -18,6 +18,7 @@ from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorks
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils._asset_utils import get_object_hash
 from azure.ai.ml._utils.utils import hash_dict
+from azure.ai.ml.constants._common import GitProperties
 from azure.ai.ml.entities import AzureBlobDatastore, Component
 from azure.ai.ml.entities._assets import Data, Model
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
@@ -42,7 +43,7 @@ E2E_TEST_LOGGING_ENABLED = "E2E_TEST_LOGGING_ENABLED"
 test_folder = Path(os.path.abspath(__file__)).parent.absolute()
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 def start_proxy(test_proxy):
     return
 
@@ -60,6 +61,11 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     set_custom_default_matcher(excluded_headers="x-ms-meta-name,x-ms-meta-version")
     add_body_key_sanitizer(json_path="$.key", value=fake_datastore_key)
     add_body_key_sanitizer(json_path="$....key", value=fake_datastore_key)
+    add_body_key_sanitizer(json_path="$.properties.properties.['mlflow.source.git.repoURL']", value="fake_git_url")
+    add_body_key_sanitizer(json_path="$.properties.properties.['mlflow.source.git.branch']", value="fake_git_branch")
+    add_body_key_sanitizer(json_path="$.properties.properties.['mlflow.source.git.commit']", value="fake_git_commit")
+    add_body_key_sanitizer(json_path="$.properties.properties.['azureml.git.dirty']", value="fake_git_dirty_value")
+    add_general_string_sanitizer(value="", target=f"\u0026tid={os.environ.get('ML_TENANT_ID')}")
     add_general_string_sanitizer(value="", target=f"&tid={os.environ.get('ML_TENANT_ID')}")
 
 
@@ -127,6 +133,11 @@ def mock_aml_services_2020_09_01_dataplanepreview(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_aml_services_2022_02_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_02_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2022_06_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2022_06_01_preview")
 
 
 @pytest.fixture
