@@ -1,5 +1,16 @@
 # Release History
 
+## 2.0.0b2 (2022-09-14)
+
+### Features Added
+
+  - Model FrontendConfiguration has a new parameter application_gateway_backend_address_pool_id
+  - Model NodeType has a new parameter eviction_policy
+  - Model NodeType has a new parameter host_group_id
+  - Model NodeType has a new parameter spot_restore_timeout
+  - Model NodeType has a new parameter use_ephemeral_os_disk
+  - Model NodeType has a new parameter vm_image_resource_id
+
 ## 2.0.0b1 (2022-06-02)
 
 **Features**
