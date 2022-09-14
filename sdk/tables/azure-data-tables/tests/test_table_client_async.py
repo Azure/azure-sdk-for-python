@@ -643,3 +643,6 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert table.credential.named_key.name == azurite_credential.named_key.name
         assert not table._cosmos_endpoint
         assert table.scheme == 'https'
+    
+    def test_use_development_storage(self):
+        tsc = TableServiceClient.from_connection_string("UseDevelopmentStorage=true")
