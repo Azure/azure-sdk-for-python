@@ -642,10 +642,33 @@ class LinearRetry(StorageRetryPolicy):
 class StorageRetry(StorageRetryPolicy):
     """
     A Storage retry policy that uses the exponetial backoff technique.
+
+    :keyword int retry_total:
+        Total number of retries to allow. Takes precedence over other counts. Default value is 3.
+    :keyword int retry_connect:
+        How many connection-related errors to retry on.
+        These are errors raised before the request is sent to the remote server,
+        which we assume has not triggered the server to process the request. Default value is 3.
+    :keyword int retry_read:
+        How many times to retry on read errors.
+        These errors are raised after the request was sent to the server, so the
+        request may have side-effects. Default value is 3.
+    :keyword int retry_status:
+        How many times to retry on bad status codes. Default value is 3.
+    :keyword float retry_backoff_factor:
+        A backoff factor to apply between attempts after the second try
+        (most errors are resolved immediately by a second try without a delay).
+        In fixed mode, retry policy will alwasy sleep for {backoff factor}.
+        In 'exponential' mode, retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
+        seconds (with some random jitter).
+    :keyword int retry_backoff_max:
+        The maximum back off time. Default value is 120 seconds (2 minutes).
+    :keyword RetryMode retry_mode:
+        Fixed or exponential delay between attemps, default is exponential.
     """
     def __init__(self, **kwargs):
-        self.backoff_factor = kwargs.pop("backoff_factor", 0.8)
-        self.max_backoff = kwargs.pop("max_backoff", 120)
+        self.backoff_factor = kwargs.pop("retry_backoff_factor", 0.8)
+        self.max_backoff = kwargs.pop("retry_backoff_max", 120)
         self.retry_mode = kwargs.pop("retry_mode", "exponential")
         if self.retry_mode not in ('fixed', 'exponential'):
             raise ValueError("Invalid retry mode specified. Possible values are 'linear' or 'exponential'.")
