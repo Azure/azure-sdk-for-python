@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.2 (2022-09-14)
+
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+- Bumped minimum dependency on `azure-mgmt-core` to `>=1.3.2`
+- Bumped minimum dependency on `msrest` to `>=0.7.1`
+
 ## 1.0.1 (2022-03-29)
 
 **Fixes**
