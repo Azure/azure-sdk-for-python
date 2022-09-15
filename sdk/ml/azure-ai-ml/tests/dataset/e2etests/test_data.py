@@ -11,7 +11,12 @@ from azure.ai.ml._utils._arm_id_utils import generate_data_arm_id
 from azure.core.paging import ItemPaged
 
 
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
+
+
+@pytest.mark.fixture(autouse=True)
+def bodiless_matching(test_proxy):
+    set_bodiless_matcher()
 
 
 @pytest.mark.e2etest

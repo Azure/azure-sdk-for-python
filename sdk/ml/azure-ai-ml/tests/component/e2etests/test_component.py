@@ -30,9 +30,7 @@ from ..unittests.test_component_schema import load_component_entity_from_rest_js
 
 from devtools_testutils import (
     AzureRecordedTestCase,
-    set_default_function_settings,
-    add_header_string_sanitizer,
-    add_body_key_sanitizer,
+    set_bodiless_matcher
 )
 
 
@@ -88,6 +86,11 @@ def tensorflow_distribution():
         }
 
     return create_tensorflow_distribution
+
+
+@pytest.mark.fixture(autouse=True)
+def bodiless_matching(test_proxy):
+    set_bodiless_matcher()
 
 
 def assert_component_basic_workflow(

@@ -4,7 +4,7 @@
 import json
 from typing import Callable, Dict, List
 
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
 import pydash
 import pytest
 
@@ -43,6 +43,11 @@ def load_registered_component(
     component_entity = client.components.get(name=component_name, version=component_version)
     component_rest_object = component_entity._to_rest_object()
     return pydash.omit(component_rest_object.properties.component_spec, *omit_fields)
+
+
+@pytest.mark.fixture(autouse=True)
+def bodiless_matching(test_proxy):
+    set_bodiless_matcher()
 
 
 @pytest.mark.usefixtures(

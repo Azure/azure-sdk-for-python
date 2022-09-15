@@ -3,7 +3,7 @@ from pathlib import Path
 from time import sleep
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
 import jwt
 import pytest
 
@@ -24,6 +24,11 @@ from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryC
 # logged in the training script, so any changes to parameter logging in simple_train.py must preserve this logging or change it both
 # here and in the script.
 TEST_PARAMS = {"a_param": "1", "another_param": "2"}
+
+
+@pytest.mark.fixture(autouse=True)
+def bodiless_matching(test_proxy):
+    set_bodiless_matcher()
 
 
 @pytest.mark.timeout(600)

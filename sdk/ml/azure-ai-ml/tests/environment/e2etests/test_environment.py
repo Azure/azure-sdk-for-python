@@ -3,7 +3,7 @@ import re
 from time import sleep
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
 import pytest
 
 from azure.ai.ml import MLClient, load_environment
@@ -20,6 +20,11 @@ def env_name(variable_recorder) -> Callable[[str], str]:
         random_env_name = f"env-test-{str(random.randint(1, 10000000))}"
         return variable_recorder.get_or_record(env_name, random_env_name)
     return generate_random_environment_name
+
+
+@pytest.mark.fixture(autouse=True)
+def bodiless_matching(test_proxy):
+    set_bodiless_matcher()
 
 
 @pytest.mark.e2etest

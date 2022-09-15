@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Dict, Optional
 
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
 import pydash
 import pytest
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
@@ -73,6 +73,11 @@ def wait_until_done(client: MLClient, job: Job, timeout: int = None) -> str:
             client.jobs.cancel(job.name)
             return JobStatus.CANCELED
     return job.status
+
+
+@pytest.mark.fixture(autouse=True)
+def bodiless_matching(test_proxy):
+    set_bodiless_matcher()
 
 
 @pytest.mark.usefixtures(

@@ -15,7 +15,7 @@ from azure.ai.ml.constants._common import LONG_URI_REGEX_FORMAT
 from azure.ai.ml.entities._assets import Model
 from azure.core.paging import ItemPaged
 
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
 
 
 @pytest.fixture
@@ -29,6 +29,11 @@ def artifact_path(tmpdir_factory) -> str:  # type: ignore
     file_name = tmpdir_factory.mktemp("artifact_testing").join("artifact_file.txt")
     file_name.write("content")
     return str(file_name)
+
+
+@pytest.mark.fixture(autouse=True)
+def bodiless_matching(test_proxy):
+    set_bodiless_matcher()
 
 
 @pytest.mark.e2etest
