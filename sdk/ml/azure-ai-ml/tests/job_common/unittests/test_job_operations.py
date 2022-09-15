@@ -171,7 +171,6 @@ class TestJobOperations:
         assert job.compute == expected
 
     @patch.object(Job, "_from_rest_object")
-    @pytest.mark.vcr()
     def test_archive(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         mock_job_operation.archive(name="random_name")
@@ -179,7 +178,6 @@ class TestJobOperations:
         mock_job_operation._operation_2022_06_preview.create_or_update.assert_called_once()
 
     @patch.object(Job, "_from_rest_object")
-    @pytest.mark.vcr()
     def test_restore(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         mock_job_operation.restore(name="random_name")

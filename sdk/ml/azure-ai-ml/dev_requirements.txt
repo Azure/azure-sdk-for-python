@@ -11,7 +11,6 @@ pytest-timeout
 pytest-mock
 pytest
 pydash
-pytest-vcr
 azure-mgmt-msi
 pywin32==227 ; sys_platform == 'win32'
 numpy;platform.python_implementation!="PyPy"
