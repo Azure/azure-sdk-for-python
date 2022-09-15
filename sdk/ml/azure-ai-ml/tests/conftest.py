@@ -35,9 +35,11 @@ from devtools_testutils import (
     add_body_key_sanitizer,
     add_remove_header_sanitizer,
     set_custom_default_matcher,
+    add_general_regex_sanitizer,
 )
 from devtools_testutils.proxy_fixtures import VariableRecorder, variable_recorder
 from devtools_testutils.fake_credentials import FakeTokenCredential
+from devtools_testutils.helpers import is_live_and_not_recording
 
 E2E_TEST_LOGGING_ENABLED = "E2E_TEST_LOGGING_ENABLED"
 test_folder = Path(os.path.abspath(__file__)).parent.absolute()
@@ -67,6 +69,8 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_body_key_sanitizer(json_path="$.properties.properties.['azureml.git.dirty']", value="fake_git_dirty_value")
     add_general_string_sanitizer(value="", target=f"\u0026tid={os.environ.get('ML_TENANT_ID')}")
     add_general_string_sanitizer(value="", target=f"&tid={os.environ.get('ML_TENANT_ID')}")
+    add_general_regex_sanitizer(value="00000000000000000", regex="(?<=\\/LocalUpload\\/)\\S*(?=\\/)")
+    add_general_regex_sanitizer(value="00000000000000000", regex="(?<=\\/az-ml-artifacts\\/)\\S*(?=\\/)")
 
 
 def pytest_addoption(parser):
@@ -335,20 +339,14 @@ def pipeline_samples_e2e_registered_eval_components(client: MLClient) -> Compone
 
 @pytest.fixture
 def mock_code_hash(request, mocker: MockFixture) -> None:
-    fake_uuid = "000000000000000000000"
-    # add sanitizer for uuid value
-    def generate_object_hash(*args, **kwargs):
-        if "disable_mock_code_hash" in request.keywords:
-            hashed_value = get_object_hash(*args, **kwargs)
-        else:
-            hashed_value = str(uuid.uuid4())
-        add_general_string_sanitizer(value=fake_uuid, target=hashed_value)
-        return hashed_value
 
-    if is_live():
-        mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", side_effect=generate_object_hash)
-    else:
-        mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", return_value=fake_uuid)
+    def generate_hash():
+        return str(uuid.uuid4())
+
+    if is_live_and_not_recording():
+        mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", side_effect=generate_hash)
+    elif not is_live():
+        mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", return_value="00000000000000000")
 
 
 @pytest.fixture
