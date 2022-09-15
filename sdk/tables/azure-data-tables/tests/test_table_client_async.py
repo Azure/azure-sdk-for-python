@@ -12,12 +12,10 @@ from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.data.tables.aio import TableServiceClient, TableClient
-from azure.data.tables import TableTransactionError
 from azure.data.tables._version import VERSION
 
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import tables_decorator_async
-from devtools_testutils import AzureTestCase
 # ------------------------------------------------------------------------------
 SERVICES = {
     TableServiceClient: 'table',
