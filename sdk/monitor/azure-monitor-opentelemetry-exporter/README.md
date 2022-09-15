@@ -126,7 +126,7 @@ Some of the key concepts for the Azure monitor exporter include:
 
 * [Sampling][sampler_ref]: Sampling is a mechanism to control the noise and overhead introduced by OpenTelemetry by reducing the number of samples of traces collected and sent to the backend.
 
-* [ApplicationInsightsSampler](https://github.com/microsoft/Telemetry-Collection-Spec/blob/main/OpenTelemetry/trace/ApplicationInsightsSampler.md): Application Insights specific sampler used for consistent sampling across Application Insights SDKs and OpenTelemetry-based SDKs sending data to Application Insights. This sampler MUST be used whenever `AzureMonitorTraceExporter` is used.
+* ApplicationInsightsSampler: Application Insights specific sampler used for consistent sampling across Application Insights SDKs and OpenTelemetry-based SDKs sending data to Application Insights. This sampler MUST be used whenever `AzureMonitorTraceExporter` is used.
 
 For more information about these resources, see [What is Azure Monitor?][product_docs].
 

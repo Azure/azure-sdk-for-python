@@ -3,6 +3,7 @@
 from typing import Optional, Sequence
 
 from fixedint import Int32
+# pylint:disable=W0611
 from opentelemetry.context import Context
 from opentelemetry.trace import Link, SpanKind, format_trace_id
 from opentelemetry.sdk.trace.sampling import (
@@ -33,10 +34,11 @@ class ApplicationInsightsSampler(Sampler):
         self._ratio = sampling_ratio
         self._sample_rate = round(sampling_ratio * 100)
 
+    # pylint:disable=C0301
     # See https://github.com/microsoft/Telemetry-Collection-Spec/blob/main/OpenTelemetry/trace/ApplicationInsightsSampler.md
     def should_sample(
         self,
-        parent_context: Optional["Context"],
+        parent_context: Optional[Context],
         trace_id: int,
         name: str,
         kind: SpanKind = None,
@@ -65,19 +67,20 @@ class ApplicationInsightsSampler(Sampler):
             _get_parent_trace_state(parent_context),
         )
 
+    # pylint:disable=R0201
     def _get_DJB2_sample_score(self, trace_id_hex: str) -> int:
         # This algorithm uses 32bit integers
-        hash = Int32(_HASH)
+        hash_value = Int32(_HASH)
         for char in trace_id_hex:
-            hash = ((hash << 5) + hash) + ord(char)
-        
-        if hash == _INTEGER_MIN:
-            hash = int(_INTEGER_MAX)
+            hash_value = ((hash_value << 5) + hash_value) + ord(char)
+
+        if hash_value == _INTEGER_MIN:
+            hash_value = int(_INTEGER_MAX)
         else:
-            hash = abs(hash)
+            hash_value = abs(hash_value)
 
         # divide by _INTEGER_MAX for value between 0 and 1 for sampling score
-        return float(hash) / _INTEGER_MAX
+        return float(hash_value) / _INTEGER_MAX
 
 
     def get_description(self) -> str:
