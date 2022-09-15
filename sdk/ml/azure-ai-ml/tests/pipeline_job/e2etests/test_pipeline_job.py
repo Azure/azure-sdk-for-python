@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Dict, Optional
 
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 import pydash
 import pytest
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
@@ -160,6 +160,10 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert isinstance(retrieved_child_run, Job)
         assert retrieved_child_run.name == child_job.name
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="Recording file names are too long and need to be shortened"
+    )
     @pytest.mark.parametrize(
         "pipeline_job_path, expected_error_type",
         [
@@ -386,6 +390,10 @@ class TestPipelineJob(AzureRecordedTestCase):
             else:
                 assert job.compute in pipeline_job.jobs[job_name].compute
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="Recording file names are too long and need to be shortened"
+    )
     @pytest.mark.parametrize(
         "pipeline_job_path, converted_jobs, expected_dict, fields_to_omit",
         [
@@ -582,6 +590,10 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"], *fields_to_omit)
         assert actual_dict == expected_dict
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="Recording file names are too long and need to be shortened"
+    )
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
@@ -906,6 +918,10 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_pipeline_dict = created_pipeline._to_dict()
         assert pydash.get(created_pipeline_dict, "jobs.hello_sweep_inline_trial.early_termination") == policy_yaml_dict
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="Recording file names are too long and need to be shortened"
+    )
     @pytest.mark.parametrize(
         "pipeline_job_path, expected_error",
         [
