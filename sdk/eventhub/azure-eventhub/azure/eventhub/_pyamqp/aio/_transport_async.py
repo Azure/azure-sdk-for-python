@@ -465,7 +465,8 @@ class WebSocketTransportAsync(AsyncTransportMixin):
                 timeout=self._connect_timeout,
                 protocols=[AMQP_WS_SUBPROTOCOL],
                 autoclose=False,
-                proxy_auth=self.http_proxy_auth
+                proxy_auth=self.http_proxy_auth,
+                ssl=self._build_ssl_opts(self.sslopts)
             )
            
         except ImportError:
@@ -507,5 +508,43 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         http://tools.ietf.org/html/rfc6455#section-5.2
         """        
         await self.ws.send_bytes(s)
+    
+    def _build_ssl_opts(self, sslopts):
+        if sslopts in [True, False, None, {}]:
+            return sslopts
+        try:
+            if "context" in sslopts:
+                return self._build_ssl_context(sslopts, **sslopts.pop("context"))
+            ssl_version = sslopts.get("ssl_version")
+            if ssl_version is None:
+                ssl_version = ssl.PROTOCOL_TLS
+
+            # Set SNI headers if supported
+            server_hostname = sslopts.get("server_hostname")
+            if (
+                (server_hostname is not None)
+                and (hasattr(ssl, "HAS_SNI") and ssl.HAS_SNI)
+                and (hasattr(ssl, "SSLContext"))
+            ):
+                context = ssl.SSLContext(ssl_version)
+                cert_reqs = sslopts.get("cert_reqs", ssl.CERT_REQUIRED)
+                certfile = sslopts.get("certfile")
+                keyfile = sslopts.get("keyfile")
+                context.verify_mode = cert_reqs
+                if cert_reqs != ssl.CERT_NONE:
+                    context.check_hostname = True
+                if (certfile is not None) and (keyfile is not None):
+                    context.load_cert_chain(certfile, keyfile)
+                return context
+            return True
+        except TypeError:
+            raise TypeError("SSL configuration must be a dictionary, or the value True.")
+
+    def _build_ssl_context(self, sslopts, check_hostname=None, **ctx_options):
+        ctx = ssl.create_default_context(**ctx_options)
+        ctx.verify_mode = ssl.CERT_REQUIRED
+        ctx.load_verify_locations(cafile=certifi.where())
+        ctx.check_hostname = check_hostname
+        return ctx
         
 
