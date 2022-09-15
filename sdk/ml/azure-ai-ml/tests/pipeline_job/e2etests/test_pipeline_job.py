@@ -166,11 +166,11 @@ class TestPipelineJob(AzureRecordedTestCase):
             # flaky parameterization
             # ("./tests/test_configs/pipeline_jobs/invalid/non_existent_remote_component.yml", ValidationException),
             (
-                "./tests/test_configs/pipeline_jobs/invalid/non_existent_remote_version.yml",
+                "tests/test_configs/pipeline_jobs/invalid/non_existent_remote_version.yml",
                 Exception,
             ),
             (
-                "./tests/test_configs/pipeline_jobs/invalid/non_existent_compute.yml",
+                "tests/test_configs/pipeline_jobs/invalid/non_existent_compute.yml",
                 Exception,
             ),
         ],
@@ -390,7 +390,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         "pipeline_job_path, converted_jobs, expected_dict, fields_to_omit",
         [
             (
-                "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_command_job_e2e.yml",
+                "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_command_job_e2e.yml",
                 2,
                 {
                     "description": "The hello world pipeline job with inline command job",
@@ -460,7 +460,7 @@ class TestPipelineJob(AzureRecordedTestCase):
                 ],
             ),
             (
-                "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_literal_output_binding_to_inline_job_input.yml",
+                "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_literal_output_binding_to_inline_job_input.yml",
                 2,
                 {
                     "description": "E2E dummy train-score-eval pipeline with registered components",
@@ -585,9 +585,9 @@ class TestPipelineJob(AzureRecordedTestCase):
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
-            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_file_component_input_e2e.yml",
-            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_file_input_e2e.yml",
-            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_tabular_input_e2e.yml",
+            "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_file_component_input_e2e.yml",
+            "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_file_input_e2e.yml",
+            "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_tabular_input_e2e.yml",
         ],
     )
     def test_pipeline_job_with_parallel_job(
@@ -910,47 +910,47 @@ class TestPipelineJob(AzureRecordedTestCase):
         "pipeline_job_path, expected_error",
         [
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_basic.yml",
+                "tests/test_configs/dsl_pipeline/data_binding_expression/input_basic.yml",
                 None,
             ),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_cross_type.yml",
+                "tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_cross_type.yml",
                 None,
             ),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_meta.yml",
+                "tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_meta.yml",
                 HttpResponseError(),
             ),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_path.yml",
+                "tests/test_configs/dsl_pipeline/data_binding_expression/input_path.yml",
                 None,
             ),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_path_concatenate.yml",
+                "tests/test_configs/dsl_pipeline/data_binding_expression/input_path_concatenate.yml",
                 HttpResponseError(),
             ),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_reason_expression.yml",
+                "tests/test_configs/dsl_pipeline/data_binding_expression/input_reason_expression.yml",
                 HttpResponseError(),
             ),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_string_concatenate.yml",
+                "tests/test_configs/dsl_pipeline/data_binding_expression/input_string_concatenate.yml",
                 None,
             ),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_compute.yml",
+                "tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_compute.yml",
                 JobException("", no_personal_data_message=""),
             ),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_literal.yml",
+                "tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_literal.yml",
                 None,
             ),
-            ("./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_literal.yml", None),
+            ("tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_literal.yml", None),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_choice.yml",
+                "tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_choice.yml",
                 JobException("", no_personal_data_message=""),
             ),
-            ("./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_limits.yml", None),
+            ("tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_limits.yml", None),
         ],
     )
     def test_pipeline_job_with_data_binding_expression(
