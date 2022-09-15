@@ -15,7 +15,7 @@ interactions:
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 16 2022 23:18:50.540632 GMT
+      - Sep, 15 2022 23:55:11.446407 GMT
     method: DELETE
     uri: https://fake_app_config.azconfig-test.io/kv/not_exist_PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?api-version=1.0
   response:
@@ -38,7 +38,7 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Tue, 16 Aug 2022 23:18:50 GMT
+      - Thu, 15 Sep 2022 23:55:11 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
