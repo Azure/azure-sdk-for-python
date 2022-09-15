@@ -7,7 +7,9 @@
 import hashlib
 import base64
 import hmac
+from yarl import URL
 from azure.core.pipeline.policies import HTTPPolicy
+from azure.core.pipeline.transport import AioHttpTransport
 from ._utils import get_current_utc_time
 
 
@@ -23,7 +25,14 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
 
         # Get the path and query from url, which looks like https://host/path/query
         query_url = str(request.http_request.url[len(self._credentials.host) + 8 :])
-
+        try:
+            if isinstance(request.context.transport, AioHttpTransport) or \
+                isinstance(getattr(request.context.transport, "_transport", None), AioHttpTransport) or \
+                isinstance(getattr(getattr(request.context.transport, "_transport", None), "_transport", None),
+                            AioHttpTransport):
+                query_url = str(URL(query_url))
+        except TypeError:
+            pass
         signed_headers = "x-ms-date;host;x-ms-content-sha256"
 
         utc_now = get_current_utc_time()
