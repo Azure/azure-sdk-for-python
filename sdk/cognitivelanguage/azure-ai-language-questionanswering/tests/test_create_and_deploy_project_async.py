@@ -5,25 +5,19 @@
 # ------------------------------------
 import pytest
 
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
+from azure.ai.language.questionanswering.projects.aio import QuestionAnsweringProjectsClient
 from azure.core.credentials import AzureKeyCredential
 
-from testcase import (
-    GlobalQuestionAnsweringAccountPreparer,
-)
-from asynctestcase import (
-    AsyncQuestionAnsweringTest,
-    QnaAuthoringAsyncHelper
-)
-from azure.ai.language.questionanswering.projects.aio import QuestionAnsweringProjectsClient
+from helpers import QnaAuthoringAsyncHelper
+from testcase import QuestionAnsweringTestCase
 
-class CreateAndDeployTests(AsyncQuestionAnsweringTest):
 
-    @pytest.mark.live_test_only
-    @GlobalQuestionAnsweringAccountPreparer()
-    async def test_create_project_aad(self, qna_account, qna_key):
+class TestCreateAndDeployAsync(QuestionAnsweringTestCase):
+
+    @pytest.mark.asyncio
+    async def test_create_project_aad(self, recorded_test, qna_creds):
         token = self.get_credential(QuestionAnsweringProjectsClient, is_async=True)
-        client = QuestionAnsweringProjectsClient(qna_account, token)
+        client = QuestionAnsweringProjectsClient(qna_creds["qna_endpoint"], token)
 
         # create project
         project_name = "IssacNewton"
@@ -46,9 +40,9 @@ class CreateAndDeployTests(AsyncQuestionAnsweringTest):
                 found = True
         assert found
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    async def test_create_project(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+    @pytest.mark.asyncio
+    async def test_create_project(self, recorded_test, qna_creds):
+        client = QuestionAnsweringProjectsClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
@@ -71,10 +65,9 @@ class CreateAndDeployTests(AsyncQuestionAnsweringTest):
                 found = True
         assert found
 
-
-    @GlobalQuestionAnsweringAccountPreparer()
-    async def test_deploy_project(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+    @pytest.mark.asyncio
+    async def test_deploy_project(self, recorded_test, qna_creds):
+        client = QuestionAnsweringProjectsClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create deployable project
         project_name = "IssacNewton"
@@ -103,7 +96,3 @@ class CreateAndDeployTests(AsyncQuestionAnsweringTest):
             if ("deploymentName" in d) and d["deploymentName"] == deployment_name:
                 deployment_found = True
         assert deployment_found
-
-
-
-

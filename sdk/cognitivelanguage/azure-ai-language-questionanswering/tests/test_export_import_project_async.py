@@ -5,23 +5,18 @@
 # ------------------------------------
 import pytest
 
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
+from azure.ai.language.questionanswering.projects.aio import QuestionAnsweringProjectsClient
 from azure.core.credentials import AzureKeyCredential
 
-from testcase import (
-    GlobalQuestionAnsweringAccountPreparer,
-)
-from asynctestcase import (
-    AsyncQuestionAnsweringTest,
-    QnaAuthoringAsyncHelper
-)
-from azure.ai.language.questionanswering.projects.aio import QuestionAnsweringProjectsClient
+from helpers import QnaAuthoringAsyncHelper
+from testcase import QuestionAnsweringTestCase
 
-class ExportAndImportTests(AsyncQuestionAnsweringTest):
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    async def test_export_project(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+class TestExportAndImportAsync(QuestionAnsweringTestCase):
+
+    @pytest.mark.asyncio
+    async def test_export_project(self, recorded_test, qna_creds):
+        client = QuestionAnsweringProjectsClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
@@ -37,10 +32,9 @@ class ExportAndImportTests(AsyncQuestionAnsweringTest):
         assert result["status"] == "succeeded"
         assert result["resultUrl"] is not None
 
-
-    @GlobalQuestionAnsweringAccountPreparer()
-    async def test_import_project(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+    @pytest.mark.asyncio
+    async def test_import_project(self, recorded_test, qna_creds):
+        client = QuestionAnsweringProjectsClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
