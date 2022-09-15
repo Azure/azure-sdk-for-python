@@ -123,3 +123,17 @@ def _populate_part_a_fields(resource):
             tags["ai.cloud.roleInstance"] = platform.node()  # hostname default
         tags["ai.internal.nodeName"] = tags["ai.cloud.roleInstance"]
     return tags
+
+def _truncate_custom_properties(properties, filter=None):
+    truncated_properties = {}
+    for key, val in properties.items():
+        # Apply filter function
+        if filter is not None:
+            if not filter(key, val):
+                continue
+        # Apply truncation rules
+        # Max key length is 150, value is 8192
+        if not key or len(key) > 150 or val is None:
+            continue
+        truncated_properties[key] = str(val)[:8192]
+    return truncated_properties
