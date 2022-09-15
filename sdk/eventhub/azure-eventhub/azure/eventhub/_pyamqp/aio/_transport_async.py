@@ -441,36 +441,35 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         self.ws = None
         self.session = None
         self._http_proxy = kwargs.get("http_proxy", None)
+        self.http_proxy_auth = None
+        self.http_proxy_host = None
+        self.http_proxy_port = None
 
     async def connect(self):
-        http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
-        ssl_opts: Optional[SSLContext] = self._build_ssl_opts(self.sslopts) if len(self.ssl_opts) > 0 else None
+        username, password = None, None
+        ssl_opts: Optional[SSLContext] = self._build_ssl_opts(self.sslopts) if len(self.sslopts) > 0 else None
+        if ssl_opts:
+            self.sslopts = ssl_opts
 
         if self._http_proxy:
-            http_proxy_host = self._http_proxy["proxy_hostname"]
-            http_proxy_port = self._http_proxy["proxy_port"]
+            self.http_proxy_host = self._http_proxy["proxy_hostname"]
+            self.http_proxy_port = self._http_proxy["proxy_port"]
             username = self._http_proxy.get("username", None)
             password = self._http_proxy.get("password", None)
-            if username or password:
-                http_proxy_auth = (username, password)
+
         try:
-            from aiohttp import ClientSession
-
-            self.session = ClientSession()
-
             if username or password:
                 from aiohttp import BasicAuth
+                self.http_proxy_auth = BasicAuth(login=username, password=password)
 
-                http_proxy_auth = BasicAuth(login=username, password=password)
-
-            self.ws = self.session.ws_connect(
-                url="wss://{}".format(self._custom_endpoint or self.host),
-                protocols=[AMQP_WS_SUBPROTOCOL],
-                timeout=self._connect_timeout,
-                proxy=http_proxy_host + f":{http_proxy_port}" if http_proxy_port else "",
-                proxy_auth=http_proxy_auth,
-                ssl=ssl_opts,
-            )
+            # self.ws = self.session._ws_connect(
+            #     url="wss://{}".format(self._custom_endpoint or self.host),
+            #     protocols=[AMQP_WS_SUBPROTOCOL],
+            #     timeout=self._connect_timeout,
+            #     proxy=http_proxy_host + f":{http_proxy_port}" if http_proxy_port else "",
+            #     proxy_auth=http_proxy_auth,
+            #     ssl=ssl_opts,
+            # )
         except ImportError:
             raise ValueError("Please install aiohttp library to use websocket transport.")
 
@@ -520,21 +519,32 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         nbytes = self._read_buffer.readinto(view)
         length += nbytes
         n -= nbytes
-        try:
-            while n:
-                data = await self.ws.receive_bytes()
+        from aiohttp import ClientSession
+        async with ClientSession() as client:
+            async with client.ws_connect(
+                url="wss://{}".format(self._custom_endpoint or self.host),
+                autoclose=False,
+                protocols=[AMQP_WS_SUBPROTOCOL],
+                #timeout=self._connect_timeout,
+                #proxy=(self.http_proxy_host + f":{self.http_proxy_port}" if self.http_proxy_port else "") if self.http_proxy_host else None,
+                #auth=self.http_proxy_auth,
+                #ssl = self.sslopts
+            ) as ws:
+                try:
+                    while n:
+                        data = await ws.receive_bytes()
 
-                if len(data) <= n:
-                    view[length : length + len(data)] = data
-                    n -= len(data)
-                else:
-                    view[length : length + n] = data[0:n]
-                    self._read_buffer = BytesIO(data[n:])
-                    n = 0
+                        if len(data) <= n:
+                            view[length : length + len(data)] = data
+                            n -= len(data)
+                        else:
+                            view[length : length + n] = data[0:n]
+                            self._read_buffer = BytesIO(data[n:])
+                            n = 0
 
-            return view
-        except (asyncio.CancelledError, asyncio.TimeoutError) as wex:
-            raise TimeoutError()
+                    return view
+                except (asyncio.CancelledError, asyncio.TimeoutError) as wex:
+                    raise TimeoutError()
 
     def close(self):
         """Do any preliminary work in shutting down the connection."""
@@ -547,5 +557,19 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         ABNF, OPCODE_BINARY = 0x2
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
-        """
-        await self.ws.send_bytes(s)
+        """        
+        from aiohttp import ClientSession
+
+        async with ClientSession() as client:
+            async with client.ws_connect(
+                url="wss://{}".format(self._custom_endpoint or self.host),
+                autoclose=False,
+                protocols=[AMQP_WS_SUBPROTOCOL],
+                #timeout=self._connect_timeout,
+                #proxy=(self.http_proxy_host + f":{self.http_proxy_port}" if self.http_proxy_port else "") if self.http_proxy_host else None,
+                #auth=self.http_proxy_auth,
+                #ssl = self.sslopts
+            ) as ws:
+                await ws.send_bytes(s)
+        
+
