@@ -13,7 +13,7 @@ from ..._internal import AadClientCertificate, validate_tenant_id
 from ..._persistent_cache import _load_persistent_cache
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
+    from typing import Any, Optional, List
     from azure.core.credentials import AccessToken
 
 T = TypeVar("T", bound="CertificateCredential")
@@ -42,7 +42,7 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
           will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword list[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
+    :keyword List[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
         may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
         any tenant the application is installed.
     """

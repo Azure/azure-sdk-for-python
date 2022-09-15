@@ -52,7 +52,7 @@ class AzurePowerShellCredential(object):
 
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.
 
-    :keyword list[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
+    :keyword List[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
         may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
         any tenant the application is installed.
     """

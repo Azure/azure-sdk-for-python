@@ -17,7 +17,7 @@ from .._internal.interactive import _build_auth_record
 from .._internal.msal_credentials import MsalCredential
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional, Union
+    from typing import Any, List, Optional
     import msal
     from .. import AuthenticationRecord
 
@@ -48,7 +48,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass
         appropriately encoded bytes instead.
     :paramtype password: str or bytes
-    :keyword list[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
+    :keyword List[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
         may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
         any tenant the application is installed.
     """

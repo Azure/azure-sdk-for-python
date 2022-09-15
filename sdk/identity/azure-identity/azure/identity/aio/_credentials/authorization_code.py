@@ -10,7 +10,7 @@ from .._internal.get_token_mixin import GetTokenMixin
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+    from typing import Any, Optional, List
     from azure.core.credentials import AccessToken
 
 
@@ -30,7 +30,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
     :keyword str client_secret: One of the application's client secrets. Required only for web apps and web APIs.
-    :keyword list[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
+    :keyword List[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
         may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
         any tenant the application is installed.
     """

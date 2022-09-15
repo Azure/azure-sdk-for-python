@@ -8,7 +8,7 @@ from .._internal.client_credential_base import ClientCredentialBase
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, List
 
 
 class ClientSecretCredential(ClientCredentialBase):
@@ -24,7 +24,7 @@ class ClientSecretCredential(ClientCredentialBase):
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword list[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
+    :keyword List[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
         may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
         any tenant the application is installed.
     """

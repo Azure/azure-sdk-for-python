@@ -90,11 +90,11 @@ def resolve_tenant(
                      "Requested tenant ID %s", default_tenant, tenant_id)
         return tenant_id
     raise ClientAuthenticationError(
-                message='The current credential is not configured to acquire tokens for tenant {}. '
-                        'To enable acquiring tokens for this tenant add it to the additionally_allowed_tenants '
-                        'when creating the credential, or add "*" to additionally_allowed_tenants to allow '
-                        'acquiring tokens for any tenant.'.format(tenant_id)
-            )
+        message='The current credential is not configured to acquire tokens for tenant {}. '
+                'To enable acquiring tokens for this tenant add it to the additionally_allowed_tenants '
+                'when creating the credential, or add "*" to additionally_allowed_tenants to allow '
+                'acquiring tokens for any tenant.'.format(tenant_id)
+    )
 
 
 

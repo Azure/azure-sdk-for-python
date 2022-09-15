@@ -8,7 +8,7 @@ from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Optional
+    from typing import Any, Callable, Optional, List
     from azure.core.credentials import AccessToken
 
 
@@ -28,7 +28,7 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
         :keyword str authority: authority of an Azure Active Directory endpoint, for example
             "login.microsoftonline.com", the authority for Azure Public Cloud (which is the default).
             :class:`~azure.identity.AzureAuthorityHosts` defines authorities for other clouds.
-        :keyword list[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
+        :keyword List[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
             may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
             any tenant the application is installed.
         """
