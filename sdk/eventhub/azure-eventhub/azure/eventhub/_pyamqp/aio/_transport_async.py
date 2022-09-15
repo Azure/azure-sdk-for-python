@@ -432,9 +432,8 @@ class AsyncTransport(AsyncTransportMixin):
 class WebSocketTransportAsync(AsyncTransportMixin):
     def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
         self._read_buffer = BytesIO()
-        self.loop = get_running_loop()
         self.socket_lock = asyncio.Lock()
-        self.sslopts = ssl if isinstance(ssl, dict) else {}
+        self.sslopts = self._build_ssl_opts(ssl) if isinstance(ssl, dict) else None
         self._connect_timeout = connect_timeout or TIMEOUT_INTERVAL
         self._custom_endpoint = kwargs.get("custom_endpoint")
         self.host = host
@@ -466,7 +465,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
                 protocols=[AMQP_WS_SUBPROTOCOL],
                 autoclose=False,
                 proxy_auth=self.http_proxy_auth,
-                ssl=self._build_ssl_opts(self.sslopts)
+                ssl=self.sslopts
             )
            
         except ImportError:
@@ -493,7 +492,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
                     n = 0 
             return view
         except (asyncio.TimeoutError) as wex:
-                    raise TimeoutError()
+            raise TimeoutError()
 
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
@@ -506,7 +505,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         ABNF, OPCODE_BINARY = 0x2
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
-        """        
+        """       
         await self.ws.send_bytes(s)
     
     def _build_ssl_opts(self, sslopts):
