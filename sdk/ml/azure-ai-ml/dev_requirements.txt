@@ -12,7 +12,7 @@ pytest-mock
 pytest
 pydash
 azure-mgmt-msi
-pywin32==227 ; sys_platform == 'win32'
+pywin32==304 ; sys_platform == 'win32'
 numpy;platform.python_implementation!="PyPy"
 scikit-image;platform.python_implementation!="PyPy"
 simplification;platform.python_implementation!="PyPy"
