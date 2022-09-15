@@ -2,28 +2,37 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import copy
-from typing import Tuple
+import platform
 
-import pytest
-from automl_job.jsonl_converter import convert_mask_in_VOC_to_jsonl
-from test_utilities.utils import assert_final_job_status, get_automl_job_properties
+if platform.python_implementation != "PyPy":
 
-from azure.ai.ml import MLClient, automl
-from azure.ai.ml.constants._common import AssetTypes
-from azure.ai.ml.entities import Data
-from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job.automl import SearchSpace
-from azure.ai.ml.entities._job.automl.image import ImageInstanceSegmentationJob, ImageObjectDetectionSearchSpace
-from azure.ai.ml.operations._run_history_constants import JobStatus
-from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
+    import copy
+    from typing import Tuple
 
-from devtools_testutils import AzureRecordedTestCase, is_live
+    import pytest
+    from automl_job.jsonl_converter import convert_mask_in_VOC_to_jsonl
+    from test_utilities.utils import assert_final_job_status, get_automl_job_properties
+
+    from azure.ai.ml import MLClient, automl
+    from azure.ai.ml.constants._common import AssetTypes
+    from azure.ai.ml.entities import Data
+    from azure.ai.ml.entities._inputs_outputs import Input
+    from azure.ai.ml.entities._job.automl import SearchSpace
+    from azure.ai.ml.entities._job.automl.image import ImageInstanceSegmentationJob, ImageObjectDetectionSearchSpace
+    from azure.ai.ml.operations._run_history_constants import JobStatus
+    from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
+
+    from devtools_testutils import AzureRecordedTestCase, is_live
+else:
+    print("This test suite is not supported on PyPy")
 
 
 @pytest.mark.automle2etest
 @pytest.mark.usefixtures("recorded_test")
-@pytest.mark.skipif(condition=not is_live(), reason="Datasets downloaded by test are too large to record reliably")
+@pytest.mark.skipif(
+    condition=not is_live() or platform.python_implementation == "PyPy",
+    reason="Datasets downloaded by test are too large to record reliably"
+)
 class TestAutoMLImageSegmentation(AzureRecordedTestCase):
     def _create_jsonl_segmentation(self, client, train_path, val_path):
 
