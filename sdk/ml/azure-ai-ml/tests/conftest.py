@@ -201,6 +201,7 @@ def client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClie
         resource_group_name=e2e_ws_scope.resource_group_name,
         workspace_name=e2e_ws_scope.workspace_name,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
+        cloud="AzureCloud"
     )
 
 
