@@ -6,7 +6,6 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from devtools_testutils.proxy_fixtures import EnvironmentVariableSanitizer
 from devtools_testutils.sanitizers import add_header_regex_sanitizer, add_oauth_response_sanitizer
 
 
@@ -31,10 +30,9 @@ TEST_ORCH_PROJECT_NAME = "orch_test"
 TEST_ORCH_DEPLOYMENT_NAME = "dep_test"
 TEST_ID = "00000000-0000-0000-0000-000000000000"
 
-environment_sanitizer = EnvironmentVariableSanitizer()
 
 @pytest.fixture(scope="session", autouse=True)
-def add_sanitizers(test_proxy):
+def add_sanitizers(test_proxy, environment_variables):
     sanitization_mapping = {
         ENV_ENDPOINT: TEST_ENDPOINT,
         ENV_KEY: TEST_KEY,
@@ -47,17 +45,18 @@ def add_sanitizers(test_proxy):
         ENV_CLIENT_ID: TEST_ID,
         ENV_CLIENT_SECRET: TEST_ID
     }
-    environment_sanitizer.sanitize_batch(sanitization_mapping)
+    environment_variables.sanitize_batch(sanitization_mapping)
     add_oauth_response_sanitizer()
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
 
+
 @pytest.fixture(scope="session")
-def conversation_creds():
+def conversation_creds(environment_variables):
     yield {
-        "endpoint": environment_sanitizer.get(ENV_ENDPOINT).rstrip("/"),
-        "key": environment_sanitizer.get(ENV_KEY),
-        "conv_project_name": environment_sanitizer.get(ENV_PROJECT_NAME),
-        "conv_deployment_name": environment_sanitizer.get(ENV_DEPLOYMENT_NAME),
-        "orch_project_name": environment_sanitizer.get(ENV_WORKFLOW_PROJECT_NAME),
-        "orch_deployment_name": environment_sanitizer.get(ENV_WORKFLOW_DEPLOYMENT_NAME)
+        "endpoint": environment_variables.get(ENV_ENDPOINT).rstrip("/"),
+        "key": environment_variables.get(ENV_KEY),
+        "conv_project_name": environment_variables.get(ENV_PROJECT_NAME),
+        "conv_deployment_name": environment_variables.get(ENV_DEPLOYMENT_NAME),
+        "orch_project_name": environment_variables.get(ENV_WORKFLOW_PROJECT_NAME),
+        "orch_deployment_name": environment_variables.get(ENV_WORKFLOW_DEPLOYMENT_NAME)
     }
