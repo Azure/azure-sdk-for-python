@@ -391,7 +391,7 @@ class Model(_MyMutableMapping):
 
     def __new__(cls, *args: typing.Any, **kwargs: typing.Any):
         # we know the last three classes in mro are going to be 'Model', 'dict', and 'object'
-        attr_to_rest_field: typing.Dict[str, _RestField] = { # map attribute name to rest_field property
+        attr_to_rest_field: typing.Dict[str, _RestReadonlyField] = { # map attribute name to rest_field property
             k: v
             for mro_class in cls.__mro__[:-3][::-1] # ignore model, dict, and object parents, and reverse the mro order
             for k, v in mro_class.__dict__.items() if k[0] != "_" and hasattr(v, "_type")
@@ -402,7 +402,7 @@ class Model(_MyMutableMapping):
                 rest_field._type = rest_field._get_deserialize_callable_from_annotation(cls.__annotations__.get(attr, None))
             if not rest_field._rest_name_input:
                 rest_field._rest_name_input = attr
-        cls._attr_to_rest_field: typing.Dict[str, _RestField] = {
+        cls._attr_to_rest_field: typing.Dict[str, _RestReadonlyField] = {
             k: v
             for k, v in attr_to_rest_field.items()
         }
@@ -415,23 +415,25 @@ def _deserialize(deserializer: typing.Optional[typing.Callable[[typing.Any], typ
     except Exception as e:
         raise DeserializationError() from e
 
-class _RestField:
+class _RestReadonlyField:
     def __init__(
         self,
         *,
         name: typing.Optional[str] = None,
         type: typing.Optional[typing.Callable] = None,
         is_discriminator: bool = False,
-        readonly: bool = False,
         default: typing.Any = _UNSET,
     ):
         self._type = type
         self._rest_name_input = name
         self._module_input: typing.Optional[str] = None
         self._is_discriminator = is_discriminator
-        self._readonly = readonly
         self._is_model = False
         self._default = default
+
+    @property
+    def _readonly(self) -> bool:
+        return True
 
     @property
     def _rest_name(self) -> str:
@@ -453,17 +455,8 @@ class _RestField:
             return item
         return _deserialize(self._type, _serialize(item))
 
-    def __set__(self, obj: Model, value) -> None:
-        if value is None:
-            # we want to wipe out entries if users set attr to None
-            try:
-                obj.__delitem__(self._rest_name)
-            except KeyError:
-                pass
-            return
-        if self._is_model and not _is_model(value):
-            obj.__setitem__(self._rest_name, _deserialize(self._type, value))
-        obj.__setitem__(self._rest_name, _serialize(value))
+    def __set__(self, obj: Model, value):
+        raise AttributeError("can't set attribute")
 
     def _get_deserialize_callable_from_annotation(self, annotation: typing.Any) -> typing.Optional[typing.Callable[[typing.Any], typing.Any]]:
         if not annotation or annotation in [int, float]:
@@ -593,6 +586,23 @@ class _RestField:
             _DESERIALIZE_MAPPING.get(annotation)
         )
 
+class _RestField(_RestReadonlyField):
+    @property
+    def _readonly(self) -> bool:
+        return False
+
+    def __set__(self, obj: Model, value) -> None:
+        if value is None:
+            # we want to wipe out entries if users set attr to None
+            try:
+                obj.__delitem__(self._rest_name)
+            except KeyError:
+                pass
+            return
+        if self._is_model and not _is_model(value):
+            obj.__setitem__(self._rest_name, _deserialize(self._type, value))
+        obj.__setitem__(self._rest_name, _serialize(value))
+
 def rest_field(
     *,
     name: typing.Optional[str] = None,
@@ -600,7 +610,15 @@ def rest_field(
     readonly: bool = False,
     default: typing.Any = _UNSET,
 ) -> typing.Any:
-    return _RestField(name=name, type=type, readonly=readonly, default=default)
+    return _RestField(name=name, type=type, default=default)
+
+def rest_readonly(
+    *,
+    name: typing.Optional[str] = None,
+    type: typing.Optional[typing.Callable] = None,
+    default: typing.Any = _UNSET,
+) -> typing.Any:
+    return _RestReadonlyField(name=name, type=type, default=default)
 
 def rest_discriminator(*, name: typing.Optional[str] = None, type: typing.Optional[typing.Callable] = None) -> typing.Any:
     return _RestField(name=name, type=type, is_discriminator=True)

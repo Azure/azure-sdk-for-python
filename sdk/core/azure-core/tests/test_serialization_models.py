@@ -9,7 +9,7 @@ from typing import Any, Iterable, List, Literal, Dict, Mapping, Sequence, Set, T
 import pytest
 import base64
 import isodate
-from azure.core.serialization import AzureJSONEncoder, Model, rest_field, rest_discriminator
+from azure.core.serialization import AzureJSONEncoder, Model, rest_field, rest_discriminator, rest_readonly
 
 class BasicResource(Model):
     platform_update_domain_count: int = rest_field(name="platformUpdateDomainCount")  # How many times the platform update domain has been counted
@@ -1806,10 +1806,10 @@ def test_deserialization_is():
 
 class ModelWithReadonly(Model):
     normal_property: str = rest_field(name="normalProperty")
-    readonly_property: str = rest_field(name="readonlyProperty", readonly=True)
+    readonly_property: str = rest_readonly(name="readonlyProperty")
 
     @overload
-    def __init__(self, *, normal_property: str,):
+    def __init__(self, *, normal_property: str):
         ...
 
     @overload
@@ -1828,8 +1828,6 @@ def test_readonly():
 
 def test_readonly_set():
     model = ModelWithReadonly({"normalProperty": "normal", "readonlyProperty": "readonly"})
-    model.normal_property = "set"
-    model.readonly_property = "set"
     assert model.normal_property == model["normalProperty"] == "set"
     assert model.readonly_property == model["readonlyProperty"] == "set"
 
