@@ -16,6 +16,8 @@
     ([#26023](https://github.com/Azure/azure-sdk-for-python/pull/26023))
 - Implement statsbeat shutdown
     ([#26077](https://github.com/Azure/azure-sdk-for-python/pull/26077))
+- Add ApplicationInsightsSampler
+    ([#26224](https://github.com/Azure/azure-sdk-for-python/pull/26224))
 
 ### Breaking Changes
 
