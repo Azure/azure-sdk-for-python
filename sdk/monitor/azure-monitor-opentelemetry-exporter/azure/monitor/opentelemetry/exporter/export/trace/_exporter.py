@@ -421,7 +421,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         # Max key length is 150, value is 8192
         if not key or len(key) > 150 or val is None:
             continue
-        data.properties[key] = val[:8192]
+        data.properties[key] = str(val)[:8192]
     if span.links:
         # Max length for value is 8192
         # Since links are a fixed length (80) in json, max number of links would be 102
