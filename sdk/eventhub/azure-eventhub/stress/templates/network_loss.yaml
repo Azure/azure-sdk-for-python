@@ -1,5 +1,5 @@
-{{- include "stress-test-addons.chaos-wrapper.tpl" (list . "stress.eh-network-chaos") -}}
-{{- define "stress.eh-network-chaos" -}}
+{{- include "stress-test-addons.chaos-wrapper.tpl" (list . "stress.python-eh-network-chaos") -}}
+{{- define "stress.python-eh-network-chaos" -}}
 apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 
@@ -7,11 +7,11 @@ spec:
   action: loss
   direction: to
   externalTargets:
-    - servicebus.windows.net
+    - '{{ .Stress.ResourceGroupName }}.servicebus.windows.net'
   mode: one
   selector:
     labelSelectors:
-      testInstance: "eh-network-loss-{{ .Release.Name }}-{{ .Release.Revision }}"
+      testInstance: "eventhub-{{ .Release.Name }}-{{ .Release.Revision }}"
       chaos: "true"
     namespaces:
       - {{ .Release.Namespace }}
