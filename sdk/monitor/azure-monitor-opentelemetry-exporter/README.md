@@ -126,7 +126,7 @@ Some of the key concepts for the Azure monitor exporter include:
 
 * [Sampling][sampler_ref]: Sampling is a mechanism to control the noise and overhead introduced by OpenTelemetry by reducing the number of samples of traces collected and sent to the backend.
 
-* [ApplicationInsightsSampler][ai_sampler_ref]: Application Insights specific sampler used for consistent sampling across Application Insights SDKs and OpenTelemetry-based SDKs sending data to Application Insights. This sampler MUST be used whenever `AzureMonitorTraceExporter` is used.
+* [ApplicationInsightsSampler](https://github.com/microsoft/Telemetry-Collection-Spec/blob/main/OpenTelemetry/trace/ApplicationInsightsSampler.md): Application Insights specific sampler used for consistent sampling across Application Insights SDKs and OpenTelemetry-based SDKs sending data to Application Insights. This sampler MUST be used whenever `AzureMonitorTraceExporter` is used.
 
 For more information about these resources, see [What is Azure Monitor?][product_docs].
 
@@ -537,4 +537,3 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [span_processor]: https://opentelemetry-python.readthedocs.io/en/stable/_modules/opentelemetry/sdk/trace.html?highlight=SpanProcessor#
 [trace_reference]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/azure/monitor/opentelemetry/exporter/export/trace/_exporter.py
 [sampler_ref]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/trace/sdk.md#sampling
-[ai_sampler_ref]: https://github.com/microsoft/Telemetry-Collection-Spec/blob/main/OpenTelemetry/trace/ApplicationInsightsSampler.md
