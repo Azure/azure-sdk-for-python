@@ -466,6 +466,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
                 timeout=self._connect_timeout,
                 protocols=[AMQP_WS_SUBPROTOCOL],
                 autoclose=False,
+                proxy=self.http_proxy_host + f":{self.http_proxy_port}" if self.http_proxy_port else "",
                 proxy_auth=self.http_proxy_auth,
                 ssl=self.sslopts
             )
