@@ -189,7 +189,7 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
         if self.state == ConnectionState.END:
             return
         await self._set_state(ConnectionState.END)
-        self._transport.close()
+        await self._transport.close()
 
     def _can_read(self):
         # type: () -> bool
