@@ -15,24 +15,24 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 16 Sep 2022 03:18:42 GMT",
+        "Date": "Fri, 16 Sep 2022 18:14:19 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
-        "Server-Timing": "traceparent;desc=\u002200-d82325590f44f1735f58db9bbcc57f26-33a697c8d7822555-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-33c88481ce1731f0341c38d3902a7208-a9f304c8dbfb1bc8-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
-        "x-aml-cluster": "vienna-eastus2euap-01",
+        "x-aml-cluster": "vienna-eastus2euap-02",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "f1eb770d-c4cc-498d-a192-e4f9b5fc8fc3",
+        "x-ms-correlation-request-id": "5335ef5e-8c28-4e97-a197-f271c207bb5e",
         "x-ms-ratelimit-remaining-subscription-reads": "11872",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "CANADACENTRAL:20220916T031842Z:f1eb770d-c4cc-498d-a192-e4f9b5fc8fc3",
-        "x-request-time": "0.044"
+        "x-ms-routing-request-id": "CANADACENTRAL:20220916T181419Z:5335ef5e-8c28-4e97-a197-f271c207bb5e",
+        "x-request-time": "0.042"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/helloworld_pipeline_job_quick_with_output_2022W37_test_pipeline_job_child_run_download",

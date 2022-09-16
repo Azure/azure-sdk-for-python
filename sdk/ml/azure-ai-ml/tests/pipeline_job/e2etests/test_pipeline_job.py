@@ -86,6 +86,7 @@ def bodiless_matching(test_proxy):
     "enable_pipeline_private_preview_features",
     "mock_asset_name",
     "mock_component_hash",
+    "enable_environment_id_arm_expansion",
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest

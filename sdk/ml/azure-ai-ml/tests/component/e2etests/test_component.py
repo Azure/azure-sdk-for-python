@@ -128,7 +128,13 @@ def assert_component_basic_workflow(
 
 @pytest.mark.e2etest
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
-@pytest.mark.usefixtures("recorded_test", "mock_code_hash", "mock_asset_name", "mock_component_hash")
+@pytest.mark.usefixtures(
+    "recorded_test",
+    "mock_code_hash",
+    "mock_asset_name",
+    "mock_component_hash",
+    "enable_environment_id_arm_expansion",
+)
 class TestComponent(AzureRecordedTestCase):
     def test_command_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         expected_dict = {
