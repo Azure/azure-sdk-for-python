@@ -67,10 +67,10 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_body_key_sanitizer(json_path="$.properties.properties.['mlflow.source.git.branch']", value="fake_git_branch")
     add_body_key_sanitizer(json_path="$.properties.properties.['mlflow.source.git.commit']", value="fake_git_commit")
     add_body_key_sanitizer(json_path="$.properties.properties.['azureml.git.dirty']", value="fake_git_dirty_value")
-    add_general_string_sanitizer(value="", target=f"\u0026tid={os.environ.get('ML_TENANT_ID')}")
+    add_general_regex_sanitizer(value="", regex=f"\\u0026tid={os.environ.get('ML_TENANT_ID')}")
     add_general_string_sanitizer(value="", target=f"&tid={os.environ.get('ML_TENANT_ID')}")
-    add_general_regex_sanitizer(value="00000000000000000", regex="(?<=\\/LocalUpload\\/)\\S*(?=\\/)")
-    add_general_regex_sanitizer(value="00000000000000000", regex="(?<=\\/az-ml-artifacts\\/)\\S*(?=\\/)")
+    add_general_regex_sanitizer(value="00000000000000000000000000000000", regex="\\/LocalUpload\\/(\\S{32})\\/?", group_for_replace="1")
+    add_general_regex_sanitizer(value="00000000000000000000000000000000", regex="\\/az-ml-artifacts\\/(\\S{32})\\/", group_for_replace="1")
 
 
 def pytest_addoption(parser):
@@ -346,7 +346,7 @@ def mock_code_hash(request, mocker: MockFixture) -> None:
     if is_live_and_not_recording():
         mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", side_effect=generate_hash)
     elif not is_live():
-        mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", return_value="00000000000000000")
+        mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", return_value="00000000000000000000000000000000")
 
 
 @pytest.fixture
@@ -441,7 +441,7 @@ def auth() -> Union[AzureCliCredential, ClientSecretCredential, FakeTokenCredent
         tenant_id = os.environ.get("ML_TENANT_ID")
         sp_id = os.environ.get("ML_CLIENT_ID")
         sp_secret = os.environ.get("ML_CLIENT_SECRET")
-        if not (tenant_id or sp_id or sp_secret):
+        if not (sp_id or sp_secret):
             return AzureCliCredential()
         return ClientSecretCredential(tenant_id, sp_id, sp_secret)
 

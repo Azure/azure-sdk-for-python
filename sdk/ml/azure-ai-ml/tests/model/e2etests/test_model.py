@@ -15,7 +15,7 @@ from azure.ai.ml.constants._common import LONG_URI_REGEX_FORMAT
 from azure.ai.ml.entities._assets import Model
 from azure.core.paging import ItemPaged
 
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher, is_live
 
 
 @pytest.fixture
@@ -116,7 +116,8 @@ class TestModel(AzureRecordedTestCase):
 
         def get_model_list():
             # Wait for list index to update before calling list command
-            sleep(30)
+            if is_live():
+                sleep(30)
             model_list = client.models.list(name=name, list_view_type=ListViewType.ACTIVE_ONLY)
             return [m.version for m in model_list if m is not None]
 

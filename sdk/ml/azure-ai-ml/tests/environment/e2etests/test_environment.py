@@ -3,7 +3,7 @@ import re
 from time import sleep
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher, is_live
 import pytest
 
 from azure.ai.ml import MLClient, load_environment
@@ -28,7 +28,7 @@ def bodiless_matching(test_proxy):
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
+@pytest.mark.usefixtures("recorded_test", "mock_code_hash")
 class TestEnvironment(AzureRecordedTestCase):
     def test_environment_create_conda(self, client: MLClient, env_name: Callable[[str], str]) -> None:
         params_override = [{"name": env_name("name")}]
@@ -185,7 +185,8 @@ class TestEnvironment(AzureRecordedTestCase):
 
         def get_environment_list():
             # Wait for list index to update before calling list command
-            sleep(30)
+            if is_live():
+                sleep(30)
             environment_list = client.environments.list(name=name, list_view_type=ListViewType.ACTIVE_ONLY)
             return [e.version for e in environment_list if e is not None]
 
