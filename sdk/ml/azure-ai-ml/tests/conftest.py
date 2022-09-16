@@ -497,6 +497,11 @@ def enable_environment_id_arm_expansion(mocker: MockFixture):
     mocker.patch("azure.ai.ml.operations._operation_orchestrator.is_private_preview_enabled", return_value=False)
 
 
+@pytest.fixture(autouse=True)
+def remove_git_props(mocker: MockFixture):
+    mocker.patch("azure.ai.ml.operations._job_operations.get_git_properties", return_value={})
+
+
 @pytest.fixture()
 def enable_internal_components():
     from azure.ai.ml._utils.utils import try_enable_internal_components
