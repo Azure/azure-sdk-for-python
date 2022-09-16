@@ -415,7 +415,7 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
             await mgmt_service.delete_queue(queue_name)
 
     @ServiceBusPreparer()
-    @pytest.mark.live_only
+    @pytest.mark.live_test_only
     async def test_async_mgmt_queue_update_success(self, **kwargs):
         servicebus_connection_str, servicebus_fully_qualified_namespace = kwargs.pop('servicebus_connection_str'), kwargs.pop('servicebus_fully_qualified_namespace')
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)

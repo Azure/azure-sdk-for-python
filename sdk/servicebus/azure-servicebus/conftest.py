@@ -18,7 +18,7 @@ collect_ignore = []
 @pytest.fixture(scope="session", autouse=True)
 def add_aeg_sanitizer(test_proxy):
     set_custom_default_matcher(
-        compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id,ServiceBusSupplementaryAuthorization,ServiceBusDlqSupplementaryAuthorization"
+        compare_bodies=False, excluded_headers="ServiceBusSupplementaryAuthorization,ServiceBusDlqSupplementaryAuthorization"
     )
     add_remove_header_sanitizer(headers="aeg-sas-key, aeg-sas-token")
     add_general_regex_sanitizer(
