@@ -366,6 +366,54 @@ class TestFile(StorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy
+    def test_append_data_lease_action(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        file_client.create_file()
+
+        data = b'Hello world'
+        lease_id = '670d43d1-ecde-4ae9-9c37-d22d340e7719'
+
+        # Act / Assert
+        # ---Acquire---
+        file_client.append_data(data, 0, len(data), lease_action='acquire', lease_duration=30, lease=lease_id)
+
+        lease = file_client.get_file_properties().lease
+        assert lease.state == 'leased'
+        assert lease.duration == 'fixed'
+
+        # ---Renew---
+        file_client.append_data(data, 0, len(data), lease_action='auto-renew', lease=lease_id)
+
+        lease = file_client.get_file_properties().lease
+        assert lease.state == 'leased'
+        assert lease.duration == 'fixed'
+
+        # ---Release---
+        file_client.append_data(data, 0, len(data), flush=True, lease_action='release', lease=lease_id)
+
+        lease = file_client.get_file_properties().lease
+        assert lease.state == 'available'
+        assert not lease.duration
+
+        # ---Acquire and release---
+        file_client.append_data(data, 0, len(data), flush=True, lease_action='acquire-release', lease=lease_id)
+
+        lease = file_client.get_file_properties().lease
+        assert lease.state == 'available'
+        assert not lease.duration
+
+    @DataLakePreparer()
+    @recorded_by_proxy
     def test_append_empty_data(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")

@@ -10,6 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class LeaseAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """LeaseAction."""
+
+    ACQUIRE = "acquire"
+    AUTO_RENEW = "auto-renew"
+    RELEASE = "release"
+    ACQUIRE_RELEASE = "acquire-release"
+
+
 class ListBlobsIncludeItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ListBlobsIncludeItem."""
 
