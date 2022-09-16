@@ -10,6 +10,16 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AgeUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Age Unit of measurement.
+    """
+
+    UNSPECIFIED = "Unspecified"
+    YEAR = "Year"
+    MONTH = "Month"
+    WEEK = "Week"
+    DAY = "Day"
+
 class AnalyzeTextLROResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration of supported Text Analysis long-running operation task results.
     """
@@ -66,6 +76,24 @@ class AnalyzeTextTaskResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENTITY_LINKING_RESULTS = "EntityLinkingResults"
     DYNAMIC_CLASSIFICATION_RESULTS = "DynamicClassificationResults"
 
+class AreaUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The area Unit of measurement.
+    """
+
+    UNSPECIFIED = "Unspecified"
+    SQUARE_KILOMETER = "SquareKilometer"
+    SQUARE_HECTOMETER = "SquareHectometer"
+    SQUARE_DECAMETER = "SquareDecameter"
+    SQUARE_DECIMETER = "SquareDecimeter"
+    SQUARE_METER = "SquareMeter"
+    SQUARE_CENTIMETER = "SquareCentimeter"
+    SQUARE_MILLIMETER = "SquareMillimeter"
+    SQUARE_INCH = "SquareInch"
+    SQUARE_FOOT = "SquareFoot"
+    SQUARE_MILE = "SquareMile"
+    SQUARE_YARD = "SquareYard"
+    ACRE = "Acre"
+
 class Association(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes if the entity is the subject of the text or if it describes someone else.
     """
@@ -97,6 +125,16 @@ class Conditionality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     HYPOTHETICAL = "hypothetical"
     CONDITIONAL = "conditional"
+
+class DateTimeSubKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The DateTime SubKind.
+    """
+
+    TIME = "Time"
+    DATE = "Date"
+    DATE_TIME = "DateTime"
+    DURATION = "Duration"
+    SET = "Set"
 
 class DocumentSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Predicted sentiment for document (Negative, Neutral, Positive, or Mixed).
@@ -194,6 +232,24 @@ class HealthcareEntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAMILY_RELATION = "FamilyRelation"
     TREATMENT_NAME = "TreatmentName"
 
+class InformationUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The information (data) Unit of measurement.
+    """
+
+    UNSPECIFIED = "Unspecified"
+    BIT = "Bit"
+    KILOBIT = "Kilobit"
+    MEGABIT = "Megabit"
+    GIGABIT = "Gigabit"
+    TERABIT = "Terabit"
+    PETABIT = "Petabit"
+    BYTE = "Byte"
+    KILOBYTE = "Kilobyte"
+    MEGABYTE = "Megabyte"
+    GIGABYTE = "Gigabyte"
+    TERABYTE = "Terabyte"
+    PETABYTE = "Petabyte"
+
 class InnerErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Human-readable error code.
     """
@@ -212,6 +268,39 @@ class InnerErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INVALID_DOCUMENT_BATCH = "InvalidDocumentBatch"
     UNSUPPORTED_LANGUAGE_CODE = "UnsupportedLanguageCode"
     INVALID_COUNTRY_HINT = "InvalidCountryHint"
+
+class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The length Unit of measurement.
+    """
+
+    UNSPECIFIED = "Unspecified"
+    KILOMETER = "Kilometer"
+    HECTOMETER = "Hectometer"
+    DECAMETER = "Decameter"
+    METER = "Meter"
+    DECIMETER = "Decimeter"
+    CENTIMETER = "Centimeter"
+    MILLIMETER = "Millimeter"
+    MICROMETER = "Micrometer"
+    NANOMETER = "Nanometer"
+    PICOMETER = "Picometer"
+    MILE = "Mile"
+    YARD = "Yard"
+    INCH = "Inch"
+    FOOT = "Foot"
+    LIGHT_YEAR = "LightYear"
+    PT = "Pt"
+
+class NumberKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the extracted number entity.
+    """
+
+    INTEGER = "Integer"
+    DECIMAL = "Decimal"
+    POWER = "Power"
+    FRACTION = "Fraction"
+    PERCENT = "Percent"
+    UNSPECIFIED = "Unspecified"
 
 class PhraseControlStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The strategy to use in phrase control.
@@ -413,6 +502,21 @@ class PiiDomain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Indicates that no domain is specified.
     NONE = "none"
 
+class RangeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of range that the resolution object represents.
+    """
+
+    NUMBER = "Number"
+    SPEED = "Speed"
+    WEIGHT = "Weight"
+    LENGTH = "Length"
+    VOLUME = "Volume"
+    AREA = "Area"
+    AGE = "Age"
+    INFORMATION = "Information"
+    TEMPERATURE = "Temperature"
+    CURRENCY = "Currency"
+
 class RelationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of relation. Examples include: ``DosageOfMedication`` or 'FrequencyOfMedication', etc.
     """
@@ -439,6 +543,34 @@ class RelationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     VALUE_OF_CONDITION = "ValueOfCondition"
     VALUE_OF_EXAMINATION = "ValueOfExamination"
 
+class RelativeTo(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reference point that the ordinal number denotes.
+    """
+
+    CURRENT = "Current"
+    END = "End"
+    START = "Start"
+
+class ResolutionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The entity resolution object kind.
+    """
+
+    BOOLEAN_RESOLUTION = "BooleanResolution"
+    DATE_TIME_RESOLUTION = "DateTimeResolution"
+    NUMBER_RESOLUTION = "NumberResolution"
+    ORDINAL_RESOLUTION = "OrdinalResolution"
+    SPEED_RESOLUTION = "SpeedResolution"
+    WEIGHT_RESOLUTION = "WeightResolution"
+    LENGTH_RESOLUTION = "LengthResolution"
+    VOLUME_RESOLUTION = "VolumeResolution"
+    AREA_RESOLUTION = "AreaResolution"
+    AGE_RESOLUTION = "AgeResolution"
+    INFORMATION_RESOLUTION = "InformationResolution"
+    TEMPERATURE_RESOLUTION = "TemperatureResolution"
+    CURRENCY_RESOLUTION = "CurrencyResolution"
+    NUMERIC_RANGE_RESOLUTION = "NumericRangeResolution"
+    TEMPORAL_SPAN_RESOLUTION = "TemporalSpanResolution"
+
 class ScriptKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Identifies the script of the input document.
     """
@@ -452,6 +584,25 @@ class SentenceSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     POSITIVE = "positive"
     NEUTRAL = "neutral"
     NEGATIVE = "negative"
+
+class SpeedUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The speed Unit of measurement.
+    """
+
+    UNSPECIFIED = "Unspecified"
+    METERS_PER_SECOND = "MetersPerSecond"
+    KILOMETERS_PER_HOUR = "KilometersPerHour"
+    KILOMETERS_PER_MINUTE = "KilometersPerMinute"
+    KILOMETERS_PER_SECOND = "KilometersPerSecond"
+    MILES_PER_HOUR = "MilesPerHour"
+    KNOT = "Knot"
+    FOOT_PER_SECOND = "FootPerSecond"
+    FOOT_PER_MINUTE = "FootPerMinute"
+    YARDS_PER_MINUTE = "YardsPerMinute"
+    YARDS_PER_SECOND = "YardsPerSecond"
+    METERS_PER_MILLISECOND = "MetersPerMillisecond"
+    CENTIMETERS_PER_MILLISECOND = "CentimetersPerMillisecond"
+    KILOMETERS_PER_MILLISECOND = "KilometersPerMillisecond"
 
 class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the task at the mentioned last update time.
@@ -489,6 +640,39 @@ class TargetRelationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ASSESSMENT = "assessment"
     TARGET = "target"
 
+class TemperatureUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The temperature Unit of measurement.
+    """
+
+    UNSPECIFIED = "Unspecified"
+    FAHRENHEIT = "Fahrenheit"
+    KELVIN = "Kelvin"
+    RANKINE = "Rankine"
+    CELSIUS = "Celsius"
+
+class TemporalModifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An optional modifier of a date/time instance.
+    """
+
+    AFTER_APPROX = "AfterApprox"
+    BEFORE = "Before"
+    BEFORE_START = "BeforeStart"
+    APPROX = "Approx"
+    REFERENCE_UNDEFINED = "ReferenceUndefined"
+    SINCE_END = "SinceEnd"
+    AFTER_MID = "AfterMid"
+    START = "Start"
+    AFTER = "After"
+    BEFORE_END = "BeforeEnd"
+    UNTIL = "Until"
+    END = "End"
+    LESS = "Less"
+    SINCE = "Since"
+    AFTER_START = "AfterStart"
+    BEFORE_APPROX = "BeforeApprox"
+    MID = "Mid"
+    MORE = "More"
+
 class TokenSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Targeted sentiment in the sentence.
     """
@@ -497,9 +681,63 @@ class TokenSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MIXED = "mixed"
     NEGATIVE = "negative"
 
+class VolumeUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Volume Unit of measurement.
+    """
+
+    UNSPECIFIED = "Unspecified"
+    CUBIC_METER = "CubicMeter"
+    CUBIC_CENTIMETER = "CubicCentimeter"
+    CUBIC_MILLIMETER = "CubicMillimeter"
+    HECTOLITER = "Hectoliter"
+    DECALITER = "Decaliter"
+    LITER = "Liter"
+    CENTILITER = "Centiliter"
+    MILLILITER = "Milliliter"
+    CUBIC_YARD = "CubicYard"
+    CUBIC_INCH = "CubicInch"
+    CUBIC_FOOT = "CubicFoot"
+    CUBIC_MILE = "CubicMile"
+    FLUID_OUNCE = "FluidOunce"
+    TEASPOON = "Teaspoon"
+    TABLESPOON = "Tablespoon"
+    PINT = "Pint"
+    QUART = "Quart"
+    CUP = "Cup"
+    GILL = "Gill"
+    PINCH = "Pinch"
+    FLUID_DRAM = "FluidDram"
+    BARREL = "Barrel"
+    MINIM = "Minim"
+    CORD = "Cord"
+    PECK = "Peck"
+    BUSHEL = "Bushel"
+    HOGSHEAD = "Hogshead"
+
 class WarningCodeValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Error code.
     """
 
     LONG_WORDS_IN_DOCUMENT = "LongWordsInDocument"
     DOCUMENT_TRUNCATED = "DocumentTruncated"
+
+class WeightUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The weight Unit of measurement.
+    """
+
+    UNSPECIFIED = "Unspecified"
+    KILOGRAM = "Kilogram"
+    GRAM = "Gram"
+    MILLIGRAM = "Milligram"
+    GALLON = "Gallon"
+    METRIC_TON = "MetricTon"
+    TON = "Ton"
+    POUND = "Pound"
+    OUNCE = "Ounce"
+    GRAIN = "Grain"
+    PENNY_WEIGHT = "PennyWeight"
+    LONG_TON_BRITISH = "LongTonBritish"
+    SHORT_TON_US = "ShortTonUS"
+    SHORT_HUNDRED_WEIGHT_US = "ShortHundredWeightUS"
+    STONE = "Stone"
+    DRAM = "Dram"

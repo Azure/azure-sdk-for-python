@@ -871,6 +871,130 @@ class AbstractiveSummary(_serialization.Model):
         self.contexts = contexts
 
 
+class QuantityResolution(_serialization.Model):
+    """Represents resolutions for quantities.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: The numeric value that the extracted text denotes. Required.
+    :vartype value: float
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "float"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        **kwargs
+    ):
+        """
+        :keyword value: The numeric value that the extracted text denotes. Required.
+        :paramtype value: float
+        """
+        super().__init__(**kwargs)
+        self.value = value
+
+
+class BaseResolution(_serialization.Model):
+    """The abstract base class for entity resolutions.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AgeResolution, AreaResolution, BooleanResolution, CurrencyResolution, DateTimeResolution,
+    InformationResolution, LengthResolution, NumberResolution, NumericRangeResolution,
+    OrdinalResolution, SpeedResolution, TemperatureResolution, TemporalSpanResolution,
+    VolumeResolution, WeightResolution
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
+     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
+     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
+     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+    :vartype resolution_kind: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
+    """
+
+    _validation = {
+        'resolution_kind': {'required': True},
+    }
+
+    _attribute_map = {
+        "resolution_kind": {"key": "resolutionKind", "type": "str"},
+    }
+
+    _subtype_map = {
+        'resolution_kind': {'AgeResolution': 'AgeResolution', 'AreaResolution': 'AreaResolution', 'BooleanResolution': 'BooleanResolution', 'CurrencyResolution': 'CurrencyResolution', 'DateTimeResolution': 'DateTimeResolution', 'InformationResolution': 'InformationResolution', 'LengthResolution': 'LengthResolution', 'NumberResolution': 'NumberResolution', 'NumericRangeResolution': 'NumericRangeResolution', 'OrdinalResolution': 'OrdinalResolution', 'SpeedResolution': 'SpeedResolution', 'TemperatureResolution': 'TemperatureResolution', 'TemporalSpanResolution': 'TemporalSpanResolution', 'VolumeResolution': 'VolumeResolution', 'WeightResolution': 'WeightResolution'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super().__init__(**kwargs)
+        self.resolution_kind = None  # type: Optional[str]
+
+
+class AgeResolution(BaseResolution, QuantityResolution):
+    """Represents the Age entity resolution model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: The numeric value that the extracted text denotes. Required.
+    :vartype value: float
+    :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
+     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
+     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
+     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+    :vartype resolution_kind: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
+    :ivar unit: The Age Unit of measurement. Required. Known values are: "Unspecified", "Year",
+     "Month", "Week", and "Day".
+    :vartype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AgeUnit
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'resolution_kind': {'required': True},
+        'unit': {'required': True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "float"},
+        "resolution_kind": {"key": "resolutionKind", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        unit: Union[str, "_models.AgeUnit"],
+        **kwargs
+    ):
+        """
+        :keyword value: The numeric value that the extracted text denotes. Required.
+        :paramtype value: float
+        :keyword unit: The Age Unit of measurement. Required. Known values are: "Unspecified", "Year",
+         "Month", "Week", and "Day".
+        :paramtype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AgeUnit
+        """
+        super().__init__(value=value, **kwargs)
+        self.value = value
+        self.resolution_kind = 'AgeResolution'  # type: str
+        self.unit = unit
+
+
 class AnalyzeTextTask(_serialization.Model):
     """AnalyzeTextTask.
 
@@ -1587,6 +1711,102 @@ class AnalyzeTextTaskResult(_serialization.Model):
         self.kind = None  # type: Optional[str]
 
 
+class AreaResolution(BaseResolution, QuantityResolution):
+    """Represents the area entity resolution model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: The numeric value that the extracted text denotes. Required.
+    :vartype value: float
+    :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
+     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
+     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
+     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+    :vartype resolution_kind: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
+    :ivar unit: The area Unit of measurement. Required. Known values are: "Unspecified",
+     "SquareKilometer", "SquareHectometer", "SquareDecameter", "SquareDecimeter", "SquareMeter",
+     "SquareCentimeter", "SquareMillimeter", "SquareInch", "SquareFoot", "SquareMile", "SquareYard",
+     and "Acre".
+    :vartype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AreaUnit
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'resolution_kind': {'required': True},
+        'unit': {'required': True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "float"},
+        "resolution_kind": {"key": "resolutionKind", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        unit: Union[str, "_models.AreaUnit"],
+        **kwargs
+    ):
+        """
+        :keyword value: The numeric value that the extracted text denotes. Required.
+        :paramtype value: float
+        :keyword unit: The area Unit of measurement. Required. Known values are: "Unspecified",
+         "SquareKilometer", "SquareHectometer", "SquareDecameter", "SquareDecimeter", "SquareMeter",
+         "SquareCentimeter", "SquareMillimeter", "SquareInch", "SquareFoot", "SquareMile", "SquareYard",
+         and "Acre".
+        :paramtype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AreaUnit
+        """
+        super().__init__(value=value, **kwargs)
+        self.value = value
+        self.resolution_kind = 'AreaResolution'  # type: str
+        self.unit = unit
+
+
+class BooleanResolution(BaseResolution):
+    """A resolution for boolean expressions.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
+     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
+     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
+     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+    :vartype resolution_kind: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
+    :ivar value: Required.
+    :vartype value: bool
+    """
+
+    _validation = {
+        'resolution_kind': {'required': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        "resolution_kind": {"key": "resolutionKind", "type": "str"},
+        "value": {"key": "value", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: bool,
+        **kwargs
+    ):
+        """
+        :keyword value: Required.
+        :paramtype value: bool
+        """
+        super().__init__(**kwargs)
+        self.resolution_kind = 'BooleanResolution'  # type: str
+        self.value = value
+
+
 class ClassificationDocumentResult(DocumentResult):
     """ClassificationDocumentResult.
 
@@ -1679,6 +1899,68 @@ class ClassificationResult(_serialization.Model):
         super().__init__(**kwargs)
         self.category = category
         self.confidence_score = confidence_score
+
+
+class CurrencyResolution(BaseResolution, QuantityResolution):
+    """Represents the currency entity resolution model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: The numeric value that the extracted text denotes. Required.
+    :vartype value: float
+    :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
+     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
+     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
+     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+    :vartype resolution_kind: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
+    :ivar iso4217: The alphabetic code based on another ISO standard, ISO 3166, which lists the
+     codes for country names. The first two letters of the ISO 4217 three-letter code are the same
+     as the code for the country name, and, where possible, the third letter corresponds to the
+     first letter of the currency name.
+    :vartype iso4217: str
+    :ivar unit: The unit of the amount captured in the extracted entity. Required.
+    :vartype unit: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'resolution_kind': {'required': True},
+        'unit': {'required': True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "float"},
+        "resolution_kind": {"key": "resolutionKind", "type": "str"},
+        "iso4217": {"key": "ISO4217", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        unit: str,
+        iso4217: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: The numeric value that the extracted text denotes. Required.
+        :paramtype value: float
+        :keyword iso4217: The alphabetic code based on another ISO standard, ISO 3166, which lists the
+         codes for country names. The first two letters of the ISO 4217 three-letter code are the same
+         as the code for the country name, and, where possible, the third letter corresponds to the
+         first letter of the currency name.
+        :paramtype iso4217: str
+        :keyword unit: The unit of the amount captured in the extracted entity. Required.
+        :paramtype unit: str
+        """
+        super().__init__(value=value, **kwargs)
+        self.value = value
+        self.resolution_kind = 'CurrencyResolution'  # type: str
+        self.iso4217 = iso4217
+        self.unit = unit
 
 
 class CustomEntitiesLROTask(AnalyzeTextLROTask):
@@ -1859,7 +2141,8 @@ class EntitiesDocumentResult(DocumentResult):
      information about the document payload.
     :vartype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
     :ivar entities: Recognized entities in the document. Required.
-    :vartype entities: list[~azure.ai.textanalytics.v2022_10_01_preview.models.Entity]
+    :vartype entities:
+     list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntityWithResolution]
     """
 
     _validation = {
@@ -1872,7 +2155,7 @@ class EntitiesDocumentResult(DocumentResult):
         "id": {"key": "id", "type": "str"},
         "warnings": {"key": "warnings", "type": "[DocumentWarning]"},
         "statistics": {"key": "statistics", "type": "DocumentStatistics"},
-        "entities": {"key": "entities", "type": "[Entity]"},
+        "entities": {"key": "entities", "type": "[EntityWithResolution]"},
     }
 
     def __init__(
@@ -1880,7 +2163,7 @@ class EntitiesDocumentResult(DocumentResult):
         *,
         id: str,  # pylint: disable=redefined-builtin
         warnings: List["_models.DocumentWarning"],
-        entities: List["_models.Entity"],
+        entities: List["_models.EntityWithResolution"],
         statistics: Optional["_models.DocumentStatistics"] = None,
         **kwargs
     ):
@@ -1893,7 +2176,8 @@ class EntitiesDocumentResult(DocumentResult):
          information about the document payload.
         :paramtype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
         :keyword entities: Recognized entities in the document. Required.
-        :paramtype entities: list[~azure.ai.textanalytics.v2022_10_01_preview.models.Entity]
+        :paramtype entities:
+         list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntityWithResolution]
         """
         super().__init__(id=id, warnings=warnings, statistics=statistics, **kwargs)
         self.entities = entities
@@ -1916,7 +2200,8 @@ class CustomEntitiesResultDocumentsItem(EntitiesDocumentResult, DocumentDetected
      information about the document payload.
     :vartype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
     :ivar entities: Recognized entities in the document. Required.
-    :vartype entities: list[~azure.ai.textanalytics.v2022_10_01_preview.models.Entity]
+    :vartype entities:
+     list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntityWithResolution]
     """
 
     _validation = {
@@ -1930,7 +2215,7 @@ class CustomEntitiesResultDocumentsItem(EntitiesDocumentResult, DocumentDetected
         "id": {"key": "id", "type": "str"},
         "warnings": {"key": "warnings", "type": "[DocumentWarning]"},
         "statistics": {"key": "statistics", "type": "DocumentStatistics"},
-        "entities": {"key": "entities", "type": "[Entity]"},
+        "entities": {"key": "entities", "type": "[EntityWithResolution]"},
     }
 
     def __init__(
@@ -1938,7 +2223,7 @@ class CustomEntitiesResultDocumentsItem(EntitiesDocumentResult, DocumentDetected
         *,
         id: str,  # pylint: disable=redefined-builtin
         warnings: List["_models.DocumentWarning"],
-        entities: List["_models.Entity"],
+        entities: List["_models.EntityWithResolution"],
         detected_language: Optional["_models.DetectedLanguage"] = None,
         statistics: Optional["_models.DocumentStatistics"] = None,
         **kwargs
@@ -1957,7 +2242,8 @@ class CustomEntitiesResultDocumentsItem(EntitiesDocumentResult, DocumentDetected
          information about the document payload.
         :paramtype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
         :keyword entities: Recognized entities in the document. Required.
-        :paramtype entities: list[~azure.ai.textanalytics.v2022_10_01_preview.models.Entity]
+        :paramtype entities:
+         list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntityWithResolution]
         """
         super().__init__(id=id, warnings=warnings, statistics=statistics, entities=entities, detected_language=detected_language, **kwargs)
         self.detected_language = detected_language
@@ -2582,6 +2868,84 @@ class CustomSingleLabelClassificationTaskParameters(CustomTaskParameters):
         :paramtype deployment_name: str
         """
         super().__init__(logging_opt_out=logging_opt_out, project_name=project_name, deployment_name=deployment_name, **kwargs)
+
+
+class DateTimeResolution(BaseResolution):
+    """A resolution for datetime entity instances.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
+     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
+     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
+     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+    :vartype resolution_kind: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
+    :ivar timex: An extended ISO 8601 date/time representation as described in
+     (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
+     Required.
+    :vartype timex: str
+    :ivar date_time_sub_kind: The DateTime SubKind. Required. Known values are: "Time", "Date",
+     "DateTime", "Duration", and "Set".
+    :vartype date_time_sub_kind: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.DateTimeSubKind
+    :ivar value: The actual time that the extracted text denote. Required.
+    :vartype value: str
+    :ivar modifier: An optional modifier of a date/time instance. Known values are: "AfterApprox",
+     "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid", "Start",
+     "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox", "Mid", and
+     "More".
+    :vartype modifier: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.TemporalModifier
+    """
+
+    _validation = {
+        'resolution_kind': {'required': True},
+        'timex': {'required': True},
+        'date_time_sub_kind': {'required': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        "resolution_kind": {"key": "resolutionKind", "type": "str"},
+        "timex": {"key": "timex", "type": "str"},
+        "date_time_sub_kind": {"key": "dateTimeSubKind", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "modifier": {"key": "modifier", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        timex: str,
+        date_time_sub_kind: Union[str, "_models.DateTimeSubKind"],
+        value: str,
+        modifier: Optional[Union[str, "_models.TemporalModifier"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword timex: An extended ISO 8601 date/time representation as described in
+         (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
+         Required.
+        :paramtype timex: str
+        :keyword date_time_sub_kind: The DateTime SubKind. Required. Known values are: "Time", "Date",
+         "DateTime", "Duration", and "Set".
+        :paramtype date_time_sub_kind: str or
+         ~azure.ai.textanalytics.v2022_10_01_preview.models.DateTimeSubKind
+        :keyword value: The actual time that the extracted text denote. Required.
+        :paramtype value: str
+        :keyword modifier: An optional modifier of a date/time instance. Known values are:
+         "AfterApprox", "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid",
+         "Start", "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox",
+         "Mid", and "More".
+        :paramtype modifier: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.TemporalModifier
+        """
+        super().__init__(**kwargs)
+        self.resolution_kind = 'DateTimeResolution'  # type: str
+        self.timex = timex
+        self.date_time_sub_kind = date_time_sub_kind
+        self.value = value
+        self.modifier = modifier
 
 
 class DetectedLanguage(_serialization.Model):
@@ -3224,7 +3588,8 @@ class EntitiesResultDocumentsItem(EntitiesDocumentResult, DocumentDetectedLangua
      information about the document payload.
     :vartype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
     :ivar entities: Recognized entities in the document. Required.
-    :vartype entities: list[~azure.ai.textanalytics.v2022_10_01_preview.models.Entity]
+    :vartype entities:
+     list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntityWithResolution]
     """
 
     _validation = {
@@ -3238,7 +3603,7 @@ class EntitiesResultDocumentsItem(EntitiesDocumentResult, DocumentDetectedLangua
         "id": {"key": "id", "type": "str"},
         "warnings": {"key": "warnings", "type": "[DocumentWarning]"},
         "statistics": {"key": "statistics", "type": "DocumentStatistics"},
-        "entities": {"key": "entities", "type": "[Entity]"},
+        "entities": {"key": "entities", "type": "[EntityWithResolution]"},
     }
 
     def __init__(
@@ -3246,7 +3611,7 @@ class EntitiesResultDocumentsItem(EntitiesDocumentResult, DocumentDetectedLangua
         *,
         id: str,  # pylint: disable=redefined-builtin
         warnings: List["_models.DocumentWarning"],
-        entities: List["_models.Entity"],
+        entities: List["_models.EntityWithResolution"],
         detected_language: Optional["_models.DetectedLanguage"] = None,
         statistics: Optional["_models.DocumentStatistics"] = None,
         **kwargs
@@ -3265,7 +3630,8 @@ class EntitiesResultDocumentsItem(EntitiesDocumentResult, DocumentDetectedLangua
          information about the document payload.
         :paramtype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
         :keyword entities: Recognized entities in the document. Required.
-        :paramtype entities: list[~azure.ai.textanalytics.v2022_10_01_preview.models.Entity]
+        :paramtype entities:
+         list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntityWithResolution]
         """
         super().__init__(id=id, warnings=warnings, statistics=statistics, entities=entities, detected_language=detected_language, **kwargs)
         self.detected_language = detected_language
@@ -3872,6 +4238,81 @@ class EntityRecognitionLROResult(AnalyzeTextLROResult):
         super().__init__(task_name=task_name, last_update_date_time=last_update_date_time, status=status, **kwargs)
         self.kind = 'EntityRecognitionLROResults'  # type: str
         self.results = results
+
+
+class EntityWithResolution(Entity):
+    """EntityWithResolution.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar text: Entity text as appears in the request. Required.
+    :vartype text: str
+    :ivar category: Entity type. Required.
+    :vartype category: str
+    :ivar subcategory: (Optional) Entity sub type.
+    :vartype subcategory: str
+    :ivar offset: Start position for the entity text. Use of different 'stringIndexType' values can
+     affect the offset returned. Required.
+    :vartype offset: int
+    :ivar length: Length for the entity text. Use of different 'stringIndexType' values can affect
+     the length returned. Required.
+    :vartype length: int
+    :ivar confidence_score: Confidence score between 0 and 1 of the extracted entity. Required.
+    :vartype confidence_score: float
+    :ivar resolutions: The collection of entity resolution objects.
+    :vartype resolutions: list[~azure.ai.textanalytics.v2022_10_01_preview.models.BaseResolution]
+    """
+
+    _validation = {
+        'text': {'required': True},
+        'category': {'required': True},
+        'offset': {'required': True},
+        'length': {'required': True},
+        'confidence_score': {'required': True},
+    }
+
+    _attribute_map = {
+        "text": {"key": "text", "type": "str"},
+        "category": {"key": "category", "type": "str"},
+        "subcategory": {"key": "subcategory", "type": "str"},
+        "offset": {"key": "offset", "type": "int"},
+        "length": {"key": "length", "type": "int"},
+        "confidence_score": {"key": "confidenceScore", "type": "float"},
+        "resolutions": {"key": "resolutions", "type": "[BaseResolution]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        text: str,
+        category: str,
+        offset: int,
+        length: int,
+        confidence_score: float,
+        subcategory: Optional[str] = None,
+        resolutions: Optional[List["_models.BaseResolution"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword text: Entity text as appears in the request. Required.
+        :paramtype text: str
+        :keyword category: Entity type. Required.
+        :paramtype category: str
+        :keyword subcategory: (Optional) Entity sub type.
+        :paramtype subcategory: str
+        :keyword offset: Start position for the entity text. Use of different 'stringIndexType' values
+         can affect the offset returned. Required.
+        :paramtype offset: int
+        :keyword length: Length for the entity text. Use of different 'stringIndexType' values can
+         affect the length returned. Required.
+        :paramtype length: int
+        :keyword confidence_score: Confidence score between 0 and 1 of the extracted entity. Required.
+        :paramtype confidence_score: float
+        :keyword resolutions: The collection of entity resolution objects.
+        :paramtype resolutions: list[~azure.ai.textanalytics.v2022_10_01_preview.models.BaseResolution]
+        """
+        super().__init__(text=text, category=category, subcategory=subcategory, offset=offset, length=length, confidence_score=confidence_score, **kwargs)
+        self.resolutions = resolutions
 
 
 class Error(_serialization.Model):
@@ -5097,6 +5538,59 @@ class HealthcareTaskParameters(PreBuiltTaskParameters):
         self.string_index_type = string_index_type
 
 
+class InformationResolution(BaseResolution, QuantityResolution):
+    """Represents the information (data) entity resolution model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: The numeric value that the extracted text denotes. Required.
+    :vartype value: float
+    :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
+     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
+     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
+     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+    :vartype resolution_kind: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
+    :ivar unit: The information (data) Unit of measurement. Required. Known values are:
+     "Unspecified", "Bit", "Kilobit", "Megabit", "Gigabit", "Terabit", "Petabit", "Byte",
+     "Kilobyte", "Megabyte", "Gigabyte", "Terabyte", and "Petabyte".
+    :vartype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.InformationUnit
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'resolution_kind': {'required': True},
+        'unit': {'required': True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "float"},
+        "resolution_kind": {"key": "resolutionKind", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        unit: Union[str, "_models.InformationUnit"],
+        **kwargs
+    ):
+        """
+        :keyword value: The numeric value that the extracted text denotes. Required.
+        :paramtype value: float
+        :keyword unit: The information (data) Unit of measurement. Required. Known values are:
+         "Unspecified", "Bit", "Kilobit", "Megabit", "Gigabit", "Terabit", "Petabit", "Byte",
+         "Kilobyte", "Megabyte", "Gigabyte", "Terabyte", and "Petabyte".
+        :paramtype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.InformationUnit
+        """
+        super().__init__(value=value, **kwargs)
+        self.value = value
+        self.resolution_kind = 'InformationResolution'  # type: str
+        self.unit = unit
+
+
 class InnerErrorModel(_serialization.Model):
     """An object containing more specific information about the error. As per Microsoft One API guidelines - https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses.
 
@@ -5820,6 +6314,59 @@ class LanguageInput(_serialization.Model):
         self.country_hint = country_hint
 
 
+class LengthResolution(BaseResolution, QuantityResolution):
+    """Represents the length entity resolution model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: The numeric value that the extracted text denotes. Required.
+    :vartype value: float
+    :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
+     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
+     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
+     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+    :vartype resolution_kind: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
+    :ivar unit: The length Unit of measurement. Required. Known values are: "Unspecified",
+     "Kilometer", "Hectometer", "Decameter", "Meter", "Decimeter", "Centimeter", "Millimeter",
+     "Micrometer", "Nanometer", "Picometer", "Mile", "Yard", "Inch", "Foot", "LightYear", and "Pt".
+    :vartype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.LengthUnit
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'resolution_kind': {'required': True},
+        'unit': {'required': True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "float"},
+        "resolution_kind": {"key": "resolutionKind", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        unit: Union[str, "_models.LengthUnit"],
+        **kwargs
+    ):
+        """
+        :keyword value: The numeric value that the extracted text denotes. Required.
+        :paramtype value: float
+        :keyword unit: The length Unit of measurement. Required. Known values are: "Unspecified",
+         "Kilometer", "Hectometer", "Decameter", "Meter", "Decimeter", "Centimeter", "Millimeter",
+         "Micrometer", "Nanometer", "Picometer", "Mile", "Yard", "Inch", "Foot", "LightYear", and "Pt".
+        :paramtype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.LengthUnit
+        """
+        super().__init__(value=value, **kwargs)
+        self.value = value
+        self.resolution_kind = 'LengthResolution'  # type: str
+        self.unit = unit
+
+
 class LinkedEntity(_serialization.Model):
     """LinkedEntity.
 
@@ -6029,6 +6576,179 @@ class MultiLanguageInput(_serialization.Model):
         self.id = id
         self.text = text
         self.language = language
+
+
+class NumberResolution(BaseResolution):
+    """A resolution for numeric entity instances.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
+     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
+     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
+     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+    :vartype resolution_kind: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
+    :ivar number_kind: The type of the extracted number entity. Required. Known values are:
+     "Integer", "Decimal", "Power", "Fraction", "Percent", and "Unspecified".
+    :vartype number_kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.NumberKind
+    :ivar value: A numeric representation of what the extracted text denotes. Required.
+    :vartype value: str
+    """
+
+    _validation = {
+        'resolution_kind': {'required': True},
+        'number_kind': {'required': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        "resolution_kind": {"key": "resolutionKind", "type": "str"},
+        "number_kind": {"key": "numberKind", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        number_kind: Union[str, "_models.NumberKind"],
+        value: str,
+        **kwargs
+    ):
+        """
+        :keyword number_kind: The type of the extracted number entity. Required. Known values are:
+         "Integer", "Decimal", "Power", "Fraction", "Percent", and "Unspecified".
+        :paramtype number_kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.NumberKind
+        :keyword value: A numeric representation of what the extracted text denotes. Required.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
+        self.resolution_kind = 'NumberResolution'  # type: str
+        self.number_kind = number_kind
+        self.value = value
+
+
+class NumericRangeResolution(BaseResolution):
+    """represents the resolution of numeric intervals.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
+     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
+     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
+     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+    :vartype resolution_kind: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
+    :ivar range_kind: The kind of range that the resolution object represents. Required. Known
+     values are: "Number", "Speed", "Weight", "Length", "Volume", "Area", "Age", "Information",
+     "Temperature", and "Currency".
+    :vartype range_kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.RangeKind
+    :ivar minimum: The beginning value of  the interval. Required.
+    :vartype minimum: float
+    :ivar maximum: The ending value of the interval. Required.
+    :vartype maximum: float
+    """
+
+    _validation = {
+        'resolution_kind': {'required': True},
+        'range_kind': {'required': True},
+        'minimum': {'required': True},
+        'maximum': {'required': True},
+    }
+
+    _attribute_map = {
+        "resolution_kind": {"key": "resolutionKind", "type": "str"},
+        "range_kind": {"key": "rangeKind", "type": "str"},
+        "minimum": {"key": "minimum", "type": "float"},
+        "maximum": {"key": "maximum", "type": "float"},
+    }
+
+    def __init__(
+        self,
+        *,
+        range_kind: Union[str, "_models.RangeKind"],
+        minimum: float,
+        maximum: float,
+        **kwargs
+    ):
+        """
+        :keyword range_kind: The kind of range that the resolution object represents. Required. Known
+         values are: "Number", "Speed", "Weight", "Length", "Volume", "Area", "Age", "Information",
+         "Temperature", and "Currency".
+        :paramtype range_kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.RangeKind
+        :keyword minimum: The beginning value of  the interval. Required.
+        :paramtype minimum: float
+        :keyword maximum: The ending value of the interval. Required.
+        :paramtype maximum: float
+        """
+        super().__init__(**kwargs)
+        self.resolution_kind = 'NumericRangeResolution'  # type: str
+        self.range_kind = range_kind
+        self.minimum = minimum
+        self.maximum = maximum
+
+
+class OrdinalResolution(BaseResolution):
+    """A resolution for ordinal numbers entity instances.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
+     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
+     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
+     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+    :vartype resolution_kind: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
+    :ivar offset: The offset With respect to the reference (e.g., offset = -1 in "show me the
+     second to last". Required.
+    :vartype offset: str
+    :ivar relative_to: The reference point that the ordinal number denotes. Required. Known values
+     are: "Current", "End", and "Start".
+    :vartype relative_to: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.RelativeTo
+    :ivar value: A simple arithmetic expression that the ordinal denotes. Required.
+    :vartype value: str
+    """
+
+    _validation = {
+        'resolution_kind': {'required': True},
+        'offset': {'required': True},
+        'relative_to': {'required': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        "resolution_kind": {"key": "resolutionKind", "type": "str"},
+        "offset": {"key": "offset", "type": "str"},
+        "relative_to": {"key": "relativeTo", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        offset: str,
+        relative_to: Union[str, "_models.RelativeTo"],
+        value: str,
+        **kwargs
+    ):
+        """
+        :keyword offset: The offset With respect to the reference (e.g., offset = -1 in "show me the
+         second to last". Required.
+        :paramtype offset: str
+        :keyword relative_to: The reference point that the ordinal number denotes. Required. Known
+         values are: "Current", "End", and "Start".
+        :paramtype relative_to: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.RelativeTo
+        :keyword value: A simple arithmetic expression that the ordinal denotes. Required.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
+        self.resolution_kind = 'OrdinalResolution'  # type: str
+        self.offset = offset
+        self.relative_to = relative_to
+        self.value = value
 
 
 class Pagination(_serialization.Model):
@@ -7232,6 +7952,61 @@ class SentimentTaskResult(AnalyzeTextTaskResult):
         self.results = results
 
 
+class SpeedResolution(BaseResolution, QuantityResolution):
+    """Represents the speed entity resolution model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: The numeric value that the extracted text denotes. Required.
+    :vartype value: float
+    :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
+     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
+     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
+     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+    :vartype resolution_kind: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
+    :ivar unit: The speed Unit of measurement. Required. Known values are: "Unspecified",
+     "MetersPerSecond", "KilometersPerHour", "KilometersPerMinute", "KilometersPerSecond",
+     "MilesPerHour", "Knot", "FootPerSecond", "FootPerMinute", "YardsPerMinute", "YardsPerSecond",
+     "MetersPerMillisecond", "CentimetersPerMillisecond", and "KilometersPerMillisecond".
+    :vartype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.SpeedUnit
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'resolution_kind': {'required': True},
+        'unit': {'required': True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "float"},
+        "resolution_kind": {"key": "resolutionKind", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        unit: Union[str, "_models.SpeedUnit"],
+        **kwargs
+    ):
+        """
+        :keyword value: The numeric value that the extracted text denotes. Required.
+        :paramtype value: float
+        :keyword unit: The speed Unit of measurement. Required. Known values are: "Unspecified",
+         "MetersPerSecond", "KilometersPerHour", "KilometersPerMinute", "KilometersPerSecond",
+         "MilesPerHour", "Knot", "FootPerSecond", "FootPerMinute", "YardsPerMinute", "YardsPerSecond",
+         "MetersPerMillisecond", "CentimetersPerMillisecond", and "KilometersPerMillisecond".
+        :paramtype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.SpeedUnit
+        """
+        super().__init__(value=value, **kwargs)
+        self.value = value
+        self.resolution_kind = 'SpeedResolution'  # type: str
+        self.unit = unit
+
+
 class SummaryContext(_serialization.Model):
     """The context of the summary.
 
@@ -7417,3 +8192,237 @@ class TasksStateTasks(_serialization.Model):
         self.in_progress = in_progress
         self.total = total
         self.items = items
+
+
+class TemperatureResolution(BaseResolution, QuantityResolution):
+    """Represents the temperature entity resolution model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: The numeric value that the extracted text denotes. Required.
+    :vartype value: float
+    :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
+     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
+     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
+     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+    :vartype resolution_kind: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
+    :ivar unit: The temperature Unit of measurement. Required. Known values are: "Unspecified",
+     "Fahrenheit", "Kelvin", "Rankine", and "Celsius".
+    :vartype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.TemperatureUnit
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'resolution_kind': {'required': True},
+        'unit': {'required': True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "float"},
+        "resolution_kind": {"key": "resolutionKind", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        unit: Union[str, "_models.TemperatureUnit"],
+        **kwargs
+    ):
+        """
+        :keyword value: The numeric value that the extracted text denotes. Required.
+        :paramtype value: float
+        :keyword unit: The temperature Unit of measurement. Required. Known values are: "Unspecified",
+         "Fahrenheit", "Kelvin", "Rankine", and "Celsius".
+        :paramtype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.TemperatureUnit
+        """
+        super().__init__(value=value, **kwargs)
+        self.value = value
+        self.resolution_kind = 'TemperatureResolution'  # type: str
+        self.unit = unit
+
+
+class TemporalSpanResolution(BaseResolution):
+    """represents the resolution of a date and/or time span.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
+     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
+     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
+     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+    :vartype resolution_kind: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
+    :ivar begin: An extended ISO 8601 date/time representation as described in
+     (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
+    :vartype begin: str
+    :ivar end: An extended ISO 8601 date/time representation as described in
+     (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
+    :vartype end: str
+    :ivar duration: An optional duration value formatted based on the ISO 8601
+     (https://en.wikipedia.org/wiki/ISO_8601#Durations).
+    :vartype duration: str
+    :ivar modifier: An optional modifier of a date/time instance. Known values are: "AfterApprox",
+     "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid", "Start",
+     "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox", "Mid", and
+     "More".
+    :vartype modifier: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.TemporalModifier
+    """
+
+    _validation = {
+        'resolution_kind': {'required': True},
+    }
+
+    _attribute_map = {
+        "resolution_kind": {"key": "resolutionKind", "type": "str"},
+        "begin": {"key": "begin", "type": "str"},
+        "end": {"key": "end", "type": "str"},
+        "duration": {"key": "duration", "type": "str"},
+        "modifier": {"key": "modifier", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        begin: Optional[str] = None,
+        end: Optional[str] = None,
+        duration: Optional[str] = None,
+        modifier: Optional[Union[str, "_models.TemporalModifier"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword begin: An extended ISO 8601 date/time representation as described in
+         (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
+        :paramtype begin: str
+        :keyword end: An extended ISO 8601 date/time representation as described in
+         (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
+        :paramtype end: str
+        :keyword duration: An optional duration value formatted based on the ISO 8601
+         (https://en.wikipedia.org/wiki/ISO_8601#Durations).
+        :paramtype duration: str
+        :keyword modifier: An optional modifier of a date/time instance. Known values are:
+         "AfterApprox", "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid",
+         "Start", "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox",
+         "Mid", and "More".
+        :paramtype modifier: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.TemporalModifier
+        """
+        super().__init__(**kwargs)
+        self.resolution_kind = 'TemporalSpanResolution'  # type: str
+        self.begin = begin
+        self.end = end
+        self.duration = duration
+        self.modifier = modifier
+
+
+class VolumeResolution(BaseResolution, QuantityResolution):
+    """Represents the volume entity resolution model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: The numeric value that the extracted text denotes. Required.
+    :vartype value: float
+    :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
+     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
+     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
+     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+    :vartype resolution_kind: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
+    :ivar unit: The Volume Unit of measurement. Required. Known values are: "Unspecified",
+     "CubicMeter", "CubicCentimeter", "CubicMillimeter", "Hectoliter", "Decaliter", "Liter",
+     "Centiliter", "Milliliter", "CubicYard", "CubicInch", "CubicFoot", "CubicMile", "FluidOunce",
+     "Teaspoon", "Tablespoon", "Pint", "Quart", "Cup", "Gill", "Pinch", "FluidDram", "Barrel",
+     "Minim", "Cord", "Peck", "Bushel", and "Hogshead".
+    :vartype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.VolumeUnit
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'resolution_kind': {'required': True},
+        'unit': {'required': True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "float"},
+        "resolution_kind": {"key": "resolutionKind", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        unit: Union[str, "_models.VolumeUnit"],
+        **kwargs
+    ):
+        """
+        :keyword value: The numeric value that the extracted text denotes. Required.
+        :paramtype value: float
+        :keyword unit: The Volume Unit of measurement. Required. Known values are: "Unspecified",
+         "CubicMeter", "CubicCentimeter", "CubicMillimeter", "Hectoliter", "Decaliter", "Liter",
+         "Centiliter", "Milliliter", "CubicYard", "CubicInch", "CubicFoot", "CubicMile", "FluidOunce",
+         "Teaspoon", "Tablespoon", "Pint", "Quart", "Cup", "Gill", "Pinch", "FluidDram", "Barrel",
+         "Minim", "Cord", "Peck", "Bushel", and "Hogshead".
+        :paramtype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.VolumeUnit
+        """
+        super().__init__(value=value, **kwargs)
+        self.value = value
+        self.resolution_kind = 'VolumeResolution'  # type: str
+        self.unit = unit
+
+
+class WeightResolution(BaseResolution, QuantityResolution):
+    """Represents the weight entity resolution model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: The numeric value that the extracted text denotes. Required.
+    :vartype value: float
+    :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
+     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
+     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
+     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+    :vartype resolution_kind: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
+    :ivar unit: The weight Unit of measurement. Required. Known values are: "Unspecified",
+     "Kilogram", "Gram", "Milligram", "Gallon", "MetricTon", "Ton", "Pound", "Ounce", "Grain",
+     "PennyWeight", "LongTonBritish", "ShortTonUS", "ShortHundredWeightUS", "Stone", and "Dram".
+    :vartype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.WeightUnit
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'resolution_kind': {'required': True},
+        'unit': {'required': True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "float"},
+        "resolution_kind": {"key": "resolutionKind", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        unit: Union[str, "_models.WeightUnit"],
+        **kwargs
+    ):
+        """
+        :keyword value: The numeric value that the extracted text denotes. Required.
+        :paramtype value: float
+        :keyword unit: The weight Unit of measurement. Required. Known values are: "Unspecified",
+         "Kilogram", "Gram", "Milligram", "Gallon", "MetricTon", "Ton", "Pound", "Ounce", "Grain",
+         "PennyWeight", "LongTonBritish", "ShortTonUS", "ShortHundredWeightUS", "Stone", and "Dram".
+        :paramtype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.WeightUnit
+        """
+        super().__init__(value=value, **kwargs)
+        self.value = value
+        self.resolution_kind = 'WeightResolution'  # type: str
+        self.unit = unit

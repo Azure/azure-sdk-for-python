@@ -15,6 +15,7 @@ from ._models_py3 import AbstractiveSummarizationTaskParameters
 from ._models_py3 import AbstractiveSummarizationTaskParametersBase
 from ._models_py3 import AbstractiveSummary
 from ._models_py3 import AbstractiveSummaryDocumentResult
+from ._models_py3 import AgeResolution
 from ._models_py3 import AnalyzeTextDynamicClassificationInput
 from ._models_py3 import AnalyzeTextEntityLinkingInput
 from ._models_py3 import AnalyzeTextEntityRecognitionInput
@@ -29,8 +30,12 @@ from ._models_py3 import AnalyzeTextPiiEntitiesRecognitionInput
 from ._models_py3 import AnalyzeTextSentimentAnalysisInput
 from ._models_py3 import AnalyzeTextTask
 from ._models_py3 import AnalyzeTextTaskResult
+from ._models_py3 import AreaResolution
+from ._models_py3 import BaseResolution
+from ._models_py3 import BooleanResolution
 from ._models_py3 import ClassificationDocumentResult
 from ._models_py3 import ClassificationResult
+from ._models_py3 import CurrencyResolution
 from ._models_py3 import CustomEntitiesLROTask
 from ._models_py3 import CustomEntitiesResult
 from ._models_py3 import CustomEntitiesResultDocumentsItem
@@ -46,6 +51,7 @@ from ._models_py3 import CustomSingleLabelClassificationLROResult
 from ._models_py3 import CustomSingleLabelClassificationLROTask
 from ._models_py3 import CustomSingleLabelClassificationTaskParameters
 from ._models_py3 import CustomTaskParameters
+from ._models_py3 import DateTimeResolution
 from ._models_py3 import DetectedLanguage
 from ._models_py3 import DocumentDetectedLanguage
 from ._models_py3 import DocumentError
@@ -71,6 +77,7 @@ from ._models_py3 import EntityLinkingResultDocumentsItem
 from ._models_py3 import EntityLinkingTaskParameters
 from ._models_py3 import EntityLinkingTaskResult
 from ._models_py3 import EntityRecognitionLROResult
+from ._models_py3 import EntityWithResolution
 from ._models_py3 import Error
 from ._models_py3 import ErrorResponse
 from ._models_py3 import ExtractedSummaryDocumentResult
@@ -91,6 +98,7 @@ from ._models_py3 import HealthcareRelationEntity
 from ._models_py3 import HealthcareResult
 from ._models_py3 import HealthcareResultDocumentsItem
 from ._models_py3 import HealthcareTaskParameters
+from ._models_py3 import InformationResolution
 from ._models_py3 import InnerErrorModel
 from ._models_py3 import InputError
 from ._models_py3 import JobState
@@ -107,11 +115,15 @@ from ._models_py3 import LanguageDetectionResult
 from ._models_py3 import LanguageDetectionTaskParameters
 from ._models_py3 import LanguageDetectionTaskResult
 from ._models_py3 import LanguageInput
+from ._models_py3 import LengthResolution
 from ._models_py3 import LinkedEntitiesDocumentResult
 from ._models_py3 import LinkedEntity
 from ._models_py3 import Match
 from ._models_py3 import MultiLanguageAnalysisInput
 from ._models_py3 import MultiLanguageInput
+from ._models_py3 import NumberResolution
+from ._models_py3 import NumericRangeResolution
+from ._models_py3 import OrdinalResolution
 from ._models_py3 import Pagination
 from ._models_py3 import PhraseControl
 from ._models_py3 import PiiEntitiesDocumentResult
@@ -123,6 +135,7 @@ from ._models_py3 import PiiTaskParameters
 from ._models_py3 import PiiTaskResult
 from ._models_py3 import PreBuiltResult
 from ._models_py3 import PreBuiltTaskParameters
+from ._models_py3 import QuantityResolution
 from ._models_py3 import RequestStatistics
 from ._models_py3 import SentenceAssessment
 from ._models_py3 import SentenceSentiment
@@ -135,6 +148,7 @@ from ._models_py3 import SentimentLROResult
 from ._models_py3 import SentimentResponse
 from ._models_py3 import SentimentResponseDocumentsItem
 from ._models_py3 import SentimentTaskResult
+from ._models_py3 import SpeedResolution
 from ._models_py3 import SummaryContext
 from ._models_py3 import TargetConfidenceScoreLabel
 from ._models_py3 import TargetRelation
@@ -143,34 +157,52 @@ from ._models_py3 import TaskParameters
 from ._models_py3 import TaskState
 from ._models_py3 import TasksState
 from ._models_py3 import TasksStateTasks
+from ._models_py3 import TemperatureResolution
+from ._models_py3 import TemporalSpanResolution
+from ._models_py3 import VolumeResolution
+from ._models_py3 import WeightResolution
 
 
+from ._text_analytics_client_enums import AgeUnit
 from ._text_analytics_client_enums import AnalyzeTextLROResultsKind
 from ._text_analytics_client_enums import AnalyzeTextLROTaskKind
 from ._text_analytics_client_enums import AnalyzeTextTaskKind
 from ._text_analytics_client_enums import AnalyzeTextTaskResultsKind
+from ._text_analytics_client_enums import AreaUnit
 from ._text_analytics_client_enums import Association
 from ._text_analytics_client_enums import Certainty
 from ._text_analytics_client_enums import ClassificationType
 from ._text_analytics_client_enums import Conditionality
+from ._text_analytics_client_enums import DateTimeSubKind
 from ._text_analytics_client_enums import DocumentSentimentValue
 from ._text_analytics_client_enums import DocumentType
 from ._text_analytics_client_enums import ErrorCode
 from ._text_analytics_client_enums import ExtractiveSummarizationSortingCriteria
 from ._text_analytics_client_enums import FhirVersion
 from ._text_analytics_client_enums import HealthcareEntityCategory
+from ._text_analytics_client_enums import InformationUnit
 from ._text_analytics_client_enums import InnerErrorCode
+from ._text_analytics_client_enums import LengthUnit
+from ._text_analytics_client_enums import NumberKind
 from ._text_analytics_client_enums import PhraseControlStrategy
 from ._text_analytics_client_enums import PiiCategory
 from ._text_analytics_client_enums import PiiDomain
+from ._text_analytics_client_enums import RangeKind
 from ._text_analytics_client_enums import RelationType
+from ._text_analytics_client_enums import RelativeTo
+from ._text_analytics_client_enums import ResolutionKind
 from ._text_analytics_client_enums import ScriptKind
 from ._text_analytics_client_enums import SentenceSentimentValue
+from ._text_analytics_client_enums import SpeedUnit
 from ._text_analytics_client_enums import State
 from ._text_analytics_client_enums import StringIndexType
 from ._text_analytics_client_enums import TargetRelationType
+from ._text_analytics_client_enums import TemperatureUnit
+from ._text_analytics_client_enums import TemporalModifier
 from ._text_analytics_client_enums import TokenSentimentValue
+from ._text_analytics_client_enums import VolumeUnit
 from ._text_analytics_client_enums import WarningCodeValue
+from ._text_analytics_client_enums import WeightUnit
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -184,6 +216,7 @@ __all__ = [
     'AbstractiveSummarizationTaskParametersBase',
     'AbstractiveSummary',
     'AbstractiveSummaryDocumentResult',
+    'AgeResolution',
     'AnalyzeTextDynamicClassificationInput',
     'AnalyzeTextEntityLinkingInput',
     'AnalyzeTextEntityRecognitionInput',
@@ -198,8 +231,12 @@ __all__ = [
     'AnalyzeTextSentimentAnalysisInput',
     'AnalyzeTextTask',
     'AnalyzeTextTaskResult',
+    'AreaResolution',
+    'BaseResolution',
+    'BooleanResolution',
     'ClassificationDocumentResult',
     'ClassificationResult',
+    'CurrencyResolution',
     'CustomEntitiesLROTask',
     'CustomEntitiesResult',
     'CustomEntitiesResultDocumentsItem',
@@ -215,6 +252,7 @@ __all__ = [
     'CustomSingleLabelClassificationLROTask',
     'CustomSingleLabelClassificationTaskParameters',
     'CustomTaskParameters',
+    'DateTimeResolution',
     'DetectedLanguage',
     'DocumentDetectedLanguage',
     'DocumentError',
@@ -240,6 +278,7 @@ __all__ = [
     'EntityLinkingTaskParameters',
     'EntityLinkingTaskResult',
     'EntityRecognitionLROResult',
+    'EntityWithResolution',
     'Error',
     'ErrorResponse',
     'ExtractedSummaryDocumentResult',
@@ -260,6 +299,7 @@ __all__ = [
     'HealthcareResult',
     'HealthcareResultDocumentsItem',
     'HealthcareTaskParameters',
+    'InformationResolution',
     'InnerErrorModel',
     'InputError',
     'JobState',
@@ -276,11 +316,15 @@ __all__ = [
     'LanguageDetectionTaskParameters',
     'LanguageDetectionTaskResult',
     'LanguageInput',
+    'LengthResolution',
     'LinkedEntitiesDocumentResult',
     'LinkedEntity',
     'Match',
     'MultiLanguageAnalysisInput',
     'MultiLanguageInput',
+    'NumberResolution',
+    'NumericRangeResolution',
+    'OrdinalResolution',
     'Pagination',
     'PhraseControl',
     'PiiEntitiesDocumentResult',
@@ -292,6 +336,7 @@ __all__ = [
     'PiiTaskResult',
     'PreBuiltResult',
     'PreBuiltTaskParameters',
+    'QuantityResolution',
     'RequestStatistics',
     'SentenceAssessment',
     'SentenceSentiment',
@@ -304,6 +349,7 @@ __all__ = [
     'SentimentResponse',
     'SentimentResponseDocumentsItem',
     'SentimentTaskResult',
+    'SpeedResolution',
     'SummaryContext',
     'TargetConfidenceScoreLabel',
     'TargetRelation',
@@ -312,32 +358,50 @@ __all__ = [
     'TaskState',
     'TasksState',
     'TasksStateTasks',
+    'TemperatureResolution',
+    'TemporalSpanResolution',
+    'VolumeResolution',
+    'WeightResolution',
+    'AgeUnit',
     'AnalyzeTextLROResultsKind',
     'AnalyzeTextLROTaskKind',
     'AnalyzeTextTaskKind',
     'AnalyzeTextTaskResultsKind',
+    'AreaUnit',
     'Association',
     'Certainty',
     'ClassificationType',
     'Conditionality',
+    'DateTimeSubKind',
     'DocumentSentimentValue',
     'DocumentType',
     'ErrorCode',
     'ExtractiveSummarizationSortingCriteria',
     'FhirVersion',
     'HealthcareEntityCategory',
+    'InformationUnit',
     'InnerErrorCode',
+    'LengthUnit',
+    'NumberKind',
     'PhraseControlStrategy',
     'PiiCategory',
     'PiiDomain',
+    'RangeKind',
     'RelationType',
+    'RelativeTo',
+    'ResolutionKind',
     'ScriptKind',
     'SentenceSentimentValue',
+    'SpeedUnit',
     'State',
     'StringIndexType',
     'TargetRelationType',
+    'TemperatureUnit',
+    'TemporalModifier',
     'TokenSentimentValue',
+    'VolumeUnit',
     'WarningCodeValue',
+    'WeightUnit',
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
