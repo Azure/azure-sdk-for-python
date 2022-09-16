@@ -490,7 +490,7 @@ class CodegenTestPR:
         print(f"++**: {os.getcwd()}")
         test_path = self.sdk_code_path()+'/tests'
         if not Path(test_path).exists():
-            os.mkdir('tests')
+            os.mkdir(test_path)
         client_name, operation_name, function_name = self.get_tests_info()
         template_path = Path('tools/azure-sdk-tools/packaging_tools/templates')
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_path))
@@ -502,6 +502,8 @@ class CodegenTestPR:
                                function=function_name)
         with suppress(black.NothingChanged):
             file_content = black.format_file_contents(temp_out, fast=True, mode=_BLACK_MODE)
+            print("+++*** file: " + f'{test_path}/test_mgmt_{self.package_name}.py')
+            print(f"+++*** path: {Path(test_path).exists()}")
             with open(f'{test_path}/test_mgmt_{self.package_name}.py', 'w', encoding='utf-8') as f:
                 f.writelines(file_content)
 
