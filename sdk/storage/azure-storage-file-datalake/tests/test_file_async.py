@@ -454,6 +454,58 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy_async
+    async def test_flush_data_lease_action(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        await file_client.create_file()
+
+        data = b'Hello world'
+        lease_id = 'c8107e94-ab42-42ac-92d6-6458764982af'
+
+        # Act / Assert
+        # ---Acquire---
+        await file_client.append_data(data, 0, len(data))
+        await file_client.flush_data(len(data), lease_action='acquire', lease_duration=30, lease=lease_id)
+
+        lease = (await file_client.get_file_properties()).lease
+        assert lease.state == 'leased'
+        assert lease.duration == 'fixed'
+
+        # ---Renew---
+        await file_client.append_data(data, 0, len(data), lease=lease_id)
+        await file_client.flush_data(len(data), lease_action='auto-renew', lease=lease_id)
+
+        lease = (await file_client.get_file_properties()).lease
+        assert lease.state == 'leased'
+        assert lease.duration == 'fixed'
+
+        # ---Release---
+        await file_client.append_data(data, 0, len(data), lease=lease_id)
+        await file_client.flush_data(len(data), lease_action='release', lease=lease_id)
+
+        lease = (await file_client.get_file_properties()).lease
+        assert lease.state == 'available'
+        assert not lease.duration
+
+        # ---Acquire and release---
+        await file_client.append_data(data, 0, len(data))
+        await file_client.flush_data(len(data), lease_action='acquire-release', lease=lease_id)
+
+        lease = (await file_client.get_file_properties()).lease
+        assert lease.state == 'available'
+        assert not lease.duration
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_flush_data_with_bool(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
