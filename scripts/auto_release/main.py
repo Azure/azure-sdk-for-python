@@ -497,7 +497,7 @@ class CodegenTestPR:
         temp_out = temp.render(package_name_dot=f'azure.mgmt.{self.package_name}',
                                package=self.package_name,
                                client=client_name,
-                               operation=operation_name,
+                               operation=re.sub(r'([a-z])([A-Z])', r'\1_\2', operation_name).lower()[:-11],
                                function=function_name)
         with suppress(black.NothingChanged):
             file_content = black.format_file_contents(temp_out, fast=True, mode=_BLACK_MODE)
