@@ -7,6 +7,7 @@
 # pylint: disable=too-many-lines
 
 import logging
+import threading
 import time
 import uuid
 import certifi
@@ -147,6 +148,10 @@ class AMQPClient(object):
         self._mgmt_links = {}
         self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
 
+        keep_alive_interval = kwargs.pop("keep_alive_interval", None)
+        self._keep_alive_interval = int(keep_alive_interval) if keep_alive_interval else 0
+        self._keep_alive_thread = None
+
         # Connection settings
         self._max_frame_size = kwargs.pop('max_frame_size', None) or MAX_FRAME_SIZE_BYTES
         self._channel_max = kwargs.pop('channel_max', None) or 65535
@@ -183,6 +188,20 @@ class AMQPClient(object):
     def __exit__(self, *args):
         """Close and destroy Client on exiting a context manager."""
         self.close()
+
+    def _keep_alive(self):
+        start_time = time.time()
+        try:
+            while self._connection and not self._shutdown:
+                current_time = time.time()
+                elapsed_time = current_time - start_time
+                if elapsed_time >= self._keep_alive_interval:
+                    _logger.debug("Keeping %r connection alive.", self.__class__.__name__)
+                    self._connection.work()
+                    start_time = current_time
+                time.sleep(1)
+        except Exception as e:  # pylint: disable=broad-except
+            _logger.info("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
 
     def _client_ready(self):  # pylint: disable=no-self-use
         """Determine whether the client is ready to start sending and/or
@@ -283,6 +302,10 @@ class AMQPClient(object):
             )
             self._cbs_authenticator.open()
         self._shutdown = False
+        if self._keep_alive_interval:
+            self._keep_alive_thread = threading.Thread(target=self._keep_alive)
+            self._keep_alive_thread.daemon = True
+            self._keep_alive_thread.start()
 
     def close(self):
         """Close the client. This includes closing the Session
@@ -299,6 +322,12 @@ class AMQPClient(object):
         self._shutdown = True
         if not self._session:
             return  # already closed.
+        if self._keep_alive_thread:
+            try:
+                self._keep_alive_thread.join()
+            except RuntimeError:  # Probably thread failed to start in .open()
+                logging.info("Keep alive thread failed to join.", exc_info=True)
+            self._keep_alive_thread = None
         self._close_link(close=True)
         if self._cbs_authenticator:
             self._cbs_authenticator.close()

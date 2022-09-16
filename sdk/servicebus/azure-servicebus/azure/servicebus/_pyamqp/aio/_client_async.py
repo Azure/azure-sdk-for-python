@@ -128,6 +128,22 @@ class AMQPClientAsync(AMQPClientSync):
         """Close and destroy Client on exiting an async context manager."""
         await self.close_async()
 
+    async def _keep_alive_async(self):
+        start_time = time.time()
+        try:
+            while self._connection and not self._shutdown:
+                current_time = time.time()
+                elapsed_time = current_time - start_time
+                if elapsed_time >= self._keep_alive_interval:
+                    _logger.info("Keeping %r connection alive. %r",
+                                 self.__class__.__name__,
+                                 self._connection.container_id)
+                    await asyncio.shield(self._connection.work_async())
+                    start_time = current_time
+                await asyncio.sleep(1)
+        except Exception as e:  # pylint: disable=broad-except
+            _logger.info("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
+
     async def _client_ready_async(self):  # pylint: disable=no-self-use
         """Determine whether the client is ready to start sending and/or
         receiving messages. To be ready, the connection must be open and
@@ -227,6 +243,8 @@ class AMQPClientAsync(AMQPClientSync):
             )
             await self._cbs_authenticator.open()
         self._shutdown = False
+        if self._keep_alive_interval:
+            self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_async())
 
     async def close_async(self):
         """Close the client asynchronously. This includes closing the Session
@@ -237,6 +255,9 @@ class AMQPClientAsync(AMQPClientSync):
         self._shutdown = True
         if not self._session:
             return  # already closed.
+        if self._keep_alive_thread:
+            await self._keep_alive_thread
+            self._keep_alive_thread = None
         await self._close_link_async(close=True)
         if self._cbs_authenticator:
             await self._cbs_authenticator.close()
