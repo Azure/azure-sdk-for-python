@@ -89,7 +89,6 @@ azure-mgmt-subscription~=0.2.0
 azure-mgmt-trafficmanager~=0.50.0
 azure-mgmt-web~=0.35.0
 azure-messaging-nspkg
-azure-mixedreality-nspkg
 azure-mixedreality-authentication
 azure-nspkg
 azure-keyvault-nspkg
