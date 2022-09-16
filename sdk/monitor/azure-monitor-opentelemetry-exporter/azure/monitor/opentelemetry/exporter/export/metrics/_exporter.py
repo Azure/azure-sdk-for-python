@@ -160,7 +160,7 @@ def _convert_point_to_envelope(
         min=min_,
         max=max_,
     )
-    properties = _utils._truncate_custom_properties(point.attributes)
+    properties = _utils._filter_custom_properties(point.attributes)
     data = MetricsData(
         properties=properties,
         metrics=[data_point],
