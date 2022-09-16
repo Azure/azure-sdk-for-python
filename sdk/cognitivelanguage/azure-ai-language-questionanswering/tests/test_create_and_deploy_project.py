@@ -5,24 +5,18 @@
 # ------------------------------------
 import pytest
 
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
+from azure.ai.language.questionanswering.projects import QuestionAnsweringProjectsClient
 from azure.core.credentials import AzureKeyCredential
 
-from testcase import (
-    QuestionAnsweringTest,
-    GlobalQuestionAnsweringAccountPreparer,
-    QnaAuthoringHelper
-)
+from helpers import QnaAuthoringHelper
+from testcase import QuestionAnsweringTestCase
 
-from azure.ai.language.questionanswering.projects import QuestionAnsweringProjectsClient
 
-class CreateAndDeployTests(QuestionAnsweringTest):
+class TestCreateAndDeploy(QuestionAnsweringTestCase):
 
-    @pytest.mark.live_test_only
-    @GlobalQuestionAnsweringAccountPreparer()
-    def test_create_project_aad(self, qna_account, qna_key):
+    def test_create_project_aad(self, recorded_test, qna_creds):
         token = self.get_credential(QuestionAnsweringProjectsClient)
-        client = QuestionAnsweringProjectsClient(qna_account, token)
+        client = QuestionAnsweringProjectsClient(qna_creds["qna_endpoint"], token)
 
         # create project
         project_name = "IssacNewton"
@@ -45,9 +39,8 @@ class CreateAndDeployTests(QuestionAnsweringTest):
                 found = True
         assert found
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    def test_create_project(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+    def test_create_project(self, recorded_test, qna_creds):
+        client = QuestionAnsweringProjectsClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
@@ -70,10 +63,8 @@ class CreateAndDeployTests(QuestionAnsweringTest):
                 found = True
         assert found
 
-
-    @GlobalQuestionAnsweringAccountPreparer()
-    def test_deploy_project(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+    def test_deploy_project(self, recorded_test, qna_creds):
+        client = QuestionAnsweringProjectsClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create deployable project
         project_name = "IssacNewton"
@@ -102,7 +93,3 @@ class CreateAndDeployTests(QuestionAnsweringTest):
             if ("deploymentName" in d) and d["deploymentName"] == deployment_name:
                 deployment_found = True
         assert deployment_found
-
-
-
-
