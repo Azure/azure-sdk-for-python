@@ -202,14 +202,12 @@ class CodegenTestPR:
         self.autorest_result = str(Path(os.getenv('TEMP_FOLDER')) / 'temp.json')
         with open(self.autorest_result, 'w') as file:
             json.dump(input_data, file)
-        print(f"*** input_data: {input_data}")
 
         # generate code(be careful about the order)
         print_exec('python scripts/dev_setup.py -p azure-core')
         print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
 
         generate_result = self.get_autorest_result()
-        print(f"***** generate_result: {generate_result}")
         self.tag_is_stable = list(generate_result.values())[0]['tagIsStable']
         log(f"tag_is_stable is {self.tag_is_stable}")
 
@@ -501,8 +499,6 @@ class CodegenTestPR:
                                function=function_name)
         with suppress(black.NothingChanged):
             file_content = black.format_file_contents(temp_out, fast=True, mode=_BLACK_MODE)
-            print("+++*** file: " + f'{test_path}/test_mgmt_{self.package_name}.py')
-            print(f"+++*** path: {Path(test_path).exists()}")
             with open(f'{test_path}/test_mgmt_{self.package_name}.py', 'w', encoding='utf-8') as f:
                 f.writelines(file_content)
 
