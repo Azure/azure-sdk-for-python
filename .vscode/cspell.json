@@ -264,6 +264,7 @@
     "PSECRET",
     "pyfuncitem",
     "pygobject",
+    "pyodide",
     "parameterizing",
     "pytyped",
     "pytz",
