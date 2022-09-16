@@ -13,7 +13,7 @@ from _shared.helper import URIIdentityReplacer, URIMsalUsernameReplacer
 from _shared.testcase import BodyReplacerProcessor
 from testcase import CommunicationIdentityTestCase
 from _shared.communication_service_preparer import CommunicationPreparer
-from _shared.utils import get_http_logging_policy
+from _shared.utils import TOKEN_EXPIRATION_ALLOWED_DEVIATION, get_http_logging_policy, token_expiration_within_allowed_deviation
 from azure.identity import DefaultAzureCredential
 from azure.communication.identity._shared.utils import parse_connection_str
 from parameterized import parameterized
@@ -75,11 +75,16 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
             http_logging_policy=get_http_logging_policy()
         )
         
-        token_expires_after = timedelta(minutes=60)
-        user, token_response = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_after=token_expires_after)
-
+        token_expires_in = timedelta(minutes=60)
+        user, token_response = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
+        
         assert user.properties.get('id') is not None
         assert token_response.token is not None
+        
+        from devtools_testutils import is_live
+        if is_live():
+            expiration_within_allowed_deviation = token_expiration_within_allowed_deviation(token_expires_in, token_response.expires_on, TOKEN_EXPIRATION_ALLOWED_DEVIATION)
+            assert expiration_within_allowed_deviation is True
         
     @CommunicationPreparer()
     def test_create_user_and_token_with_custom_maximum_validity(self, communication_livetest_dynamic_connection_string):
@@ -88,11 +93,16 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
             http_logging_policy=get_http_logging_policy()
         )
         
-        token_expires_after = timedelta(minutes=1440)
-        user, token_response = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_after=token_expires_after)
+        token_expires_in = timedelta(minutes=1440)
+        user, token_response = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
 
         assert user.properties.get('id') is not None
         assert token_response.token is not None
+        
+        from devtools_testutils import is_live
+        if is_live():
+            expiration_within_allowed_deviation = token_expiration_within_allowed_deviation(token_expires_in, token_response.expires_on, TOKEN_EXPIRATION_ALLOWED_DEVIATION)
+            assert expiration_within_allowed_deviation is True
         
     @CommunicationPreparer()
     def test_create_user_and_token_with_custom_validity_under_minimum_allowed(self, communication_livetest_dynamic_connection_string):
@@ -101,10 +111,10 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
             http_logging_policy=get_http_logging_policy()
         )
         
-        token_expires_after = timedelta(minutes=59)
+        token_expires_in = timedelta(minutes=59)
         
         with pytest.raises(Exception) as ex:
-            identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_after=token_expires_after)
+            identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
             
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
@@ -116,10 +126,10 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
             http_logging_policy=get_http_logging_policy()
         )
         
-        token_expires_after = timedelta(minutes=1441)
+        token_expires_in = timedelta(minutes=1441)
         
         with pytest.raises(Exception) as ex:
-            identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_after=token_expires_after)
+            identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
             
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
@@ -165,8 +175,8 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
         )
         user = identity_client.create_user()
 
-        token_expires_after = timedelta(minutes=60)
-        token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_after=token_expires_after)
+        token_expires_in = timedelta(minutes=60)
+        token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
 
         assert user.properties.get('id') is not None
         assert token_response.token is not None
@@ -179,8 +189,8 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
         )
         user = identity_client.create_user()
 
-        token_expires_after = timedelta(minutes=1440)
-        token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_after=token_expires_after)
+        token_expires_in = timedelta(minutes=1440)
+        token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
 
         assert user.properties.get('id') is not None
         assert token_response.token is not None
@@ -193,10 +203,10 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
         )
         user = identity_client.create_user()
 
-        token_expires_after = timedelta(minutes=59)
+        token_expires_in = timedelta(minutes=59)
         
         with pytest.raises(Exception) as ex:
-            identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_after=token_expires_after)
+            identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
 
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
@@ -209,10 +219,10 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
         )
         user = identity_client.create_user()
 
-        token_expires_after = timedelta(minutes=1441)
+        token_expires_in = timedelta(minutes=1441)
         
         with pytest.raises(Exception) as ex:
-            identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_after=token_expires_after)
+            identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
 
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None

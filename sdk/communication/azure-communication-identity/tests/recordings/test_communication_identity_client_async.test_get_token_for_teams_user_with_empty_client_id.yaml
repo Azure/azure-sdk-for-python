@@ -9,8 +9,8 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrH2EP_G7QWudzpvgt3NkszGUxET0ULbfC_Fi0kVAdasyL2IzNCRSSH736cgO3JVUEQC2By2n-mHCMsxa3CPfkht_N0KWBUnUp2twKA9UrJX43v1zhI-j2Nku8_tAT-cZw7eOo1Mv9qpKvPHhcLPF6p1jHlWNvnwHY-9kvsLcB9SUgAA;
-        fpc=AmYDLNioUsZHmlhG53z7q6o; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevro4CcF6uKukCr7G3OdRQTH9jrAyCWKOCYOv1sg5DAtZs-BOVXEBY6axvNfyTg0hYf-WXgdprC2ql-Ay5afy1UgdFB6kd9Gna9bDNmU5Rwyzt8kPjcZ7SB0jA3tOP4lr16A881GSAMH5xbtTD1-mL0UQYaRAA5cH6DhH4ygIGXIbMgAA;
+        fpc=AjUMrHOZyppJnkm5GdEZydA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
       - python-requests/2.28.1
     method: GET
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Aug 2022 20:04:10 GMT
+      - Fri, 16 Sep 2022 17:41:45 GMT
       expires:
       - '-1'
       p3p:
@@ -37,7 +37,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=AmYDLNioUsZHmlhG53z7q6o; expires=Sat, 24-Sep-2022 20:04:10 GMT; path=/;
+      - fpc=AjUMrHOZyppJnkm5GdEZydA; expires=Sun, 16-Oct-2022 17:41:45 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -46,7 +46,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.13481.11 - NEULR1 ProdSlices
+      - 2.1.13622.7 - NEULR1 ProdSlices
       x-xss-protection:
       - '0'
     status:
@@ -62,28 +62,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)
+      - azsdk-python-communication-identity/1.3.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Thu, 25 Aug 2022 20:04:11 GMT
+      - Fri, 16 Sep 2022 17:41:45 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.ppe.communication.azure.net/teamsUser/:exchangeAccessToken?api-version=2022-10-01
+    uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-10-01
   response:
     body:
       string: '{"error": {"code": "ValidationError", "message": "AppId: The AppId
         field is required.", "target": "AppId"}}'
     headers:
       content-type: application/json
-      date: Thu, 25 Aug 2022 20:04:10 GMT
-      ms-cv: 45T2jkDVGUq3RhAbC2t8eg.0
+      date: Fri, 16 Sep 2022 17:41:45 GMT
+      ms-cv: 4CDilMG4M0STFf5sZ2Gyeg.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 42ms
+      x-processing-time: 37ms
     status:
       code: 400
       message: Bad Request
-    url: https://test-petrsvihlik.ppe.communication.azure.net/teamsUser/:exchangeAccessToken?api-version=2022-10-01
+    url: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-10-01
 version: 1

@@ -13,13 +13,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)
+      - azsdk-python-communication-identity/1.3.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Thu, 25 Aug 2022 20:03:33 GMT
+      - Fri, 16 Sep 2022 17:41:07 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2022-10-01
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-10-01
   response:
     body:
       string: '{"identity": {"id": "sanitized"}}'
@@ -32,9 +32,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Aug 2022 20:03:34 GMT
+      - Fri, 16 Sep 2022 17:41:07 GMT
       ms-cv:
-      - 98o+DGCkZEu8vr74kAQWAg.0
+      - PqMXUZJZW0uAbex5kOxHvQ.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 82ms
+      - 37ms
     status:
       code: 201
       message: Created

@@ -11,7 +11,7 @@ from azure.core.credentials import AccessToken
 
 from ._generated._communication_identity_client\
     import CommunicationIdentityClient as CommunicationIdentityClientGen
-from ._shared.utils import parse_connection_str, get_authentication_policy
+from ._shared.utils import parse_connection_str, get_authentication_policy, create_body
 from ._shared.models import CommunicationUserIdentifier
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
@@ -115,21 +115,7 @@ class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-
             tuple of (~azure.communication.identity.CommunicationUserIdentifier, ~azure.core.credentials.AccessToken)
         """
         token_expires_in = kwargs.pop('token_expires_in', None)
-
-        expires_after_in_minutes = 0
-
-        if token_expires_in is not None:
-
-            expires_after_in_minutes = int(token_expires_in.total_seconds() / 60)
-
-            body = {
-                'createTokenWithScopes': scopes,
-                'expiresInMinutes': expires_after_in_minutes
-            }
-        else:
-            body = {
-                'createTokenWithScopes': scopes
-            }
+        body = create_body(scopes, token_expires_in, scopes_key_name='createTokenWithScopes')
 
         return self._identity_service_client.communication_identity.create(
             cls=lambda pr, u, e: (CommunicationUserIdentifier(u['identity']['id'], raw_id=u['identity']['id']),
@@ -176,19 +162,7 @@ class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-
         :rtype: ~azure.core.credentials.AccessToken
         """
         token_expires_in = kwargs.pop('token_expires_in', None)
-
-        expires_after_in_minutes = 0
-
-        if token_expires_in is not None:
-            expires_after_in_minutes = int(token_expires_in.total_seconds() / 60)
-            body = {
-                'scopes': scopes,
-                'expiresInMinutes': expires_after_in_minutes
-            }
-        else:
-            body = {
-                'scopes': scopes
-            }
+        body = create_body(scopes, token_expires_in, scopes_key_name='scopes')
 
         return self._identity_service_client.communication_identity.issue_access_token(
             user.properties['id'],

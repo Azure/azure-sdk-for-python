@@ -82,8 +82,8 @@ print("Token issued with value: " + tokenresponse.token)
 You can specify expiration time for the token. The token can be configured to expire in as little as one hour or as long as 24 hours. The default expiration time is 24 hours.
 
 ```python
-token_expires_after = timedelta(minutes=60)
-tokenresponse = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_after=token_expires_after)
+token_expires_in = timedelta(minutes=60)
+tokenresponse = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
 print("Token issued with value: " + tokenresponse.token)
 ```
 
@@ -100,8 +100,8 @@ print("Token issued with value: " + tokenresponse.token)
 
 You can specify expiration time for the token. The token can be configured to expire in as little as one hour or as long as 24 hours. The default expiration time is 24 hours.
 ```python
-token_expires_after = timedelta(minutes=60)
-user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_after=token_expires_after)
+token_expires_in = timedelta(minutes=60)
+user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
 print("User id:" + user.properties['id'])
 print("Token issued with value: " + tokenresponse.token)
 ```

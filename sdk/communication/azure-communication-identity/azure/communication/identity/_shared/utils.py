@@ -131,3 +131,35 @@ def get_authentication_policy(
 
     raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
                     "or a token credential from azure.identity".format(type(credential)))
+
+def create_body(
+        scopes, # type: List[Union[str, CommunicationTokenScope]]
+        token_expires_in, # type: datetime.timedelta
+        **kwargs,
+):
+    # type: (...) -> dict[str, Any]
+    """
+    Returns body to pass to request for user and token creation or token creation.
+    : param scopes: List of scopes to be added to the token.
+    : type scopes: list[str or ~azure.communication.identity.CommunicationTokenScope]
+    : param token_expires_in: Custom validity period of the Communication Identity access token
+     within [1, 24] hours range. If not provided, the default value of 24 hours will be used.
+    : type token_expires_in: ~datetime.timedelta
+    : keyword scopes_key_name: Name for the key for scopes to pass in the request body.
+    : paramtype keyword scopes_key_name: str
+    : return: Body to pass to request for user and token creation or token creation.
+    : rtype: dict[str, Any]
+    """
+    scopes_key_name = kwargs.pop('scopes_key_name', None)
+    expires_after_in_minutes = 0
+    if token_expires_in is not None:
+        expires_after_in_minutes = int(token_expires_in.total_seconds() / 60)
+        body = {
+            scopes_key_name: scopes,
+            'expiresInMinutes': expires_after_in_minutes
+        }
+    else:
+        body = {
+            scopes_key_name: scopes
+        }
+    return body

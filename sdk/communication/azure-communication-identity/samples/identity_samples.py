@@ -72,8 +72,8 @@ class CommunicationIdentityClientSamples(object):
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         user = identity_client.create_user()
         print("Getting token for: " + user.properties.get('id'))
-        token_expires_after = timedelta(minutes=60)
-        tokenresponse = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_after=token_expires_after)
+        token_expires_in = timedelta(minutes=60)
+        tokenresponse = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
         print("Token issued with value: " + tokenresponse.token)
 
     def revoke_tokens(self):
@@ -135,8 +135,8 @@ class CommunicationIdentityClientSamples(object):
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         print("Creating new user with token")
-        token_expires_after = timedelta(minutes=60)
-        user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_after=token_expires_after)
+        token_expires_in = timedelta(minutes=60)
+        user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
         print("User created with id:" + user.properties.get('id'))
         print("Token issued with value: " + tokenresponse.token)
 
