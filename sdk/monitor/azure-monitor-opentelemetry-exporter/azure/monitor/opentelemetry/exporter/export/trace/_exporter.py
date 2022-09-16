@@ -420,7 +420,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         if target:
             data.target = str(target)[:1024]
 
-    data.properties = _utils._truncate_custom_properties(
+    data.properties = _utils._filter_custom_properties(
         span.attributes,
         lambda key, val: not _is_opentelemetry_standard_attribute(key)
     )
@@ -448,7 +448,7 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
             envelope.tags["ai.operation.parentId"] = "{:016x}".format(
                 span.context.span_id
             )
-        properties = _utils._truncate_custom_properties(
+        properties = _utils._filter_custom_properties(
             event.attributes,
             lambda key, val: not _is_opentelemetry_standard_attribute(key)
         )

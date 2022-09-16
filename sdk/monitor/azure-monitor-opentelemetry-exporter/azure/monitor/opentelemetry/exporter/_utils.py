@@ -125,7 +125,7 @@ def _populate_part_a_fields(resource):
     return tags
 
 # pylint: disable=W0622
-def _truncate_custom_properties(properties, filter=None):
+def _filter_custom_properties(properties, filter=None):
     truncated_properties = {}
     for key, val in properties.items():
         # Apply filter function
