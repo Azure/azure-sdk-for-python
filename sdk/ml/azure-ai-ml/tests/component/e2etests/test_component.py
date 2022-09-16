@@ -380,6 +380,10 @@ class TestComponent(AzureRecordedTestCase):
         assert component_resource.display_name == display_name
 
     @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="non-deterministic upload fails in playback on CI"
+    )
     def test_component_create_twice_same_code_arm_id(
         self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path
     ) -> None:
@@ -404,6 +408,10 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         # the code arm id should be the same
         assert component_resource1.code == component_resource2.code
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="non-deterministic upload fails in playback on CI"
+    )
     def test_component_update_code(self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path) -> None:
         component_name = randstr("component_name")
         path = "./tests/test_configs/components/basic_component_code_local_path.yml"

@@ -31,7 +31,13 @@ def import_job_enabled(mocker: MockFixture):
 
 
 @pytest.mark.timeout(600)
-@pytest.mark.usefixtures("recorded_test", "mock_asset_name", "mock_code_hash", "mock_component_hash")
+@pytest.mark.usefixtures(
+    "recorded_test",
+    "mock_asset_name",
+    "mock_code_hash",
+    "mock_component_hash",
+    "enable_environment_id_arm_expansion",
+)
 class TestImportJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_import_job_submit_cancel(self, client: MLClient) -> None:
