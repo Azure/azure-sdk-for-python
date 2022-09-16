@@ -32,7 +32,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
     description of the on-behalf-of flow.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.
-    :param str client_id: the service principal's client ID
+    :param str client_id: The service principal's client ID
     :keyword str client_secret: Optional. A client secret to authenticate the service principal.
         Either **client_secret** or **client_certificate** must be provided.
     :keyword bytes client_certificate: Optional. The bytes of a certificate in PEM or PKCS12 format including
@@ -44,11 +44,11 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword password: a certificate password. Used only when **client_certificate** is provided. If this value
+    :keyword password: A certificate password. Used only when **client_certificate** is provided. If this value
         is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass
         appropriately encoded bytes instead.
     :paramtype password: str or bytes
-    :keyword List[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
+    :keyword List[str] additionally_allowed_tenants: Optional additional tenant ids for which the credential
         may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
         any tenant the application is installed.
     """

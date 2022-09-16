@@ -22,8 +22,8 @@ class AuthorizationCodeCredential(GetTokenMixin):
     about the authentication flow.
 
     :param str tenant_id: ID of the application's Azure Active Directory tenant. Also called its "directory" ID.
-    :param str client_id: the application's client ID
-    :param str authorization_code: the authorization code from the user's log-in
+    :param str client_id: The application's client ID
+    :param str authorization_code: The authorization code from the user's log-in
     :param str redirect_uri: The application's redirect URI. Must match the URI used to request the authorization code.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",

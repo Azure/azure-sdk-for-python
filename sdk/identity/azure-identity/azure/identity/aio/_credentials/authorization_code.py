@@ -22,15 +22,15 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
     about the authentication flow.
 
     :param str tenant_id: ID of the application's Azure Active Directory tenant. Also called its "directory" ID.
-    :param str client_id: the application's client ID
-    :param str authorization_code: the authorization code from the user's log-in
+    :param str client_id: The application's client ID
+    :param str authorization_code: The authorization code from the user's log-in
     :param str redirect_uri: The application's redirect URI. Must match the URI used to request the authorization code.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
     :keyword str client_secret: One of the application's client secrets. Required only for web apps and web APIs.
-    :keyword List[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
+    :keyword List[str] additionally_allowed_tenants: Optional additional tenant ids for which the credential
         may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
         any tenant the application is installed.
     """

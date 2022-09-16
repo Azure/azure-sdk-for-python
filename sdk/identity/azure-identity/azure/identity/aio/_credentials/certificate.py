@@ -28,21 +28,21 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
     for more information on configuring certificate authentication.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
-    :param str client_id: the service principal's client ID
-    :param str certificate_path: path to a PEM-encoded certificate file including the private key. If not provided,
+    :param str client_id: The service principal's client ID
+    :param str certificate_path: Path to a PEM-encoded certificate file including the private key. If not provided,
           `certificate_data` is required.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds.
-    :keyword bytes certificate_data: the bytes of a certificate in PEM format, including the private key
+    :keyword bytes certificate_data: The bytes of a certificate in PEM format, including the private key
     :keyword password: The certificate's password. If a unicode string, it will be encoded as UTF-8. If the certificate
           requires a different encoding, pass appropriately encoded bytes instead.
     :paramtype password: str or bytes
-    :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
+    :keyword cache_persistence_options: Configuration for persistent token caching. If unspecified, the credential
           will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword List[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
+    :keyword List[str] additionally_allowed_tenants: Optional additional tenant ids for which the credential
         may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
         any tenant the application is installed.
     """

@@ -15,16 +15,16 @@ class ClientSecretCredential(ClientCredentialBase):
     """Authenticates as a service principal using a client secret.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.
-    :param str client_id: the service principal's client ID
-    :param str client_secret: one of the service principal's client secrets
+    :param str client_id: The service principal's client ID
+    :param str client_secret: One of the service principal's client secrets
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
+    :keyword cache_persistence_options: Configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword List[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
+    :keyword List[str] additionally_allowed_tenants: Optional additional tenant ids for which the credential
         may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
         any tenant the application is installed.
     """
