@@ -32,7 +32,12 @@ def bodiless_matching(test_proxy):
 
 
 @pytest.mark.timeout(600)
-@pytest.mark.usefixtures("recorded_test", "mock_code_hash", "mock_asset_name")
+@pytest.mark.usefixtures(
+    "recorded_test",
+    "mock_code_hash",
+    "mock_asset_name",
+    "enable_environment_id_arm_expansion",
+)
 class TestCommandJob(AzureRecordedTestCase):
     @pytest.mark.skip(
         "Investigate The network connectivity issue encountered for 'Microsoft.MachineLearningServices'; cannot fulfill the request."
