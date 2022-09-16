@@ -14,14 +14,22 @@ from devtools_testutils.sanitizers import add_remove_header_sanitizer, add_gener
 
 
 collect_ignore = []
-collect_ignore.append("test_connection_string_parser*")
-collect_ignore.append("test_message*")
-collect_ignore.append("test_queues*")
-collect_ignore.append("test_sb_client*")
-collect_ignore.append("test_session*")
-collect_ignore.append("test_topic*")
-collect_ignore.append("test_subscriptions*")
-collect_ignore.append("test_errors*")
+collect_ignore.append("tests/test_connection_string_parser.py")
+collect_ignore.append("tests/test_message.py")
+collect_ignore.append("tests/test_queues.py")
+collect_ignore.append("tests/test_sb_client.py")
+collect_ignore.append("tests/test_sessions.py")
+collect_ignore.append("tests/test_topic.py")
+collect_ignore.append("tests/test_subscriptions.py")
+collect_ignore.append("tests/livetest/test_errors.py")
+
+collect_ignore.append("tests/async_tests/test_connection_string_parser_async.py")
+collect_ignore.append("tests/async_tests/test_message_async.py")
+collect_ignore.append("tests/async_tests/test_queues_async.py")
+collect_ignore.append("tests/async_tests/test_sb_client_async.py")
+collect_ignore.append("tests/async_tests/test_session_async.py")
+collect_ignore.append("tests/async_tests/test_topic_async.py")
+collect_ignore.append("tests/async_tests/test_subscriptions_async.py")
 
 @pytest.fixture(scope="session", autouse=True)
 def add_aeg_sanitizer(test_proxy):
