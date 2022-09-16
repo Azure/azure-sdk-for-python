@@ -487,12 +487,13 @@ class CodegenTestPR:
     @return_origin_path
     def prepare_tests(self):
         os.chdir('../../../')
-        print(f"++**: {os.getcwd()}")
         test_path = self.sdk_code_path()+'/tests'
         if not Path(test_path).exists():
             os.mkdir(test_path)
         client_name, operation_name, function_name = self.get_tests_info()
         template_path = Path('scripts/auto-release/templates')
+        print(f'++**template_path: {template_path.exists()}')
+        print(f"++**template_path: {Path(template_path/'testcase.py').exists()}")
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_path))
         temp = env.get_template('testcase.py')
         temp_out = temp.render(package_name_dot=f'azure.mgmt.{self.package_name}',
