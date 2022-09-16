@@ -4,10 +4,14 @@ import json
 import time
 import logging
 from glob import glob
+from contextlib import suppress
 import subprocess
 from pathlib import Path
 from functools import wraps
 from typing import List, Any, Dict
+
+import black
+import jinja2
 from packaging.version import Version
 from ghapi.all import GhApi
 from azure.storage.blob import BlobServiceClient, ContainerClient
@@ -15,6 +19,8 @@ from util import add_certificate
 
 _LOG = logging.getLogger()
 
+_BLACK_MODE = black.Mode()
+_BLACK_MODE.line_length = 120
 
 def return_origin_path(func):
     @wraps(func)
@@ -204,7 +210,7 @@ class CodegenTestPR:
         generate_result = self.get_autorest_result()
         self.tag_is_stable = list(generate_result.values())[0]['tagIsStable']
         log(f"tag_is_stable is {self.tag_is_stable}")
-        
+
         print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
 
     def get_package_name_with_autorest_result(self):
@@ -453,12 +459,54 @@ class CodegenTestPR:
         start_test_proxy()
 
     def get_tests_info(self):
+        code_report = self.sdk_code_path() + '/code_reports/latest/report.json'
+        multi_code_report = self.sdk_code_path() + '/code_reports/latest/merged_report.json'
+        if not Path(code_report).exists():
+            code_report = multi_code_report
+        with open(code_report, 'r') as reader:
+            report_json = json.load(reader)
+        client_name = report_json['client'][0]
+        operations = report_json['operations']
+        operation_name = 'Operations'
+        function_name = 'list'
+        for op_name, op in operations.items():
+            if op_name == 'Operations':
+                continue
+            for func_name, func in op['functions'].items():
+                if len(func['parameters']) < 2:
+                    operation_name = op_name
+                    function_name = func_name
+                    break
+            else:
+                continue
+            break
+        return client_name, operation_name, function_name
 
-
+    @return_origin_path
     def prepare_tests(self):
+        os.chdir('../../../')
         test_path = self.sdk_code_path()+'/tests'
         if not Path(test_path).exists():
             os.mkdir('tests')
+        client_name, operation_name, function_name = self.get_tests_info()
+        template_path = Path('tools/azure-sdk-tools/packaging_tools/templates')
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_path))
+        temp = env.get_template('testcase.py')
+        temp_out = temp.render(package_name_dot=self.package_name,
+                               package=self.package_name,
+                               client=client_name,
+                               operation=operation_name,
+                               function=function_name)
+        with suppress(black.NothingChanged):
+            file_content = black.format_file_contents(temp_out, fast=True, mode=_BLACK_MODE)
+            with open(f'{test_path}/test_mgmt_{self.package_name}.py', 'w', encoding='utf-8') as f:
+                f.writelines(file_content)
+
+        if not Path(f'{test_path}/conftest.py').exists():
+            with open(template_path/'conftest.py', 'r') as fr:
+                content = fr.read()
+            with open(f'{test_path}/conftest.py', 'w') as fw:
+                fw.write(content)
 
     @return_origin_path
     def run_test_proc(self):
