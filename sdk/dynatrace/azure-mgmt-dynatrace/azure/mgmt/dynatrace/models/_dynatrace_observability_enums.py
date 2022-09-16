@@ -7,26 +7,24 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
-    """
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
 
     INTERNAL = "Internal"
 
-class AutoUpdateSetting(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Update settings of OneAgent.
-    """
+
+class AutoUpdateSetting(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Update settings of OneAgent."""
 
     ENABLED = "ENABLED"
     DISABLED = "DISABLED"
 
-class AvailabilityState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The availability state of OneAgent.
-    """
+
+class AvailabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The availability state of OneAgent."""
 
     CRASHED = "CRASHED"
     LOST = "LOST"
@@ -37,38 +35,39 @@ class AvailabilityState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNKNOWN = "UNKNOWN"
     UNMONITORED = "UNMONITORED"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class LiftrResourceCategories(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Liftr resource category
-    """
+
+class LiftrResourceCategories(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Liftr resource category."""
 
     UNKNOWN = "Unknown"
     MONITOR_LOGS = "MonitorLogs"
 
-class LogModule(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Tells whether log modules are enabled or not
-    """
+
+class LogModule(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Tells whether log modules are enabled or not."""
 
     ENABLED = "ENABLED"
     DISABLED = "DISABLED"
 
-class ManagedIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The kind of managed identity assigned to this resource.
-    """
+
+class ManagedIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of managed identity assigned to this resource."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_AND_USER_ASSIGNED = "SystemAndUserAssigned"
 
-class MarketplaceSubscriptionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class MarketplaceSubscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Flag specifying the Marketplace Subscription Status of the resource. If payment is not made in
     time, the resource will go in Suspended state.
     """
@@ -76,32 +75,33 @@ class MarketplaceSubscriptionStatus(with_metaclass(CaseInsensitiveEnumMeta, str,
     ACTIVE = "Active"
     SUSPENDED = "Suspended"
 
-class MonitoringStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Flag specifying if the resource monitoring is enabled or disabled.
-    """
+
+class MonitoringStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Flag specifying if the resource monitoring is enabled or disabled."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class MonitoringType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The monitoring mode of OneAgent
-    """
+
+class MonitoringType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The monitoring mode of OneAgent."""
 
     CLOUD_INFRASTRUCTURE = "CLOUD_INFRASTRUCTURE"
     FULL_STACK = "FULL_STACK"
 
-class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system"
+    logs UX. Default value is "user,system".
     """
 
     USER = "user"
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the monitoring resource
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the monitoring resource."""
 
     ACCEPTED = "Accepted"
     CREATING = "Creating"
@@ -113,67 +113,67 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DELETED = "Deleted"
     NOT_SPECIFIED = "NotSpecified"
 
-class SendAadLogsStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether AAD logs are being sent.
-    """
+
+class SendAadLogsStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether AAD logs are being sent."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class SendActivityLogsStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether activity logs are being sent.
-    """
+
+class SendActivityLogsStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether activity logs are being sent."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class SendingLogsStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether logs are being sent.
-    """
+
+class SendingLogsStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether logs are being sent."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class SendingMetricsStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether metrics are being sent.
-    """
+
+class SendingMetricsStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether metrics are being sent."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class SendSubscriptionLogsStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether subscription logs are being sent.
-    """
+
+class SendSubscriptionLogsStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether subscription logs are being sent."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class SingleSignOnStates(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Various states of the SSO resource
-    """
+
+class SingleSignOnStates(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Various states of the SSO resource."""
 
     INITIAL = "Initial"
     ENABLE = "Enable"
     DISABLE = "Disable"
     EXISTING = "Existing"
 
-class SSOStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether SSO is enabled or not
-    """
+
+class SSOStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether SSO is enabled or not."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class TagAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Valid actions for a filtering tag. Exclusion takes priority over inclusion.
-    """
+
+class TagAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Valid actions for a filtering tag. Exclusion takes priority over inclusion."""
 
     INCLUDE = "Include"
     EXCLUDE = "Exclude"
 
-class UpdateStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current update status of OneAgent.
-    """
+
+class UpdateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current update status of OneAgent."""
 
     INCOMPATIBLE = "INCOMPATIBLE"
     OUTDATED = "OUTDATED"
