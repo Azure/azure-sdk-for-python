@@ -20,8 +20,9 @@ if TYPE_CHECKING:
     from azure.core.async_paging import AsyncItemPaged
     from azure.core.polling import AsyncLROPoller
     from .._generated.models import PhoneNumberSearchResult, PurchasedPhoneNumber, PhoneNumberCapabilities
+    from .._api_versions import DEFAULT_VERSION
 
-class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-keyword
+class PhoneNumbersClient(object):
     """A client to interact with the AzureCommunicationService Phone Numbers gateway.
 
     This client provides operations to interact with the phone numbers service
@@ -29,6 +30,9 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         The endpoint url for Azure Communication Service resource.
     :param AsyncTokenCredential credential:
         The credentials with which to authenticate.
+    :keyword api_version: Api Version. The default value is "2022-01-11-preview2". Note that
+        overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
     def __init__(
                 self,
@@ -48,8 +52,10 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
                 "You need to provide account shared key to authenticate.")
 
         self._endpoint = endpoint
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._phone_number_client = PhoneNumbersClientGen(
             self._endpoint,
+            api_version=self._api_version,
             authentication_policy=get_authentication_policy(endpoint, credential, is_async=True),
             sdk_moniker=SDK_MONIKER,
             **kwargs)

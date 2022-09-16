@@ -21,13 +21,16 @@ if TYPE_CHECKING:
     from ._generated.models import CommunicationTokenScope
 
 
-class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-version-keyword
+class CommunicationIdentityClient(object):
     """Azure Communication Services Identity client.
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
     :param TokenCredential credential:
         The TokenCredential we use to authenticate against the service.
+    :keyword api_version: Api Version. Default value is "2022-06-01". Note that overriding this
+        default value may result in unsupported behavior.
+    :paramtype api_version: str
 
     .. admonition:: Example:
 

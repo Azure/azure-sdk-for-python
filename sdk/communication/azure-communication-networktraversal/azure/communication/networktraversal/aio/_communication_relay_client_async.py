@@ -11,6 +11,7 @@ from .._generated.aio._communication_network_traversal_client\
     import CommunicationNetworkTraversalClient as CommunicationNetworkTraversalClientGen
 from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._version import SDK_MONIKER
+from .._api_versions import DEFAULT_VERSION
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -19,13 +20,16 @@ if TYPE_CHECKING:
     from azure.communication.networktraversal import RouteType
 
 
-class CommunicationRelayClient: # pylint: disable=client-accepts-api-version-keyword
+class CommunicationRelayClient:
     """Azure Communication Services Network Traversal client.
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
     :param AsyncTokenCredential credential:
         The AsyncTokenCredential we use to authenticate against the service.
+    :keyword api_version: Api Version. Default value is "2022-03-01-preview". Note that overriding
+        this default value may result in unsupported behavior.
+    :paramtype api_version: str
 
     .. admonition:: Example:
 
@@ -51,8 +55,10 @@ class CommunicationRelayClient: # pylint: disable=client-accepts-api-version-key
                 "You need to provide account shared key to authenticate.")
 
         self._endpoint = endpoint
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._network_traversal_service_client = CommunicationNetworkTraversalClientGen(
             self._endpoint,
+            api_version=self._api_version,
             authentication_policy=get_authentication_policy(endpoint, credential, decode_url=True, is_async=True),
             sdk_moniker=SDK_MONIKER,
             **kwargs)

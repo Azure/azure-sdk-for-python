@@ -14,8 +14,10 @@ from ._shared.policy import HMACCredentialsPolicy
 from ._generated._azure_communication_email_service import AzureCommunicationEmailService
 from ._version import SDK_MONIKER
 from ._generated.models import SendEmailResult, SendStatusResult, EmailMessage
+from ._api_versions import DEFAULT_VERSION
 
-class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
+
+class EmailClient(object):
     """A client to interact with the AzureCommunicationService Email gateway.
 
     This client provides operations to send an email and monitor its status.
@@ -24,6 +26,9 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
         The endpoint url for Azure Communication Service resource.
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
+    :keyword api_version: Api Version. Default value is "2021-10-01-preview". Note that overriding
+        this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
     def __init__(
             self,
@@ -40,10 +45,13 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
         if endpoint.endswith("/"):
             endpoint = endpoint[:-1]
 
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
+
         authentication_policy = HMACCredentialsPolicy(endpoint, credential)
 
         self._generated_client = AzureCommunicationEmailService(
             endpoint,
+            api_version=self._api_version,
             authentication_policy=authentication_policy,
             sdk_moniker=SDK_MONIKER,
             **kwargs
