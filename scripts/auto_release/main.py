@@ -487,6 +487,7 @@ class CodegenTestPR:
     @return_origin_path
     def prepare_tests(self):
         os.chdir('../../../')
+        print(f"++**: {os.getcwd()}")
         test_path = self.sdk_code_path()+'/tests'
         if not Path(test_path).exists():
             os.mkdir('tests')
