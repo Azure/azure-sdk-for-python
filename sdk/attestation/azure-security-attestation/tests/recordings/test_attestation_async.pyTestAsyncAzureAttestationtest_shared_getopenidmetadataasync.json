@@ -1,0 +1,92 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/tenant/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "113",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.10.0 Python/3.10.7 (Windows-10-10.0.19044-SP0)"
+      },
+      "RequestBody": "client_id=xxxx\u0026client_secret=secret\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fattest.azure.net%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "92",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 16 Sep 2022 17:31:22 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": [
+          "fpc=AhmI3HFSaI9GmItgvYdNVBxxWF_wAQAAAOqpttoOAAAA; expires=Sun, 16-Oct-2022 17:31:22 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.13672.7 - SEASLR2 ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "access_token": "Sanitized"
+      }
+    },
+    {
+      "RequestUri": "https://fakeresource.wus.attest.azure.net/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-security-attestation/1.0.0b2 Python/3.10.7 (Windows-10-10.0.19044-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "582",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 16 Sep 2022 17:31:24 GMT",
+        "Server": "Kestrel",
+        "x-ms-maa-service-version": "1.11.02043.302"
+      },
+      "ResponseBody": {
+        "response_types_supported": [
+          "token",
+          "none"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "revocation_endpoint": "https://fakeresource.wus.attest.azure.net/revoke",
+        "issuer": "https://fakeresource.wus.attest.azure.net",
+        "jwks_uri": "https://fakeresource.wus.attest.azure.net/certs",
+        "claims_supported": [
+          "cnf",
+          "nonce",
+          "x-ms-ver",
+          "x-ms-attestation-type",
+          "x-ms-policy-hash",
+          "x-ms-policy-signer",
+          "x-ms-sgx-is-debuggable",
+          "x-ms-sgx-mrenclave",
+          "x-ms-sgx-mrsigner",
+          "x-ms-sgx-svn",
+          "x-ms-sgx-ehd",
+          "x-ms-sgx-collateral",
+          "is-debuggable",
+          "sgx-mrsigner",
+          "sgx-mrenclave",
+          "product-id",
+          "svn",
+          "tee"
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

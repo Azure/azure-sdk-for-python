@@ -9,7 +9,7 @@
 
 from typing import Any
 from cryptography.hazmat.backends import default_backend
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 import cryptography
 import cryptography.x509
 import pytest
@@ -132,13 +132,14 @@ _runtime_data = (
 )
 
 
-class AttestationTest(AzureTestCase):
+class TestAttestation(AzureRecordedTestCase):
 
     # The caching infrastructure won't cache .well-known/openid_metadata responses so
     # mark the metadata related tests as live-only.
     @pytest.mark.live_test_only
     @AttestationPreparer()
-    def test_shared_getopenidmetadata(self, attestation_location_short_name):
+    def test_shared_getopenidmetadata(self, **kwargs):
+        attestation_location_short_name = kwargs.pop("attestation_location_short_name")
         attest_client = self.shared_client(attestation_location_short_name)
         open_id_metadata = attest_client.get_open_id_metadata()
         assert open_id_metadata["response_types_supported"] is not None
@@ -153,7 +154,8 @@ class AttestationTest(AzureTestCase):
 
     @pytest.mark.live_test_only
     @AttestationPreparer()
-    def test_aad_getopenidmetadata(self, attestation_aad_url):
+    def test_aad_getopenidmetadata(self, **kwargs):
+        attestation_aad_url = kwargs.pop("attestation_aad_url")
         attest_client = self.create_client(attestation_aad_url)
         open_id_metadata = attest_client.get_open_id_metadata()
         assert open_id_metadata["response_types_supported"] is not None
@@ -162,7 +164,8 @@ class AttestationTest(AzureTestCase):
 
     @pytest.mark.live_test_only
     @AttestationPreparer()
-    def test_isolated_getopenidmetadata(self, attestation_isolated_url):
+    def test_isolated_getopenidmetadata(self, **kwargs):
+        attestation_isolated_url = kwargs.pop("attestation_isolated_url")
         attest_client = self.create_client(attestation_isolated_url)
         open_id_metadata = attest_client.get_open_id_metadata()
         assert open_id_metadata["response_types_supported"] is not None
@@ -170,6 +173,7 @@ class AttestationTest(AzureTestCase):
         assert open_id_metadata["issuer"] == attestation_isolated_url
 
     @AttestationPreparer()
+    @recorded_by_proxy
     def test_shared_getsigningcertificates(self, attestation_location_short_name):
         attest_client = self.shared_client(attestation_location_short_name)
         signers = attest_client.get_signing_certificates()
@@ -179,6 +183,7 @@ class AttestationTest(AzureTestCase):
             )
 
     @AttestationPreparer()
+    @recorded_by_proxy
     def test_aad_getsigningcertificates(self, attestation_aad_url):
         # type: (str) -> None
         attest_client = self.create_client(attestation_aad_url)
@@ -189,6 +194,7 @@ class AttestationTest(AzureTestCase):
             )
 
     @AttestationPreparer()
+    @recorded_by_proxy
     def test_isolated_getsigningcertificates(self, attestation_isolated_url):
         # type: (str) -> None
         attest_client = self.create_client(attestation_isolated_url)
@@ -235,6 +241,7 @@ class AttestationTest(AzureTestCase):
 
     @AttestationPreparer()
     @AllInstanceTypes
+    @recorded_by_proxy
     def test_attest_open_enclave(self, **kwargs):
         # type: (str, **Any) -> None
         self._test_attest_open_enclave(kwargs.pop("instance_url"))
@@ -265,11 +272,13 @@ class AttestationTest(AzureTestCase):
 
     @AttestationPreparer()
     @AllInstanceTypes
+    @recorded_by_proxy
     def test_attest_sgx_enclave(self, **kwargs):
         # type: (str, **Any) -> None
         self._test_attest_sgx_enclave(kwargs.pop("instance_url"))
 
     @AttestationPreparer()
+    @recorded_by_proxy
     def test_tpm_attestation(self, attestation_aad_url):
         # type: (str) -> None
         client = self.create_client(attestation_aad_url)
