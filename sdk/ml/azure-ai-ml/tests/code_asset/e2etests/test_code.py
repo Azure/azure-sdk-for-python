@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Callable
 from unittest.mock import patch
 
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 import pytest
 from test_utilities.utils import get_arm_id
 
@@ -56,6 +56,10 @@ class TestCode(AzureRecordedTestCase):
             code_entity.path = code_asset_path
             client._code.create_or_update(code_entity)
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="registry tests do not record properly. Investigate later."
+    )
     def test_create_and_get_from_registry(
         self,
         registry_client: MLClient,

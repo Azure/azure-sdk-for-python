@@ -149,6 +149,10 @@ class TestModel(AzureRecordedTestCase):
         client.models.restore(name=name)
         assert name in get_model_list()
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="Registry uploads do not record well. Investigate later"
+    )
     def test_create_get_download_model_registry(self, registry_client: MLClient, randstr: Callable[[], str]) -> None:
         model_path = Path("./tests/test_configs/model/model_full.yml")
         model_name = randstr("model_name")
@@ -175,6 +179,10 @@ class TestModel(AzureRecordedTestCase):
         assert os.path.exists(wd)
         assert os.path.exists(f"{wd}/lightgbm_mlflow_model/MLmodel")
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="Registry uploads do not record well. Investigate later"
+    )
     def test_list_model_registry(self, registry_client: MLClient, randstr: Callable[[], str]) -> None:
         model_path = Path("./tests/test_configs/model/model_full.yml")
         model_name = randstr("model_name")
