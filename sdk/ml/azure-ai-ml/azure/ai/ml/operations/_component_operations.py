@@ -9,7 +9,6 @@ import types
 from inspect import Parameter, signature
 from typing import Callable, Dict, Iterable, Union
 
-from azure.ai.ml._ml_exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
@@ -36,6 +35,7 @@ from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._validation import ValidationResult
+from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 
 from .._utils._experimental import experimental
 from .._utils.utils import is_data_binding_expression
@@ -458,11 +458,12 @@ class ComponentOperations(_ScopeDependentOperations):
                     base_path,
                 )
             elif isinstance(job_instance, AutoMLJob):
-                self._job_operations._resolve_automl_job_inputs(job_instance, base_path, inside_pipeline=True)
+                self._job_operations._resolve_automl_job_inputs(job_instance)
 
     def _resolve_arm_id_for_pipeline_component_jobs(self, jobs, resolver: Callable):
 
         from azure.ai.ml.entities._builders import BaseNode, Sweep
+        from azure.ai.ml.entities._builders.control_flow_node import LoopNode
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
         from azure.ai.ml.entities._job.pipeline._io import PipelineInput
@@ -504,6 +505,8 @@ class ComponentOperations(_ScopeDependentOperations):
 
         for key, job_instance in jobs.items():
             preprocess_job(job_instance)
+            if isinstance(job_instance, LoopNode):
+                job_instance = job_instance.body
             if isinstance(job_instance, AutoMLJob):
                 self._job_operations._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)
             elif isinstance(job_instance, BaseNode):

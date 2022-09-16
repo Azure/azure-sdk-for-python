@@ -22,7 +22,7 @@ from uuid import uuid4
 
 from marshmallow import ValidationError
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, MlException
+from azure.ai.ml.exceptions import ErrorCategory, MlException
 from azure.core.exceptions import HttpResponseError
 
 from .._utils.utils import _is_user_error_from_exception_type, _is_user_error_from_status_code, _str_to_bool

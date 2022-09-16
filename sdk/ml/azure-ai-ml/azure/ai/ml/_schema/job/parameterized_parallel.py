@@ -15,7 +15,7 @@ from azure.ai.ml.constants._common import LoggingLevel
 class ParameterizedParallelSchema(PathAwareSchema):
     logging_level = StringTransformedEnum(
         allowed_values=[LoggingLevel.DEBUG, LoggingLevel.INFO, LoggingLevel.WARN],
-        casing_transform=lambda *args: None,
+        casing_transform=lambda x: x,
         dump_default=LoggingLevel.INFO,
         metadata={
             "description": "A string of the logging level name, which is defined in 'logging'. Possible values are 'WARNING', 'INFO', and 'DEBUG'."

@@ -10,15 +10,6 @@ from os import PathLike
 from typing import Any, Optional, Tuple, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context, _check_and_upload_path
-from azure.ai.ml._ml_exceptions import (
-    AssetException,
-    ErrorCategory,
-    ErrorTarget,
-    MlException,
-    ModelException,
-    ValidationErrorType,
-    ValidationException,
-)
 from azure.ai.ml._restclient.v2021_10_01.models import UriReference
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._utils._arm_id_utils import (
@@ -51,6 +42,15 @@ from azure.ai.ml.constants._common import (
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._assets import Code, Data, Environment, Model
 from azure.ai.ml.entities._assets.asset import Asset
+from azure.ai.ml.exceptions import (
+    AssetException,
+    ErrorCategory,
+    ErrorTarget,
+    MlException,
+    ModelException,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 module_logger = logging.getLogger(__name__)

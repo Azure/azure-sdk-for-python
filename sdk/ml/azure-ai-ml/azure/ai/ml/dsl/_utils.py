@@ -10,8 +10,8 @@ import re
 import sys
 from pathlib import Path
 
-from azure.ai.ml._ml_exceptions import ComponentException, ErrorCategory, ErrorTarget
 from azure.ai.ml.dsl._constants import VALID_NAME_CHARS
+from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget
 
 
 def _normalize_identifier_name(name):

@@ -9,13 +9,12 @@ from typing import Iterable, Tuple
 
 from azure.ai.ml._artifacts._artifact_utilities import download_artifact_from_storage_url
 from azure.ai.ml._local_endpoints.errors import RequiredLocalArtifactsNotFoundError
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._utils._arm_id_utils import parse_name_version
 from azure.ai.ml._utils.utils import dump_yaml, is_url
 from azure.ai.ml.entities import OnlineDeployment
 from azure.ai.ml.entities._assets.environment import BuildContext, Environment
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.operations._environment_operations import EnvironmentOperations
-
 
 
 def get_environment_artifacts(
@@ -41,7 +40,7 @@ def get_environment_artifacts(
         name, version = parse_name_version(deployment.environment)
         environment_asset = environment_operations.get(name=name, version=version)
         if not _cloud_environment_is_valid(environment=environment_asset):
-            msg =(
+            msg = (
                 "Cloud environment must have environment.image "
                 "or the environment.build.path set to work for local endpoints."
             )
@@ -64,6 +63,7 @@ def get_environment_artifacts(
             deployment_name=deployment.name,
         )
     return _get_local_environment_artifacts(deployment.base_path, deployment.environment)
+
 
 def _get_cloud_environment_artifacts(
     environment_operations: EnvironmentOperations,
@@ -102,6 +102,7 @@ def _get_cloud_environment_artifacts(
         environment_asset.inference_config,
     )
 
+
 def _get_local_environment_artifacts(base_path: str, environment: Environment):
     """
     :return: (base_image, conda_file_path, conda_file_contents, build_directory,
@@ -133,6 +134,7 @@ def _get_local_environment_artifacts(base_path: str, environment: Environment):
             environment.inference_config,
         )
 
+
 def _local_environment_is_valid(deployment: OnlineDeployment):
     return isinstance(deployment.environment, Environment) and (
         deployment.environment.image
@@ -143,13 +145,16 @@ def _local_environment_is_valid(deployment: OnlineDeployment):
         )
     )
 
+
 def _local_build_context_is_valid(build_context: BuildContext):
     return build_context.path is not None
+
 
 def _cloud_environment_is_valid(environment: Environment):
     return isinstance(environment, Environment) and (
         environment.image or (environment.build and environment.build.path)
     )
+
 
 def _environment_contains_cloud_artifacts(deployment: OnlineDeployment):
     return isinstance(deployment.environment, str)

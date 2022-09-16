@@ -4,8 +4,8 @@
 
 import re
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.constants._endpoint import OnlineEndpointConfigurations
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
 def validate_endpoint_or_deployment_name(name: str, is_deployment: bool = False) -> None:

@@ -13,13 +13,6 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Type, Union
 
-from azure.ai.ml._ml_exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    JobException,
-    ValidationErrorType,
-    ValidationException,
-)
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase, JobService
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobType as RestJobType
@@ -32,6 +25,7 @@ from azure.ai.ml.entities._job.job_errors import JobParsingError, PipelineChildJ
 from azure.ai.ml.entities._mixins import TelemetryMixin
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import find_type_in_override
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, ValidationErrorType, ValidationException
 
 from ._studio_url_from_job_id import studio_url_from_job_id
 from .pipeline._component_translatable import ComponentTranslatableMixin
@@ -58,7 +52,8 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     :type tags: dict[str, str]
     :param properties: The job property dictionary.
     :type properties: dict[str, str]
-    :param experiment_name:  Name of the experiment the job will be created under, if None is provided, experiment will be set to current directory.
+    :param experiment_name:  Name of the experiment the job will be created under,
+        if None is provided, experiment will be set to current directory.
     :type experiment_name: str
     :param services: Information on services associated with the job.
     :type services: dict[str, JobService]
@@ -254,7 +249,8 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         :type data: Dict, optional
         :param yaml_path: YAML Path, defaults to None
         :type yaml_path: Union[PathLike, str], optional
-        :param params_override: Fields to overwrite on top of the yaml file. Format is [{"field1": "value1"}, {"field2": "value2"}], defaults to None
+        :param params_override: Fields to overwrite on top of the yaml file.
+            Format is [{"field1": "value1"}, {"field2": "value2"}], defaults to None
         :type params_override: List[Dict], optional
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
@@ -281,7 +277,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         return job
 
     @classmethod
-    def _from_rest_object(cls, obj: Union[JobBase, Run]) -> "Job":
+    def _from_rest_object(cls, obj: Union[JobBase, Run]) -> "Job":  # pylint: disable=too-many-return-statements
         from azure.ai.ml.entities import PipelineJob
         from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._builders.spark import Spark
@@ -294,29 +290,29 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             if isinstance(obj, Run):
                 # special handling for child jobs
                 return _BaseJob._load_from_rest(obj)
-            elif _is_pipeline_child_job(obj):
+            if _is_pipeline_child_job(obj):
                 raise PipelineChildJobError(job_id=obj.id)
-            elif obj.properties.job_type == RestJobType.COMMAND:
+            if obj.properties.job_type == RestJobType.COMMAND:
                 # PrP only until new import job type is ready on MFE in PuP
                 # compute type 'DataFactory' is reserved compute name for 'clusterless' ADF jobs
                 if obj.properties.compute_id.endswith("/" + ComputeType.ADF):
                     return ImportJob._load_from_rest(obj)
-                else:
-                    return Command._load_from_rest_job(obj)
-            elif obj.properties.job_type == RestJobType.SPARK:
+
+                return Command._load_from_rest_job(obj)
+            if obj.properties.job_type == RestJobType.SPARK:
                 return Spark._load_from_rest_job(obj)
-            elif obj.properties.job_type == RestJobType.SWEEP:
+            if obj.properties.job_type == RestJobType.SWEEP:
                 return SweepJob._load_from_rest(obj)
-            elif obj.properties.job_type == RestJobType.AUTO_ML:
+            if obj.properties.job_type == RestJobType.AUTO_ML:
                 return AutoMLJob._load_from_rest(obj)
-            elif obj.properties.job_type == RestJobType.PIPELINE:
+            if obj.properties.job_type == RestJobType.PIPELINE:
                 return PipelineJob._load_from_rest(obj)
         except PipelineChildJobError as ex:
             raise ex
         except Exception as ex:
             error_message = json.dumps(obj.as_dict(), indent=2) if obj else None
             module_logger.info(
-                f"Exception: {ex}.\n{traceback.format_exc()}\n" f"Unable to parse the job resource: {error_message}.\n"
+                "Exception: %s.\n%s\nUnable to parse the job resource: %s.\n", ex, traceback.format_exc(), error_message
             )
             raise JobParsingError(
                 message=str(ex),
@@ -332,7 +328,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                 error_category=ErrorCategory.SYSTEM_ERROR,
             )
 
-    def _get_telemetry_values(self):
+    def _get_telemetry_values(self):  # pylint: disable=arguments-differ
         telemetry_values = {"type": self.type}
         return telemetry_values
 

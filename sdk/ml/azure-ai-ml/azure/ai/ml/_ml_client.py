@@ -19,7 +19,6 @@ from azure.ai.ml._azure_environments import (
     _set_cloud,
 )
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
@@ -29,6 +28,7 @@ from azure.ai.ml._restclient.v2022_01_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062022Preview
+from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
@@ -52,6 +52,7 @@ from azure.ai.ml.entities import (
     Workspace,
 )
 from azure.ai.ml.entities._assets import WorkspaceModelReference
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.operations import (
     BatchDeploymentOperations,
     BatchEndpointOperations,
@@ -105,7 +106,7 @@ class MLClient(object):
         :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations.
             Defaults to None
         :type workspace_name: str, optional
-        :param registry_name: Registry to use in the client, optional for non registry dependent operations.
+        :param registry_name: Registry to use in the client, only used in the context of registry assets.
             Defaults to None
         :type registry_name: str, optional
         :param kwargs: A dictionary of additional configuration parameters.
@@ -193,6 +194,13 @@ class MLClient(object):
             **kwargs,
         )
 
+        self._rp_service_client_registries = ServiceClient102022(
+            subscription_id=self._operation_scope._subscription_id,
+            credential=self._credential,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._rp_service_client = ServiceClient052022(
             subscription_id=self._operation_scope._subscription_id,
             credential=self._credential,
@@ -255,7 +263,7 @@ class MLClient(object):
         # TODO make sure that at least one reviewer who understands operation initialization details reviews this
         self._registries = RegistryOperations(
             self._operation_scope,
-            self._rp_service_client,
+            self._rp_service_client_registries,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,

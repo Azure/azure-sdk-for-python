@@ -9,14 +9,16 @@ import logging
 import shutil
 from pathlib import Path
 from typing import Iterable
-from marshmallow.exceptions import ValidationError as SchemaValidationError
-from docker.models.containers import Container
 
+from docker.models.containers import Container
+from marshmallow.exceptions import ValidationError as SchemaValidationError
+
+from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._local_endpoints import AzureMlImageContext, DockerfileResolver, LocalEndpointMode
 from azure.ai.ml._local_endpoints.docker_client import (
     DockerClient,
-    get_status_from_container,
     get_deployment_json_from_container,
+    get_status_from_container,
 )
 from azure.ai.ml._local_endpoints.errors import InvalidLocalEndpointError, LocalEndpointNotFoundError
 from azure.ai.ml._local_endpoints.validators.code_validator import get_code_configuration_artifacts
@@ -27,7 +29,7 @@ from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 from azure.ai.ml.entities import OnlineDeployment
-from azure.ai.ml._ml_exceptions import ValidationException, log_and_raise_error
+from azure.ai.ml.exceptions import ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -87,7 +89,7 @@ class _LocalDeploymentHelper(object):
                 deployment_metadata=deployment_metadata,
             )
             return self.get(endpoint_name=deployment.endpoint_name, deployment_name=deployment.name)
-        except Exception as ex: # pylint: disable=broad-except
+        except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:
@@ -169,9 +171,7 @@ class _LocalDeploymentHelper(object):
         :type deployment_metadata: dict
         """
         deployment_name = deployment.name
-        deployment_directory = _create_build_directory(
-            endpoint_name=endpoint_name, deployment_name=deployment_name
-        )
+        deployment_directory = _create_build_directory(endpoint_name=endpoint_name, deployment_name=deployment_name)
         deployment_directory_path = str(deployment_directory.resolve())
 
         # Get assets for mounting into the container
@@ -278,6 +278,7 @@ class _LocalDeploymentHelper(object):
             prebuilt_image_name=yaml_base_image_name if is_byoc else None,
         )
 
+
 def _convert_container_to_deployment(container: Container) -> OnlineDeployment:
     """Converts provided Container for local deployment to OnlineDeployment
     entity.
@@ -300,6 +301,7 @@ def _convert_container_to_deployment(container: Container) -> OnlineDeployment:
         provisioning_state=LocalEndpointConstants.ENDPOINT_STATE_SUCCEEDED,
     )
 
+
 def _write_conda_file(conda_contents: str, directory_path: str, conda_file_name: str):
     """Writes out conda file to provided directory.
 
@@ -311,6 +313,7 @@ def _write_conda_file(conda_contents: str, directory_path: str, conda_file_name:
     conda_file_path = f"{directory_path}/{conda_file_name}"
     p = Path(conda_file_path)
     p.write_text(conda_contents)
+
 
 def _convert_json_to_deployment(deployment_json: dict, **kwargs) -> OnlineDeployment:
     """Converts metadata json and kwargs to OnlineDeployment entity.
@@ -324,13 +327,16 @@ def _convert_json_to_deployment(deployment_json: dict, **kwargs) -> OnlineDeploy
         params_override.append({k: v})
     return OnlineDeployment._load(data=deployment_json, params_override=params_override)
 
+
 def _get_stubbed_endpoint_metadata(endpoint_name: str) -> dict:
     return json.dumps({"name": endpoint_name})
+
 
 def _create_build_directory(endpoint_name: str, deployment_name: str) -> Path:
     build_directory = _get_deployment_directory(endpoint_name=endpoint_name, deployment_name=deployment_name)
     build_directory.mkdir(parents=True, exist_ok=True)
     return build_directory
+
 
 def _get_deployment_directory(endpoint_name: str, deployment_name: str) -> Path:
     return Path(Path.home(), ".azureml", "inferencing", endpoint_name, deployment_name)
