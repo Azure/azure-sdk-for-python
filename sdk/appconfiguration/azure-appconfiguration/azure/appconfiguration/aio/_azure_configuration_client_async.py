@@ -83,17 +83,31 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
             base_user_agent=USER_AGENT, **kwargs
         )
 
-        pipeline = kwargs.get("pipeline")
         self._sync_token_policy = AsyncSyncTokenPolicy()
-
-        if pipeline is None:
-            aad_mode = not isinstance(credential, AppConfigConnectionStringCredential)
-            pipeline = self._create_appconfig_pipeline(
-                credential=credential, aad_mode=aad_mode, base_url=base_url, **kwargs
-            )
+        
+        aad_mode = not isinstance(credential, AppConfigConnectionStringCredential)
+        if aad_mode:
+            scope = base_url.strip("/") + "/.default"
+            if hasattr(credential, "get_token"):
+                credential_policy = AsyncBearerTokenCredentialPolicy(
+                    credential, scope
+                )
+            else:
+                raise TypeError(
+                    "Please provide an instance from azure-identity "
+                    "or a class that implement the 'get_token protocol"
+                )
+        else:
+            credential_policy = AppConfigRequestsCredentialsPolicy(credential)
 
         self._impl = AzureAppConfiguration(
-            credential, base_url, credential_scopes=self._credential_scopes, pipeline=pipeline  # type: ignore
+            credential, base_url,
+            credential_scopes=self._credential_scopes,
+            authentication_policy=credential_policy,
+            user_agent_policy=self._config.user_agent_policy,
+            per_call_policies=self._sync_token_policy,
+            transport=AioHttpTransport(),
+            **kwargs  # type: ignore
         )
 
     @classmethod
@@ -120,47 +134,6 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
             credential=AppConfigConnectionStringCredential(connection_string),
             base_url=base_url,
             **kwargs
-        )
-
-    def _create_appconfig_pipeline(
-        self, credential, base_url=None, aad_mode=False, **kwargs
-    ):
-        transport = kwargs.get("transport")
-        policies = kwargs.get("policies")
-
-        if policies is None:  # [] is a valid policy list
-            if aad_mode:
-                scope = base_url.strip("/") + "/.default"
-                if hasattr(credential, "get_token"):
-                    credential_policy = AsyncBearerTokenCredentialPolicy(
-                        credential, scope
-                    )
-                else:
-                    raise TypeError(
-                        "Please provide an instance from azure-identity "
-                        "or a class that implement the 'get_token protocol"
-                    )
-            else:
-                credential_policy = AppConfigRequestsCredentialsPolicy(credential)
-
-            policies = [
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                self._config.retry_policy,
-                self._sync_token_policy,
-                credential_policy,
-                self._config.logging_policy,  # HTTP request/response log
-                DistributedTracingPolicy(**kwargs),
-                HttpLoggingPolicy(**kwargs),
-                ContentDecodePolicy(**kwargs),
-            ]
-
-        if not transport:
-            transport = AioHttpTransport(**kwargs)
-
-        return AsyncPipeline(
-            transport,
-            policies,
         )
 
     @distributed_trace
