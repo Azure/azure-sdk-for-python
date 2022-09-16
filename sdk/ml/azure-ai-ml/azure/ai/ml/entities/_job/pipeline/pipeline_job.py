@@ -12,7 +12,6 @@ from typing import Dict, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._ml_exceptions import ErrorTarget
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2022_06_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._schema import PathAwareSchema
@@ -51,6 +50,7 @@ from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJob
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
+from azure.ai.ml.exceptions import ErrorTarget
 
 module_logger = logging.getLogger(__name__)
 

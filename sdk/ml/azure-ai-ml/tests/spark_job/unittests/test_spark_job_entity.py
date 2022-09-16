@@ -1,7 +1,6 @@
 import pytest
 
 from azure.ai.ml import Input, Output
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml._restclient.v2022_06_01_preview.models import AmlToken, JobBase
 from azure.ai.ml._restclient.v2022_06_01_preview.models import SparkJob as RestSparkJob
 from azure.ai.ml._restclient.v2022_06_01_preview.models import SparkJobPythonEntry
@@ -9,6 +8,7 @@ from azure.ai.ml.entities import SparkJob
 from azure.ai.ml.entities._builders.spark_func import spark
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
 from azure.ai.ml.entities._job.spark_resource_configuration import SparkResourceConfiguration
+from azure.ai.ml.exceptions import ValidationException
 
 
 @pytest.mark.unittest

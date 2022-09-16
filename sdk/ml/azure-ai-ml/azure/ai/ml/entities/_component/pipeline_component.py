@@ -12,7 +12,6 @@ from typing import Dict, Tuple, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2021_10_01.models import ComponentVersionDetails
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml._schema import PathAwareSchema
@@ -32,6 +31,7 @@ from azure.ai.ml.entities._job.pipeline._attr_dict import (
 )
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._validation import ValidationResult
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
 

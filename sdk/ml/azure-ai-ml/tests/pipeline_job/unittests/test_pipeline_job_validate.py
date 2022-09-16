@@ -6,10 +6,10 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
 from azure.ai.ml import Input, MLClient, dsl, load_component, load_job
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
 from azure.ai.ml.entities import Choice, CommandComponent, PipelineJob
 from azure.ai.ml.entities._validate_funcs import validate_job
+from azure.ai.ml.exceptions import ValidationException
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 

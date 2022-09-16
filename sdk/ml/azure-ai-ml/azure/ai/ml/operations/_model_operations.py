@@ -19,14 +19,7 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
-from azure.ai.ml._ml_exceptions import (
-    AssetPathException,
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-    log_and_raise_error,
-)
+from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
@@ -51,6 +44,13 @@ from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_fl
 from azure.ai.ml.constants._common import ASSET_ID_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._assets import Model, WorkspaceModelReference
 from azure.ai.ml.entities._datastore.credentials import AccountKeyCredentials
+from azure.ai.ml.exceptions import (
+    AssetPathException,
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.exceptions import ResourceNotFoundError
 

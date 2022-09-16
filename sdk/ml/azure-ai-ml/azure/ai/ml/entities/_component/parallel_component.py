@@ -8,7 +8,6 @@ from typing import Any, Dict, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema
 from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
@@ -16,6 +15,7 @@ from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConf
 from azure.ai.ml.entities._job.parallel.parallel_task import ParallelTask
 from azure.ai.ml.entities._job.parallel.parameterized_parallel import ParameterizedParallel
 from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ..._schema import PathAwareSchema
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type

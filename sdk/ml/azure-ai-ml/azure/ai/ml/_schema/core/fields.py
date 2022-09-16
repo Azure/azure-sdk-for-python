@@ -18,7 +18,6 @@ from marshmallow.exceptions import ValidationError
 from marshmallow.fields import _T, Field, Nested
 from marshmallow.utils import FieldInstanceResolutionError, from_iso_datetime, resolve_field_instance
 
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._utils._arm_id_utils import (
     AMLVersionedArmId,
@@ -44,6 +43,7 @@ from azure.ai.ml.constants._common import (
     AzureMLResourceType,
 )
 from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
+from azure.ai.ml.exceptions import ValidationException
 
 module_logger = logging.getLogger(__name__)
 

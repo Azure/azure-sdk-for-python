@@ -7,9 +7,9 @@ import re
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._utils.utils import is_url
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, REGISTRY_URI_FORMAT
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from .spark_job_entry import SparkJobEntry, SparkJobEntryType
 

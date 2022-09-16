@@ -9,7 +9,6 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     EndpointAuthMode,
     IdentityConfiguration,
@@ -27,6 +26,7 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._util import is_compute_in_override, load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ._endpoint_helpers import validate_endpoint_or_deployment_name, validate_identity_type_defined
 from .endpoint import Endpoint

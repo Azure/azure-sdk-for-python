@@ -9,7 +9,6 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentData
 from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentDetails as RestBatchDeployment
 from azure.ai.ml._restclient.v2022_05_01.models import BatchOutputAction
@@ -23,6 +22,7 @@ from azure.ai.ml.entities._assets import Environment, Model
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from .code_configuration import CodeConfiguration
 from .deployment import Deployment

@@ -6,9 +6,9 @@ import types
 from inspect import Parameter, Signature
 from typing import Callable, Sequence
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._job.pipeline._exceptions import UnexpectedKeywordError
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
 

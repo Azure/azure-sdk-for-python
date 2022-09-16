@@ -9,7 +9,6 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Dict, List, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInput as RestJobInput
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml._utils.utils import is_data_binding_expression
@@ -32,6 +31,7 @@ from azure.ai.ml.entities._job.pipeline._exceptions import (
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpressionMixin
 from azure.ai.ml.entities._job.pipeline._pipeline_job_helpers import from_dict_to_rest_io, process_sdk_component_job_io
 from azure.ai.ml.entities._util import resolve_pipeline_parameter
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 # pylint: disable=pointless-string-statement
 """Classes in this file converts input & output set by user to pipeline job input & output."""
@@ -521,7 +521,7 @@ class InputsAttrDict(dict):
     @classmethod
     def _validate_inputs(cls, inputs):
         msg = "Pipeline/component input should be a \
-        azure.ai.ml.entities._job.pipeline._io.PipelineInputBase with owner, got {}."
+        azure.ai.ml.entities._job.pipeline._io.NodeInput with owner, got {}."
         for val in inputs.values():
             if isinstance(val, NodeInput) and val._owner is not None:
                 continue
@@ -568,7 +568,7 @@ class _GroupAttrDict(InputsAttrDict):
 
     @classmethod
     def _validate_inputs(cls, inputs):
-        msg = "Pipeline/component input should be a azure.ai.ml.entities._job.pipeline._io.PipelineInputBase, got {}."
+        msg = "Pipeline/component input should be a azure.ai.ml.entities._job.pipeline._io.NodeInput, got {}."
         for val in inputs.values():
             if isinstance(val, NodeInput) and val._owner is not None:
                 continue
@@ -606,7 +606,7 @@ class _GroupAttrDict(InputsAttrDict):
 
         group_parameter_name = group_parameter_name if group_parameter_name else ""
         flattened_parameters = {}
-        msg = "'%s' in parameter group should be a azure.ai.ml.entities._job._io.PipelineInputBase, got '%s'."
+        msg = "'%s' in parameter group should be a azure.ai.ml.entities._job._io.NodeInput, got '%s'."
         for k, v in self.items():
             flattened_name = ".".join([group_parameter_name, k])
             if isinstance(v, _GroupAttrDict):

@@ -41,4 +41,4 @@ def test_online_deployment(client: MLClient) -> None:
     except Exception as ex:
         raise ex
     finally:
-        client.online_endpoints.begin_delete(name=endpoint.name, no_wait=True)
+        client.online_endpoints.begin_delete(name=endpoint.name)

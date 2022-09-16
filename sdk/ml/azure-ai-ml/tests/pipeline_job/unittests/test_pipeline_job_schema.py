@@ -10,7 +10,6 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobService, MLTableJobInput
 from azure.ai.ml._restclient.v2022_06_01_preview.models import PipelineJob as RestPipelineJob
@@ -29,6 +28,7 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 )
 from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
+from azure.ai.ml.exceptions import ValidationException
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 

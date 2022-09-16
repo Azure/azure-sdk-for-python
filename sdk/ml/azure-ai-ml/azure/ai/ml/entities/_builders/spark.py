@@ -11,7 +11,6 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_06_01_preview.models import IdentityConfiguration
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase as JobBaseData
 from azure.ai.ml._restclient.v2022_06_01_preview.models import SparkJob as RestSparkJob
@@ -37,6 +36,7 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 from azure.ai.ml.entities._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from azure.ai.ml.entities._job.spark_job import SparkJob
 from azure.ai.ml.entities._job.spark_resource_configuration import SparkResourceConfiguration
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ..._schema import NestedField, PathAwareSchema, UnionField
 from .._job.pipeline._io import NodeOutput, PipelineInput

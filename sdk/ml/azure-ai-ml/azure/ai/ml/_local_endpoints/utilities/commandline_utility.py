@@ -8,12 +8,13 @@ import subprocess
 import sys
 import time
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, MlException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException
 
 
 def _print_command_results(test_passed, time_taken, output):
     print("Command {} in {} seconds.".format("successful" if test_passed else "failed", time_taken))
     print("Output: \n{}\n".format(output))
+
 
 def run_cli_command(
     cmd_arguments,

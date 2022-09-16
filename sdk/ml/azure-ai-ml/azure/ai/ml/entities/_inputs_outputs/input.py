@@ -9,9 +9,9 @@ import math
 from inspect import Parameter
 from typing import Dict, Union, overload
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
 from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .base import _InputOutputBase
 from .utils import _get_param_with_standard_annotation, _remove_empty_values

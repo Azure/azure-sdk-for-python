@@ -11,7 +11,6 @@ from marshmallow import ValidationError
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
 
 from azure.ai.ml import MLClient, load_component, load_data, load_job
-from azure.ai.ml._ml_exceptions import JobException, ValidationException
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants import InputOutputModes
@@ -21,6 +20,7 @@ from azure.ai.ml.entities._builders import Command, Pipeline
 from azure.ai.ml.entities._builders.do_while import DoWhile
 from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.spark import Spark
+from azure.ai.ml.exceptions import JobException, ValidationException
 from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError

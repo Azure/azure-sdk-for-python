@@ -9,7 +9,6 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeResource
 from azure.ai.ml._schema.compute.compute import ComputeSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
@@ -18,6 +17,7 @@ from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import find_type_in_override
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class Compute(Resource, RestTranslatableMixin):

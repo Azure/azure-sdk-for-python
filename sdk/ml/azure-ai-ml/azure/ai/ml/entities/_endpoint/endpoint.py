@@ -7,8 +7,8 @@ from abc import abstractmethod
 from os import PathLike
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
 

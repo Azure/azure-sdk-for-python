@@ -75,7 +75,7 @@ class InternalBaseNode(BaseNode):
             **kwargs,
         )
 
-    def _build_input(self, name, meta: Input, data) -> PipelineInputBase:
+    def _build_input(self, name, meta: Input, data) -> NodeInput:
         return super(InternalBaseNode, self)._build_input(name, InternalInput._cast_from_input_or_dict(meta), data)
 
     @property

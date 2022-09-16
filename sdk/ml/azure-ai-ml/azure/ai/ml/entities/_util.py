@@ -13,7 +13,6 @@ from unittest import mock
 import msrest
 from marshmallow.exceptions import ValidationError
 
-from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInputType as JobInputType06
 from azure.ai.ml._schema._datastore import (
@@ -54,6 +53,7 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 
 # Maps schema class name to formatted error message pointing to Microsoft docs reference page for a schema's YAML
 REF_DOC_ERROR_MESSAGE_MAP = {
@@ -330,7 +330,7 @@ def extract_label(input_str: str):
 def resolve_pipeline_parameters(pipeline_parameters: dict, remove_empty=False):
     """Resolve pipeline parameters.
 
-    1. Resolve BaseNode and OutputsAttrDict type to PipelineOutputBase.
+    1. Resolve BaseNode and OutputsAttrDict type to NodeOutput.
     2. Remove empty value (optional).
     """
 

@@ -5,7 +5,7 @@
 from enum import EnumMeta
 from typing import Iterable, Sequence, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .input import Input
 

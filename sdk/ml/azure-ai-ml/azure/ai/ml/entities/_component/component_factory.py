@@ -8,7 +8,6 @@ from typing import Any, Callable, Dict, Tuple
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml._utils.utils import is_internal_components_enabled
 from azure.ai.ml.constants._common import (
@@ -29,6 +28,7 @@ from azure.ai.ml.entities._component.spark_component import SparkComponent
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.distribution import DistributionConfiguration
 from azure.ai.ml.entities._util import extract_label
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class _ComponentFactory:

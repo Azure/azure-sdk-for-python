@@ -3,9 +3,9 @@
 # ---------------------------------------------------------
 # pylint: disable=protected-access
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.constants import InputOutputModes
 from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 def _validate_spark_configurations(obj):

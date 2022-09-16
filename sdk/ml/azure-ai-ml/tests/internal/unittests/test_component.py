@@ -13,10 +13,10 @@ import yaml
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
 from azure.ai.ml._internal.entities.component import InternalComponent
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
 from azure.ai.ml.entities import Component
+from azure.ai.ml.exceptions import ValidationException
 
 from .._utils import PARAMETERS_TO_TEST
 
