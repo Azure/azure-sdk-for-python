@@ -27,7 +27,7 @@ collect_ignore.append("tests/async_tests/test_connection_string_parser_async.py"
 collect_ignore.append("tests/async_tests/test_message_async.py")
 collect_ignore.append("tests/async_tests/test_queues_async.py")
 collect_ignore.append("tests/async_tests/test_sb_client_async.py")
-collect_ignore.append("tests/async_tests/test_session_async.py")
+collect_ignore.append("tests/async_tests/test_sessions_async.py")
 collect_ignore.append("tests/async_tests/test_topic_async.py")
 collect_ignore.append("tests/async_tests/test_subscriptions_async.py")
 
