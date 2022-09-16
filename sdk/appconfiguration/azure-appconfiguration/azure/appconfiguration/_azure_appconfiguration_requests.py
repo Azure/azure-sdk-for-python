@@ -25,6 +25,8 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
 
         # Get the path and query from url, which looks like https://host/path/query
         query_url = str(request.http_request.url[len(self._credentials.host) + 8 :])
+        # Need URL() to get a correct encoded key value, from "%2A" to "*", when transport is in type AioHttpTransport.
+        # There's a similar scenario in azure-storage-blob, the check logic is from there.
         try:
             if isinstance(request.context.transport, AioHttpTransport) or \
                 isinstance(getattr(request.context.transport, "_transport", None), AioHttpTransport) or \
