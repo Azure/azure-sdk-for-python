@@ -739,7 +739,8 @@
         "reprlib",
         "gzrs",
         "ragzrs",
-        "wsid"
+        "wsid",
+        "azml"
       ]
     },
     {
