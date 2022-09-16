@@ -11,6 +11,7 @@ from ._generated._phone_numbers_client import PhoneNumbersClient as PhoneNumbers
 from ._generated.models import PhoneNumberSearchRequest
 from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
+from ._api_versions import DEFAULT_VERSION
 
 if TYPE_CHECKING:
     from typing import Any
@@ -18,7 +19,6 @@ if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
     from ._generated.models import PhoneNumberSearchResult, PurchasedPhoneNumber, PhoneNumberCapabilities
-    from ._api_versions import DEFAULT_VERSION
 
 
 class PhoneNumbersClient(object):
