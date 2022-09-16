@@ -8,17 +8,12 @@ from typing import Dict, Any, Optional, Mapping, Union, TYPE_CHECKING
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
-    DistributedTracingPolicy,
-    HttpLoggingPolicy,
     AsyncBearerTokenCredentialPolicy,
-    ContentDecodePolicy,
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError,
@@ -34,7 +29,6 @@ from .._utils import (
     prep_if_none_match,
 )
 from .._generated.aio import AzureAppConfiguration
-from .._generated.aio._configuration import AzureAppConfigurationConfiguration
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from .._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from .._models import ConfigurationSetting
@@ -74,23 +68,17 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
         if not credential:
             raise ValueError("Missing credential")
 
-        self._credential_scopes = base_url.strip("/") + "/.default"
+        credential_scopes = base_url.strip("/") + "/.default"
 
-        self._config = AzureAppConfigurationConfiguration(
-            credential, base_url, credential_scopes=self._credential_scopes, **kwargs  # type: ignore
-        )
-        self._config.user_agent_policy = UserAgentPolicy(
-            base_user_agent=USER_AGENT, **kwargs
-        )
-
-        self._sync_token_policy = AsyncSyncTokenPolicy()
+        user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
         
+        self._sync_token_policy = AsyncSyncTokenPolicy()
+
         aad_mode = not isinstance(credential, AppConfigConnectionStringCredential)
         if aad_mode:
-            scope = base_url.strip("/") + "/.default"
             if hasattr(credential, "get_token"):
                 credential_policy = AsyncBearerTokenCredentialPolicy(
-                    credential, scope
+                    credential, credential_scopes
                 )
             else:
                 raise TypeError(
@@ -101,12 +89,12 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
             credential_policy = AppConfigRequestsCredentialsPolicy(credential)
 
         self._impl = AzureAppConfiguration(
-            credential, base_url,
-            credential_scopes=self._credential_scopes,
+            credential,
+            base_url,
+            credential_scopes=credential_scopes,
             authentication_policy=credential_policy,
-            user_agent_policy=self._config.user_agent_policy,
+            user_agent_policy=user_agent_policy,
             per_call_policies=self._sync_token_policy,
-            transport=AioHttpTransport(),
             **kwargs  # type: ignore
         )
 
