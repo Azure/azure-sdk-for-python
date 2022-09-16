@@ -491,11 +491,7 @@ class CodegenTestPR:
         if not Path(test_path).exists():
             os.mkdir(test_path)
         client_name, operation_name, function_name = self.get_tests_info()
-        template_path = Path('scripts/auto-release/templates')
-        print(f'++**script_path: {Path("scripts").exists()}')
-        print(f'++**auto_release_path: {Path("scripts/auto-release").exists()}')
-        print(f'++**tools_path: {Path("tools/azure-sdk-tools/packaging_tools").exists()}')
-        print(f"++**template_path: {Path(template_path/'testcase.py').exists()}")
+        template_path = Path('scripts/auto_release/templates')
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_path))
         temp = env.get_template('testcase.py')
         temp_out = temp.render(package_name_dot=f'azure.mgmt.{self.package_name}',
