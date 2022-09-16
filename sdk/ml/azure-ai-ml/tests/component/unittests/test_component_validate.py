@@ -6,9 +6,9 @@ import pytest
 from marshmallow import ValidationError
 
 from azure.ai.ml import MLClient, load_component
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml.entities import CommandComponent, Environment
 from azure.ai.ml.entities._assets import Code
+from azure.ai.ml.exceptions import ValidationException
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 

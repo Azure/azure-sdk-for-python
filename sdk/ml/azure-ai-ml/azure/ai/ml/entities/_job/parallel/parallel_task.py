@@ -5,8 +5,6 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-
 # from azure.ai.ml.entities._deployment.code_configuration import CodeConfiguration
 from azure.ai.ml._schema.component.parallel_task import ComponentParallelTaskSchema
 from azure.ai.ml._utils.utils import load_yaml
@@ -14,6 +12,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class ParallelTask(RestTranslatableMixin, DictMixin):

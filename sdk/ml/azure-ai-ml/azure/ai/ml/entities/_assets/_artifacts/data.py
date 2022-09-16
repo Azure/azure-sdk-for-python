@@ -10,13 +10,7 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Type, Union
 
-from azure.ai.ml._ml_exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-    log_and_raise_error,
-)
+from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2022_05_01.models import (
     DataContainerData,
     DataContainerDetails,
@@ -34,6 +28,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .artifact import ArtifactStorageInfo
 

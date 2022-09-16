@@ -241,7 +241,7 @@ class TestOnlineEndpointsOperations:
         mock_online_endpoint_operations.get(name=random_name)
         mock_online_endpoint_operations._online_operation.get.assert_called_once()
 
-    def test_online_list_keys(
+    def test_online_get_keys(
         self,
         mock_online_endpoint_operations: OnlineEndpointOperations,
         randstr: Callable[[], str],
@@ -253,11 +253,11 @@ class TestOnlineEndpointsOperations:
             location="eastus",
             properties=RestOnlineEndpoint(auth_mode="key"),
         )
-        mock_online_endpoint_operations.list_keys(name=random_name)
+        mock_online_endpoint_operations.get_keys(name=random_name)
         mock_online_endpoint_operations._online_operation.get.assert_called_once()
         mock_online_endpoint_operations._online_operation.list_keys.assert_called_once()
 
-    def test_online_list_token(
+    def test_online_get_token(
         self,
         mock_online_endpoint_operations: OnlineEndpointOperations,
         randstr: Callable[[], str],
@@ -269,7 +269,7 @@ class TestOnlineEndpointsOperations:
             location="eastus",
             properties=RestOnlineEndpoint(auth_mode="amltoken"),
         )
-        mock_online_endpoint_operations.list_keys(name=random_name)
+        mock_online_endpoint_operations.get_keys(name=random_name)
         mock_online_endpoint_operations._online_operation.get.assert_called_once()
         mock_online_endpoint_operations._online_operation.get_token.assert_called_once()
 

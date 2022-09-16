@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 from marshmallow import ValidationError
 
-from .._ml_exceptions import ValidationException
+from ..exceptions import ValidationException
 from . import Component, Job
 from ._load_functions import _load_common_raising_marshmallow_error, _try_load_yaml_dict
 from ._validation import SchemaValidatableMixin, _ValidationResultBuilder

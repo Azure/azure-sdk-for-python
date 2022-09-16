@@ -6,7 +6,6 @@
 
 from typing import Dict, List, Optional
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_01_01_preview.models import AssignedUser
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeInstance as CIRest
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeInstanceSshSettings as CiSShSettings
@@ -22,6 +21,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._compute.compute import Compute, NetworkSettings
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ._identity import IdentityConfiguration
 from ._schedule import ComputeSchedules

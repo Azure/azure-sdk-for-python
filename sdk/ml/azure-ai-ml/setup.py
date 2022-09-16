@@ -62,13 +62,13 @@ setup(
             "azure.ai",
         ]
     ),
-    python_requires="<4.0,>=3.6",
+    python_requires="<4.0,>=3.7",
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "pyyaml<7.0.0,>=5.1.0",
         "msrest>=0.6.18",
         "azure-core<2.0.0,>=1.8.0, !=1.22.0",
-        "azure-mgmt-core<2.0.0,>=1.2.0",
+        "azure-mgmt-core<2.0.0,>=1.3.0",
         "marshmallow<4.0.0,>=3.5",
         "jsonschema<5.0.0,>=4.0.0",
         "tqdm<=4.63.0",
@@ -77,16 +77,16 @@ setup(
         # Used for PR 718512
         "colorama<=0.4.4",
         "pyjwt<3.0.0",
-        "azure-storage-blob<12.13.0,>=12.10.0",
-        "azure-storage-file-share<12.9.0",
-        "azure-storage-file-datalake<12.8.0",
-        "pydash<=4.9.0",
+        "azure-storage-blob<13.0.0,>=12.10.0",
+        "azure-storage-file-share<13.0.0",
+        "azure-storage-file-datalake<13.0.0",
+        "pydash<6.0.0",
         "pathspec==0.9.*",
         "isodate",
         # Used for local endpoint story.
         "docker",
         "azure-common<2.0.0,>=1.1",
-        "typing-extensions>=4.0.1",
+        "typing-extensions<5.0.0",
         "applicationinsights<=0.11.10",
     ],
     extras_require={

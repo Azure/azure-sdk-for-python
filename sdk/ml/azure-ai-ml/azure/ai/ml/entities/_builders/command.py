@@ -13,7 +13,6 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJobLimits as RestCommandJobLimits
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
@@ -42,12 +41,11 @@ from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTermin
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._system_data import SystemData
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..._schema import PathAwareSchema
 from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
 from .._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
-from .._job.pipeline._io import PipelineInput, PipelineOutputBase
-from .._job.pipeline._pipeline_expression import PipelineExpression
 from .._util import convert_ordered_dict_to_dict, get_rest_dict, load_from_dict, validate_attribute_type
 from .base_node import BaseNode
 from .sweep import Sweep
@@ -166,18 +164,10 @@ class Command(BaseNode):
 
     @classmethod
     def _get_supported_inputs_types(cls):
-        # when command node is constructed inside dsl.pipeline, inputs can be PipelineInput or Output of another node
+        supported_types = super()._get_supported_inputs_types() or ()
         return (
-            PipelineInput,
-            PipelineOutputBase,
-            Input,
             SweepDistribution,
-            str,
-            bool,
-            int,
-            float,
-            Enum,
-            PipelineExpression,
+            *supported_types,
         )
 
     @classmethod
@@ -562,9 +552,10 @@ class Command(BaseNode):
 
     def _resolve_job_services(self, services: dict) -> dict:
         """Resolve normal dict to dict[str, JobService]"""
+        # pylint disable=no-self-use
         if services is None:
             return None
-        elif not isinstance(services, dict):
+        if not isinstance(services, dict):
             msg = f"Services must be a dict, got {type(services)} instead."
             raise ValidationException(
                 message=msg,
