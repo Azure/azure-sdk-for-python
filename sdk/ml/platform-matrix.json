@@ -1,0 +1,40 @@
+{
+   "displayNames": {
+     "--disablecov": "",
+     "false": "",
+     "true": ""
+   },
+   "matrix": {
+     "Agent": {
+       "ubuntu-20.04": { "OSVmImage": "MMSUbuntu20.04", "Pool": "azsdk-pool-mms-ubuntu-2004-general" },
+     },
+     "PythonVersion": [ "pypy3.7", "3.7", "3.8" ],
+     "CoverageArg": "--disablecov",
+     "TestSamples": "false"
+   },
+   "include": [
+     {
+       "CoverageConfig": {
+         "ubuntu2004_39_coverage": {
+           "OSVmImage": "MMSUbuntu20.04",
+           "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+           "PythonVersion": "3.9",
+           "CoverageArg": "",
+           "TestSamples": "false"
+         }
+       }
+     },
+     {
+       "Config": {
+         "Ubuntu2004_310": {
+           "OSVmImage": "MMSUbuntu20.04",
+           "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+           "PythonVersion": "3.10.4",
+           "CoverageArg": "--disablecov",
+           "TestSamples": "false"
+         }
+       }
+     }
+   ]
+ }
+ 
