@@ -24,21 +24,18 @@ class CommonResourceProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CommonResourceProperties, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -53,15 +50,12 @@ class CreateGenericQuotaRequestParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CurrentQuotaLimitBase]'},
+        "value": {"key": "value", "type": "[CurrentQuotaLimitBase]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CreateGenericQuotaRequestParameters, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class CurrentQuotaLimitBase(msrest.serialization.Model):
@@ -81,27 +75,24 @@ class CurrentQuotaLimitBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'QuotaProperties'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "QuotaProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CurrentQuotaLimitBase, self).__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class CurrentUsagesBase(msrest.serialization.Model):
@@ -120,27 +111,24 @@ class CurrentUsagesBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'UsagesProperties'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "UsagesProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CurrentUsagesBase, self).__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class ExceptionResponse(msrest.serialization.Model):
@@ -151,15 +139,12 @@ class ExceptionResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ServiceError'},
+        "error": {"key": "error", "type": "ServiceError"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExceptionResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = kwargs.get("error", None)
 
 
 class LimitJsonObject(msrest.serialization.Model):
@@ -176,21 +161,16 @@ class LimitJsonObject(msrest.serialization.Model):
     """
 
     _validation = {
-        'limit_object_type': {'required': True},
+        "limit_object_type": {"required": True},
     }
 
     _attribute_map = {
-        'limit_object_type': {'key': 'limitObjectType', 'type': 'str'},
+        "limit_object_type": {"key": "limitObjectType", "type": "str"},
     }
 
-    _subtype_map = {
-        'limit_object_type': {'LimitValue': 'LimitObject'}
-    }
+    _subtype_map = {"limit_object_type": {"LimitValue": "LimitObject"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LimitJsonObject, self).__init__(**kwargs)
         self.limit_object_type = None  # type: Optional[str]
 
@@ -211,24 +191,21 @@ class LimitObject(LimitJsonObject):
     """
 
     _validation = {
-        'limit_object_type': {'required': True},
-        'value': {'required': True},
+        "limit_object_type": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'limit_object_type': {'key': 'limitObjectType', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'int'},
-        'limit_type': {'key': 'limitType', 'type': 'str'},
+        "limit_object_type": {"key": "limitObjectType", "type": "str"},
+        "value": {"key": "value", "type": "int"},
+        "limit_type": {"key": "limitType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LimitObject, self).__init__(**kwargs)
-        self.limit_object_type = 'LimitValue'  # type: str
-        self.value = kwargs['value']
-        self.limit_type = kwargs.get('limit_type', None)
+        self.limit_object_type = "LimitValue"  # type: str
+        self.value = kwargs["value"]
+        self.limit_type = kwargs.get("limit_type", None)
 
 
 class OperationDisplay(msrest.serialization.Model):
@@ -245,21 +222,18 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OperationDisplay, self).__init__(**kwargs)
-        self.provider = kwargs.get('provider', None)
-        self.resource = kwargs.get('resource', None)
-        self.operation = kwargs.get('operation', None)
-        self.description = kwargs.get('description', None)
+        self.provider = kwargs.get("provider", None)
+        self.resource = kwargs.get("resource", None)
+        self.operation = kwargs.get("operation", None)
+        self.description = kwargs.get("description", None)
 
 
 class OperationList(msrest.serialization.Model):
@@ -272,17 +246,14 @@ class OperationList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationResponse]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OperationResponse]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OperationList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class OperationResponse(msrest.serialization.Model):
@@ -297,19 +268,16 @@ class OperationResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OperationResponse, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
-        self.origin = kwargs.get('origin', None)
+        self.name = kwargs.get("name", None)
+        self.display = kwargs.get("display", None)
+        self.origin = kwargs.get("origin", None)
 
 
 class QuotaLimits(msrest.serialization.Model):
@@ -323,17 +291,14 @@ class QuotaLimits(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CurrentQuotaLimitBase]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CurrentQuotaLimitBase]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(QuotaLimits, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class QuotaLimitsResponse(msrest.serialization.Model):
@@ -347,17 +312,14 @@ class QuotaLimitsResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CurrentQuotaLimitBase]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CurrentQuotaLimitBase]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(QuotaLimitsResponse, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class QuotaProperties(msrest.serialization.Model):
@@ -388,33 +350,30 @@ class QuotaProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'unit': {'readonly': True},
-        'quota_period': {'readonly': True},
-        'is_quota_applicable': {'readonly': True},
+        "unit": {"readonly": True},
+        "quota_period": {"readonly": True},
+        "is_quota_applicable": {"readonly": True},
     }
 
     _attribute_map = {
-        'limit': {'key': 'limit', 'type': 'LimitJsonObject'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'ResourceName'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'quota_period': {'key': 'quotaPeriod', 'type': 'str'},
-        'is_quota_applicable': {'key': 'isQuotaApplicable', 'type': 'bool'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        "limit": {"key": "limit", "type": "LimitJsonObject"},
+        "unit": {"key": "unit", "type": "str"},
+        "name": {"key": "name", "type": "ResourceName"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "quota_period": {"key": "quotaPeriod", "type": "str"},
+        "is_quota_applicable": {"key": "isQuotaApplicable", "type": "bool"},
+        "properties": {"key": "properties", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(QuotaProperties, self).__init__(**kwargs)
-        self.limit = kwargs.get('limit', None)
+        self.limit = kwargs.get("limit", None)
         self.unit = None
-        self.name = kwargs.get('name', None)
-        self.resource_type = kwargs.get('resource_type', None)
+        self.name = kwargs.get("name", None)
+        self.resource_type = kwargs.get("resource_type", None)
         self.quota_period = None
         self.is_quota_applicable = None
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class QuotaRequestDetails(msrest.serialization.Model):
@@ -443,38 +402,35 @@ class QuotaRequestDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'message': {'readonly': True},
-        'request_submit_time': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "message": {"readonly": True},
+        "request_submit_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'message': {'key': 'properties.message', 'type': 'str'},
-        'error': {'key': 'properties.error', 'type': 'ServiceErrorDetail'},
-        'request_submit_time': {'key': 'properties.requestSubmitTime', 'type': 'iso-8601'},
-        'value': {'key': 'properties.value', 'type': '[SubRequest]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "message": {"key": "properties.message", "type": "str"},
+        "error": {"key": "properties.error", "type": "ServiceErrorDetail"},
+        "request_submit_time": {"key": "properties.requestSubmitTime", "type": "iso-8601"},
+        "value": {"key": "properties.value", "type": "[SubRequest]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(QuotaRequestDetails, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.provisioning_state = None
         self.message = None
-        self.error = kwargs.get('error', None)
+        self.error = kwargs.get("error", None)
         self.request_submit_time = None
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class QuotaRequestDetailsList(msrest.serialization.Model):
@@ -488,17 +444,14 @@ class QuotaRequestDetailsList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[QuotaRequestDetails]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[QuotaRequestDetails]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(QuotaRequestDetailsList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class QuotaRequestOneResourceSubmitResponse(msrest.serialization.Model):
@@ -547,39 +500,36 @@ class QuotaRequestOneResourceSubmitResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'message': {'readonly': True},
-        'request_submit_time': {'readonly': True},
-        'current_value': {'readonly': True},
-        'quota_period': {'readonly': True},
-        'is_quota_applicable': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "message": {"readonly": True},
+        "request_submit_time": {"readonly": True},
+        "current_value": {"readonly": True},
+        "quota_period": {"readonly": True},
+        "is_quota_applicable": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'message': {'key': 'properties.message', 'type': 'str'},
-        'request_submit_time': {'key': 'properties.requestSubmitTime', 'type': 'iso-8601'},
-        'limit': {'key': 'properties.limit', 'type': 'LimitObject'},
-        'current_value': {'key': 'properties.currentValue', 'type': 'int'},
-        'unit': {'key': 'properties.unit', 'type': 'str'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'ResourceName'},
-        'resource_type': {'key': 'properties.resourceType', 'type': 'str'},
-        'quota_period': {'key': 'properties.quotaPeriod', 'type': 'str'},
-        'is_quota_applicable': {'key': 'properties.isQuotaApplicable', 'type': 'bool'},
-        'error': {'key': 'properties.error', 'type': 'ServiceErrorDetail'},
-        'properties': {'key': 'properties.properties', 'type': 'object'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "message": {"key": "properties.message", "type": "str"},
+        "request_submit_time": {"key": "properties.requestSubmitTime", "type": "iso-8601"},
+        "limit": {"key": "properties.limit", "type": "LimitObject"},
+        "current_value": {"key": "properties.currentValue", "type": "int"},
+        "unit": {"key": "properties.unit", "type": "str"},
+        "name_properties_name": {"key": "properties.name", "type": "ResourceName"},
+        "resource_type": {"key": "properties.resourceType", "type": "str"},
+        "quota_period": {"key": "properties.quotaPeriod", "type": "str"},
+        "is_quota_applicable": {"key": "properties.isQuotaApplicable", "type": "bool"},
+        "error": {"key": "properties.error", "type": "ServiceErrorDetail"},
+        "properties": {"key": "properties.properties", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(QuotaRequestOneResourceSubmitResponse, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -587,15 +537,15 @@ class QuotaRequestOneResourceSubmitResponse(msrest.serialization.Model):
         self.provisioning_state = None
         self.message = None
         self.request_submit_time = None
-        self.limit = kwargs.get('limit', None)
+        self.limit = kwargs.get("limit", None)
         self.current_value = None
-        self.unit = kwargs.get('unit', None)
-        self.name_properties_name = kwargs.get('name_properties_name', None)
-        self.resource_type = kwargs.get('resource_type', None)
+        self.unit = kwargs.get("unit", None)
+        self.name_properties_name = kwargs.get("name_properties_name", None)
+        self.resource_type = kwargs.get("resource_type", None)
         self.quota_period = None
         self.is_quota_applicable = None
-        self.error = kwargs.get('error', None)
-        self.properties = kwargs.get('properties', None)
+        self.error = kwargs.get("error", None)
+        self.properties = kwargs.get("properties", None)
 
 
 class QuotaRequestProperties(msrest.serialization.Model):
@@ -618,29 +568,26 @@ class QuotaRequestProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'message': {'readonly': True},
-        'request_submit_time': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "message": {"readonly": True},
+        "request_submit_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ServiceErrorDetail'},
-        'request_submit_time': {'key': 'requestSubmitTime', 'type': 'iso-8601'},
-        'value': {'key': 'value', 'type': '[SubRequest]'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "error": {"key": "error", "type": "ServiceErrorDetail"},
+        "request_submit_time": {"key": "requestSubmitTime", "type": "iso-8601"},
+        "value": {"key": "value", "type": "[SubRequest]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(QuotaRequestProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.message = None
-        self.error = kwargs.get('error', None)
+        self.error = kwargs.get("error", None)
         self.request_submit_time = None
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class QuotaRequestSubmitResponse(msrest.serialization.Model):
@@ -659,26 +606,23 @@ class QuotaRequestSubmitResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'QuotaRequestProperties'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "QuotaRequestProperties"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(QuotaRequestSubmitResponse, self).__init__(**kwargs)
         self.id = None
         self.name = None
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
         self.type = None
 
 
@@ -722,44 +666,41 @@ class QuotaRequestSubmitResponse202(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'message': {'readonly': True},
-        'quota_period': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "message": {"readonly": True},
+        "quota_period": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'message': {'key': 'properties.message', 'type': 'str'},
-        'limit': {'key': 'properties.limit', 'type': 'LimitObject'},
-        'unit': {'key': 'properties.unit', 'type': 'str'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'ResourceName'},
-        'resource_type': {'key': 'properties.resourceType', 'type': 'str'},
-        'quota_period': {'key': 'properties.quotaPeriod', 'type': 'str'},
-        'properties': {'key': 'properties.properties', 'type': 'object'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "message": {"key": "properties.message", "type": "str"},
+        "limit": {"key": "properties.limit", "type": "LimitObject"},
+        "unit": {"key": "properties.unit", "type": "str"},
+        "name_properties_name": {"key": "properties.name", "type": "ResourceName"},
+        "resource_type": {"key": "properties.resourceType", "type": "str"},
+        "quota_period": {"key": "properties.quotaPeriod", "type": "str"},
+        "properties": {"key": "properties.properties", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(QuotaRequestSubmitResponse202, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.provisioning_state = None
         self.message = None
-        self.limit = kwargs.get('limit', None)
-        self.unit = kwargs.get('unit', None)
-        self.name_properties_name = kwargs.get('name_properties_name', None)
-        self.resource_type = kwargs.get('resource_type', None)
+        self.limit = kwargs.get("limit", None)
+        self.unit = kwargs.get("unit", None)
+        self.name_properties_name = kwargs.get("name_properties_name", None)
+        self.resource_type = kwargs.get("resource_type", None)
         self.quota_period = None
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class ResourceName(msrest.serialization.Model):
@@ -774,20 +715,17 @@ class ResourceName(msrest.serialization.Model):
     """
 
     _validation = {
-        'localized_value': {'readonly': True},
+        "localized_value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourceName, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
         self.localized_value = None
 
 
@@ -805,22 +743,19 @@ class ServiceError(msrest.serialization.Model):
     """
 
     _validation = {
-        'details': {'readonly': True},
+        "details": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ServiceErrorDetail]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[ServiceErrorDetail]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ServiceError, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
         self.details = None
 
 
@@ -836,19 +771,16 @@ class ServiceErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ServiceErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -878,34 +810,31 @@ class SubRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'resource_type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'message': {'readonly': True},
-        'sub_request_id': {'readonly': True},
+        "resource_type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "message": {"readonly": True},
+        "sub_request_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'ResourceName'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'sub_request_id': {'key': 'subRequestId', 'type': 'str'},
-        'limit': {'key': 'limit', 'type': 'LimitJsonObject'},
+        "name": {"key": "name", "type": "ResourceName"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "sub_request_id": {"key": "subRequestId", "type": "str"},
+        "limit": {"key": "limit", "type": "LimitJsonObject"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SubRequest, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = kwargs.get("name", None)
         self.resource_type = None
-        self.unit = kwargs.get('unit', None)
+        self.unit = kwargs.get("unit", None)
         self.provisioning_state = None
         self.message = None
         self.sub_request_id = None
-        self.limit = kwargs.get('limit', None)
+        self.limit = kwargs.get("limit", None)
 
 
 class UsagesLimits(msrest.serialization.Model):
@@ -919,17 +848,14 @@ class UsagesLimits(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CurrentUsagesBase]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CurrentUsagesBase]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(UsagesLimits, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class UsagesObject(msrest.serialization.Model):
@@ -945,21 +871,18 @@ class UsagesObject(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'int'},
-        'usages_type': {'key': 'usagesType', 'type': 'str'},
+        "value": {"key": "value", "type": "int"},
+        "usages_type": {"key": "usagesType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(UsagesObject, self).__init__(**kwargs)
-        self.value = kwargs['value']
-        self.usages_type = kwargs.get('usages_type', None)
+        self.value = kwargs["value"]
+        self.usages_type = kwargs.get("usages_type", None)
 
 
 class UsagesProperties(msrest.serialization.Model):
@@ -989,30 +912,27 @@ class UsagesProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'unit': {'readonly': True},
-        'quota_period': {'readonly': True},
-        'is_quota_applicable': {'readonly': True},
+        "unit": {"readonly": True},
+        "quota_period": {"readonly": True},
+        "is_quota_applicable": {"readonly": True},
     }
 
     _attribute_map = {
-        'usages': {'key': 'usages', 'type': 'UsagesObject'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'ResourceName'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'quota_period': {'key': 'quotaPeriod', 'type': 'str'},
-        'is_quota_applicable': {'key': 'isQuotaApplicable', 'type': 'bool'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        "usages": {"key": "usages", "type": "UsagesObject"},
+        "unit": {"key": "unit", "type": "str"},
+        "name": {"key": "name", "type": "ResourceName"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "quota_period": {"key": "quotaPeriod", "type": "str"},
+        "is_quota_applicable": {"key": "isQuotaApplicable", "type": "bool"},
+        "properties": {"key": "properties", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(UsagesProperties, self).__init__(**kwargs)
-        self.usages = kwargs.get('usages', None)
+        self.usages = kwargs.get("usages", None)
         self.unit = None
-        self.name = kwargs.get('name', None)
-        self.resource_type = kwargs.get('resource_type', None)
+        self.name = kwargs.get("name", None)
+        self.resource_type = kwargs.get("resource_type", None)
         self.quota_period = None
         self.is_quota_applicable = None
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
