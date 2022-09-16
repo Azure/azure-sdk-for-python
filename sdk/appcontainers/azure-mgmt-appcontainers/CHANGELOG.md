@@ -1,5 +1,14 @@
 # Release History
 
+## 2.0.0 (2022-09-16)
+
+### Breaking Changes
+
+  - Model CustomHostnameAnalysisResult no longer has parameter id
+  - Model CustomHostnameAnalysisResult no longer has parameter name
+  - Model CustomHostnameAnalysisResult no longer has parameter system_data
+  - Model CustomHostnameAnalysisResult no longer has parameter type
+
 ## 1.0.0 (2022-05-17)
 
 **Breaking changes**
