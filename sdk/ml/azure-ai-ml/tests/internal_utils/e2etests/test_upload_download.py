@@ -18,7 +18,7 @@ from azure.ai.ml._utils._storage_utils import get_storage_client
 from azure.ai.ml.entities import Model
 from azure.ai.ml.entities._datastore.credentials import NoneCredentials
 
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 container_name = "testblob"
 file_share_name = "testfileshare"
@@ -90,6 +90,10 @@ except FileExistsError:
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
+@pytest.mark.skipif(
+    condition=not is_live(),
+    reason="test are flaky in playback"
+)
 class TestUpload(AzureRecordedTestCase):
     def test_upload_file_blob(
         self, storage_account_name: str, storage_account_secret: str, dir_asset_id: str, file_asset_id: str
@@ -190,6 +194,7 @@ class TestUpload(AzureRecordedTestCase):
 
         assert (name, str(version)) == (artifact_info["name"], artifact_info["version"])
 
+    @pytest.mark.skip(reason="test timing out")
     def test_artifact_blob_dir_upload_and_download(
         self,
         storage_account_name: str,

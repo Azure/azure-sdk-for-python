@@ -30,6 +30,7 @@ from ..unittests.test_component_schema import load_component_entity_from_rest_js
 
 from devtools_testutils import (
     AzureRecordedTestCase,
+    is_live,
     set_bodiless_matcher
 )
 
@@ -663,7 +664,8 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
 
         def get_component_list():
             # Wait for list index to update before calling list
-            sleep(30)
+            if is_live():
+                sleep(30)
             component_list = client.components.list(name=name, list_view_type=ListViewType.ACTIVE_ONLY)
             return [c.version for c in component_list]
 
