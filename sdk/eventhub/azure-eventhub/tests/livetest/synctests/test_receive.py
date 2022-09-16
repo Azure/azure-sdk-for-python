@@ -4,12 +4,9 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import os
 import threading
 import pytest
 import time
-import datetime
-import uamqp
 
 from azure.eventhub import EventData, TransportType, EventHubConsumerClient
 from azure.eventhub.exceptions import EventHubError

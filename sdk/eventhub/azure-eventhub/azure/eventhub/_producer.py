@@ -165,7 +165,7 @@ class EventHubProducer(
         condition: Optional[Exception],
     ) -> None:
         """
-        Called when the outcome is received for a delivery.
+        ONLY USED FOR uamqp_transport=True. Called when the outcome is received for a delivery.
 
         :param outcome: The outcome of the message delivery - success or failure.
         :type outcome: ~uamqp.constants.MessageSendResult

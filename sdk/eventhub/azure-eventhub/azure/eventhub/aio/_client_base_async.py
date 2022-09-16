@@ -367,7 +367,7 @@ class ClientBaseAsync(ClientBase):
                 await mgmt_client.close_async()
 
     async def _get_eventhub_properties_async(self) -> Dict[str, Any]:
-        mgmt_msg = mgmt_msg = self._amqp_transport.build_message(
+        mgmt_msg = self._amqp_transport.build_message(
             application_properties={"name": self.eventhub_name}
         )
         response = await self._management_request_async(

@@ -198,6 +198,9 @@ class EventHubConsumer(
             max_wait_time or 0
         )
         if len(self._message_buffer) < max_batch_size:
+            # TODO: the retry here is a bit tricky as we are using low-level api from the amqp client.
+            #  Currently we create a new client with the latest received event's offset per retry.
+            #  Ideally we should reuse the same client reestablishing the connection/link with the latest offset.
             while retried_times <= max_retries:
                 try:
                     if self._open():
