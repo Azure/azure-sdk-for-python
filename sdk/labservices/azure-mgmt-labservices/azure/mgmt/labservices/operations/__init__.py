@@ -6,24 +6,32 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._provider_operations_operations import ProviderOperationsOperations
-from ._global_users_operations import GlobalUsersOperations
-from ._lab_accounts_operations import LabAccountsOperations
+from ._images_operations import ImagesOperations
+from ._lab_plans_operations import LabPlansOperations
 from ._operations import Operations
-from ._gallery_images_operations import GalleryImagesOperations
 from ._labs_operations import LabsOperations
-from ._environment_settings_operations import EnvironmentSettingsOperations
-from ._environments_operations import EnvironmentsOperations
+from ._operation_results_operations import OperationResultsOperations
+from ._schedules_operations import SchedulesOperations
+from ._skus_operations import SkusOperations
+from ._usages_operations import UsagesOperations
 from ._users_operations import UsersOperations
+from ._virtual_machines_operations import VirtualMachinesOperations
+
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ProviderOperationsOperations',
-    'GlobalUsersOperations',
-    'LabAccountsOperations',
-    'Operations',
-    'GalleryImagesOperations',
-    'LabsOperations',
-    'EnvironmentSettingsOperations',
-    'EnvironmentsOperations',
-    'UsersOperations',
+    "ImagesOperations",
+    "LabPlansOperations",
+    "Operations",
+    "LabsOperations",
+    "OperationResultsOperations",
+    "SchedulesOperations",
+    "SkusOperations",
+    "UsagesOperations",
+    "UsersOperations",
+    "VirtualMachinesOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -1,0 +1,144 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01\u0026showStats=true",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "495",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "EntityRecognition",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975.",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975.",
+              "language": "es"
+            },
+            {
+              "id": "3",
+              "text": "Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegr\u00FCndet.",
+              "language": "de"
+            }
+          ]
+        },
+        "parameters": {
+          "modelVersion": "2020-02-01",
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "356e39d5-e8e7-458c-809f-8646b50e0c67",
+        "Content-Length": "1113",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Wed, 08 Jun 2022 01:43:43 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "110"
+      },
+      "ResponseBody": {
+        "kind": "EntityRecognitionResults",
+        "results": {
+          "statistics": {
+            "documentsCount": 3,
+            "validDocumentsCount": 3,
+            "erroneousDocumentsCount": 0,
+            "transactionsCount": 3
+          },
+          "documents": [
+            {
+              "id": "1",
+              "statistics": {
+                "charactersCount": 68,
+                "transactionsCount": 1
+              },
+              "entities": [
+                {
+                  "text": "Microsoft",
+                  "category": "Organization",
+                  "offset": 0,
+                  "length": 9,
+                  "confidenceScore": 1.0
+                },
+                {
+                  "text": "Bill Gates",
+                  "category": "Person",
+                  "offset": 25,
+                  "length": 10,
+                  "confidenceScore": 0.67
+                },
+                {
+                  "text": "Paul Allen",
+                  "category": "Person",
+                  "offset": 40,
+                  "length": 10,
+                  "confidenceScore": 0.81
+                },
+                {
+                  "text": "April 4, 1975",
+                  "category": "DateTime",
+                  "subcategory": "Date",
+                  "offset": 54,
+                  "length": 13,
+                  "confidenceScore": 0.8
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "2",
+              "statistics": {
+                "charactersCount": 72,
+                "transactionsCount": 1
+              },
+              "entities": [
+                {
+                  "text": "4 de abril de 1975",
+                  "category": "DateTime",
+                  "subcategory": "Date",
+                  "offset": 53,
+                  "length": 18,
+                  "confidenceScore": 0.8
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "3",
+              "statistics": {
+                "charactersCount": 73,
+                "transactionsCount": 1
+              },
+              "entities": [
+                {
+                  "text": "4. April 1975",
+                  "category": "DateTime",
+                  "subcategory": "Date",
+                  "offset": 19,
+                  "length": 13,
+                  "confidenceScore": 0.8
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2020-02-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -1,6 +1,8 @@
 # Release History
 
-## 7.4.1 (Unreleased)
+## 7.8.1 (Unreleased)
+
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
 
 ### Features Added
 
@@ -9,6 +11,64 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 7.8.0 (2022-07-06)
+
+This version will be the last version to officially support Python 3.6, future versions will require Python 3.7+.
+
+### Features Added
+
+- In `ServiceBusClient`, `get_queue_receiver`, `get_subscription_receiver`, `get_queue_sender`, and `get_topic_sender` now accept
+an optional `client_identifier` argument which allows for specifying a custom identifier for the respective sender or receiver. It can
+be useful during debugging as Service Bus associates the id with errors and helps with easier correlation.
+- `ServiceBusReceiver` and `ServiceBusSender` have an added property `client_identifier` which returns the `client_identifier` for the current instance.
+
+## 7.7.0 (2022-06-07)
+
+### Bugs Fixed
+
+- Fixed bug to make AMQP exceptions retryable by default, if condition is not non-retryable, to ensure that InternalServerErrors are retried.
+
+### Features Added
+
+- The `ServiceBusClient` constructor now accepts optional `custom_endpoint_address` argument
+which allows for specifying a custom endpoint to use when communicating with the Service Bus service,
+and is useful when your network does not allow communicating to the standard Service Bus endpoint.
+- The `ServiceBusClient`constructor now accepts optional `connection_verify` argument
+which allows for specifying the path to the custom CA_BUNDLE file of the SSL certificate which is used to authenticate
+the identity of the connection endpoint.
+
+## 7.6.1 (2022-04-11)
+
+### Other Changes
+
+- Improved receiving by releasing messages from internal buffer when the `prefetch_count` of `ServiceBusReceiver`  is set 0 and there is no active receive call, this helps avoid receiving expired messages and incrementing delivery count of a message.
+
+## 7.6.0 (2022-02-10)
+
+### Features Added
+
+- Introduce `ServiceBusMessageState` enum that can assume the values of `active`, `scheduled` or `deferred`.
+- Add `state` property in `ServiceBusReceivedMessage`.
+
+## 7.5.0 (2022-01-12)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+
+### Features Added
+
+- Added support for fixed (linear) retry backoff:
+  - Sync/async `ServiceBusClient` constructors and `from_connection_string` take `retry_mode` as a keyword argument.
+- Added new enum class `ServiceBusSessionFilter`, which is the type of existing `NEXT_AVAILABLE_SESSION` value.
+
+### Bugs Fixed
+
+- Fixed bug that when setting `ServiceBusMessage.time_to_live` with value being `datetime.timedelta`, `total_seconds` should be respected (PR #21869, thanks @jyggen).
+
+### Other Changes
+
+- Improved token refresh timing to prevent potentially blocking main flow when the token is about to get expired soon.
+- Updated uAMQP dependency to 1.5.1.
 
 ## 7.4.0 (2021-11-09)
 

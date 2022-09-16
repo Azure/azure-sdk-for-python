@@ -6,34 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Required for storage accounts where kind = BlobStorage. The access tier used for billing.
     """
 
     HOT = "Hot"
     COOL = "Cool"
 
-class AccountStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the status indicating whether the primary location of the storage account is available or
     unavailable.
     """
@@ -41,21 +25,21 @@ class AccountStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AVAILABLE = "Available"
     UNAVAILABLE = "Unavailable"
 
-class KeyPermission(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class KeyPermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Permissions for the key -- read-only or full permissions.
     """
 
     READ = "READ"
     FULL = "FULL"
 
-class Kind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Required. Indicates the type of storage account.
     """
 
     STORAGE = "Storage"
     BLOB_STORAGE = "BlobStorage"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the status of the storage account at the time the operation was called.
     """
 
@@ -63,7 +47,7 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RESOLVING_DNS = "ResolvingDNS"
     SUCCEEDED = "Succeeded"
 
-class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the reason that a storage account name could not be used. The Reason element is only
     returned if NameAvailable is false.
     """
@@ -71,7 +55,7 @@ class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ACCOUNT_NAME_INVALID = "AccountNameInvalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the sku name. Required for account creation; optional for update. Note that in
     older versions, sku name was called accountType.
     """
@@ -82,14 +66,14 @@ class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD_ZRS = "Standard_ZRS"
     PREMIUM_LRS = "Premium_LRS"
 
-class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the sku tier. This is based on the SKU name.
     """
 
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class UsageUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the unit of measurement.
     """
 

@@ -42,9 +42,7 @@ import asyncio
 import os
 import sys
 
-from azure.storage.blob.aio import BlobServiceClient
-
-from azure.storage.blob import BlobPrefix
+from azure.storage.blob.aio import BlobServiceClient, BlobPrefix
 
 try:
     CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
@@ -89,5 +87,4 @@ async def main():
         sys.exit(1)
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

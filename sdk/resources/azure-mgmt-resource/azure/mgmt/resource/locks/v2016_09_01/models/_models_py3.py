@@ -16,10 +16,10 @@ from ._management_lock_client_enums import *
 class ManagementLockListResult(msrest.serialization.Model):
     """The list of locks.
 
-    :param value: The list of locks.
-    :type value: list[~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: The list of locks.
+    :vartype value: list[~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -34,6 +34,12 @@ class ManagementLockListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of locks.
+        :paramtype value: list[~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(ManagementLockListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -52,15 +58,15 @@ class ManagementLockObject(msrest.serialization.Model):
     :vartype type: str
     :ivar name: The name of the lock.
     :vartype name: str
-    :param level: Required. The level of the lock. Possible values are: NotSpecified, CanNotDelete,
+    :ivar level: Required. The level of the lock. Possible values are: NotSpecified, CanNotDelete,
      ReadOnly. CanNotDelete means authorized users are able to read and modify the resources, but
      not delete. ReadOnly means authorized users can only read from a resource, but they can't
      modify or delete it. Possible values include: "NotSpecified", "CanNotDelete", "ReadOnly".
-    :type level: str or ~azure.mgmt.resource.locks.v2016_09_01.models.LockLevel
-    :param notes: Notes about the lock. Maximum of 512 characters.
-    :type notes: str
-    :param owners: The owners of the lock.
-    :type owners: list[~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockOwner]
+    :vartype level: str or ~azure.mgmt.resource.locks.v2016_09_01.models.LockLevel
+    :ivar notes: Notes about the lock. Maximum of 512 characters.
+    :vartype notes: str
+    :ivar owners: The owners of the lock.
+    :vartype owners: list[~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockOwner]
     """
 
     _validation = {
@@ -87,6 +93,18 @@ class ManagementLockObject(msrest.serialization.Model):
         owners: Optional[List["ManagementLockOwner"]] = None,
         **kwargs
     ):
+        """
+        :keyword level: Required. The level of the lock. Possible values are: NotSpecified,
+         CanNotDelete, ReadOnly. CanNotDelete means authorized users are able to read and modify the
+         resources, but not delete. ReadOnly means authorized users can only read from a resource, but
+         they can't modify or delete it. Possible values include: "NotSpecified", "CanNotDelete",
+         "ReadOnly".
+        :paramtype level: str or ~azure.mgmt.resource.locks.v2016_09_01.models.LockLevel
+        :keyword notes: Notes about the lock. Maximum of 512 characters.
+        :paramtype notes: str
+        :keyword owners: The owners of the lock.
+        :paramtype owners: list[~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockOwner]
+        """
         super(ManagementLockObject, self).__init__(**kwargs)
         self.id = None
         self.type = None
@@ -99,8 +117,8 @@ class ManagementLockObject(msrest.serialization.Model):
 class ManagementLockOwner(msrest.serialization.Model):
     """Lock owner properties.
 
-    :param application_id: The application ID of the lock owner.
-    :type application_id: str
+    :ivar application_id: The application ID of the lock owner.
+    :vartype application_id: str
     """
 
     _attribute_map = {
@@ -113,6 +131,10 @@ class ManagementLockOwner(msrest.serialization.Model):
         application_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword application_id: The application ID of the lock owner.
+        :paramtype application_id: str
+        """
         super(ManagementLockOwner, self).__init__(**kwargs)
         self.application_id = application_id
 
@@ -120,10 +142,10 @@ class ManagementLockOwner(msrest.serialization.Model):
 class Operation(msrest.serialization.Model):
     """Microsoft.Authorization operation.
 
-    :param name: Operation name: {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.resource.locks.v2016_09_01.models.OperationDisplay
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.resource.locks.v2016_09_01.models.OperationDisplay
     """
 
     _attribute_map = {
@@ -138,6 +160,12 @@ class Operation(msrest.serialization.Model):
         display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Operation name: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.resource.locks.v2016_09_01.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -146,12 +174,12 @@ class Operation(msrest.serialization.Model):
 class OperationDisplay(msrest.serialization.Model):
     """The object that represents the operation.
 
-    :param provider: Service provider: Microsoft.Authorization.
-    :type provider: str
-    :param resource: Resource on which the operation is performed: Profile, endpoint, etc.
-    :type resource: str
-    :param operation: Operation type: Read, write, delete, etc.
-    :type operation: str
+    :ivar provider: Service provider: Microsoft.Authorization.
+    :vartype provider: str
+    :ivar resource: Resource on which the operation is performed: Profile, endpoint, etc.
+    :vartype resource: str
+    :ivar operation: Operation type: Read, write, delete, etc.
+    :vartype operation: str
     """
 
     _attribute_map = {
@@ -168,6 +196,14 @@ class OperationDisplay(msrest.serialization.Model):
         operation: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Service provider: Microsoft.Authorization.
+        :paramtype provider: str
+        :keyword resource: Resource on which the operation is performed: Profile, endpoint, etc.
+        :paramtype resource: str
+        :keyword operation: Operation type: Read, write, delete, etc.
+        :paramtype operation: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -177,10 +213,10 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """Result of the request to list Microsoft.Authorization operations. It contains a list of operations and a URL link to get the next set of results.
 
-    :param value: List of Microsoft.Authorization operations.
-    :type value: list[~azure.mgmt.resource.locks.v2016_09_01.models.Operation]
-    :param next_link: URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: List of Microsoft.Authorization operations.
+    :vartype value: list[~azure.mgmt.resource.locks.v2016_09_01.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -195,6 +231,12 @@ class OperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of Microsoft.Authorization operations.
+        :paramtype value: list[~azure.mgmt.resource.locks.v2016_09_01.models.Operation]
+        :keyword next_link: URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link

@@ -6,17 +6,24 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-from datetime import timedelta
+import pytest
+from datetime import datetime, timedelta
 
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 from azure.storage.fileshare import (
+    generate_share_sas,
+    NTFSAttributes,
+    ShareDirectoryClient,
+    ShareSasPermissions,
     ShareServiceClient,
     StorageErrorCode,
 )
 from devtools_testutils.storage import StorageTestCase
 from settings.testcase import FileSharePreparer
 # ------------------------------------------------------------------------------
-
+TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
+                        '1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;' \
+                        'S-1-5-21-397955417-626881126-188441444-3053964)'
 
 
 class StorageDirectoryTest(StorageTestCase):
@@ -79,6 +86,31 @@ class StorageDirectoryTest(StorageTestCase):
         self.assertTrue(created)
 
     @FileSharePreparer()
+    def test_create_directory_set_smb_properties(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        directory_client = share_client.get_directory_client('dir1')
+        file_attributes = NTFSAttributes(read_only=True, directory=True)
+        file_creation_time = file_last_write_time = file_change_time = datetime(2022, 3, 10, 10, 14, 30, 500000)
+
+        # Act
+        directory_client.create_directory(
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time)
+        directory_properties = directory_client.get_directory_properties()
+
+        # Assert
+        self.assertIsNotNone(directory_properties)
+        self.assertEqual(file_creation_time, directory_properties.creation_time)
+        self.assertEqual(file_last_write_time, directory_properties.last_write_time)
+        self.assertEqual(file_change_time, directory_properties.change_time)
+        self.assertIn('ReadOnly', directory_properties.file_attributes)
+        self.assertIn('Directory', directory_properties.file_attributes)
+
+    @FileSharePreparer()
     def test_create_subdirectories(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
@@ -137,6 +169,17 @@ class StorageDirectoryTest(StorageTestCase):
         self.assertIsNone(deleted)
         with self.assertRaises(ResourceNotFoundError):
             new_file.get_file_properties()
+
+    @FileSharePreparer()
+    def test_share_directory_exists(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory = share_client.create_directory('dir1')
+
+        directory2 = share_client.get_directory_client("dir2")
+
+        self.assertTrue(directory.exists())
+        self.assertFalse(directory2.exists())
 
     @FileSharePreparer()
     def test_delete_subdirectories(self, storage_account_name, storage_account_key):
@@ -333,20 +376,26 @@ class StorageDirectoryTest(StorageTestCase):
         permission_key = directory_properties_on_creation.permission_key
         last_write_time = directory_properties_on_creation.last_write_time
         creation_time = directory_properties_on_creation.creation_time
+        change_time = directory_properties_on_creation.change_time
 
         new_last_write_time = last_write_time + timedelta(hours=1)
         new_creation_time = creation_time + timedelta(hours=1)
+        new_change_time = change_time + timedelta(hours=1)
 
         # Act
-        directory_client.set_http_headers(file_attributes='None', file_creation_time=new_creation_time,
-                                          file_last_write_time=new_last_write_time,
-                                          permission_key=permission_key)
+        directory_client.set_http_headers(
+            file_attributes='None',
+            file_creation_time=new_creation_time,
+            file_last_write_time=new_last_write_time,
+            file_change_time=new_change_time,
+            permission_key=permission_key)
         directory_properties = directory_client.get_directory_properties()
 
         # Assert
         self.assertIsNotNone(directory_properties)
         self.assertEqual(directory_properties.creation_time, new_creation_time)
         self.assertEqual(directory_properties.last_write_time, new_last_write_time)
+        self.assertEqual(directory_properties.change_time, new_change_time)
 
     @FileSharePreparer()
     def test_list_subdirectories_and_files(self, storage_account_name, storage_account_key):
@@ -536,6 +585,168 @@ class StorageDirectoryTest(StorageTestCase):
         self.assertIsNotNone(props.etag)
         self.assertIsNotNone(props.last_modified)
         self.assertTrue(props.server_encrypted)
+
+    @FileSharePreparer()
+    def test_rename_directory(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        source_directory = share_client.create_directory('dir1')
+
+        # Act
+        new_directory = source_directory.rename_directory('dir2')
+
+        # Assert
+        props = new_directory.get_directory_properties()
+        self.assertIsNotNone(props)
+
+    @FileSharePreparer()
+    def test_rename_directory_different_directory(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        parent_source_directory = share_client.create_directory('dir1')
+        source_directory = parent_source_directory.create_subdirectory('sub1')
+
+        dest_parent_directory = share_client.create_directory('dir2')
+
+        # Act
+        new_directory_path = dest_parent_directory.directory_path + '/sub2'
+        new_directory = source_directory.rename_directory(new_directory_path)
+
+        # Assert
+        props = new_directory.get_directory_properties()
+        self.assertIsNotNone(props)
+
+    @FileSharePreparer()
+    def test_rename_directory_ignore_readonly(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        source_directory = share_client.create_directory('dir1')
+        dest_directory = share_client.create_directory('dir2')
+        dest_file = dest_directory.get_file_client('test')
+
+        file_attributes = NTFSAttributes(read_only=True)
+        dest_file.create_file(1024, file_attributes=file_attributes)
+
+        # Act
+        new_directory = source_directory.rename_directory(
+            dest_directory.directory_path + '/' + dest_file.file_name,
+            overwrite=True, ignore_read_only=True)
+
+        # Assert
+        props = new_directory.get_directory_properties()
+        self.assertIsNotNone(props)
+        self.assertTrue(props.is_directory)
+
+    @FileSharePreparer()
+    def test_rename_directory_file_permission(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        file_permission_key = share_client.create_permission_for_share(TEST_FILE_PERMISSIONS)
+
+        source_directory = share_client.create_directory('dir1')
+
+        # Act
+        new_directory = source_directory.rename_directory('dir2', file_permission=TEST_FILE_PERMISSIONS)
+
+        # Assert
+        props = new_directory.get_directory_properties()
+        self.assertIsNotNone(props)
+        self.assertEqual(file_permission_key, props.permission_key)
+
+    @FileSharePreparer()
+    def test_rename_directory_preserve_permission(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        source_directory = share_client.create_directory('dir1', file_permission=TEST_FILE_PERMISSIONS)
+        source_props = source_directory.get_directory_properties()
+        source_permission_key = source_props.permission_key
+
+        # Act
+        new_directory = source_directory.rename_directory('dir2', file_permission='preserve')
+
+        # Assert
+        props = new_directory.get_directory_properties()
+        self.assertIsNotNone(props)
+        self.assertEqual(source_permission_key, props.permission_key)
+
+    @FileSharePreparer()
+    def test_rename_directory_smb_properties(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        source_directory = share_client.create_directory('dir1')
+
+        file_attributes = NTFSAttributes(read_only=True, directory=True)
+        file_creation_time = datetime(2022, 1, 26, 10, 9, 30, 500000)
+        file_last_write_time = datetime(2022, 1, 26, 10, 14, 30, 500000)
+        file_change_time = datetime(2022, 3, 7, 10, 14, 30, 500000)
+
+        # Act
+        new_directory = source_directory.rename_directory(
+            'dir2',
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time)
+
+        # Assert
+        props = new_directory.get_directory_properties()
+        self.assertIsNotNone(props)
+        self.assertTrue(props.is_directory)
+        self.assertEqual(str(file_attributes), props.file_attributes.replace(' ', ''))
+        self.assertEqual(file_creation_time, props.creation_time)
+        self.assertEqual(file_last_write_time, props.last_write_time)
+        self.assertEqual(file_change_time, props.change_time)
+
+    @FileSharePreparer()
+    def test_rename_directory_dest_lease(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        source_directory = share_client.create_directory('dir1')
+        dest_directory = share_client.create_directory('dir2')
+        dest_file = dest_directory.upload_file('test', b'Hello World')
+        lease = dest_file.acquire_lease()
+
+        # Act
+        new_directory = source_directory.rename_directory(
+            dest_directory.directory_path + '/' + dest_file.file_name,
+            overwrite=True, destination_lease=lease)
+
+        # Assert
+        props = new_directory.get_directory_properties()
+        self.assertIsNotNone(props)
+        self.assertTrue(props.is_directory)
+
+    @pytest.mark.live_test_only
+    @FileSharePreparer()
+    def test_rename_directory_share_sas(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        token = generate_share_sas(
+            share_client.account_name,
+            share_client.share_name,
+            share_client.credential.account_key,
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            permission=ShareSasPermissions(read=True, write=True))
+
+        source_directory = ShareDirectoryClient(
+            self.account_url(storage_account_name, 'file'),
+            share_client.share_name, 'dir1',
+            credential=token)
+        source_directory.create_directory()
+
+        # Act
+        new_directory = source_directory.rename_directory('dir2' + '?' + token)
+
+        # Assert
+        props = new_directory.get_directory_properties()
+        self.assertIsNotNone(props)
 
 
 # ------------------------------------------------------------------------------

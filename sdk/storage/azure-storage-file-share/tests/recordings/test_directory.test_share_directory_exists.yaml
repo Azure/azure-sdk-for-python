@@ -1,0 +1,191 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.6.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 04 Nov 2021 06:25:37 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare765b1188?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 04 Nov 2021 06:25:38 GMT
+      etag:
+      - '"0x8D99F5BEB060D63"'
+      last-modified:
+      - Thu, 04 Nov 2021 06:25:38 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-10-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.6.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 04 Nov 2021 06:25:38 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
+      x-ms-version:
+      - '2020-10-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare765b1188/dir1?restype=directory
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 04 Nov 2021 06:25:38 GMT
+      etag:
+      - '"0x8D99F5BEB238366"'
+      last-modified:
+      - Thu, 04 Nov 2021 06:25:38 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Directory
+      x-ms-file-change-time:
+      - '2021-11-04T06:25:38.5449318Z'
+      x-ms-file-creation-time:
+      - '2021-11-04T06:25:38.5449318Z'
+      x-ms-file-id:
+      - '13835128424026341376'
+      x-ms-file-last-write-time:
+      - '2021-11-04T06:25:38.5449318Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 8772442282881623900*1253935651986682069
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2020-10-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file-share/12.6.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 04 Nov 2021 06:25:38 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/utshare765b1188/dir1?restype=directory
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 04 Nov 2021 06:25:38 GMT
+      etag:
+      - '"0x8D99F5BEB238366"'
+      last-modified:
+      - Thu, 04 Nov 2021 06:25:38 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Directory
+      x-ms-file-change-time:
+      - '2021-11-04T06:25:38.5449318Z'
+      x-ms-file-creation-time:
+      - '2021-11-04T06:25:38.5449318Z'
+      x-ms-file-id:
+      - '13835128424026341376'
+      x-ms-file-last-write-time:
+      - '2021-11-04T06:25:38.5449318Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 8772442282881623900*1253935651986682069
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2020-10-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file-share/12.6.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 04 Nov 2021 06:25:39 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/utshare765b1188/dir2?restype=directory
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
+        specified resource does not exist.\nRequestId:567d7016-d01a-0058-5244-d195ff000000\nTime:2021-11-04T06:25:38.9185299Z</Message></Error>"
+    headers:
+      content-length:
+      - '223'
+      content-type:
+      - application/xml
+      date:
+      - Thu, 04 Nov 2021 06:25:38 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ResourceNotFound
+      x-ms-version:
+      - '2020-10-02'
+    status:
+      code: 404
+      message: The specified resource does not exist.
+version: 1

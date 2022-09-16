@@ -1,0 +1,207 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/example.avro.User?api-version=2021-10",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "221",
+        "Content-Type": "application/json; serialization=Avro",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "type": "record",
+        "name": "User",
+        "namespace": "example.avro",
+        "fields": [
+          {
+            "type": "string",
+            "name": "name"
+          },
+          {
+            "type": [
+              "int",
+              "null"
+            ],
+            "name": "favorite_number"
+          },
+          {
+            "type": [
+              "string",
+              "null"
+            ],
+            "name": "favorite_color"
+          }
+        ]
+      },
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Apr 2022 23:19:36 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2021-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "802531c620b14267bd35922af6c09337",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/802531c620b14267bd35922af6c09337?api-version=2021-10",
+        "Schema-Name": "example.avro.User",
+        "Schema-Version": "1",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.User/versions?api-version=2021-10",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/example.avro.User:get-id?api-version=2021-10",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "221",
+        "Content-Type": "application/json; serialization=Avro",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "type": "record",
+        "name": "User",
+        "namespace": "example.avro",
+        "fields": [
+          {
+            "type": "string",
+            "name": "name"
+          },
+          {
+            "type": [
+              "int",
+              "null"
+            ],
+            "name": "favorite_number"
+          },
+          {
+            "type": [
+              "string",
+              "null"
+            ],
+            "name": "favorite_color"
+          }
+        ]
+      },
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Apr 2022 23:19:36 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2021-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "802531c620b14267bd35922af6c09337",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/802531c620b14267bd35922af6c09337?api-version=2021-10",
+        "Schema-Name": "example.avro.User",
+        "Schema-Version": "1",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.User/versions?api-version=2021-10",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/802531c620b14267bd35922af6c09337?api-version=2021-10",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json; serialization=Avro",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; serialization=Avro",
+        "Date": "Fri, 22 Apr 2022 23:19:37 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2021-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "802531c620b14267bd35922af6c09337",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/802531c620b14267bd35922af6c09337?api-version=2021-10",
+        "Schema-Name": "example.avro.User",
+        "Schema-Version": "1",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.User/versions?api-version=2021-10",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": {
+        "namespace": "example.avro",
+        "type": "record",
+        "name": "User",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "favorite_number",
+            "type": [
+              "int",
+              "null"
+            ]
+          },
+          {
+            "name": "favorite_color",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/802531c620b14267bd35922af6c09337?api-version=2021-10",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json; serialization=Avro",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; serialization=Avro",
+        "Date": "Fri, 22 Apr 2022 23:19:37 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2021-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "802531c620b14267bd35922af6c09337",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/802531c620b14267bd35922af6c09337?api-version=2021-10",
+        "Schema-Name": "example.avro.User",
+        "Schema-Version": "1",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.User/versions?api-version=2021-10",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": {
+        "namespace": "example.avro",
+        "type": "record",
+        "name": "User",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "favorite_number",
+            "type": [
+              "int",
+              "null"
+            ]
+          },
+          {
+            "name": "favorite_color",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

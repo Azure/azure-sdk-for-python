@@ -11,7 +11,7 @@ steps:
     condition: succeededOrFailed()
 
   - script: |
-      pip install -r eng/ci_tools.txt
+      pip install black==21.6b0
     displayName: 'Prep Environment'
     condition: succeededOrFailed()
 

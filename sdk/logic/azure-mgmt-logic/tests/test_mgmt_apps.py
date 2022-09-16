@@ -8,18 +8,18 @@
 import unittest
 
 import azure.mgmt.logic
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
 
-class MgmtAppsTest(AzureMgmtTestCase):
+class TestMgmtApps(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtAppsTest, self).setUp()
+    def setup_method(self, method):
         self.logic_client = self.create_mgmt_client(
             azure.mgmt.logic.LogicManagementClient
         )
 
     @ResourceGroupPreparer(location="West US")
+    @recorded_by_proxy
     def test_logic(self, resource_group, location):
         workflow_name = '12HourHeartBeat'
         # workflow_name1 = workflow_name+'1'

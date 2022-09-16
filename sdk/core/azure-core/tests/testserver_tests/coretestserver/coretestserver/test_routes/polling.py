@@ -151,3 +151,22 @@ def request_id_location():
         '{"status": "Succeeded"}',
         status=200
     )
+
+@polling_api.route('/polling-with-options', methods=["PUT"])
+def polling_with_options_first():
+    base_url = get_base_url(request)
+    return Response(
+        '{"properties":{"provisioningState": "InProgress"}}',
+        headers={
+            'location': '{}/polling/final-get-with-location'.format(base_url),
+            'operation-location': '{}/polling/post/resource-location/operation-location-url'.format(base_url),
+        },
+        status=202
+    )
+
+@polling_api.route('/final-get-with-location', methods=["GET"])
+def polling_with_options_final_get_with_location():
+    return Response(
+        '{"returnedFrom": "locationHeaderUrl"}',
+        status=200
+    )

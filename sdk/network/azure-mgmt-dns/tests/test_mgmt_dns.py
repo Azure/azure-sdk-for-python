@@ -10,7 +10,7 @@ import unittest
 import azure.mgmt.dns
 import azure.mgmt.network
 from devtools_testutils import (
-    AzureMgmtTestCase, ResourceGroupPreparer,
+    AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy,
     AzureMgmtPreparer, FakeResource
 )
 
@@ -69,10 +69,9 @@ class VirtualNetworkPreparer(AzureMgmtPreparer):
             'resolution_virtual_network': resolution_network
         }
 
-class MgmtDnsTest(AzureMgmtTestCase):
+class TestMgmtDns(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtDnsTest, self).setUp()
+    def setup_method(self, method):
         self.dns_client = self.create_mgmt_client(
             azure.mgmt.dns.DnsManagementClient,
         )
@@ -81,6 +80,7 @@ class MgmtDnsTest(AzureMgmtTestCase):
         )
 
     @ResourceGroupPreparer()
+    @recorded_by_proxy
     def test_public_zone(self, resource_group, location):
         zone_name = self.get_resource_name('pydns.com')
 
@@ -93,21 +93,21 @@ class MgmtDnsTest(AzureMgmtTestCase):
                 'location': 'global'
             }
         )
-        self.assertEqual(zone.name, zone_name)
+        assert zone.name == zone_name
 
         zone = self.dns_client.zones.get(
             resource_group.name,
             zone.name
         )
-        self.assertEqual(zone.name, zone_name)
+        assert zone.name == zone_name
 
         zones = list(self.dns_client.zones.list_by_resource_group(
             resource_group.name
         ))
-        self.assertGreaterEqual(len(zones), 1)
+        assert len(zones) >= 1
 
         zones = list(self.dns_client.zones.list())
-        self.assertGreaterEqual(len(zones), 1)
+        assert len(zones) >= 1
 
         # Record set
         record_set_name = self.get_resource_name('record_set')
@@ -150,21 +150,21 @@ class MgmtDnsTest(AzureMgmtTestCase):
             record_set_name,
             'A'
         )
-        self.assertIsNotNone(record_set)
+        assert record_set is not None
 
         record_sets = list(self.dns_client.record_sets.list_by_type(
             resource_group.name,
             zone.name,
             'A'
         ))
-        self.assertEqual(len(record_sets), 1)
+        assert len(record_sets) == 1
 
         # NS and SOA records are created by default in public zones.
         record_sets = list(self.dns_client.record_sets.list_by_dns_zone(
             resource_group.name,
             zone.name
         ))
-        self.assertEqual(len(record_sets), 3)
+        assert len(record_sets) == 3
 
         self.dns_client.record_sets.delete(
             resource_group.name,
@@ -182,6 +182,7 @@ class MgmtDnsTest(AzureMgmtTestCase):
     @unittest.skip("using this API is no longer allowed")
     @ResourceGroupPreparer()
     @VirtualNetworkPreparer()
+    @recorded_by_proxy
     def test_private_zone(self, resource_group, location, registration_virtual_network, resolution_virtual_network):
         zone_name = self.get_resource_name('pydns.com')
 
@@ -196,21 +197,21 @@ class MgmtDnsTest(AzureMgmtTestCase):
                 'resolution_virtual_networks': [ { 'id': resolution_virtual_network.id } ]
             }
         )
-        self.assertEqual(zone.name, zone_name)
+        assert zone.name == zone_name
 
         zone = self.dns_client.zones.get(
             resource_group.name,
             zone.name
         )
-        self.assertEqual(zone.name, zone_name)
+        assert zone.name == zone_name
 
         zones = list(self.dns_client.zones.list_by_resource_group(
             resource_group.name
         ))
-        self.assertGreaterEqual(len(zones), 1)
+        assert len(zones) >= 1
 
         zones = list(self.dns_client.zones.list())
-        self.assertGreaterEqual(len(zones), 1)
+        assert len(zones) >= 1
 
         # Record set
         record_set_name = self.get_resource_name('record_set')
@@ -253,21 +254,21 @@ class MgmtDnsTest(AzureMgmtTestCase):
             record_set_name,
             'A'
         )
-        self.assertIsNotNone(record_set)
+        assert record_set is not None
 
         record_sets = list(self.dns_client.record_sets.list_by_type(
             resource_group.name,
             zone.name,
             'A'
         ))
-        self.assertEqual(len(record_sets), 1)
+        assert len(record_sets) == 1
 
         # SOA record is created by default in private zones.
         record_sets = list(self.dns_client.record_sets.list_by_dns_zone(
             resource_group.name,
             zone.name
         ))
-        self.assertEqual(len(record_sets), 2)
+        assert len(record_sets) == 2
 
         self.dns_client.record_sets.delete(
             resource_group.name,

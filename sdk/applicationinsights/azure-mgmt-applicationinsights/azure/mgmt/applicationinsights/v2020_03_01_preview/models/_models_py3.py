@@ -43,97 +43,12 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-
-
-class ComponentLinkedStorageAccounts(Resource):
-    """An Application Insights component linked storage accounts.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :param linked_storage_account: Linked storage account resource ID.
-    :type linked_storage_account: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'linked_storage_account': {'key': 'properties.linkedStorageAccount', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        linked_storage_account: Optional[str] = None,
-        **kwargs
-    ):
-        super(ComponentLinkedStorageAccounts, self).__init__(**kwargs)
-        self.linked_storage_account = linked_storage_account
-
-
-class ComponentLinkedStorageAccountsPatch(msrest.serialization.Model):
-    """An Application Insights component linked storage accounts patch.
-
-    :param linked_storage_account: Linked storage account resource ID.
-    :type linked_storage_account: str
-    """
-
-    _attribute_map = {
-        'linked_storage_account': {'key': 'properties.linkedStorageAccount', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        linked_storage_account: Optional[str] = None,
-        **kwargs
-    ):
-        super(ComponentLinkedStorageAccountsPatch, self).__init__(**kwargs)
-        self.linked_storage_account = linked_storage_account
-
-
-class ErrorResponse(msrest.serialization.Model):
-    """Error response indicates Insights service is not able to process the incoming request. The reason is provided in the error message.
-
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
 
 
 class ProxyResource(Resource):
@@ -167,4 +82,136 @@ class ProxyResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
+
+
+class ComponentLinkedStorageAccounts(ProxyResource):
+    """An Application Insights component linked storage accounts.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar linked_storage_account: Linked storage account resource ID.
+    :vartype linked_storage_account: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'linked_storage_account': {'key': 'properties.linkedStorageAccount', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        linked_storage_account: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword linked_storage_account: Linked storage account resource ID.
+        :paramtype linked_storage_account: str
+        """
+        super(ComponentLinkedStorageAccounts, self).__init__(**kwargs)
+        self.linked_storage_account = linked_storage_account
+
+
+class ComponentLinkedStorageAccountsPatch(msrest.serialization.Model):
+    """An Application Insights component linked storage accounts patch.
+
+    :ivar linked_storage_account: Linked storage account resource ID.
+    :vartype linked_storage_account: str
+    """
+
+    _attribute_map = {
+        'linked_storage_account': {'key': 'properties.linkedStorageAccount', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        linked_storage_account: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword linked_storage_account: Linked storage account resource ID.
+        :paramtype linked_storage_account: str
+        """
+        super(ComponentLinkedStorageAccountsPatch, self).__init__(**kwargs)
+        self.linked_storage_account = linked_storage_account
+
+
+class ErrorResponseLinkedStorage(msrest.serialization.Model):
+    """ErrorResponseLinkedStorage.
+
+    :ivar error: Error response indicates Insights service is not able to process the incoming
+     request. The reason is provided in the error message.
+    :vartype error:
+     ~azure.mgmt.applicationinsights.v2020_03_01_preview.models.ErrorResponseLinkedStorageError
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponseLinkedStorageError'},
+    }
+
+    def __init__(
+        self,
+        *,
+        error: Optional["ErrorResponseLinkedStorageError"] = None,
+        **kwargs
+    ):
+        """
+        :keyword error: Error response indicates Insights service is not able to process the incoming
+         request. The reason is provided in the error message.
+        :paramtype error:
+         ~azure.mgmt.applicationinsights.v2020_03_01_preview.models.ErrorResponseLinkedStorageError
+        """
+        super(ErrorResponseLinkedStorage, self).__init__(**kwargs)
+        self.error = error
+
+
+class ErrorResponseLinkedStorageError(msrest.serialization.Model):
+    """Error response indicates Insights service is not able to process the incoming request. The reason is provided in the error message.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ErrorResponseLinkedStorageError, self).__init__(**kwargs)
+        self.code = None
+        self.message = None

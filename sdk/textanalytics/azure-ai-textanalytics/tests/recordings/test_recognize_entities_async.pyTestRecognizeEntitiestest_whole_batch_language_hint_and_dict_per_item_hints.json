@@ -1,0 +1,101 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "343",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "EntityRecognition",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "I will go to the park.",
+              "language": "es"
+            },
+            {
+              "id": "2",
+              "text": "I did not like the hotel we stayed at.",
+              "language": "es"
+            },
+            {
+              "id": "3",
+              "text": "The restaurant had really good food.",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "89687108-c83a-478a-8c01-8189b33b209c",
+        "Content-Length": "501",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Wed, 08 Jun 2022 01:44:01 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "32"
+      },
+      "ResponseBody": {
+        "kind": "EntityRecognitionResults",
+        "results": {
+          "documents": [
+            {
+              "id": "1",
+              "entities": [
+                {
+                  "text": "park",
+                  "category": "Location",
+                  "offset": 17,
+                  "length": 4,
+                  "confidenceScore": 0.99
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "2",
+              "entities": [
+                {
+                  "text": "hotel",
+                  "category": "Location",
+                  "offset": 19,
+                  "length": 5,
+                  "confidenceScore": 0.99
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "3",
+              "entities": [
+                {
+                  "text": "restaurant",
+                  "category": "Location",
+                  "subcategory": "Structural",
+                  "offset": 4,
+                  "length": 10,
+                  "confidenceScore": 0.97
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-06-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

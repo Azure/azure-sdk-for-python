@@ -1,0 +1,174 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "393",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "56",
+              "text": ":)",
+              "language": "en"
+            },
+            {
+              "id": "0",
+              "text": ":(",
+              "language": "en"
+            },
+            {
+              "id": "22",
+              "text": "",
+              "language": "en"
+            },
+            {
+              "id": "19",
+              "text": ":P",
+              "language": "en"
+            },
+            {
+              "id": "1",
+              "text": ":D",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "Healthcare",
+            "parameters": {
+              "modelVersion": "latest",
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "b61657b7-eac7-4fbc-b4a6-208e25b49bdc",
+        "Content-Length": "0",
+        "Date": "Thu, 09 Jun 2022 23:39:30 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/171e0c8b-1f4b-409d-aa93-34cb75dda0f7?api-version=2022-05-01",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "424"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/171e0c8b-1f4b-409d-aa93-34cb75dda0f7?api-version=2022-05-01\u0026showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "50a213ad-e0b8-48ca-9a45-858305c73fd7",
+        "Content-Length": "1184",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 09 Jun 2022 23:39:35 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "83"
+      },
+      "ResponseBody": {
+        "jobId": "171e0c8b-1f4b-409d-aa93-34cb75dda0f7",
+        "lastUpdatedDateTime": "2022-06-09T23:39:32Z",
+        "createdDateTime": "2022-06-09T23:39:29Z",
+        "expirationDateTime": "2022-06-10T23:39:29Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 1,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 1,
+          "items": [
+            {
+              "kind": "HealthcareLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-06-09T23:39:32.0682617Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 5,
+                  "validDocumentsCount": 4,
+                  "erroneousDocumentsCount": 1,
+                  "transactionsCount": 4
+                },
+                "documents": [
+                  {
+                    "id": "56",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "relations": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "0",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "relations": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "19",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "relations": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "1",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "relations": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [
+                  {
+                    "id": "22",
+                    "error": {
+                      "code": "InvalidArgument",
+                      "message": "Invalid Document in request.",
+                      "innererror": {
+                        "code": "InvalidDocument",
+                        "message": "Document text is empty."
+                      }
+                    }
+                  }
+                ],
+                "modelVersion": "2022-03-01"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -24,8 +24,9 @@
 #
 # --------------------------------------------------------------------------
 import pytest
+from azure.core.pipeline.transport import RequestsTransport
 from azure.core import PipelineClient
-from azure.core.exceptions import DecodeError
+from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core.pipeline.transport import RequestsTransport
 from utils import HTTP_REQUESTS
 
@@ -44,6 +45,21 @@ def test_decompress_plain_no_header(http_request):
     decoded = content.decode('utf-8')
     assert decoded == "test"
 
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_compress_plain_no_header_offline(port, http_request):
+    # cspell:disable-next-line
+    # thanks to Daisy Cisneros for this test!
+    # expect plain text
+    request = http_request(method="GET", url="http://localhost:{}/streams/string".format(port))
+    with RequestsTransport() as sender:
+        response = sender.send(request, stream=True)
+        response.raise_for_status()
+        data = response.stream_download(sender, decompress=False)
+        content = b"".join(list(data))
+        decoded = content.decode('utf-8')
+        assert decoded == "test"
+
+@pytest.mark.live_test_only
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_compress_plain_no_header(http_request):
     # expect plain text
@@ -77,6 +93,19 @@ def test_decompress_compressed_no_header(http_request):
     except UnicodeDecodeError:
         pass
 
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_compress_compressed_no_header_offline(port, http_request):
+    # expect compressed text
+    client = PipelineClient("")
+    request = http_request(method="GET", url="http://localhost:{}/streams/compressed_no_header".format(port))
+    pipeline_response = client._pipeline.run(request, stream=True)
+    response = pipeline_response.http_response
+    data = response.stream_download(client._pipeline, decompress=False)
+    content = b"".join(list(data))
+    with pytest.raises(UnicodeDecodeError):
+        decoded = content.decode('utf-8')
+
+@pytest.mark.live_test_only
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_compress_compressed_no_header(http_request):
     # expect compressed text
@@ -135,6 +164,7 @@ def test_compress_plain_header(http_request):
     decoded = content.decode('utf-8')
     assert decoded == "test"
 
+@pytest.mark.live_test_only
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_decompress_compressed_header(http_request):
     # expect plain text
@@ -149,6 +179,18 @@ def test_decompress_compressed_header(http_request):
     content = b"".join(list(data))
     decoded = content.decode('utf-8')
     assert decoded == "test"
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_decompress_compressed_header_offline(port, http_request):
+    client = PipelineClient("")
+    request = http_request(method="GET", url="http://localhost:{}/streams/decompress_header".format(port))
+    with RequestsTransport() as sender:
+        response = client._pipeline.run(request, stream=True).http_response
+        response.raise_for_status()
+        data = response.stream_download(sender, decompress=True)
+        content = b"".join(list(data))
+        decoded = content.decode('utf-8')
+        assert decoded == "test"
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_compress_compressed_header(http_request):

@@ -44,6 +44,8 @@ class AzureResourceBase(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AzureResourceBase, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -66,18 +68,18 @@ class DeploymentScript(AzureResourceBase):
     :vartype name: str
     :ivar type: Type of this resource.
     :vartype type: str
-    :param identity: Optional property. Managed identity to be used for this deployment script.
+    :ivar identity: Optional property. Managed identity to be used for this deployment script.
      Currently, only user-assigned MSI is supported.
-    :type identity:
+    :vartype identity:
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ManagedServiceIdentity
-    :param location: Required. The location of the ACI and the storage account for the deployment
+    :ivar location: Required. The location of the ACI and the storage account for the deployment
      script.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param kind: Required. Type of the script.Constant filled by server.  Possible values include:
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: Required. Type of the script.Constant filled by server. Possible values include:
      "AzurePowerShell", "AzureCLI".
-    :type kind: str or ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ScriptType
+    :vartype kind: str or ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ScriptType
     :ivar system_data: The system metadata related to this resource.
     :vartype system_data: ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.SystemData
     """
@@ -114,6 +116,17 @@ class DeploymentScript(AzureResourceBase):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword identity: Optional property. Managed identity to be used for this deployment script.
+         Currently, only user-assigned MSI is supported.
+        :paramtype identity:
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ManagedServiceIdentity
+        :keyword location: Required. The location of the ACI and the storage account for the deployment
+         script.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(DeploymentScript, self).__init__(**kwargs)
         self.identity = identity
         self.location = location
@@ -135,30 +148,30 @@ class AzureCliScript(DeploymentScript):
     :vartype name: str
     :ivar type: Type of this resource.
     :vartype type: str
-    :param identity: Optional property. Managed identity to be used for this deployment script.
+    :ivar identity: Optional property. Managed identity to be used for this deployment script.
      Currently, only user-assigned MSI is supported.
-    :type identity:
+    :vartype identity:
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ManagedServiceIdentity
-    :param location: Required. The location of the ACI and the storage account for the deployment
+    :ivar location: Required. The location of the ACI and the storage account for the deployment
      script.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param kind: Required. Type of the script.Constant filled by server.  Possible values include:
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: Required. Type of the script.Constant filled by server. Possible values include:
      "AzurePowerShell", "AzureCLI".
-    :type kind: str or ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ScriptType
+    :vartype kind: str or ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ScriptType
     :ivar system_data: The system metadata related to this resource.
     :vartype system_data: ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.SystemData
-    :param container_settings: Container settings.
-    :type container_settings:
+    :ivar container_settings: Container settings.
+    :vartype container_settings:
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ContainerConfiguration
-    :param storage_account_settings: Storage Account settings.
-    :type storage_account_settings:
+    :ivar storage_account_settings: Storage Account settings.
+    :vartype storage_account_settings:
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.StorageAccountConfiguration
-    :param cleanup_preference: The clean up preference when the script execution gets in a terminal
+    :ivar cleanup_preference: The clean up preference when the script execution gets in a terminal
      state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
      "OnExpiration". Default value: "Always".
-    :type cleanup_preference: str or
+    :vartype cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears in the response.
      Possible values include: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
@@ -169,30 +182,30 @@ class AzureCliScript(DeploymentScript):
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ScriptStatus
     :ivar outputs: List of script outputs.
     :vartype outputs: dict[str, any]
-    :param primary_script_uri: Uri for the script. This is the entry point for the external script.
-    :type primary_script_uri: str
-    :param supporting_script_uris: Supporting files for the external script.
-    :type supporting_script_uris: list[str]
-    :param script_content: Script body.
-    :type script_content: str
-    :param arguments: Command line arguments to pass to the script. Arguments are separated by
+    :ivar primary_script_uri: Uri for the script. This is the entry point for the external script.
+    :vartype primary_script_uri: str
+    :ivar supporting_script_uris: Supporting files for the external script.
+    :vartype supporting_script_uris: list[str]
+    :ivar script_content: Script body.
+    :vartype script_content: str
+    :ivar arguments: Command line arguments to pass to the script. Arguments are separated by
      spaces. ex: -Name blue* -Location 'West US 2'.
-    :type arguments: str
-    :param environment_variables: The environment variables to pass over to the script.
-    :type environment_variables:
+    :vartype arguments: str
+    :ivar environment_variables: The environment variables to pass over to the script.
+    :vartype environment_variables:
      list[~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.EnvironmentVariable]
-    :param force_update_tag: Gets or sets how the deployment script should be forced to execute
-     even if the script resource has not changed. Can be current time stamp or a GUID.
-    :type force_update_tag: str
-    :param retention_interval: Required. Interval for which the service retains the script resource
+    :ivar force_update_tag: Gets or sets how the deployment script should be forced to execute even
+     if the script resource has not changed. Can be current time stamp or a GUID.
+    :vartype force_update_tag: str
+    :ivar retention_interval: Required. Interval for which the service retains the script resource
      after it reaches a terminal state. Resource will be deleted when this duration expires.
      Duration is based on ISO 8601 pattern (for example P1D means one day).
-    :type retention_interval: ~datetime.timedelta
-    :param timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
+    :vartype retention_interval: ~datetime.timedelta
+    :ivar timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
      value is P1D.
-    :type timeout: ~datetime.timedelta
-    :param az_cli_version: Required. Azure CLI module version to be used.
-    :type az_cli_version: str
+    :vartype timeout: ~datetime.timedelta
+    :ivar az_cli_version: Required. Azure CLI module version to be used.
+    :vartype az_cli_version: str
     """
 
     _validation = {
@@ -255,6 +268,53 @@ class AzureCliScript(DeploymentScript):
         timeout: Optional[datetime.timedelta] = "P1D",
         **kwargs
     ):
+        """
+        :keyword identity: Optional property. Managed identity to be used for this deployment script.
+         Currently, only user-assigned MSI is supported.
+        :paramtype identity:
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ManagedServiceIdentity
+        :keyword location: Required. The location of the ACI and the storage account for the deployment
+         script.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword container_settings: Container settings.
+        :paramtype container_settings:
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ContainerConfiguration
+        :keyword storage_account_settings: Storage Account settings.
+        :paramtype storage_account_settings:
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.StorageAccountConfiguration
+        :keyword cleanup_preference: The clean up preference when the script execution gets in a
+         terminal state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
+         "OnExpiration". Default value: "Always".
+        :paramtype cleanup_preference: str or
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.CleanupOptions
+        :keyword primary_script_uri: Uri for the script. This is the entry point for the external
+         script.
+        :paramtype primary_script_uri: str
+        :keyword supporting_script_uris: Supporting files for the external script.
+        :paramtype supporting_script_uris: list[str]
+        :keyword script_content: Script body.
+        :paramtype script_content: str
+        :keyword arguments: Command line arguments to pass to the script. Arguments are separated by
+         spaces. ex: -Name blue* -Location 'West US 2'.
+        :paramtype arguments: str
+        :keyword environment_variables: The environment variables to pass over to the script.
+        :paramtype environment_variables:
+         list[~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.EnvironmentVariable]
+        :keyword force_update_tag: Gets or sets how the deployment script should be forced to execute
+         even if the script resource has not changed. Can be current time stamp or a GUID.
+        :paramtype force_update_tag: str
+        :keyword retention_interval: Required. Interval for which the service retains the script
+         resource after it reaches a terminal state. Resource will be deleted when this duration
+         expires. Duration is based on ISO 8601 pattern (for example P1D means one day).
+        :paramtype retention_interval: ~datetime.timedelta
+        :keyword timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
+         value is P1D.
+        :paramtype timeout: ~datetime.timedelta
+        :keyword az_cli_version: Required. Azure CLI module version to be used.
+        :paramtype az_cli_version: str
+        """
         super(AzureCliScript, self).__init__(identity=identity, location=location, tags=tags, **kwargs)
         self.kind = 'AzureCLI'  # type: str
         self.container_settings = container_settings
@@ -279,28 +339,28 @@ class ScriptConfigurationBase(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param primary_script_uri: Uri for the script. This is the entry point for the external script.
-    :type primary_script_uri: str
-    :param supporting_script_uris: Supporting files for the external script.
-    :type supporting_script_uris: list[str]
-    :param script_content: Script body.
-    :type script_content: str
-    :param arguments: Command line arguments to pass to the script. Arguments are separated by
+    :ivar primary_script_uri: Uri for the script. This is the entry point for the external script.
+    :vartype primary_script_uri: str
+    :ivar supporting_script_uris: Supporting files for the external script.
+    :vartype supporting_script_uris: list[str]
+    :ivar script_content: Script body.
+    :vartype script_content: str
+    :ivar arguments: Command line arguments to pass to the script. Arguments are separated by
      spaces. ex: -Name blue* -Location 'West US 2'.
-    :type arguments: str
-    :param environment_variables: The environment variables to pass over to the script.
-    :type environment_variables:
+    :vartype arguments: str
+    :ivar environment_variables: The environment variables to pass over to the script.
+    :vartype environment_variables:
      list[~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.EnvironmentVariable]
-    :param force_update_tag: Gets or sets how the deployment script should be forced to execute
-     even if the script resource has not changed. Can be current time stamp or a GUID.
-    :type force_update_tag: str
-    :param retention_interval: Required. Interval for which the service retains the script resource
+    :ivar force_update_tag: Gets or sets how the deployment script should be forced to execute even
+     if the script resource has not changed. Can be current time stamp or a GUID.
+    :vartype force_update_tag: str
+    :ivar retention_interval: Required. Interval for which the service retains the script resource
      after it reaches a terminal state. Resource will be deleted when this duration expires.
      Duration is based on ISO 8601 pattern (for example P1D means one day).
-    :type retention_interval: ~datetime.timedelta
-    :param timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
+    :vartype retention_interval: ~datetime.timedelta
+    :ivar timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
      value is P1D.
-    :type timeout: ~datetime.timedelta
+    :vartype timeout: ~datetime.timedelta
     """
 
     _validation = {
@@ -331,6 +391,31 @@ class ScriptConfigurationBase(msrest.serialization.Model):
         timeout: Optional[datetime.timedelta] = "P1D",
         **kwargs
     ):
+        """
+        :keyword primary_script_uri: Uri for the script. This is the entry point for the external
+         script.
+        :paramtype primary_script_uri: str
+        :keyword supporting_script_uris: Supporting files for the external script.
+        :paramtype supporting_script_uris: list[str]
+        :keyword script_content: Script body.
+        :paramtype script_content: str
+        :keyword arguments: Command line arguments to pass to the script. Arguments are separated by
+         spaces. ex: -Name blue* -Location 'West US 2'.
+        :paramtype arguments: str
+        :keyword environment_variables: The environment variables to pass over to the script.
+        :paramtype environment_variables:
+         list[~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.EnvironmentVariable]
+        :keyword force_update_tag: Gets or sets how the deployment script should be forced to execute
+         even if the script resource has not changed. Can be current time stamp or a GUID.
+        :paramtype force_update_tag: str
+        :keyword retention_interval: Required. Interval for which the service retains the script
+         resource after it reaches a terminal state. Resource will be deleted when this duration
+         expires. Duration is based on ISO 8601 pattern (for example P1D means one day).
+        :paramtype retention_interval: ~datetime.timedelta
+        :keyword timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
+         value is P1D.
+        :paramtype timeout: ~datetime.timedelta
+        """
         super(ScriptConfigurationBase, self).__init__(**kwargs)
         self.primary_script_uri = primary_script_uri
         self.supporting_script_uris = supporting_script_uris
@@ -347,16 +432,16 @@ class DeploymentScriptPropertiesBase(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param container_settings: Container settings.
-    :type container_settings:
+    :ivar container_settings: Container settings.
+    :vartype container_settings:
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ContainerConfiguration
-    :param storage_account_settings: Storage Account settings.
-    :type storage_account_settings:
+    :ivar storage_account_settings: Storage Account settings.
+    :vartype storage_account_settings:
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.StorageAccountConfiguration
-    :param cleanup_preference: The clean up preference when the script execution gets in a terminal
+    :ivar cleanup_preference: The clean up preference when the script execution gets in a terminal
      state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
      "OnExpiration". Default value: "Always".
-    :type cleanup_preference: str or
+    :vartype cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears in the response.
      Possible values include: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
@@ -392,6 +477,19 @@ class DeploymentScriptPropertiesBase(msrest.serialization.Model):
         cleanup_preference: Optional[Union[str, "CleanupOptions"]] = "Always",
         **kwargs
     ):
+        """
+        :keyword container_settings: Container settings.
+        :paramtype container_settings:
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ContainerConfiguration
+        :keyword storage_account_settings: Storage Account settings.
+        :paramtype storage_account_settings:
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.StorageAccountConfiguration
+        :keyword cleanup_preference: The clean up preference when the script execution gets in a
+         terminal state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
+         "OnExpiration". Default value: "Always".
+        :paramtype cleanup_preference: str or
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.CleanupOptions
+        """
         super(DeploymentScriptPropertiesBase, self).__init__(**kwargs)
         self.container_settings = container_settings
         self.storage_account_settings = storage_account_settings
@@ -408,38 +506,38 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
 
     All required parameters must be populated in order to send to Azure.
 
-    :param primary_script_uri: Uri for the script. This is the entry point for the external script.
-    :type primary_script_uri: str
-    :param supporting_script_uris: Supporting files for the external script.
-    :type supporting_script_uris: list[str]
-    :param script_content: Script body.
-    :type script_content: str
-    :param arguments: Command line arguments to pass to the script. Arguments are separated by
+    :ivar primary_script_uri: Uri for the script. This is the entry point for the external script.
+    :vartype primary_script_uri: str
+    :ivar supporting_script_uris: Supporting files for the external script.
+    :vartype supporting_script_uris: list[str]
+    :ivar script_content: Script body.
+    :vartype script_content: str
+    :ivar arguments: Command line arguments to pass to the script. Arguments are separated by
      spaces. ex: -Name blue* -Location 'West US 2'.
-    :type arguments: str
-    :param environment_variables: The environment variables to pass over to the script.
-    :type environment_variables:
+    :vartype arguments: str
+    :ivar environment_variables: The environment variables to pass over to the script.
+    :vartype environment_variables:
      list[~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.EnvironmentVariable]
-    :param force_update_tag: Gets or sets how the deployment script should be forced to execute
-     even if the script resource has not changed. Can be current time stamp or a GUID.
-    :type force_update_tag: str
-    :param retention_interval: Required. Interval for which the service retains the script resource
+    :ivar force_update_tag: Gets or sets how the deployment script should be forced to execute even
+     if the script resource has not changed. Can be current time stamp or a GUID.
+    :vartype force_update_tag: str
+    :ivar retention_interval: Required. Interval for which the service retains the script resource
      after it reaches a terminal state. Resource will be deleted when this duration expires.
      Duration is based on ISO 8601 pattern (for example P1D means one day).
-    :type retention_interval: ~datetime.timedelta
-    :param timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
+    :vartype retention_interval: ~datetime.timedelta
+    :ivar timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
      value is P1D.
-    :type timeout: ~datetime.timedelta
-    :param container_settings: Container settings.
-    :type container_settings:
+    :vartype timeout: ~datetime.timedelta
+    :ivar container_settings: Container settings.
+    :vartype container_settings:
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ContainerConfiguration
-    :param storage_account_settings: Storage Account settings.
-    :type storage_account_settings:
+    :ivar storage_account_settings: Storage Account settings.
+    :vartype storage_account_settings:
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.StorageAccountConfiguration
-    :param cleanup_preference: The clean up preference when the script execution gets in a terminal
+    :ivar cleanup_preference: The clean up preference when the script execution gets in a terminal
      state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
      "OnExpiration". Default value: "Always".
-    :type cleanup_preference: str or
+    :vartype cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears in the response.
      Possible values include: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
@@ -450,8 +548,8 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ScriptStatus
     :ivar outputs: List of script outputs.
     :vartype outputs: dict[str, any]
-    :param az_cli_version: Required. Azure CLI module version to be used.
-    :type az_cli_version: str
+    :ivar az_cli_version: Required. Azure CLI module version to be used.
+    :vartype az_cli_version: str
     """
 
     _validation = {
@@ -497,6 +595,44 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
         cleanup_preference: Optional[Union[str, "CleanupOptions"]] = "Always",
         **kwargs
     ):
+        """
+        :keyword primary_script_uri: Uri for the script. This is the entry point for the external
+         script.
+        :paramtype primary_script_uri: str
+        :keyword supporting_script_uris: Supporting files for the external script.
+        :paramtype supporting_script_uris: list[str]
+        :keyword script_content: Script body.
+        :paramtype script_content: str
+        :keyword arguments: Command line arguments to pass to the script. Arguments are separated by
+         spaces. ex: -Name blue* -Location 'West US 2'.
+        :paramtype arguments: str
+        :keyword environment_variables: The environment variables to pass over to the script.
+        :paramtype environment_variables:
+         list[~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.EnvironmentVariable]
+        :keyword force_update_tag: Gets or sets how the deployment script should be forced to execute
+         even if the script resource has not changed. Can be current time stamp or a GUID.
+        :paramtype force_update_tag: str
+        :keyword retention_interval: Required. Interval for which the service retains the script
+         resource after it reaches a terminal state. Resource will be deleted when this duration
+         expires. Duration is based on ISO 8601 pattern (for example P1D means one day).
+        :paramtype retention_interval: ~datetime.timedelta
+        :keyword timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
+         value is P1D.
+        :paramtype timeout: ~datetime.timedelta
+        :keyword container_settings: Container settings.
+        :paramtype container_settings:
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ContainerConfiguration
+        :keyword storage_account_settings: Storage Account settings.
+        :paramtype storage_account_settings:
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.StorageAccountConfiguration
+        :keyword cleanup_preference: The clean up preference when the script execution gets in a
+         terminal state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
+         "OnExpiration". Default value: "Always".
+        :paramtype cleanup_preference: str or
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.CleanupOptions
+        :keyword az_cli_version: Required. Azure CLI module version to be used.
+        :paramtype az_cli_version: str
+        """
         super(AzureCliScriptProperties, self).__init__(container_settings=container_settings, storage_account_settings=storage_account_settings, cleanup_preference=cleanup_preference, primary_script_uri=primary_script_uri, supporting_script_uris=supporting_script_uris, script_content=script_content, arguments=arguments, environment_variables=environment_variables, force_update_tag=force_update_tag, retention_interval=retention_interval, timeout=timeout, **kwargs)
         self.primary_script_uri = primary_script_uri
         self.supporting_script_uris = supporting_script_uris
@@ -513,7 +649,6 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
         self.provisioning_state = None
         self.status = None
         self.outputs = None
-        self.az_cli_version = az_cli_version
 
 
 class AzurePowerShellScript(DeploymentScript):
@@ -529,30 +664,30 @@ class AzurePowerShellScript(DeploymentScript):
     :vartype name: str
     :ivar type: Type of this resource.
     :vartype type: str
-    :param identity: Optional property. Managed identity to be used for this deployment script.
+    :ivar identity: Optional property. Managed identity to be used for this deployment script.
      Currently, only user-assigned MSI is supported.
-    :type identity:
+    :vartype identity:
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ManagedServiceIdentity
-    :param location: Required. The location of the ACI and the storage account for the deployment
+    :ivar location: Required. The location of the ACI and the storage account for the deployment
      script.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param kind: Required. Type of the script.Constant filled by server.  Possible values include:
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: Required. Type of the script.Constant filled by server. Possible values include:
      "AzurePowerShell", "AzureCLI".
-    :type kind: str or ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ScriptType
+    :vartype kind: str or ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ScriptType
     :ivar system_data: The system metadata related to this resource.
     :vartype system_data: ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.SystemData
-    :param container_settings: Container settings.
-    :type container_settings:
+    :ivar container_settings: Container settings.
+    :vartype container_settings:
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ContainerConfiguration
-    :param storage_account_settings: Storage Account settings.
-    :type storage_account_settings:
+    :ivar storage_account_settings: Storage Account settings.
+    :vartype storage_account_settings:
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.StorageAccountConfiguration
-    :param cleanup_preference: The clean up preference when the script execution gets in a terminal
+    :ivar cleanup_preference: The clean up preference when the script execution gets in a terminal
      state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
      "OnExpiration". Default value: "Always".
-    :type cleanup_preference: str or
+    :vartype cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears in the response.
      Possible values include: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
@@ -563,30 +698,30 @@ class AzurePowerShellScript(DeploymentScript):
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ScriptStatus
     :ivar outputs: List of script outputs.
     :vartype outputs: dict[str, any]
-    :param primary_script_uri: Uri for the script. This is the entry point for the external script.
-    :type primary_script_uri: str
-    :param supporting_script_uris: Supporting files for the external script.
-    :type supporting_script_uris: list[str]
-    :param script_content: Script body.
-    :type script_content: str
-    :param arguments: Command line arguments to pass to the script. Arguments are separated by
+    :ivar primary_script_uri: Uri for the script. This is the entry point for the external script.
+    :vartype primary_script_uri: str
+    :ivar supporting_script_uris: Supporting files for the external script.
+    :vartype supporting_script_uris: list[str]
+    :ivar script_content: Script body.
+    :vartype script_content: str
+    :ivar arguments: Command line arguments to pass to the script. Arguments are separated by
      spaces. ex: -Name blue* -Location 'West US 2'.
-    :type arguments: str
-    :param environment_variables: The environment variables to pass over to the script.
-    :type environment_variables:
+    :vartype arguments: str
+    :ivar environment_variables: The environment variables to pass over to the script.
+    :vartype environment_variables:
      list[~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.EnvironmentVariable]
-    :param force_update_tag: Gets or sets how the deployment script should be forced to execute
-     even if the script resource has not changed. Can be current time stamp or a GUID.
-    :type force_update_tag: str
-    :param retention_interval: Required. Interval for which the service retains the script resource
+    :ivar force_update_tag: Gets or sets how the deployment script should be forced to execute even
+     if the script resource has not changed. Can be current time stamp or a GUID.
+    :vartype force_update_tag: str
+    :ivar retention_interval: Required. Interval for which the service retains the script resource
      after it reaches a terminal state. Resource will be deleted when this duration expires.
      Duration is based on ISO 8601 pattern (for example P1D means one day).
-    :type retention_interval: ~datetime.timedelta
-    :param timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
+    :vartype retention_interval: ~datetime.timedelta
+    :ivar timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
      value is P1D.
-    :type timeout: ~datetime.timedelta
-    :param az_power_shell_version: Required. Azure PowerShell module version to be used.
-    :type az_power_shell_version: str
+    :vartype timeout: ~datetime.timedelta
+    :ivar az_power_shell_version: Required. Azure PowerShell module version to be used.
+    :vartype az_power_shell_version: str
     """
 
     _validation = {
@@ -649,6 +784,53 @@ class AzurePowerShellScript(DeploymentScript):
         timeout: Optional[datetime.timedelta] = "P1D",
         **kwargs
     ):
+        """
+        :keyword identity: Optional property. Managed identity to be used for this deployment script.
+         Currently, only user-assigned MSI is supported.
+        :paramtype identity:
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ManagedServiceIdentity
+        :keyword location: Required. The location of the ACI and the storage account for the deployment
+         script.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword container_settings: Container settings.
+        :paramtype container_settings:
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ContainerConfiguration
+        :keyword storage_account_settings: Storage Account settings.
+        :paramtype storage_account_settings:
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.StorageAccountConfiguration
+        :keyword cleanup_preference: The clean up preference when the script execution gets in a
+         terminal state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
+         "OnExpiration". Default value: "Always".
+        :paramtype cleanup_preference: str or
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.CleanupOptions
+        :keyword primary_script_uri: Uri for the script. This is the entry point for the external
+         script.
+        :paramtype primary_script_uri: str
+        :keyword supporting_script_uris: Supporting files for the external script.
+        :paramtype supporting_script_uris: list[str]
+        :keyword script_content: Script body.
+        :paramtype script_content: str
+        :keyword arguments: Command line arguments to pass to the script. Arguments are separated by
+         spaces. ex: -Name blue* -Location 'West US 2'.
+        :paramtype arguments: str
+        :keyword environment_variables: The environment variables to pass over to the script.
+        :paramtype environment_variables:
+         list[~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.EnvironmentVariable]
+        :keyword force_update_tag: Gets or sets how the deployment script should be forced to execute
+         even if the script resource has not changed. Can be current time stamp or a GUID.
+        :paramtype force_update_tag: str
+        :keyword retention_interval: Required. Interval for which the service retains the script
+         resource after it reaches a terminal state. Resource will be deleted when this duration
+         expires. Duration is based on ISO 8601 pattern (for example P1D means one day).
+        :paramtype retention_interval: ~datetime.timedelta
+        :keyword timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
+         value is P1D.
+        :paramtype timeout: ~datetime.timedelta
+        :keyword az_power_shell_version: Required. Azure PowerShell module version to be used.
+        :paramtype az_power_shell_version: str
+        """
         super(AzurePowerShellScript, self).__init__(identity=identity, location=location, tags=tags, **kwargs)
         self.kind = 'AzurePowerShell'  # type: str
         self.container_settings = container_settings
@@ -675,38 +857,38 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
 
     All required parameters must be populated in order to send to Azure.
 
-    :param primary_script_uri: Uri for the script. This is the entry point for the external script.
-    :type primary_script_uri: str
-    :param supporting_script_uris: Supporting files for the external script.
-    :type supporting_script_uris: list[str]
-    :param script_content: Script body.
-    :type script_content: str
-    :param arguments: Command line arguments to pass to the script. Arguments are separated by
+    :ivar primary_script_uri: Uri for the script. This is the entry point for the external script.
+    :vartype primary_script_uri: str
+    :ivar supporting_script_uris: Supporting files for the external script.
+    :vartype supporting_script_uris: list[str]
+    :ivar script_content: Script body.
+    :vartype script_content: str
+    :ivar arguments: Command line arguments to pass to the script. Arguments are separated by
      spaces. ex: -Name blue* -Location 'West US 2'.
-    :type arguments: str
-    :param environment_variables: The environment variables to pass over to the script.
-    :type environment_variables:
+    :vartype arguments: str
+    :ivar environment_variables: The environment variables to pass over to the script.
+    :vartype environment_variables:
      list[~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.EnvironmentVariable]
-    :param force_update_tag: Gets or sets how the deployment script should be forced to execute
-     even if the script resource has not changed. Can be current time stamp or a GUID.
-    :type force_update_tag: str
-    :param retention_interval: Required. Interval for which the service retains the script resource
+    :ivar force_update_tag: Gets or sets how the deployment script should be forced to execute even
+     if the script resource has not changed. Can be current time stamp or a GUID.
+    :vartype force_update_tag: str
+    :ivar retention_interval: Required. Interval for which the service retains the script resource
      after it reaches a terminal state. Resource will be deleted when this duration expires.
      Duration is based on ISO 8601 pattern (for example P1D means one day).
-    :type retention_interval: ~datetime.timedelta
-    :param timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
+    :vartype retention_interval: ~datetime.timedelta
+    :ivar timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
      value is P1D.
-    :type timeout: ~datetime.timedelta
-    :param container_settings: Container settings.
-    :type container_settings:
+    :vartype timeout: ~datetime.timedelta
+    :ivar container_settings: Container settings.
+    :vartype container_settings:
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ContainerConfiguration
-    :param storage_account_settings: Storage Account settings.
-    :type storage_account_settings:
+    :ivar storage_account_settings: Storage Account settings.
+    :vartype storage_account_settings:
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.StorageAccountConfiguration
-    :param cleanup_preference: The clean up preference when the script execution gets in a terminal
+    :ivar cleanup_preference: The clean up preference when the script execution gets in a terminal
      state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
      "OnExpiration". Default value: "Always".
-    :type cleanup_preference: str or
+    :vartype cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears in the response.
      Possible values include: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
@@ -717,8 +899,8 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ScriptStatus
     :ivar outputs: List of script outputs.
     :vartype outputs: dict[str, any]
-    :param az_power_shell_version: Required. Azure PowerShell module version to be used.
-    :type az_power_shell_version: str
+    :ivar az_power_shell_version: Required. Azure PowerShell module version to be used.
+    :vartype az_power_shell_version: str
     """
 
     _validation = {
@@ -764,6 +946,44 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
         cleanup_preference: Optional[Union[str, "CleanupOptions"]] = "Always",
         **kwargs
     ):
+        """
+        :keyword primary_script_uri: Uri for the script. This is the entry point for the external
+         script.
+        :paramtype primary_script_uri: str
+        :keyword supporting_script_uris: Supporting files for the external script.
+        :paramtype supporting_script_uris: list[str]
+        :keyword script_content: Script body.
+        :paramtype script_content: str
+        :keyword arguments: Command line arguments to pass to the script. Arguments are separated by
+         spaces. ex: -Name blue* -Location 'West US 2'.
+        :paramtype arguments: str
+        :keyword environment_variables: The environment variables to pass over to the script.
+        :paramtype environment_variables:
+         list[~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.EnvironmentVariable]
+        :keyword force_update_tag: Gets or sets how the deployment script should be forced to execute
+         even if the script resource has not changed. Can be current time stamp or a GUID.
+        :paramtype force_update_tag: str
+        :keyword retention_interval: Required. Interval for which the service retains the script
+         resource after it reaches a terminal state. Resource will be deleted when this duration
+         expires. Duration is based on ISO 8601 pattern (for example P1D means one day).
+        :paramtype retention_interval: ~datetime.timedelta
+        :keyword timeout: Maximum allowed script execution time specified in ISO 8601 format. Default
+         value is P1D.
+        :paramtype timeout: ~datetime.timedelta
+        :keyword container_settings: Container settings.
+        :paramtype container_settings:
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ContainerConfiguration
+        :keyword storage_account_settings: Storage Account settings.
+        :paramtype storage_account_settings:
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.StorageAccountConfiguration
+        :keyword cleanup_preference: The clean up preference when the script execution gets in a
+         terminal state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
+         "OnExpiration". Default value: "Always".
+        :paramtype cleanup_preference: str or
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.CleanupOptions
+        :keyword az_power_shell_version: Required. Azure PowerShell module version to be used.
+        :paramtype az_power_shell_version: str
+        """
         super(AzurePowerShellScriptProperties, self).__init__(container_settings=container_settings, storage_account_settings=storage_account_settings, cleanup_preference=cleanup_preference, primary_script_uri=primary_script_uri, supporting_script_uris=supporting_script_uris, script_content=script_content, arguments=arguments, environment_variables=environment_variables, force_update_tag=force_update_tag, retention_interval=retention_interval, timeout=timeout, **kwargs)
         self.primary_script_uri = primary_script_uri
         self.supporting_script_uris = supporting_script_uris
@@ -780,13 +1000,12 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
         self.provisioning_state = None
         self.status = None
         self.outputs = None
-        self.az_power_shell_version = az_power_shell_version
 
 
 class ContainerConfiguration(msrest.serialization.Model):
     """Settings to customize ACI container instance.
 
-    :param container_group_name: Container group name, if not specified then the name will get
+    :ivar container_group_name: Container group name, if not specified then the name will get
      auto-generated. Not specifying a 'containerGroupName' indicates the system to generate a unique
      name which might end up flagging an Azure Policy as non-compliant. Use 'containerGroupName'
      when you have an Azure Policy that expects a specific naming convention or when you want to
@@ -796,7 +1015,7 @@ class ContainerConfiguration(msrest.serialization.Model):
      object to properties: { "containerSettings": { "containerGroupName": "contoso-container" } }.
      If you do not want to specify a 'containerGroupName' then do not add 'containerSettings'
      property.
-    :type container_group_name: str
+    :vartype container_group_name: str
     """
 
     _validation = {
@@ -813,6 +1032,19 @@ class ContainerConfiguration(msrest.serialization.Model):
         container_group_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword container_group_name: Container group name, if not specified then the name will get
+         auto-generated. Not specifying a 'containerGroupName' indicates the system to generate a unique
+         name which might end up flagging an Azure Policy as non-compliant. Use 'containerGroupName'
+         when you have an Azure Policy that expects a specific naming convention or when you want to
+         fully control the name. 'containerGroupName' property must be between 1 and 63 characters long,
+         must contain only lowercase letters, numbers, and dashes and it cannot start or end with a dash
+         and consecutive dashes are not allowed. To specify a 'containerGroupName', add the following
+         object to properties: { "containerSettings": { "containerGroupName": "contoso-container" } }.
+         If you do not want to specify a 'containerGroupName' then do not add 'containerSettings'
+         property.
+        :paramtype container_group_name: str
+        """
         super(ContainerConfiguration, self).__init__(**kwargs)
         self.container_group_name = container_group_name
 
@@ -822,8 +1054,9 @@ class DeploymentScriptListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: An array of deployment scripts.
-    :type value: list[~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.DeploymentScript]
+    :ivar value: An array of deployment scripts.
+    :vartype value:
+     list[~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.DeploymentScript]
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     """
@@ -843,6 +1076,11 @@ class DeploymentScriptListResult(msrest.serialization.Model):
         value: Optional[List["DeploymentScript"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: An array of deployment scripts.
+        :paramtype value:
+         list[~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.DeploymentScript]
+        """
         super(DeploymentScriptListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -851,9 +1089,9 @@ class DeploymentScriptListResult(msrest.serialization.Model):
 class DeploymentScriptsError(msrest.serialization.Model):
     """Deployment scripts error response.
 
-    :param error: Common error response for all Azure Resource Manager APIs to return error details
+    :ivar error: Common error response for all Azure Resource Manager APIs to return error details
      for failed operations. (This also follows the OData error response format.).
-    :type error: ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ErrorResponse
+    :vartype error: ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ErrorResponse
     """
 
     _attribute_map = {
@@ -866,6 +1104,11 @@ class DeploymentScriptsError(msrest.serialization.Model):
         error: Optional["ErrorResponse"] = None,
         **kwargs
     ):
+        """
+        :keyword error: Common error response for all Azure Resource Manager APIs to return error
+         details for failed operations. (This also follows the OData error response format.).
+        :paramtype error: ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ErrorResponse
+        """
         super(DeploymentScriptsError, self).__init__(**kwargs)
         self.error = error
 
@@ -881,8 +1124,8 @@ class DeploymentScriptUpdateParameter(AzureResourceBase):
     :vartype name: str
     :ivar type: Type of this resource.
     :vartype type: str
-    :param tags: A set of tags. Resource tags to be updated.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags to be updated.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -904,6 +1147,10 @@ class DeploymentScriptUpdateParameter(AzureResourceBase):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags to be updated.
+        :paramtype tags: dict[str, str]
+        """
         super(DeploymentScriptUpdateParameter, self).__init__(**kwargs)
         self.tags = tags
 
@@ -913,12 +1160,12 @@ class EnvironmentVariable(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the environment variable.
-    :type name: str
-    :param value: The value of the environment variable.
-    :type value: str
-    :param secure_value: The value of the secure environment variable.
-    :type secure_value: str
+    :ivar name: Required. The name of the environment variable.
+    :vartype name: str
+    :ivar value: The value of the environment variable.
+    :vartype value: str
+    :ivar secure_value: The value of the secure environment variable.
+    :vartype secure_value: str
     """
 
     _validation = {
@@ -939,6 +1186,14 @@ class EnvironmentVariable(msrest.serialization.Model):
         secure_value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the environment variable.
+        :paramtype name: str
+        :keyword value: The value of the environment variable.
+        :paramtype value: str
+        :keyword secure_value: The value of the secure environment variable.
+        :paramtype secure_value: str
+        """
         super(EnvironmentVariable, self).__init__(**kwargs)
         self.name = name
         self.value = value
@@ -970,6 +1225,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -1013,6 +1270,8 @@ class ErrorResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -1026,14 +1285,14 @@ class ManagedServiceIdentity(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param type: Type of the managed identity. Possible values include: "UserAssigned".
-    :type type: str or
+    :ivar type: Type of the managed identity. Possible values include: "UserAssigned".
+    :vartype type: str or
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ManagedServiceIdentityType
     :ivar tenant_id: ID of the Azure Active Directory.
     :vartype tenant_id: str
-    :param user_assigned_identities: The list of user-assigned managed identities associated with
+    :ivar user_assigned_identities: The list of user-assigned managed identities associated with
      the resource. Key is the Azure resource Id of the managed identity.
-    :type user_assigned_identities: dict[str,
+    :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.UserAssignedIdentity]
     """
 
@@ -1054,6 +1313,15 @@ class ManagedServiceIdentity(msrest.serialization.Model):
         user_assigned_identities: Optional[Dict[str, "UserAssignedIdentity"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: Type of the managed identity. Possible values include: "UserAssigned".
+        :paramtype type: str or
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ManagedServiceIdentityType
+        :keyword user_assigned_identities: The list of user-assigned managed identities associated with
+         the resource. Key is the Azure resource Id of the managed identity.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.UserAssignedIdentity]
+        """
         super(ManagedServiceIdentity, self).__init__(**kwargs)
         self.type = type
         self.tenant_id = None
@@ -1093,6 +1361,8 @@ class ScriptLog(AzureResourceBase):
         self,
         **kwargs
     ):
+        """
+        """
         super(ScriptLog, self).__init__(**kwargs)
         self.log = None
 
@@ -1100,8 +1370,8 @@ class ScriptLog(AzureResourceBase):
 class ScriptLogsList(msrest.serialization.Model):
     """Deployment script execution logs.
 
-    :param value: Deployment scripts logs.
-    :type value: list[~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ScriptLog]
+    :ivar value: Deployment scripts logs.
+    :vartype value: list[~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ScriptLog]
     """
 
     _attribute_map = {
@@ -1114,6 +1384,10 @@ class ScriptLogsList(msrest.serialization.Model):
         value: Optional[List["ScriptLog"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Deployment scripts logs.
+        :paramtype value: list[~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ScriptLog]
+        """
         super(ScriptLogsList, self).__init__(**kwargs)
         self.value = value
 
@@ -1133,8 +1407,8 @@ class ScriptStatus(msrest.serialization.Model):
     :vartype end_time: ~datetime.datetime
     :ivar expiration_time: Time the deployment script resource will expire.
     :vartype expiration_time: ~datetime.datetime
-    :param error: Error that is relayed from the script execution.
-    :type error: ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ErrorResponse
+    :ivar error: Error that is relayed from the script execution.
+    :vartype error: ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ErrorResponse
     """
 
     _validation = {
@@ -1160,6 +1434,10 @@ class ScriptStatus(msrest.serialization.Model):
         error: Optional["ErrorResponse"] = None,
         **kwargs
     ):
+        """
+        :keyword error: Error that is relayed from the script execution.
+        :paramtype error: ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ErrorResponse
+        """
         super(ScriptStatus, self).__init__(**kwargs)
         self.container_instance_id = None
         self.storage_account_id = None
@@ -1172,10 +1450,10 @@ class ScriptStatus(msrest.serialization.Model):
 class StorageAccountConfiguration(msrest.serialization.Model):
     """Settings to use an existing storage account. Valid storage account kinds are: Storage, StorageV2 and FileStorage.
 
-    :param storage_account_name: The storage account name.
-    :type storage_account_name: str
-    :param storage_account_key: The storage account access key.
-    :type storage_account_key: str
+    :ivar storage_account_name: The storage account name.
+    :vartype storage_account_name: str
+    :ivar storage_account_key: The storage account access key.
+    :vartype storage_account_key: str
     """
 
     _attribute_map = {
@@ -1190,6 +1468,12 @@ class StorageAccountConfiguration(msrest.serialization.Model):
         storage_account_key: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword storage_account_name: The storage account name.
+        :paramtype storage_account_name: str
+        :keyword storage_account_key: The storage account access key.
+        :paramtype storage_account_key: str
+        """
         super(StorageAccountConfiguration, self).__init__(**kwargs)
         self.storage_account_name = storage_account_name
         self.storage_account_key = storage_account_key
@@ -1198,22 +1482,22 @@ class StorageAccountConfiguration(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or
+    :vartype last_modified_by_type: str or
      ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -1236,6 +1520,24 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or
+         ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -1270,6 +1572,8 @@ class UserAssignedIdentity(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(UserAssignedIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None

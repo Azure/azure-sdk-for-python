@@ -8,6 +8,7 @@ from ..._exceptions import CredentialUnavailableError
 from .._internal import AsyncContextManager
 from .._internal.aad_client import AadClient
 from .._internal.get_token_mixin import GetTokenMixin
+from .._internal.decorators import log_get_token_async
 from ..._credentials.vscode import _VSCodeCredentialBase
 
 if TYPE_CHECKING:
@@ -39,6 +40,7 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
         if self._client:
             await self._client.__aexit__()
 
+    @log_get_token_async
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
 
@@ -53,7 +55,11 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
             Studio Code
         """
         if self._unavailable_reason:
-            raise CredentialUnavailableError(message=self._unavailable_reason)
+            error_message = self._unavailable_reason \
+                            + '\n' \
+                              "Visit https://aka.ms/azsdk/python/identity/vscodecredential/troubleshoot" \
+                              " to troubleshoot this issue."
+            raise CredentialUnavailableError(message=error_message)
         if not self._client:
             raise CredentialUnavailableError("Initialization failed")
 

@@ -10,8 +10,8 @@ DESCRIPTION:
 USAGE:
     python sample_publish_cncf_cloud_events_async.py
     Set the environment variables with your own values before running the sample:
-    1) CLOUD_ACCESS_KEY - The access key of your eventgrid account.
-    2) CLOUD_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
+    1) EVENTGRID_CLOUD_EVENT_TOPIC_KEY - The access key of your eventgrid account.
+    2) EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT - The topic hostname. Typically it exists in the format
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
@@ -20,8 +20,8 @@ from azure.eventgrid.aio import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 from cloudevents.http import CloudEvent
 
-topic_key = os.environ["CLOUD_ACCESS_KEY"]
-endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]
+topic_key = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
+endpoint = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
 
 
 async def publish():

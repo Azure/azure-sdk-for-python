@@ -1,0 +1,59 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "126",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "KeyPhraseExtraction",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {}
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "1709e236-c873-4941-94f2-dcb8d713afc6",
+        "Content-Length": "266",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 08 Jun 2022 18:31:37 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "2"
+      },
+      "ResponseBody": {
+        "kind": "KeyPhraseExtractionResults",
+        "results": {
+          "documents": [],
+          "errors": [
+            {
+              "id": "1",
+              "error": {
+                "code": "InvalidArgument",
+                "message": "Invalid Document in request.",
+                "innererror": {
+                  "code": "InvalidDocument",
+                  "message": "Document text is empty."
+                }
+              }
+            }
+          ],
+          "modelVersion": "2021-06-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

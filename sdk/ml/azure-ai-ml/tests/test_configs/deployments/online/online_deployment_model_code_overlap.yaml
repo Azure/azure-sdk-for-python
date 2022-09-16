@@ -1,0 +1,17 @@
+name: blue
+endpoint_name: my-new-endpoint
+model:
+  name: model-1
+  version: 1
+  path: ../model-3/sklearn_regression_model.pkl
+code_configuration:
+  code: ../model-3/
+  scoring_script: score.py
+environment:
+  name: env-model1
+  version: 3
+  conda_file: ../model-3/conda.yml
+  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1
+instance_type: Standard_F2s_v2
+scale_settings:
+  type: default

@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import logging
+import re
 import sys
 
 try:
@@ -140,3 +141,38 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 
         self._add_authorization_header(request, string_to_sign)
         #logger.debug("String_to_sign=%s", string_to_sign)
+
+
+class StorageHttpChallenge(object):
+    def __init__(self, challenge):
+        """ Parses an HTTP WWW-Authentication Bearer challenge from the Storage service. """
+        if not challenge:
+            raise ValueError("Challenge cannot be empty")
+
+        self._parameters = {}
+        self.scheme, trimmed_challenge = challenge.strip().split(" ", 1)
+
+        # name=value pairs either comma or space separated with values possibly being
+        # enclosed in quotes
+        for item in re.split('[, ]', trimmed_challenge):
+            comps = item.split("=")
+            if len(comps) == 2:
+                key = comps[0].strip(' "')
+                value = comps[1].strip(' "')
+                if key:
+                    self._parameters[key] = value
+
+        # Extract and verify required parameters
+        self.authorization_uri = self._parameters.get('authorization_uri')
+        if not self.authorization_uri:
+            raise ValueError("Authorization Uri not found")
+
+        self.resource_id = self._parameters.get('resource_id')
+        if not self.resource_id:
+            raise ValueError("Resource id not found")
+
+        uri_path = urlparse(self.authorization_uri).path.lstrip("/")
+        self.tenant_id = uri_path.split("/")[0]
+
+    def get_value(self, key):
+        return self._parameters.get(key)

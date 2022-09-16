@@ -1,17 +1,13 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 
-try:
-    from unittest import mock
-except ImportError:  # python < 3.3
-    import mock  # type: ignore
+from unittest import mock
 import asyncio
 import sys
 
-from asynctestcase import AsyncTextAnalyticsTest
+from testcase import TextAnalyticsTest
 from testcase import TextAnalyticsPreparer
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics.aio import TextAnalyticsClient
@@ -33,9 +29,11 @@ class AsyncMockTransport(mock.MagicMock):
             self.__aenter__ = mock.Mock(return_value=get_completed_future())
             self.__aexit__ = mock.Mock(return_value=get_completed_future())
 
-class TestContextManager(AsyncTextAnalyticsTest):
+class TestContextManager(TextAnalyticsTest):
     @TextAnalyticsPreparer()
-    async def test_close(self, textanalytics_test_endpoint, textanalytics_test_api_key):
+    async def test_close(self, **kwargs):
+        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         transport = AsyncMockTransport()
         client = TextAnalyticsClient(
             textanalytics_test_endpoint,
@@ -48,7 +46,9 @@ class TestContextManager(AsyncTextAnalyticsTest):
         assert transport.__aexit__.call_count == 1
 
     @TextAnalyticsPreparer()
-    async def test_context_manager(self, textanalytics_test_endpoint, textanalytics_test_api_key):
+    async def test_context_manager(self, **kwargs):
+        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         transport = AsyncMockTransport()
         client = TextAnalyticsClient(
             textanalytics_test_endpoint,

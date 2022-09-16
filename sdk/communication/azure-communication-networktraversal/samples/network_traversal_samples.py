@@ -52,7 +52,7 @@ class CommunicationRelayClientSamples(object):
         print("User created with id:" + user.properties.get('id'))
 
         print("Getting relay configuration")
-        relay_configuration = relay_client.get_relay_configuration(user)
+        relay_configuration = relay_client.get_relay_configuration(user=user)
 
         for iceServer in relay_configuration.ice_servers:
             print("Icer server:")

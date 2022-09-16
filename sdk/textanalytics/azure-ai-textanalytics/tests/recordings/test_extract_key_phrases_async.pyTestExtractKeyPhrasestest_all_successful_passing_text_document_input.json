@@ -1,0 +1,72 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "268",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "KeyPhraseExtraction",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "Microsoft was founded by Bill Gates and Paul Allen",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "Microsoft fue fundado por Bill Gates y Paul Allen",
+              "language": "es"
+            }
+          ]
+        },
+        "parameters": {}
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "9ce797c4-8f95-43f2-b86b-d0c50bbbd374",
+        "Content-Length": "259",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=2,CognitiveServices.TextAnalytics.TextRecords=2",
+        "Date": "Wed, 08 Jun 2022 18:31:11 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "13"
+      },
+      "ResponseBody": {
+        "kind": "KeyPhraseExtractionResults",
+        "results": {
+          "documents": [
+            {
+              "id": "1",
+              "keyPhrases": [
+                "Bill Gates",
+                "Paul Allen",
+                "Microsoft"
+              ],
+              "warnings": []
+            },
+            {
+              "id": "2",
+              "keyPhrases": [
+                "Bill Gates",
+                "Paul Allen",
+                "Microsoft"
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-06-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

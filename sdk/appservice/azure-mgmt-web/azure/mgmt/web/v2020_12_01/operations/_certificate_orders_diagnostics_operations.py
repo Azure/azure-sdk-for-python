@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,101 +7,197 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
-import warnings
+from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
+
+from msrest import Serializer
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
+from .._vendor import MixinABC, _convert_request, _format_url_section
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+def build_list_app_service_certificate_order_detector_response_request(
+    resource_group_name: str,
+    certificate_order_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-class CertificateOrdersDiagnosticsOperations(object):
-    """CertificateOrdersDiagnosticsOperations operations.
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
+    # Construct URL
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/detectors")  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+        "certificateOrderName": _SERIALIZER.url("certificate_order_name", certificate_order_name, 'str'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+    }
 
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.web.v2020_12_01.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
+
+
+def build_get_app_service_certificate_order_detector_response_request(
+    resource_group_name: str,
+    certificate_order_name: str,
+    detector_name: str,
+    subscription_id: str,
+    *,
+    start_time: Optional[datetime.datetime] = None,
+    end_time: Optional[datetime.datetime] = None,
+    time_grain: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/detectors/{detectorName}")  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+        "certificateOrderName": _SERIALIZER.url("certificate_order_name", certificate_order_name, 'str'),
+        "detectorName": _SERIALIZER.url("detector_name", detector_name, 'str'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    if start_time is not None:
+        _params['startTime'] = _SERIALIZER.query("start_time", start_time, 'iso-8601')
+    if end_time is not None:
+        _params['endTime'] = _SERIALIZER.query("end_time", end_time, 'iso-8601')
+    if time_grain is not None:
+        _params['timeGrain'] = _SERIALIZER.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
+
+class CertificateOrdersDiagnosticsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.web.v2020_12_01.WebSiteManagementClient`'s
+        :attr:`certificate_orders_diagnostics` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+
+    @distributed_trace
     def list_app_service_certificate_order_detector_response(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.DetectorResponseCollection"]
+        resource_group_name: str,
+        certificate_order_name: str,
+        **kwargs: Any
+    ) -> Iterable[_models.DetectorResponseCollection]:
         """Microsoft.CertificateRegistration to get the list of detectors for this RP.
 
-        Description for Microsoft.CertificateRegistration to get the list of detectors for this RP.
+        Microsoft.CertificateRegistration to get the list of detectors for this RP.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
         :param certificate_order_name: The certificate order name for which the response is needed.
         :type certificate_order_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DetectorResponseCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.DetectorResponseCollection]
+        :return: An iterator like instance of either DetectorResponseCollection or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2020_12_01.models.DetectorResponseCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DetectorResponseCollection"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DetectorResponseCollection]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
-        accept = "application/json"
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_app_service_certificate_order_detector_response.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'certificateOrderName': self._serialize.url("certificate_order_name", certificate_order_name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_app_service_certificate_order_detector_response_request(
+                    resource_group_name=resource_group_name,
+                    certificate_order_name=certificate_order_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    template_url=self.list_app_service_certificate_order_detector_response.metadata['url'],
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_app_service_certificate_order_detector_response_request(
+                    resource_group_name=resource_group_name,
+                    certificate_order_name=certificate_order_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    template_url=next_link,
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)  # type: ignore
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('DetectorResponseCollection', pipeline_response)
+            deserialized = self._deserialize("DetectorResponseCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -109,36 +206,40 @@ class CertificateOrdersDiagnosticsOperations(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
-    list_app_service_certificate_order_detector_response.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/detectors'}  # type: ignore
+    list_app_service_certificate_order_detector_response.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/detectors"}  # type: ignore
 
+    @distributed_trace
     def get_app_service_certificate_order_detector_response(
         self,
-        resource_group_name,  # type: str
-        certificate_order_name,  # type: str
-        detector_name,  # type: str
-        start_time=None,  # type: Optional[datetime.datetime]
-        end_time=None,  # type: Optional[datetime.datetime]
-        time_grain=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.DetectorResponse"
+        resource_group_name: str,
+        certificate_order_name: str,
+        detector_name: str,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        time_grain: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.DetectorResponse:
         """Microsoft.CertificateRegistration call to get a detector response from App Lens.
 
-        Description for Microsoft.CertificateRegistration call to get a detector response from App
-        Lens.
+        Microsoft.CertificateRegistration call to get a detector response from App Lens.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -146,56 +247,55 @@ class CertificateOrdersDiagnosticsOperations(object):
         :type certificate_order_name: str
         :param detector_name: The detector name which needs to be run.
         :type detector_name: str
-        :param start_time: The start time for detector response.
+        :param start_time: The start time for detector response. Default value is None.
         :type start_time: ~datetime.datetime
-        :param end_time: The end time for the detector response.
+        :param end_time: The end time for the detector response. Default value is None.
         :type end_time: ~datetime.datetime
-        :param time_grain: The time grain for the detector response.
+        :param time_grain: The time grain for the detector response. Default value is None.
         :type time_grain: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DetectorResponse, or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2020_12_01.models.DetectorResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DetectorResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
-        accept = "application/json"
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        # Construct URL
-        url = self.get_app_service_certificate_order_detector_response.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'certificateOrderName': self._serialize.url("certificate_order_name", certificate_order_name, 'str'),
-            'detectorName': self._serialize.url("detector_name", detector_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if start_time is not None:
-            query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
-        if end_time is not None:
-            query_parameters['endTime'] = self._serialize.query("end_time", end_time, 'iso-8601')
-        if time_grain is not None:
-            query_parameters['timeGrain'] = self._serialize.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DetectorResponse]
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        
+        request = build_get_app_service_certificate_order_detector_response_request(
+            resource_group_name=resource_group_name,
+            certificate_order_name=certificate_order_name,
+            detector_name=detector_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            start_time=start_time,
+            end_time=end_time,
+            time_grain=time_grain,
+            template_url=self.get_app_service_certificate_order_detector_response.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorResponse', pipeline_response)
@@ -204,4 +304,6 @@ class CertificateOrdersDiagnosticsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_app_service_certificate_order_detector_response.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/detectors/{detectorName}'}  # type: ignore
+
+    get_app_service_certificate_order_detector_response.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/detectors/{detectorName}"}  # type: ignore
+

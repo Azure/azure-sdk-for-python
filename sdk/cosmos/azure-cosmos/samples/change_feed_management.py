@@ -1,3 +1,8 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See LICENSE.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
@@ -7,7 +12,7 @@ import uuid
 import config
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites -
 #
 # 1. An Azure Cosmos account -
 #    https:#azure.microsoft.com/en-us/documentation/articles/documentdb-create-account/

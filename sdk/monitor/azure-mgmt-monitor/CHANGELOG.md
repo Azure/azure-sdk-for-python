@@ -1,5 +1,53 @@
 # Release History
 
+## 4.0.1 (2022-08-02)
+
+**Other Change**
+
+  - Fix package structure
+
+## 4.0.0 (2022-08-02)
+
+**Features**
+
+  - Added operation ActionGroupsOperations.begin_create_notifications_at_action_group_resource_level
+  - Added operation ActionGroupsOperations.begin_create_notifications_at_resource_group_level
+  - Added operation ActionGroupsOperations.get_test_notifications_at_action_group_resource_level
+  - Added operation ActionGroupsOperations.get_test_notifications_at_resource_group_level
+
+**Breaking changes**
+
+  - Model ActionGroupResource no longer has parameter identity
+  - Model ActionGroupResource no longer has parameter kind
+  - Model AzureResource no longer has parameter identity
+  - Model AzureResource no longer has parameter kind
+  - Removed operation group BaselineOperations
+  - Removed operation group MetricBaselineOperations
+
+## 3.1.0 (2022-03-16)
+
+**Features**
+
+  - Added operation DataCollectionRuleAssociationsOperations.list_by_data_collection_endpoint
+  - Model DataCollectionRule has a new parameter data_collection_endpoint_id
+  - Model DataCollectionRule has a new parameter metadata
+  - Model DataCollectionRule has a new parameter stream_declarations
+  - Model DataCollectionRuleAssociation has a new parameter metadata
+  - Model DataCollectionRuleAssociationProxyOnlyResource has a new parameter metadata
+  - Model DataCollectionRuleAssociationProxyOnlyResourceProperties has a new parameter metadata
+  - Model DataCollectionRuleDataSources has a new parameter iis_logs
+  - Model DataCollectionRuleDataSources has a new parameter log_files
+  - Model DataCollectionRuleResource has a new parameter data_collection_endpoint_id
+  - Model DataCollectionRuleResource has a new parameter metadata
+  - Model DataCollectionRuleResource has a new parameter stream_declarations
+  - Model DataCollectionRuleResourceProperties has a new parameter data_collection_endpoint_id
+  - Model DataCollectionRuleResourceProperties has a new parameter metadata
+  - Model DataCollectionRuleResourceProperties has a new parameter stream_declarations
+  - Model DataFlow has a new parameter output_stream
+  - Model DataFlow has a new parameter transform_kql
+  - Model DataSourcesSpec has a new parameter iis_logs
+  - Model DataSourcesSpec has a new parameter log_files
+
 ## 3.0.0 (2021-11-05)
 
 **Features**

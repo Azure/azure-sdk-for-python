@@ -6,9 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
 
 import msrest.serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ResourceSku(msrest.serialization.Model):
@@ -84,6 +88,8 @@ class ResourceSku(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceSku, self).__init__(**kwargs)
         self.resource_type = None
         self.name = None
@@ -125,6 +131,8 @@ class ResourceSkuCapabilities(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceSkuCapabilities, self).__init__(**kwargs)
         self.name = None
         self.value = None
@@ -141,7 +149,7 @@ class ResourceSkuCapacity(msrest.serialization.Model):
     :vartype maximum: long
     :ivar default: The default capacity.
     :vartype default: long
-    :ivar scale_type: The scale type applicable to the sku. Possible values include: "Automatic",
+    :ivar scale_type: The scale type applicable to the sku. Known values are: "Automatic",
      "Manual", "None".
     :vartype scale_type: str or ~azure.mgmt.compute.v2017_09_01.models.ResourceSkuCapacityScaleType
     """
@@ -164,6 +172,8 @@ class ResourceSkuCapacity(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceSkuCapacity, self).__init__(**kwargs)
         self.minimum = None
         self.maximum = None
@@ -200,6 +210,8 @@ class ResourceSkuCosts(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceSkuCosts, self).__init__(**kwargs)
         self.meter_id = None
         self.quantity = None
@@ -231,6 +243,8 @@ class ResourceSkuLocationInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceSkuLocationInfo, self).__init__(**kwargs)
         self.location = None
         self.zones = None
@@ -261,6 +275,8 @@ class ResourceSkuRestrictionInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceSkuRestrictionInfo, self).__init__(**kwargs)
         self.locations = None
         self.zones = None
@@ -271,14 +287,14 @@ class ResourceSkuRestrictions(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: The type of restrictions. Possible values include: "Location", "Zone".
+    :ivar type: The type of restrictions. Known values are: "Location", "Zone".
     :vartype type: str or ~azure.mgmt.compute.v2017_09_01.models.ResourceSkuRestrictionsType
     :ivar values: The value of restrictions. If the restriction type is set to location. This would
      be different locations where the SKU is restricted.
     :vartype values: list[str]
     :ivar restriction_info: The information about the restriction where the SKU cannot be used.
     :vartype restriction_info: ~azure.mgmt.compute.v2017_09_01.models.ResourceSkuRestrictionInfo
-    :ivar reason_code: The reason for restriction. Possible values include: "QuotaId",
+    :ivar reason_code: The reason for restriction. Known values are: "QuotaId",
      "NotAvailableForSubscription".
     :vartype reason_code: str or
      ~azure.mgmt.compute.v2017_09_01.models.ResourceSkuRestrictionsReasonCode
@@ -302,6 +318,8 @@ class ResourceSkuRestrictions(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceSkuRestrictions, self).__init__(**kwargs)
         self.type = None
         self.values = None
@@ -314,11 +332,11 @@ class ResourceSkusResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The list of skus available for the subscription.
-    :type value: list[~azure.mgmt.compute.v2017_09_01.models.ResourceSku]
-    :param next_link: The URI to fetch the next page of Resource Skus. Call ListNext() with this
-     URI to fetch the next page of Resource Skus.
-    :type next_link: str
+    :ivar value: Required. The list of skus available for the subscription.
+    :vartype value: list[~azure.mgmt.compute.v2017_09_01.models.ResourceSku]
+    :ivar next_link: The URI to fetch the next page of Resource Skus. Call ListNext() with this URI
+     to fetch the next page of Resource Skus.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -333,10 +351,17 @@ class ResourceSkusResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ResourceSku"],
+        value: List["_models.ResourceSku"],
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. The list of skus available for the subscription.
+        :paramtype value: list[~azure.mgmt.compute.v2017_09_01.models.ResourceSku]
+        :keyword next_link: The URI to fetch the next page of Resource Skus. Call ListNext() with this
+         URI to fetch the next page of Resource Skus.
+        :paramtype next_link: str
+        """
         super(ResourceSkusResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link

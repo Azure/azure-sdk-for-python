@@ -1,0 +1,170 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.0/custom/models",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "108",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": {
+        "source": "https://blob_sas_url",
+        "sourceFilter": {
+          "prefix": "",
+          "includeSubFolders": false
+        },
+        "useLabelFile": true
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "apim-request-id": "b2813a19-4cbf-46af-8087-068c67172b01",
+        "Content-Length": "0",
+        "Date": "Fri, 24 Jun 2022 01:34:51 GMT",
+        "Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.0/custom/models/cb5f0e11-4e88-4d47-ace2-cce8fd431041",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "4060"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.0/custom/models/cb5f0e11-4e88-4d47-ace2-cce8fd431041?includeKeys=true",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "e922c16d-bb8d-440e-a7ed-7165b06af4b0",
+        "Content-Length": "1380",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 24 Jun 2022 01:35:12 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "15127"
+      },
+      "ResponseBody": {
+        "modelInfo": {
+          "modelId": "cb5f0e11-4e88-4d47-ace2-cce8fd431041",
+          "status": "ready",
+          "createdDateTime": "2022-06-24T01:34:51Z",
+          "lastUpdatedDateTime": "2022-06-24T01:34:54Z"
+        },
+        "trainResult": {
+          "averageModelAccuracy": 0.889,
+          "trainingDocuments": [
+            {
+              "documentName": "multipage_invoice1.pdf",
+              "pages": 3,
+              "status": "succeeded"
+            },
+            {
+              "documentName": "multipage_invoice2.pdf",
+              "pages": 3,
+              "status": "succeeded"
+            },
+            {
+              "documentName": "multipage_invoice3.pdf",
+              "pages": 3,
+              "status": "succeeded"
+            },
+            {
+              "documentName": "multipage_invoice4.pdf",
+              "pages": 3,
+              "status": "succeeded"
+            },
+            {
+              "documentName": "multipage_invoice5.pdf",
+              "pages": 3,
+              "status": "succeeded"
+            }
+          ],
+          "fields": [
+            {
+              "fieldName": "Customer2",
+              "accuracy": 1.0
+            },
+            {
+              "fieldName": "CustomerAddress",
+              "accuracy": 1.0
+            },
+            {
+              "fieldName": "CustomerName",
+              "accuracy": 1.0
+            },
+            {
+              "fieldName": "CustomerPhoneNumber",
+              "accuracy": 1.0
+            },
+            {
+              "fieldName": "FirstItem",
+              "accuracy": 1.0
+            },
+            {
+              "fieldName": "FirstPrice",
+              "accuracy": 1.0
+            },
+            {
+              "fieldName": "FirstQuantity",
+              "accuracy": 1.0
+            },
+            {
+              "fieldName": "Merchant",
+              "accuracy": 0.0
+            },
+            {
+              "fieldName": "Merchant2",
+              "accuracy": 0.0
+            },
+            {
+              "fieldName": "MerchantAddress",
+              "accuracy": 1.0
+            },
+            {
+              "fieldName": "MerchantPhoneNumber",
+              "accuracy": 1.0
+            },
+            {
+              "fieldName": "Signature",
+              "accuracy": 1.0
+            },
+            {
+              "fieldName": "Signature2",
+              "accuracy": 1.0
+            },
+            {
+              "fieldName": "Subtotal",
+              "accuracy": 1.0
+            },
+            {
+              "fieldName": "Tax",
+              "accuracy": 1.0
+            },
+            {
+              "fieldName": "Tip",
+              "accuracy": 1.0
+            },
+            {
+              "fieldName": "Total",
+              "accuracy": 1.0
+            },
+            {
+              "fieldName": "Total2",
+              "accuracy": 1.0
+            }
+          ],
+          "errors": []
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

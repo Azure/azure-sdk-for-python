@@ -6,49 +6,52 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._application_gateways_operations import ApplicationGatewaysOperations
-from ._application_security_groups_operations import ApplicationSecurityGroupsOperations
-from ._network_management_client_operations import NetworkManagementClientOperationsMixin
-from ._ddos_protection_plans_operations import DdosProtectionPlansOperations
-from ._available_endpoint_services_operations import AvailableEndpointServicesOperations
-from ._express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
-from ._express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
-from ._express_route_circuit_connections_operations import ExpressRouteCircuitConnectionsOperations
-from ._express_route_circuits_operations import ExpressRouteCircuitsOperations
-from ._express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
-from ._express_route_cross_connections_operations import ExpressRouteCrossConnectionsOperations
-from ._express_route_cross_connection_peerings_operations import ExpressRouteCrossConnectionPeeringsOperations
-from ._load_balancers_operations import LoadBalancersOperations
-from ._load_balancer_backend_address_pools_operations import LoadBalancerBackendAddressPoolsOperations
-from ._load_balancer_frontend_ip_configurations_operations import LoadBalancerFrontendIPConfigurationsOperations
-from ._inbound_nat_rules_operations import InboundNatRulesOperations
-from ._load_balancer_load_balancing_rules_operations import LoadBalancerLoadBalancingRulesOperations
-from ._load_balancer_network_interfaces_operations import LoadBalancerNetworkInterfacesOperations
-from ._load_balancer_probes_operations import LoadBalancerProbesOperations
-from ._network_interfaces_operations import NetworkInterfacesOperations
-from ._network_interface_ip_configurations_operations import NetworkInterfaceIPConfigurationsOperations
-from ._network_interface_load_balancers_operations import NetworkInterfaceLoadBalancersOperations
-from ._network_security_groups_operations import NetworkSecurityGroupsOperations
-from ._security_rules_operations import SecurityRulesOperations
-from ._default_security_rules_operations import DefaultSecurityRulesOperations
-from ._network_watchers_operations import NetworkWatchersOperations
-from ._packet_captures_operations import PacketCapturesOperations
-from ._connection_monitors_operations import ConnectionMonitorsOperations
+from ._operations import ApplicationGatewaysOperations
+from ._operations import ApplicationSecurityGroupsOperations
+from ._operations import NetworkManagementClientOperationsMixin
+from ._operations import DdosProtectionPlansOperations
+from ._operations import AvailableEndpointServicesOperations
+from ._operations import ExpressRouteCircuitAuthorizationsOperations
+from ._operations import ExpressRouteCircuitPeeringsOperations
+from ._operations import ExpressRouteCircuitConnectionsOperations
+from ._operations import ExpressRouteCircuitsOperations
+from ._operations import ExpressRouteServiceProvidersOperations
+from ._operations import ExpressRouteCrossConnectionsOperations
+from ._operations import ExpressRouteCrossConnectionPeeringsOperations
+from ._operations import LoadBalancersOperations
+from ._operations import LoadBalancerBackendAddressPoolsOperations
+from ._operations import LoadBalancerFrontendIPConfigurationsOperations
+from ._operations import InboundNatRulesOperations
+from ._operations import LoadBalancerLoadBalancingRulesOperations
+from ._operations import LoadBalancerNetworkInterfacesOperations
+from ._operations import LoadBalancerProbesOperations
+from ._operations import NetworkInterfacesOperations
+from ._operations import NetworkInterfaceIPConfigurationsOperations
+from ._operations import NetworkInterfaceLoadBalancersOperations
+from ._operations import NetworkSecurityGroupsOperations
+from ._operations import SecurityRulesOperations
+from ._operations import DefaultSecurityRulesOperations
+from ._operations import NetworkWatchersOperations
+from ._operations import PacketCapturesOperations
+from ._operations import ConnectionMonitorsOperations
 from ._operations import Operations
-from ._public_ip_addresses_operations import PublicIPAddressesOperations
-from ._route_filters_operations import RouteFiltersOperations
-from ._route_filter_rules_operations import RouteFilterRulesOperations
-from ._route_tables_operations import RouteTablesOperations
-from ._routes_operations import RoutesOperations
-from ._bgp_service_communities_operations import BgpServiceCommunitiesOperations
-from ._usages_operations import UsagesOperations
-from ._virtual_networks_operations import VirtualNetworksOperations
-from ._subnets_operations import SubnetsOperations
-from ._virtual_network_peerings_operations import VirtualNetworkPeeringsOperations
-from ._virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
-from ._virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
-from ._local_network_gateways_operations import LocalNetworkGatewaysOperations
+from ._operations import PublicIPAddressesOperations
+from ._operations import RouteFiltersOperations
+from ._operations import RouteFilterRulesOperations
+from ._operations import RouteTablesOperations
+from ._operations import RoutesOperations
+from ._operations import BgpServiceCommunitiesOperations
+from ._operations import UsagesOperations
+from ._operations import VirtualNetworksOperations
+from ._operations import SubnetsOperations
+from ._operations import VirtualNetworkPeeringsOperations
+from ._operations import VirtualNetworkGatewaysOperations
+from ._operations import VirtualNetworkGatewayConnectionsOperations
+from ._operations import LocalNetworkGatewaysOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'ApplicationGatewaysOperations',
     'ApplicationSecurityGroupsOperations',
@@ -93,3 +96,5 @@ __all__ = [
     'VirtualNetworkGatewayConnectionsOperations',
     'LocalNetworkGatewaysOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

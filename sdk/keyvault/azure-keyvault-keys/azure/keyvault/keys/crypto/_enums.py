@@ -3,9 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
-
-class KeyWrapAlgorithm(str, Enum):
+# pylint: disable=enum-must-be-uppercase
+class KeyWrapAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Key wrapping algorithms"""
 
     aes_128 = "A128KW"
@@ -16,7 +17,7 @@ class KeyWrapAlgorithm(str, Enum):
     rsa1_5 = "RSA1_5"
 
 
-class EncryptionAlgorithm(str, Enum):
+class EncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Encryption algorithms"""
 
     rsa_oaep = "RSA-OAEP"
@@ -33,7 +34,7 @@ class EncryptionAlgorithm(str, Enum):
     a256_cbcpad = "A256CBCPAD"
 
 
-class SignatureAlgorithm(str, Enum):
+class SignatureAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Signature algorithms, described in https://tools.ietf.org/html/rfc7518"""
 
     ps256 = "PS256"  #: RSASSA-PSS using SHA-256 and MGF1 with SHA-256

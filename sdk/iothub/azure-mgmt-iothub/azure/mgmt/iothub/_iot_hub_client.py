@@ -9,21 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from msrest import Deserializer, Serializer
 
 from ._configuration import IotHubClientConfiguration
+from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -43,9 +40,9 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The subscription identifier.
+    :param subscription_id: The subscription identifier. Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -56,7 +53,7 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2021-07-01'
+    DEFAULT_API_VERSION = '2021-07-02'
     _PROFILE_TAG = "azure.mgmt.iothub.IotHubClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -67,15 +64,13 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
+        credential: "TokenCredential",
+        subscription_id: str,
         api_version=None, # type: Optional[str]
-        base_url=None,  # type: Optional[str]
+        base_url: str = "https://management.azure.com",
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
-        if not base_url:
-            base_url = 'https://management.azure.com'
         self._config = IotHubClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(IotHubClient, self).__init__(
@@ -103,6 +98,8 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
            * 2021-03-03-preview: :mod:`v2021_03_03_preview.models<azure.mgmt.iothub.v2021_03_03_preview.models>`
            * 2021-03-31: :mod:`v2021_03_31.models<azure.mgmt.iothub.v2021_03_31.models>`
            * 2021-07-01: :mod:`v2021_07_01.models<azure.mgmt.iothub.v2021_07_01.models>`
+           * 2021-07-02: :mod:`v2021_07_02.models<azure.mgmt.iothub.v2021_07_02.models>`
+           * 2022-04-30-preview: :mod:`v2022_04_30_preview.models<azure.mgmt.iothub.v2022_04_30_preview.models>`
         """
         if api_version == '2016-02-03':
             from .v2016_02_03 import models
@@ -140,6 +137,12 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2021-07-01':
             from .v2021_07_01 import models
             return models
+        elif api_version == '2021-07-02':
+            from .v2021_07_02 import models
+            return models
+        elif api_version == '2022-04-30-preview':
+            from .v2022_04_30_preview import models
+            return models
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
@@ -156,6 +159,8 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
            * 2021-03-03-preview: :class:`CertificatesOperations<azure.mgmt.iothub.v2021_03_03_preview.operations.CertificatesOperations>`
            * 2021-03-31: :class:`CertificatesOperations<azure.mgmt.iothub.v2021_03_31.operations.CertificatesOperations>`
            * 2021-07-01: :class:`CertificatesOperations<azure.mgmt.iothub.v2021_07_01.operations.CertificatesOperations>`
+           * 2021-07-02: :class:`CertificatesOperations<azure.mgmt.iothub.v2021_07_02.operations.CertificatesOperations>`
+           * 2022-04-30-preview: :class:`CertificatesOperations<azure.mgmt.iothub.v2022_04_30_preview.operations.CertificatesOperations>`
         """
         api_version = self._get_api_version('certificates')
         if api_version == '2017-07-01':
@@ -178,6 +183,10 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_31.operations import CertificatesOperations as OperationClass
         elif api_version == '2021-07-01':
             from .v2021_07_01.operations import CertificatesOperations as OperationClass
+        elif api_version == '2021-07-02':
+            from .v2021_07_02.operations import CertificatesOperations as OperationClass
+        elif api_version == '2022-04-30-preview':
+            from .v2022_04_30_preview.operations import CertificatesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'certificates'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -193,6 +202,8 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
            * 2021-03-03-preview: :class:`IotHubOperations<azure.mgmt.iothub.v2021_03_03_preview.operations.IotHubOperations>`
            * 2021-03-31: :class:`IotHubOperations<azure.mgmt.iothub.v2021_03_31.operations.IotHubOperations>`
            * 2021-07-01: :class:`IotHubOperations<azure.mgmt.iothub.v2021_07_01.operations.IotHubOperations>`
+           * 2021-07-02: :class:`IotHubOperations<azure.mgmt.iothub.v2021_07_02.operations.IotHubOperations>`
+           * 2022-04-30-preview: :class:`IotHubOperations<azure.mgmt.iothub.v2022_04_30_preview.operations.IotHubOperations>`
         """
         api_version = self._get_api_version('iot_hub')
         if api_version == '2019-03-22':
@@ -209,6 +220,10 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_31.operations import IotHubOperations as OperationClass
         elif api_version == '2021-07-01':
             from .v2021_07_01.operations import IotHubOperations as OperationClass
+        elif api_version == '2021-07-02':
+            from .v2021_07_02.operations import IotHubOperations as OperationClass
+        elif api_version == '2022-04-30-preview':
+            from .v2022_04_30_preview.operations import IotHubOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'iot_hub'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -229,6 +244,8 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
            * 2021-03-03-preview: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2021_03_03_preview.operations.IotHubResourceOperations>`
            * 2021-03-31: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2021_03_31.operations.IotHubResourceOperations>`
            * 2021-07-01: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2021_07_01.operations.IotHubResourceOperations>`
+           * 2021-07-02: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2021_07_02.operations.IotHubResourceOperations>`
+           * 2022-04-30-preview: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2022_04_30_preview.operations.IotHubResourceOperations>`
         """
         api_version = self._get_api_version('iot_hub_resource')
         if api_version == '2016-02-03':
@@ -255,6 +272,10 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_31.operations import IotHubResourceOperations as OperationClass
         elif api_version == '2021-07-01':
             from .v2021_07_01.operations import IotHubResourceOperations as OperationClass
+        elif api_version == '2021-07-02':
+            from .v2021_07_02.operations import IotHubResourceOperations as OperationClass
+        elif api_version == '2022-04-30-preview':
+            from .v2022_04_30_preview.operations import IotHubResourceOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'iot_hub_resource'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -273,6 +294,8 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
            * 2021-03-03-preview: :class:`Operations<azure.mgmt.iothub.v2021_03_03_preview.operations.Operations>`
            * 2021-03-31: :class:`Operations<azure.mgmt.iothub.v2021_03_31.operations.Operations>`
            * 2021-07-01: :class:`Operations<azure.mgmt.iothub.v2021_07_01.operations.Operations>`
+           * 2021-07-02: :class:`Operations<azure.mgmt.iothub.v2021_07_02.operations.Operations>`
+           * 2022-04-30-preview: :class:`Operations<azure.mgmt.iothub.v2022_04_30_preview.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2017-07-01':
@@ -295,6 +318,10 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_31.operations import Operations as OperationClass
         elif api_version == '2021-07-01':
             from .v2021_07_01.operations import Operations as OperationClass
+        elif api_version == '2021-07-02':
+            from .v2021_07_02.operations import Operations as OperationClass
+        elif api_version == '2022-04-30-preview':
+            from .v2022_04_30_preview.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -307,6 +334,8 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
            * 2021-03-03-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.iothub.v2021_03_03_preview.operations.PrivateEndpointConnectionsOperations>`
            * 2021-03-31: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.iothub.v2021_03_31.operations.PrivateEndpointConnectionsOperations>`
            * 2021-07-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.iothub.v2021_07_01.operations.PrivateEndpointConnectionsOperations>`
+           * 2021-07-02: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.iothub.v2021_07_02.operations.PrivateEndpointConnectionsOperations>`
+           * 2022-04-30-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.iothub.v2022_04_30_preview.operations.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
         if api_version == '2020-03-01':
@@ -317,6 +346,10 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_31.operations import PrivateEndpointConnectionsOperations as OperationClass
         elif api_version == '2021-07-01':
             from .v2021_07_01.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2021-07-02':
+            from .v2021_07_02.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2022-04-30-preview':
+            from .v2022_04_30_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -329,6 +362,8 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
            * 2021-03-03-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.iothub.v2021_03_03_preview.operations.PrivateLinkResourcesOperations>`
            * 2021-03-31: :class:`PrivateLinkResourcesOperations<azure.mgmt.iothub.v2021_03_31.operations.PrivateLinkResourcesOperations>`
            * 2021-07-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.iothub.v2021_07_01.operations.PrivateLinkResourcesOperations>`
+           * 2021-07-02: :class:`PrivateLinkResourcesOperations<azure.mgmt.iothub.v2021_07_02.operations.PrivateLinkResourcesOperations>`
+           * 2022-04-30-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.iothub.v2022_04_30_preview.operations.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
         if api_version == '2020-03-01':
@@ -339,6 +374,10 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_31.operations import PrivateLinkResourcesOperations as OperationClass
         elif api_version == '2021-07-01':
             from .v2021_07_01.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2021-07-02':
+            from .v2021_07_02.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2022-04-30-preview':
+            from .v2022_04_30_preview.operations import PrivateLinkResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -355,6 +394,8 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
            * 2021-03-03-preview: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2021_03_03_preview.operations.ResourceProviderCommonOperations>`
            * 2021-03-31: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2021_03_31.operations.ResourceProviderCommonOperations>`
            * 2021-07-01: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2021_07_01.operations.ResourceProviderCommonOperations>`
+           * 2021-07-02: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2021_07_02.operations.ResourceProviderCommonOperations>`
+           * 2022-04-30-preview: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2022_04_30_preview.operations.ResourceProviderCommonOperations>`
         """
         api_version = self._get_api_version('resource_provider_common')
         if api_version == '2018-04-01':
@@ -373,6 +414,10 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
             from .v2021_03_31.operations import ResourceProviderCommonOperations as OperationClass
         elif api_version == '2021-07-01':
             from .v2021_07_01.operations import ResourceProviderCommonOperations as OperationClass
+        elif api_version == '2021-07-02':
+            from .v2021_07_02.operations import ResourceProviderCommonOperations as OperationClass
+        elif api_version == '2022-04-30-preview':
+            from .v2022_04_30_preview.operations import ResourceProviderCommonOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'resource_provider_common'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

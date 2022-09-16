@@ -6,30 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AgentPoolMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AgentPoolMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A cluster must have at least one 'System' Agent Pool at all times. For additional information
     on agent pool restrictions and best practices, see:
-    https://docs.microsoft.com/azure/aks/use-system-pools
+    https://docs.microsoft.com/azure/aks/use-system-pools.
     """
 
     #: System agent pools are primarily for hosting critical system pods such as CoreDNS and
@@ -39,34 +23,35 @@ class AgentPoolMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: User agent pools are primarily for hosting your application pods.
     USER = "User"
 
-class AgentPoolType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of Agent Pool.
-    """
+
+class AgentPoolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of Agent Pool."""
 
     #: Create an Agent Pool backed by a Virtual Machine Scale Set.
     VIRTUAL_MACHINE_SCALE_SETS = "VirtualMachineScaleSets"
     #: Use of this is strongly discouraged.
     AVAILABILITY_SET = "AvailabilitySet"
 
-class Code(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Tells whether the cluster is Running or Stopped
-    """
+
+class Code(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Tells whether the cluster is Running or Stopped."""
 
     #: The cluster is running.
     RUNNING = "Running"
     #: The cluster is stopped.
     STOPPED = "Stopped"
 
-class ConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The private link service connection status.
-    """
+
+class ConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private link service connection status."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
-class ContainerServiceStorageProfileTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class ContainerServiceStorageProfileTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies what kind of storage to use. If omitted, the default will be chosen on your behalf
     based on the choice of orchestrator.
     """
@@ -74,9 +59,9 @@ class ContainerServiceStorageProfileTypes(with_metaclass(_CaseInsensitiveEnumMet
     STORAGE_ACCOUNT = "StorageAccount"
     MANAGED_DISKS = "ManagedDisks"
 
-class ContainerServiceVMSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Size of agent VMs. Note: This is no longer maintained.
-    """
+
+class ContainerServiceVMSizeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Size of agent VMs. Note: This is no longer maintained."""
 
     STANDARD_A1 = "Standard_A1"
     STANDARD_A10 = "Standard_A10"
@@ -253,7 +238,8 @@ class ContainerServiceVMSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     STANDARD_NV24 = "Standard_NV24"
     STANDARD_NV6 = "Standard_NV6"
 
-class Count(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
+
+class Count(int, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Number of masters (VMs) in the container service cluster. Allowed values are 1, 3, and 5. The
     default value is 1.
     """
@@ -262,16 +248,17 @@ class Count(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
     THREE = 3
     FIVE = 5
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class Expander(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class Expander(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If not specified, the default is 'random'. See `expanders
     <https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-expanders>`_
     for more information.
@@ -294,15 +281,15 @@ class Expander(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Used when you don't have a particular need for the node groups to scale differently.
     RANDOM = "random"
 
-class ExtendedLocationTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of extendedLocation.
-    """
+
+class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of extendedLocation."""
 
     EDGE_ZONE = "EdgeZone"
 
-class GPUInstanceProfile(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """GPUInstanceProfile to be used to specify GPU MIG instance profile for supported GPU VM SKU.
-    """
+
+class GPUInstanceProfile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """GPUInstanceProfile to be used to specify GPU MIG instance profile for supported GPU VM SKU."""
 
     MIG1_G = "MIG1g"
     MIG2_G = "MIG2g"
@@ -310,7 +297,8 @@ class GPUInstanceProfile(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MIG4_G = "MIG4g"
     MIG7_G = "MIG7g"
 
-class KubeletDiskType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class KubeletDiskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines the placement of emptyDir volumes, container runtime data root, and Kubelet
     ephemeral storage.
     """
@@ -320,7 +308,8 @@ class KubeletDiskType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Kubelet will use the temporary disk for its data.
     TEMPORARY = "Temporary"
 
-class LicenseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class LicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The license type to use for Windows VMs. See `Azure Hybrid User Benefits
     <https://azure.microsoft.com/pricing/hybrid-benefit/faq/>`_ for more details.
     """
@@ -330,7 +319,8 @@ class LicenseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Enables Azure Hybrid User Benefits for Windows VMs.
     WINDOWS_SERVER = "Windows_Server"
 
-class LoadBalancerSku(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class LoadBalancerSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default is 'standard'. See `Azure Load Balancer SKUs
     <https://docs.microsoft.com/azure/load-balancer/skus>`_ for more information about the
     differences between load balancer SKUs.
@@ -343,22 +333,23 @@ class LoadBalancerSku(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Use a basic Load Balancer with limited functionality.
     BASIC = "basic"
 
-class ManagedClusterPodIdentityProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current provisioning state of the pod identity.
-    """
+
+class ManagedClusterPodIdentityProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state of the pod identity."""
 
     ASSIGNED = "Assigned"
     UPDATING = "Updating"
     DELETING = "Deleting"
     FAILED = "Failed"
 
-class ManagedClusterSKUName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The name of a managed cluster SKU.
-    """
+
+class ManagedClusterSKUName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of a managed cluster SKU."""
 
     BASIC = "Basic"
 
-class ManagedClusterSKUTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class ManagedClusterSKUTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If not specified, the default is 'Free'. See `uptime SLA
     <https://docs.microsoft.com/azure/aks/uptime-sla>`_ for more details.
     """
@@ -369,20 +360,20 @@ class ManagedClusterSKUTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     #: No guaranteed SLA, no additional charges. Free tier clusters have an SLO of 99.5%.
     FREE = "Free"
 
-class NetworkMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """This cannot be specified if networkPlugin is anything other than 'azure'.
-    """
+
+class NetworkMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This cannot be specified if networkPlugin is anything other than 'azure'."""
 
     #: No bridge is created. Intra-VM Pod to Pod communication is through IP routes created by Azure
     #: CNI. See `Transparent Mode <https://docs.microsoft.com/azure/aks/faq#transparent-mode>`_ for
     #: more information.
     TRANSPARENT = "transparent"
-    #: This is no longer supported.
+    #: This is no longer supported
     BRIDGE = "bridge"
 
-class NetworkPlugin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Network plugin used for building the Kubernetes network.
-    """
+
+class NetworkPlugin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Network plugin used for building the Kubernetes network."""
 
     #: Use the Azure CNI network plugin. See `Azure CNI (advanced) networking
     #: <https://docs.microsoft.com/azure/aks/concepts-network#azure-cni-advanced-networking>`_ for
@@ -393,9 +384,9 @@ class NetworkPlugin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: information.
     KUBENET = "kubenet"
 
-class NetworkPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Network policy used for building the Kubernetes network.
-    """
+
+class NetworkPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Network policy used for building the Kubernetes network."""
 
     #: Use Calico network policies. See `differences between Azure and Calico policies
     #: <https://docs.microsoft.com/azure/aks/use-network-policies#differences-between-azure-and-calico-policies-and-their-capabilities>`_
@@ -406,7 +397,8 @@ class NetworkPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: for more information.
     AZURE = "azure"
 
-class OSDiskType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class OSDiskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default is 'Ephemeral' if the VM supports it and has a cache disk larger than the requested
     OSDiskSizeGB. Otherwise, defaults to 'Managed'. May not be changed after creation. For more
     information see `Ephemeral OS
@@ -422,23 +414,24 @@ class OSDiskType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: provides lower read/write latency, along with faster node scaling and cluster upgrades.
     EPHEMERAL = "Ephemeral"
 
-class OSSKU(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies an OS SKU. This value must not be specified if OSType is Windows.
-    """
+
+class OSSKU(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies an OS SKU. This value must not be specified if OSType is Windows."""
 
     UBUNTU = "Ubuntu"
     CBL_MARINER = "CBLMariner"
 
-class OSType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The operating system type. The default is Linux.
-    """
+
+class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operating system type. The default is Linux."""
 
     #: Use Linux.
     LINUX = "Linux"
     #: Use Windows.
     WINDOWS = "Windows"
 
-class OutboundType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class OutboundType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This can only be set at cluster creation time and cannot be changed later. For more information
     see `egress outbound type <https://docs.microsoft.com/azure/aks/egress-outboundtype>`_.
     """
@@ -458,16 +451,17 @@ class OutboundType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: advanced scenario and requires proper network configuration.
     USER_ASSIGNED_NAT_GATEWAY = "userAssignedNATGateway"
 
-class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current provisioning state.
-    """
+
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
     DELETING = "Deleting"
     FAILED = "Failed"
 
-class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """For more information see `use managed identities in AKS
     <https://docs.microsoft.com/azure/aks/use-managed-identity>`_.
     """
@@ -483,7 +477,8 @@ class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Do not use a managed identity for the Managed Cluster, service principal will be used instead.
     NONE = "None"
 
-class ScaleDownMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class ScaleDownMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes how VMs are added to or removed from Agent Pools. See `billing states
     <https://docs.microsoft.com/azure/virtual-machines/states-billing>`_.
     """
@@ -494,10 +489,11 @@ class ScaleDownMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: during scale down.
     DEALLOCATE = "Deallocate"
 
-class ScaleSetEvictionPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class ScaleSetEvictionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The eviction policy specifies what to do with the VM when it is evicted. The default is Delete.
     For more information about eviction see `spot VMs
-    <https://docs.microsoft.com/azure/virtual-machines/spot-vms>`_
+    <https://docs.microsoft.com/azure/virtual-machines/spot-vms>`_.
     """
 
     #: Nodes in the underlying Scale Set of the node pool are deleted when they're evicted.
@@ -507,9 +503,9 @@ class ScaleSetEvictionPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     #: cause issues with cluster scaling or upgrading.
     DEALLOCATE = "Deallocate"
 
-class ScaleSetPriority(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The Virtual Machine Scale Set priority.
-    """
+
+class ScaleSetPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Virtual Machine Scale Set priority."""
 
     #: Spot priority VMs will be used. There is no SLA for spot nodes. See `spot on AKS
     #: <https://docs.microsoft.com/azure/aks/spot-node-pool>`_ for more information.
@@ -517,7 +513,8 @@ class ScaleSetPriority(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Regular VMs will be used.
     REGULAR = "Regular"
 
-class UpgradeChannel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class UpgradeChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """For more information see `setting the AKS cluster auto-upgrade channel
     <https://docs.microsoft.com/azure/aks/upgrade-cluster#set-auto-upgrade-channel>`_.
     """
@@ -547,9 +544,9 @@ class UpgradeChannel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Disables auto-upgrades and keeps the cluster at its current version of Kubernetes.
     NONE = "none"
 
-class WeekDay(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The weekday enum.
-    """
+
+class WeekDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The weekday enum."""
 
     SUNDAY = "Sunday"
     MONDAY = "Monday"

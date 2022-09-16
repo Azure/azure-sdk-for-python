@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ArtifactsClientConfiguration(Configuration):
+class ArtifactsClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for ArtifactsClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -26,7 +26,8 @@ class ArtifactsClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.
+    :param endpoint: The workspace development endpoint, for example
+     https://myworkspace.dev.azuresynapse.net.
     :type endpoint: str
     """
 

@@ -1,0 +1,6 @@
+name: test_ws_conn_python_pat
+type: python_feed
+target: https://test-feed.com
+credentials:
+  type: pat
+  pat: dummy_pat

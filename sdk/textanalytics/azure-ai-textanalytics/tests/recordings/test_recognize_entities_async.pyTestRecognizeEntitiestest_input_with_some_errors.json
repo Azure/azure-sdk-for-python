@@ -1,0 +1,119 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "324",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "EntityRecognition",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975.",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "Hola",
+              "language": "Spanish"
+            },
+            {
+              "id": "3",
+              "text": "",
+              "language": "de"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "d867544b-c987-484a-90b1-d9ed60e3cae3",
+        "Content-Length": "1046",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
+        "Date": "Wed, 08 Jun 2022 01:43:57 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "27"
+      },
+      "ResponseBody": {
+        "kind": "EntityRecognitionResults",
+        "results": {
+          "documents": [
+            {
+              "id": "1",
+              "entities": [
+                {
+                  "text": "Microsoft",
+                  "category": "Organization",
+                  "offset": 0,
+                  "length": 9,
+                  "confidenceScore": 1.0
+                },
+                {
+                  "text": "Bill Gates",
+                  "category": "Person",
+                  "offset": 25,
+                  "length": 10,
+                  "confidenceScore": 1.0
+                },
+                {
+                  "text": "Paul Allen",
+                  "category": "Person",
+                  "offset": 40,
+                  "length": 10,
+                  "confidenceScore": 1.0
+                },
+                {
+                  "text": "April 4, 1975",
+                  "category": "DateTime",
+                  "subcategory": "Date",
+                  "offset": 54,
+                  "length": 13,
+                  "confidenceScore": 0.8
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [
+            {
+              "id": "2",
+              "error": {
+                "code": "InvalidArgument",
+                "message": "Invalid Language Code.",
+                "innererror": {
+                  "code": "UnsupportedLanguageCode",
+                  "message": "Invalid language code. Supported languages: ar,cs,da,de,en,es,fi,fr,hu,it,ja,ko,nl,no,pl,pt-BR,pt-PT,ru,sv,tr,zh-Hans. For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"
+                }
+              }
+            },
+            {
+              "id": "3",
+              "error": {
+                "code": "InvalidArgument",
+                "message": "Invalid Document in request.",
+                "innererror": {
+                  "code": "InvalidDocument",
+                  "message": "Document text is empty."
+                }
+              }
+            }
+          ],
+          "modelVersion": "2021-06-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

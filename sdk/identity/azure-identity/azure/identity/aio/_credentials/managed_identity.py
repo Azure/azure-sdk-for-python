@@ -38,30 +38,39 @@ class ManagedIdentityCredential(AsyncContextManager):
     def __init__(self, **kwargs: "Any") -> None:
         self._credential = None  # type: Optional[AsyncTokenCredential]
 
-        if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
-            if os.environ.get(EnvironmentVariables.MSI_SECRET):
-                _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
-                from .app_service import AppServiceCredential
+        if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
+            if os.environ.get(EnvironmentVariables.IDENTITY_HEADER):
+                if os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT):
+                    _LOGGER.info("%s will use Service Fabric managed identity", self.__class__.__name__)
+                    from .service_fabric import ServiceFabricCredential
 
-                self._credential = AppServiceCredential(**kwargs)
-            else:
-                _LOGGER.info("%s will use Cloud Shell managed identity", self.__class__.__name__)
-                from .cloud_shell import CloudShellCredential
+                    self._credential = ServiceFabricCredential(**kwargs)
+                else:
+                    _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
+                    from .app_service import AppServiceCredential
 
-                self._credential = CloudShellCredential(**kwargs)
-        elif os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
-            if os.environ.get(EnvironmentVariables.IDENTITY_HEADER) and os.environ.get(
-                EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT
-            ):
-                _LOGGER.info("%s will use Service Fabric managed identity", self.__class__.__name__)
-                from .service_fabric import ServiceFabricCredential
-
-                self._credential = ServiceFabricCredential(**kwargs)
+                    self._credential = AppServiceCredential(**kwargs)
             elif os.environ.get(EnvironmentVariables.IMDS_ENDPOINT):
                 _LOGGER.info("%s will use Azure Arc managed identity", self.__class__.__name__)
                 from .azure_arc import AzureArcCredential
 
                 self._credential = AzureArcCredential(**kwargs)
+            else:
+                _LOGGER.info("%s will use Cloud Shell managed identity", self.__class__.__name__)
+                from .cloud_shell import CloudShellCredential
+
+                self._credential = CloudShellCredential(**kwargs)
+        elif os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
+            if os.environ.get(EnvironmentVariables.MSI_SECRET):
+                _LOGGER.info("%s will use Azure ML managed identity", self.__class__.__name__)
+                from .azure_ml import AzureMLCredential
+
+                self._credential = AzureMLCredential(**kwargs)
+            else:
+                _LOGGER.info("%s will use Cloud Shell managed identity", self.__class__.__name__)
+                from .cloud_shell import CloudShellCredential
+
+                self._credential = CloudShellCredential(**kwargs)
         elif all(os.environ.get(var) for var in EnvironmentVariables.TOKEN_EXCHANGE_VARS):
             _LOGGER.info("%s will use token exchange", self.__class__.__name__)
             from .token_exchange import TokenExchangeCredential

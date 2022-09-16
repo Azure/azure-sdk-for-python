@@ -37,5 +37,4 @@ async def release_phone_number():
         print('Status of the operation: ' + poller.status())
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(release_phone_number())
+    asyncio.run(release_phone_number())

@@ -1,0 +1,62 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "237",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "SentimentAnalysis",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "This should fail because we\u0027re passing in an invalid language hint",
+              "language": "notalanguage"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "2042bbf3-aeba-4202-951c-3c14717e655d",
+        "Content-Length": "446",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 08 Jun 2022 01:14:49 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "2"
+      },
+      "ResponseBody": {
+        "kind": "SentimentAnalysisResults",
+        "results": {
+          "documents": [],
+          "errors": [
+            {
+              "id": "0",
+              "error": {
+                "code": "InvalidArgument",
+                "message": "Invalid Language Code.",
+                "innererror": {
+                  "code": "UnsupportedLanguageCode",
+                  "message": "Invalid language code. Supported languages: de,en,es,fr,hi,it,ja,ko,nl,no,pt-BR,pt-PT,tr,zh-Hans,zh-Hant. For additional details see https://aka.ms/text-analytics/language-support?tabs=sentiment-analysis"
+                }
+              }
+            }
+          ],
+          "modelVersion": "2021-10-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

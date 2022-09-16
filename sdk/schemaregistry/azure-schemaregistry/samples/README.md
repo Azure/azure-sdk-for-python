@@ -11,18 +11,18 @@ urlFragment: schemaregistry-samples
 # Azure Schema Registry client library for Python Samples
 
 These are code samples that show common scenario operations with the Schema Registry client library.
-The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations,
-and require Python 3.6 or later.
+The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations.
 
 Several Schema Registry Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Schema Registry:
 
 * [schema_registry.py][schema_registry_sample] ([async version][schema_registry_async_sample]) - Examples for common Schema Registry tasks:
     * Register a schema
     * Get schema by id
+    * Get schema by version
     * Get schema id
 
 ## Prerequisites
-- Python 2.7, 3.6 or later.
+- Python 3.7 or later.
 - **Microsoft Azure Subscription:**  To use Azure services, including Azure Schema Registry, you'll need a subscription.
 If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://account.windowsazure.com/Home/Index).
 

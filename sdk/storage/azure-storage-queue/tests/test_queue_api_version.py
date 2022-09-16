@@ -10,7 +10,7 @@ from azure.storage.queue import (
     QueueServiceClient,
     QueueClient
 )
-from azure.storage.queue._serialize import _SUPPORTED_API_VERSIONS
+from azure.storage.queue._shared.constants import X_MS_VERSION
 from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ class StorageClientTest(StorageTestCase):
     def setUp(self):
         super(StorageClientTest, self).setUp()
         self.api_version_1 = "2019-02-02"
-        self.api_version_2 = _SUPPORTED_API_VERSIONS[-1]
+        self.api_version_2 = X_MS_VERSION
 
     # --Test Cases--------------------------------------------------------------
 

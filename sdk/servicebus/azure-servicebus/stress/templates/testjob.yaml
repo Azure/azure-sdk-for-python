@@ -1,0 +1,15 @@
+{{- include "stress-test-addons.deploy-job-template.from-pod" (list . "stress.python-sb-stress") -}}
+{{- define "stress.python-sb-stress" -}}
+metadata:
+  labels:
+    testName: "deploy-python-sb-stress"
+    testInstance: "servicebus-{{ .Release.Name }}-{{ .Release.Revision }}"
+    chaos: "true"
+spec:
+  containers:
+    - name: python-sb-stress
+      image: {{ .Values.image }}
+      imagePullPolicy: Always
+      command: ['bash', '-c', 'python3 test_stress_queues.py']
+      {{- include "stress-test-addons.container-env" . | nindent 6 }}
+{{- end -}}

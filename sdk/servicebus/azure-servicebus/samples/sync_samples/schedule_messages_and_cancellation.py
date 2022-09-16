@@ -9,8 +9,6 @@
 Example to show scheduling messages to and cancelling messages from a Service Bus Queue.
 """
 
-# pylint: disable=C0111
-
 import os
 import datetime
 from azure.servicebus import ServiceBusClient, ServiceBusMessage

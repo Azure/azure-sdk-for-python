@@ -6,40 +6,25 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class Action(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Action(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The action of virtual network rule.
     """
 
     ALLOW = "Allow"
 
-class ActionsRequired(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ActionsRequired(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """A message indicating if changes on the service provider require any updates on the consumer.
     """
 
     NONE = "None"
     RECREATE = "Recreate"
 
-class ConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The private link service connection status.
     """
 
@@ -48,7 +33,7 @@ class ConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity that created the resource.
     """
 
@@ -57,21 +42,21 @@ class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DefaultAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DefaultAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The default action of allow or deny when no other rules match.
     """
 
     ALLOW = "Allow"
     DENY = "Deny"
 
-class EncryptionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EncryptionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates whether or not the encryption is enabled for container registry.
     """
 
     ENABLED = "enabled"
     DISABLED = "disabled"
 
-class ImportMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ImportMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """When Force, any existing target tags will be overwritten. When NoForce, any existing target
     tags will fail the operation before any copying begins.
     """
@@ -79,7 +64,7 @@ class ImportMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NO_FORCE = "NoForce"
     FORCE = "Force"
 
-class LastModifiedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LastModifiedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity that last modified the resource.
     """
 
@@ -88,53 +73,53 @@ class LastModifiedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class NetworkRuleBypassOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NetworkRuleBypassOptions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Whether to allow trusted Azure services to access a network restricted registry.
     """
 
     AZURE_SERVICES = "AzureServices"
     NONE = "None"
 
-class PasswordName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PasswordName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The password name.
     """
 
     PASSWORD = "password"
     PASSWORD2 = "password2"
 
-class PipelineOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PipelineOptions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     OVERWRITE_TAGS = "OverwriteTags"
     OVERWRITE_BLOBS = "OverwriteBlobs"
     DELETE_SOURCE_BLOB_ON_SUCCESS = "DeleteSourceBlobOnSuccess"
     CONTINUE_ON_ERRORS = "ContinueOnErrors"
 
-class PipelineRunSourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PipelineRunSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the source.
     """
 
     AZURE_STORAGE_BLOB = "AzureStorageBlob"
 
-class PipelineRunTargetType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PipelineRunTargetType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the target.
     """
 
     AZURE_STORAGE_BLOB = "AzureStorageBlob"
 
-class PipelineSourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PipelineSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of source for the import pipeline.
     """
 
     AZURE_STORAGE_BLOB_CONTAINER = "AzureStorageBlobContainer"
 
-class PolicyStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PolicyStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The value that indicates whether the policy is enabled or not.
     """
 
     ENABLED = "enabled"
     DISABLED = "disabled"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioning state of the pipeline at the time the operation was called.
     """
 
@@ -145,21 +130,21 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class PublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Whether or not public network access is allowed for the container registry.
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class RegistryUsageUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RegistryUsageUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The unit of measurement.
     """
 
     COUNT = "Count"
     BYTES = "Bytes"
 
-class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The identity type.
     """
 
@@ -168,7 +153,7 @@ class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     NONE = "None"
 
-class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The SKU name of the container registry. Required for registry creation.
     """
 
@@ -177,7 +162,7 @@ class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The SKU tier based on the SKU name.
     """
 
@@ -186,20 +171,20 @@ class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class TriggerStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TriggerStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The current status of the source trigger.
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class TrustPolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TrustPolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of trust policy.
     """
 
     NOTARY = "Notary"
 
-class WebhookAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class WebhookAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     PUSH = "push"
     DELETE = "delete"
@@ -207,7 +192,7 @@ class WebhookAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CHART_PUSH = "chart_push"
     CHART_DELETE = "chart_delete"
 
-class WebhookStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class WebhookStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the webhook at the time the operation was called.
     """
 

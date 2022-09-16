@@ -9,22 +9,22 @@ import unittest
 
 import azure.mgmt.search
 from datetime import date, timedelta
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
-class MgmtSearchTest(AzureMgmtTestCase):
+class TestMgmtSearch(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtSearchTest, self).setUp()
+    def setup_method(self, method):
         self.client = self.create_mgmt_client(
             azure.mgmt.search.SearchManagementClient
         )
 
     @ResourceGroupPreparer()
+    @recorded_by_proxy
     def test_search_services(self, resource_group, location):
         account_name = 'ptvstestsearch'
 
         availability = self.client.services.check_name_availability(account_name)
-        self.assertTrue(availability.is_name_available)
+        assert availability.is_name_available
 
         service = self.client.services.begin_create_or_update(
             resource_group.name,
@@ -41,18 +41,18 @@ class MgmtSearchTest(AzureMgmtTestCase):
         ).result()
 
         availability = self.client.services.check_name_availability(account_name)
-        self.assertFalse(availability.is_name_available)
-        self.assertEqual(availability.reason, "AlreadyExists")
+        assert not availability.is_name_available
+        assert availability.reason == "AlreadyExists"
 
         service = self.client.services.get(
             resource_group.name,
             service.name
         )
-        self.assertEqual(service.name, account_name)
+        assert service.name == account_name
 
         services = list(self.client.services.list_by_resource_group(resource_group.name))
-        self.assertEqual(len(services), 1)
-        self.assertEqual(services[0].name, account_name)
+        assert len(services) == 1
+        assert services[0].name == account_name
 
         self.client.services.delete(
             resource_group.name,
@@ -60,6 +60,7 @@ class MgmtSearchTest(AzureMgmtTestCase):
         )
 
     @ResourceGroupPreparer()
+    @recorded_by_proxy
     def test_search_query_keys(self, resource_group, location):
         account_name = 'ptvstestquerykeysxxy'
         key_name = 'testkey'
@@ -83,15 +84,15 @@ class MgmtSearchTest(AzureMgmtTestCase):
             account_name,
             key_name,
         )
-        self.assertEqual(key.name, key_name)
+        assert key.name == key_name
 
         keys = list(self.client.query_keys.list_by_search_service(
             resource_group.name,
             account_name
         ))
-        self.assertEqual(len(keys), 2) # default key and mine
-        self.assertIsNone(keys[0].name)
-        self.assertEqual(keys[1].name, key_name)
+        assert len(keys) == 2 # default key and mine
+        assert keys[0].name is None
+        assert keys[1].name == key_name
 
         self.client.query_keys.delete(
             resource_group.name,
@@ -100,6 +101,7 @@ class MgmtSearchTest(AzureMgmtTestCase):
         )
 
     @ResourceGroupPreparer()
+    @recorded_by_proxy
     def test_search_admin_keys(self, resource_group, location):
         account_name = 'ptvstestquerykeys'
 
@@ -121,16 +123,16 @@ class MgmtSearchTest(AzureMgmtTestCase):
             resource_group.name,
             account_name
         )
-        self.assertIsNotNone(admin_keys.primary_key)
-        self.assertIsNotNone(admin_keys.secondary_key)
+        assert admin_keys.primary_key is not None
+        assert admin_keys.secondary_key is not None
 
         regenerated_admin_keys = self.client.admin_keys.regenerate(
             resource_group.name,
             account_name,
             'primary'
         )
-        self.assertIsNotNone(regenerated_admin_keys.primary_key)
-        self.assertEqual(admin_keys.secondary_key, regenerated_admin_keys.secondary_key)
+        assert regenerated_admin_keys.primary_key is not None
+        assert admin_keys.secondary_key == regenerated_admin_keys.secondary_key
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

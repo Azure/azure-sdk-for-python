@@ -14,14 +14,14 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 13:06:27 GMT
+      - Fri, 14 Jan 2022 23:49:09 GMT
     method: POST
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/enableautoscale?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/enableautoscale?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
@@ -31,13 +31,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 13:06:27 GMT
+      - Fri, 14 Jan 2022 23:49:09 GMT
       etag:
-      - '0x8D9535AD7466EB9'
+      - '0x8D9D7B875D2742C'
       last-modified:
-      - Fri, 30 Jul 2021 13:06:27 GMT
+      - Fri, 14 Jan 2022 23:49:10 GMT
       request-id:
-      - 672ef332-e772-446a-9fbf-b71bfbd80052
+      - 2c34de2b-0408-4c26-8d4d-1a66d13cb948
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -63,17 +63,17 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 13:06:28 GMT
+      - Fri, 14 Jan 2022 23:49:10 GMT
     method: POST
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/evaluateautoscale?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/evaluateautoscale?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.AutoScaleRun\",\"timestamp\":\"2021-07-30T13:06:28.8922385Z\",\"results\":\"$TargetDedicatedNodes=3;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.AutoScaleRun\",\"timestamp\":\"2022-01-14T23:49:10.1530075Z\",\"results\":\"$TargetDedicatedNodes=3;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
@@ -82,9 +82,723 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 13:06:28 GMT
+      - Fri, 14 Jan 2022 23:49:09 GMT
       request-id:
-      - 1b025c2d-c6b3-4b0d-a147-4fb09338496c
+      - 69f734a3-fe49-42d9-b021-1e4fc3b27473
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:49:10 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B875D2742C\",\"lastModified\":\"2022-01-14T23:49:10.0316716Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-14T23:49:10.0316716Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":true,\"autoScaleFormula\":\"$TargetDedicatedNodes=2\",\"autoScaleEvaluationInterval\":\"PT6M\",\"autoScaleRun\":{\r\n
+        \   \"timestamp\":\"2022-01-14T23:49:10.0316716Z\",\"results\":\"$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n
+        \ },\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n    {\r\n
+        \     \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n  ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:49:09 GMT
+      etag:
+      - '0x8D9D7B875D2742C'
+      last-modified:
+      - Fri, 14 Jan 2022 23:49:10 GMT
+      request-id:
+      - f65feac7-1bbd-4d1e-ad9b-a70e463cd9fe
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:49:25 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B875D2742C\",\"lastModified\":\"2022-01-14T23:49:10.0316716Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-14T23:49:10.0316716Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":true,\"autoScaleFormula\":\"$TargetDedicatedNodes=2\",\"autoScaleEvaluationInterval\":\"PT6M\",\"autoScaleRun\":{\r\n
+        \   \"timestamp\":\"2022-01-14T23:49:10.0316716Z\",\"results\":\"$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n
+        \ },\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n    {\r\n
+        \     \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n  ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:49:24 GMT
+      etag:
+      - '0x8D9D7B875D2742C'
+      last-modified:
+      - Fri, 14 Jan 2022 23:49:10 GMT
+      request-id:
+      - 8c778aac-2591-4015-a852-8d1e8ff7d4fa
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:49:49 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B875D2742C\",\"lastModified\":\"2022-01-14T23:49:10.0316716Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-14T23:49:10.0316716Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":true,\"autoScaleFormula\":\"$TargetDedicatedNodes=2\",\"autoScaleEvaluationInterval\":\"PT6M\",\"autoScaleRun\":{\r\n
+        \   \"timestamp\":\"2022-01-14T23:49:10.0316716Z\",\"results\":\"$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n
+        \ },\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n    {\r\n
+        \     \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n  ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:49:49 GMT
+      etag:
+      - '0x8D9D7B875D2742C'
+      last-modified:
+      - Fri, 14 Jan 2022 23:49:10 GMT
+      request-id:
+      - 0a804286-f0a2-4dbf-bc3b-8cb5ccc70da9
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:49:54 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B875D2742C\",\"lastModified\":\"2022-01-14T23:49:10.0316716Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-14T23:49:10.0316716Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":true,\"autoScaleFormula\":\"$TargetDedicatedNodes=2\",\"autoScaleEvaluationInterval\":\"PT6M\",\"autoScaleRun\":{\r\n
+        \   \"timestamp\":\"2022-01-14T23:49:10.0316716Z\",\"results\":\"$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n
+        \ },\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n    {\r\n
+        \     \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n  ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:49:54 GMT
+      etag:
+      - '0x8D9D7B875D2742C'
+      last-modified:
+      - Fri, 14 Jan 2022 23:49:10 GMT
+      request-id:
+      - 079d7abf-6f22-47b8-8154-1dcd3447f7f8
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:49:59 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B875D2742C\",\"lastModified\":\"2022-01-14T23:49:10.0316716Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-14T23:49:10.0316716Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":true,\"autoScaleFormula\":\"$TargetDedicatedNodes=2\",\"autoScaleEvaluationInterval\":\"PT6M\",\"autoScaleRun\":{\r\n
+        \   \"timestamp\":\"2022-01-14T23:49:10.0316716Z\",\"results\":\"$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n
+        \ },\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n    {\r\n
+        \     \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n  ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:49:59 GMT
+      etag:
+      - '0x8D9D7B875D2742C'
+      last-modified:
+      - Fri, 14 Jan 2022 23:49:10 GMT
+      request-id:
+      - e8e2b724-acc6-463b-99c6-1f5b6494c5b0
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:50:05 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B875D2742C\",\"lastModified\":\"2022-01-14T23:49:10.0316716Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-14T23:49:10.0316716Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":true,\"autoScaleFormula\":\"$TargetDedicatedNodes=2\",\"autoScaleEvaluationInterval\":\"PT6M\",\"autoScaleRun\":{\r\n
+        \   \"timestamp\":\"2022-01-14T23:49:10.0316716Z\",\"results\":\"$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n
+        \ },\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n    {\r\n
+        \     \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n  ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:50:05 GMT
+      etag:
+      - '0x8D9D7B875D2742C'
+      last-modified:
+      - Fri, 14 Jan 2022 23:49:10 GMT
+      request-id:
+      - f3161f7c-4ae4-4566-89cf-882ac8217827
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:50:10 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B875D2742C\",\"lastModified\":\"2022-01-14T23:49:10.0316716Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-14T23:49:10.0316716Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":true,\"autoScaleFormula\":\"$TargetDedicatedNodes=2\",\"autoScaleEvaluationInterval\":\"PT6M\",\"autoScaleRun\":{\r\n
+        \   \"timestamp\":\"2022-01-14T23:49:10.0316716Z\",\"results\":\"$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n
+        \ },\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n    {\r\n
+        \     \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n  ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:50:09 GMT
+      etag:
+      - '0x8D9D7B875D2742C'
+      last-modified:
+      - Fri, 14 Jan 2022 23:49:10 GMT
+      request-id:
+      - 76a178ef-609e-48ec-96d5-995cf337e38b
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:50:15 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B875D2742C\",\"lastModified\":\"2022-01-14T23:49:10.0316716Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-14T23:49:10.0316716Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":true,\"autoScaleFormula\":\"$TargetDedicatedNodes=2\",\"autoScaleEvaluationInterval\":\"PT6M\",\"autoScaleRun\":{\r\n
+        \   \"timestamp\":\"2022-01-14T23:49:10.0316716Z\",\"results\":\"$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n
+        \ },\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n    {\r\n
+        \     \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n  ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:50:14 GMT
+      etag:
+      - '0x8D9D7B875D2742C'
+      last-modified:
+      - Fri, 14 Jan 2022 23:49:10 GMT
+      request-id:
+      - e7c744f1-82ab-4802-a3c7-98582e16b850
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:50:20 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B875D2742C\",\"lastModified\":\"2022-01-14T23:49:10.0316716Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-14T23:49:10.0316716Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":true,\"autoScaleFormula\":\"$TargetDedicatedNodes=2\",\"autoScaleEvaluationInterval\":\"PT6M\",\"autoScaleRun\":{\r\n
+        \   \"timestamp\":\"2022-01-14T23:49:10.0316716Z\",\"results\":\"$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n
+        \ },\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n    {\r\n
+        \     \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n  ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:50:19 GMT
+      etag:
+      - '0x8D9D7B875D2742C'
+      last-modified:
+      - Fri, 14 Jan 2022 23:49:10 GMT
+      request-id:
+      - d6ff7dac-6247-4fe8-b5be-22c5c62f5a88
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:50:25 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B875D2742C\",\"lastModified\":\"2022-01-14T23:49:10.0316716Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-14T23:49:10.0316716Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":true,\"autoScaleFormula\":\"$TargetDedicatedNodes=2\",\"autoScaleEvaluationInterval\":\"PT6M\",\"autoScaleRun\":{\r\n
+        \   \"timestamp\":\"2022-01-14T23:49:10.0316716Z\",\"results\":\"$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n
+        \ },\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n    {\r\n
+        \     \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n  ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:50:24 GMT
+      etag:
+      - '0x8D9D7B875D2742C'
+      last-modified:
+      - Fri, 14 Jan 2022 23:49:10 GMT
+      request-id:
+      - 67d6b6ad-7fcb-4ba7-af11-ca32553a9353
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:50:30 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B875D2742C\",\"lastModified\":\"2022-01-14T23:49:10.0316716Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-14T23:49:10.0316716Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":true,\"autoScaleFormula\":\"$TargetDedicatedNodes=2\",\"autoScaleEvaluationInterval\":\"PT6M\",\"autoScaleRun\":{\r\n
+        \   \"timestamp\":\"2022-01-14T23:49:10.0316716Z\",\"results\":\"$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n
+        \ },\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n    {\r\n
+        \     \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n  ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:50:29 GMT
+      etag:
+      - '0x8D9D7B875D2742C'
+      last-modified:
+      - Fri, 14 Jan 2022 23:49:10 GMT
+      request-id:
+      - 7af14521-6164-42b3-8cbf-642d688dd8cb
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:50:35 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B875D2742C\",\"lastModified\":\"2022-01-14T23:49:10.0316716Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-14T23:49:10.0316716Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":true,\"autoScaleFormula\":\"$TargetDedicatedNodes=2\",\"autoScaleEvaluationInterval\":\"PT6M\",\"autoScaleRun\":{\r\n
+        \   \"timestamp\":\"2022-01-14T23:49:10.0316716Z\",\"results\":\"$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n
+        \ },\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n    {\r\n
+        \     \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n  ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:50:34 GMT
+      etag:
+      - '0x8D9D7B875D2742C'
+      last-modified:
+      - Fri, 14 Jan 2022 23:49:10 GMT
+      request-id:
+      - 32db6fcc-8662-43ed-9fb5-fe2286e0f403
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:50:40 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B875D2742C\",\"lastModified\":\"2022-01-14T23:49:10.0316716Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-14T23:49:10.0316716Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":2,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":true,\"autoScaleFormula\":\"$TargetDedicatedNodes=2\",\"autoScaleEvaluationInterval\":\"PT6M\",\"autoScaleRun\":{\r\n
+        \   \"timestamp\":\"2022-01-14T23:49:10.0316716Z\",\"results\":\"$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n
+        \ },\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n    {\r\n
+        \     \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n  ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:50:40 GMT
+      etag:
+      - '0x8D9D7B875D2742C'
+      last-modified:
+      - Fri, 14 Jan 2022 23:49:10 GMT
+      request-id:
+      - c20d5ca0-388e-46bf-bd7f-a35dacf5326b
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:50:46 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B875D2742C\",\"lastModified\":\"2022-01-14T23:49:10.0316716Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:41.1008698Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":2,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":true,\"autoScaleFormula\":\"$TargetDedicatedNodes=2\",\"autoScaleEvaluationInterval\":\"PT6M\",\"autoScaleRun\":{\r\n
+        \   \"timestamp\":\"2022-01-14T23:49:10.0316716Z\",\"results\":\"$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n
+        \ },\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n    {\r\n
+        \     \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n  ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:50:45 GMT
+      etag:
+      - '0x8D9D7B875D2742C'
+      last-modified:
+      - Fri, 14 Jan 2022 23:49:10 GMT
+      request-id:
+      - 5aad88ec-aad6-4210-bccb-4cd3d4567607
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -108,14 +822,14 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 13:06:28 GMT
+      - Fri, 14 Jan 2022 23:50:46 GMT
     method: POST
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/disableautoscale?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/disableautoscale?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
@@ -125,13 +839,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 13:06:28 GMT
+      - Fri, 14 Jan 2022 23:50:45 GMT
       etag:
-      - '0x8D9535AD83AE1C4'
+      - '0x8D9D7B8AF09C92F'
       last-modified:
-      - Fri, 30 Jul 2021 13:06:28 GMT
+      - Fri, 14 Jan 2022 23:50:46 GMT
       request-id:
-      - 7a34758b-c6df-4650-ba6b-f2585de2155a
+      - 9fd6f4bd-a7f1-4a08-8b5f-7169a85f59cf
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -153,34 +867,83 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 13:06:29 GMT
+      - Fri, 14 Jan 2022 23:50:46 GMT
     method: GET
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9535AD83AE1C4\",\"lastModified\":\"2021-07-30T13:06:28.9535428Z\",\"creationTime\":\"2021-07-30T13:06:27.3515193Z\",\"state\":\"active\",\"stateTransitionTime\":\"2021-07-30T13:06:27.3515193Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2021-07-30T13:06:28.976542Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8AF09C92F\",\"lastModified\":\"2022-01-14T23:50:46.0244271Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:46.0244271Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT2M\",\"currentDedicatedNodes\":2,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
         \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
         \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
-        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
-        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\"\r\n  }\r\n}"
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 13:06:28 GMT
+      - Fri, 14 Jan 2022 23:50:45 GMT
       etag:
-      - '0x8D9535AD83AE1C4'
+      - '0x8D9D7B8AF09C92F'
       last-modified:
-      - Fri, 30 Jul 2021 13:06:28 GMT
+      - Fri, 14 Jan 2022 23:50:46 GMT
       request-id:
-      - d40a5d76-1888-47fc-ad86-4344db1381ac
+      - e30947e9-93b9-4ca7-a8dc-55d71bb64bc2
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8AF09C92F\",\"lastModified\":\"2022-01-14T23:50:46.0244271Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:47.5964387Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT2M\",\"currentDedicatedNodes\":2,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:50:50 GMT
+      etag:
+      - '0x8D9D7B8AF09C92F'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:46 GMT
+      request-id:
+      - 701f2b5d-7b74-42f3-94e0-dc756eef819c
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -206,14 +969,14 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 13:06:29 GMT
+      - Fri, 14 Jan 2022 23:50:51 GMT
     method: POST
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/resize?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/resize?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
@@ -223,13 +986,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 13:06:28 GMT
+      - Fri, 14 Jan 2022 23:50:50 GMT
       etag:
-      - '0x8D9535AD851F591'
+      - '0x8D9D7B8B2344EC1'
       last-modified:
-      - Fri, 30 Jul 2021 13:06:29 GMT
+      - Fri, 14 Jan 2022 23:50:51 GMT
       request-id:
-      - aad23fc1-7b60-4173-b89f-743f7286b674
+      - 036ad2af-7ba3-4670-a4fa-d10154f3c8bd
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -253,14 +1016,14 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 13:06:29 GMT
+      - Fri, 14 Jan 2022 23:50:51 GMT
     method: POST
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/stopresize?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/stopresize?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
@@ -270,13 +1033,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 13:06:28 GMT
+      - Fri, 14 Jan 2022 23:50:50 GMT
       etag:
-      - '0x8D9535AD851F591'
+      - '0x8D9D7B8B2462926'
       last-modified:
-      - Fri, 30 Jul 2021 13:06:29 GMT
+      - Fri, 14 Jan 2022 23:50:51 GMT
       request-id:
-      - 06e3fce6-c58b-49e5-8c66-1f181ad47d93
+      - 330622c3-8dac-4286-896e-60dfce1bc67d
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -298,34 +1061,34 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 13:06:29 GMT
+      - Fri, 14 Jan 2022 23:50:51 GMT
     method: GET
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9535AD851F591\",\"lastModified\":\"2021-07-30T13:06:29.1047825Z\",\"creationTime\":\"2021-07-30T13:06:27.3515193Z\",\"state\":\"active\",\"stateTransitionTime\":\"2021-07-30T13:06:27.3515193Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2021-07-30T13:06:29.1907793Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":2,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
         \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
         \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
-        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
-        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\"\r\n  }\r\n}"
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 13:06:28 GMT
+      - Fri, 14 Jan 2022 23:50:51 GMT
       etag:
-      - '0x8D9535AD851F591'
+      - '0x8D9D7B8B2462926'
       last-modified:
-      - Fri, 30 Jul 2021 13:06:29 GMT
+      - Fri, 14 Jan 2022 23:50:51 GMT
       request-id:
-      - 91396f4f-ed45-4c1c-b11c-52cb10da4dce
+      - b80de78d-054c-444d-9f66-8b95c23fe173
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -347,37 +1110,34 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 13:06:34 GMT
+      - Fri, 14 Jan 2022 23:50:56 GMT
     method: GET
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9535AD851F591\",\"lastModified\":\"2021-07-30T13:06:29.1047825Z\",\"creationTime\":\"2021-07-30T13:06:27.3515193Z\",\"state\":\"active\",\"stateTransitionTime\":\"2021-07-30T13:06:27.3515193Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2021-07-30T13:06:29.3387833Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"resizeErrors\":[\r\n
-        \   {\r\n      \"code\":\"ResizeStopped\",\"message\":\"Desired number of
-        low priority nodes could not be allocated due to a stop resize operation\"\r\n
-        \   }\r\n  ],\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
         \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
         \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
-        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
-        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\"\r\n  }\r\n}"
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 13:06:34 GMT
+      - Fri, 14 Jan 2022 23:50:56 GMT
       etag:
-      - '0x8D9535AD851F591'
+      - '0x8D9D7B8B2462926'
       last-modified:
-      - Fri, 30 Jul 2021 13:06:29 GMT
+      - Fri, 14 Jan 2022 23:50:51 GMT
       request-id:
-      - 9c6e3501-ddd2-4ec8-abd3-5c3513c08333
+      - 049b6e63-286b-44bf-be3d-ab3f23213772
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -399,19 +1159,2175 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 13:06:34 GMT
+      - Fri, 14 Jan 2022 23:51:01 GMT
     method: GET
-    uri: https://batch.southcentralus.batch.azure.com/lifetimepoolstats?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:51:01 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - cbf94a5e-7f02-46e8-a0b7-6220082db2ab
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:51:07 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:51:06 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - e3ecb1fa-82ae-4c66-99af-69915442bdaf
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:51:12 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:51:11 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 3693e218-11bd-4777-aa38-802a2970d669
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:51:17 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:51:16 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - b7435ee6-f2af-4ce6-89b5-773c98509467
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:51:22 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:51:22 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - f384361b-ee8f-4176-ac84-58dfe55b2264
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:51:27 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:51:27 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 87583dfc-20e6-49e9-83ed-bc19f0e0c568
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:51:32 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:51:32 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 3a34b50a-9342-405e-9672-59454b2dc6a0
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:51:37 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:51:37 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 45a46e00-1396-4bcb-a17a-a445508d4831
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:51:42 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:51:42 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 97d43b8d-4393-4d71-862c-730014086c84
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:51:47 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:51:47 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - e25b4172-d1ec-4f70-b375-c81910c66e4f
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:51:52 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:51:52 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 0201c4da-b6ad-40a7-8b1d-59cdd09dc771
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:51:58 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:51:57 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 83541eec-9c49-4676-ac7d-764ddef2f370
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:52:03 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:52:02 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - d113946b-d13a-49e8-b5f4-029a87bcb605
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:52:08 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:52:07 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - e4c3f808-c2fe-4750-8e71-b7e7ca903d3e
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:52:13 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:52:12 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 49c488a3-fd53-4690-aa58-d6658e3fe60f
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:52:18 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:52:17 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - cbcb9ec2-4177-4e95-b26a-02a13e2e48a3
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:52:23 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:52:22 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 08f25fa9-6a33-44b0-94e4-1c1505858fe5
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:52:28 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:52:28 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 3b4bff54-4904-4c8d-8750-26044e59094d
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:52:33 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:52:33 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 9bc1a3fd-1ad0-409c-bc05-9c41bca6c43b
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:52:39 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:52:38 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - e93398ba-87a6-45b9-b9fd-e867aecbf66c
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:52:44 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:52:44 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - d2e3b94b-c03e-48ee-b6ed-74f3cccdf843
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:52:49 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:52:48 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - ce3700cb-dd49-4d54-ae62-ab596e65754d
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:52:54 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:52:53 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 783e50ae-517f-461b-8ee3-acb3e54161ab
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:52:59 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:52:58 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 950158c8-f373-4923-a36a-eb8c2346c245
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:53:04 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:53:03 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - f4e08f0c-eff5-42c1-8aac-435450e77c8c
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:53:09 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:53:08 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 36d95d3a-0caa-41c6-a069-b45eb92b2518
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:53:14 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:53:13 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 53132931-ac81-4d0e-bf4f-6eb59c44e3b5
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:53:19 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:53:18 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - a1a4c7b4-362f-466c-be56-687313472abf
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:53:25 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:53:24 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 7c68e20b-e999-49ad-b4f7-694b5c51c8a0
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:53:30 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:53:29 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - cb7be2aa-4e45-4da9-b4df-10d9063bfc5d
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:53:35 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:53:34 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 58aa187a-5b23-4432-8628-67184cf455d1
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:53:40 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:53:40 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - d8b808dc-bf95-45d7-ab27-b8f53fbc85f1
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:53:45 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:53:45 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 4f6bd5fd-686a-40a3-8c97-519797f7c1f3
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:53:50 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:53:49 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 9e8f35f3-f7b6-4de8-a84b-f093cf5a395b
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:53:55 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:53:55 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 224af6e3-7921-4e07-9d7f-3d51827daca4
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:54:00 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:54:00 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 149159ed-ea81-4ac4-91fb-c788d4b22afe
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:54:06 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:54:05 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - ee5ff153-fde1-45b5-9e40-a1b81a19a7c7
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:54:11 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:54:10 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - aad3f0e8-12ce-412a-a2a5-e625039447d6
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:54:16 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:54:15 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - ff11534b-6d88-4b9b-8d1f-7b2bf4696964
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:54:21 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:54:20 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - fb96b09a-8727-4466-a48c-4ca222c4e059
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:54:26 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:54:26 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 9486bc96-a32d-4023-ae00-6ca24369c978
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:54:31 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:54:31 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - b3a5c413-eb36-4cfc-9f32-05fe7089f318
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:54:36 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2022-01-14T23:50:51.4532646Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:54:35 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 8d6f2fb1-4931-4332-abea-6ac9c1318566
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:54:41 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D9D7B8B2462926\",\"lastModified\":\"2022-01-14T23:50:51.4532646Z\",\"creationTime\":\"2022-01-14T23:49:09.4916586Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-14T23:49:09.4916586Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2022-01-14T23:54:40.427153Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 23:54:40 GMT
+      etag:
+      - '0x8D9D7B8B2462926'
+      last-modified:
+      - Fri, 14 Jan 2022 23:50:51 GMT
+      request-id:
+      - 192d8dd5-477b-44f0-9a58-95a02c1e4cf8
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 23:54:41 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/lifetimepoolstats?api-version=2022-01-01.15.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#poolstats/@Element\",\"url\":\"https://batch.southcentralus.batch.azure.com/lifetimepoolstats\",\"usageStats\":{\r\n
-        \   \"startTime\":\"2021-07-30T13:06:10.450905Z\",\"lastUpdateTime\":\"2021-07-30T13:06:10.450905Z\",\"dedicatedCoreTime\":\"PT0S\"\r\n
-        \ },\"resourceStats\":{\r\n    \"startTime\":\"2021-07-30T13:06:10.450905Z\",\"diskReadIOps\":\"0\",\"diskWriteIOps\":\"0\",\"lastUpdateTime\":\"2021-07-30T13:06:10.450905Z\",\"avgCPUPercentage\":0.0,\"avgMemoryGiB\":0.0,\"peakMemoryGiB\":0.0,\"avgDiskGiB\":0.0,\"peakDiskGiB\":0.0,\"diskReadGiB\":0.0,\"diskWriteGiB\":0.0,\"networkReadGiB\":0.0,\"networkWriteGiB\":0.0\r\n
+        \   \"startTime\":\"2022-01-14T23:41:43.1857777Z\",\"lastUpdateTime\":\"2022-01-14T23:41:43.1857777Z\",\"dedicatedCoreTime\":\"PT0S\"\r\n
+        \ },\"resourceStats\":{\r\n    \"startTime\":\"2022-01-14T23:41:43.1857777Z\",\"diskReadIOps\":\"0\",\"diskWriteIOps\":\"0\",\"lastUpdateTime\":\"2022-01-14T23:41:43.1857777Z\",\"avgCPUPercentage\":0.0,\"avgMemoryGiB\":0.0,\"peakMemoryGiB\":0.0,\"avgDiskGiB\":0.0,\"peakDiskGiB\":0.0,\"diskReadGiB\":0.0,\"diskWriteGiB\":0.0,\"networkReadGiB\":0.0,\"networkWriteGiB\":0.0\r\n
         \ }\r\n}"
     headers:
       content-type:
@@ -419,9 +3335,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 13:06:34 GMT
+      - Fri, 14 Jan 2022 23:54:41 GMT
       request-id:
-      - 2fe10aea-7155-4c52-8151-115e2cd6451c
+      - c14a683f-cc08-4b88-98df-7314eee78914
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -443,14 +3359,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 13:06:34 GMT
+      - Fri, 14 Jan 2022 23:54:42 GMT
     method: GET
-    uri: https://batch.southcentralus.batch.azure.com/poolusagemetrics?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/poolusagemetrics?api-version=2022-01-01.15.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#poolusagemetrics\",\"value\":[]\r\n}"
@@ -460,9 +3376,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 13:06:34 GMT
+      - Fri, 14 Jan 2022 23:54:41 GMT
       request-id:
-      - 920ad640-a602-4004-b798-6fd1486dc874
+      - 84162704-993a-424c-84d3-4a739e3129fc
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

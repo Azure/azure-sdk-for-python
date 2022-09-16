@@ -12,38 +12,42 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-10-01
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Check
         the battery level\"\n      ],\n      \"answer\": \"**Check the battery level**\\n\\nYou
-        can check the battery level from the lock screen or the desktop:\",\n      \"confidenceScore\":
-        0.6544,\n      \"id\": 133,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
-        \     \"metadata\": {\n        \"explicitlytaggedheading\": \"check the battery
-        level\"\n      },\n      \"dialog\": {\n        \"isContextOnly\": false,\n
-        \       \"prompts\": []\n      }\n    },\n    {\n      \"questions\": [\n
-        \       \"Make your battery last\"\n      ],\n      \"answer\": \"**Make your
-        battery last**\\n\\nFor info on how to care for your battery and power supply,
-        conserve power, and make your Surface battery last longer, see [Surface battery
-        and power](http://www.microsoft.com/surface/support/hardware-and-drivers/battery-and-power)
-        on Surface.com.\",\n      \"confidenceScore\": 0.42950000000000005,\n      \"id\":
-        136,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
-        {\n        \"explicitlytaggedheading\": \"make your battery last\"\n      },\n
+        can check the battery level from the lock screen or on the desktop. Lock screen\\n\\nWhen
+        you wake your Surface Book, the battery status appears in the lower-right
+        corner of the lock screen. \u272A\",\n      \"confidenceScore\": 0.8101999999999999,\n
+        \     \"id\": 24,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n
+        \     \"metadata\": {\n        \"system_metadata_qna_edited_manually\": \"true\",\n
+        \       \"explicitlytaggedheading\": \"check the battery level\"\n      },\n
         \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
-        []\n      }\n    }\n  ]\n}"
+        [\n          {\n            \"displayOrder\": 0,\n            \"qnaId\": 25,\n
+        \           \"displayText\": \"Desktop taskbar\"\n          }\n        ]\n
+        \     }\n    },\n    {\n      \"questions\": [\n        \"Making your battery
+        last\"\n      ],\n      \"answer\": \"**Making your battery last**\\n\\nTo
+        learn ways to conserve power and make your battery last longer, see [Surface
+        battery and power](https://www.microsoft.com/surface/support/hardware-and-drivers/battery-and-power-pro)
+        on Surface.com.\",\n      \"confidenceScore\": 0.39399999999999996,\n      \"id\":
+        26,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n      \"metadata\":
+        {\n        \"system_metadata_qna_edited_manually\": \"true\",\n        \"explicitlytaggedheading\":
+        \"make your battery last\"\n      },\n      \"dialog\": {\n        \"isContextOnly\":
+        false,\n        \"prompts\": []\n      }\n    }\n  ]\n}"
     headers:
-      apim-request-id: 9fd77651-b899-4814-92b9-cec69b7ba85d
-      content-length: '1143'
+      apim-request-id: a4ae08d5-51bb-4d31-89bf-0c3932a4a13d
+      content-length: '1481'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
-      date: Thu, 28 Oct 2021 03:30:22 GMT
+      date: Tue, 02 Aug 2022 22:08:12 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '169'
+      x-envoy-upstream-service-time: '74'
     status:
       code: 200
       message: OK
-    url: https://wuppe.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c&deploymentName=test&api-version=2021-10-01
+    url: https://languagesdkresource.cognitiveservices.azure.com//language/:query-knowledgebases?projectName=testQA&deploymentName=test&api-version=2021-10-01
 version: 1

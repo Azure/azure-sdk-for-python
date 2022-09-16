@@ -6,22 +6,350 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
+import functools
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from msrest import Serializer
 
 from .. import models as _models
+from .._vendor import _convert_request, _format_url_section
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+def build_get_request(
+    certificate_name: str,
+    subscription_id: str,
+    resource_group_name: str,
+    provisioning_service_name: str,
+    *,
+    if_match: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}')
+    path_format_arguments = {
+        "certificateName": _SERIALIZER.url("certificate_name", certificate_name, 'str'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "provisioningServiceName": _SERIALIZER.url("provisioning_service_name", provisioning_service_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if if_match is not None:
+        header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_create_or_update_request(
+    subscription_id: str,
+    resource_group_name: str,
+    provisioning_service_name: str,
+    certificate_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    if_match: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    api_version = "2021-10-15"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "provisioningServiceName": _SERIALIZER.url("provisioning_service_name", provisioning_service_name, 'str'),
+        "certificateName": _SERIALIZER.url("certificate_name", certificate_name, 'str', max_length=256, min_length=0),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if if_match is not None:
+        header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PUT",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        json=json,
+        content=content,
+        **kwargs
+    )
+
+
+def build_delete_request(
+    subscription_id: str,
+    resource_group_name: str,
+    provisioning_service_name: str,
+    certificate_name: str,
+    *,
+    if_match: str,
+    certificate_name1: Optional[str] = None,
+    certificate_raw_bytes: Optional[bytearray] = None,
+    certificate_is_verified: Optional[bool] = None,
+    certificate_purpose: Optional[Union[str, "_models.CertificatePurpose"]] = None,
+    certificate_created: Optional[datetime.datetime] = None,
+    certificate_last_updated: Optional[datetime.datetime] = None,
+    certificate_has_private_key: Optional[bool] = None,
+    certificate_nonce: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "provisioningServiceName": _SERIALIZER.url("provisioning_service_name", provisioning_service_name, 'str'),
+        "certificateName": _SERIALIZER.url("certificate_name", certificate_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if certificate_name1 is not None:
+        query_parameters['certificate.name'] = _SERIALIZER.query("certificate_name1", certificate_name1, 'str')
+    if certificate_raw_bytes is not None:
+        query_parameters['certificate.rawBytes'] = _SERIALIZER.query("certificate_raw_bytes", certificate_raw_bytes, 'bytearray')
+    if certificate_is_verified is not None:
+        query_parameters['certificate.isVerified'] = _SERIALIZER.query("certificate_is_verified", certificate_is_verified, 'bool')
+    if certificate_purpose is not None:
+        query_parameters['certificate.purpose'] = _SERIALIZER.query("certificate_purpose", certificate_purpose, 'str')
+    if certificate_created is not None:
+        query_parameters['certificate.created'] = _SERIALIZER.query("certificate_created", certificate_created, 'iso-8601')
+    if certificate_last_updated is not None:
+        query_parameters['certificate.lastUpdated'] = _SERIALIZER.query("certificate_last_updated", certificate_last_updated, 'iso-8601')
+    if certificate_has_private_key is not None:
+        query_parameters['certificate.hasPrivateKey'] = _SERIALIZER.query("certificate_has_private_key", certificate_has_private_key, 'bool')
+    if certificate_nonce is not None:
+        query_parameters['certificate.nonce'] = _SERIALIZER.query("certificate_nonce", certificate_nonce, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_request(
+    subscription_id: str,
+    resource_group_name: str,
+    provisioning_service_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "provisioningServiceName": _SERIALIZER.url("provisioning_service_name", provisioning_service_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_generate_verification_code_request(
+    certificate_name: str,
+    subscription_id: str,
+    resource_group_name: str,
+    provisioning_service_name: str,
+    *,
+    if_match: str,
+    certificate_name1: Optional[str] = None,
+    certificate_raw_bytes: Optional[bytearray] = None,
+    certificate_is_verified: Optional[bool] = None,
+    certificate_purpose: Optional[Union[str, "_models.CertificatePurpose"]] = None,
+    certificate_created: Optional[datetime.datetime] = None,
+    certificate_last_updated: Optional[datetime.datetime] = None,
+    certificate_has_private_key: Optional[bool] = None,
+    certificate_nonce: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}/generateVerificationCode')
+    path_format_arguments = {
+        "certificateName": _SERIALIZER.url("certificate_name", certificate_name, 'str'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "provisioningServiceName": _SERIALIZER.url("provisioning_service_name", provisioning_service_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if certificate_name1 is not None:
+        query_parameters['certificate.name'] = _SERIALIZER.query("certificate_name1", certificate_name1, 'str')
+    if certificate_raw_bytes is not None:
+        query_parameters['certificate.rawBytes'] = _SERIALIZER.query("certificate_raw_bytes", certificate_raw_bytes, 'bytearray')
+    if certificate_is_verified is not None:
+        query_parameters['certificate.isVerified'] = _SERIALIZER.query("certificate_is_verified", certificate_is_verified, 'bool')
+    if certificate_purpose is not None:
+        query_parameters['certificate.purpose'] = _SERIALIZER.query("certificate_purpose", certificate_purpose, 'str')
+    if certificate_created is not None:
+        query_parameters['certificate.created'] = _SERIALIZER.query("certificate_created", certificate_created, 'iso-8601')
+    if certificate_last_updated is not None:
+        query_parameters['certificate.lastUpdated'] = _SERIALIZER.query("certificate_last_updated", certificate_last_updated, 'iso-8601')
+    if certificate_has_private_key is not None:
+        query_parameters['certificate.hasPrivateKey'] = _SERIALIZER.query("certificate_has_private_key", certificate_has_private_key, 'bool')
+    if certificate_nonce is not None:
+        query_parameters['certificate.nonce'] = _SERIALIZER.query("certificate_nonce", certificate_nonce, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_verify_certificate_request(
+    certificate_name: str,
+    subscription_id: str,
+    resource_group_name: str,
+    provisioning_service_name: str,
+    *,
+    if_match: str,
+    json: JSONType = None,
+    content: Any = None,
+    certificate_name1: Optional[str] = None,
+    certificate_raw_bytes: Optional[bytearray] = None,
+    certificate_is_verified: Optional[bool] = None,
+    certificate_purpose: Optional[Union[str, "_models.CertificatePurpose"]] = None,
+    certificate_created: Optional[datetime.datetime] = None,
+    certificate_last_updated: Optional[datetime.datetime] = None,
+    certificate_has_private_key: Optional[bool] = None,
+    certificate_nonce: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    api_version = "2021-10-15"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}/verify')
+    path_format_arguments = {
+        "certificateName": _SERIALIZER.url("certificate_name", certificate_name, 'str'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "provisioningServiceName": _SERIALIZER.url("provisioning_service_name", provisioning_service_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if certificate_name1 is not None:
+        query_parameters['certificate.name'] = _SERIALIZER.query("certificate_name1", certificate_name1, 'str')
+    if certificate_raw_bytes is not None:
+        query_parameters['certificate.rawBytes'] = _SERIALIZER.query("certificate_raw_bytes", certificate_raw_bytes, 'bytearray')
+    if certificate_is_verified is not None:
+        query_parameters['certificate.isVerified'] = _SERIALIZER.query("certificate_is_verified", certificate_is_verified, 'bool')
+    if certificate_purpose is not None:
+        query_parameters['certificate.purpose'] = _SERIALIZER.query("certificate_purpose", certificate_purpose, 'str')
+    if certificate_created is not None:
+        query_parameters['certificate.created'] = _SERIALIZER.query("certificate_created", certificate_created, 'iso-8601')
+    if certificate_last_updated is not None:
+        query_parameters['certificate.lastUpdated'] = _SERIALIZER.query("certificate_last_updated", certificate_last_updated, 'iso-8601')
+    if certificate_has_private_key is not None:
+        query_parameters['certificate.hasPrivateKey'] = _SERIALIZER.query("certificate_has_private_key", certificate_has_private_key, 'bool')
+    if certificate_nonce is not None:
+        query_parameters['certificate.nonce'] = _SERIALIZER.query("certificate_nonce", certificate_nonce, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        json=json,
+        content=content,
+        **kwargs
+    )
 
 class DpsCertificateOperations(object):
     """DpsCertificateOperations operations.
@@ -45,15 +373,15 @@ class DpsCertificateOperations(object):
         self._deserialize = deserializer
         self._config = config
 
+    @distributed_trace
     def get(
         self,
-        certificate_name,  # type: str
-        resource_group_name,  # type: str
-        provisioning_service_name,  # type: str
-        if_match=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.CertificateResponse"
+        certificate_name: str,
+        resource_group_name: str,
+        provisioning_service_name: str,
+        if_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> "_models.CertificateResponse":
         """Get the certificate from the provisioning service.
 
         :param certificate_name: Name of the certificate to retrieve.
@@ -75,36 +403,25 @@ class DpsCertificateOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'certificateName': self._serialize.url("certificate_name", certificate_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'provisioningServiceName': self._serialize.url("provisioning_service_name", provisioning_service_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_request(
+            certificate_name=certificate_name,
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            provisioning_service_name=provisioning_service_name,
+            if_match=if_match,
+            template_url=self.get.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CertificateResponse', pipeline_response)
@@ -113,18 +430,20 @@ class DpsCertificateOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}'}  # type: ignore
 
+
+    @distributed_trace
     def create_or_update(
         self,
-        resource_group_name,  # type: str
-        provisioning_service_name,  # type: str
-        certificate_name,  # type: str
-        certificate_description,  # type: "_models.CertificateBodyDescription"
-        if_match=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.CertificateResponse"
+        resource_group_name: str,
+        provisioning_service_name: str,
+        certificate_name: str,
+        certificate_description: "_models.CertificateBodyDescription",
+        if_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> "_models.CertificateResponse":
         """Upload the certificate to the provisioning service.
 
         Add new certificate or update an existing certificate.
@@ -136,7 +455,8 @@ class DpsCertificateOperations(object):
         :param certificate_name: The name of the certificate create or update.
         :type certificate_name: str
         :param certificate_description: The certificate body.
-        :type certificate_description: ~azure.mgmt.iothubprovisioningservices.models.CertificateBodyDescription
+        :type certificate_description:
+         ~azure.mgmt.iothubprovisioningservices.models.CertificateBodyDescription
         :param if_match: ETag of the certificate. This is required to update an existing certificate,
          and ignored while creating a brand new certificate.
         :type if_match: str
@@ -150,41 +470,30 @@ class DpsCertificateOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
-        # Construct URL
-        url = self.create_or_update.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'provisioningServiceName': self._serialize.url("provisioning_service_name", provisioning_service_name, 'str'),
-            'certificateName': self._serialize.url("certificate_name", certificate_name, 'str', max_length=256, min_length=0),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        _json = self._serialize.body(certificate_description, 'CertificateBodyDescription')
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        request = build_create_or_update_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            provisioning_service_name=provisioning_service_name,
+            certificate_name=certificate_name,
+            content_type=content_type,
+            json=_json,
+            if_match=if_match,
+            template_url=self.create_or_update.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(certificate_description, 'CertificateBodyDescription')
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CertificateResponse', pipeline_response)
@@ -193,25 +502,27 @@ class DpsCertificateOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}'}  # type: ignore
 
+
+    @distributed_trace
     def delete(
         self,
-        resource_group_name,  # type: str
-        if_match,  # type: str
-        provisioning_service_name,  # type: str
-        certificate_name,  # type: str
-        certificate_name1=None,  # type: Optional[str]
-        certificate_raw_bytes=None,  # type: Optional[bytearray]
-        certificate_is_verified=None,  # type: Optional[bool]
-        certificate_purpose=None,  # type: Optional[Union[str, "_models.CertificatePurpose"]]
-        certificate_created=None,  # type: Optional[datetime.datetime]
-        certificate_last_updated=None,  # type: Optional[datetime.datetime]
-        certificate_has_private_key=None,  # type: Optional[bool]
-        certificate_nonce=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        if_match: str,
+        provisioning_service_name: str,
+        certificate_name: str,
+        certificate_name1: Optional[str] = None,
+        certificate_raw_bytes: Optional[bytearray] = None,
+        certificate_is_verified: Optional[bool] = None,
+        certificate_purpose: Optional[Union[str, "_models.CertificatePurpose"]] = None,
+        certificate_created: Optional[datetime.datetime] = None,
+        certificate_last_updated: Optional[datetime.datetime] = None,
+        certificate_has_private_key: Optional[bool] = None,
+        certificate_nonce: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """Delete the Provisioning Service Certificate.
 
         Deletes the specified certificate associated with the Provisioning Service.
@@ -233,7 +544,8 @@ class DpsCertificateOperations(object):
          private key.
         :type certificate_is_verified: bool
         :param certificate_purpose: A description that mentions the purpose of the certificate.
-        :type certificate_purpose: str or ~azure.mgmt.iothubprovisioningservices.models.CertificatePurpose
+        :type certificate_purpose: str or
+         ~azure.mgmt.iothubprovisioningservices.models.CertificatePurpose
         :param certificate_created: Time the certificate is created.
         :type certificate_created: ~datetime.datetime
         :param certificate_last_updated: Time the certificate is last updated.
@@ -252,51 +564,33 @@ class DpsCertificateOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'provisioningServiceName': self._serialize.url("provisioning_service_name", provisioning_service_name, 'str'),
-            'certificateName': self._serialize.url("certificate_name", certificate_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_delete_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            provisioning_service_name=provisioning_service_name,
+            certificate_name=certificate_name,
+            if_match=if_match,
+            certificate_name1=certificate_name1,
+            certificate_raw_bytes=certificate_raw_bytes,
+            certificate_is_verified=certificate_is_verified,
+            certificate_purpose=certificate_purpose,
+            certificate_created=certificate_created,
+            certificate_last_updated=certificate_last_updated,
+            certificate_has_private_key=certificate_has_private_key,
+            certificate_nonce=certificate_nonce,
+            template_url=self.delete.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if certificate_name1 is not None:
-            query_parameters['certificate.name'] = self._serialize.query("certificate_name1", certificate_name1, 'str')
-        if certificate_raw_bytes is not None:
-            query_parameters['certificate.rawBytes'] = self._serialize.query("certificate_raw_bytes", certificate_raw_bytes, 'bytearray')
-        if certificate_is_verified is not None:
-            query_parameters['certificate.isVerified'] = self._serialize.query("certificate_is_verified", certificate_is_verified, 'bool')
-        if certificate_purpose is not None:
-            query_parameters['certificate.purpose'] = self._serialize.query("certificate_purpose", certificate_purpose, 'str')
-        if certificate_created is not None:
-            query_parameters['certificate.created'] = self._serialize.query("certificate_created", certificate_created, 'iso-8601')
-        if certificate_last_updated is not None:
-            query_parameters['certificate.lastUpdated'] = self._serialize.query("certificate_last_updated", certificate_last_updated, 'iso-8601')
-        if certificate_has_private_key is not None:
-            query_parameters['certificate.hasPrivateKey'] = self._serialize.query("certificate_has_private_key", certificate_has_private_key, 'bool')
-        if certificate_nonce is not None:
-            query_parameters['certificate.nonce'] = self._serialize.query("certificate_nonce", certificate_nonce, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -304,13 +598,14 @@ class DpsCertificateOperations(object):
 
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}'}  # type: ignore
 
+
+    @distributed_trace
     def list(
         self,
-        resource_group_name,  # type: str
-        provisioning_service_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.CertificateListDescription"
+        resource_group_name: str,
+        provisioning_service_name: str,
+        **kwargs: Any
+    ) -> "_models.CertificateListDescription":
         """Get all the certificates tied to the provisioning service.
 
         :param resource_group_name: Name of resource group.
@@ -327,33 +622,23 @@ class DpsCertificateOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.list.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'provisioningServiceName': self._serialize.url("provisioning_service_name", provisioning_service_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_list_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            provisioning_service_name=provisioning_service_name,
+            template_url=self.list.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CertificateListDescription', pipeline_response)
@@ -362,25 +647,27 @@ class DpsCertificateOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates'}  # type: ignore
 
+
+    @distributed_trace
     def generate_verification_code(
         self,
-        certificate_name,  # type: str
-        if_match,  # type: str
-        resource_group_name,  # type: str
-        provisioning_service_name,  # type: str
-        certificate_name1=None,  # type: Optional[str]
-        certificate_raw_bytes=None,  # type: Optional[bytearray]
-        certificate_is_verified=None,  # type: Optional[bool]
-        certificate_purpose=None,  # type: Optional[Union[str, "_models.CertificatePurpose"]]
-        certificate_created=None,  # type: Optional[datetime.datetime]
-        certificate_last_updated=None,  # type: Optional[datetime.datetime]
-        certificate_has_private_key=None,  # type: Optional[bool]
-        certificate_nonce=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.VerificationCodeResponse"
+        certificate_name: str,
+        if_match: str,
+        resource_group_name: str,
+        provisioning_service_name: str,
+        certificate_name1: Optional[str] = None,
+        certificate_raw_bytes: Optional[bytearray] = None,
+        certificate_is_verified: Optional[bool] = None,
+        certificate_purpose: Optional[Union[str, "_models.CertificatePurpose"]] = None,
+        certificate_created: Optional[datetime.datetime] = None,
+        certificate_last_updated: Optional[datetime.datetime] = None,
+        certificate_has_private_key: Optional[bool] = None,
+        certificate_nonce: Optional[str] = None,
+        **kwargs: Any
+    ) -> "_models.VerificationCodeResponse":
         """Generate verification code for Proof of Possession.
 
         :param certificate_name: The mandatory logical name of the certificate, that the provisioning
@@ -401,7 +688,8 @@ class DpsCertificateOperations(object):
          private key.
         :type certificate_is_verified: bool
         :param certificate_purpose: Description mentioning the purpose of the certificate.
-        :type certificate_purpose: str or ~azure.mgmt.iothubprovisioningservices.models.CertificatePurpose
+        :type certificate_purpose: str or
+         ~azure.mgmt.iothubprovisioningservices.models.CertificatePurpose
         :param certificate_created: Certificate creation time.
         :type certificate_created: ~datetime.datetime
         :param certificate_last_updated: Certificate last updated time.
@@ -420,51 +708,33 @@ class DpsCertificateOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.generate_verification_code.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'certificateName': self._serialize.url("certificate_name", certificate_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'provisioningServiceName': self._serialize.url("provisioning_service_name", provisioning_service_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_generate_verification_code_request(
+            certificate_name=certificate_name,
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            provisioning_service_name=provisioning_service_name,
+            if_match=if_match,
+            certificate_name1=certificate_name1,
+            certificate_raw_bytes=certificate_raw_bytes,
+            certificate_is_verified=certificate_is_verified,
+            certificate_purpose=certificate_purpose,
+            certificate_created=certificate_created,
+            certificate_last_updated=certificate_last_updated,
+            certificate_has_private_key=certificate_has_private_key,
+            certificate_nonce=certificate_nonce,
+            template_url=self.generate_verification_code.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if certificate_name1 is not None:
-            query_parameters['certificate.name'] = self._serialize.query("certificate_name1", certificate_name1, 'str')
-        if certificate_raw_bytes is not None:
-            query_parameters['certificate.rawBytes'] = self._serialize.query("certificate_raw_bytes", certificate_raw_bytes, 'bytearray')
-        if certificate_is_verified is not None:
-            query_parameters['certificate.isVerified'] = self._serialize.query("certificate_is_verified", certificate_is_verified, 'bool')
-        if certificate_purpose is not None:
-            query_parameters['certificate.purpose'] = self._serialize.query("certificate_purpose", certificate_purpose, 'str')
-        if certificate_created is not None:
-            query_parameters['certificate.created'] = self._serialize.query("certificate_created", certificate_created, 'iso-8601')
-        if certificate_last_updated is not None:
-            query_parameters['certificate.lastUpdated'] = self._serialize.query("certificate_last_updated", certificate_last_updated, 'iso-8601')
-        if certificate_has_private_key is not None:
-            query_parameters['certificate.hasPrivateKey'] = self._serialize.query("certificate_has_private_key", certificate_has_private_key, 'bool')
-        if certificate_nonce is not None:
-            query_parameters['certificate.nonce'] = self._serialize.query("certificate_nonce", certificate_nonce, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VerificationCodeResponse', pipeline_response)
@@ -473,26 +743,28 @@ class DpsCertificateOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     generate_verification_code.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}/generateVerificationCode'}  # type: ignore
 
+
+    @distributed_trace
     def verify_certificate(
         self,
-        certificate_name,  # type: str
-        if_match,  # type: str
-        resource_group_name,  # type: str
-        provisioning_service_name,  # type: str
-        request,  # type: "_models.VerificationCodeRequest"
-        certificate_name1=None,  # type: Optional[str]
-        certificate_raw_bytes=None,  # type: Optional[bytearray]
-        certificate_is_verified=None,  # type: Optional[bool]
-        certificate_purpose=None,  # type: Optional[Union[str, "_models.CertificatePurpose"]]
-        certificate_created=None,  # type: Optional[datetime.datetime]
-        certificate_last_updated=None,  # type: Optional[datetime.datetime]
-        certificate_has_private_key=None,  # type: Optional[bool]
-        certificate_nonce=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.CertificateResponse"
+        certificate_name: str,
+        if_match: str,
+        resource_group_name: str,
+        provisioning_service_name: str,
+        request: "_models.VerificationCodeRequest",
+        certificate_name1: Optional[str] = None,
+        certificate_raw_bytes: Optional[bytearray] = None,
+        certificate_is_verified: Optional[bool] = None,
+        certificate_purpose: Optional[Union[str, "_models.CertificatePurpose"]] = None,
+        certificate_created: Optional[datetime.datetime] = None,
+        certificate_last_updated: Optional[datetime.datetime] = None,
+        certificate_has_private_key: Optional[bool] = None,
+        certificate_nonce: Optional[str] = None,
+        **kwargs: Any
+    ) -> "_models.CertificateResponse":
         """Verify certificate's private key possession.
 
         Verifies the certificate's private key possession by providing the leaf cert issued by the
@@ -517,7 +789,8 @@ class DpsCertificateOperations(object):
          private key.
         :type certificate_is_verified: bool
         :param certificate_purpose: Describe the purpose of the certificate.
-        :type certificate_purpose: str or ~azure.mgmt.iothubprovisioningservices.models.CertificatePurpose
+        :type certificate_purpose: str or
+         ~azure.mgmt.iothubprovisioningservices.models.CertificatePurpose
         :param certificate_created: Certificate creation time.
         :type certificate_created: ~datetime.datetime
         :param certificate_last_updated: Certificate last updated time.
@@ -536,56 +809,38 @@ class DpsCertificateOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
-        # Construct URL
-        url = self.verify_certificate.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'certificateName': self._serialize.url("certificate_name", certificate_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'provisioningServiceName': self._serialize.url("provisioning_service_name", provisioning_service_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if certificate_name1 is not None:
-            query_parameters['certificate.name'] = self._serialize.query("certificate_name1", certificate_name1, 'str')
-        if certificate_raw_bytes is not None:
-            query_parameters['certificate.rawBytes'] = self._serialize.query("certificate_raw_bytes", certificate_raw_bytes, 'bytearray')
-        if certificate_is_verified is not None:
-            query_parameters['certificate.isVerified'] = self._serialize.query("certificate_is_verified", certificate_is_verified, 'bool')
-        if certificate_purpose is not None:
-            query_parameters['certificate.purpose'] = self._serialize.query("certificate_purpose", certificate_purpose, 'str')
-        if certificate_created is not None:
-            query_parameters['certificate.created'] = self._serialize.query("certificate_created", certificate_created, 'iso-8601')
-        if certificate_last_updated is not None:
-            query_parameters['certificate.lastUpdated'] = self._serialize.query("certificate_last_updated", certificate_last_updated, 'iso-8601')
-        if certificate_has_private_key is not None:
-            query_parameters['certificate.hasPrivateKey'] = self._serialize.query("certificate_has_private_key", certificate_has_private_key, 'bool')
-        if certificate_nonce is not None:
-            query_parameters['certificate.nonce'] = self._serialize.query("certificate_nonce", certificate_nonce, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        _json = self._serialize.body(request, 'VerificationCodeRequest')
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        request = build_verify_certificate_request(
+            certificate_name=certificate_name,
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            provisioning_service_name=provisioning_service_name,
+            content_type=content_type,
+            if_match=if_match,
+            json=_json,
+            certificate_name1=certificate_name1,
+            certificate_raw_bytes=certificate_raw_bytes,
+            certificate_is_verified=certificate_is_verified,
+            certificate_purpose=certificate_purpose,
+            certificate_created=certificate_created,
+            certificate_last_updated=certificate_last_updated,
+            certificate_has_private_key=certificate_has_private_key,
+            certificate_nonce=certificate_nonce,
+            template_url=self.verify_certificate.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(request, 'VerificationCodeRequest')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CertificateResponse', pipeline_response)
@@ -594,4 +849,6 @@ class DpsCertificateOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     verify_certificate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}/verify'}  # type: ignore
+

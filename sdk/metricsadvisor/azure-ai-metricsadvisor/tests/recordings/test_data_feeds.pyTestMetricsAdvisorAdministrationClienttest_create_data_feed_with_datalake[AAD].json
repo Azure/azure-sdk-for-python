@@ -1,0 +1,317 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.7.2 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1753",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:06:13 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=Ag0OyaGPd0pEibyG7M6Pa-LGLH8mCQAAAKaHTNkOAAAA; expires=Sat, 15-Jan-2022 01:06:13 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12261.15 - WUS2 ProdSlices",
+        "x-ms-request-id": "e9f25c77-9302-4ff7-9d68-530b63de1a00"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/kerberos",
+        "tenant_region_scope": "WW",
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Cookie": "fpc=Ag0OyaGPd0pEibyG7M6Pa-LGLH8mCQAAAKaHTNkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.7.2 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "945",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:06:13 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=Ag0OyaGPd0pEibyG7M6Pa-LGLH8mCQAAAKaHTNkOAAAA; expires=Sat, 15-Jan-2022 01:06:14 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12261.14 - NCUS ProdSlices",
+        "x-ms-request-id": "05b083a6-7051-492f-9502-7215af130000"
+      },
+      "ResponseBody": {
+        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+        "api-version": "1.1",
+        "metadata": [
+          {
+            "preferred_network": "login.microsoftonline.com",
+            "preferred_cache": "login.windows.net",
+            "aliases": [
+              "login.microsoftonline.com",
+              "login.windows.net",
+              "login.microsoft.com",
+              "sts.windows.net"
+            ]
+          },
+          {
+            "preferred_network": "login.partner.microsoftonline.cn",
+            "preferred_cache": "login.partner.microsoftonline.cn",
+            "aliases": [
+              "login.partner.microsoftonline.cn",
+              "login.chinacloudapi.cn"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.de",
+            "preferred_cache": "login.microsoftonline.de",
+            "aliases": [
+              "login.microsoftonline.de"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.us",
+            "preferred_cache": "login.microsoftonline.us",
+            "aliases": [
+              "login.microsoftonline.us",
+              "login.usgovcloudapi.net"
+            ]
+          },
+          {
+            "preferred_network": "login-us.microsoftonline.com",
+            "preferred_cache": "login-us.microsoftonline.com",
+            "aliases": [
+              "login-us.microsoftonline.com"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "820",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "5d45cefa-5e0c-11ec-b8c6-6245b51668de"
+      },
+      "RequestBody": "{\u0022dataSourceType\u0022: \u0022AzureDataLakeStorageGen2\u0022, \u0022dataFeedName\u0022: \u0022datalakef5db92be-9688-4148-bf35-0df95ab0c183\u0022, \u0022granularityName\u0022: \u0022Daily\u0022, \u0022metrics\u0022: [{\u0022metricName\u0022: \u0022cost\u0022, \u0022metricDisplayName\u0022: \u0022Cost\u0022}, {\u0022metricName\u0022: \u0022revenue\u0022, \u0022metricDisplayName\u0022: \u0022Revenue\u0022}], \u0022dimension\u0022: [{\u0022dimensionName\u0022: \u0022category\u0022, \u0022dimensionDisplayName\u0022: \u0022Category\u0022}, {\u0022dimensionName\u0022: \u0022city\u0022, \u0022dimensionDisplayName\u0022: \u0022city\u0022}], \u0022dataStartFrom\u0022: \u00222019-01-01T00:00:00.000Z\u0022, \u0022startOffsetInSeconds\u0022: 0, \u0022maxConcurrency\u0022: -1, \u0022minRetryIntervalInSeconds\u0022: -1, \u0022stopRetryAfterInSeconds\u0022: -1, \u0022viewMode\u0022: \u0022Private\u0022, \u0022authenticationType\u0022: \u0022Basic\u0022, \u0022dataSourceParameter\u0022: {\u0022accountName\u0022: \u0022adsampledatalakegen2\u0022, \u0022accountKey\u0022: \u0022azure_datalake_account_key\u0022, \u0022fileSystemName\u0022: \u0022adsample\u0022, \u0022directoryTemplate\u0022: \u0022%Y/%m/%d\u0022, \u0022fileTemplate\u0022: \u0022adsample.json\u0022}}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "apim-request-id": "1f96b37b-6488-4c78-bb5d-be095ea0638c",
+        "Content-Length": "0",
+        "Date": "Thu, 16 Dec 2021 01:06:14 GMT",
+        "Location": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/5b5bd19e-6887-4314-ab28-98db787a5ef7",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "440",
+        "X-Request-ID": "1f96b37b-6488-4c78-bb5d-be095ea0638c"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/5b5bd19e-6887-4314-ab28-98db787a5ef7",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "5de24b35-5e0c-11ec-9865-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "8073dc5a-4cdc-4b0d-8e94-a2ac2ede96f6",
+        "Content-Length": "1314",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:06:14 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "109",
+        "X-Request-ID": "8073dc5a-4cdc-4b0d-8e94-a2ac2ede96f6"
+      },
+      "ResponseBody": {
+        "dataFeedId": "5b5bd19e-6887-4314-ab28-98db787a5ef7",
+        "dataFeedName": "datalakef5db92be-9688-4148-bf35-0df95ab0c183",
+        "metrics": [
+          {
+            "metricId": "9493c372-4ca8-4903-a56f-a252890a3349",
+            "metricName": "cost",
+            "metricDisplayName": "Cost",
+            "metricDescription": ""
+          },
+          {
+            "metricId": "c0ac7dac-4382-47b3-b1f5-1732023fdf95",
+            "metricName": "revenue",
+            "metricDisplayName": "Revenue",
+            "metricDescription": ""
+          }
+        ],
+        "dimension": [
+          {
+            "dimensionName": "category",
+            "dimensionDisplayName": "Category"
+          },
+          {
+            "dimensionName": "city",
+            "dimensionDisplayName": "city"
+          }
+        ],
+        "dataStartFrom": "2019-01-01T00:00:00Z",
+        "dataSourceType": "AzureDataLakeStorageGen2",
+        "timestampColumn": "",
+        "startOffsetInSeconds": 0,
+        "maxQueryPerMinute": 30.0,
+        "granularityName": "Daily",
+        "needRollup": "NoRollup",
+        "fillMissingPointType": "PreviousValue",
+        "fillMissingPointValue": 0.0,
+        "rollUpMethod": "None",
+        "dataFeedDescription": "",
+        "stopRetryAfterInSeconds": -1,
+        "minRetryIntervalInSeconds": -1,
+        "maxConcurrency": -1,
+        "viewMode": "Private",
+        "admins": [
+          "f850650c-1fcf-4489-b46f-71af2e30d360"
+        ],
+        "viewers": [],
+        "creator": "f850650c-1fcf-4489-b46f-71af2e30d360",
+        "status": "Active",
+        "createdTime": "2021-12-16T01:06:14Z",
+        "isAdmin": true,
+        "actionLinkTemplate": "",
+        "dataSourceParameter": {
+          "fileTemplate": "adsample.json",
+          "accountName": "adsampledatalakegen2",
+          "directoryTemplate": "%Y/%m/%d",
+          "fileSystemName": "adsample"
+        },
+        "authenticationType": "Basic"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/5b5bd19e-6887-4314-ab28-98db787a5ef7",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "5df9721e-5e0c-11ec-b843-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "apim-request-id": "3b31f962-06db-4dc5-8f56-b7f682b4705e",
+        "Content-Length": "0",
+        "Date": "Thu, 16 Dec 2021 01:06:15 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "259",
+        "X-Request-ID": "3b31f962-06db-4dc5-8f56-b7f682b4705e"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {
+    "data_feed_id": "5b5bd19e-6887-4314-ab28-98db787a5ef7",
+    "data_feed_name": "datalakef5db92be-9688-4148-bf35-0df95ab0c183"
+  }
+}

@@ -30,6 +30,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: metricsadvisor
+    TestProxy: true
     Artifacts:
     - name: azure-ai-metricsadvisor
       safeName: azureaimetricsadvisor

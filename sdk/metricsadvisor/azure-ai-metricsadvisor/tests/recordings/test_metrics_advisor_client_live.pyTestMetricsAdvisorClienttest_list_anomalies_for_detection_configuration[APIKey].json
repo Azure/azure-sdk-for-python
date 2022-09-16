@@ -1,0 +1,3970 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/metrics_advisor_anomaly_detection_configuration_id/anomalies/query",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "80",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "b8660370-5e0c-11ec-a172-6245b51668de"
+      },
+      "RequestBody": "{\u0022startTime\u0022: \u00222021-01-01T00:00:00.000Z\u0022, \u0022endTime\u0022: \u00222021-09-09T00:00:00.000Z\u0022}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "cfec9fef-331d-462a-b2d8-a6c0bfb387cf",
+        "Content-Length": "61965",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:08:46 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "181",
+        "X-Request-ID": "cfec9fef-331d-462a-b2d8-a6c0bfb387cf"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 15420.0,
+              "expectedValue": 14904.236708889845
+            }
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3679755.4,
+              "expectedValue": 3594199.9173268327
+            }
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 18646.0,
+              "expectedValue": 18461.933031277986
+            }
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 5868974.6,
+              "expectedValue": 5762104.088142085
+            }
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 30194203.6,
+              "expectedValue": 28232962.377209164
+            }
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 111783.2,
+              "expectedValue": 95792.08940179006
+            }
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 128.0,
+              "expectedValue": 53.33110771551577
+            }
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 78408.2,
+              "expectedValue": 77580.05857138261
+            }
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2084351.0,
+              "expectedValue": 1924520.700525785
+            }
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "Delhi",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 566280.0,
+              "expectedValue": 556858.2872410621
+            }
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3969258.0,
+              "expectedValue": 3888388.6792332586
+            }
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 99633.0,
+              "expectedValue": 98835.04371049948
+            }
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 36057885.8,
+              "expectedValue": 33702160.160400994
+            }
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 128.0,
+              "expectedValue": 53.45463352726066
+            }
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2143836.1999999993,
+              "expectedValue": 2113684.8813570985
+            }
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 2.4,
+              "expectedValue": 1.5730411205132784
+            }
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1783102.0,
+              "expectedValue": 1640694.105350191
+            }
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "Delhi",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 1.2,
+              "expectedValue": 0.7066551751756711
+            }
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 174927.8,
+              "expectedValue": 169707.25790459377
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 55791561.8,
+              "expectedValue": 52146711.57082515
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 17763.6,
+              "expectedValue": 14939.115446142221
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 44140.0,
+              "expectedValue": 40165.21522314834
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3637272.6,
+              "expectedValue": 3457374.1827957006
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 18544.0,
+              "expectedValue": 18573.49119556344
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 313939.2,
+              "expectedValue": 302983.7349080156
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 5713417.0,
+              "expectedValue": 5388312.2772086505
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 30842491.0,
+              "expectedValue": 29220589.251529176
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 65120708.60000002,
+              "expectedValue": 60928226.58873364
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2118757.4,
+              "expectedValue": 1990588.000879956
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 15958.6,
+              "expectedValue": 14801.412700077344
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3929462.2,
+              "expectedValue": 3747040.46482205
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 50246.6,
+              "expectedValue": 47199.46740307129
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 99554.2,
+              "expectedValue": 98790.40651653314
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 36613489.2,
+              "expectedValue": 34723916.07924643
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2129348.4,
+              "expectedValue": 2047309.0353815206
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1465438.4,
+              "expectedValue": 1406478.7844450518
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3390417.8,
+              "expectedValue": 3219749.022546579
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1819508.4,
+              "expectedValue": 1702650.3766832482
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 172878.8,
+              "expectedValue": 162880.98413497326
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 10715.2,
+              "expectedValue": 9806.569582296583
+            }
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 915052.0,
+              "expectedValue": 860381.6543449762
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 46223324.39999999,
+              "expectedValue": 51658853.93628524
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 18794.8,
+              "expectedValue": 14928.192046060632
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3557110.8,
+              "expectedValue": 3421692.7231707172
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 302523.0,
+              "expectedValue": 289047.92447263916
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 5002031.0,
+              "expectedValue": 5285940.591640723
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 21651545.2,
+              "expectedValue": 28160599.04553165
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1514682.7999999998,
+              "expectedValue": 1466595.985419273
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 54389650.6,
+              "expectedValue": 60434403.48157868
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 78846.2,
+              "expectedValue": 72856.42103928475
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1592324.4000000001,
+              "expectedValue": 1936304.813006105
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1349390.4,
+              "expectedValue": 1240019.6797783375
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 17878.8,
+              "expectedValue": 15001.054963810702
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3844083.4,
+              "expectedValue": 3766824.6904201247
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 29486.2,
+              "expectedValue": 48882.651330438646
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 26345993.6,
+              "expectedValue": 33519740.434638046
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.2,
+              "expectedValue": 0.0
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1114394.5999999999,
+              "expectedValue": 1452188.3661763624
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3772430.6,
+              "expectedValue": 3660658.4496160294
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2748075.2,
+              "expectedValue": 3088092.541722599
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 101570.8,
+              "expectedValue": 97019.67688166443
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 979829.2,
+              "expectedValue": 905428.1268474654
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1330345.8,
+              "expectedValue": 1647050.6998793813
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 286810.2,
+              "expectedValue": 266428.50153999095
+            }
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 556031.4,
+              "expectedValue": 907918.9346716325
+            }
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 15975.4,
+              "expectedValue": 14833.318674056622
+            }
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1021213.2,
+              "expectedValue": 1268518.416997127
+            }
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 12462.6,
+              "expectedValue": 17120.37641611239
+            }
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3128841.0,
+              "expectedValue": 3063083.1069818996
+            }
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 9539.6,
+              "expectedValue": 11417.46805957497
+            }
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 888728.0,
+              "expectedValue": 1105167.665080527
+            }
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 944571.8,
+              "expectedValue": 1018683.8275201623
+            }
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 555486.2,
+              "expectedValue": 600511.9460640918
+            }
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 820800.4,
+              "expectedValue": 827960.4535627111
+            }
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 99953.0,
+              "expectedValue": 91291.61516647617
+            }
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 13476.2,
+              "expectedValue": 13018.050446140425
+            }
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 57432.4,
+              "expectedValue": 74639.80632230906
+            }
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 25057.4,
+              "expectedValue": 26335.948356205896
+            }
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 2.8,
+              "expectedValue": 0.3603323274967791
+            }
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2844699.5999999996,
+              "expectedValue": 2830567.6397403707
+            }
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 49483.0,
+              "expectedValue": 54036.26355747791
+            }
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 278462.6,
+              "expectedValue": 231288.6949115089
+            }
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 497992.2,
+              "expectedValue": 515628.9438528166
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 14175.2,
+              "expectedValue": 14011.667618596795
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 958754.0,
+              "expectedValue": 1237596.049123676
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 12382.2,
+              "expectedValue": 15529.391246004403
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2709864.8,
+              "expectedValue": 2702268.4446283607
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 8022.8,
+              "expectedValue": 10043.521173708903
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2100637.6,
+              "expectedValue": 2310777.468518325
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 2.8,
+              "expectedValue": 4.084072118604822
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 233914.0,
+              "expectedValue": 222107.3827913444
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 826612.4,
+              "expectedValue": 1080885.6091288687
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 841703.2,
+              "expectedValue": 954901.5194508741
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 459048.8,
+              "expectedValue": 553528.1572480674
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 728012.6,
+              "expectedValue": 769058.6676610776
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 46143.2,
+              "expectedValue": 71072.76767972016
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 2.0,
+              "expectedValue": 0.35857567815131547
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.2,
+              "expectedValue": 0.0
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2490582.0,
+              "expectedValue": 2654288.705689229
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1288664.2,
+              "expectedValue": 1318940.8256573013
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 65962.8,
+              "expectedValue": 70293.10788225455
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 525745.2,
+              "expectedValue": 609516.4172555495
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 44144.6,
+              "expectedValue": 49380.682789332786
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 76440.0,
+              "expectedValue": 79391.2231861852
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 238022.8,
+              "expectedValue": 218442.95013328307
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 4354.6,
+              "expectedValue": 5283.76781659235
+            }
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 505612.2,
+              "expectedValue": 518566.10077923804
+            }
+          },
+          {
+            "timestamp": "2021-09-03T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2441932.4,
+              "expectedValue": 2353681.314898354
+            }
+          },
+          {
+            "timestamp": "2021-09-03T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 113954.6,
+              "expectedValue": 106860.75165018426
+            }
+          },
+          {
+            "timestamp": "2021-09-03T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.2,
+              "expectedValue": 0.02631046265811555
+            }
+          },
+          {
+            "timestamp": "2021-09-03T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1265088.0,
+              "expectedValue": 1228363.4432157346
+            }
+          },
+          {
+            "timestamp": "2021-09-03T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2800629.6,
+              "expectedValue": 2704913.3962151622
+            }
+          },
+          {
+            "timestamp": "2021-09-03T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1119723.8,
+              "expectedValue": 1058800.5739074093
+            }
+          },
+          {
+            "timestamp": "2021-09-03T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3224109.1999999997,
+              "expectedValue": 3178474.442274154
+            }
+          },
+          {
+            "timestamp": "2021-09-03T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 31544272.2,
+              "expectedValue": 31781187.61271761
+            }
+          },
+          {
+            "timestamp": "2021-09-03T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2994072.2,
+              "expectedValue": 3139669.3185392586
+            }
+          },
+          {
+            "timestamp": "2021-09-03T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 89195.0,
+              "expectedValue": 82392.52610255797
+            }
+          },
+          {
+            "timestamp": "2021-09-03T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 238214.4,
+              "expectedValue": 233050.2230870262
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2806323.8,
+              "expectedValue": 2693149.711020451
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 54085206.4,
+              "expectedValue": 50202452.52693161
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 121492.2,
+              "expectedValue": 113889.2697952415
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 5461964.600000001,
+              "expectedValue": 5244270.14717106
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 30361792.4,
+              "expectedValue": 27857657.842299365
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1444745.8,
+              "expectedValue": 1366721.9769829495
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Delhi",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.2,
+              "expectedValue": 0.0
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 63024122.20000002,
+              "expectedValue": 58900349.339255504
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 854854.2,
+              "expectedValue": 761361.2148050971
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3195040.0,
+              "expectedValue": 3074398.553917697
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1286341.8,
+              "expectedValue": 1174225.0008364278
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 88944.0,
+              "expectedValue": 79991.57032012538
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 44478.2,
+              "expectedValue": 46893.542648426665
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 35930534.800000004,
+              "expectedValue": 33653423.035935074
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1423414.4000000001,
+              "expectedValue": 1365172.0810414234
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3519115.8,
+              "expectedValue": 3462448.346018242
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 99773.0,
+              "expectedValue": 90723.15435066422
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 973088.7999999999,
+              "expectedValue": 875753.1645225417
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Delhi",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 1.4,
+              "expectedValue": 0.37761464392903077
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 3.4,
+              "expectedValue": 0.7763852979455852
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 4094219.6,
+              "expectedValue": 3925034.3906976786
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 264315.0,
+              "expectedValue": 247474.70465266862
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 9966.2,
+              "expectedValue": 8914.960575021682
+            }
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 4728733.4,
+              "expectedValue": 4541980.89341128
+            }
+          },
+          {
+            "timestamp": "2021-09-01T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2860438.2,
+              "expectedValue": 2773294.3776804293
+            }
+          },
+          {
+            "timestamp": "2021-09-01T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 53245901.599999994,
+              "expectedValue": 51142464.48478422
+            }
+          },
+          {
+            "timestamp": "2021-09-01T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 13366.6,
+              "expectedValue": 14577.095304342409
+            }
+          },
+          {
+            "timestamp": "2021-09-01T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 122364.8,
+              "expectedValue": 115423.53065069548
+            }
+          },
+          {
+            "timestamp": "2021-09-01T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 5516639.0,
+              "expectedValue": 5299733.9872953845
+            }
+          },
+          {
+            "timestamp": "2021-09-01T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 29414407.6,
+              "expectedValue": 28513898.011989478
+            }
+          },
+          {
+            "timestamp": "2021-09-01T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1463983.2,
+              "expectedValue": 1387828.9033123115
+            }
+          },
+          {
+            "timestamp": "2021-09-01T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 62305531.599999994,
+              "expectedValue": 59983798.443240725
+            }
+          },
+          {
+            "timestamp": "2021-09-01T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2012590.6,
+              "expectedValue": 1928208.5279808403
+            }
+          },
+          {
+            "timestamp": "2021-09-01T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3252018.4000000004,
+              "expectedValue": 3159566.574251734
+            }
+          },
+          {
+            "timestamp": "2021-09-01T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1305978.8,
+              "expectedValue": 1189996.690630152
+            }
+          },
+          {
+            "timestamp": "2021-09-01T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 35114570.4,
+              "expectedValue": 34381166.07010745
+            }
+          },
+          {
+            "timestamp": "2021-09-01T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3538810.8,
+              "expectedValue": 3488619.308194952
+            }
+          },
+          {
+            "timestamp": "2021-09-01T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 98024.4,
+              "expectedValue": 92263.22551112942
+            }
+          },
+          {
+            "timestamp": "2021-09-01T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1720324.8,
+              "expectedValue": 1646333.965250487
+            }
+          },
+          {
+            "timestamp": "2021-09-01T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 256227.2,
+              "expectedValue": 248339.24482791848
+            }
+          },
+          {
+            "timestamp": "2021-08-31T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2827468.0,
+              "expectedValue": 2789850.0333792525
+            }
+          },
+          {
+            "timestamp": "2021-08-31T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 53828937.0,
+              "expectedValue": 52691742.96294699
+            }
+          },
+          {
+            "timestamp": "2021-08-31T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 120341.4,
+              "expectedValue": 116485.58669042763
+            }
+          },
+          {
+            "timestamp": "2021-08-31T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 239206.4,
+              "expectedValue": 253230.51804628258
+            }
+          },
+          {
+            "timestamp": "2021-08-31T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1464329.3999999997,
+              "expectedValue": 1422482.8480468797
+            }
+          },
+          {
+            "timestamp": "2021-08-31T00:00:00Z",
+            "dimension": {
+              "region": "Delhi",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.2,
+              "expectedValue": 0.0
+            }
+          },
+          {
+            "timestamp": "2021-08-31T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.2,
+              "expectedValue": 0.0
+            }
+          },
+          {
+            "timestamp": "2021-08-31T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3217475.8,
+              "expectedValue": 3178235.6116160066
+            }
+          },
+          {
+            "timestamp": "2021-08-31T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1306074.2,
+              "expectedValue": 1217988.2424153732
+            }
+          },
+          {
+            "timestamp": "2021-08-31T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 35630703.400000006,
+              "expectedValue": 35006384.02518826
+            }
+          },
+          {
+            "timestamp": "2021-08-31T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3518960.6,
+              "expectedValue": 3524426.662833169
+            }
+          },
+          {
+            "timestamp": "2021-08-31T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 2.8,
+              "expectedValue": 0.8680323748025722
+            }
+          },
+          {
+            "timestamp": "2021-08-31T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 4821.0,
+              "expectedValue": 5241.219612500226
+            }
+          },
+          {
+            "timestamp": "2021-08-31T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 98262.4,
+              "expectedValue": 92861.14951149026
+            }
+          },
+          {
+            "timestamp": "2021-08-31T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 227831.4,
+              "expectedValue": 251983.6619293398
+            }
+          },
+          {
+            "timestamp": "2021-08-30T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2870895.6,
+              "expectedValue": 2819772.0289156763
+            }
+          },
+          {
+            "timestamp": "2021-08-30T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1778079.2,
+              "expectedValue": 1647930.7476587896
+            }
+          },
+          {
+            "timestamp": "2021-08-30T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 122665.8,
+              "expectedValue": 116448.06030598703
+            }
+          },
+          {
+            "timestamp": "2021-08-30T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 44415.6,
+              "expectedValue": 41937.94744068611
+            }
+          },
+          {
+            "timestamp": "2021-08-30T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3259115.2,
+              "expectedValue": 3204318.048510608
+            }
+          },
+          {
+            "timestamp": "2021-08-30T00:00:00Z",
+            "dimension": {
+              "region": "Delhi",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 427890.0,
+              "expectedValue": 500064.8948097963
+            }
+          },
+          {
+            "timestamp": "2021-08-30T00:00:00Z",
+            "dimension": {
+              "region": "Delhi",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 110911.6,
+              "expectedValue": 177463.5037806232
+            }
+          },
+          {
+            "timestamp": "2021-08-30T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 34993822.8,
+              "expectedValue": 34646607.65268621
+            }
+          },
+          {
+            "timestamp": "2021-08-30T00:00:00Z",
+            "dimension": {
+              "region": "Delhi",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3795650.0,
+              "expectedValue": 5052743.147396773
+            }
+          },
+          {
+            "timestamp": "2021-08-30T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1429030.0,
+              "expectedValue": 1489713.0839464657
+            }
+          },
+          {
+            "timestamp": "2021-08-30T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 2.4,
+              "expectedValue": 0.8516811857786479
+            }
+          },
+          {
+            "timestamp": "2021-08-30T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 4845.2,
+              "expectedValue": 5097.6253170685695
+            }
+          },
+          {
+            "timestamp": "2021-08-30T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 95261.2,
+              "expectedValue": 90631.73932481908
+            }
+          },
+          {
+            "timestamp": "2021-08-30T00:00:00Z",
+            "dimension": {
+              "region": "Delhi",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 4500355.4,
+              "expectedValue": 5901957.672928559
+            }
+          },
+          {
+            "timestamp": "2021-08-29T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2185478.2,
+              "expectedValue": 2170962.6759264823
+            }
+          },
+          {
+            "timestamp": "2021-08-29T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 81663.2,
+              "expectedValue": 78599.52241041596
+            }
+          },
+          {
+            "timestamp": "2021-08-29T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.4,
+              "expectedValue": 0.023143287585071518
+            }
+          },
+          {
+            "timestamp": "2021-08-29T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 230216.4,
+              "expectedValue": 224691.99060479912
+            }
+          },
+          {
+            "timestamp": "2021-08-29T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 914488.0,
+              "expectedValue": 951341.9038283993
+            }
+          },
+          {
+            "timestamp": "2021-08-29T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2508093.4000000004,
+              "expectedValue": 2495687.1836120985
+            }
+          },
+          {
+            "timestamp": "2021-08-29T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 53255.4,
+              "expectedValue": 52551.814578713536
+            }
+          },
+          {
+            "timestamp": "2021-08-29T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 1.6,
+              "expectedValue": 0.8254581281729148
+            }
+          },
+          {
+            "timestamp": "2021-08-29T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 24493553.4,
+              "expectedValue": 25705507.24248744
+            }
+          },
+          {
+            "timestamp": "2021-08-29T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2564323.8,
+              "expectedValue": 2769481.4298086492
+            }
+          },
+          {
+            "timestamp": "2021-08-29T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 69723.6,
+              "expectedValue": 67618.16243640205
+            }
+          },
+          {
+            "timestamp": "2021-08-29T00:00:00Z",
+            "dimension": {
+              "region": "Delhi",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 2.0,
+              "expectedValue": 0.6813866569345242
+            }
+          },
+          {
+            "timestamp": "2021-08-29T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 213018.6,
+              "expectedValue": 209509.5565277068
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1821095.0,
+              "expectedValue": 1880633.601009862
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 42160.2,
+              "expectedValue": 36733.92255847708
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 206663.2,
+              "expectedValue": 209790.78144624218
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 856691.8,
+              "expectedValue": 809845.2152300065
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1410373.5999999999,
+              "expectedValue": 1340465.3992085145
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2120473.6,
+              "expectedValue": 2190673.5908331377
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 44292.8,
+              "expectedValue": 49795.23606274424
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 29353.4,
+              "expectedValue": 27288.00778165344
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 1.4,
+              "expectedValue": 0.7777131841014607
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.4,
+              "expectedValue": 0.024198874273526336
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 24003791.2,
+              "expectedValue": 24910921.486072205
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 28.6,
+              "expectedValue": 12.584955773014197
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2534196.6,
+              "expectedValue": 2681804.6807964817
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 65794.0,
+              "expectedValue": 64324.21300762308
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 538012.2,
+              "expectedValue": 625484.7306194816
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 40939.2,
+              "expectedValue": 38193.24715128368
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1171521.2,
+              "expectedValue": 1116497.7430947903
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 135196.4,
+              "expectedValue": 128075.33425603808
+            }
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 23.2,
+              "expectedValue": 3.2043217945735565
+            }
+          },
+          {
+            "timestamp": "2021-08-27T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2924002.2,
+              "expectedValue": 2736438.9680029
+            }
+          },
+          {
+            "timestamp": "2021-08-27T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 249643.6,
+              "expectedValue": 245013.93961893415
+            }
+          },
+          {
+            "timestamp": "2021-08-27T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 26429373.8,
+              "expectedValue": 25774347.06993498
+            }
+          },
+          {
+            "timestamp": "2021-08-27T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 144.0,
+              "expectedValue": 65.43086642765398
+            }
+          },
+          {
+            "timestamp": "2021-08-27T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 64996.4,
+              "expectedValue": 57465.93397871828
+            }
+          },
+          {
+            "timestamp": "2021-08-27T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3189768.0,
+              "expectedValue": 3060220.67927524
+            }
+          },
+          {
+            "timestamp": "2021-08-27T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 31740430.0,
+              "expectedValue": 31781187.61271761
+            }
+          },
+          {
+            "timestamp": "2021-08-27T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 144.0,
+              "expectedValue": 63.72113722460451
+            }
+          },
+          {
+            "timestamp": "2021-08-27T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 4518.2,
+              "expectedValue": 3990.279980946186
+            }
+          },
+          {
+            "timestamp": "2021-08-27T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 229280.0,
+              "expectedValue": 223735.0793487389
+            }
+          },
+          {
+            "timestamp": "2021-08-26T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 278819.8,
+              "expectedValue": 272850.9200202143
+            }
+          },
+          {
+            "timestamp": "2021-08-26T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 215.0,
+              "expectedValue": 65.00300295210225
+            }
+          },
+          {
+            "timestamp": "2021-08-26T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 3067805.8,
+              "expectedValue": 3067324.184041086
+            }
+          },
+          {
+            "timestamp": "2021-08-26T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.4,
+              "expectedValue": 0.0
+            }
+          },
+          {
+            "timestamp": "2021-08-26T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 69728.6,
+              "expectedValue": 63428.568568213544
+            }
+          },
+          {
+            "timestamp": "2021-08-26T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 2.2,
+              "expectedValue": 0.6822232959585527
+            }
+          },
+          {
+            "timestamp": "2021-08-26T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 215.4,
+              "expectedValue": 63.66327883432905
+            }
+          },
+          {
+            "timestamp": "2021-08-26T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 5359.6,
+              "expectedValue": 4991.36672684892
+            }
+          },
+          {
+            "timestamp": "2021-08-25T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.2,
+              "expectedValue": 0.020336306134938305
+            }
+          },
+          {
+            "timestamp": "2021-08-25T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 284270.0,
+              "expectedValue": 275635.09835896216
+            }
+          },
+          {
+            "timestamp": "2021-08-25T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 382034.8,
+              "expectedValue": 363447.9716645364
+            }
+          },
+          {
+            "timestamp": "2021-08-25T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 28790026.2,
+              "expectedValue": 27785672.80774203
+            }
+          },
+          {
+            "timestamp": "2021-08-25T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 793209.4,
+              "expectedValue": 716546.3230147297
+            }
+          },
+          {
+            "timestamp": "2021-08-25T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 233.4,
+              "expectedValue": 64.57513947655052
+            }
+          },
+          {
+            "timestamp": "2021-08-25T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.2,
+              "expectedValue": 0.0
+            }
+          },
+          {
+            "timestamp": "2021-08-25T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 73358.2,
+              "expectedValue": 62694.42336622866
+            }
+          },
+          {
+            "timestamp": "2021-08-25T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 34365703.8,
+              "expectedValue": 34287439.864768654
+            }
+          },
+          {
+            "timestamp": "2021-08-25T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 233.6,
+              "expectedValue": 63.60542044405359
+            }
+          },
+          {
+            "timestamp": "2021-08-25T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 894168.2,
+              "expectedValue": 817038.6964669436
+            }
+          },
+          {
+            "timestamp": "2021-08-25T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 4136178.8,
+              "expectedValue": 3919348.965555142
+            }
+          },
+          {
+            "timestamp": "2021-08-25T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 4772106.199999999,
+              "expectedValue": 4526599.531010914
+            }
+          },
+          {
+            "timestamp": "2021-08-24T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 285057.4,
+              "expectedValue": 278674.2042802683
+            }
+          },
+          {
+            "timestamp": "2021-08-24T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 5450704.200000001,
+              "expectedValue": 5328316.484723231
+            }
+          },
+          {
+            "timestamp": "2021-08-24T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 29559314.0,
+              "expectedValue": 28327296.815904554
+            }
+          },
+          {
+            "timestamp": "2021-08-24T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 175.6,
+              "expectedValue": 64.14727600099877
+            }
+          },
+          {
+            "timestamp": "2021-08-24T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 71060.6,
+              "expectedValue": 65686.60980132784
+            }
+          },
+          {
+            "timestamp": "2021-08-24T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3234972.4,
+              "expectedValue": 3388188.709652606
+            }
+          },
+          {
+            "timestamp": "2021-08-24T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 35202442.6,
+              "expectedValue": 34818931.614510655
+            }
+          },
+          {
+            "timestamp": "2021-08-24T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 175.6,
+              "expectedValue": 63.54756205377813
+            }
+          },
+          {
+            "timestamp": "2021-08-24T00:00:00Z",
+            "dimension": {
+              "region": "Delhi",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.6,
+              "expectedValue": 0.10820453540771693
+            }
+          },
+          {
+            "timestamp": "2021-08-24T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 39687.6,
+              "expectedValue": 41989.74203972904
+            }
+          },
+          {
+            "timestamp": "2021-08-24T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.8,
+              "expectedValue": 0.11794708682789304
+            }
+          },
+          {
+            "timestamp": "2021-08-23T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 281662.0,
+              "expectedValue": 274433.9671919434
+            }
+          },
+          {
+            "timestamp": "2021-08-23T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.2,
+              "expectedValue": 0.0
+            }
+          },
+          {
+            "timestamp": "2021-08-23T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 28851992.8,
+              "expectedValue": 27966225.355117608
+            }
+          },
+          {
+            "timestamp": "2021-08-23T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 268305.2,
+              "expectedValue": 256678.50950533443
+            }
+          },
+          {
+            "timestamp": "2021-08-23T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 117.6,
+              "expectedValue": 63.71941252544704
+            }
+          },
+          {
+            "timestamp": "2021-08-23T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 1.4,
+              "expectedValue": 0.5408853966017415
+            }
+          },
+          {
+            "timestamp": "2021-08-23T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 117.6,
+              "expectedValue": 63.489703663502674
+            }
+          },
+          {
+            "timestamp": "2021-08-22T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 764449.0,
+              "expectedValue": 605754.4795700322
+            }
+          },
+          {
+            "timestamp": "2021-08-22T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1367578.0000000002,
+              "expectedValue": 1404382.8867704156
+            }
+          },
+          {
+            "timestamp": "2021-08-22T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 1.8,
+              "expectedValue": 0.4985272433487493
+            }
+          },
+          {
+            "timestamp": "2021-08-22T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 24141036.4,
+              "expectedValue": 25264131.593112707
+            }
+          },
+          {
+            "timestamp": "2021-08-22T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.4,
+              "expectedValue": 0.008770575730321714
+            }
+          },
+          {
+            "timestamp": "2021-08-22T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2574428.2,
+              "expectedValue": 2712511.1399546852
+            }
+          },
+          {
+            "timestamp": "2021-08-22T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1134191.6,
+              "expectedValue": 1167409.933859988
+            }
+          },
+          {
+            "timestamp": "2021-08-21T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 36640.0,
+              "expectedValue": 32845.285344611075
+            }
+          },
+          {
+            "timestamp": "2021-08-21T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 713689.8,
+              "expectedValue": 540781.7711012078
+            }
+          },
+          {
+            "timestamp": "2021-08-21T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 85.8,
+              "expectedValue": 62.86368557434357
+            }
+          },
+          {
+            "timestamp": "2021-08-21T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "value": 23242359.6,
+              "expectedValue": 24309348.803339146
+            }
+          },
+          {
+            "timestamp": "2021-08-21T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 85.8,
+              "expectedValue": 63.18851672897739
+            }
+          },
+          {
+            "timestamp": "2021-08-21T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.2,
+              "expectedValue": 0.005865633172224808
+            }
+          },
+          {
+            "timestamp": "2021-08-21T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2465176.2,
+              "expectedValue": 2614285.7693372658
+            }
+          },
+          {
+            "timestamp": "2021-08-21T00:00:00Z",
+            "dimension": {
+              "region": "Delhi",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 1.8,
+              "expectedValue": 0.9450090156841819
+            }
+          },
+          {
+            "timestamp": "2021-08-20T00:00:00Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 94.4,
+              "expectedValue": 62.44407096681864
+            }
+          },
+          {
+            "timestamp": "2021-08-20T00:00:00Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 44287.6,
+              "expectedValue": 42590.78124486485
+            }
+          },
+          {
+            "timestamp": "2021-08-20T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 1.8,
+              "expectedValue": 0.42394886590274466
+            }
+          },
+          {
+            "timestamp": "2021-08-20T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 94.60000000000001,
+              "expectedValue": 62.96178141675054
+            }
+          },
+          {
+            "timestamp": "2021-08-20T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 1.8,
+              "expectedValue": 0.686640569051943
+            }
+          },
+          {
+            "timestamp": "2021-08-19T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2960997.2,
+              "expectedValue": 3136422.2095051063
+            }
+          },
+          {
+            "timestamp": "2021-08-19T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.2,
+              "expectedValue": 0.0
+            }
+          },
+          {
+            "timestamp": "2021-08-19T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3249698.4000000004,
+              "expectedValue": 3381044.244105893
+            }
+          },
+          {
+            "timestamp": "2021-08-19T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 1.8,
+              "expectedValue": 0.7375742064188365
+            }
+          },
+          {
+            "timestamp": "2021-08-18T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1036488.2,
+              "expectedValue": 1095825.6582992822
+            }
+          },
+          {
+            "timestamp": "2021-08-18T00:00:00Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.2,
+              "expectedValue": 0.0
+            }
+          },
+          {
+            "timestamp": "2021-08-18T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 5108.0,
+              "expectedValue": 4846.033885065109
+            }
+          },
+          {
+            "timestamp": "2021-08-17T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 90400.8,
+              "expectedValue": 91882.17218818293
+            }
+          },
+          {
+            "timestamp": "2021-08-17T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1062598.8,
+              "expectedValue": 1137968.0766493168
+            }
+          },
+          {
+            "timestamp": "2021-08-17T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 37438.4,
+              "expectedValue": 39980.85077012258
+            }
+          },
+          {
+            "timestamp": "2021-08-16T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 85807.8,
+              "expectedValue": 92174.03467064463
+            }
+          },
+          {
+            "timestamp": "2021-08-16T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1045258.8,
+              "expectedValue": 1180802.299101658
+            }
+          },
+          {
+            "timestamp": "2021-08-16T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1158413.2000000002,
+              "expectedValue": 1209315.2403067811
+            }
+          },
+          {
+            "timestamp": "2021-08-16T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.8,
+              "expectedValue": 0.08826131082299894
+            }
+          },
+          {
+            "timestamp": "2021-08-16T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1026024.8,
+              "expectedValue": 1069979.110808358
+            }
+          },
+          {
+            "timestamp": "2021-08-16T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 3.2,
+              "expectedValue": 0.6334711905359063
+            }
+          },
+          {
+            "timestamp": "2021-08-15T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 799246.8,
+              "expectedValue": 598260.3643567222
+            }
+          },
+          {
+            "timestamp": "2021-08-15T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 63765.2,
+              "expectedValue": 54654.88564197587
+            }
+          },
+          {
+            "timestamp": "2021-08-15T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 13481.2,
+              "expectedValue": 8963.923789701006
+            }
+          },
+          {
+            "timestamp": "2021-08-15T00:00:00Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.2,
+              "expectedValue": 0.0
+            }
+          },
+          {
+            "timestamp": "2021-08-15T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 262908.4,
+              "expectedValue": 285760.93757460464
+            }
+          },
+          {
+            "timestamp": "2021-08-15T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 687468.8,
+              "expectedValue": 545161.2254735252
+            }
+          },
+          {
+            "timestamp": "2021-08-15T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.2,
+              "expectedValue": 0.0
+            }
+          },
+          {
+            "timestamp": "2021-08-15T00:00:00Z",
+            "dimension": {
+              "region": "Beijing",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 11.0,
+              "expectedValue": 0.6836282294931131
+            }
+          },
+          {
+            "timestamp": "2021-08-15T00:00:00Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 24.799999999999997,
+              "expectedValue": 13.929011436529034
+            }
+          },
+          {
+            "timestamp": "2021-08-15T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 2717852.2,
+              "expectedValue": 2973336.1543558766
+            }
+          },
+          {
+            "timestamp": "2021-08-15T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 3168020.0,
+              "expectedValue": 3469558.172498144
+            }
+          },
+          {
+            "timestamp": "2021-08-14T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 55396.2,
+              "expectedValue": 59413.505543305
+            }
+          },
+          {
+            "timestamp": "2021-08-14T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 561051.2,
+              "expectedValue": 530426.6140500883
+            }
+          },
+          {
+            "timestamp": "2021-08-14T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.2,
+              "expectedValue": 0.0
+            }
+          },
+          {
+            "timestamp": "2021-08-14T00:00:00Z",
+            "dimension": {
+              "region": "Mumbai",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 1.8,
+              "expectedValue": 0.6212604262360049
+            }
+          },
+          {
+            "timestamp": "2021-08-13T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 75282.0,
+              "expectedValue": 83574.89261554879
+            }
+          },
+          {
+            "timestamp": "2021-08-13T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 835114.8,
+              "expectedValue": 986642.4383526635
+            }
+          },
+          {
+            "timestamp": "2021-08-13T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Electronics (Accessories)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.4,
+              "expectedValue": 0.0025544338052809652
+            }
+          },
+          {
+            "timestamp": "2021-08-12T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 82642.0,
+              "expectedValue": 90932.79962750834
+            }
+          },
+          {
+            "timestamp": "2021-08-12T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 992041.4,
+              "expectedValue": 1138670.5235813526
+            }
+          },
+          {
+            "timestamp": "2021-08-12T00:00:00Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Electronics (Consumer)"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.2,
+              "expectedValue": 0.0
+            }
+          },
+          {
+            "timestamp": "2021-08-11T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 86037.8,
+              "expectedValue": 92796.44934986462
+            }
+          },
+          {
+            "timestamp": "2021-08-11T00:00:00Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "value": 1033696.6,
+              "expectedValue": 1186050.1276109335
+            }
+          },
+          {
+            "timestamp": "2021-08-11T00:00:00Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Grocery \u0026 Gourmet Food"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "value": 0.8,
+              "expectedValue": 0.09228344812115082
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

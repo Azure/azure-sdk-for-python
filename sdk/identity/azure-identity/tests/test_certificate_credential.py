@@ -107,6 +107,16 @@ def test_user_agent():
 
     credential.get_token("scope")
 
+def test_tenant_id():
+    transport = msal_validating_transport(
+        requests=[Request(required_headers={"User-Agent": USER_AGENT})],
+        responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
+
+    credential = CertificateCredential("tenant-id", "client-id", PEM_CERT_PATH, transport=transport)
+
+    credential.get_token("scope", tenant_id="tenant_id")
+
 
 @pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
 def test_authority(authority):
@@ -153,14 +163,14 @@ def test_regional_authority():
         mock_confidential_client.reset_mock()
 
         # region can be configured via environment variable
-        with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: region}, clear=True):
+        with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: region.value}, clear=True):
             credential = CertificateCredential("tenant", "client-id", PEM_CERT_PATH)
         with patch("msal.ConfidentialClientApplication", mock_confidential_client):
             credential.get_token("scope")
 
         assert mock_confidential_client.call_count == 1
         _, kwargs = mock_confidential_client.call_args
-        assert kwargs["azure_region"] == region
+        assert kwargs["azure_region"] == region.value
 
 
 def test_requires_certificate():

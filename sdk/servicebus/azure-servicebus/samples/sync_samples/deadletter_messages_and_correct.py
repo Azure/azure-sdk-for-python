@@ -13,8 +13,6 @@ For an example of basic usage for receiving from a dead-letter queue, please ref
 to the sample `receive_deadlettered_messages.py`.
 """
 
-# pylint: disable=C0111
-
 import os
 from azure.servicebus import ServiceBusMessage, ServiceBusSubQueue, ServiceBusClient
 

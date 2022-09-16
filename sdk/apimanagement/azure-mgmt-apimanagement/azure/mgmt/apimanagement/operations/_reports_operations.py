@@ -6,23 +6,397 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
+import functools
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from msrest import Serializer
 
 from .. import models as _models
+from .._vendor import _convert_request, _format_url_section
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+def build_list_by_api_request(
+    resource_group_name: str,
+    service_name: str,
+    subscription_id: str,
+    *,
+    filter: str,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    orderby: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-08-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byApi')
+    path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "serviceName": _SERIALIZER.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+    if top is not None:
+        query_parameters['$top'] = _SERIALIZER.query("top", top, 'int', minimum=1)
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int', minimum=0)
+    if orderby is not None:
+        query_parameters['$orderby'] = _SERIALIZER.query("orderby", orderby, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_by_user_request(
+    resource_group_name: str,
+    service_name: str,
+    subscription_id: str,
+    *,
+    filter: str,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    orderby: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-08-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byUser')
+    path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "serviceName": _SERIALIZER.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+    if top is not None:
+        query_parameters['$top'] = _SERIALIZER.query("top", top, 'int', minimum=1)
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int', minimum=0)
+    if orderby is not None:
+        query_parameters['$orderby'] = _SERIALIZER.query("orderby", orderby, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_by_operation_request(
+    resource_group_name: str,
+    service_name: str,
+    subscription_id: str,
+    *,
+    filter: str,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    orderby: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-08-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byOperation')
+    path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "serviceName": _SERIALIZER.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+    if top is not None:
+        query_parameters['$top'] = _SERIALIZER.query("top", top, 'int', minimum=1)
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int', minimum=0)
+    if orderby is not None:
+        query_parameters['$orderby'] = _SERIALIZER.query("orderby", orderby, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_by_product_request(
+    resource_group_name: str,
+    service_name: str,
+    subscription_id: str,
+    *,
+    filter: str,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    orderby: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-08-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byProduct')
+    path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "serviceName": _SERIALIZER.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+    if top is not None:
+        query_parameters['$top'] = _SERIALIZER.query("top", top, 'int', minimum=1)
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int', minimum=0)
+    if orderby is not None:
+        query_parameters['$orderby'] = _SERIALIZER.query("orderby", orderby, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_by_geo_request(
+    resource_group_name: str,
+    service_name: str,
+    subscription_id: str,
+    *,
+    filter: str,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-08-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byGeo')
+    path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "serviceName": _SERIALIZER.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+    if top is not None:
+        query_parameters['$top'] = _SERIALIZER.query("top", top, 'int', minimum=1)
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int', minimum=0)
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_by_subscription_request(
+    resource_group_name: str,
+    service_name: str,
+    subscription_id: str,
+    *,
+    filter: str,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    orderby: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-08-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/bySubscription')
+    path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "serviceName": _SERIALIZER.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+    if top is not None:
+        query_parameters['$top'] = _SERIALIZER.query("top", top, 'int', minimum=1)
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int', minimum=0)
+    if orderby is not None:
+        query_parameters['$orderby'] = _SERIALIZER.query("orderby", orderby, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_by_time_request(
+    resource_group_name: str,
+    service_name: str,
+    subscription_id: str,
+    *,
+    filter: str,
+    interval: datetime.timedelta,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    orderby: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-08-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byTime')
+    path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "serviceName": _SERIALIZER.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+    if top is not None:
+        query_parameters['$top'] = _SERIALIZER.query("top", top, 'int', minimum=1)
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int', minimum=0)
+    if orderby is not None:
+        query_parameters['$orderby'] = _SERIALIZER.query("orderby", orderby, 'str')
+    query_parameters['interval'] = _SERIALIZER.query("interval", interval, 'duration')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_by_request_request(
+    resource_group_name: str,
+    service_name: str,
+    subscription_id: str,
+    *,
+    filter: str,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-08-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byRequest')
+    path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "serviceName": _SERIALIZER.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+    if top is not None:
+        query_parameters['$top'] = _SERIALIZER.query("top", top, 'int', minimum=1)
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int', minimum=0)
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
 
 class ReportsOperations(object):
     """ReportsOperations operations.
@@ -31,7 +405,7 @@ class ReportsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.apimanagement.models
+    :type models: ~api_management_client.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -46,17 +420,17 @@ class ReportsOperations(object):
         self._deserialize = deserializer
         self._config = config
 
+    @distributed_trace
     def list_by_api(
         self,
-        resource_group_name,  # type: str
-        service_name,  # type: str
-        filter,  # type: str
-        top=None,  # type: Optional[int]
-        skip=None,  # type: Optional[int]
-        orderby=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.ReportCollection"]
+        resource_group_name: str,
+        service_name: str,
+        filter: str,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        orderby: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.ReportCollection"]:
         """Lists report records by API.
 
         :param resource_group_name: The name of the resource group.
@@ -73,7 +447,7 @@ class ReportsOperations(object):
         :type orderby: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ReportCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ReportCollection]
+        :rtype: ~azure.core.paging.ItemPaged[~api_management_client.models.ReportCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReportCollection"]
@@ -81,43 +455,41 @@ class ReportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_by_api.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
-                if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
-                if orderby is not None:
-                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_by_api_request(
+                    resource_group_name=resource_group_name,
+                    service_name=service_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    skip=skip,
+                    orderby=orderby,
+                    template_url=self.list_by_api.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_by_api_request(
+                    resource_group_name=resource_group_name,
+                    service_name=service_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    skip=skip,
+                    orderby=orderby,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('ReportCollection', pipeline_response)
+            deserialized = self._deserialize("ReportCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -130,28 +502,29 @@ class ReportsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
+
 
         return ItemPaged(
             get_next, extract_data
         )
     list_by_api.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byApi'}  # type: ignore
 
+    @distributed_trace
     def list_by_user(
         self,
-        resource_group_name,  # type: str
-        service_name,  # type: str
-        filter,  # type: str
-        top=None,  # type: Optional[int]
-        skip=None,  # type: Optional[int]
-        orderby=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.ReportCollection"]
+        resource_group_name: str,
+        service_name: str,
+        filter: str,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        orderby: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.ReportCollection"]:
         """Lists report records by User.
 
         :param resource_group_name: The name of the resource group.
@@ -180,7 +553,7 @@ class ReportsOperations(object):
         :type orderby: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ReportCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ReportCollection]
+        :rtype: ~azure.core.paging.ItemPaged[~api_management_client.models.ReportCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReportCollection"]
@@ -188,43 +561,41 @@ class ReportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_by_user.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
-                if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
-                if orderby is not None:
-                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_by_user_request(
+                    resource_group_name=resource_group_name,
+                    service_name=service_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    skip=skip,
+                    orderby=orderby,
+                    template_url=self.list_by_user.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_by_user_request(
+                    resource_group_name=resource_group_name,
+                    service_name=service_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    skip=skip,
+                    orderby=orderby,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('ReportCollection', pipeline_response)
+            deserialized = self._deserialize("ReportCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -237,28 +608,29 @@ class ReportsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
+
 
         return ItemPaged(
             get_next, extract_data
         )
     list_by_user.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byUser'}  # type: ignore
 
+    @distributed_trace
     def list_by_operation(
         self,
-        resource_group_name,  # type: str
-        service_name,  # type: str
-        filter,  # type: str
-        top=None,  # type: Optional[int]
-        skip=None,  # type: Optional[int]
-        orderby=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.ReportCollection"]
+        resource_group_name: str,
+        service_name: str,
+        filter: str,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        orderby: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.ReportCollection"]:
         """Lists report records by API Operations.
 
         :param resource_group_name: The name of the resource group.
@@ -287,7 +659,7 @@ class ReportsOperations(object):
         :type orderby: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ReportCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ReportCollection]
+        :rtype: ~azure.core.paging.ItemPaged[~api_management_client.models.ReportCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReportCollection"]
@@ -295,43 +667,41 @@ class ReportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_by_operation.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
-                if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
-                if orderby is not None:
-                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_by_operation_request(
+                    resource_group_name=resource_group_name,
+                    service_name=service_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    skip=skip,
+                    orderby=orderby,
+                    template_url=self.list_by_operation.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_by_operation_request(
+                    resource_group_name=resource_group_name,
+                    service_name=service_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    skip=skip,
+                    orderby=orderby,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('ReportCollection', pipeline_response)
+            deserialized = self._deserialize("ReportCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -344,28 +714,29 @@ class ReportsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
+
 
         return ItemPaged(
             get_next, extract_data
         )
     list_by_operation.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byOperation'}  # type: ignore
 
+    @distributed_trace
     def list_by_product(
         self,
-        resource_group_name,  # type: str
-        service_name,  # type: str
-        filter,  # type: str
-        top=None,  # type: Optional[int]
-        skip=None,  # type: Optional[int]
-        orderby=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.ReportCollection"]
+        resource_group_name: str,
+        service_name: str,
+        filter: str,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        orderby: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.ReportCollection"]:
         """Lists report records by Product.
 
         :param resource_group_name: The name of the resource group.
@@ -393,7 +764,7 @@ class ReportsOperations(object):
         :type orderby: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ReportCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ReportCollection]
+        :rtype: ~azure.core.paging.ItemPaged[~api_management_client.models.ReportCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReportCollection"]
@@ -401,43 +772,41 @@ class ReportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_by_product.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
-                if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
-                if orderby is not None:
-                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_by_product_request(
+                    resource_group_name=resource_group_name,
+                    service_name=service_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    skip=skip,
+                    orderby=orderby,
+                    template_url=self.list_by_product.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_by_product_request(
+                    resource_group_name=resource_group_name,
+                    service_name=service_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    skip=skip,
+                    orderby=orderby,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('ReportCollection', pipeline_response)
+            deserialized = self._deserialize("ReportCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -450,27 +819,28 @@ class ReportsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
+
 
         return ItemPaged(
             get_next, extract_data
         )
     list_by_product.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byProduct'}  # type: ignore
 
+    @distributed_trace
     def list_by_geo(
         self,
-        resource_group_name,  # type: str
-        service_name,  # type: str
-        filter,  # type: str
-        top=None,  # type: Optional[int]
-        skip=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.ReportCollection"]
+        resource_group_name: str,
+        service_name: str,
+        filter: str,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.ReportCollection"]:
         """Lists report records by geography.
 
         :param resource_group_name: The name of the resource group.
@@ -497,7 +867,7 @@ class ReportsOperations(object):
         :type skip: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ReportCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ReportCollection]
+        :rtype: ~azure.core.paging.ItemPaged[~api_management_client.models.ReportCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReportCollection"]
@@ -505,41 +875,39 @@ class ReportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_by_geo.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
-                if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_by_geo_request(
+                    resource_group_name=resource_group_name,
+                    service_name=service_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    skip=skip,
+                    template_url=self.list_by_geo.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_by_geo_request(
+                    resource_group_name=resource_group_name,
+                    service_name=service_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    skip=skip,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('ReportCollection', pipeline_response)
+            deserialized = self._deserialize("ReportCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -552,28 +920,29 @@ class ReportsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
+
 
         return ItemPaged(
             get_next, extract_data
         )
     list_by_geo.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byGeo'}  # type: ignore
 
+    @distributed_trace
     def list_by_subscription(
         self,
-        resource_group_name,  # type: str
-        service_name,  # type: str
-        filter,  # type: str
-        top=None,  # type: Optional[int]
-        skip=None,  # type: Optional[int]
-        orderby=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.ReportCollection"]
+        resource_group_name: str,
+        service_name: str,
+        filter: str,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        orderby: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.ReportCollection"]:
         """Lists report records by subscription.
 
         :param resource_group_name: The name of the resource group.
@@ -601,7 +970,7 @@ class ReportsOperations(object):
         :type orderby: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ReportCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ReportCollection]
+        :rtype: ~azure.core.paging.ItemPaged[~api_management_client.models.ReportCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReportCollection"]
@@ -609,43 +978,41 @@ class ReportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_by_subscription.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
-                if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
-                if orderby is not None:
-                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_by_subscription_request(
+                    resource_group_name=resource_group_name,
+                    service_name=service_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    skip=skip,
+                    orderby=orderby,
+                    template_url=self.list_by_subscription.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_by_subscription_request(
+                    resource_group_name=resource_group_name,
+                    service_name=service_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    skip=skip,
+                    orderby=orderby,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('ReportCollection', pipeline_response)
+            deserialized = self._deserialize("ReportCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -658,29 +1025,30 @@ class ReportsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
+
 
         return ItemPaged(
             get_next, extract_data
         )
     list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/bySubscription'}  # type: ignore
 
+    @distributed_trace
     def list_by_time(
         self,
-        resource_group_name,  # type: str
-        service_name,  # type: str
-        filter,  # type: str
-        interval,  # type: datetime.timedelta
-        top=None,  # type: Optional[int]
-        skip=None,  # type: Optional[int]
-        orderby=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.ReportCollection"]
+        resource_group_name: str,
+        service_name: str,
+        filter: str,
+        interval: datetime.timedelta,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        orderby: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.ReportCollection"]:
         """Lists report records by Time.
 
         :param resource_group_name: The name of the resource group.
@@ -713,7 +1081,7 @@ class ReportsOperations(object):
         :type orderby: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ReportCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ReportCollection]
+        :rtype: ~azure.core.paging.ItemPaged[~api_management_client.models.ReportCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReportCollection"]
@@ -721,44 +1089,43 @@ class ReportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_by_time.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
-                if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
-                if orderby is not None:
-                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
-                query_parameters['interval'] = self._serialize.query("interval", interval, 'duration')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_by_time_request(
+                    resource_group_name=resource_group_name,
+                    service_name=service_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    interval=interval,
+                    top=top,
+                    skip=skip,
+                    orderby=orderby,
+                    template_url=self.list_by_time.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_by_time_request(
+                    resource_group_name=resource_group_name,
+                    service_name=service_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    interval=interval,
+                    top=top,
+                    skip=skip,
+                    orderby=orderby,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('ReportCollection', pipeline_response)
+            deserialized = self._deserialize("ReportCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -771,27 +1138,28 @@ class ReportsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
+
 
         return ItemPaged(
             get_next, extract_data
         )
     list_by_time.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byTime'}  # type: ignore
 
+    @distributed_trace
     def list_by_request(
         self,
-        resource_group_name,  # type: str
-        service_name,  # type: str
-        filter,  # type: str
-        top=None,  # type: Optional[int]
-        skip=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.RequestReportCollection"]
+        resource_group_name: str,
+        service_name: str,
+        filter: str,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.RequestReportCollection"]:
         """Lists report records by Request.
 
         :param resource_group_name: The name of the resource group.
@@ -809,8 +1177,9 @@ class ReportsOperations(object):
         :param skip: Number of records to skip.
         :type skip: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either RequestReportCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.RequestReportCollection]
+        :return: An iterator like instance of either RequestReportCollection or the result of
+         cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~api_management_client.models.RequestReportCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RequestReportCollection"]
@@ -818,41 +1187,39 @@ class ReportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_by_request.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
-                if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_by_request_request(
+                    resource_group_name=resource_group_name,
+                    service_name=service_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    skip=skip,
+                    template_url=self.list_by_request.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_by_request_request(
+                    resource_group_name=resource_group_name,
+                    service_name=service_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    skip=skip,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('RequestReportCollection', pipeline_response)
+            deserialized = self._deserialize("RequestReportCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -865,11 +1232,12 @@ class ReportsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
+
 
         return ItemPaged(
             get_next, extract_data

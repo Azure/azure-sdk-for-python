@@ -1,0 +1,104 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "340",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "EntityLinking",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "56",
+              "text": ":)",
+              "language": "en"
+            },
+            {
+              "id": "0",
+              "text": ":(",
+              "language": "en"
+            },
+            {
+              "id": "22",
+              "text": "",
+              "language": "en"
+            },
+            {
+              "id": "19",
+              "text": ":P",
+              "language": "en"
+            },
+            {
+              "id": "1",
+              "text": ":D",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "d34f68cc-db54-4cfa-9560-177767247a78",
+        "Content-Length": "418",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=4,CognitiveServices.TextAnalytics.TextRecords=4",
+        "Date": "Wed, 08 Jun 2022 01:44:12 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "43"
+      },
+      "ResponseBody": {
+        "kind": "EntityLinkingResults",
+        "results": {
+          "documents": [
+            {
+              "id": "56",
+              "entities": [],
+              "warnings": []
+            },
+            {
+              "id": "0",
+              "entities": [],
+              "warnings": []
+            },
+            {
+              "id": "19",
+              "entities": [],
+              "warnings": []
+            },
+            {
+              "id": "1",
+              "entities": [],
+              "warnings": []
+            }
+          ],
+          "errors": [
+            {
+              "id": "22",
+              "error": {
+                "code": "InvalidArgument",
+                "message": "Invalid Document in request.",
+                "innererror": {
+                  "code": "InvalidDocument",
+                  "message": "Document text is empty."
+                }
+              }
+            }
+          ],
+          "modelVersion": "2021-06-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

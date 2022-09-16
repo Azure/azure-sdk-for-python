@@ -13,19 +13,20 @@
 #   virtual_machine_scale_set_rolling_upgrades: 4/4
 #   virtual_machine_scale_set_extensions: 5/5
 
+import os
 import time
 import unittest
 
+import pytest
 import azure.mgmt.compute
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtComputeTest(AzureMgmtTestCase):
+class TestMgmtCompute(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtComputeTest, self).setUp()
+    def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.compute.ComputeManagementClient
         )
@@ -75,7 +76,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = result.result()
 
     def create_load_balance_probe(self, group_name, location):
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = group_name
         PUBLIC_IP_ADDRESS_NAME = "public_ip_address_name"
         LOAD_BALANCER_NAME = "myLoadBalancer"
@@ -165,8 +166,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     @unittest.skip("skip temporary")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute_vmss_rolling_upgrades(self, resource_group):
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         VIRTUAL_MACHINE_SCALE_SET_NAME = self.get_resource_name("virtualmachinescaleset")
         NETWORK_NAME = self.get_resource_name("networknamex")
@@ -261,8 +263,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
         
     @unittest.skip("The entity was not found in this Azure location.")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute_vmss_extension(self, resource_group):
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         VIRTUAL_MACHINE_SCALE_SET_NAME = self.get_resource_name("virtualmachinescaleset")
         VIRTUAL_MACHINE_EXTENSION_NAME = self.get_resource_name("vmssextensionx")
@@ -390,10 +393,12 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_machine_scale_sets.begin_delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
         result = result.result()
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute_vmss_vm(self, resource_group):
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         VIRTUAL_MACHINE_SCALE_SET_NAME = self.get_resource_name("virtualmachinescaleset")
         NETWORK_NAME = self.get_resource_name("networknamex")
@@ -545,9 +550,11 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_machine_scale_sets.begin_delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
         result = result.result()
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute_vmss_vm_2(self, resource_group):
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         VIRTUAL_MACHINE_SCALE_SET_NAME = self.get_resource_name("virtualmachinescaleset")
         NETWORK_NAME = self.get_resource_name("networknamex")
@@ -657,9 +664,10 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     @unittest.skip("The (VMRedeployment) need artificially generated,skip for now")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute(self, resource_group):
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         VIRTUAL_MACHINE_SCALE_SET_NAME = self.get_resource_name("virtualmachinescaleset")
         VMSS_EXTENSION_NAME = self.get_resource_name("vmssextensionx")
@@ -847,9 +855,10 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute_vmss_base_2(self, resource_group):
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         VIRTUAL_MACHINE_SCALE_SET_NAME = self.get_resource_name("virtualmachinescaleset")
         VMSS_EXTENSION_NAME = self.get_resource_name("vmssextension")
@@ -977,9 +986,11 @@ class MgmtComputeTest(AzureMgmtTestCase):
     # can not test it, see: 
     # https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-maintenance-notifications
     # """)
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute_vmss_perform_maintenance(self, resource_group):
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         VIRTUAL_MACHINE_SCALE_SET_NAME = self.get_resource_name("virtualmachinescaleset")
         NETWORK_NAME = self.get_resource_name("networknamex")
@@ -1067,7 +1078,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             result = self.mgmt_client.virtual_machine_scale_sets.begin_perform_maintenance(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
             result = result.result()
         except ResourceExistsError as e:
-            self.assertTrue(str(e).startswith("(OperationNotAllowed) Operation 'performMaintenance' is not allowed on"))
+            assert str(e).startswith("(OperationNotAllowed) Operation 'performMaintenance' is not allowed on")
 
         # TODO: Operation 'performMaintenance' is not allowed on VM 'virtualmachinescalesetname_2' since the Subscription of this VM is not eligible.
         # Perform maintenance virtual machine scale set vms (TODO: need swagger file)
@@ -1075,7 +1086,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
            result = self.mgmt_client.virtual_machine_scale_set_vms.begin_perform_maintenance(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME, INSTANCE_ID)
            result = result.result()
         except ResourceExistsError as e:
-           self.assertTrue(str(e).startswith("(OperationNotAllowed) Operation 'performMaintenance' is not allowed on"))
+           assert str(e).startswith("(OperationNotAllowed) Operation 'performMaintenance' is not allowed on")
 
         # Delete virtual machine set (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_scale_sets.begin_delete(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)

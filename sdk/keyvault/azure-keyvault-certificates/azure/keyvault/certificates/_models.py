@@ -2,10 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 # pylint: disable=too-many-lines,too-many-public-methods
+from . import _generated_models as models
 from ._shared import parse_key_vault_id
-from ._generated.v7_1 import models
 from ._enums import(
     CertificatePolicyAction,
     KeyUsageType,
@@ -319,10 +318,10 @@ class KeyVaultCertificate(object):
     def _from_certificate_bundle(cls, certificate_bundle):
         # type: (models.CertificateBundle) -> KeyVaultCertificate
         """Construct a certificate from an autorest-generated certificateBundle"""
-        # pylint:disable=protected-access
+        # pylint:disable=protected-access, line-too-long
 
         if certificate_bundle.policy:
-            policy = CertificatePolicy._from_certificate_policy_bundle(certificate_bundle.policy)
+            policy = CertificatePolicy._from_certificate_policy_bundle(certificate_bundle.policy)  # type: Optional[CertificatePolicy]
         else:
             policy = None
 

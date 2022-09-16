@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 from json import loads
 from typing import cast, TYPE_CHECKING
-from six.moves.http_client import HTTPResponse as _HTTPResponse
+from http.client import HTTPResponse as _HTTPResponse
 from ._helpers import (
     get_charset_encoding,
     decode_to_text,
@@ -43,7 +43,7 @@ except (SyntaxError, ImportError):
         HttpResponse as _HttpResponse,
         HttpRequest as _HttpRequest
     )
-from ..utils._utils import _case_insensitive_dict
+from ..utils._utils import case_insensitive_dict
 from ..utils._pipeline_transport_rest_shared import (
     _pad_attr_name,
     BytesIOSocket,
@@ -121,7 +121,7 @@ class _HttpResponseBackcompatMixinBase(object):
         Assuming this body is multipart, return the iterator or parts.
 
         If parts are application/http use http_response_type or HttpClientTransportResponse
-        as enveloppe.
+        as envelope.
         """
         return _get_raw_parts_helper(
             self, http_response_type or RestHttpClientTransportResponse
@@ -438,7 +438,7 @@ class _RestHttpClientTransportResponseBase(_HttpResponseBaseImpl, _RestHttpClien
 
     def __init__(self, **kwargs):
         internal_response = kwargs.pop("internal_response")
-        headers = _case_insensitive_dict(internal_response.getheaders())
+        headers = case_insensitive_dict(internal_response.getheaders())
         super(_RestHttpClientTransportResponseBase, self).__init__(
             internal_response=internal_response,
             status_code=internal_response.status,

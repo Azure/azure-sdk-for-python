@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=https://azuremlsdk2.blob.core.windows.net/latest/onlineEndpoint.schema.json
+name: deon30
+auth_mode: aml_token
+traffic:
+  blue: 100

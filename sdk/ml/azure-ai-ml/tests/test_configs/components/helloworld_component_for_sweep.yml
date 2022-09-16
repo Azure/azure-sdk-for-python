@@ -1,0 +1,53 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+name: microsoftsamples_command_component_for_sweep
+display_name: CommandComponentForSweep
+description: This is the command component for sweep
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 0.0.1
+
+inputs:
+  batch_size:
+    type: integer
+  first_layer_neurons:
+    type: integer
+  second_layer_neurons:
+    type: integer
+  third_layer_neurons:
+    type: integer
+  epochs:
+    type: integer
+  momentum:
+    type: number
+  weight_decay:
+    type: number
+  learning_rate:
+    type: number
+  f1:
+    type: number
+  f2:
+    type: number
+  random_seed:
+    type: integer
+    default: 42
+  data_folder:
+    type: mltable
+
+outputs:
+  trained_model_dir:
+    type: mlflow_model
+
+# Write some output to work around a bug when pipeline node failed to run with empty dataset as input
+command: >-
+  echo "Start training ..." &&
+  python mnist.py --data_folder ${{inputs.data_folder}} --batch_size ${{inputs.batch_size}}
+  --first_layer_neurons ${{inputs.first_layer_neurons}} --second_layer_neurons ${{inputs.second_layer_neurons}}
+  --third_layer_neurons ${{inputs.third_layer_neurons}} --epochs ${{inputs.epochs}}
+  --f1 ${{inputs.f1}} --f2 ${{inputs.f2}} --weight_decay ${{inputs.weight_decay}} --momentum ${{inputs.momentum}}
+  --learning_rate ${{inputs.learning_rate}} --saved_model ${{outputs.trained_model_dir}}
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

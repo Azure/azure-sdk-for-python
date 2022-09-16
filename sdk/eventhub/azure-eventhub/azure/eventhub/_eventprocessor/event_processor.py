@@ -75,7 +75,9 @@ class EventProcessor(
         self._partition_close_handler = kwargs.get(
             "on_partition_close", None
         )  # type: Optional[Callable[[PartitionContext, CloseReason], None]]
-        checkpoint_store = kwargs.get("checkpoint_store")  # type: Optional[CheckpointStore]
+        checkpoint_store = kwargs.get(
+            "checkpoint_store"
+        )  # type: Optional[CheckpointStore]
         self._checkpoint_store = checkpoint_store or InMemoryCheckpointStore()
         self._initial_event_position = kwargs.get(
             "initial_event_position", "@latest"
@@ -87,9 +89,12 @@ class EventProcessor(
         self._load_balancing_interval = kwargs.get(
             "load_balancing_interval", 10.0
         )  # type: float
-        self._load_balancing_strategy = kwargs.get("load_balancing_strategy") or LoadBalancingStrategy.GREEDY
+        self._load_balancing_strategy = (
+            kwargs.get("load_balancing_strategy") or LoadBalancingStrategy.GREEDY
+        )
         self._ownership_timeout = kwargs.get(
-            "partition_ownership_expiration_interval", self._load_balancing_interval * 6)
+            "partition_ownership_expiration_interval", self._load_balancing_interval * 6
+        )
 
         self._partition_contexts = {}  # type: Dict[str, PartitionContext]
 
@@ -141,7 +146,7 @@ class EventProcessor(
             _LOGGER.debug(
                 "EventProcessor %r tries to cancel partitions %r",
                 self._id,
-                to_cancel_partitions
+                to_cancel_partitions,
             )
             for partition_id in to_cancel_partitions:
                 if partition_id in self._consumers:
@@ -149,13 +154,15 @@ class EventProcessor(
                     _LOGGER.info(
                         "EventProcessor %r has cancelled partition %r",
                         self._id,
-                        partition_id
+                        partition_id,
                     )
 
     def _initialize_partition_consumer(self, partition_id):
         if self._partition_initialize_handler:
             try:
-                self._partition_initialize_handler(self._partition_contexts[partition_id])
+                self._partition_initialize_handler(
+                    self._partition_contexts[partition_id]
+                )
             except Exception as err:  # pylint:disable=broad-except
                 _LOGGER.warning(
                     "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
@@ -168,9 +175,7 @@ class EventProcessor(
                 )
                 self._process_error(self._partition_contexts[partition_id], err)
         _LOGGER.info(
-            "EventProcessor %r has claimed partition %r",
-            self._id,
-            partition_id
+            "EventProcessor %r has claimed partition %r", self._id, partition_id
         )
 
     def _create_tasks_for_claimed_ownership(self, claimed_partitions, checkpoints=None):
@@ -179,13 +184,15 @@ class EventProcessor(
             _LOGGER.debug(
                 "EventProcessor %r tries to claim partition %r",
                 self._id,
-                claimed_partitions
+                claimed_partitions,
             )
             for partition_id in claimed_partitions:
                 if partition_id not in self._consumers:
                     if partition_id in self._partition_contexts:
                         partition_context = self._partition_contexts[partition_id]
-                        partition_context._last_received_event = None  # pylint:disable=protected-access
+                        partition_context._last_received_event = (  # pylint:disable=protected-access
+                            None
+                        )
                     else:
                         partition_context = PartitionContext(
                             self._namespace,
@@ -283,7 +290,7 @@ class EventProcessor(
                     self._eventhub_name,
                     self._consumer_group,
                     err,
-                    load_balancing_interval
+                    load_balancing_interval,
                 )
                 self._process_error(None, err)  # type: ignore
 
@@ -307,7 +314,9 @@ class EventProcessor(
 
         if self._partition_close_handler:
             try:
-                self._partition_close_handler(self._partition_contexts[partition_id], reason)
+                self._partition_close_handler(
+                    self._partition_contexts[partition_id], reason
+                )
             except Exception as err:  # pylint:disable=broad-except
                 _LOGGER.warning(
                     "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
@@ -324,8 +333,7 @@ class EventProcessor(
 
     def _do_receive(self, partition_id, consumer):
         # type: (str, EventHubConsumer) -> None
-        """Call the consumer.receive() and handle exceptions if any after it exhausts retries.
-        """
+        """Call the consumer.receive() and handle exceptions if any after it exhausts retries."""
         try:
             consumer.receive(self._batch, self._max_batch_size, self._max_wait_time)
         except Exception as error:  # pylint:disable=broad-except
@@ -339,9 +347,7 @@ class EventProcessor(
                 error,
             )
             self._process_error(self._partition_contexts[partition_id], error)
-            self._close_consumer(
-                partition_id, consumer, CloseReason.OWNERSHIP_LOST
-            )
+            self._close_consumer(partition_id, consumer, CloseReason.OWNERSHIP_LOST)
 
     def start(self):
         # type: () -> None

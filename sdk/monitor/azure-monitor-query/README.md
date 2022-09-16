@@ -2,7 +2,7 @@
 
 The Azure Monitor Query client library is used to execute read-only queries against [Azure Monitor][azure_monitor_overview]'s two data platforms:
 
-- [Logs](https://docs.microsoft.com/azure/azure-monitor/logs/data-platform-logs) - Collects and organizes log and performance data from monitored resources. Data from different sources such as platform logs from Azure services, log and performance data from virtual machines agents, and usage and performance data from apps can be consolidated into a single [Azure Log Analytics workspace](https://docs.microsoft.com/azure/azure-monitor/logs/data-platform-logs#log-analytics-workspaces). The various data types can be analyzed together using the [Kusto Query Language][kusto_query_language].
+- [Logs](https://docs.microsoft.com/azure/azure-monitor/logs/data-platform-logs) - Collects and organizes log and performance data from monitored resources. Data from different sources such as platform logs from Azure services, log and performance data from virtual machines agents, and usage and performance data from apps can be consolidated into a single [Azure Log Analytics workspace](https://docs.microsoft.com/azure/azure-monitor/logs/data-platform-logs#log-analytics-and-workspaces). The various data types can be analyzed together using the [Kusto Query Language][kusto_query_language].
 - [Metrics](https://docs.microsoft.com/azure/azure-monitor/essentials/data-platform-metrics) - Collects numeric data from monitored resources into a time series database. Metrics are numerical values that are collected at regular intervals and describe some aspect of a system at a particular time. Metrics are lightweight and capable of supporting near real-time scenarios, making them particularly useful for alerting and fast detection of issues.
 
 **Resources:**
@@ -16,14 +16,15 @@ The Azure Monitor Query client library is used to execute read-only queries agai
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended on 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
 ### Prerequisites
 
-- Python 2.7, or 3.6 or later
+- Python 3.6 or later
 - An [Azure subscription][azure_subscription]
+- A [TokenCredential](https://docs.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential?view=azure-python) implementation, such as an [Azure Identity library credential type](https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#credential-classes).
 - To query Logs, you need an [Azure Log Analytics workspace][azure_monitor_create_using_portal].
 - To query Metrics, you need an Azure resource of any kind (Storage Account, Key Vault, Cosmos DB, etc.).
 
@@ -73,7 +74,7 @@ For examples of Logs and Metrics queries, see the [Examples](#examples) section.
 
 ### Logs query rate limits and throttling
 
-The Log Analytics service applies throttling when the request rate is too high. Limits, such as the maximum number of rows returned, are also applied on the Kusto queries. For more information, see [Rate and query limits](https://dev.loganalytics.io/documentation/Using-the-API/Limits).
+The Log Analytics service applies throttling when the request rate is too high. Limits, such as the maximum number of rows returned, are also applied on the Kusto queries. For more information, see [Query API](https://docs.microsoft.com/azure/azure-monitor/service-limits#la-query-api).
 
 If you're executing a batch logs query, a throttled request will return a `LogsQueryError` object. That object's `code` value will be `ThrottledError`.
 
@@ -119,8 +120,9 @@ For example:
 import os
 import pandas as pd
 from datetime import datetime, timezone
-from azure.monitor.query import LogsQueryClient
+from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 from azure.identity import DefaultAzureCredential
+from azure.core.exceptions import HttpResponseError
 
 credential = DefaultAzureCredential()
 client = LogsQueryClient(credential)
@@ -270,8 +272,8 @@ client = LogsQueryClient(credential)
 response = client.query_workspace(
     os.environ['LOG_WORKSPACE_ID'],
     "range x from 1 to 10000000000 step 1 | count",
-    timespan=None,
-    server_timeout=1,
+    timespan=timedelta(days=1),
+    server_timeout=600 # sets the timeout to 10 minutes
     )
 ```
 

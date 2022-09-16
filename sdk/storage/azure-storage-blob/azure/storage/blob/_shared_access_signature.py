@@ -66,13 +66,14 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param str snapshot:
             The snapshot parameter is an opaque DateTime value that,
             when present, specifies the blob snapshot to grant permission.
-        :param BlobSasPermissions permission:
+        :param permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
-            Permissions must be ordered read, write, delete, list.
+            Permissions must be ordered racwdxytmei.
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
+        :type permission: str or BlobSasPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -150,13 +151,14 @@ class BlobSharedAccessSignature(SharedAccessSignature):
 
         :param str container_name:
             Name of container.
-        :param ContainerSasPermissions permission:
+        :param permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
-            Permissions must be ordered read, write, delete, list.
+            Permissions must be ordered racwdxyltfmei.
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
+        :type permission: str or ContainerSasPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -406,7 +408,7 @@ def generate_container_sas(
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-        Permissions must be ordered read, write, delete, list.
+        Permissions must be ordered racwdxyltfmei.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
@@ -525,7 +527,7 @@ def generate_blob_sas(
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-        Permissions must be ordered read, write, delete, list.
+        Permissions must be ordered racwdxytmei.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.

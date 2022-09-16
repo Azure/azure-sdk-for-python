@@ -1,0 +1,65 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "193",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "PiiEntityRecognition",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "\uC544\uAC00 SSN: 859-98-0987",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "8a27b218-afbd-40d2-9ef5-9daf4ab8f6e8",
+        "Content-Length": "288",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
+        "Date": "Wed, 08 Jun 2022 01:36:39 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "26"
+      },
+      "ResponseBody": {
+        "kind": "PiiEntityRecognitionResults",
+        "results": {
+          "documents": [
+            {
+              "redactedText": "\uC544\uAC00 SSN: ***********",
+              "id": "0",
+              "entities": [
+                {
+                  "text": "859-98-0987",
+                  "category": "USSocialSecurityNumber",
+                  "offset": 8,
+                  "length": 11,
+                  "confidenceScore": 0.65
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-01-15"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Union
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.aio._communication_network_traversal_client\
@@ -16,9 +16,10 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from .._generated.models import CommunicationRelayConfiguration
     from azure.communication.identity import CommunicationUserIdentifier
+    from azure.communication.networktraversal import RouteType
 
 
-class CommunicationRelayClient:
+class CommunicationRelayClient: # pylint: disable=client-accepts-api-version-keyword
     """Azure Communication Services Network Traversal client.
 
     :param str endpoint:
@@ -83,8 +84,10 @@ class CommunicationRelayClient:
     @distributed_trace_async
     async def get_relay_configuration(
             self,
+            *,
             user: 'CommunicationUserIdentifier' = None,
-            route_type: 'CommunicationRelayConfigurationRequestRouteType' = None,
+            route_type: Optional[Union[str, "RouteType"]] = None,
+            ttl: Optional[int] = 172800,
             **kwargs # type: Any
         ) -> 'CommunicationRelayConfiguration':
         """get a Communication Relay configuration.
@@ -97,10 +100,11 @@ class CommunicationRelayClient:
         """
         if user is None:
             return await self._network_traversal_service_client.communication_network_traversal. \
-                issue_relay_configuration(None, route_type, **kwargs)
+                issue_relay_configuration(route_type=route_type, ttl=ttl, **kwargs)
         return await self._network_traversal_service_client.communication_network_traversal.issue_relay_configuration(
-            user.properties['id'],
-            route_type,
+            id=user.properties['id'],
+            route_type=route_type,
+            ttl=ttl,
             **kwargs)
 
     async def __aenter__(self) -> "CommunicationRelayClient":

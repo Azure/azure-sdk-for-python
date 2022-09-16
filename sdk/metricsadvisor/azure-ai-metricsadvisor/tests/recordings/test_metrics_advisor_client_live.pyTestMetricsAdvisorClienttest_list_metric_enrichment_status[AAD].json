@@ -1,0 +1,355 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.7.2 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1753",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:08:56 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=Ag0OyaGPd0pEibyG7M6Pa-LGLH8mDwAAAKaHTNkOAAAA; expires=Sat, 15-Jan-2022 01:08:57 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12261.15 - WUS2 ProdSlices",
+        "x-ms-request-id": "e9f25c77-9302-4ff7-9d68-530b48ee1a00"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/kerberos",
+        "tenant_region_scope": "WW",
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Cookie": "fpc=Ag0OyaGPd0pEibyG7M6Pa-LGLH8mDwAAAKaHTNkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.7.2 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "945",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:08:57 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=Ag0OyaGPd0pEibyG7M6Pa-LGLH8mDwAAAKaHTNkOAAAA; expires=Sat, 15-Jan-2022 01:08:57 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12261.14 - WUS2 ProdSlices",
+        "x-ms-request-id": "fec3d69a-5dca-4be0-a5ca-525f133d0000"
+      },
+      "ResponseBody": {
+        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+        "api-version": "1.1",
+        "metadata": [
+          {
+            "preferred_network": "login.microsoftonline.com",
+            "preferred_cache": "login.windows.net",
+            "aliases": [
+              "login.microsoftonline.com",
+              "login.windows.net",
+              "login.microsoft.com",
+              "sts.windows.net"
+            ]
+          },
+          {
+            "preferred_network": "login.partner.microsoftonline.cn",
+            "preferred_cache": "login.partner.microsoftonline.cn",
+            "aliases": [
+              "login.partner.microsoftonline.cn",
+              "login.chinacloudapi.cn"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.de",
+            "preferred_cache": "login.microsoftonline.de",
+            "aliases": [
+              "login.microsoftonline.de"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.us",
+            "preferred_cache": "login.microsoftonline.us",
+            "aliases": [
+              "login.microsoftonline.us",
+              "login.usgovcloudapi.net"
+            ]
+          },
+          {
+            "preferred_network": "login-us.microsoftonline.com",
+            "preferred_cache": "login-us.microsoftonline.com",
+            "aliases": [
+              "login-us.microsoftonline.com"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metrics_advisor_metric_id/status/enrichment/anomalyDetection/query",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "80",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "bebaae7d-5e0c-11ec-b11f-6245b51668de"
+      },
+      "RequestBody": "{\u0022startTime\u0022: \u00222021-01-01T00:00:00.000Z\u0022, \u0022endTime\u0022: \u00222021-09-09T00:00:00.000Z\u0022}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "b17182af-c819-462d-8560-d1e42e77555b",
+        "Content-Length": "4668",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:08:57 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "174",
+        "X-Request-ID": "b17182af-c819-462d-8560-d1e42e77555b"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "timestamp": "2021-08-11T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:37.533Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:37.533Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-12T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:37.533Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:37.533Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-17T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:37.533Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:37.533Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-19T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-13T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:37.533Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:37.533Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-14T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:37.533Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:37.533Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-15T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:37.533Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:37.533Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-16T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:37.533Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:37.533Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-18T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-20T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-21T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-22T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-23T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-24T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-25T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-29T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-26T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-27T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-28T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:45:57.535Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-30T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022UpdateTime\u0022:\u00222021-09-07T23:50:38.043Z\u0022,\u0022CreateTime\u0022:\u00222021-09-07T23:50:38.043Z\u0022}"
+          },
+          {
+            "timestamp": "2021-08-31T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022UpdateTime\u0022:\u00222021-09-07T23:50:38.043Z\u0022,\u0022CreateTime\u0022:\u00222021-09-07T23:50:38.043Z\u0022}"
+          },
+          {
+            "timestamp": "2021-09-01T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022UpdateTime\u0022:\u00222021-09-07T23:50:38.043Z\u0022,\u0022CreateTime\u0022:\u00222021-09-07T23:50:38.043Z\u0022}"
+          },
+          {
+            "timestamp": "2021-09-02T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022UpdateTime\u0022:\u00222021-09-07T23:50:58.044Z\u0022,\u0022CreateTime\u0022:\u00222021-09-07T23:50:58.044Z\u0022}"
+          },
+          {
+            "timestamp": "2021-09-03T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022UpdateTime\u0022:\u00222021-09-07T23:50:58.044Z\u0022,\u0022CreateTime\u0022:\u00222021-09-07T23:50:58.044Z\u0022}"
+          },
+          {
+            "timestamp": "2021-09-04T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:51:38.047Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:51:38.047Z\u0022}"
+          },
+          {
+            "timestamp": "2021-09-05T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:51:38.047Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:51:38.047Z\u0022}"
+          },
+          {
+            "timestamp": "2021-09-06T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-07T23:51:38.047Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-07T23:51:38.047Z\u0022}"
+          },
+          {
+            "timestamp": "2021-09-07T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-08T00:09:21.194Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-08T00:09:21.194Z\u0022}"
+          },
+          {
+            "timestamp": "2021-09-08T00:00:00Z",
+            "status": "Succeeded",
+            "message": "{\u0022CreateTime\u0022:\u00222021-09-09T00:04:14.700Z\u0022,\u0022UpdateTime\u0022:\u00222021-09-09T00:04:14.700Z\u0022}"
+          }
+        ],
+        "@nextLink": null
+      }
+    }
+  ],
+  "Variables": {}
+}

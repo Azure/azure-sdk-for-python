@@ -1,0 +1,199 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "508",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "EntityRecognition",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975.",
+              "language": "en"
+            },
+            {
+              "id": "1",
+              "text": "Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975.",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegr\u00FCndet.",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "967f4738-61dd-4952-9bea-fa57f39018a1",
+        "Content-Length": "1725",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Wed, 08 Jun 2022 01:43:57 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "36"
+      },
+      "ResponseBody": {
+        "kind": "EntityRecognitionResults",
+        "results": {
+          "documents": [
+            {
+              "id": "0",
+              "entities": [
+                {
+                  "text": "Microsoft",
+                  "category": "Organization",
+                  "offset": 0,
+                  "length": 9,
+                  "confidenceScore": 1.0
+                },
+                {
+                  "text": "Bill Gates",
+                  "category": "Person",
+                  "offset": 25,
+                  "length": 10,
+                  "confidenceScore": 1.0
+                },
+                {
+                  "text": "Paul Allen",
+                  "category": "Person",
+                  "offset": 40,
+                  "length": 10,
+                  "confidenceScore": 1.0
+                },
+                {
+                  "text": "April 4, 1975",
+                  "category": "DateTime",
+                  "subcategory": "Date",
+                  "offset": 54,
+                  "length": 13,
+                  "confidenceScore": 0.8
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "1",
+              "entities": [
+                {
+                  "text": "Microsoft",
+                  "category": "Organization",
+                  "offset": 0,
+                  "length": 9,
+                  "confidenceScore": 1.0
+                },
+                {
+                  "text": "Bill Gates",
+                  "category": "Person",
+                  "offset": 26,
+                  "length": 10,
+                  "confidenceScore": 1.0
+                },
+                {
+                  "text": "Paul Allen",
+                  "category": "Person",
+                  "offset": 39,
+                  "length": 10,
+                  "confidenceScore": 0.99
+                },
+                {
+                  "text": "4",
+                  "category": "Quantity",
+                  "subcategory": "Number",
+                  "offset": 53,
+                  "length": 1,
+                  "confidenceScore": 0.8
+                },
+                {
+                  "text": "1975",
+                  "category": "DateTime",
+                  "subcategory": "DateRange",
+                  "offset": 67,
+                  "length": 4,
+                  "confidenceScore": 0.8
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "2",
+              "entities": [
+                {
+                  "text": "Microsoft",
+                  "category": "Organization",
+                  "offset": 0,
+                  "length": 9,
+                  "confidenceScore": 0.99
+                },
+                {
+                  "text": "4",
+                  "category": "Quantity",
+                  "subcategory": "Number",
+                  "offset": 19,
+                  "length": 1,
+                  "confidenceScore": 0.8
+                },
+                {
+                  "text": "April 1975",
+                  "category": "DateTime",
+                  "subcategory": "DateRange",
+                  "offset": 22,
+                  "length": 10,
+                  "confidenceScore": 0.8
+                },
+                {
+                  "text": "Bill Gates",
+                  "category": "Person",
+                  "offset": 37,
+                  "length": 10,
+                  "confidenceScore": 1.0
+                },
+                {
+                  "text": "Paul Allen",
+                  "category": "Person",
+                  "offset": 52,
+                  "length": 10,
+                  "confidenceScore": 1.0
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [
+            {
+              "id": "3",
+              "error": {
+                "code": "InvalidArgument",
+                "message": "Invalid Document in request.",
+                "innererror": {
+                  "code": "InvalidDocument",
+                  "message": "Document text is empty."
+                }
+              }
+            }
+          ],
+          "modelVersion": "2021-06-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -1,0 +1,122 @@
+{
+    "jobId": "5e7abd01-cb10-4232-afde-dfcf0eb01dbc",
+    "lastUpdateDateTime": "2022-04-18T19:43:22Z",
+    "createdDateTime": "2022-04-18T19:43:08Z",
+    "expirationDateTime": "2022-04-19T19:43:08Z",
+    "status": "partiallySucceeded",
+    "errors": [
+        {
+            "code": "InternalServerError",
+            "message": "1 out of 5 job tasks failed. Failed job tasks : keyphrasescomposite."
+        }
+    ],
+    "tasks": {
+        "completed": 4,
+        "failed": 1,
+        "inProgress": 0,
+        "total": 5,
+        "items": [
+            {
+                "kind": "EntityRecognitionLROResults",
+                "taskName": "0",
+                "lastUpdateDateTime": "2022-04-18T19:43:22.3181205Z",
+                "status": "succeeded",
+                "results": {
+                    "documents": [
+                        {
+                            "id": "1",
+                            "entities": [
+                                {
+                                    "text": "hotel",
+                                    "category": "Location",
+                                    "offset": 19,
+                                    "length": 5,
+                                    "confidenceScore": 0.76
+                                }
+                            ],
+                            "warnings": []
+                        }
+                    ],
+                    "errors": [],
+                    "modelVersion": "2020-04-01"
+                }
+            },
+            {
+                "kind": "KeyPhraseExtractionLROResults",
+                "taskName": "1",
+                "lastUpdateDateTime": "2022-04-18T19:43:09.0888005Z",
+                "status": "failed"
+            },
+            {
+                "kind": "PiiEntityRecognitionLROResults",
+                "taskName": "2",
+                "lastUpdateDateTime": "2022-04-18T19:43:18.5390244Z",
+                "status": "succeeded",
+                "results": {
+                    "documents": [
+                        {
+                            "redactedText": "I did not like the hotel we stayed at.",
+                            "id": "1",
+                            "entities": [],
+                            "warnings": []
+                        }
+                    ],
+                    "errors": [],
+                    "modelVersion": "2021-01-15"
+                }
+            },
+            {
+                "kind": "EntityLinkingLROResults",
+                "taskName": "3",
+                "lastUpdateDateTime": "2022-04-18T19:43:10.4261716Z",
+                "status": "succeeded",
+                "results": {
+                    "documents": [
+                        {
+                            "id": "1",
+                            "entities": [],
+                            "warnings": []
+                        }
+                    ],
+                    "errors": [],
+                    "modelVersion": "2021-06-01"
+                }
+            },
+            {
+                "kind": "SentimentAnalysisLROResults",
+                "taskName": "4",
+                "lastUpdateDateTime": "2022-04-18T19:43:11.4597392Z",
+                "status": "succeeded",
+                "results": {
+                    "documents": [
+                        {
+                            "id": "1",
+                            "sentiment": "negative",
+                            "confidenceScores": {
+                                "positive": 0.01,
+                                "neutral": 0.45,
+                                "negative": 0.54
+                            },
+                            "sentences": [
+                                {
+                                    "sentiment": "negative",
+                                    "confidenceScores": {
+                                        "positive": 0.01,
+                                        "neutral": 0.45,
+                                        "negative": 0.54
+                                    },
+                                    "offset": 0,
+                                    "length": 38,
+                                    "text": "I did not like the hotel we stayed at."
+                                }
+                            ],
+                            "warnings": []
+                        }
+                    ],
+                    "errors": [],
+                    "modelVersion": "2019-10-01"
+                }
+            }
+        ]
+    }
+}

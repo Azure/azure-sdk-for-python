@@ -1,0 +1,30 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/metrics_advisor_data_feed_id/ingestionProgress/reset",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "80",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "163df09e-5e0d-11ec-946d-6245b51668de"
+      },
+      "RequestBody": "{\u0022startTime\u0022: \u00222021-10-01T00:00:00.000Z\u0022, \u0022endTime\u0022: \u00222021-10-02T00:00:00.000Z\u0022}",
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "apim-request-id": "70848c67-1385-4603-a7e2-c0138d440a03",
+        "Content-Length": "0",
+        "Date": "Thu, 16 Dec 2021 01:11:23 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "183",
+        "X-Request-ID": "70848c67-1385-4603-a7e2-c0138d440a03"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

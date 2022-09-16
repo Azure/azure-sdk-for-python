@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Optional
     from datetime import datetime
-    from ._generated.v7_1 import models as _models
+    from . import _generated_models as _models
 
 
 class SecretProperties(object):
@@ -186,6 +186,15 @@ class SecretProperties(object):
         :rtype: dict or None
         """
         return self._tags
+
+    @property
+    def managed(self):
+        # type: () -> Optional[bool]
+        """Whether the secret's lifetime is managed by Key Vault. If the secret backs a certificate, this will be true.
+
+        :rtype: bool or None
+        """
+        return self._managed
 
 
 class KeyVaultSecret(object):

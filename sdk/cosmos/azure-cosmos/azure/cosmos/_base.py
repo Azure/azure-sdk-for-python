@@ -27,18 +27,17 @@ import datetime
 import json
 import uuid
 import binascii
-from typing import Dict, Any
+from typing import Dict, Any, Union
 
-import six
-from six.moves.urllib.parse import quote as urllib_quote
-
+from urllib.parse import quote as urllib_quote
+from urllib.parse import urlsplit
 from azure.core import MatchConditions
-
 from . import auth
 from . import documents
 from . import partition_key
 from . import http_constants
 from . import _runtime_constants
+from .offer import ThroughputProperties
 
 # pylint: disable=protected-access
 
@@ -71,6 +70,7 @@ _COMMON_OPTIONS = {
     'supported_query_features': 'supportedQueryFeatures',
     'query_version': 'queryVersion'
 }
+
 
 def _get_match_headers(kwargs):
     # type: (Dict[str, Any]) -> Tuple(Optional[str], Optional[str])
@@ -113,14 +113,14 @@ def build_options(kwargs):
 
 
 def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
-    cosmos_client_connection,
-    default_headers,
-    verb,
-    path,
-    resource_id,
-    resource_type,
-    options,
-    partition_key_range_id=None,
+        cosmos_client_connection,
+        default_headers,
+        verb,
+        path,
+        resource_id,
+        resource_type,
+        options,
+        partition_key_range_id=None,
 ):
     """Gets HTTP request headers.
 
@@ -241,7 +241,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.XDate] = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
     if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
-        authorization = auth.GetAuthorizationHeader(
+        authorization = auth._get_authorization_header(
             cosmos_client_connection, verb, path, resource_id, IsNameBased(resource_id), resource_type, headers
         )
         # urllib.quote throws when the input parameter is None
@@ -292,6 +292,12 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if options.get("populateQuotaInfo"):
         headers[http_constants.HttpHeaders.PopulateQuotaInfo] = options["populateQuotaInfo"]
+
+    if options.get("maxIntegratedCacheStaleness"):
+        headers[http_constants.HttpHeaders.DedicatedGatewayCacheStaleness] = options["maxIntegratedCacheStaleness"]
+
+    if options.get("autoUpgradePolicy"):
+        headers[http_constants.HttpHeaders.AutoscaleSettings] = options["autoUpgradePolicy"]
 
     return headers
 
@@ -487,7 +493,7 @@ def IsItemContainerLink(link):  # pylint: disable=too-many-return-statements
 
 
 def GetItemContainerInfo(self_link, alt_content_path, id_from_response):
-    """Given the self link and alt_content_path from the reponse header and
+    """Given the self link and alt_content_path from the response header and
     result extract the collection name and collection id.
 
     Every response header has an alt-content-path that is the owner's path in
@@ -546,7 +552,7 @@ def GetItemContainerLink(link):
 
 
 def IndexOfNth(s, value, n):
-    """Gets the index of Nth occurance of a given character in a string.
+    """Gets the index of Nth occurrence of a given character in a string.
 
     :param str s: Input string
     :param char value: Input char to be searched.
@@ -578,9 +584,6 @@ def IsValidBase64String(string_to_validate):
         if len(buffer) != 4:
             return False
     except Exception as e:  # pylint: disable=broad-except
-        if six.PY2:
-            e = e.message  # pylint: disable=no-member
-            # (e.message does exist on py2)
         if isinstance(e, binascii.Error):
             return False
         raise e
@@ -642,7 +645,7 @@ def ParsePaths(paths):
                 newIndex += 1
 
             # This will extract the token excluding the quote chars
-            token = path[currentIndex + 1 : newIndex]
+            token = path[currentIndex + 1: newIndex]
             tokens.append(token)
             currentIndex = newIndex + 1
         else:
@@ -661,3 +664,72 @@ def ParsePaths(paths):
             tokens.append(token)
 
     return tokens
+
+
+def create_scope_from_url(url):
+    parsed_url = urlsplit(url)
+    return parsed_url.scheme + "://" + parsed_url.hostname + "/.default"
+
+
+def validate_cache_staleness_value(max_integrated_cache_staleness):
+    int(max_integrated_cache_staleness)  # Will throw error if data type cant be converted to int
+    if max_integrated_cache_staleness < 0:
+        raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be an "
+                         "integer greater than or equal to zero")
+
+
+def _stringify_auto_scale(offer: Dict[str, Any]) -> Any:
+    auto_scale_params = None
+    max_throughput = offer.auto_scale_max_throughput
+    increment_percent = offer.auto_scale_increment_percent
+    auto_scale_params = {"maxThroughput": max_throughput}
+    if increment_percent is not None:
+        auto_scale_params["autoUpgradePolicy"] = {"throughputPolicy": {"incrementPercent": increment_percent}}
+    auto_scale_settings = json.dumps(auto_scale_params)
+
+    return auto_scale_settings
+
+
+def _set_throughput_options(offer: Union[int, ThroughputProperties], request_options: Dict[str, Any]) -> Any:
+    if offer is not None:
+        try:
+            max_throughput = offer.auto_scale_max_throughput
+            increment_percent = offer.auto_scale_increment_percent
+
+            if max_throughput is not None:
+                request_options['autoUpgradePolicy'] = _stringify_auto_scale(offer=offer)
+            elif increment_percent:
+                raise ValueError("auto_scale_max_throughput must be supplied in "
+                                 "conjunction with auto_scale_increment_percent")
+            if offer.offer_throughput:
+                request_options["offerThroughput"] = offer.offer_throughput
+
+        except AttributeError:
+            if isinstance(offer, int):
+                request_options["offerThroughput"] = offer
+            else:
+                raise TypeError("offer_throughput must be int or an instance of ThroughputProperties")
+
+
+def _deserialize_throughput(throughput: list) -> Any:
+    throughput_properties = throughput
+    try:
+        max_throughput = throughput_properties[0]['content']['offerAutopilotSettings']['maxThroughput']
+    except (KeyError, TypeError):  # Adding TypeError just in case one of these dicts is None
+        max_throughput = None
+    try:
+        increment_percent = \
+            throughput_properties[0]['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
+                'incrementPercent']
+    except (KeyError, TypeError):
+        increment_percent = None
+    try:
+        throughput = throughput_properties[0]["content"]["offerThroughput"]
+    except (KeyError, TypeError):
+        throughput = None
+    return ThroughputProperties(
+        auto_scale_max_throughput=max_throughput,
+        auto_scale_increment_percent=increment_percent,
+        offer_throughput=throughput,
+        properties=throughput_properties[0]
+    )

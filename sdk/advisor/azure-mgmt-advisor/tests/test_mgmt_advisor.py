@@ -15,7 +15,7 @@ from azure.mgmt.advisor.models import (
 )
 
 from devtools_testutils import (
-    AzureMgmtTestCase, ResourceGroupPreparer
+    AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 )
 
 # the goal of these tests is to validate AutoRest generation of the Python wrapper
@@ -23,14 +23,14 @@ from devtools_testutils import (
 # to verify that all operations are possible using the generated client and that
 # the operations can accept valid input and produce valid output.
 
-class MgmtAdvisorTest(AzureMgmtTestCase):
+class TestMgmtAdvisor(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtAdvisorTest, self).setUp()
+    def setup_method(self, method):
         self.client = self.create_mgmt_client(
             azure.mgmt.advisor.AdvisorManagementClient
         )
 
+    @recorded_by_proxy
     def test_generate_recommendations(self):
 
         def call(response, *args, **kwargs):
@@ -40,15 +40,15 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         response = self.client.recommendations.generate(cls=call)
 
         # we should get a valid Location header back
-        self.assertTrue('Location' in response.headers)
+        assert 'Location' in response.headers
         location = response.headers['Location']
 
         # extract the operation ID from the Location header
         operation_id = re.findall("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", location)
 
         # the operation ID should be a valid GUID
-        self.assertNotEqual(operation_id, None)
-        self.assertTrue(len(operation_id), 1)
+        assert operation_id != None
+        assert len(operation_id), 1
 
         # we should be able to get generation status for this operation ID
         response = self.client.recommendations.get_generate_status(
@@ -58,29 +58,30 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         status_code = response.status_code
 
         # and the status should be 202 or 204
-        self.assertTrue(status_code == 202 or status_code == 204)
+        assert status_code == 202 or status_code == 204
 
     @unittest.skip("unavailable")
+    @recorded_by_proxy
     def test_suppressions(self):
 
         # first, get all recommendations
         response = list(self.client.recommendations.list())
 
         # we should have at least one recommendation
-        self.assertNotEqual(len(response), 0)
+        assert len(response) != 0
         recommendation = None
 
         # the recommendation should have all relevant properties populated
         for rec in response:
-            self.assertNotEqual(rec.id, None)
-            self.assertNotEqual(rec.name, None)
-            self.assertNotEqual(rec.type, None)
-            self.assertNotEqual(rec.category, None)
-            self.assertNotEqual(rec.impact, None)
-            # self.assertNotEqual(rec.risk, None)
-            self.assertNotEqual(rec.short_description, None)
-            self.assertNotEqual(rec.short_description.problem, None)
-            self.assertNotEqual(rec.short_description.solution, None)
+            assert rec.id != None
+            assert rec.name != None
+            assert rec.type != None
+            assert rec.category != None
+            assert rec.impact != None
+            # assert rec.risk != None
+            assert rec.short_description != None
+            assert rec.short_description.problem != None
+            assert rec.short_description.solution != None
             if (rec.impacted_value != None):
                 recommendation = rec
 
@@ -97,8 +98,8 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         )
 
         # it should be identical to what we got from list
-        self.assertEqual(output.id, rec.id)
-        self.assertEqual(output.name, rec.name)
+        assert output.id == rec.id
+        assert output.name == rec.name
 
         # create a new suppression
         suppression = self.client.suppressions.create(
@@ -109,7 +110,7 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         )
 
         # it should get created successfully
-        self.assertEqual(suppression.ttl, "01:00:00")
+        assert suppression.ttl == "01:00:00"
 
         # get the suppression
         sup = self.client.suppressions.get(
@@ -119,8 +120,8 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         )
 
         # it should be identical to what we just added
-        self.assertEqual(sup.name, suppressionName)
-        self.assertEqual(sup.id, resourceUri + "/providers/Microsoft.Advisor/recommendations/" + recommendationName + "/suppressions/" + suppressionName)
+        assert sup.name == suppressionName
+        assert sup.id == resourceUri + "/providers/Microsoft.Advisor/recommendations/" + recommendationName + "/suppressions/" + suppressionName
 
         # delete the suppression
         self.client.suppressions.delete(
@@ -132,9 +133,10 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         # the suppression should be gone
         #response = list(self.client.suppressions.list())
         #for sup in response:
-        #    self.assertNotEqual(sup.Name, suppressionName)
+        #    assert sup.Name != suppressionName
 
     @unittest.skip("unavailable")
+    @recorded_by_proxy
     def test_configurations_subscription(self):
 
         # create a new configuration to update low CPU threshold to 20
@@ -148,7 +150,7 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         output = list(self.client.configurations.list_by_subscription())[0]
 
         # it should be identical to what we just set
-        self.assertEqual(output.low_cpu_threshold, "20")
+        assert output.low_cpu_threshold == "20"
 
         # restore the default configuration
         input.low_cpu_threshold=5
@@ -158,9 +160,10 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         output = list(self.client.configurations.list_by_subscription())[0]
 
         # it should be identical to what we just set
-        self.assertEqual(output.low_cpu_threshold, "5")
+        assert output.low_cpu_threshold == "5"
 
     @ResourceGroupPreparer()
+    @recorded_by_proxy
     def test_configurations_resourcegroup(self, resource_group):
         resourceGroupName = resource_group.name
         configurationName = "default"
@@ -180,7 +183,7 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         output = list(self.client.configurations.list_by_resource_group(resource_group = resourceGroupName))[0]
 
         # it should be identical to what we just set
-        self.assertEqual(output.exclude, True)
+        assert output.exclude == True
 
         # restore the default configuration
         input.exclude=False
@@ -194,7 +197,7 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         output = list(self.client.configurations.list_by_resource_group(resource_group = resourceGroupName))[0]
 
         # it should be identical to what we just set
-        self.assertEqual(output.exclude, False)
+        assert output.exclude == False
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

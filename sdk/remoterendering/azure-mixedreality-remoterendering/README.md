@@ -18,7 +18,7 @@ This SDK supports version "2021-01-01" of the [Remote Rendering REST API](https:
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 # Getting started
 
@@ -69,7 +69,7 @@ Use the `AzureKeyCredential` object to use an account identifier and account key
 from azure.core.credentials import AzureKeyCredential
 from azure.mixedreality.remoterendering import RemoteRenderingClient
 
-account_id = "<ACCOUNTD ID>"
+account_id = "<ACCOUNT_ID>"
 account_domain = "<ACCOUNT_DOMAIN>"
 account_key = "<ACCOUNT_KEY>"
 arr_endpoint = "<ARR_ENDPOINT>"
@@ -92,7 +92,7 @@ to be used with a Mixed Reality client library:
 ```python
 from azure.mixedreality.authentication import MixedRealityStsClient
 from azure.mixedreality.remoterendering import RemoteRenderingClient
-account_id = "<ACCOUNTD ID>"
+account_id = "<ACCOUNT_ID>"
 account_domain = "<ACCOUNT_DOMAIN>"
 account_key = "<ACCOUNT_KEY>"
 
@@ -124,7 +124,7 @@ by assigning the appropriate role for your Mixed Reality service to your service
 from azure.identity import DefaultAzureCredential
 from azure.mixedreality.remoterendering import RemoteRenderingClient
 
-account_id = "<ACCOUNTD ID>"
+account_id = "<ACCOUNT_ID>"
 account_domain = "<ACCOUNT_DOMAIN>"
 default_credential = DefaultAzureCredential()
 

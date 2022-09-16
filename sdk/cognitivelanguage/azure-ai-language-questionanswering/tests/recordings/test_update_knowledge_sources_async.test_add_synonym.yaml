@@ -1,0 +1,87 @@
+interactions:
+- request:
+    body: '{"description": "biography of Sir Issac Newton", "language": "en", "multilingualResource":
+      true, "settings": {"defaultAnswer": "no answer"}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '140'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: PATCH
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"projectName\": \"IssacNewton\",\n  \"description\": \"biography
+        of Sir Issac Newton\",\n  \"language\": \"en\",\n  \"multilingualResource\":
+        false,\n  \"createdDateTime\": \"2022-08-02T22:07:25Z\",\n  \"lastModifiedDateTime\":
+        \"2022-08-02T22:10:53Z\",\n  \"settings\": {\n    \"defaultAnswer\": \"no
+        answer\"\n  }\n}"
+    headers:
+      apim-request-id: 72a65860-6416-4f71-8c0c-9d429b301437
+      content-length: '286'
+      content-type: application/json; charset=utf-8
+      date: Tue, 02 Aug 2022 22:10:52 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '23'
+    status:
+      code: 200
+      message: OK
+    url: https://languagesdkresource.cognitiveservices.azure.com//language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
+- request:
+    body: '{"value": [{"alterations": ["qnamaker", "qna maker"]}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '55'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: PUT
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/synonyms?api-version=2021-10-01
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 3b350cde-dbd9-43e0-a9db-30db2bf1075c
+      content-length: '0'
+      date: Tue, 02 Aug 2022 22:10:55 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '2354'
+    status:
+      code: 204
+      message: No Content
+    url: https://languagesdkresource.cognitiveservices.azure.com//language/query-knowledgebases/projects/IssacNewton/synonyms?api-version=2021-10-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/synonyms?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"value\": [\n    {\n      \"alterations\": [\n        \"qnamaker\",\n
+        \       \"qna maker\"\n      ]\n    }\n  ]\n}"
+    headers:
+      apim-request-id: 016038d9-a5ca-48a1-a3dd-2e66cbff303a
+      content-length: '103'
+      content-type: application/json; charset=utf-8
+      date: Tue, 02 Aug 2022 22:10:56 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '109'
+    status:
+      code: 200
+      message: OK
+    url: https://languagesdkresource.cognitiveservices.azure.com//language/query-knowledgebases/projects/IssacNewton/synonyms?api-version=2021-10-01
+version: 1

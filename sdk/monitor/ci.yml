@@ -27,6 +27,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: monitor
+    TestProxy: true
     BuildTargetingString: '*'
     Artifacts:
     - name: azure-mgmt-monitor
@@ -35,3 +36,5 @@ extends:
       safeName: azuremonitoropentelemetryexporter
     - name: azure-monitor-query
       safeName: azuremonitorquery
+    - name: azure-monitor-ingestion
+      safeName: azuremonitoringestion

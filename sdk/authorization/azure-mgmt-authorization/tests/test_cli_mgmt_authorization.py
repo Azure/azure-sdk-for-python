@@ -28,16 +28,15 @@
 import unittest
 
 import azure.mgmt.authorization
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtAuthorizationTest(AzureMgmtTestCase):
+class TestMgmtAuthorization(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
+    def setup_method(self, method):
         # (UnsupportedApiVersionForRoleDefinitionHasDataActions) Assignments to roles with DataActions and NotDataActions \
         # are not supported on API version '2015-07-01'
-        super(MgmtAuthorizationTest, self).setUp()
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.authorization.AuthorizationManagementClient,
             api_version="2018-01-01-preview"
@@ -56,9 +55,10 @@ class MgmtAuthorizationTest(AzureMgmtTestCase):
             )
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_deny_assignment(self, resource_group):
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         SCOPE = "subscriptions/{subscriptionId}".format(
             subscriptionId=SUBSCRIPTION_ID
@@ -99,9 +99,10 @@ class MgmtAuthorizationTest(AzureMgmtTestCase):
 
     @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_role_assignment_by_id(self, resource_group):
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         SCOPE = "subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}".format(
             subscriptionId=SUBSCRIPTION_ID,
@@ -131,9 +132,10 @@ class MgmtAuthorizationTest(AzureMgmtTestCase):
         result = self.mgmt_client.role_assignments.delete_by_id(role_id=ROLE_ID)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_list_by_resource(self, resource_group):
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_NAME = "resourcexxx"
         RESOURCE_GROUP = resource_group.name
         RESOURCE_ID = "/subscriptions/{guid}/resourceGroups/{resourcegroupname}/providers/{resourceprovidernamespace}/{resourcetype}/{resourcename}".format(
@@ -176,9 +178,10 @@ class MgmtAuthorizationTest(AzureMgmtTestCase):
 
     @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_role_assignment(self, resource_group):
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         SCOPE = "subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}".format(
             subscriptionId=SUBSCRIPTION_ID,
@@ -248,9 +251,10 @@ class MgmtAuthorizationTest(AzureMgmtTestCase):
         result = self.mgmt_client.role_assignments.delete(scope=SCOPE, role_assignment_name=ROLE_ASSIGNMENT_NAME)
 
     @unittest.skip('hard to test')
+    @recorded_by_proxy
     def test_role_definition(self):
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         SCOPE = "subscriptions/{subscriptionId}".format(
             subscriptionId=SUBSCRIPTION_ID
         )

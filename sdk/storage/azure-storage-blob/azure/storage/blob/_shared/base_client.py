@@ -6,9 +6,12 @@
 import logging
 import uuid
 from typing import (  # pylint: disable=unused-import
-    Optional,
     Any,
+    Dict,
     Tuple,
+    Union,
+    Optional,
+    TYPE_CHECKING
 )
 
 try:
@@ -20,39 +23,41 @@ except ImportError:
 import six
 
 from azure.core.configuration import Configuration
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport, HttpTransport
 from azure.core.pipeline.policies import (
-    RedirectPolicy,
+    AzureSasCredentialPolicy,
     ContentDecodePolicy,
-    BearerTokenCredentialPolicy,
-    ProxyPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
+    RedirectPolicy,
+    ProxyPolicy,
     UserAgentPolicy,
-    AzureSasCredentialPolicy
 )
 
-from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
+from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, SERVICE_HOST_BASE
 from .models import LocationMode
 from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
 from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .policies import (
-    StorageHeadersPolicy,
+    ExponentialRetry,
+    StorageBearerTokenCredentialPolicy,
     StorageContentValidation,
+    StorageHeadersPolicy,
+    StorageHosts,
+    StorageLoggingPolicy,
     StorageRequestHook,
     StorageResponseHook,
-    StorageLoggingPolicy,
-    StorageHosts,
     QueueMessagePolicy,
-    ExponentialRetry,
 )
 from .._version import VERSION
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
@@ -68,7 +73,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self,
         parsed_url,  # type: Any
         service,  # type: str
-        credential=None,  # type: Optional[Any]
+        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -104,9 +109,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip('/')
             self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
-        self.require_encryption = kwargs.get("require_encryption", False)
-        self.key_encryption_key = kwargs.get("key_encryption_key")
-        self.key_resolver_function = kwargs.get("key_resolver_function")
         self._config, self._pipeline = self._create_pipeline(self.credential, storage_sdk=service, **kwargs)
 
     def __enter__(self):
@@ -208,18 +210,18 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         if sas_token and isinstance(credential, AzureSasCredential):
             raise ValueError(
                 "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
-        if sas_token and not credential:
-            query_str += sas_token
-        elif is_credential_sastoken(credential):
+        if is_credential_sastoken(credential):
             query_str += credential.lstrip("?")
             credential = None
+        elif sas_token:
+            query_str += sas_token
         return query_str.rstrip("?&"), credential
 
     def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+            self._credential_policy = StorageBearerTokenCredentialPolicy(credential)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
@@ -356,6 +358,8 @@ def _format_shared_key_credential(account_name, credential):
         if "account_key" not in credential:
             raise ValueError("Shared key credential missing 'account_key")
         return SharedKeyCredentialPolicy(**credential)
+    if isinstance(credential, AzureNamedKeyCredential):
+        return SharedKeyCredentialPolicy(credential.named_key.name, credential.named_key.key)
     return credential
 
 
@@ -400,6 +404,10 @@ def parse_connection_str(conn_str, credential, service):
             )
         except KeyError:
             raise ValueError("Connection string missing required connection details.")
+    if service == "dfs":
+        primary = primary.replace(".blob.", ".dfs.")
+        if secondary:
+            secondary = secondary.replace(".blob.", ".dfs.")
     return primary, secondary, credential
 
 

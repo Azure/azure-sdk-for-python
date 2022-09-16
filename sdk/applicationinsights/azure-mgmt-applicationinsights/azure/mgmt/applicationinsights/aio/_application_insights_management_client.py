@@ -9,12 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Serializer, Deserializer
+from typing import Any, Optional, TYPE_CHECKING
 
+from msrest import Deserializer, Serializer
+
+from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
+
 from ._configuration import ApplicationInsightsManagementClientConfiguration
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -38,14 +46,15 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param str api_version: API version to use if no profile is provided, or if
-     missing in profile.
-    :param str base_url: Service URL
+    :param api_version: API version to use if no profile is provided, or if missing in profile.
+    :type api_version: str
+    :param base_url: Service URL
+    :type base_url: str
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2017-10-01'
+    DEFAULT_API_VERSION = '2022-04-01'
     _PROFILE_TAG = "azure.mgmt.applicationinsights.ApplicationInsightsManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -55,33 +64,37 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
             'api_keys': '2015-05-01',
             'component_available_features': '2015-05-01',
             'component_current_billing_features': '2015-05-01',
+            'component_current_pricing_plan': '2017-10-01',
             'component_feature_capabilities': '2015-05-01',
+            'component_linked_storage_accounts': '2020-03-01-preview',
             'component_quota_status': '2015-05-01',
-            'components': '2015-05-01',
+            'components': '2020-02-02',
+            'ea_subscription_list_migration_date': '2017-10-01',
+            'ea_subscription_migrate_to_new_pricing_model': '2017-10-01',
+            'ea_subscription_rollback_to_legacy_pricing_model': '2017-10-01',
             'export_configurations': '2015-05-01',
             'favorites': '2015-05-01',
-            'my_workbooks': '2015-05-01',
+            'live_token': '2021-10-14',
+            'my_workbooks': '2021-03-08',
             'operations': '2015-05-01',
             'proactive_detection_configurations': '2015-05-01',
             'web_test_locations': '2015-05-01',
             'web_tests': '2015-05-01',
             'work_item_configurations': '2015-05-01',
-            'workbooks': '2015-05-01',
+            'workbook_templates': '2020-11-20',
         }},
         _PROFILE_TAG + " latest"
     )
 
     def __init__(
         self,
-        credential,  # type: "AsyncTokenCredential"
-        subscription_id,  # type: str
-        api_version=None,
-        base_url=None,
-        profile=KnownProfiles.default,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        api_version: Optional[str] = None,
+        base_url: str = "https://management.azure.com",
+        profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:
-        if not base_url:
-            base_url = 'https://management.azure.com'
         self._config = ApplicationInsightsManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(ApplicationInsightsManagementClient, self).__init__(
@@ -101,11 +114,16 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-10-01: :mod:`v2017_10_01.models<azure.mgmt.applicationinsights.v2017_10_01.models>`
            * 2018-05-01-preview: :mod:`v2018_05_01_preview.models<azure.mgmt.applicationinsights.v2018_05_01_preview.models>`
            * 2018-06-17-preview: :mod:`v2018_06_17_preview.models<azure.mgmt.applicationinsights.v2018_06_17_preview.models>`
-           * 2019-09-01-preview: :mod:`v2019_09_01_preview.models<azure.mgmt.applicationinsights.v2019_09_01_preview.models>`
            * 2019-10-17-preview: :mod:`v2019_10_17_preview.models<azure.mgmt.applicationinsights.v2019_10_17_preview.models>`
+           * 2020-02-02: :mod:`v2020_02_02.models<azure.mgmt.applicationinsights.v2020_02_02.models>`
            * 2020-02-02-preview: :mod:`v2020_02_02_preview.models<azure.mgmt.applicationinsights.v2020_02_02_preview.models>`
            * 2020-03-01-preview: :mod:`v2020_03_01_preview.models<azure.mgmt.applicationinsights.v2020_03_01_preview.models>`
            * 2020-06-02-preview: :mod:`v2020_06_02_preview.models<azure.mgmt.applicationinsights.v2020_06_02_preview.models>`
+           * 2020-11-20: :mod:`v2020_11_20.models<azure.mgmt.applicationinsights.v2020_11_20.models>`
+           * 2021-03-08: :mod:`v2021_03_08.models<azure.mgmt.applicationinsights.v2021_03_08.models>`
+           * 2021-08-01: :mod:`v2021_08_01.models<azure.mgmt.applicationinsights.v2021_08_01.models>`
+           * 2021-10-14: :mod:`v2021_10.models<azure.mgmt.applicationinsights.v2021_10.models>`
+           * 2022-04-01: :mod:`v2022_04_01.models<azure.mgmt.applicationinsights.v2022_04_01.models>`
         """
         if api_version == '2015-05-01':
             from ..v2015_05_01 import models
@@ -119,11 +137,11 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2018-06-17-preview':
             from ..v2018_06_17_preview import models
             return models
-        elif api_version == '2019-09-01-preview':
-            from ..v2019_09_01_preview import models
-            return models
         elif api_version == '2019-10-17-preview':
             from ..v2019_10_17_preview import models
+            return models
+        elif api_version == '2020-02-02':
+            from ..v2020_02_02 import models
             return models
         elif api_version == '2020-02-02-preview':
             from ..v2020_02_02_preview import models
@@ -133,6 +151,21 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
             return models
         elif api_version == '2020-06-02-preview':
             from ..v2020_06_02_preview import models
+            return models
+        elif api_version == '2020-11-20':
+            from ..v2020_11_20 import models
+            return models
+        elif api_version == '2021-03-08':
+            from ..v2021_03_08 import models
+            return models
+        elif api_version == '2021-08-01':
+            from ..v2021_08_01 import models
+            return models
+        elif api_version == '2021-10-14':
+            from ..v2021_10 import models
+            return models
+        elif api_version == '2022-04-01':
+            from ..v2022_04_01 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -259,6 +292,7 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2015-05-01: :class:`ComponentsOperations<azure.mgmt.applicationinsights.v2015_05_01.aio.operations.ComponentsOperations>`
            * 2018-05-01-preview: :class:`ComponentsOperations<azure.mgmt.applicationinsights.v2018_05_01_preview.aio.operations.ComponentsOperations>`
+           * 2020-02-02: :class:`ComponentsOperations<azure.mgmt.applicationinsights.v2020_02_02.aio.operations.ComponentsOperations>`
            * 2020-02-02-preview: :class:`ComponentsOperations<azure.mgmt.applicationinsights.v2020_02_02_preview.aio.operations.ComponentsOperations>`
         """
         api_version = self._get_api_version('components')
@@ -266,6 +300,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2015_05_01.aio.operations import ComponentsOperations as OperationClass
         elif api_version == '2018-05-01-preview':
             from ..v2018_05_01_preview.aio.operations import ComponentsOperations as OperationClass
+        elif api_version == '2020-02-02':
+            from ..v2020_02_02.aio.operations import ComponentsOperations as OperationClass
         elif api_version == '2020-02-02-preview':
             from ..v2020_02_02_preview.aio.operations import ComponentsOperations as OperationClass
         else:
@@ -342,10 +378,13 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-06-02-preview: :class:`LiveTokenOperations<azure.mgmt.applicationinsights.v2020_06_02_preview.aio.operations.LiveTokenOperations>`
+           * 2021-10-14: :class:`LiveTokenOperations<azure.mgmt.applicationinsights.v2021_10.aio.operations.LiveTokenOperations>`
         """
         api_version = self._get_api_version('live_token')
         if api_version == '2020-06-02-preview':
             from ..v2020_06_02_preview.aio.operations import LiveTokenOperations as OperationClass
+        elif api_version == '2021-10-14':
+            from ..v2021_10.aio.operations import LiveTokenOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'live_token'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -355,10 +394,13 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2015-05-01: :class:`MyWorkbooksOperations<azure.mgmt.applicationinsights.v2015_05_01.aio.operations.MyWorkbooksOperations>`
+           * 2021-03-08: :class:`MyWorkbooksOperations<azure.mgmt.applicationinsights.v2021_03_08.aio.operations.MyWorkbooksOperations>`
         """
         api_version = self._get_api_version('my_workbooks')
         if api_version == '2015-05-01':
             from ..v2015_05_01.aio.operations import MyWorkbooksOperations as OperationClass
+        elif api_version == '2021-03-08':
+            from ..v2021_03_08.aio.operations import MyWorkbooksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'my_workbooks'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -368,14 +410,17 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2015-05-01: :class:`Operations<azure.mgmt.applicationinsights.v2015_05_01.aio.operations.Operations>`
-           * 2019-09-01-preview: :class:`Operations<azure.mgmt.applicationinsights.v2019_09_01_preview.aio.operations.Operations>`
+           * 2018-05-01-preview: :class:`Operations<azure.mgmt.applicationinsights.v2018_05_01_preview.aio.operations.Operations>`
+           * 2018-06-17-preview: :class:`Operations<azure.mgmt.applicationinsights.v2018_06_17_preview.aio.operations.Operations>`
            * 2020-06-02-preview: :class:`Operations<azure.mgmt.applicationinsights.v2020_06_02_preview.aio.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2015-05-01':
             from ..v2015_05_01.aio.operations import Operations as OperationClass
-        elif api_version == '2019-09-01-preview':
-            from ..v2019_09_01_preview.aio.operations import Operations as OperationClass
+        elif api_version == '2018-05-01-preview':
+            from ..v2018_05_01_preview.aio.operations import Operations as OperationClass
+        elif api_version == '2018-06-17-preview':
+            from ..v2018_06_17_preview.aio.operations import Operations as OperationClass
         elif api_version == '2020-06-02-preview':
             from ..v2020_06_02_preview.aio.operations import Operations as OperationClass
         else:
@@ -399,32 +444,6 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
-    def queries(self):
-        """Instance depends on the API version:
-
-           * 2019-09-01-preview: :class:`QueriesOperations<azure.mgmt.applicationinsights.v2019_09_01_preview.aio.operations.QueriesOperations>`
-        """
-        api_version = self._get_api_version('queries')
-        if api_version == '2019-09-01-preview':
-            from ..v2019_09_01_preview.aio.operations import QueriesOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'queries'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
-    def query_packs(self):
-        """Instance depends on the API version:
-
-           * 2019-09-01-preview: :class:`QueryPacksOperations<azure.mgmt.applicationinsights.v2019_09_01_preview.aio.operations.QueryPacksOperations>`
-        """
-        api_version = self._get_api_version('query_packs')
-        if api_version == '2019-09-01-preview':
-            from ..v2019_09_01_preview.aio.operations import QueryPacksOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'query_packs'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
     def web_test_locations(self):
         """Instance depends on the API version:
 
@@ -442,10 +461,13 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2015-05-01: :class:`WebTestsOperations<azure.mgmt.applicationinsights.v2015_05_01.aio.operations.WebTestsOperations>`
+           * 2018-05-01-preview: :class:`WebTestsOperations<azure.mgmt.applicationinsights.v2018_05_01_preview.aio.operations.WebTestsOperations>`
         """
         api_version = self._get_api_version('web_tests')
         if api_version == '2015-05-01':
             from ..v2015_05_01.aio.operations import WebTestsOperations as OperationClass
+        elif api_version == '2018-05-01-preview':
+            from ..v2018_05_01_preview.aio.operations import WebTestsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'web_tests'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -468,10 +490,13 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-10-17-preview: :class:`WorkbookTemplatesOperations<azure.mgmt.applicationinsights.v2019_10_17_preview.aio.operations.WorkbookTemplatesOperations>`
+           * 2020-11-20: :class:`WorkbookTemplatesOperations<azure.mgmt.applicationinsights.v2020_11_20.aio.operations.WorkbookTemplatesOperations>`
         """
         api_version = self._get_api_version('workbook_templates')
         if api_version == '2019-10-17-preview':
             from ..v2019_10_17_preview.aio.operations import WorkbookTemplatesOperations as OperationClass
+        elif api_version == '2020-11-20':
+            from ..v2020_11_20.aio.operations import WorkbookTemplatesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'workbook_templates'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -482,12 +507,18 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2015-05-01: :class:`WorkbooksOperations<azure.mgmt.applicationinsights.v2015_05_01.aio.operations.WorkbooksOperations>`
            * 2018-06-17-preview: :class:`WorkbooksOperations<azure.mgmt.applicationinsights.v2018_06_17_preview.aio.operations.WorkbooksOperations>`
+           * 2021-08-01: :class:`WorkbooksOperations<azure.mgmt.applicationinsights.v2021_08_01.aio.operations.WorkbooksOperations>`
+           * 2022-04-01: :class:`WorkbooksOperations<azure.mgmt.applicationinsights.v2022_04_01.aio.operations.WorkbooksOperations>`
         """
         api_version = self._get_api_version('workbooks')
         if api_version == '2015-05-01':
             from ..v2015_05_01.aio.operations import WorkbooksOperations as OperationClass
         elif api_version == '2018-06-17-preview':
             from ..v2018_06_17_preview.aio.operations import WorkbooksOperations as OperationClass
+        elif api_version == '2021-08-01':
+            from ..v2021_08_01.aio.operations import WorkbooksOperations as OperationClass
+        elif api_version == '2022-04-01':
+            from ..v2022_04_01.aio.operations import WorkbooksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'workbooks'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

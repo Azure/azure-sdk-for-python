@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -12,22 +10,22 @@ FILE: sample_analyze_actions.py
 DESCRIPTION:
     This sample demonstrates how to submit a collection of text documents for analysis, which consists of a variety
     of text analysis actions, such as Entity Recognition, PII Entity Recognition, Linked Entity Recognition,
-    Sentiment Analysis, Key Phrase Extraction, or Extractive Text Summarization (not shown - see sample sample_extract_summary.py).
+    Sentiment Analysis, Key Phrase Extraction, and more.
     The response will contain results from each of the individual actions specified in the request.
 
 USAGE:
     python sample_analyze_actions.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
-    2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
+    1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
+    2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
 
 import os
 
 
-def sample_analyze_actions():
+def sample_analyze_actions() -> None:
     # [START analyze]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import (
@@ -39,8 +37,8 @@ def sample_analyze_actions():
         AnalyzeSentimentAction,
     )
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+    endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+    key = os.environ["AZURE_LANGUAGE_KEY"]
 
     text_analytics_client = TextAnalyticsClient(
         endpoint=endpoint,
@@ -73,74 +71,58 @@ def sample_analyze_actions():
 
     document_results = poller.result()
     for doc, action_results in zip(documents, document_results):
-        print("\nDocument text: {}".format(doc))
-        recognize_entities_result = action_results[0]
-        print("...Results of Recognize Entities Action:")
-        if recognize_entities_result.is_error:
-            print("...Is an error with code '{}' and message '{}'".format(
-                recognize_entities_result.code, recognize_entities_result.message
-            ))
-        else:
-            for entity in recognize_entities_result.entities:
-                print("......Entity: {}".format(entity.text))
-                print(".........Category: {}".format(entity.category))
-                print(".........Confidence Score: {}".format(entity.confidence_score))
-                print(".........Offset: {}".format(entity.offset))
+        print(f"\nDocument text: {doc}")
+        for result in action_results:
+            if result.kind == "EntityRecognition":
+                print("...Results of Recognize Entities Action:")
+                for entity in result.entities:
+                    print(f"......Entity: {entity.text}")
+                    print(f".........Category: {entity.category}")
+                    print(f".........Confidence Score: {entity.confidence_score}")
+                    print(f".........Offset: {entity.offset}")
 
-        recognize_pii_entities_result = action_results[1]
-        print("...Results of Recognize PII Entities action:")
-        if recognize_pii_entities_result.is_error:
-            print("...Is an error with code '{}' and message '{}'".format(
-                recognize_pii_entities_result.code, recognize_pii_entities_result.message
-            ))
-        else:
-            for entity in recognize_pii_entities_result.entities:
-                print("......Entity: {}".format(entity.text))
-                print(".........Category: {}".format(entity.category))
-                print(".........Confidence Score: {}".format(entity.confidence_score))
+            elif result.kind == "PiiEntityRecognition":
+                print("...Results of Recognize PII Entities action:")
+                for entity in result.entities:
+                    print(f"......Entity: {entity.text}")
+                    print(f".........Category: {entity.category}")
+                    print(f".........Confidence Score: {entity.confidence_score}")
 
-        extract_key_phrases_result = action_results[2]
-        print("...Results of Extract Key Phrases action:")
-        if extract_key_phrases_result.is_error:
-            print("...Is an error with code '{}' and message '{}'".format(
-                extract_key_phrases_result.code, extract_key_phrases_result.message
-            ))
-        else:
-            print("......Key Phrases: {}".format(extract_key_phrases_result.key_phrases))
+            elif result.kind == "KeyPhraseExtraction":
+                print("...Results of Extract Key Phrases action:")
+                print(f"......Key Phrases: {result.key_phrases}")
 
-        recognize_linked_entities_result = action_results[3]
-        print("...Results of Recognize Linked Entities action:")
-        if recognize_linked_entities_result.is_error:
-            print("...Is an error with code '{}' and message '{}'".format(
-                recognize_linked_entities_result.code, recognize_linked_entities_result.message
-            ))
-        else:
-            for linked_entity in recognize_linked_entities_result.entities:
-                print("......Entity name: {}".format(linked_entity.name))
-                print(".........Data source: {}".format(linked_entity.data_source))
-                print(".........Data source language: {}".format(linked_entity.language))
-                print(".........Data source entity ID: {}".format(linked_entity.data_source_entity_id))
-                print(".........Data source URL: {}".format(linked_entity.url))
-                print(".........Document matches:")
-                for match in linked_entity.matches:
-                    print("............Match text: {}".format(match.text))
-                    print("............Confidence Score: {}".format(match.confidence_score))
-                    print("............Offset: {}".format(match.offset))
-                    print("............Length: {}".format(match.length))
+            elif result.kind == "EntityLinking":
+                print("...Results of Recognize Linked Entities action:")
+                for linked_entity in result.entities:
+                    print(f"......Entity name: {linked_entity.name}")
+                    print(f".........Data source: {linked_entity.data_source}")
+                    print(f".........Data source language: {linked_entity.language}")
+                    print(
+                        f".........Data source entity ID: {linked_entity.data_source_entity_id}"
+                    )
+                    print(f".........Data source URL: {linked_entity.url}")
+                    print(".........Document matches:")
+                    for match in linked_entity.matches:
+                        print(f"............Match text: {match.text}")
+                        print(f"............Confidence Score: {match.confidence_score}")
+                        print(f"............Offset: {match.offset}")
+                        print(f"............Length: {match.length}")
 
-        analyze_sentiment_result = action_results[4]
-        print("...Results of Analyze Sentiment action:")
-        if analyze_sentiment_result.is_error:
-            print("...Is an error with code '{}' and message '{}'".format(
-                analyze_sentiment_result.code, analyze_sentiment_result.message
-            ))
-        else:
-            print("......Overall sentiment: {}".format(analyze_sentiment_result.sentiment))
-            print("......Scores: positive={}; neutral={}; negative={} \n".format(
-                analyze_sentiment_result.confidence_scores.positive,
-                analyze_sentiment_result.confidence_scores.neutral,
-                analyze_sentiment_result.confidence_scores.negative,
-            ))
+            elif result.kind == "SentimentAnalysis":
+                print("...Results of Analyze Sentiment action:")
+                print(f"......Overall sentiment: {result.sentiment}")
+                print(
+                    f"......Scores: positive={result.confidence_scores.positive}; \
+                    neutral={result.confidence_scores.neutral}; \
+                    negative={result.confidence_scores.negative} \n"
+                )
+
+            elif result.is_error is True:
+                print(
+                    f"...Is an error with code '{result.code}' and message '{result.message}'"
+                )
+
         print("------------------------------------------")
 
     # [END analyze]

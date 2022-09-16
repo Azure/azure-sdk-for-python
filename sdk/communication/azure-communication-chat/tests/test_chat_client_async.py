@@ -17,10 +17,7 @@ from azure.core.exceptions import HttpResponseError
 from datetime import datetime
 from msrest.serialization import TZ_UTC
 
-try:
-    from unittest.mock import Mock, patch
-except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
+from unittest.mock import Mock, patch
 
 import pytest
 import time

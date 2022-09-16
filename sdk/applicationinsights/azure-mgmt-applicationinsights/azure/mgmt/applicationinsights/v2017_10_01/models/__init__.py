@@ -6,16 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ApplicationInsightsComponentPricingPlan
-    from ._models_py3 import CloudErrorBody
-    from ._models_py3 import EASubscriptionMigrationDate
-    from ._models_py3 import Resource
-except (SyntaxError, ImportError):
-    from ._models import ApplicationInsightsComponentPricingPlan  # type: ignore
-    from ._models import CloudErrorBody  # type: ignore
-    from ._models import EASubscriptionMigrationDate  # type: ignore
-    from ._models import Resource  # type: ignore
+from ._models_py3 import ApplicationInsightsComponentPricingPlan
+from ._models_py3 import CloudErrorBody
+from ._models_py3 import EASubscriptionMigrationDate
+from ._models_py3 import Resource
+
 
 __all__ = [
     'ApplicationInsightsComponentPricingPlan',

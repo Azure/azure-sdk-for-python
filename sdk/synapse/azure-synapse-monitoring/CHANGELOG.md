@@ -2,6 +2,9 @@
 
 ## 0.3.0 (Unreleased)
 
+### Other Changes
+
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
 
 ## 0.2.0 (2021-03-09)
 

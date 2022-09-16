@@ -20,19 +20,19 @@ import os
 import unittest
 
 import azure.mgmt.cdn
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtCdnTest(AzureMgmtTestCase):
+class TestMgmtCdn(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtCdnTest, self).setUp()
+    def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.cdn.CdnManagementClient
         )
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_cdn(self, resource_group):
 
         SUBSCRIPTION_ID = None

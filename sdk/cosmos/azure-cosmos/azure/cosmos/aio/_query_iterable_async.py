@@ -21,6 +21,7 @@
 
 """Iterable query results in the Azure Cosmos database service.
 """
+import asyncio
 from azure.core.async_paging import AsyncPageIterator
 from azure.cosmos._execution_context.aio import execution_dispatcher
 
@@ -77,11 +78,6 @@ class QueryIterable(AsyncPageIterator):
         )
         super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
-    async def __aiter__(self):
-        if 'partition_key' in self._options:
-            self._options['partition_key'] = await self._options['partition_key']
-        return self
-
     async def _unpack(self, block):
         continuation = None
         if self._client.last_response_headers:
@@ -100,6 +96,9 @@ class QueryIterable(AsyncPageIterator):
         :return: List of results.
         :rtype: list
         """
+
+        if 'partitionKey' in self._options and asyncio.iscoroutine(self._options['partitionKey']):
+            self._options['partitionKey'] = await self._options['partitionKey']
         block = await self._ex_context.fetch_next_block()
         if not block:
             raise StopAsyncIteration

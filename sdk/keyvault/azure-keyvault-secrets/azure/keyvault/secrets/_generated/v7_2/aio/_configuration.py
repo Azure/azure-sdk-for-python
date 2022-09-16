@@ -13,12 +13,15 @@ from azure.core.pipeline import policies
 
 VERSION = "unknown"
 
-class KeyVaultClientConfiguration(Configuration):
+class KeyVaultClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for KeyVaultClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :keyword api_version: Api Version. Default value is "7.2". Note that overriding this default
+     value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -26,8 +29,10 @@ class KeyVaultClientConfiguration(Configuration):
         **kwargs: Any
     ) -> None:
         super(KeyVaultClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "7.2")  # type: str
 
-        self.api_version = "7.2"
+
+        self.api_version = api_version
         kwargs.setdefault('sdk_moniker', 'keyvault/{}'.format(VERSION))
         self._configure(**kwargs)
 

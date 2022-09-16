@@ -10,9 +10,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-ca641c2f?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-ca641c2f?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"ValidationFailed","message":"Invalid twin specified","details":[{"code":"ValidationFailed","message":"dtmi:samples:Building;2
@@ -20,10 +20,11 @@ interactions:
     headers:
       content-length: '191'
       content-type: application/json; charset=utf-8
-      date: Tue, 24 Nov 2020 21:07:08 GMT
+      date: Thu, 26 May 2022 07:28:03 GMT
       strict-transport-security: max-age=2592000
+      traceresponse: 00-133ee7366ee13f45b86ef6fb05d2aa95-579315978668154e-01
     status:
       code: 400
       message: Bad Request
-    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-ca641c2f?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-ca641c2f?api-version=2022-05-31
 version: 1

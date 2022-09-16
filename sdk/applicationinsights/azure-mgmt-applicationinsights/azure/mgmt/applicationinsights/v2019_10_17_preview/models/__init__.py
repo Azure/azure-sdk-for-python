@@ -6,24 +6,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ErrorFieldContract
-    from ._models_py3 import WorkbookError
-    from ._models_py3 import WorkbookTemplate
-    from ._models_py3 import WorkbookTemplateGallery
-    from ._models_py3 import WorkbookTemplateLocalizedGallery
-    from ._models_py3 import WorkbookTemplateResource
-    from ._models_py3 import WorkbookTemplateUpdateParameters
-    from ._models_py3 import WorkbookTemplatesListResult
-except (SyntaxError, ImportError):
-    from ._models import ErrorFieldContract  # type: ignore
-    from ._models import WorkbookError  # type: ignore
-    from ._models import WorkbookTemplate  # type: ignore
-    from ._models import WorkbookTemplateGallery  # type: ignore
-    from ._models import WorkbookTemplateLocalizedGallery  # type: ignore
-    from ._models import WorkbookTemplateResource  # type: ignore
-    from ._models import WorkbookTemplateUpdateParameters  # type: ignore
-    from ._models import WorkbookTemplatesListResult  # type: ignore
+from ._models_py3 import ErrorFieldContract
+from ._models_py3 import WorkbookError
+from ._models_py3 import WorkbookTemplate
+from ._models_py3 import WorkbookTemplateGallery
+from ._models_py3 import WorkbookTemplateLocalizedGallery
+from ._models_py3 import WorkbookTemplateResource
+from ._models_py3 import WorkbookTemplateUpdateParameters
+from ._models_py3 import WorkbookTemplatesListResult
+
 
 __all__ = [
     'ErrorFieldContract',

@@ -73,7 +73,7 @@ def retry_hook(settings, **kwargs):
         settings['hook'](retry_count=settings['count'] - 1, location_mode=settings['mode'], **kwargs)
 
 
-def is_retry(response, mode):
+def is_retry(response, mode):   # pylint: disable=too-many-return-statements
     """Is this method/status code retryable? (Based on allowlists and control
     variables such as the number of total retries to allow, whether to
     respect the Retry-After header, whether this header is present, and
@@ -82,7 +82,7 @@ def is_retry(response, mode):
     """
     status = response.http_response.status_code
     if 300 <= status < 500:
-        # An exception occured, but in most cases it was expected. Examples could
+        # An exception occurred, but in most cases it was expected. Examples could
         # include a 309 Conflict or 412 Precondition Failed.
         if status == 404 and mode == LocationMode.SECONDARY:
             # Response code 404 should be retried if secondary was used.
@@ -97,6 +97,12 @@ def is_retry(response, mode):
         if status in [501, 505]:
             return False
         return True
+    # retry if invalid content md5
+    if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
+        computed_md5 = response.http_request.headers.get('content-md5', None) or \
+                       encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
+        if response.http_response.headers['content-md5'] != computed_md5:
+            return True
     return False
 
 
@@ -330,6 +336,9 @@ class StorageContentValidation(SansIOHTTPPolicy):
 
     @staticmethod
     def get_content_md5(data):
+        # Since HTTP does not differentiate between no content and empty content,
+        # we have to perform a None check.
+        data = data or b""
         md5 = hashlib.md5() # nosec
         if isinstance(data, bytes):
             md5.update(data)

@@ -32,7 +32,9 @@ from . import _endpoint_discovery_retry_policy
 from . import _resource_throttle_retry_policy
 from . import _default_retry_policy
 from . import _session_retry_policy
+from . import _gone_retry_policy
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes
+
 
 # pylint: disable=protected-access
 
@@ -65,6 +67,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
     sessionRetry_policy = _session_retry_policy._SessionRetryPolicy(
         client.connection_policy.EnableEndpointDiscovery, global_endpoint_manager, *args
     )
+    partition_key_range_gone_retry_policy = _gone_retry_policy.PartitionKeyRangeGoneRetryPolicy(client, *args)
+
     while True:
         try:
             client_timeout = kwargs.get('timeout')
@@ -82,7 +86,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             ] = resourceThrottle_retry_policy.current_retry_attempt_count
             client.last_response_headers[
                 HttpHeaders.ThrottleRetryWaitTimeInMs
-            ] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
+            ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
 
             return result
         except exceptions.CosmosHttpResponseError as e:
@@ -97,6 +101,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 and e.sub_status == SubStatusCodes.READ_SESSION_NOTAVAILABLE
             ):
                 retry_policy = sessionRetry_policy
+            elif exceptions._partition_range_is_gone(e):
+                retry_policy = partition_key_range_gone_retry_policy
             else:
                 retry_policy = defaultRetry_policy
 
@@ -111,7 +117,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 ] = resourceThrottle_retry_policy.current_retry_attempt_count
                 client.last_response_headers[
                     HttpHeaders.ThrottleRetryWaitTimeInMs
-                ] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
+                ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
                 if args and args[0].should_clear_session_token_on_session_read_failure:
                     client.session.clear_session_token(client.last_response_headers)
                 raise

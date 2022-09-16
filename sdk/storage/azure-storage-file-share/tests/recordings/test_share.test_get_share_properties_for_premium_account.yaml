@@ -90,6 +90,8 @@ interactions:
       - '44'
       x-ms-share-provisioned-iops:
       - '100'
+      x-ms-share-provisioned-bandwidth-mibps:
+      - '110'
       x-ms-share-quota:
       - '100'
       x-ms-version:

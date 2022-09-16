@@ -1,0 +1,99 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "602",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "KeyPhraseExtraction",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "One",
+              "language": "en"
+            },
+            {
+              "id": "1",
+              "text": "Two",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "Three",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "Four",
+              "language": "en"
+            },
+            {
+              "id": "4",
+              "text": "Five",
+              "language": "en"
+            },
+            {
+              "id": "5",
+              "text": "Six",
+              "language": "en"
+            },
+            {
+              "id": "6",
+              "text": "Seven",
+              "language": "en"
+            },
+            {
+              "id": "7",
+              "text": "Eight",
+              "language": "en"
+            },
+            {
+              "id": "8",
+              "text": "Nine",
+              "language": "en"
+            },
+            {
+              "id": "9",
+              "text": "Ten",
+              "language": "en"
+            },
+            {
+              "id": "10",
+              "text": "Eleven",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {}
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "apim-request-id": "304685eb-56fc-4f19-b5cd-24ca34906f6d",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 08 Jun 2022 18:31:16 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "6"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidRequest",
+          "message": "Invalid Document in request.",
+          "innererror": {
+            "code": "InvalidDocumentBatch",
+            "message": "Batch request contains too many records. Max 10 records are permitted."
+          }
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

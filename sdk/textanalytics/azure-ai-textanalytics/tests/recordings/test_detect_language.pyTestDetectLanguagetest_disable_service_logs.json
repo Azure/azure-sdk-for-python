@@ -1,0 +1,52 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/languages?loggingOptOut=true",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "85",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "documents": [
+          {
+            "id": "0",
+            "text": "Test for logging disable",
+            "countryHint": "US"
+          }
+        ]
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "0cb86c8e-09a5-498e-88ec-481f3b6df8d0",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
+        "Date": "Wed, 08 Jun 2022 01:33:28 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "14"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "id": "0",
+            "detectedLanguage": {
+              "name": "English",
+              "iso6391Name": "en",
+              "confidenceScore": 0.85
+            },
+            "warnings": []
+          }
+        ],
+        "errors": [],
+        "modelVersion": "2021-11-20"
+      }
+    }
+  ],
+  "Variables": {}
+}

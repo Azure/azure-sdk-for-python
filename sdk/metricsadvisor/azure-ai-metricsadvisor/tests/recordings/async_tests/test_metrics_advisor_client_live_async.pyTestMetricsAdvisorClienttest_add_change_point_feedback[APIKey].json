@@ -1,0 +1,30 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "280",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "6899b4ec-5e0d-11ec-9b03-6245b51668de"
+      },
+      "RequestBody": "{\u0022feedbackType\u0022: \u0022ChangePoint\u0022, \u0022metricId\u0022: \u0022metrics_advisor_metric_id\u0022, \u0022dimensionFilter\u0022: {\u0022dimension\u0022: {\u0022category\u0022: \u0022Shoes Handbags \u0026 Sunglasses\u0022}}, \u0022startTime\u0022: \u00222021-08-05T00:00:00.000Z\u0022, \u0022endTime\u0022: \u00222021-09-09T00:00:00.000Z\u0022, \u0022value\u0022: {\u0022changePointValue\u0022: \u0022NotChangePoint\u0022}}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "apim-request-id": "e114fc8c-643d-41e7-a144-0a829fb9dc65",
+        "Content-Length": "0",
+        "Date": "Thu, 16 Dec 2021 01:13:42 GMT",
+        "Location": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/aa12168d-f358-4a10-a767-6bed2a347c43",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "460",
+        "X-Request-ID": "e114fc8c-643d-41e7-a144-0a829fb9dc65"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

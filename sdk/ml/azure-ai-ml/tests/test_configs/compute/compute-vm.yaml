@@ -1,0 +1,11 @@
+name: banchcivm
+type: virtualmachine
+description: some_desc_vm
+
+resource_id: /subscriptions/13e50845-67bc-4ac5-94db-48d493a6d9e8/resourceGroups/myrg/providers/Microsoft.Compute/virtualMachines/myvm
+
+ssh_settings:
+   ssh_port: 8888
+   admin_username: azureuser
+   admin_password: azureuserpassword
+   ssh_private_key_file: tests/test_configs/compute/ssh_fake_key.txt

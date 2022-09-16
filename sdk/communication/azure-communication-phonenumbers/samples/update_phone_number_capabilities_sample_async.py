@@ -41,5 +41,4 @@ async def update_phone_number_capabilities():
     print('Status of the operation: ' + poller.status())
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(update_phone_number_capabilities())
+    asyncio.run(update_phone_number_capabilities())

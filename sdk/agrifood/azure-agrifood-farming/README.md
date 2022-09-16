@@ -16,7 +16,7 @@ Use FarmBeats client library for Python to do the following.
 To use this package, you must have:
 - Azure subscription - [Create a free account][azure_subscription]
 - Azure FarmBeats resource - [Install FarmBeats][install_farmbeats]
-- Python 2.7, 3.6 or later - [Install Python][python]
+- 3.6 or later - [Install Python][python]
 
 ### Install the package
 

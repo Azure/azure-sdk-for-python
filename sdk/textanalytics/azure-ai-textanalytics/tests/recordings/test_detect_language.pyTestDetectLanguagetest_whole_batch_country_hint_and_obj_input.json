@@ -1,0 +1,87 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "328",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "LanguageDetection",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "I should take my cat to the veterinarian.",
+              "countryHint": "CA"
+            },
+            {
+              "id": "2",
+              "text": "Este es un document escrito en Espa\u00F1ol.",
+              "countryHint": "CA"
+            },
+            {
+              "id": "3",
+              "text": "\u732B\u306F\u5E78\u305B",
+              "countryHint": "CA"
+            }
+          ]
+        },
+        "parameters": {}
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "14ad5053-dba4-49ce-b520-68ba21ee38a3",
+        "Content-Length": "416",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Wed, 08 Jun 2022 01:33:22 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "9"
+      },
+      "ResponseBody": {
+        "kind": "LanguageDetectionResults",
+        "results": {
+          "documents": [
+            {
+              "id": "1",
+              "detectedLanguage": {
+                "name": "English",
+                "iso6391Name": "en",
+                "confidenceScore": 0.96
+              },
+              "warnings": []
+            },
+            {
+              "id": "2",
+              "detectedLanguage": {
+                "name": "Spanish",
+                "iso6391Name": "es",
+                "confidenceScore": 0.75
+              },
+              "warnings": []
+            },
+            {
+              "id": "3",
+              "detectedLanguage": {
+                "name": "Japanese",
+                "iso6391Name": "ja",
+                "confidenceScore": 1.0
+              },
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-11-20"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

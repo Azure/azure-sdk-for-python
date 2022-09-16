@@ -16,7 +16,9 @@ USAGE:
     python sample_query_table.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) TABLES_STORAGE_ENDPOINT_SUFFIX - the Table service account URL suffix
+    2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
+    3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
 import os
@@ -41,12 +43,12 @@ class SampleTablesQuery(object):
         from azure.data.tables import TableClient
         from azure.core.exceptions import ResourceExistsError
 
-        brands = [u"Crayola", u"Sharpie", u"Chameleon"]
-        colors = [u"red", u"blue", u"orange", u"yellow"]
-        names = [u"marker", u"pencil", u"pen"]
+        brands = ["Crayola", "Sharpie", "Chameleon"]
+        colors = ["red", "blue", "orange", "yellow"]
+        names = ["marker", "pencil", "pen"]
         entity_template = {
-            u"PartitionKey": u"pk",
-            u"RowKey": u"row",
+            "PartitionKey": "pk",
+            "RowKey": "row",
         }
 
         with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
@@ -57,14 +59,11 @@ class SampleTablesQuery(object):
 
             for i in range(25):
                 e = copy.deepcopy(entity_template)
-                try:
-                    e[u"RowKey"] += unicode(i)
-                except NameError:
-                    e[u"RowKey"] += str(i)
-                e[u"Name"] = random.choice(names)
-                e[u"Brand"] = random.choice(brands)
-                e[u"Color"] = random.choice(colors)
-                e[u"Value"] = random.randint(0, 100)
+                e["RowKey"] += str(i)
+                e["Name"] = random.choice(names)
+                e["Brand"] = random.choice(brands)
+                e["Color"] = random.choice(colors)
+                e["Value"] = random.randint(0, 100)
                 table_client.create_entity(entity=e)
 
     def sample_query_entities(self):
@@ -75,10 +74,32 @@ class SampleTablesQuery(object):
         # [START query_entities]
         with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
             try:
-                parameters = {u"name": u"marker"}
-                name_filter = u"Name eq @name"
+                parameters = {"name": "marker"}
+                name_filter = "Name eq @name"
                 queried_entities = table_client.query_entities(
-                    query_filter=name_filter, select=[u"Brand", u"Color"], parameters=parameters
+                    query_filter=name_filter, select=["Brand", "Color"], parameters=parameters
+                )
+
+                for entity_chosen in queried_entities:
+                    print(entity_chosen)
+
+            except HttpResponseError as e:
+                print(e.message)
+        # [END query_entities]
+
+    def sample_query_entities_without_metadata(self):
+        from azure.data.tables import TableClient
+        from azure.core.exceptions import HttpResponseError
+
+        print("Entities with name: marker")
+        # [START query_entities]
+        with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
+            try:
+                parameters = {"name": "marker"}
+                name_filter = "Name eq @name"
+                headers = {"Accept" : "application/json;odata=nometadata"}
+                queried_entities = table_client.query_entities(
+                    query_filter=name_filter, select=["Brand", "Color"], parameters=parameters, headers=headers
                 )
 
                 for entity_chosen in queried_entities:
@@ -96,10 +117,10 @@ class SampleTablesQuery(object):
         # [START query_entities]
         with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
             try:
-                parameters = {u"name": u"marker", u"brand": u"Crayola"}
-                name_filter = u"Name eq @name and Brand eq @brand"
+                parameters = {"name": "marker", "brand": "Crayola"}
+                name_filter = "Name eq @name and Brand eq @brand"
                 queried_entities = table_client.query_entities(
-                    query_filter=name_filter, select=[u"Brand", u"Color"], parameters=parameters
+                    query_filter=name_filter, select=["Brand", "Color"], parameters=parameters
                 )
 
                 for entity_chosen in queried_entities:
@@ -117,10 +138,10 @@ class SampleTablesQuery(object):
         # [START query_entities]
         with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
             try:
-                parameters = {u"lower": 25, u"upper": 50}
-                name_filter = u"Value gt @lower and Value lt @upper"
+                parameters = {"lower": 25, "upper": 50}
+                name_filter = "Value gt @lower and Value lt @upper"
                 queried_entities = table_client.query_entities(
-                    query_filter=name_filter, select=[u"Value"], parameters=parameters
+                    query_filter=name_filter, select=["Value"], parameters=parameters
                 )
 
                 for entity_chosen in queried_entities:
@@ -142,6 +163,7 @@ if __name__ == "__main__":
     try:
         stq.insert_random_entities()
         stq.sample_query_entities()
+        stq.sample_query_entities_without_metadata()
         stq.sample_query_entities_multiple_params()
         stq.sample_query_entities_values()
     except:

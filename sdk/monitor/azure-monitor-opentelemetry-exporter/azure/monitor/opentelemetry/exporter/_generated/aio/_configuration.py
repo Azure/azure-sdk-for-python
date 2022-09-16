@@ -13,13 +13,14 @@ from azure.core.pipeline import policies
 
 VERSION = "unknown"
 
-class AzureMonitorClientConfiguration(Configuration):
+class AzureMonitorClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for AzureMonitorClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param host: Breeze endpoint: https://dc.services.visualstudio.com.
+    :param host: Breeze endpoint: https://dc.services.visualstudio.com. Default value is
+     "https://dc.services.visualstudio.com".
     :type host: str
     """
 
@@ -28,9 +29,9 @@ class AzureMonitorClientConfiguration(Configuration):
         host: str = "https://dc.services.visualstudio.com",
         **kwargs: Any
     ) -> None:
+        super(AzureMonitorClientConfiguration, self).__init__(**kwargs)
         if host is None:
             raise ValueError("Parameter 'host' must not be None.")
-        super(AzureMonitorClientConfiguration, self).__init__(**kwargs)
 
         self.host = host
         kwargs.setdefault('sdk_moniker', 'azuremonitorclient/{}'.format(VERSION))

@@ -1,5 +1,100 @@
 # Release History
 
+## 2.8.0 (2022-09-13)
+
+### Features Added
+
+  - Added model AzureSynapseArtifactsLinkedService
+  - Added model BigDataPoolParametrizationReference
+  - Added model BigDataPoolReferenceType
+  - Added model DatasetReferenceType
+  - Added model ExpressionType
+  - Added model GoogleSheetsLinkedService
+  - Added model IntegrationRuntimeReferenceType
+  - Added model NotebookParameter
+  - Added model NotebookParameterType
+  - Added model NotebookReferenceType
+  - Added model PipelineReferenceType
+  - Added model SparkJobReferenceType
+  - Added model SynapseNotebookActivity
+  - Added model SynapseNotebookReference
+  - Added model SynapseSparkJobDefinitionActivity
+  - Added model SynapseSparkJobReference
+  - Added model Type
+
+## 2.7.0 (2022-06-15)
+
+**Features**
+
+  - Model RestServiceLinkedService has a new parameter client_id
+  - Model RestServiceLinkedService has a new parameter client_secret
+  - Model RestServiceLinkedService has a new parameter resource
+  - Model RestServiceLinkedService has a new parameter scope
+  - Model RestServiceLinkedService has a new parameter token_endpoint
+
+## 2.6.0 (2022-05-27)
+
+**Features**
+
+  - Added operation group GlobalParametersOperations
+  - Model DataFlowSink has a new parameter rejected_data_linked_service
+  - Model ExecuteDataFlowActivity has a new parameter source_staging_concurrency
+  - Model ExecuteDataFlowActivityTypeProperties has a new parameter source_staging_concurrency
+  - Model ExecutePowerQueryActivityTypeProperties has a new parameter source_staging_concurrency
+  - Model ExecuteWranglingDataflowActivity has a new parameter source_staging_concurrency
+  - Model Factory has a new parameter purview_configuration
+  - Model PowerQuerySink has a new parameter rejected_data_linked_service
+
+## 2.5.0 (2022-05-12)
+
+**Features**
+
+  - Model PrivateLinkConnectionApprovalRequest has a new parameter private_endpoint
+
+## 2.4.0 (2022-04-15)
+
+**Features**
+
+  - Model ExecutePipelineActivity has a new parameter policy
+  - Model WebActivity has a new parameter disable_cert_validation
+
+## 2.3.0 (2022-03-02)
+
+**Features**
+
+  - Added model QuickbaseLinkedService
+  - Added model ScriptActivity
+  - Added model ScriptActivityLogDestination
+  - Added model ScriptActivityParameter
+  - Added model ScriptActivityParameterDirection
+  - Added model ScriptActivityParameterType
+  - Added model ScriptActivityScriptBlock
+  - Added model ScriptActivityTypePropertiesLogSettings
+  - Added model ScriptType
+  - Added model SmartsheetLinkedService
+  - Added model TeamDeskAuthenticationType
+  - Added model TeamDeskLinkedService
+  - Added model ZendeskAuthenticationType
+  - Added model ZendeskLinkedService
+
+## 2.2.1 (2022-02-14)
+
+**Fixes**
+  - Fix parameter public_network_access mapping type in Model FactoryUpdateParameters
+
+## 2.2.0 (2022-01-06)
+
+**Features**
+
+  - Model AzureBlobFSLinkedService has a new parameter service_principal_credential
+  - Model AzureBlobFSLinkedService has a new parameter service_principal_credential_type
+  - Model AzureDatabricksDeltaLakeLinkedService has a new parameter credential
+  - Model AzureDatabricksDeltaLakeLinkedService has a new parameter workspace_resource_id
+  - Model CosmosDbLinkedService has a new parameter credential
+  - Model DynamicsLinkedService has a new parameter credential
+  - Model GoogleAdWordsLinkedService has a new parameter connection_properties
+  - Model LinkedIntegrationRuntimeRbacAuthorization has a new parameter credential
+
 ## 2.1.0 (2021-11-20)
 
 **Features**

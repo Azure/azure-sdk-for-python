@@ -1,0 +1,82 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "321",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "KeyPhraseExtraction",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "I should take my cat to the veterinarian.",
+              "language": "de"
+            },
+            {
+              "id": "4",
+              "text": "Este es un document escrito en Espa\u00F1ol.",
+              "language": "de"
+            },
+            {
+              "id": "3",
+              "text": "\u732B\u306F\u5E78\u305B",
+              "language": "de"
+            }
+          ]
+        },
+        "parameters": {}
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "ddb8d114-8136-4541-b48e-86336db0565b",
+        "Content-Length": "278",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Wed, 08 Jun 2022 18:31:33 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "15"
+      },
+      "ResponseBody": {
+        "kind": "KeyPhraseExtractionResults",
+        "results": {
+          "documents": [
+            {
+              "id": "1",
+              "keyPhrases": [
+                "cat",
+                "veterinarian"
+              ],
+              "warnings": []
+            },
+            {
+              "id": "4",
+              "keyPhrases": [
+                "Espa\u00F1ol",
+                "document"
+              ],
+              "warnings": []
+            },
+            {
+              "id": "3",
+              "keyPhrases": [
+                "\u306F\u5E78\u305B"
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-06-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

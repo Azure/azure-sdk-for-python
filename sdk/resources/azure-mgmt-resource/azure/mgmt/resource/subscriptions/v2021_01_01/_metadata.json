@@ -5,13 +5,13 @@
         "name": "SubscriptionClient",
         "filename": "_subscription_client",
         "description": "All resource groups and resources exist within subscriptions. These operation enable you get information about your subscriptions and tenants. A tenant is a dedicated instance of Azure Active Directory (Azure AD) for your organization.",
-        "base_url": "\u0027https://management.azure.com\u0027",
-        "custom_base_url": null,
+        "host_value": "\"https://management.azure.com\"",
+        "parameterized_host_template": null,
         "azure_arm": true,
         "has_lro_operations": false,
         "client_side_validation": false,
-        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"SubscriptionClientConfiguration\"], \"._operations_mixin\": [\"SubscriptionClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
-        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"SubscriptionClientConfiguration\"], \"._operations_mixin\": [\"SubscriptionClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"SubscriptionClientConfiguration\"], \"._operations_mixin\": [\"SubscriptionClientOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"SubscriptionClientConfiguration\"], \"._operations_mixin\": [\"SubscriptionClientOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -42,7 +42,7 @@
                     "required": false
                 },
                 "base_url": {
-                    "signature": "base_url=None,  # type: Optional[str]",
+                    "signature": "base_url=\"https://management.azure.com\",  # type: str",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false
@@ -62,7 +62,7 @@
                     "required": false
                 },
                 "base_url": {
-                    "signature": "base_url: Optional[str] = None,",
+                    "signature": "base_url: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false
@@ -79,29 +79,28 @@
     "config": {
         "credential": true,
         "credential_scopes": ["https://management.azure.com/.default"],
-        "credential_default_policy_type": "BearerTokenCredentialPolicy",
-        "credential_default_policy_type_has_async_version": true,
-        "credential_key_header_name": null,
-        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
-        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+        "credential_call_sync": "ARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "credential_call_async": "AsyncARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMChallengeAuthenticationPolicy\", \"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
         "subscriptions": "SubscriptionsOperations",
         "tenants": "TenantsOperations"
     },
     "operation_mixins": {
-        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}",
-        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}",
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
         "operations": {
             "check_resource_name" : {
                 "sync": {
-                    "signature": "def check_resource_name(\n    self,\n    resource_name_definition=None,  # type: Optional[\"_models.ResourceName\"]\n    **kwargs  # type: Any\n):\n",
-                    "doc": "\"\"\"Checks resource name validity.\n\nA resource name is valid if it is not a reserved word, does not contains a reserved word and\ndoes not start with a reserved word.\n\n:param resource_name_definition: Resource object with values for resource name and resource\n type.\n:type resource_name_definition: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.ResourceName\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckResourceNameResult, or the result of cls(response)\n:rtype: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.CheckResourceNameResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def check_resource_name(\n    self,\n    resource_name_definition=None,  # type: Optional[\"_models.ResourceName\"]\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.CheckResourceNameResult\"\n",
+                    "doc": "\"\"\"Checks resource name validity.\n\nA resource name is valid if it is not a reserved word, does not contains a reserved word and\ndoes not start with a reserved word.\n\n:param resource_name_definition: Resource object with values for resource name and resource\n type. Default value is None.\n:type resource_name_definition:\n ~azure.mgmt.resource.subscriptions.v2021_01_01.models.ResourceName\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckResourceNameResult, or the result of cls(response)\n:rtype: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.CheckResourceNameResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "async": {
                     "coroutine": true,
                     "signature": "async def check_resource_name(\n    self,\n    resource_name_definition: Optional[\"_models.ResourceName\"] = None,\n    **kwargs: Any\n) -\u003e \"_models.CheckResourceNameResult\":\n",
-                    "doc": "\"\"\"Checks resource name validity.\n\nA resource name is valid if it is not a reserved word, does not contains a reserved word and\ndoes not start with a reserved word.\n\n:param resource_name_definition: Resource object with values for resource name and resource\n type.\n:type resource_name_definition: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.ResourceName\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckResourceNameResult, or the result of cls(response)\n:rtype: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.CheckResourceNameResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "doc": "\"\"\"Checks resource name validity.\n\nA resource name is valid if it is not a reserved word, does not contains a reserved word and\ndoes not start with a reserved word.\n\n:param resource_name_definition: Resource object with values for resource name and resource\n type. Default value is None.\n:type resource_name_definition:\n ~azure.mgmt.resource.subscriptions.v2021_01_01.models.ResourceName\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckResourceNameResult, or the result of cls(response)\n:rtype: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.CheckResourceNameResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "call": "resource_name_definition"
             }

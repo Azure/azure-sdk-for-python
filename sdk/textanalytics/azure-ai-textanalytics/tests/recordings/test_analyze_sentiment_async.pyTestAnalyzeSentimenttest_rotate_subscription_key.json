@@ -1,0 +1,304 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "343",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "SentimentAnalysis",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "I will go to the park.",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "I did not like the hotel we stayed at.",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "The restaurant had really good food.",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "905f25f0-6ac6-4006-9d5f-68acfd284cd5",
+        "Content-Length": "959",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Wed, 08 Jun 2022 01:29:37 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "22"
+      },
+      "ResponseBody": {
+        "kind": "SentimentAnalysisResults",
+        "results": {
+          "documents": [
+            {
+              "id": "1",
+              "sentiment": "neutral",
+              "confidenceScores": {
+                "positive": 0.02,
+                "neutral": 0.96,
+                "negative": 0.02
+              },
+              "sentences": [
+                {
+                  "sentiment": "neutral",
+                  "confidenceScores": {
+                    "positive": 0.02,
+                    "neutral": 0.96,
+                    "negative": 0.02
+                  },
+                  "offset": 0,
+                  "length": 22,
+                  "text": "I will go to the park."
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "2",
+              "sentiment": "negative",
+              "confidenceScores": {
+                "positive": 0.01,
+                "neutral": 0.01,
+                "negative": 0.98
+              },
+              "sentences": [
+                {
+                  "sentiment": "negative",
+                  "confidenceScores": {
+                    "positive": 0.01,
+                    "neutral": 0.01,
+                    "negative": 0.98
+                  },
+                  "offset": 0,
+                  "length": 38,
+                  "text": "I did not like the hotel we stayed at."
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "3",
+              "sentiment": "positive",
+              "confidenceScores": {
+                "positive": 0.99,
+                "neutral": 0.0,
+                "negative": 0.0
+              },
+              "sentences": [
+                {
+                  "sentiment": "positive",
+                  "confidenceScores": {
+                    "positive": 0.99,
+                    "neutral": 0.0,
+                    "negative": 0.0
+                  },
+                  "offset": 0,
+                  "length": 36,
+                  "text": "The restaurant had really good food."
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-10-01"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "343",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "SentimentAnalysis",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "I will go to the park.",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "I did not like the hotel we stayed at.",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "The restaurant had really good food.",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "apim-request-id": "a5d704fd-7a7d-435d-8062-343eb2b989fb",
+        "Content-Length": "224",
+        "Content-Type": "application/json",
+        "Date": "Wed, 08 Jun 2022 01:29:37 GMT"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "401",
+          "message": "Access denied due to invalid subscription key or wrong API endpoint. Make sure to provide a valid key for an active subscription and use a correct regional API endpoint for your resource."
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "343",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "SentimentAnalysis",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "I will go to the park.",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "I did not like the hotel we stayed at.",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "The restaurant had really good food.",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "0777b4f8-acee-4c3d-a186-734b4eb8e20a",
+        "Content-Length": "959",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Wed, 08 Jun 2022 01:29:37 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "19"
+      },
+      "ResponseBody": {
+        "kind": "SentimentAnalysisResults",
+        "results": {
+          "documents": [
+            {
+              "id": "1",
+              "sentiment": "neutral",
+              "confidenceScores": {
+                "positive": 0.02,
+                "neutral": 0.96,
+                "negative": 0.02
+              },
+              "sentences": [
+                {
+                  "sentiment": "neutral",
+                  "confidenceScores": {
+                    "positive": 0.02,
+                    "neutral": 0.96,
+                    "negative": 0.02
+                  },
+                  "offset": 0,
+                  "length": 22,
+                  "text": "I will go to the park."
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "2",
+              "sentiment": "negative",
+              "confidenceScores": {
+                "positive": 0.01,
+                "neutral": 0.01,
+                "negative": 0.98
+              },
+              "sentences": [
+                {
+                  "sentiment": "negative",
+                  "confidenceScores": {
+                    "positive": 0.01,
+                    "neutral": 0.01,
+                    "negative": 0.98
+                  },
+                  "offset": 0,
+                  "length": 38,
+                  "text": "I did not like the hotel we stayed at."
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "3",
+              "sentiment": "positive",
+              "confidenceScores": {
+                "positive": 0.99,
+                "neutral": 0.0,
+                "negative": 0.0
+              },
+              "sentences": [
+                {
+                  "sentiment": "positive",
+                  "confidenceScores": {
+                    "positive": 0.99,
+                    "neutral": 0.0,
+                    "negative": 0.0
+                  },
+                  "offset": 0,
+                  "length": 36,
+                  "text": "The restaurant had really good food."
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-10-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class DataSourceKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DataSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Datasource kind
     """
 
@@ -34,14 +18,14 @@ class DataSourceKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ETW_PROVIDERS = "ETWProviders"
     WINDOWS_EVENT_LOGS = "WindowsEventLogs"
 
-class GuestDiagnosticSettingsOsType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class GuestDiagnosticSettingsOsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Operating system type for the configuration
     """
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
-class SinkConfigurationKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SinkConfigurationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     EVENT_HUB = "EventHub"
     APPLICATION_INSIGHTS = "ApplicationInsights"

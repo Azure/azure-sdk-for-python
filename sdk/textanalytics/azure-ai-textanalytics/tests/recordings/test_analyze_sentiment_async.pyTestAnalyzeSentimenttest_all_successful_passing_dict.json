@@ -1,0 +1,170 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01\u0026showStats=true",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "418",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "SentimentAnalysis",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "Microsoft was founded by Bill Gates and Paul Allen.",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "I did not like the hotel we stayed at. It was too expensive.",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "The restaurant had really good food. I recommend you try it.",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "742f4f60-5616-4baf-8ca2-51ff1e9e10ed",
+        "Content-Length": "1571",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Wed, 08 Jun 2022 01:29:29 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "19"
+      },
+      "ResponseBody": {
+        "kind": "SentimentAnalysisResults",
+        "results": {
+          "statistics": {
+            "documentsCount": 3,
+            "validDocumentsCount": 3,
+            "erroneousDocumentsCount": 0,
+            "transactionsCount": 3
+          },
+          "documents": [
+            {
+              "id": "1",
+              "sentiment": "neutral",
+              "statistics": {
+                "charactersCount": 51,
+                "transactionsCount": 1
+              },
+              "confidenceScores": {
+                "positive": 0.01,
+                "neutral": 0.97,
+                "negative": 0.02
+              },
+              "sentences": [
+                {
+                  "sentiment": "neutral",
+                  "confidenceScores": {
+                    "positive": 0.01,
+                    "neutral": 0.97,
+                    "negative": 0.02
+                  },
+                  "offset": 0,
+                  "length": 51,
+                  "text": "Microsoft was founded by Bill Gates and Paul Allen."
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "2",
+              "sentiment": "negative",
+              "statistics": {
+                "charactersCount": 60,
+                "transactionsCount": 1
+              },
+              "confidenceScores": {
+                "positive": 0.01,
+                "neutral": 0.01,
+                "negative": 0.98
+              },
+              "sentences": [
+                {
+                  "sentiment": "negative",
+                  "confidenceScores": {
+                    "positive": 0.01,
+                    "neutral": 0.01,
+                    "negative": 0.98
+                  },
+                  "offset": 0,
+                  "length": 39,
+                  "text": "I did not like the hotel we stayed at. "
+                },
+                {
+                  "sentiment": "negative",
+                  "confidenceScores": {
+                    "positive": 0.0,
+                    "neutral": 0.01,
+                    "negative": 0.99
+                  },
+                  "offset": 39,
+                  "length": 21,
+                  "text": "It was too expensive."
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "3",
+              "sentiment": "positive",
+              "statistics": {
+                "charactersCount": 60,
+                "transactionsCount": 1
+              },
+              "confidenceScores": {
+                "positive": 0.98,
+                "neutral": 0.01,
+                "negative": 0.01
+              },
+              "sentences": [
+                {
+                  "sentiment": "positive",
+                  "confidenceScores": {
+                    "positive": 0.99,
+                    "neutral": 0.0,
+                    "negative": 0.0
+                  },
+                  "offset": 0,
+                  "length": 37,
+                  "text": "The restaurant had really good food. "
+                },
+                {
+                  "sentiment": "positive",
+                  "confidenceScores": {
+                    "positive": 0.96,
+                    "neutral": 0.03,
+                    "negative": 0.01
+                  },
+                  "offset": 37,
+                  "length": 23,
+                  "text": "I recommend you try it."
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-10-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

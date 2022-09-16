@@ -53,6 +53,8 @@ __all__ = [
     "StreamConsumedError",
     "StreamClosedError",
     "ResponseNotReadError",
+    "SerializationError",
+    "DeserializationError",
 ]
 
 
@@ -333,6 +335,16 @@ class HttpResponseError(AzureError):
             pass
         return None
 
+    def __str__(self):
+        retval = super(HttpResponseError, self).__str__()
+        try:
+            body = self.response.text()
+            if body and not self.error:
+                return "{}\nContent: {}".format(retval, body)[:2048]
+        except Exception:  # pylint: disable=broad-except
+            pass
+        return retval
+
 
 class DecodeError(HttpResponseError):
     """Error raised during response deserialization."""
@@ -484,3 +496,11 @@ class ResponseNotReadError(AzureError):
             )
         )
         super(ResponseNotReadError, self).__init__(message)
+
+class SerializationError(ValueError):
+    """Raised if an error is encountered during serialization."""
+    ...
+
+class DeserializationError(ValueError):
+    """Raised if an error is encountered during deserialization."""
+    ...

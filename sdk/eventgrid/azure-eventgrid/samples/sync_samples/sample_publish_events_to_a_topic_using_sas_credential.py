@@ -12,7 +12,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) EVENTGRID_SAS - The shared access signature to use Event Grid. This is typically given to you
     after creating it using the `generate_sas` method.
-    2) EG_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
+    2) EVENTGRID_TOPIC_ENDPOINT - The topic hostname. Typically it exists in the format
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
@@ -20,7 +20,7 @@ from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_s
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 
 sas = os.environ["EVENTGRID_SAS"]
-endpoint = os.environ["EG_TOPIC_HOSTNAME"]
+endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
 credential = AzureSasCredential(sas)
 client = EventGridPublisherClient(endpoint, credential)

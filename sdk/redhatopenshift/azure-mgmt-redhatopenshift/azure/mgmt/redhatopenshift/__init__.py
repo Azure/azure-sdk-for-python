@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_red_hat_open_shift4_client import AzureRedHatOpenShift4Client
-__all__ = ['AzureRedHatOpenShift4Client']
+from ._azure_red_hat_open_shift_client import AzureRedHatOpenShiftClient
+__all__ = ['AzureRedHatOpenShiftClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore

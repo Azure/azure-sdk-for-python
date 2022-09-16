@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -12,6 +11,7 @@ from azure.core.exceptions import HttpResponseError
 from testcase import DocumentTranslationTest, Document
 from preparer import DocumentTranslationPreparer, \
     DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
+from devtools_testutils import recorded_by_proxy
 from azure.storage.blob import ContainerClient
 from azure.ai.translation.document._generated.models import StartTranslationDetails as _StartTranslationDetails
 from azure.ai.translation.document import (
@@ -29,10 +29,13 @@ class TestTranslation(DocumentTranslationTest):
 
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
-    def test_active_directory_auth(self):
-        token = self.generate_oauth_token()
-        endpoint = self.get_oauth_endpoint()
-        client = DocumentTranslationClient(endpoint, token)
+    def test_active_directory_auth(self, **kwargs):
+        translation_document_test_endpoint = kwargs.pop("translation_document_test_endpoint")
+        token = self.get_credential(DocumentTranslationClient)
+        kwargs = {}
+        if os.getenv("AZURE_COGNITIVE_SCOPE"):
+            kwargs["credential_scopes"] = [os.getenv("AZURE_COGNITIVE_SCOPE")]
+        client = DocumentTranslationClient(translation_document_test_endpoint, token, **kwargs)
         # prepare containers and test data
         blob_data = b'This is some text'
         source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
@@ -45,7 +48,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="fr"
+                        language="fr"
                     )
                 ]
             )
@@ -56,11 +59,14 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_single_source_single_target(self, client):
+    @recorded_by_proxy
+    def test_single_source_single_target(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
-        source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
-        target_container_sas_url = self.create_target_container()
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data), variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -69,7 +75,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )
@@ -77,15 +83,19 @@ class TestTranslation(DocumentTranslationTest):
 
         # submit translation and test
         self._begin_and_validate_translation(client, translation_inputs, 1, "es")
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_single_source_two_targets(self, client):
+    @recorded_by_proxy
+    def test_single_source_two_targets(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
-        source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
-        target_container_sas_url = self.create_target_container()
-        additional_target_container_sas_url = self.create_target_container()
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data), variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
+        additional_target_container_sas_url = self.create_target_container(variables=variables, container_suffix="2")
 
         # prepare translation inputs
         translation_inputs = [
@@ -94,11 +104,11 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     ),
                     TranslationTarget(
                         target_url=additional_target_container_sas_url,
-                        language_code="fr"
+                        language="fr"
                     )
                 ]
             )
@@ -106,16 +116,20 @@ class TestTranslation(DocumentTranslationTest):
 
         # submit translation and test
         self._begin_and_validate_translation(client, translation_inputs, 2)
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_multiple_sources_single_target(self, client):
+    @recorded_by_proxy
+    def test_multiple_sources_single_target(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
-        source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data), variables=variables)
         blob_data = b'This is some text2'
-        additional_source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
-        target_container_sas_url = self.create_target_container()
+        additional_source_container_sas_url = self.create_source_container(data=Document(data=blob_data), variables=variables, container_suffix="2")
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -124,7 +138,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ]
             ),
@@ -133,7 +147,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="fr"
+                        language="fr"
                     )
                 ]
             )
@@ -141,15 +155,19 @@ class TestTranslation(DocumentTranslationTest):
 
         # submit translation and test
         self._begin_and_validate_translation(client, translation_inputs, 2)
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_single_source_single_target_with_prefix(self, client):
+    @recorded_by_proxy
+    def test_single_source_single_target_with_prefix(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
         prefix = "xyz"
-        source_container_sas_url = self.create_source_container(data=Document(data=blob_data, prefix=prefix))
-        target_container_sas_url = self.create_target_container()
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data, prefix=prefix), variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -158,7 +176,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ],
                 prefix=prefix
@@ -167,15 +185,19 @@ class TestTranslation(DocumentTranslationTest):
 
         # submit translation and test
         self._begin_and_validate_translation(client, translation_inputs, 1, "es")
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_single_source_single_target_with_suffix(self, client):
+    @recorded_by_proxy
+    def test_single_source_single_target_with_suffix(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
         suffix = "txt"
-        source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
-        target_container_sas_url = self.create_target_container()
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data), variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -184,7 +206,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ],
                 suffix=suffix
@@ -193,12 +215,16 @@ class TestTranslation(DocumentTranslationTest):
 
         # submit translation and test
         self._begin_and_validate_translation(client, translation_inputs, 1, "es")
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_bad_input_source(self, client):
+    @recorded_by_proxy
+    def test_bad_input_source(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
-        target_container_sas_url = self.create_target_container()
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -207,7 +233,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )
@@ -217,13 +243,17 @@ class TestTranslation(DocumentTranslationTest):
             poller = client.begin_translation(translation_inputs)
             result = poller.result()
         assert e.value.error.code == "InvalidDocumentAccessLevel"
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_bad_input_target(self, client):
+    @recorded_by_proxy
+    def test_bad_input_target(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
-        source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data), variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -232,7 +262,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url="https://idont.ex.ist",
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )
@@ -242,17 +272,22 @@ class TestTranslation(DocumentTranslationTest):
             poller = client.begin_translation(translation_inputs)
             result = poller.result()
         assert e.value.error.code == "InvalidTargetDocumentAccessLevel"
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_use_supported_and_unsupported_files(self, client):
+    @recorded_by_proxy
+    def test_use_supported_and_unsupported_files(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=[
                 Document(suffix=".txt"),
                 Document(suffix=".jpg")
-            ]
+            ],
+            variables=variables
         )
-        target_container_sas_url = self.create_target_container()
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -261,7 +296,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )
@@ -272,13 +307,17 @@ class TestTranslation(DocumentTranslationTest):
         self._validate_translation_metadata(poller=poller, status="Succeeded", total=1, succeeded=1)
         for document in result:
             self._validate_doc_status(document, "es")
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_existing_documents_in_target(self, client):
+    @recorded_by_proxy
+    def test_existing_documents_in_target(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
-        source_container_sas_url = self.create_source_container(data=Document(name="document"))
-        target_container_sas_url = self.create_target_container(data=Document(name="document"))
+        source_container_sas_url = self.create_source_container(data=Document(name="document"), variables=variables)
+        target_container_sas_url = self.create_target_container(data=Document(name="document"), variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -287,7 +326,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )
@@ -300,13 +339,17 @@ class TestTranslation(DocumentTranslationTest):
         for doc in result:
             assert doc.status == "Failed"
             assert doc.error.code == "TargetFileAlreadyExists"
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_existing_documents_in_target_one_valid(self, client):
+    @recorded_by_proxy
+    def test_existing_documents_in_target_one_valid(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
-        source_container_sas_url = self.create_source_container(data=[Document(name="document"), Document()])
-        target_container_sas_url = self.create_target_container(data=Document(name="document"))
+        source_container_sas_url = self.create_source_container(data=[Document(name="document"), Document()], variables=variables)
+        target_container_sas_url = self.create_target_container(data=Document(name="document"), variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -315,7 +358,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )
@@ -328,13 +371,17 @@ class TestTranslation(DocumentTranslationTest):
         for doc in result:
             if doc.status == "Failed":
                 assert doc.error.code == "TargetFileAlreadyExists"
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_empty_document(self, client):
+    @recorded_by_proxy
+    def test_empty_document(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
-        source_container_sas_url = self.create_source_container(Document(data=b''))
-        target_container_sas_url = self.create_target_container()
+        source_container_sas_url = self.create_source_container(Document(data=b''), variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -343,7 +390,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )
@@ -356,14 +403,18 @@ class TestTranslation(DocumentTranslationTest):
         for doc in result:
             assert doc.status == "Failed"
             assert doc.error.code == "NoTranslatableText"
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_overloaded_inputs(self, client):
+    @recorded_by_proxy
+    def test_overloaded_inputs(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
-        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
-        target_container_sas_url = self.create_target_container()
-        target_container_sas_url_2 = self.create_target_container()
+        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'), variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
+        target_container_sas_url_2 = self.create_target_container(variables=variables, container_suffix="2")
 
         # prepare translation inputs
         translation_inputs = [
@@ -372,7 +423,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )
@@ -389,14 +440,18 @@ class TestTranslation(DocumentTranslationTest):
         poller = client.begin_translation(inputs=translation_inputs)
         result = poller.result()
         self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_overloaded_single_input(self, client):
+    @recorded_by_proxy
+    def test_overloaded_single_input(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
-        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
-        target_container_sas_url = self.create_target_container()
-        target_container_sas_url_2 = self.create_target_container()
+        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'), variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
+        target_container_sas_url_2 = self.create_target_container(variables=variables, container_suffix="2")
 
         # positional
         poller = client.begin_translation(source_container_sas_url, target_container_sas_url, "es")
@@ -404,20 +459,22 @@ class TestTranslation(DocumentTranslationTest):
         self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
 
         # keyword
-        poller = client.begin_translation(source_url=source_container_sas_url, target_url=target_container_sas_url_2, target_language_code="es")
+        poller = client.begin_translation(source_url=source_container_sas_url, target_url=target_container_sas_url_2, target_language="es")
         result = poller.result()
         self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_overloaded_bad_input(self, client):
+    def test_overloaded_bad_input(self, **kwargs):
+        client = kwargs.pop("client")
         translation_inputs = [
             DocumentTranslationInput(
                 source_url="container",
                 targets=[
                     TranslationTarget(
                         target_url="container",
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )
@@ -438,7 +495,8 @@ class TestTranslation(DocumentTranslationTest):
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_translation_continuation_token(self, client):
+    def test_translation_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
         source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
         target_container_sas_url = self.create_target_container()
 
@@ -454,10 +512,13 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_single_input_with_kwargs(self, client):
+    @recorded_by_proxy
+    def test_single_input_with_kwargs(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
-        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
-        target_container_sas_url = self.create_target_container()
+        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'), variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         def callback(request):
             req = _StartTranslationDetails.deserialize(json.loads(request.http_request.body))
@@ -479,7 +540,7 @@ class TestTranslation(DocumentTranslationTest):
                 target_container_sas_url,
                 "es",
                 storage_type="File",
-                source_language_code="en",
+                source_language="en",
                 prefix="",
                 suffix=".txt",
                 category_id="fake",
@@ -492,14 +553,19 @@ class TestTranslation(DocumentTranslationTest):
             poller.result()
         except HttpResponseError as e:
             pass
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_single_input_with_kwarg_successful(self, client):
+    @recorded_by_proxy
+    def test_single_input_with_kwarg_successful(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=[Document(data=b'hello world', prefix="kwargs"),
-                                                                      Document(data=b'hello world')])
-        target_container_sas_url = self.create_target_container()
+                                                                      Document(data=b'hello world')],
+                                                                variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         poller = client.begin_translation(
             source_container_sas_url,
@@ -511,11 +577,13 @@ class TestTranslation(DocumentTranslationTest):
         self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
         for doc in result:
             self._validate_doc_status(doc, target_language="fr")
+        return variables
 
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_translation_with_glossary(self, client):
+    def test_translation_with_glossary(self, **kwargs):
+        client = kwargs.pop("client")
         doc = Document(data=b'testing')
         source_container_sas_url = self.create_source_container(data=[doc])
         target_container_sas_url = self.create_target_container()

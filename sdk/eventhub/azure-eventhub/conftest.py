@@ -21,13 +21,7 @@ from uamqp.authentication import SASTokenAuth
 
 from devtools_testutils import get_region_override
 
-# Ignore async tests for Python < 3.5
 collect_ignore = []
-if sys.version_info < (3, 5):
-    collect_ignore.append("tests/livetest/asynctests")
-    collect_ignore.append("tests/unittest/asynctests")
-    collect_ignore.append("features")
-    collect_ignore.append("samples/async_samples")
 PARTITION_COUNT = 2
 CONN_STR = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}"
 RES_GROUP_PREFIX = "eh-res-group"
@@ -48,6 +42,9 @@ def sleep(request):
     sleep = request.config.getoption("--sleep")
     return sleep.lower() in ('true', 'yes', '1', 'y')
 
+@pytest.fixture(scope="session", params=[True])
+def uamqp_transport(request):
+    return request.param
 
 def get_logger(filename, level=logging.INFO):
     azure_logger = logging.getLogger("azure.eventhub")
@@ -73,6 +70,13 @@ def get_logger(filename, level=logging.INFO):
 
 log = get_logger(None, logging.DEBUG)
 
+
+@pytest.fixture(scope="session")
+def timeout_factor(uamqp_transport):
+    if uamqp_transport:
+        return 1000
+    else:
+        return 1
 
 @pytest.fixture(scope="session")
 def resource_group():

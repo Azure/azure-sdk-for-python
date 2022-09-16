@@ -1,0 +1,440 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.9.0b1 Python/3.9.10 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1753",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Mar 2022 08:11:09 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12507.17 - EUS ProdSlices",
+        "x-ms-request-id": "f854199b-fa0b-4f09-a7d6-7b89fef59800"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+        "tenant_region_scope": "NA",
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Cookie": "cookie;",
+        "User-Agent": "azsdk-python-identity/1.9.0b1 Python/3.9.10 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "945",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Mar 2022 08:11:10 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12529.17 - SEASLR1 ProdSlices",
+        "x-ms-request-id": "a89171f1-8c8a-46e9-81da-0f306fe00d00"
+      },
+      "ResponseBody": {
+        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+        "api-version": "1.1",
+        "metadata": [
+          {
+            "preferred_network": "login.microsoftonline.com",
+            "preferred_cache": "login.windows.net",
+            "aliases": [
+              "login.microsoftonline.com",
+              "login.windows.net",
+              "login.microsoft.com",
+              "sts.windows.net"
+            ]
+          },
+          {
+            "preferred_network": "login.partner.microsoftonline.cn",
+            "preferred_cache": "login.partner.microsoftonline.cn",
+            "aliases": [
+              "login.partner.microsoftonline.cn",
+              "login.chinacloudapi.cn"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.de",
+            "preferred_cache": "login.microsoftonline.de",
+            "aliases": [
+              "login.microsoftonline.de"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.us",
+            "preferred_cache": "login.microsoftonline.us",
+            "aliases": [
+              "login.microsoftonline.us",
+              "login.usgovcloudapi.net"
+            ]
+          },
+          {
+            "preferred_network": "login-us.microsoftonline.com",
+            "preferred_cache": "login-us.microsoftonline.com",
+            "aliases": [
+              "login-us.microsoftonline.com"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "af5849d5-e20f-4570-b5c4-5b80964a91a1",
+        "Connection": "keep-alive",
+        "Content-Length": "289",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Cookie": "cookie;",
+        "User-Agent": "azsdk-python-identity/1.9.0b1 Python/3.9.10 (Windows-10-10.0.22000-SP0)",
+        "x-client-cpu": "x64",
+        "x-client-current-telemetry": "4|730,0|",
+        "x-client-last-telemetry": "4|0|||",
+        "x-client-os": "win32",
+        "x-client-sku": "MSAL.Python",
+        "x-client-ver": "1.17.0",
+        "x-ms-lib-capability": "retry-after, h429"
+      },
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "client-request-id": "af5849d5-e20f-4570-b5c4-5b80964a91a1",
+        "Content-Length": "93",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Mar 2022 08:11:10 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-clitelem": "1,0,0,,",
+        "x-ms-ests-server": "2.1.12507.17 - EUS ProdSlices",
+        "x-ms-request-id": "b198224d-6380-4eca-b00e-ed476e129f00"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 3599,
+        "ext_expires_in": 3599,
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/9f4b37b7/providers/Microsoft.NotificationHubs/namespaces/namespacexxz?api-version=2017-04-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "22",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-mgmt-notificationhubs/8.0.0 Python/3.9.10 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "acaa56b9-9b92-11ec-855e-d08e79139a4a"
+      },
+      "RequestBody": {
+        "location": "eastus"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "api-supported-versions": "2014-09-01, 2016-03-01, 2017-04-01, 2020-01-01-preview",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/9f4b37b7/providers/Microsoft.NotificationHubs/namespaces/namespacexxz/operations/Q3JlYXRlTmFtZXNwYWNlLTBiMWY2NDcxLTFiZjAtNGRkYS1hZWMzLWNiOTI3MmYwOTU5MC1uYW1lc3BhY2V4eHo7bmhwcm9kYmwyMDAxLTItZmFicmlj?api-version=2017-04-01",
+        "Cache-Control": "no-cache",
+        "Content-Length": "297",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Mar 2022 08:11:20 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/9f4b37b7/providers/Microsoft.NotificationHubs/namespaces/namespacexxz?api-version=2017-04-01",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Server": "Kestrel",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "TrackingId": "a9576dae-76f1-480f-8f0d-e56223d30cbc",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "2c23715b-33fa-4f6e-a67b-c0d09128f850",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-request-id": "2c23715b-33fa-4f6e-a67b-c0d09128f850",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20220304T081121Z:2c23715b-33fa-4f6e-a67b-c0d09128f850"
+      },
+      "ResponseBody": {
+        "properties": {
+          "provisioningState": "Unknown",
+          "enabled": false,
+          "zoneRedundant": false
+        },
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/9f4b37b7/providers/Microsoft.NotificationHubs/namespaces/namespacexxz",
+        "name": "namespacexxz",
+        "type": "Microsoft.NotificationHubs/namespaces"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/9f4b37b7/providers/Microsoft.NotificationHubs/namespaces/namespacexxz?api-version=2017-04-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-notificationhubs/8.0.0 Python/3.9.10 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "b4b18641-9b92-11ec-912b-d08e79139a4a"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2014-09-01, 2016-03-01, 2017-04-01, 2020-01-01-preview",
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Mar 2022 08:11:21 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Kestrel",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "TrackingId": "e1436054-d6c7-4fc9-9922-f39a6d5c7436",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "57787f40-3f39-4b03-83b1-63086af7ea31",
+        "x-ms-ratelimit-remaining-subscription-reads": "11999",
+        "x-ms-request-id": "57787f40-3f39-4b03-83b1-63086af7ea31",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20220304T081121Z:57787f40-3f39-4b03-83b1-63086af7ea31"
+      },
+      "ResponseBody": {
+        "sku": {
+          "name": "Free"
+        },
+        "properties": {
+          "provisioningState": "Succeeded",
+          "status": "Active",
+          "createdAt": "2022-03-04T08:11:19.1700000Z",
+          "updatedAt": "2022-03-04T08:11:19.2030000Z",
+          "serviceBusEndpoint": "https://namespacexxz.servicebus.windows.net:443/",
+          "enabled": true,
+          "critical": false,
+          "zoneRedundant": false,
+          "networkACLs": {},
+          "privateEndpointConnections": []
+        },
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/9f4b37b7/providers/Microsoft.NotificationHubs/namespaces/namespacexxz",
+        "name": "namespacexxz",
+        "type": "Microsoft.NotificationHubs/namespaces",
+        "location": "East US",
+        "tags": {}
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/9f4b37b7/providers/Microsoft.NotificationHubs/namespaces/namespacexxz/notificationHubs/notificationhubxxzx?api-version=2017-04-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "22",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-mgmt-notificationhubs/8.0.0 Python/3.9.10 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "b4eab0a8-9b92-11ec-9494-d08e79139a4a"
+      },
+      "RequestBody": {
+        "location": "eastus"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "api-supported-versions": "2014-09-01, 2016-03-01, 2017-04-01, 2020-01-01-preview",
+        "Cache-Control": "no-cache",
+        "Content-Length": "383",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Mar 2022 08:11:26 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Kestrel",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "TrackingId": "44c99d07-df5e-4560-b990-8a7fb985cd9d",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "de2a1c05-54d9-42ea-a4d6-52f5e067088f",
+        "x-ms-ratelimit-remaining-subscription-writes": "1198",
+        "x-ms-request-id": "de2a1c05-54d9-42ea-a4d6-52f5e067088f",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20220304T081127Z:de2a1c05-54d9-42ea-a4d6-52f5e067088f"
+      },
+      "ResponseBody": {
+        "properties": {
+          "registrationTtl": "10675199.02:48:05.4775807",
+          "dailyMaxActiveDevices": 0
+        },
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/9f4b37b7/providers/Microsoft.NotificationHubs/namespaces/namespacexxz/NotificationHubs/notificationhubxxzx",
+        "name": "notificationhubxxzx",
+        "type": "Microsoft.NotificationHubs/namespaces/notificationHubs",
+        "location": "East US"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/9f4b37b7/providers/Microsoft.NotificationHubs/namespaces/namespacexxz/notificationHubs/notificationhubxxzx?api-version=2017-04-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-notificationhubs/8.0.0 Python/3.9.10 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "b845b6b3-9b92-11ec-a134-d08e79139a4a"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2014-09-01, 2016-03-01, 2017-04-01, 2020-01-01-preview",
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Mar 2022 08:11:27 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Kestrel",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "TrackingId": "2ffba0ef-81cb-43b4-b3af-a79fae49ebef",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "7c11c21e-dc75-4869-aa8e-761511e9a3b0",
+        "x-ms-ratelimit-remaining-subscription-reads": "11998",
+        "x-ms-request-id": "7c11c21e-dc75-4869-aa8e-761511e9a3b0",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20220304T081127Z:7c11c21e-dc75-4869-aa8e-761511e9a3b0"
+      },
+      "ResponseBody": {
+        "properties": {
+          "registrationTtl": "10675199.02:48:05.4775807",
+          "authorizationRules": [],
+          "dailyMaxActiveDevices": 0
+        },
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/9f4b37b7/providers/Microsoft.NotificationHubs/namespaces/namespacexxz/NotificationHubs/notificationhubxxzx",
+        "name": "notificationhubxxzx",
+        "type": "Microsoft.NotificationHubs/namespaces/notificationHubs",
+        "location": "East US"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/9f4b37b7/providers/Microsoft.NotificationHubs/namespaces/namespacexxz/notificationHubs/notificationhubxxzx?api-version=2017-04-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-mgmt-notificationhubs/8.0.0 Python/3.9.10 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "b917f653-9b92-11ec-8372-d08e79139a4a"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2014-09-01, 2016-03-01, 2017-04-01, 2020-01-01-preview",
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 04 Mar 2022 08:11:31 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Kestrel",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "TrackingId": "db6027d2-9138-4ef3-87b5-e7f306676df3",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "4d8abdef-8c39-449c-b0cf-5115e51a3a4d",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14999",
+        "x-ms-request-id": "4d8abdef-8c39-449c-b0cf-5115e51a3a4d",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20220304T081132Z:4d8abdef-8c39-449c-b0cf-5115e51a3a4d"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

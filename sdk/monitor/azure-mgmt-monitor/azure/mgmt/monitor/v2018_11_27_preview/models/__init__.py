@@ -6,26 +6,21 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import DataContainer
-    from ._models_py3 import Error
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import ResponseWithError
-    from ._models_py3 import VMInsightsOnboardingStatus
-    from ._models_py3 import WorkspaceInfo
-except (SyntaxError, ImportError):
-    from ._models import DataContainer  # type: ignore
-    from ._models import Error  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import ResponseWithError  # type: ignore
-    from ._models import VMInsightsOnboardingStatus  # type: ignore
-    from ._models import WorkspaceInfo  # type: ignore
+from ._models_py3 import DataContainer
+from ._models_py3 import Error
+from ._models_py3 import ProxyResource
+from ._models_py3 import ResponseWithError
+from ._models_py3 import VMInsightsOnboardingStatus
+from ._models_py3 import WorkspaceInfo
+
 
 from ._monitor_management_client_enums import (
     DataStatus,
     OnboardingStatus,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'DataContainer',
     'Error',
@@ -36,3 +31,5 @@ __all__ = [
     'DataStatus',
     'OnboardingStatus',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

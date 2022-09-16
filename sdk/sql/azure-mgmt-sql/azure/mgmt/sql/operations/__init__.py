@@ -7,24 +7,16 @@
 # --------------------------------------------------------------------------
 
 from ._recoverable_databases_operations import RecoverableDatabasesOperations
-from ._server_connection_policies_operations import ServerConnectionPoliciesOperations
 from ._data_masking_policies_operations import DataMaskingPoliciesOperations
 from ._data_masking_rules_operations import DataMaskingRulesOperations
 from ._geo_backup_policies_operations import GeoBackupPoliciesOperations
 from ._databases_operations import DatabasesOperations
 from ._elastic_pools_operations import ElasticPoolsOperations
-from ._replication_links_operations import ReplicationLinksOperations
 from ._server_communication_links_operations import ServerCommunicationLinksOperations
 from ._service_objectives_operations import ServiceObjectivesOperations
 from ._elastic_pool_activities_operations import ElasticPoolActivitiesOperations
 from ._elastic_pool_database_activities_operations import ElasticPoolDatabaseActivitiesOperations
-from ._transparent_data_encryptions_operations import TransparentDataEncryptionsOperations
-from ._transparent_data_encryption_activities_operations import TransparentDataEncryptionActivitiesOperations
 from ._server_usages_operations import ServerUsagesOperations
-from ._extended_database_blob_auditing_policies_operations import ExtendedDatabaseBlobAuditingPoliciesOperations
-from ._extended_server_blob_auditing_policies_operations import ExtendedServerBlobAuditingPoliciesOperations
-from ._server_blob_auditing_policies_operations import ServerBlobAuditingPoliciesOperations
-from ._database_blob_auditing_policies_operations import DatabaseBlobAuditingPoliciesOperations
 from ._database_advisors_operations import DatabaseAdvisorsOperations
 from ._database_automatic_tuning_operations import DatabaseAutomaticTuningOperations
 from ._database_columns_operations import DatabaseColumnsOperations
@@ -53,8 +45,6 @@ from ._job_target_executions_operations import JobTargetExecutionsOperations
 from ._job_target_groups_operations import JobTargetGroupsOperations
 from ._job_versions_operations import JobVersionsOperations
 from ._capabilities_operations import CapabilitiesOperations
-from ._long_term_retention_backups_operations import LongTermRetentionBackupsOperations
-from ._long_term_retention_managed_instance_backups_operations import LongTermRetentionManagedInstanceBackupsOperations
 from ._long_term_retention_policies_operations import LongTermRetentionPoliciesOperations
 from ._maintenance_window_options_operations import MaintenanceWindowOptionsOperations
 from ._maintenance_windows_operations import MaintenanceWindowsOperations
@@ -66,8 +56,6 @@ from ._managed_databases_operations import ManagedDatabasesOperations
 from ._managed_database_schemas_operations import ManagedDatabaseSchemasOperations
 from ._managed_database_security_alert_policies_operations import ManagedDatabaseSecurityAlertPoliciesOperations
 from ._managed_database_security_events_operations import ManagedDatabaseSecurityEventsOperations
-from ._managed_database_sensitivity_labels_operations import ManagedDatabaseSensitivityLabelsOperations
-from ._managed_database_recommended_sensitivity_labels_operations import ManagedDatabaseRecommendedSensitivityLabelsOperations
 from ._managed_database_tables_operations import ManagedDatabaseTablesOperations
 from ._managed_database_transparent_data_encryption_operations import ManagedDatabaseTransparentDataEncryptionOperations
 from ._managed_database_vulnerability_assessment_rule_baselines_operations import ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations
@@ -81,19 +69,15 @@ from ._managed_instance_long_term_retention_policies_operations import ManagedIn
 from ._managed_instance_operations_operations import ManagedInstanceOperationsOperations
 from ._managed_instance_private_endpoint_connections_operations import ManagedInstancePrivateEndpointConnectionsOperations
 from ._managed_instance_private_link_resources_operations import ManagedInstancePrivateLinkResourcesOperations
-from ._managed_instances_operations import ManagedInstancesOperations
 from ._managed_instance_tde_certificates_operations import ManagedInstanceTdeCertificatesOperations
 from ._managed_instance_vulnerability_assessments_operations import ManagedInstanceVulnerabilityAssessmentsOperations
 from ._managed_restorable_dropped_database_backup_short_term_retention_policies_operations import ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
 from ._managed_server_security_alert_policies_operations import ManagedServerSecurityAlertPoliciesOperations
 from ._operations import Operations
-from ._operations_health_operations import OperationsHealthOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._recoverable_managed_databases_operations import RecoverableManagedDatabasesOperations
 from ._restore_points_operations import RestorePointsOperations
-from ._sensitivity_labels_operations import SensitivityLabelsOperations
-from ._recommended_sensitivity_labels_operations import RecommendedSensitivityLabelsOperations
 from ._server_advisors_operations import ServerAdvisorsOperations
 from ._server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from ._server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
@@ -116,37 +100,53 @@ from ._virtual_clusters_operations import VirtualClustersOperations
 from ._virtual_network_rules_operations import VirtualNetworkRulesOperations
 from ._workload_classifiers_operations import WorkloadClassifiersOperations
 from ._workload_groups_operations import WorkloadGroupsOperations
+from ._transparent_data_encryptions_operations import TransparentDataEncryptionsOperations
 from ._backup_short_term_retention_policies_operations import BackupShortTermRetentionPoliciesOperations
 from ._database_extensions_operations import DatabaseExtensionsOperations
 from ._database_operations_operations import DatabaseOperationsOperations
 from ._database_usages_operations import DatabaseUsagesOperations
 from ._ledger_digest_uploads_operations import LedgerDigestUploadsOperations
 from ._outbound_firewall_rules_operations import OutboundFirewallRulesOperations
-from ._restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
-from ._restorable_dropped_managed_databases_operations import RestorableDroppedManagedDatabasesOperations
 from ._servers_operations import ServersOperations
 from ._usages_operations import UsagesOperations
+from ._long_term_retention_backups_operations import LongTermRetentionBackupsOperations
+from ._long_term_retention_managed_instance_backups_operations import LongTermRetentionManagedInstanceBackupsOperations
+from ._managed_instances_operations import ManagedInstancesOperations
+from ._restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
+from ._restorable_dropped_managed_databases_operations import RestorableDroppedManagedDatabasesOperations
+from ._server_connection_policies_operations import ServerConnectionPoliciesOperations
+from ._distributed_availability_groups_operations import DistributedAvailabilityGroupsOperations
+from ._server_trust_certificates_operations import ServerTrustCertificatesOperations
+from ._ipv6_firewall_rules_operations import IPv6FirewallRulesOperations
+from ._endpoint_certificates_operations import EndpointCertificatesOperations
+from ._replication_links_operations import ReplicationLinksOperations
+from ._managed_database_sensitivity_labels_operations import ManagedDatabaseSensitivityLabelsOperations
+from ._managed_database_recommended_sensitivity_labels_operations import ManagedDatabaseRecommendedSensitivityLabelsOperations
+from ._sensitivity_labels_operations import SensitivityLabelsOperations
+from ._recommended_sensitivity_labels_operations import RecommendedSensitivityLabelsOperations
+from ._server_blob_auditing_policies_operations import ServerBlobAuditingPoliciesOperations
+from ._database_blob_auditing_policies_operations import DatabaseBlobAuditingPoliciesOperations
+from ._extended_database_blob_auditing_policies_operations import ExtendedDatabaseBlobAuditingPoliciesOperations
+from ._extended_server_blob_auditing_policies_operations import ExtendedServerBlobAuditingPoliciesOperations
+from ._database_advanced_threat_protection_settings_operations import DatabaseAdvancedThreatProtectionSettingsOperations
+from ._server_advanced_threat_protection_settings_operations import ServerAdvancedThreatProtectionSettingsOperations
+from ._managed_server_dns_aliases_operations import ManagedServerDnsAliasesOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'RecoverableDatabasesOperations',
-    'ServerConnectionPoliciesOperations',
     'DataMaskingPoliciesOperations',
     'DataMaskingRulesOperations',
     'GeoBackupPoliciesOperations',
     'DatabasesOperations',
     'ElasticPoolsOperations',
-    'ReplicationLinksOperations',
     'ServerCommunicationLinksOperations',
     'ServiceObjectivesOperations',
     'ElasticPoolActivitiesOperations',
     'ElasticPoolDatabaseActivitiesOperations',
-    'TransparentDataEncryptionsOperations',
-    'TransparentDataEncryptionActivitiesOperations',
     'ServerUsagesOperations',
-    'ExtendedDatabaseBlobAuditingPoliciesOperations',
-    'ExtendedServerBlobAuditingPoliciesOperations',
-    'ServerBlobAuditingPoliciesOperations',
-    'DatabaseBlobAuditingPoliciesOperations',
     'DatabaseAdvisorsOperations',
     'DatabaseAutomaticTuningOperations',
     'DatabaseColumnsOperations',
@@ -175,8 +175,6 @@ __all__ = [
     'JobTargetGroupsOperations',
     'JobVersionsOperations',
     'CapabilitiesOperations',
-    'LongTermRetentionBackupsOperations',
-    'LongTermRetentionManagedInstanceBackupsOperations',
     'LongTermRetentionPoliciesOperations',
     'MaintenanceWindowOptionsOperations',
     'MaintenanceWindowsOperations',
@@ -188,8 +186,6 @@ __all__ = [
     'ManagedDatabaseSchemasOperations',
     'ManagedDatabaseSecurityAlertPoliciesOperations',
     'ManagedDatabaseSecurityEventsOperations',
-    'ManagedDatabaseSensitivityLabelsOperations',
-    'ManagedDatabaseRecommendedSensitivityLabelsOperations',
     'ManagedDatabaseTablesOperations',
     'ManagedDatabaseTransparentDataEncryptionOperations',
     'ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations',
@@ -203,19 +199,15 @@ __all__ = [
     'ManagedInstanceOperationsOperations',
     'ManagedInstancePrivateEndpointConnectionsOperations',
     'ManagedInstancePrivateLinkResourcesOperations',
-    'ManagedInstancesOperations',
     'ManagedInstanceTdeCertificatesOperations',
     'ManagedInstanceVulnerabilityAssessmentsOperations',
     'ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations',
     'ManagedServerSecurityAlertPoliciesOperations',
     'Operations',
-    'OperationsHealthOperations',
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
     'RecoverableManagedDatabasesOperations',
     'RestorePointsOperations',
-    'SensitivityLabelsOperations',
-    'RecommendedSensitivityLabelsOperations',
     'ServerAdvisorsOperations',
     'ServerAutomaticTuningOperations',
     'ServerAzureADAdministratorsOperations',
@@ -238,14 +230,37 @@ __all__ = [
     'VirtualNetworkRulesOperations',
     'WorkloadClassifiersOperations',
     'WorkloadGroupsOperations',
+    'TransparentDataEncryptionsOperations',
     'BackupShortTermRetentionPoliciesOperations',
     'DatabaseExtensionsOperations',
     'DatabaseOperationsOperations',
     'DatabaseUsagesOperations',
     'LedgerDigestUploadsOperations',
     'OutboundFirewallRulesOperations',
-    'RestorableDroppedDatabasesOperations',
-    'RestorableDroppedManagedDatabasesOperations',
     'ServersOperations',
     'UsagesOperations',
+    'LongTermRetentionBackupsOperations',
+    'LongTermRetentionManagedInstanceBackupsOperations',
+    'ManagedInstancesOperations',
+    'RestorableDroppedDatabasesOperations',
+    'RestorableDroppedManagedDatabasesOperations',
+    'ServerConnectionPoliciesOperations',
+    'DistributedAvailabilityGroupsOperations',
+    'ServerTrustCertificatesOperations',
+    'IPv6FirewallRulesOperations',
+    'EndpointCertificatesOperations',
+    'ReplicationLinksOperations',
+    'ManagedDatabaseSensitivityLabelsOperations',
+    'ManagedDatabaseRecommendedSensitivityLabelsOperations',
+    'SensitivityLabelsOperations',
+    'RecommendedSensitivityLabelsOperations',
+    'ServerBlobAuditingPoliciesOperations',
+    'DatabaseBlobAuditingPoliciesOperations',
+    'ExtendedDatabaseBlobAuditingPoliciesOperations',
+    'ExtendedServerBlobAuditingPoliciesOperations',
+    'DatabaseAdvancedThreatProtectionSettingsOperations',
+    'ServerAdvancedThreatProtectionSettingsOperations',
+    'ManagedServerDnsAliasesOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

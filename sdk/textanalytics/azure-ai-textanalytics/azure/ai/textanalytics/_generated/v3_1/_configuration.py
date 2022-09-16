@@ -6,43 +6,41 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
-
     from azure.core.credentials import TokenCredential
 
 VERSION = "unknown"
 
-class TextAnalyticsClientConfiguration(Configuration):
+class TextAnalyticsClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for TextAnalyticsClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com).
+    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
+     https://westus.api.cognitive.microsoft.com). Required.
     :type endpoint: str
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        endpoint,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: "TokenCredential",
+        endpoint: str,
+        **kwargs: Any
+    ) -> None:
+        super(TextAnalyticsClientConfiguration, self).__init__(**kwargs)
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(TextAnalyticsClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.endpoint = endpoint

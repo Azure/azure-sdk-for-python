@@ -22,6 +22,7 @@ from azure_devtools.ci_tools.github_tools import get_files, GithubLink
 _LOGGER = logging.getLogger(__name__)
 
 CONFIG_FILE = "swagger_to_sdk_config_autorest.json"
+CONFIG_FILE_DPG = "swagger_to_sdk_config_dpg.json"
 
 DEFAULT_COMMIT_MESSAGE = "Generated from {hexsha}"
 
@@ -191,7 +192,11 @@ def extract_conf_from_readmes(swagger_files_in_pr, restapi_git_folder, sdk_git_i
     }
     for readme_file in readme_files_in_pr:
         build_swaggertosdk_conf_from_json_readme(
-            readme_file, sdk_git_id, config, base_folder=restapi_git_folder, force_generation=force_generation
+            readme_file,
+            sdk_git_id,
+            config,
+            base_folder=restapi_git_folder,
+            force_generation=force_generation,
         )
 
 

@@ -1,0 +1,124 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/bf7f6f42-bc10-4ff6-996e-b9e1ce8f5b87",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "178",
+        "Content-Type": "application/merge-patch\u002Bjson",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.9.7 (macOS-12.2.1-x86_64-i386-64bit)",
+        "x-ms-client-request-id": "a131f612-9e60-11ec-bbd8-acde48001122"
+      },
+      "RequestBody": {
+        "hookType": "Email",
+        "hookName": "update668deed9-2628-46b6-9301-85e073b8bd55",
+        "description": "update",
+        "externalLink": "update",
+        "hookParameter": {
+          "toList": [
+            "myemail@m.com"
+          ]
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "0b21ad63-c5e1-4d40-b326-a77138f3df9f",
+        "Content-Length": "266",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 07 Mar 2022 21:50:40 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "385",
+        "X-Request-ID": "0b21ad63-c5e1-4d40-b326-a77138f3df9f"
+      },
+      "ResponseBody": {
+        "hookId": "bf7f6f42-bc10-4ff6-996e-b9e1ce8f5b87",
+        "hookName": "update668deed9-2628-46b6-9301-85e073b8bd55",
+        "hookType": "Email",
+        "externalLink": "update",
+        "description": "update",
+        "admins": [
+          "f850650c-1fcf-4489-b46f-71af2e30d360"
+        ],
+        "hookParameter": {
+          "toList": [
+            "myemail@m.com"
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/bf7f6f42-bc10-4ff6-996e-b9e1ce8f5b87",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.9.7 (macOS-12.2.1-x86_64-i386-64bit)",
+        "x-ms-client-request-id": "a18188ee-9e60-11ec-bbd8-acde48001122"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "fa07888a-413b-4061-a871-f0ebfbecf37b",
+        "Content-Length": "266",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 07 Mar 2022 21:50:40 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "122",
+        "X-Request-ID": "fa07888a-413b-4061-a871-f0ebfbecf37b"
+      },
+      "ResponseBody": {
+        "hookId": "bf7f6f42-bc10-4ff6-996e-b9e1ce8f5b87",
+        "hookName": "update668deed9-2628-46b6-9301-85e073b8bd55",
+        "hookType": "Email",
+        "externalLink": "update",
+        "description": "update",
+        "admins": [
+          "f850650c-1fcf-4489-b46f-71af2e30d360"
+        ],
+        "hookParameter": {
+          "toList": [
+            "myemail@m.com"
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/bf7f6f42-bc10-4ff6-996e-b9e1ce8f5b87",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.9.7 (macOS-12.2.1-x86_64-i386-64bit)",
+        "x-ms-client-request-id": "a1a65f0c-9e60-11ec-bbd8-acde48001122"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "apim-request-id": "fc94012c-a4d9-4868-82c0-ce2bcde2cc69",
+        "Content-Length": "0",
+        "Date": "Mon, 07 Mar 2022 21:50:41 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "167",
+        "X-Request-ID": "fc94012c-a4d9-4868-82c0-ce2bcde2cc69"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {
+    "email_hook_id": "bf7f6f42-bc10-4ff6-996e-b9e1ce8f5b87",
+    "email_hook_name": "emailhook56c6a268-3dd6-42b4-96b1-24a6e26d16c5",
+    "hook_updated_name": "update668deed9-2628-46b6-9301-85e073b8bd55"
+  }
+}

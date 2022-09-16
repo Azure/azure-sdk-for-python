@@ -11,7 +11,7 @@ USAGE:
     python sample_publish_events_to_a_topic_using_sas_credential_async.py
     Set the environment variables with your own values before running the sample:
     1) EVENTGRID_SAS - The access key of your eventgrid account.
-    2) EG_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
+    2) EVENTGRID_TOPIC_ENDPOINT - The topic hostname. Typically it exists in the format
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
@@ -21,7 +21,7 @@ from azure.eventgrid.aio import EventGridPublisherClient
 from azure.core.credentials import AzureSasCredential
 
 sas = os.environ["EVENTGRID_SAS"]
-endpoint = os.environ["EG_TOPIC_HOSTNAME"]
+endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
 async def publish():
     credential = AzureSasCredential(sas)

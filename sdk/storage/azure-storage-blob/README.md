@@ -15,7 +15,7 @@ Blob storage is ideal for:
 ## Getting started
 
 ### Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package.
+* Python 3.7 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 
@@ -181,6 +181,16 @@ Four different clients are provided to interact with the various components of t
     this client represents lease interactions with a `ContainerClient` or `BlobClient`. It provides operations to
     acquire, renew, release, change, and break a lease on a specified resource.
 
+### Async Clients 
+This library includes a complete async API supported on Python 3.5+. To use it, you must
+first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
+See
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport)
+for more information.
+
+Async clients and credentials should be closed when they're no longer needed. These
+objects are async context managers and define async `close` methods.
+
 ### Blob Types
 Once you've initialized a Client, you can choose from the different types of blobs:
 * [Block blobs](https://docs.microsoft.com/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs#about-block-blobs)
@@ -321,6 +331,8 @@ Defaults to `False`.
 Use the following keyword arguments when instantiating a client to configure encryption:
 
 * __require_encryption__ (bool): If set to True, will enforce that objects are encrypted and decrypt them.
+* __encryption_version__ (str): Specifies the version of encryption to use. Current options are `'2.0'` or `'1.0'` and
+the default value is `'1.0'`. Version 1.0 is deprecated, and it is **highly recommended** to use version 2.0.
 * __key_encryption_key__ (object): The user-provided key-encryption-key. The instance must implement the following methods:
     - `wrap_key(key)`--wraps the specified key using an algorithm of the user's choice.
     - `get_key_wrap_algorithm()`--returns the algorithm used to wrap the specified symmetric key.
@@ -334,7 +346,11 @@ Other optional configuration keyword arguments that can be specified on the clie
 
 **Client keyword arguments:**
 
-* __connection_timeout__ (int): Optionally sets the connect and read timeout value, in seconds.
+* __connection_timeout__ (int): The number of seconds the client will wait to establish a connection to the server.
+Defaults to 20 seconds.
+* __read_timeout__ (int): The number of seconds the client will wait, between consecutive read operations, for a
+response from the server. This is a socket level timeout and is not affected by overall data size. Client-side read 
+timeouts will be automatically retried. Defaults to 60 seconds.
 * __transport__ (Any): User-provided transport to send the HTTP request.
 
 **Per-operation keyword arguments:**

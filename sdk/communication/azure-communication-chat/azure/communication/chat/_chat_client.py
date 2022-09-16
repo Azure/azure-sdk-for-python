@@ -5,10 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 from uuid import uuid4
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse # type: ignore
+from urllib.parse import urlparse
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
@@ -35,7 +32,7 @@ if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
 
 
-class ChatClient(object):
+class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Chat gateway.
 
     This client provides operations to create chat thread, delete chat thread,

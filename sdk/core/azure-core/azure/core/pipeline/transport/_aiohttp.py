@@ -97,12 +97,14 @@ class AioHttpTransport(AsyncHttpTransport):
         """
         if not self.session and self._session_owner:
             jar = aiohttp.DummyCookieJar()
-            self.session = aiohttp.ClientSession(
-                loop=self._loop,
-                trust_env=self._use_env_settings,
-                cookie_jar=jar,
-                auto_decompress=False,
-            )
+            clientsession_kwargs = {
+                "trust_env": self._use_env_settings,
+                "cookie_jar": jar,
+                "auto_decompress": False,
+            }
+            if self._loop is not None:
+                clientsession_kwargs["loop"] = self._loop
+            self.session = aiohttp.ClientSession(**clientsession_kwargs)
         if self.session is not None:
             await self.session.__aenter__()
 
@@ -215,7 +217,7 @@ class AioHttpTransport(AsyncHttpTransport):
             verify=config.pop('connection_verify', self.connection_config.verify)
         )
         # If we know for sure there is not body, disable "auto content type"
-        # Otherwise, aiohttp will send "application/octect-stream" even for empty POST request
+        # Otherwise, aiohttp will send "application/octet-stream" even for empty POST request
         # and that break services like storage signature
         if not request.data and not request.files:
             config['skip_auto_headers'] = ['Content-Type']

@@ -114,7 +114,9 @@ class CommunicationIceServer(msrest.serialization.Model):
     :ivar credential: Required. Credential for the server.
     :vartype credential: str
     :ivar route_type: Required. The routing methodology to where the ICE server will be located
-     from the client. Possible values include: "any", "nearest".
+     from the client. "any" will have higher reliability while "nearest" will have lower latency. It
+     is recommended to default to use the "any" routing method unless there are specific scenarios
+     which minimizing latency is critical. Possible values include: "any", "nearest".
     :vartype route_type: str or ~azure.communication.networktraversal.models.RouteType
     """
 
@@ -149,7 +151,9 @@ class CommunicationIceServer(msrest.serialization.Model):
         :keyword credential: Required. Credential for the server.
         :paramtype credential: str
         :keyword route_type: Required. The routing methodology to where the ICE server will be located
-         from the client. Possible values include: "any", "nearest".
+         from the client. "any" will have higher reliability while "nearest" will have lower latency. It
+         is recommended to default to use the "any" routing method unless there are specific scenarios
+         which minimizing latency is critical. Possible values include: "any", "nearest".
         :paramtype route_type: str or ~azure.communication.networktraversal.models.RouteType
         """
         super(CommunicationIceServer, self).__init__(**kwargs)
@@ -165,7 +169,7 @@ class CommunicationRelayConfiguration(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar expires_on: Required. The date for which the username and credentials are not longer
-     valid.
+     valid. Will be 48 hours from request time.
     :vartype expires_on: ~datetime.datetime
     :ivar ice_servers: Required. An array representing the credentials and the STUN/TURN server
      URLs for use in ICE negotiations.
@@ -191,7 +195,7 @@ class CommunicationRelayConfiguration(msrest.serialization.Model):
     ):
         """
         :keyword expires_on: Required. The date for which the username and credentials are not longer
-         valid.
+         valid. Will be 48 hours from request time.
         :paramtype expires_on: ~datetime.datetime
         :keyword ice_servers: Required. An array representing the credentials and the STUN/TURN server
          URLs for use in ICE negotiations.
@@ -206,16 +210,26 @@ class CommunicationRelayConfiguration(msrest.serialization.Model):
 class CommunicationRelayConfigurationRequest(msrest.serialization.Model):
     """Request for a CommunicationRelayConfiguration.
 
-    :ivar id: An existing ACS identity.
+    :ivar id: An identity to be associated with telemetry for data relayed using the returned
+     credentials. Must be an existing ACS user identity. If not provided, the telemetry will not
+     contain an associated identity value.
     :vartype id: str
-    :ivar route_type: The routing methodology to where the ICE server will be located from the
-     client. Possible values include: "any", "nearest".
+    :ivar route_type: Filter the routing methodology returned. If not provided, will return all
+     route types in separate ICE servers. Possible values include: "any", "nearest".
     :vartype route_type: str or ~azure.communication.networktraversal.models.RouteType
+    :ivar ttl: The credential Time-To-Live (TTL), in seconds. The default value will be used if
+     given value exceeds it.
+    :vartype ttl: int
     """
+
+    _validation = {
+        'ttl': {'maximum': 172800, 'minimum': 0},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'route_type': {'key': 'routeType', 'type': 'str'},
+        'ttl': {'key': 'ttl', 'type': 'int'},
     }
 
     def __init__(
@@ -223,15 +237,22 @@ class CommunicationRelayConfigurationRequest(msrest.serialization.Model):
         *,
         id: Optional[str] = None,
         route_type: Optional[Union[str, "RouteType"]] = None,
+        ttl: Optional[int] = 172800,
         **kwargs
     ):
         """
-        :keyword id: An existing ACS identity.
+        :keyword id: An identity to be associated with telemetry for data relayed using the returned
+         credentials. Must be an existing ACS user identity. If not provided, the telemetry will not
+         contain an associated identity value.
         :paramtype id: str
-        :keyword route_type: The routing methodology to where the ICE server will be located from the
-         client. Possible values include: "any", "nearest".
+        :keyword route_type: Filter the routing methodology returned. If not provided, will return all
+         route types in separate ICE servers. Possible values include: "any", "nearest".
         :paramtype route_type: str or ~azure.communication.networktraversal.models.RouteType
+        :keyword ttl: The credential Time-To-Live (TTL), in seconds. The default value will be used if
+         given value exceeds it.
+        :paramtype ttl: int
         """
         super(CommunicationRelayConfigurationRequest, self).__init__(**kwargs)
         self.id = id
         self.route_type = route_type
+        self.ttl = ttl

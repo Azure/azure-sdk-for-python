@@ -18,31 +18,27 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class WebPubSubServiceClientConfiguration(Configuration):
+class WebPubSubServiceClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for WebPubSubServiceClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param hub: Target hub name, which should start with alphabetic characters and only contain alpha-numeric characters or underscore.
+    :param hub: Target hub name, which should start with alphabetic characters and only contain
+     alpha-numeric characters or underscore.
     :type hub: str
     :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2021-10-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        hub: str,
-        endpoint: str,
-        credential: "AsyncTokenCredential",
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, hub: str, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(WebPubSubServiceClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
 
         if hub is None:
             raise ValueError("Parameter 'hub' must not be None.")
@@ -55,22 +51,21 @@ class WebPubSubServiceClientConfiguration(Configuration):
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop('credential_scopes', ['https://webpubsub.azure.com/.default'])
-        kwargs.setdefault('sdk_moniker', 'messaging-webpubsubservice/{}'.format(VERSION))
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://webpubsub.azure.com/.default"])
+        kwargs.setdefault("sdk_moniker", "messaging-webpubsubservice/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
-        self.authentication_policy = kwargs.get('authentication_policy')
+    def _configure(self, **kwargs: Any) -> None:
+        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
+        self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
+                self.credential, *self.credential_scopes, **kwargs
+            )

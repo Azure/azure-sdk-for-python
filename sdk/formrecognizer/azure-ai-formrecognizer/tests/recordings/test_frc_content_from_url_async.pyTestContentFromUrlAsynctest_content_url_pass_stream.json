@@ -1,0 +1,35 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/layout/analyze?readingOrder=basic",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "37",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": {
+        "source": "b\u0027\\xff\\xd8\\xff\\xe0\u0027"
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "apim-request-id": "fdb8dc32-bcd9-413d-a832-1e45a2823554",
+        "Content-Length": "95",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 24 Jun 2022 00:08:45 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "4"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "FailedToDownloadImage",
+          "message": "Failed to download image from input URL."
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

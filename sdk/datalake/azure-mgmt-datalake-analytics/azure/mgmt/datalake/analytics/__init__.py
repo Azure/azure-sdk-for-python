@@ -1,8 +1,1 @@
-﻿from .account import DataLakeAnalyticsAccountManagementClient
-from .catalog import DataLakeAnalyticsCatalogManagementClient
-from .job import DataLakeAnalyticsJobManagementClient
-
-from .version import VERSION
-
-__version__ = VERSION
-
+__path__ = __import__('pkgutil').extend_path(__path__, __name__)

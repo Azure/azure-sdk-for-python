@@ -1,0 +1,37 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+# not supported yet.
+
+name: microsoft_samples_command_component_ml_table_input_outputs
+display_name: CommandComponentMLTableInputOutputs
+description: This is the command component with input/output types of MLTable
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 1
+
+inputs:
+  component_in_mltable_mount:
+    type: mltable
+
+  component_in_mltable_url:
+    type: mltable
+
+  component_in_mltable_eval:
+    type: mltable
+
+outputs:
+  component_out_mltable_rw_mount:
+    type: mltable
+
+  component_out_mltable_upload:
+    type: mltable
+
+command: |
+  echo ${{inputs.component_in_mltable_mount}}
+  echo ${{inputs.component_in_mltable_url}}
+  echo ${{inputs.component_in_mltable_eval}}
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

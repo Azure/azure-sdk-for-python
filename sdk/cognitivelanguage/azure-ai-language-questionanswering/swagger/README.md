@@ -31,7 +31,7 @@ python: true
 title: QuestionAnsweringClient
 version-tolerant: true
 models-mode: msrest
-package-version: 1.0.0
+package-version: 1.1.0b1
 add-credential: true
 credential-default-policy-type: AzureKeyCredentialPolicy
 credential-key-header-name: Ocp-Apim-Subscription-Key

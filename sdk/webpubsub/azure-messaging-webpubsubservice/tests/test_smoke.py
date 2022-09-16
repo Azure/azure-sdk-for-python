@@ -5,7 +5,6 @@
 # license information.
 # -------------------------------------------------------------------------
 import pytest
-from requests.packages.urllib3.connection import connection
 from testcase import WebpubsubTest, WebpubsubPowerShellPreparer
 from azure.messaging.webpubsubservice._operations._operations import build_send_to_all_request
 from azure.core.exceptions import ServiceRequestError

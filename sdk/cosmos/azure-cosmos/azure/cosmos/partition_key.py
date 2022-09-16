@@ -22,6 +22,7 @@
 """Create partition keys in the Azure Cosmos DB SQL API service.
 """
 
+
 class NonePartitionKeyValue(object):
     """Represents None value for partitionKey when it's missing in a container.
     """

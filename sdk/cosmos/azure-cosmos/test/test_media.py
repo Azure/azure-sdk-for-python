@@ -3,6 +3,7 @@ import azure.cosmos._synchronized_request as synchronized_request
 import unittest
 import test_config
 
+#  TODO: Check if this test is needed - not sure what is being tested here other than account names?
 
 class FakePipelineResponse:
     def __init__(
@@ -53,7 +54,7 @@ class MediaTests(unittest.TestCase):
         try:
             original_execute_function = synchronized_request._PipelineRunFunction
             synchronized_request._PipelineRunFunction = self._MockRunFunction
-            cosmos_client.CosmosClient(host, master_key)
+            cosmos_client.CosmosClient(host, master_key, consistency_level="Session")
         finally:
             synchronized_request._PipelineRunFunction = original_execute_function
 

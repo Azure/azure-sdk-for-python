@@ -1,0 +1,13 @@
+name: blue
+endpoint_name: myBatchEndpoint
+model:
+  name: model-1
+  version: 5
+  path: ../model-1/model/sklearn_regression_model.pkl
+code_configuration:
+  code: ../endpoint_scoring
+  scoring_script: do_nothing.py
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+compute: azureml:cpu-cluster
+resources:
+  instance_count: 1

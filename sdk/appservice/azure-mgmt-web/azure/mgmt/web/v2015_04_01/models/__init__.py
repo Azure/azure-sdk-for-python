@@ -6,68 +6,37 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Address
-    from ._models_py3 import Contact
-    from ._models_py3 import CsmOperationCollection
-    from ._models_py3 import CsmOperationDescription
-    from ._models_py3 import CsmOperationDescriptionProperties
-    from ._models_py3 import CsmOperationDisplay
-    from ._models_py3 import Dimension
-    from ._models_py3 import Domain
-    from ._models_py3 import DomainAvailablilityCheckResult
-    from ._models_py3 import DomainCollection
-    from ._models_py3 import DomainControlCenterSsoRequest
-    from ._models_py3 import DomainOwnershipIdentifier
-    from ._models_py3 import DomainOwnershipIdentifierCollection
-    from ._models_py3 import DomainPatchResource
-    from ._models_py3 import DomainPurchaseConsent
-    from ._models_py3 import DomainRecommendationSearchParameters
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import HostName
-    from ._models_py3 import MetricAvailability
-    from ._models_py3 import MetricSpecification
-    from ._models_py3 import NameIdentifier
-    from ._models_py3 import NameIdentifierCollection
-    from ._models_py3 import ProxyOnlyResource
-    from ._models_py3 import Resource
-    from ._models_py3 import ServiceSpecification
-    from ._models_py3 import TldLegalAgreement
-    from ._models_py3 import TldLegalAgreementCollection
-    from ._models_py3 import TopLevelDomain
-    from ._models_py3 import TopLevelDomainAgreementOption
-    from ._models_py3 import TopLevelDomainCollection
-except (SyntaxError, ImportError):
-    from ._models import Address  # type: ignore
-    from ._models import Contact  # type: ignore
-    from ._models import CsmOperationCollection  # type: ignore
-    from ._models import CsmOperationDescription  # type: ignore
-    from ._models import CsmOperationDescriptionProperties  # type: ignore
-    from ._models import CsmOperationDisplay  # type: ignore
-    from ._models import Dimension  # type: ignore
-    from ._models import Domain  # type: ignore
-    from ._models import DomainAvailablilityCheckResult  # type: ignore
-    from ._models import DomainCollection  # type: ignore
-    from ._models import DomainControlCenterSsoRequest  # type: ignore
-    from ._models import DomainOwnershipIdentifier  # type: ignore
-    from ._models import DomainOwnershipIdentifierCollection  # type: ignore
-    from ._models import DomainPatchResource  # type: ignore
-    from ._models import DomainPurchaseConsent  # type: ignore
-    from ._models import DomainRecommendationSearchParameters  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import HostName  # type: ignore
-    from ._models import MetricAvailability  # type: ignore
-    from ._models import MetricSpecification  # type: ignore
-    from ._models import NameIdentifier  # type: ignore
-    from ._models import NameIdentifierCollection  # type: ignore
-    from ._models import ProxyOnlyResource  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ServiceSpecification  # type: ignore
-    from ._models import TldLegalAgreement  # type: ignore
-    from ._models import TldLegalAgreementCollection  # type: ignore
-    from ._models import TopLevelDomain  # type: ignore
-    from ._models import TopLevelDomainAgreementOption  # type: ignore
-    from ._models import TopLevelDomainCollection  # type: ignore
+from ._models_py3 import Address
+from ._models_py3 import Contact
+from ._models_py3 import CsmOperationCollection
+from ._models_py3 import CsmOperationDescription
+from ._models_py3 import CsmOperationDescriptionProperties
+from ._models_py3 import CsmOperationDisplay
+from ._models_py3 import Dimension
+from ._models_py3 import Domain
+from ._models_py3 import DomainAvailablilityCheckResult
+from ._models_py3 import DomainCollection
+from ._models_py3 import DomainControlCenterSsoRequest
+from ._models_py3 import DomainOwnershipIdentifier
+from ._models_py3 import DomainOwnershipIdentifierCollection
+from ._models_py3 import DomainPatchResource
+from ._models_py3 import DomainPurchaseConsent
+from ._models_py3 import DomainRecommendationSearchParameters
+from ._models_py3 import ErrorResponse
+from ._models_py3 import HostName
+from ._models_py3 import MetricAvailability
+from ._models_py3 import MetricSpecification
+from ._models_py3 import NameIdentifier
+from ._models_py3 import NameIdentifierCollection
+from ._models_py3 import ProxyOnlyResource
+from ._models_py3 import Resource
+from ._models_py3 import ServiceSpecification
+from ._models_py3 import TldLegalAgreement
+from ._models_py3 import TldLegalAgreementCollection
+from ._models_py3 import TopLevelDomain
+from ._models_py3 import TopLevelDomainAgreementOption
+from ._models_py3 import TopLevelDomainCollection
+
 
 from ._web_site_management_client_enums import (
     AzureResourceType,
@@ -80,7 +49,9 @@ from ._web_site_management_client_enums import (
     HostNameType,
     ProvisioningState,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'Address',
     'Contact',
@@ -122,3 +93,5 @@ __all__ = [
     'HostNameType',
     'ProvisioningState',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

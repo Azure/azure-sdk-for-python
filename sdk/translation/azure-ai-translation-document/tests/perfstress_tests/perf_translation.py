@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -14,7 +13,7 @@ from azure.storage.blob.aio import ContainerClient, BlobServiceClient
 from azure.storage.blob import generate_container_sas
 
 
-class Document(object):
+class Document:
     """Represents a document to be uploaded to source/target container"""
     def __init__(self, **kwargs):
         self.name = kwargs.get("name", str(uuid.uuid4()))

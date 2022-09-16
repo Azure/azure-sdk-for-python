@@ -1,5 +1,3 @@
-
-# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -15,7 +13,7 @@ from azure.core.credentials import AzureKeyCredential
 DocumentTranslationPreparer = functools.partial(
     PowerShellPreparer,
     'translation',
-    translation_document_test_endpoint="https://redacted.cognitiveservices.azure.com/",
+    translation_document_test_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
     translation_document_test_api_key="fakeZmFrZV9hY29jdW50X2tleQ==",
     translation_document_name="redacted",
     translation_document_storage_name="redacted",
@@ -25,7 +23,7 @@ DocumentTranslationPreparer = functools.partial(
 
 class DocumentTranslationClientPreparer(AzureMgmtPreparer):
     def __init__(self, client_cls, client_kwargs={}, **kwargs):
-        super(DocumentTranslationClientPreparer, self).__init__(
+        super().__init__(
             name_prefix='',
             random_name_length=42
         )

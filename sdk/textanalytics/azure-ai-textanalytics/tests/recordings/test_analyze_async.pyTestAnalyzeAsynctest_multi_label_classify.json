@@ -1,0 +1,145 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "938",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component.",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "I need a reservation for an indoor restaurant in China. Please don\u0027t stop the music. Play music and add it to my playlist",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "CustomMultiLabelClassification",
+            "parameters": {
+              "projectName": "multi_category_classify_project_name",
+              "deploymentName": "multi_category_classify_project_name"
+            }
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "99519f4f-3df8-43cf-9ab6-a7acbdf2d37d",
+        "Content-Length": "0",
+        "Date": "Thu, 09 Jun 2022 17:43:29 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/487eaff9-5af8-4037-9c1f-4401d9fc655f?api-version=2022-05-01",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "174"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/487eaff9-5af8-4037-9c1f-4401d9fc655f?api-version=2022-05-01\u0026showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "599bd1df-7886-4d5f-b82c-95aec510c01b",
+        "Content-Length": "1013",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 09 Jun 2022 17:43:34 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "56"
+      },
+      "ResponseBody": {
+        "jobId": "487eaff9-5af8-4037-9c1f-4401d9fc655f",
+        "lastUpdatedDateTime": "2022-06-09T17:43:30Z",
+        "createdDateTime": "2022-06-09T17:43:30Z",
+        "expirationDateTime": "2022-06-10T17:43:30Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 1,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 1,
+          "items": [
+            {
+              "kind": "CustomMultiLabelClassificationLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-06-09T17:43:30.9583252Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 3,
+                  "validDocumentsCount": 3,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 3
+                },
+                "documents": [
+                  {
+                    "id": "1",
+                    "class": [],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "2",
+                    "class": [],
+                    "statistics": {
+                      "charactersCount": 158,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "3",
+                    "class": [
+                      {
+                        "category": "BookRestaurant",
+                        "confidenceScore": 0.97
+                      }
+                    ],
+                    "statistics": {
+                      "charactersCount": 121,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "projectName": "multi_category_classify_project_name",
+                "deploymentName": "multi_category_classify_project_name"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -35,5 +35,4 @@ async def list_purchased_phone_numbers():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(list_purchased_phone_numbers())
+    asyncio.run(list_purchased_phone_numbers())

@@ -11,8 +11,8 @@ DESCRIPTION:
 USAGE:
     python publish_cloud_events_to_custom_topic_sample.py
     Set the environment variables with your own values before running the sample:
-    1) CLOUD_ACCESS_KEY - The access key of your eventgrid account.
-    2) CLOUD_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
+    1) EVENTGRID_CLOUD_EVENT_TOPIC_KEY - The access key of your eventgrid account.
+    2) EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT - The topic hostname. Typically it exists in the format
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
@@ -23,8 +23,8 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
 from azure.eventgrid import EventGridPublisherClient
 
-key = os.environ.get("CLOUD_ACCESS_KEY")
-endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]
+key = os.environ.get("EVENTGRID_CLOUD_EVENT_TOPIC_KEY")
+endpoint = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
 
 # authenticate client
 credential = AzureKeyCredential(key)

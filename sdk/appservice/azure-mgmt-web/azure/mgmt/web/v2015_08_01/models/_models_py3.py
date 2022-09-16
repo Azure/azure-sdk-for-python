@@ -7,11 +7,13 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._web_site_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AppServiceCertificate(msrest.serialization.Model):
@@ -19,12 +21,12 @@ class AppServiceCertificate(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param key_vault_id: Key Vault resource Id.
-    :type key_vault_id: str
-    :param key_vault_secret_name: Key Vault secret name.
-    :type key_vault_secret_name: str
-    :ivar provisioning_state: Status of the Key Vault secret. Possible values include:
-     "Initialized", "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
+    :ivar key_vault_id: Key Vault resource Id.
+    :vartype key_vault_id: str
+    :ivar key_vault_secret_name: Key Vault secret name.
+    :vartype key_vault_secret_name: str
+    :ivar provisioning_state: Status of the Key Vault secret. Known values are: "Initialized",
+     "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
      "OperationNotPermittedOnKeyVault", "AzureServiceUnauthorizedToAccessKeyVault",
      "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey",
      "Unknown".
@@ -48,6 +50,12 @@ class AppServiceCertificate(msrest.serialization.Model):
         key_vault_secret_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword key_vault_id: Key Vault resource Id.
+        :paramtype key_vault_id: str
+        :keyword key_vault_secret_name: Key Vault secret name.
+        :paramtype key_vault_secret_name: str
+        """
         super(AppServiceCertificate, self).__init__(**kwargs)
         self.key_vault_id = key_vault_id
         self.key_vault_secret_name = key_vault_secret_name
@@ -61,8 +69,8 @@ class AppServiceCertificateCollection(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. Collection of resources.
-    :type value: list[~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateResource]
+    :ivar value: Required. Collection of resources.
+    :vartype value: list[~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateResource]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
@@ -80,9 +88,13 @@ class AppServiceCertificateCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["AppServiceCertificateResource"],
+        value: List["_models.AppServiceCertificateResource"],
         **kwargs
     ):
+        """
+        :keyword value: Required. Collection of resources.
+        :paramtype value: list[~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateResource]
+        """
         super(AppServiceCertificateCollection, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -99,14 +111,14 @@ class Resource(msrest.serialization.Model):
     :vartype id: str
     :ivar name: Resource Name.
     :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :param location: Required. Resource Location.
-    :type location: str
+    :ivar kind: Kind of resource.
+    :vartype kind: str
+    :ivar location: Required. Resource Location.
+    :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -133,6 +145,14 @@ class Resource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword kind: Kind of resource.
+        :paramtype kind: str
+        :keyword location: Required. Resource Location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -153,41 +173,40 @@ class AppServiceCertificateOrder(Resource):
     :vartype id: str
     :ivar name: Resource Name.
     :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :param location: Required. Resource Location.
-    :type location: str
+    :ivar kind: Kind of resource.
+    :vartype kind: str
+    :ivar location: Required. Resource Location.
+    :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param certificates: State of the Key Vault secret.
-    :type certificates: dict[str, ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificate]
-    :param distinguished_name: Certificate distinguished name.
-    :type distinguished_name: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar certificates: State of the Key Vault secret.
+    :vartype certificates: dict[str, ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificate]
+    :ivar distinguished_name: Certificate distinguished name.
+    :vartype distinguished_name: str
     :ivar domain_verification_token: Domain verification token.
     :vartype domain_verification_token: str
-    :param validity_in_years: Duration in years (must be between 1 and 3).
-    :type validity_in_years: int
-    :param key_size: Certificate key size.
-    :type key_size: int
-    :param product_type: Certificate product type. Possible values include:
-     "StandardDomainValidatedSsl", "StandardDomainValidatedWildCardSsl".
-    :type product_type: str or ~azure.mgmt.web.v2015_08_01.models.CertificateProductType
-    :param auto_renew: :code:`<code>true</code>` if the certificate should be automatically renewed
+    :ivar validity_in_years: Duration in years (must be between 1 and 3).
+    :vartype validity_in_years: int
+    :ivar key_size: Certificate key size.
+    :vartype key_size: int
+    :ivar product_type: Certificate product type. Known values are: "StandardDomainValidatedSsl",
+     "StandardDomainValidatedWildCardSsl".
+    :vartype product_type: str or ~azure.mgmt.web.v2015_08_01.models.CertificateProductType
+    :ivar auto_renew: :code:`<code>true</code>` if the certificate should be automatically renewed
      when it expires; otherwise, :code:`<code>false</code>`.
-    :type auto_renew: bool
-    :ivar provisioning_state: Status of certificate order. Possible values include: "Succeeded",
-     "Failed", "Canceled", "InProgress", "Deleting".
+    :vartype auto_renew: bool
+    :ivar provisioning_state: Status of certificate order. Known values are: "Succeeded", "Failed",
+     "Canceled", "InProgress", "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.web.v2015_08_01.models.ProvisioningState
-    :ivar status: Current order status. Possible values include: "Pendingissuance", "Issued",
-     "Revoked", "Canceled", "Denied", "Pendingrevocation", "PendingRekey", "Unused", "Expired",
-     "NotSubmitted".
+    :ivar status: Current order status. Known values are: "Pendingissuance", "Issued", "Revoked",
+     "Canceled", "Denied", "Pendingrevocation", "PendingRekey", "Unused", "Expired", "NotSubmitted".
     :vartype status: str or ~azure.mgmt.web.v2015_08_01.models.CertificateOrderStatus
     :ivar signed_certificate: Signed certificate.
     :vartype signed_certificate: ~azure.mgmt.web.v2015_08_01.models.CertificateDetails
-    :param csr: Last CSR that was created for this order.
-    :type csr: str
+    :ivar csr: Last CSR that was created for this order.
+    :vartype csr: str
     :ivar intermediate: Intermediate certificate.
     :vartype intermediate: ~azure.mgmt.web.v2015_08_01.models.CertificateDetails
     :ivar root: Root certificate.
@@ -263,15 +282,39 @@ class AppServiceCertificateOrder(Resource):
         location: str,
         kind: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        certificates: Optional[Dict[str, "AppServiceCertificate"]] = None,
+        certificates: Optional[Dict[str, "_models.AppServiceCertificate"]] = None,
         distinguished_name: Optional[str] = None,
         validity_in_years: Optional[int] = 1,
         key_size: Optional[int] = 2048,
-        product_type: Optional[Union[str, "CertificateProductType"]] = None,
+        product_type: Optional[Union[str, "_models.CertificateProductType"]] = None,
         auto_renew: Optional[bool] = True,
         csr: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword kind: Kind of resource.
+        :paramtype kind: str
+        :keyword location: Required. Resource Location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword certificates: State of the Key Vault secret.
+        :paramtype certificates: dict[str, ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificate]
+        :keyword distinguished_name: Certificate distinguished name.
+        :paramtype distinguished_name: str
+        :keyword validity_in_years: Duration in years (must be between 1 and 3).
+        :paramtype validity_in_years: int
+        :keyword key_size: Certificate key size.
+        :paramtype key_size: int
+        :keyword product_type: Certificate product type. Known values are:
+         "StandardDomainValidatedSsl", "StandardDomainValidatedWildCardSsl".
+        :paramtype product_type: str or ~azure.mgmt.web.v2015_08_01.models.CertificateProductType
+        :keyword auto_renew: :code:`<code>true</code>` if the certificate should be automatically
+         renewed when it expires; otherwise, :code:`<code>false</code>`.
+        :paramtype auto_renew: bool
+        :keyword csr: Last CSR that was created for this order.
+        :paramtype csr: str
+        """
         super(AppServiceCertificateOrder, self).__init__(kind=kind, location=location, tags=tags, **kwargs)
         self.certificates = certificates
         self.distinguished_name = distinguished_name
@@ -301,8 +344,8 @@ class AppServiceCertificateOrderCollection(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. Collection of resources.
-    :type value: list[~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateOrder]
+    :ivar value: Required. Collection of resources.
+    :vartype value: list[~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateOrder]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
@@ -320,9 +363,13 @@ class AppServiceCertificateOrderCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["AppServiceCertificateOrder"],
+        value: List["_models.AppServiceCertificateOrder"],
         **kwargs
     ):
+        """
+        :keyword value: Required. Collection of resources.
+        :paramtype value: list[~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateOrder]
+        """
         super(AppServiceCertificateOrderCollection, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -337,8 +384,8 @@ class ProxyOnlyResource(msrest.serialization.Model):
     :vartype id: str
     :ivar name: Resource Name.
     :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
+    :ivar kind: Kind of resource.
+    :vartype kind: str
     :ivar type: Resource type.
     :vartype type: str
     """
@@ -362,6 +409,10 @@ class ProxyOnlyResource(msrest.serialization.Model):
         kind: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword kind: Kind of resource.
+        :paramtype kind: str
+        """
         super(ProxyOnlyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -378,37 +429,36 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
     :vartype id: str
     :ivar name: Resource Name.
     :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
+    :ivar kind: Kind of resource.
+    :vartype kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param certificates: State of the Key Vault secret.
-    :type certificates: dict[str, ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificate]
-    :param distinguished_name: Certificate distinguished name.
-    :type distinguished_name: str
+    :ivar certificates: State of the Key Vault secret.
+    :vartype certificates: dict[str, ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificate]
+    :ivar distinguished_name: Certificate distinguished name.
+    :vartype distinguished_name: str
     :ivar domain_verification_token: Domain verification token.
     :vartype domain_verification_token: str
-    :param validity_in_years: Duration in years (must be between 1 and 3).
-    :type validity_in_years: int
-    :param key_size: Certificate key size.
-    :type key_size: int
-    :param product_type: Certificate product type. Possible values include:
-     "StandardDomainValidatedSsl", "StandardDomainValidatedWildCardSsl".
-    :type product_type: str or ~azure.mgmt.web.v2015_08_01.models.CertificateProductType
-    :param auto_renew: :code:`<code>true</code>` if the certificate should be automatically renewed
+    :ivar validity_in_years: Duration in years (must be between 1 and 3).
+    :vartype validity_in_years: int
+    :ivar key_size: Certificate key size.
+    :vartype key_size: int
+    :ivar product_type: Certificate product type. Known values are: "StandardDomainValidatedSsl",
+     "StandardDomainValidatedWildCardSsl".
+    :vartype product_type: str or ~azure.mgmt.web.v2015_08_01.models.CertificateProductType
+    :ivar auto_renew: :code:`<code>true</code>` if the certificate should be automatically renewed
      when it expires; otherwise, :code:`<code>false</code>`.
-    :type auto_renew: bool
-    :ivar provisioning_state: Status of certificate order. Possible values include: "Succeeded",
-     "Failed", "Canceled", "InProgress", "Deleting".
+    :vartype auto_renew: bool
+    :ivar provisioning_state: Status of certificate order. Known values are: "Succeeded", "Failed",
+     "Canceled", "InProgress", "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.web.v2015_08_01.models.ProvisioningState
-    :ivar status: Current order status. Possible values include: "Pendingissuance", "Issued",
-     "Revoked", "Canceled", "Denied", "Pendingrevocation", "PendingRekey", "Unused", "Expired",
-     "NotSubmitted".
+    :ivar status: Current order status. Known values are: "Pendingissuance", "Issued", "Revoked",
+     "Canceled", "Denied", "Pendingrevocation", "PendingRekey", "Unused", "Expired", "NotSubmitted".
     :vartype status: str or ~azure.mgmt.web.v2015_08_01.models.CertificateOrderStatus
     :ivar signed_certificate: Signed certificate.
     :vartype signed_certificate: ~azure.mgmt.web.v2015_08_01.models.CertificateDetails
-    :param csr: Last CSR that was created for this order.
-    :type csr: str
+    :ivar csr: Last CSR that was created for this order.
+    :vartype csr: str
     :ivar intermediate: Intermediate certificate.
     :vartype intermediate: ~azure.mgmt.web.v2015_08_01.models.CertificateDetails
     :ivar root: Root certificate.
@@ -479,15 +529,35 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
         self,
         *,
         kind: Optional[str] = None,
-        certificates: Optional[Dict[str, "AppServiceCertificate"]] = None,
+        certificates: Optional[Dict[str, "_models.AppServiceCertificate"]] = None,
         distinguished_name: Optional[str] = None,
         validity_in_years: Optional[int] = 1,
         key_size: Optional[int] = 2048,
-        product_type: Optional[Union[str, "CertificateProductType"]] = None,
+        product_type: Optional[Union[str, "_models.CertificateProductType"]] = None,
         auto_renew: Optional[bool] = True,
         csr: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword kind: Kind of resource.
+        :paramtype kind: str
+        :keyword certificates: State of the Key Vault secret.
+        :paramtype certificates: dict[str, ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificate]
+        :keyword distinguished_name: Certificate distinguished name.
+        :paramtype distinguished_name: str
+        :keyword validity_in_years: Duration in years (must be between 1 and 3).
+        :paramtype validity_in_years: int
+        :keyword key_size: Certificate key size.
+        :paramtype key_size: int
+        :keyword product_type: Certificate product type. Known values are:
+         "StandardDomainValidatedSsl", "StandardDomainValidatedWildCardSsl".
+        :paramtype product_type: str or ~azure.mgmt.web.v2015_08_01.models.CertificateProductType
+        :keyword auto_renew: :code:`<code>true</code>` if the certificate should be automatically
+         renewed when it expires; otherwise, :code:`<code>false</code>`.
+        :paramtype auto_renew: bool
+        :keyword csr: Last CSR that was created for this order.
+        :paramtype csr: str
+        """
         super(AppServiceCertificateOrderPatchResource, self).__init__(kind=kind, **kwargs)
         self.certificates = certificates
         self.distinguished_name = distinguished_name
@@ -519,16 +589,16 @@ class AppServiceCertificatePatchResource(ProxyOnlyResource):
     :vartype id: str
     :ivar name: Resource Name.
     :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
+    :ivar kind: Kind of resource.
+    :vartype kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param key_vault_id: Key Vault resource Id.
-    :type key_vault_id: str
-    :param key_vault_secret_name: Key Vault secret name.
-    :type key_vault_secret_name: str
-    :ivar provisioning_state: Status of the Key Vault secret. Possible values include:
-     "Initialized", "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
+    :ivar key_vault_id: Key Vault resource Id.
+    :vartype key_vault_id: str
+    :ivar key_vault_secret_name: Key Vault secret name.
+    :vartype key_vault_secret_name: str
+    :ivar provisioning_state: Status of the Key Vault secret. Known values are: "Initialized",
+     "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
      "OperationNotPermittedOnKeyVault", "AzureServiceUnauthorizedToAccessKeyVault",
      "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey",
      "Unknown".
@@ -560,6 +630,14 @@ class AppServiceCertificatePatchResource(ProxyOnlyResource):
         key_vault_secret_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword kind: Kind of resource.
+        :paramtype kind: str
+        :keyword key_vault_id: Key Vault resource Id.
+        :paramtype key_vault_id: str
+        :keyword key_vault_secret_name: Key Vault secret name.
+        :paramtype key_vault_secret_name: str
+        """
         super(AppServiceCertificatePatchResource, self).__init__(kind=kind, **kwargs)
         self.key_vault_id = key_vault_id
         self.key_vault_secret_name = key_vault_secret_name
@@ -577,20 +655,20 @@ class AppServiceCertificateResource(Resource):
     :vartype id: str
     :ivar name: Resource Name.
     :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :param location: Required. Resource Location.
-    :type location: str
+    :ivar kind: Kind of resource.
+    :vartype kind: str
+    :ivar location: Required. Resource Location.
+    :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param key_vault_id: Key Vault resource Id.
-    :type key_vault_id: str
-    :param key_vault_secret_name: Key Vault secret name.
-    :type key_vault_secret_name: str
-    :ivar provisioning_state: Status of the Key Vault secret. Possible values include:
-     "Initialized", "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar key_vault_id: Key Vault resource Id.
+    :vartype key_vault_id: str
+    :ivar key_vault_secret_name: Key Vault secret name.
+    :vartype key_vault_secret_name: str
+    :ivar provisioning_state: Status of the Key Vault secret. Known values are: "Initialized",
+     "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
      "OperationNotPermittedOnKeyVault", "AzureServiceUnauthorizedToAccessKeyVault",
      "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey",
      "Unknown".
@@ -627,6 +705,18 @@ class AppServiceCertificateResource(Resource):
         key_vault_secret_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword kind: Kind of resource.
+        :paramtype kind: str
+        :keyword location: Required. Resource Location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword key_vault_id: Key Vault resource Id.
+        :paramtype key_vault_id: str
+        :keyword key_vault_secret_name: Key Vault secret name.
+        :paramtype key_vault_secret_name: str
+        """
         super(AppServiceCertificateResource, self).__init__(kind=kind, location=location, tags=tags, **kwargs)
         self.key_vault_id = key_vault_id
         self.key_vault_secret_name = key_vault_secret_name
@@ -686,6 +776,8 @@ class CertificateDetails(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CertificateDetails, self).__init__(**kwargs)
         self.version = None
         self.serial_number = None
@@ -707,14 +799,14 @@ class CertificateEmail(ProxyOnlyResource):
     :vartype id: str
     :ivar name: Resource Name.
     :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
+    :ivar kind: Kind of resource.
+    :vartype kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param email_id: Email id.
-    :type email_id: str
-    :param time_stamp: Time stamp.
-    :type time_stamp: ~datetime.datetime
+    :ivar email_id: Email id.
+    :vartype email_id: str
+    :ivar time_stamp: Time stamp.
+    :vartype time_stamp: ~datetime.datetime
     """
 
     _validation = {
@@ -740,6 +832,14 @@ class CertificateEmail(ProxyOnlyResource):
         time_stamp: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword kind: Kind of resource.
+        :paramtype kind: str
+        :keyword email_id: Email id.
+        :paramtype email_id: str
+        :keyword time_stamp: Time stamp.
+        :paramtype time_stamp: ~datetime.datetime
+        """
         super(CertificateEmail, self).__init__(kind=kind, **kwargs)
         self.email_id = email_id
         self.time_stamp = time_stamp
@@ -754,19 +854,19 @@ class CertificateOrderAction(ProxyOnlyResource):
     :vartype id: str
     :ivar name: Resource Name.
     :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
+    :ivar kind: Kind of resource.
+    :vartype kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param type_properties_type: Action type. Possible values include: "CertificateIssued",
+    :ivar type_properties_type: Action type. Known values are: "CertificateIssued",
      "CertificateOrderCanceled", "CertificateOrderCreated", "CertificateRevoked",
      "DomainValidationComplete", "FraudDetected", "OrgNameChange", "OrgValidationComplete",
      "SanDrop", "FraudCleared", "CertificateExpired", "CertificateExpirationWarning",
      "FraudDocumentationRequired", "Unknown".
-    :type type_properties_type: str or
+    :vartype type_properties_type: str or
      ~azure.mgmt.web.v2015_08_01.models.CertificateOrderActionType
-    :param created_at: Time at which the certificate action was performed.
-    :type created_at: ~datetime.datetime
+    :ivar created_at: Time at which the certificate action was performed.
+    :vartype created_at: ~datetime.datetime
     """
 
     _validation = {
@@ -788,10 +888,23 @@ class CertificateOrderAction(ProxyOnlyResource):
         self,
         *,
         kind: Optional[str] = None,
-        type_properties_type: Optional[Union[str, "CertificateOrderActionType"]] = None,
+        type_properties_type: Optional[Union[str, "_models.CertificateOrderActionType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword kind: Kind of resource.
+        :paramtype kind: str
+        :keyword type_properties_type: Action type. Known values are: "CertificateIssued",
+         "CertificateOrderCanceled", "CertificateOrderCreated", "CertificateRevoked",
+         "DomainValidationComplete", "FraudDetected", "OrgNameChange", "OrgValidationComplete",
+         "SanDrop", "FraudCleared", "CertificateExpired", "CertificateExpirationWarning",
+         "FraudDocumentationRequired", "Unknown".
+        :paramtype type_properties_type: str or
+         ~azure.mgmt.web.v2015_08_01.models.CertificateOrderActionType
+        :keyword created_at: Time at which the certificate action was performed.
+        :paramtype created_at: ~datetime.datetime
+        """
         super(CertificateOrderAction, self).__init__(kind=kind, **kwargs)
         self.type_properties_type = type_properties_type
         self.created_at = created_at
@@ -804,8 +917,8 @@ class CsmOperationCollection(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. Collection of resources.
-    :type value: list[~azure.mgmt.web.v2015_08_01.models.CsmOperationDescription]
+    :ivar value: Required. Collection of resources.
+    :vartype value: list[~azure.mgmt.web.v2015_08_01.models.CsmOperationDescription]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
@@ -823,9 +936,13 @@ class CsmOperationCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["CsmOperationDescription"],
+        value: List["_models.CsmOperationDescription"],
         **kwargs
     ):
+        """
+        :keyword value: Required. Collection of resources.
+        :paramtype value: list[~azure.mgmt.web.v2015_08_01.models.CsmOperationDescription]
+        """
         super(CsmOperationCollection, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -834,14 +951,14 @@ class CsmOperationCollection(msrest.serialization.Model):
 class CsmOperationDescription(msrest.serialization.Model):
     """Description of an operation available for Microsoft.Web resource provider.
 
-    :param name:
-    :type name: str
-    :param display: Meta data about operation used for display in portal.
-    :type display: ~azure.mgmt.web.v2015_08_01.models.CsmOperationDisplay
-    :param origin:
-    :type origin: str
-    :param properties: Properties available for a Microsoft.Web resource provider operation.
-    :type properties: ~azure.mgmt.web.v2015_08_01.models.CsmOperationDescriptionProperties
+    :ivar name:
+    :vartype name: str
+    :ivar display: Meta data about operation used for display in portal.
+    :vartype display: ~azure.mgmt.web.v2015_08_01.models.CsmOperationDisplay
+    :ivar origin:
+    :vartype origin: str
+    :ivar properties: Properties available for a Microsoft.Web resource provider operation.
+    :vartype properties: ~azure.mgmt.web.v2015_08_01.models.CsmOperationDescriptionProperties
     """
 
     _attribute_map = {
@@ -855,11 +972,21 @@ class CsmOperationDescription(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["CsmOperationDisplay"] = None,
+        display: Optional["_models.CsmOperationDisplay"] = None,
         origin: Optional[str] = None,
-        properties: Optional["CsmOperationDescriptionProperties"] = None,
+        properties: Optional["_models.CsmOperationDescriptionProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword name:
+        :paramtype name: str
+        :keyword display: Meta data about operation used for display in portal.
+        :paramtype display: ~azure.mgmt.web.v2015_08_01.models.CsmOperationDisplay
+        :keyword origin:
+        :paramtype origin: str
+        :keyword properties: Properties available for a Microsoft.Web resource provider operation.
+        :paramtype properties: ~azure.mgmt.web.v2015_08_01.models.CsmOperationDescriptionProperties
+        """
         super(CsmOperationDescription, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -870,9 +997,9 @@ class CsmOperationDescription(msrest.serialization.Model):
 class CsmOperationDescriptionProperties(msrest.serialization.Model):
     """Properties available for a Microsoft.Web resource provider operation.
 
-    :param service_specification: Resource metrics service provided by Microsoft.Insights resource
+    :ivar service_specification: Resource metrics service provided by Microsoft.Insights resource
      provider.
-    :type service_specification: ~azure.mgmt.web.v2015_08_01.models.ServiceSpecification
+    :vartype service_specification: ~azure.mgmt.web.v2015_08_01.models.ServiceSpecification
     """
 
     _attribute_map = {
@@ -882,9 +1009,14 @@ class CsmOperationDescriptionProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        service_specification: Optional["ServiceSpecification"] = None,
+        service_specification: Optional["_models.ServiceSpecification"] = None,
         **kwargs
     ):
+        """
+        :keyword service_specification: Resource metrics service provided by Microsoft.Insights
+         resource provider.
+        :paramtype service_specification: ~azure.mgmt.web.v2015_08_01.models.ServiceSpecification
+        """
         super(CsmOperationDescriptionProperties, self).__init__(**kwargs)
         self.service_specification = service_specification
 
@@ -892,14 +1024,14 @@ class CsmOperationDescriptionProperties(msrest.serialization.Model):
 class CsmOperationDisplay(msrest.serialization.Model):
     """Meta data about operation used for display in portal.
 
-    :param provider:
-    :type provider: str
-    :param resource:
-    :type resource: str
-    :param operation:
-    :type operation: str
-    :param description:
-    :type description: str
+    :ivar provider:
+    :vartype provider: str
+    :ivar resource:
+    :vartype resource: str
+    :ivar operation:
+    :vartype operation: str
+    :ivar description:
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -918,6 +1050,16 @@ class CsmOperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider:
+        :paramtype provider: str
+        :keyword resource:
+        :paramtype resource: str
+        :keyword operation:
+        :paramtype operation: str
+        :keyword description:
+        :paramtype description: str
+        """
         super(CsmOperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -929,14 +1071,14 @@ class Dimension(msrest.serialization.Model):
     """Dimension of a resource metric. For e.g. instance specific HTTP requests for a web app, 
 where instance name is dimension of the metric HTTP request.
 
-    :param name:
-    :type name: str
-    :param display_name:
-    :type display_name: str
-    :param internal_name:
-    :type internal_name: str
-    :param to_be_exported_for_shoebox:
-    :type to_be_exported_for_shoebox: bool
+    :ivar name:
+    :vartype name: str
+    :ivar display_name:
+    :vartype display_name: str
+    :ivar internal_name:
+    :vartype internal_name: str
+    :ivar to_be_exported_for_shoebox:
+    :vartype to_be_exported_for_shoebox: bool
     """
 
     _attribute_map = {
@@ -955,6 +1097,16 @@ where instance name is dimension of the metric HTTP request.
         to_be_exported_for_shoebox: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword name:
+        :paramtype name: str
+        :keyword display_name:
+        :paramtype display_name: str
+        :keyword internal_name:
+        :paramtype internal_name: str
+        :keyword to_be_exported_for_shoebox:
+        :paramtype to_be_exported_for_shoebox: bool
+        """
         super(Dimension, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -965,10 +1117,10 @@ where instance name is dimension of the metric HTTP request.
 class MetricAvailability(msrest.serialization.Model):
     """Retention policy of a resource metric.
 
-    :param time_grain:
-    :type time_grain: str
-    :param blob_duration:
-    :type blob_duration: str
+    :ivar time_grain:
+    :vartype time_grain: str
+    :ivar blob_duration:
+    :vartype blob_duration: str
     """
 
     _attribute_map = {
@@ -983,6 +1135,12 @@ class MetricAvailability(msrest.serialization.Model):
         blob_duration: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword time_grain:
+        :paramtype time_grain: str
+        :keyword blob_duration:
+        :paramtype blob_duration: str
+        """
         super(MetricAvailability, self).__init__(**kwargs)
         self.time_grain = time_grain
         self.blob_duration = blob_duration
@@ -991,36 +1149,36 @@ class MetricAvailability(msrest.serialization.Model):
 class MetricSpecification(msrest.serialization.Model):
     """Definition of a single resource metric.
 
-    :param name:
-    :type name: str
-    :param display_name:
-    :type display_name: str
-    :param display_description:
-    :type display_description: str
-    :param unit:
-    :type unit: str
-    :param aggregation_type:
-    :type aggregation_type: str
-    :param supports_instance_level_aggregation:
-    :type supports_instance_level_aggregation: bool
-    :param enable_regional_mdm_account:
-    :type enable_regional_mdm_account: bool
-    :param source_mdm_account:
-    :type source_mdm_account: str
-    :param source_mdm_namespace:
-    :type source_mdm_namespace: str
-    :param metric_filter_pattern:
-    :type metric_filter_pattern: str
-    :param fill_gap_with_zero:
-    :type fill_gap_with_zero: bool
-    :param is_internal:
-    :type is_internal: bool
-    :param dimensions:
-    :type dimensions: list[~azure.mgmt.web.v2015_08_01.models.Dimension]
-    :param category:
-    :type category: str
-    :param availabilities:
-    :type availabilities: list[~azure.mgmt.web.v2015_08_01.models.MetricAvailability]
+    :ivar name:
+    :vartype name: str
+    :ivar display_name:
+    :vartype display_name: str
+    :ivar display_description:
+    :vartype display_description: str
+    :ivar unit:
+    :vartype unit: str
+    :ivar aggregation_type:
+    :vartype aggregation_type: str
+    :ivar supports_instance_level_aggregation:
+    :vartype supports_instance_level_aggregation: bool
+    :ivar enable_regional_mdm_account:
+    :vartype enable_regional_mdm_account: bool
+    :ivar source_mdm_account:
+    :vartype source_mdm_account: str
+    :ivar source_mdm_namespace:
+    :vartype source_mdm_namespace: str
+    :ivar metric_filter_pattern:
+    :vartype metric_filter_pattern: str
+    :ivar fill_gap_with_zero:
+    :vartype fill_gap_with_zero: bool
+    :ivar is_internal:
+    :vartype is_internal: bool
+    :ivar dimensions:
+    :vartype dimensions: list[~azure.mgmt.web.v2015_08_01.models.Dimension]
+    :ivar category:
+    :vartype category: str
+    :ivar availabilities:
+    :vartype availabilities: list[~azure.mgmt.web.v2015_08_01.models.MetricAvailability]
     """
 
     _attribute_map = {
@@ -1056,11 +1214,43 @@ class MetricSpecification(msrest.serialization.Model):
         metric_filter_pattern: Optional[str] = None,
         fill_gap_with_zero: Optional[bool] = None,
         is_internal: Optional[bool] = None,
-        dimensions: Optional[List["Dimension"]] = None,
+        dimensions: Optional[List["_models.Dimension"]] = None,
         category: Optional[str] = None,
-        availabilities: Optional[List["MetricAvailability"]] = None,
+        availabilities: Optional[List["_models.MetricAvailability"]] = None,
         **kwargs
     ):
+        """
+        :keyword name:
+        :paramtype name: str
+        :keyword display_name:
+        :paramtype display_name: str
+        :keyword display_description:
+        :paramtype display_description: str
+        :keyword unit:
+        :paramtype unit: str
+        :keyword aggregation_type:
+        :paramtype aggregation_type: str
+        :keyword supports_instance_level_aggregation:
+        :paramtype supports_instance_level_aggregation: bool
+        :keyword enable_regional_mdm_account:
+        :paramtype enable_regional_mdm_account: bool
+        :keyword source_mdm_account:
+        :paramtype source_mdm_account: str
+        :keyword source_mdm_namespace:
+        :paramtype source_mdm_namespace: str
+        :keyword metric_filter_pattern:
+        :paramtype metric_filter_pattern: str
+        :keyword fill_gap_with_zero:
+        :paramtype fill_gap_with_zero: bool
+        :keyword is_internal:
+        :paramtype is_internal: bool
+        :keyword dimensions:
+        :paramtype dimensions: list[~azure.mgmt.web.v2015_08_01.models.Dimension]
+        :keyword category:
+        :paramtype category: str
+        :keyword availabilities:
+        :paramtype availabilities: list[~azure.mgmt.web.v2015_08_01.models.MetricAvailability]
+        """
         super(MetricSpecification, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -1082,8 +1272,8 @@ class MetricSpecification(msrest.serialization.Model):
 class NameIdentifier(msrest.serialization.Model):
     """Identifies an object.
 
-    :param name: Name of the object.
-    :type name: str
+    :ivar name: Name of the object.
+    :vartype name: str
     """
 
     _attribute_map = {
@@ -1096,6 +1286,10 @@ class NameIdentifier(msrest.serialization.Model):
         name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the object.
+        :paramtype name: str
+        """
         super(NameIdentifier, self).__init__(**kwargs)
         self.name = name
 
@@ -1109,20 +1303,20 @@ class ReissueCertificateOrderRequest(ProxyOnlyResource):
     :vartype id: str
     :ivar name: Resource Name.
     :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
+    :ivar kind: Kind of resource.
+    :vartype kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param key_size: Certificate Key Size.
-    :type key_size: int
-    :param delay_existing_revoke_in_hours: Delay in hours to revoke existing certificate after the
+    :ivar key_size: Certificate Key Size.
+    :vartype key_size: int
+    :ivar delay_existing_revoke_in_hours: Delay in hours to revoke existing certificate after the
      new certificate is issued.
-    :type delay_existing_revoke_in_hours: int
-    :param csr: Csr to be used for re-key operation.
-    :type csr: str
-    :param is_private_key_external: Should we change the ASC type (from managed private key to
+    :vartype delay_existing_revoke_in_hours: int
+    :ivar csr: Csr to be used for re-key operation.
+    :vartype csr: str
+    :ivar is_private_key_external: Should we change the ASC type (from managed private key to
      external private key and vice versa).
-    :type is_private_key_external: bool
+    :vartype is_private_key_external: bool
     """
 
     _validation = {
@@ -1152,6 +1346,20 @@ class ReissueCertificateOrderRequest(ProxyOnlyResource):
         is_private_key_external: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword kind: Kind of resource.
+        :paramtype kind: str
+        :keyword key_size: Certificate Key Size.
+        :paramtype key_size: int
+        :keyword delay_existing_revoke_in_hours: Delay in hours to revoke existing certificate after
+         the new certificate is issued.
+        :paramtype delay_existing_revoke_in_hours: int
+        :keyword csr: Csr to be used for re-key operation.
+        :paramtype csr: str
+        :keyword is_private_key_external: Should we change the ASC type (from managed private key to
+         external private key and vice versa).
+        :paramtype is_private_key_external: bool
+        """
         super(ReissueCertificateOrderRequest, self).__init__(kind=kind, **kwargs)
         self.key_size = key_size
         self.delay_existing_revoke_in_hours = delay_existing_revoke_in_hours
@@ -1168,17 +1376,17 @@ class RenewCertificateOrderRequest(ProxyOnlyResource):
     :vartype id: str
     :ivar name: Resource Name.
     :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
+    :ivar kind: Kind of resource.
+    :vartype kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param key_size: Certificate Key Size.
-    :type key_size: int
-    :param csr: Csr to be used for re-key operation.
-    :type csr: str
-    :param is_private_key_external: Should we change the ASC type (from managed private key to
+    :ivar key_size: Certificate Key Size.
+    :vartype key_size: int
+    :ivar csr: Csr to be used for re-key operation.
+    :vartype csr: str
+    :ivar is_private_key_external: Should we change the ASC type (from managed private key to
      external private key and vice versa).
-    :type is_private_key_external: bool
+    :vartype is_private_key_external: bool
     """
 
     _validation = {
@@ -1206,6 +1414,17 @@ class RenewCertificateOrderRequest(ProxyOnlyResource):
         is_private_key_external: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword kind: Kind of resource.
+        :paramtype kind: str
+        :keyword key_size: Certificate Key Size.
+        :paramtype key_size: int
+        :keyword csr: Csr to be used for re-key operation.
+        :paramtype csr: str
+        :keyword is_private_key_external: Should we change the ASC type (from managed private key to
+         external private key and vice versa).
+        :paramtype is_private_key_external: bool
+        """
         super(RenewCertificateOrderRequest, self).__init__(kind=kind, **kwargs)
         self.key_size = key_size
         self.csr = csr
@@ -1215,8 +1434,8 @@ class RenewCertificateOrderRequest(ProxyOnlyResource):
 class ServiceSpecification(msrest.serialization.Model):
     """Resource metrics service provided by Microsoft.Insights resource provider.
 
-    :param metric_specifications:
-    :type metric_specifications: list[~azure.mgmt.web.v2015_08_01.models.MetricSpecification]
+    :ivar metric_specifications:
+    :vartype metric_specifications: list[~azure.mgmt.web.v2015_08_01.models.MetricSpecification]
     """
 
     _attribute_map = {
@@ -1226,9 +1445,13 @@ class ServiceSpecification(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        metric_specifications: Optional[List["MetricSpecification"]] = None,
+        metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
         **kwargs
     ):
+        """
+        :keyword metric_specifications:
+        :paramtype metric_specifications: list[~azure.mgmt.web.v2015_08_01.models.MetricSpecification]
+        """
         super(ServiceSpecification, self).__init__(**kwargs)
         self.metric_specifications = metric_specifications
 
@@ -1238,8 +1461,8 @@ class SiteSeal(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param html: Required. HTML snippet.
-    :type html: str
+    :ivar html: Required. HTML snippet.
+    :vartype html: str
     """
 
     _validation = {
@@ -1256,6 +1479,10 @@ class SiteSeal(msrest.serialization.Model):
         html: str,
         **kwargs
     ):
+        """
+        :keyword html: Required. HTML snippet.
+        :paramtype html: str
+        """
         super(SiteSeal, self).__init__(**kwargs)
         self.html = html
 
@@ -1263,11 +1490,11 @@ class SiteSeal(msrest.serialization.Model):
 class SiteSealRequest(msrest.serialization.Model):
     """Site seal request.
 
-    :param light_theme: If :code:`<code>true</code>` use the light color theme for site seal;
+    :ivar light_theme: If :code:`<code>true</code>` use the light color theme for site seal;
      otherwise, use the default color theme.
-    :type light_theme: bool
-    :param locale: Locale of site seal.
-    :type locale: str
+    :vartype light_theme: bool
+    :ivar locale: Locale of site seal.
+    :vartype locale: str
     """
 
     _attribute_map = {
@@ -1282,6 +1509,13 @@ class SiteSealRequest(msrest.serialization.Model):
         locale: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword light_theme: If :code:`<code>true</code>` use the light color theme for site seal;
+         otherwise, use the default color theme.
+        :paramtype light_theme: bool
+        :keyword locale: Locale of site seal.
+        :paramtype locale: str
+        """
         super(SiteSealRequest, self).__init__(**kwargs)
         self.light_theme = light_theme
         self.locale = locale

@@ -9,17 +9,17 @@ import unittest
 
 import azure.mgmt.iothub
 from datetime import date, timedelta
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
-class MgmtIoTHubTest(AzureMgmtTestCase):
+class TestMgmtIoTHub(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtIoTHubTest, self).setUp()
+    def setup_method(self, method):
         self.iothub_client = self.create_mgmt_client(
             azure.mgmt.iothub.IotHubClient
         )
 
     @ResourceGroupPreparer()
+    @recorded_by_proxy
     def test_iothub(self, resource_group, location):
         account_name = self.get_resource_name('iot')
         
@@ -28,14 +28,14 @@ class MgmtIoTHubTest(AzureMgmtTestCase):
                 "name": account_name
             }
         )
-        self.assertTrue(is_available.name_available)
+        assert is_available.name_available
 
         async_iot_hub = self.iothub_client.iot_hub_resource.begin_create_or_update(
             resource_group.name,
             account_name,
             {
                 'location': location,
-                'subscriptionid': self.settings.SUBSCRIPTION_ID,
+                'subscriptionid': self.get_settings_value("SUBSCRIPTION_ID"),
                 'resourcegroup': resource_group.name,
                 'sku': {
                   'name': 'S1',
@@ -56,19 +56,19 @@ class MgmtIoTHubTest(AzureMgmtTestCase):
             }
         )
         iothub_account = async_iot_hub.result()
-        self.assertEqual(iothub_account.name, account_name)
+        assert iothub_account.name == account_name
 
         iothub_account = self.iothub_client.iot_hub_resource.get(
             resource_group.name,
             account_name
         )
-        self.assertEqual(iothub_account.name, account_name)
+        assert iothub_account.name == account_name
 
         iothub_accounts =  list(self.iothub_client.iot_hub_resource.list_by_resource_group(resource_group.name))
-        self.assertTrue(all(i.name == account_name for i in iothub_accounts))
+        assert all(i.name == account_name for i in iothub_accounts)
 
         iothub_accounts =  list(self.iothub_client.iot_hub_resource.list_by_subscription())
-        self.assertTrue(any(i.name == account_name for i in iothub_accounts))
+        assert any(i.name == account_name for i in iothub_accounts)
 
         stats = self.iothub_client.iot_hub_resource.get_stats(
             resource_group.name,
@@ -98,6 +98,7 @@ class MgmtIoTHubTest(AzureMgmtTestCase):
 
     @unittest.skip('hard to test')
     @ResourceGroupPreparer()
+    @recorded_by_proxy
     def test_iothub_consumer_group(self, resource_group, location):
         account_name = self.get_resource_name('iot')
 
@@ -106,7 +107,7 @@ class MgmtIoTHubTest(AzureMgmtTestCase):
             account_name,
             {
                 'location': location,
-                'subscriptionid': self.settings.SUBSCRIPTION_ID,
+                'subscriptionid': self.get_settings_value("SUBSCRIPTION_ID"),
                 'resourcegroup': resource_group.name,
                 'sku': {
                   'name': 'S1',
@@ -148,7 +149,7 @@ class MgmtIoTHubTest(AzureMgmtTestCase):
             account_name,
             'events'
         ))
-        self.assertTrue(any(group.name == consumer_group.name for group in consumer_groups))
+        assert any(group.name == consumer_group.name for group in consumer_groups)
 
         self.iothub_client.iot_hub_resource.delete_event_hub_consumer_group(
             resource_group.name,

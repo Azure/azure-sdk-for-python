@@ -1,0 +1,428 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "706",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "56",
+              "text": ":)",
+              "language": "en"
+            },
+            {
+              "id": "0",
+              "text": ":(",
+              "language": "en"
+            },
+            {
+              "id": "19",
+              "text": ":P",
+              "language": "en"
+            },
+            {
+              "id": "1",
+              "text": ":D",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "EntityRecognition",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "1",
+            "kind": "KeyPhraseExtraction",
+            "parameters": {}
+          },
+          {
+            "taskName": "2",
+            "kind": "PiiEntityRecognition",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "3",
+            "kind": "EntityLinking",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "4",
+            "kind": "SentimentAnalysis",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "fb020bdb-4731-4e09-803b-bc868028fb7f",
+        "Content-Length": "0",
+        "Date": "Thu, 09 Jun 2022 17:41:28 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/a0957e79-b001-493d-916e-e032ff215312?api-version=2022-05-01",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "624"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/a0957e79-b001-493d-916e-e032ff215312?api-version=2022-05-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "ce43fba6-4213-482d-87c5-f21ebc0d2ea6",
+        "Content-Length": "626",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 09 Jun 2022 17:41:33 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "65"
+      },
+      "ResponseBody": {
+        "jobId": "a0957e79-b001-493d-916e-e032ff215312",
+        "lastUpdatedDateTime": "2022-06-09T17:41:33Z",
+        "createdDateTime": "2022-06-09T17:41:28Z",
+        "expirationDateTime": "2022-06-10T17:41:28Z",
+        "status": "running",
+        "errors": [],
+        "tasks": {
+          "completed": 1,
+          "failed": 0,
+          "inProgress": 4,
+          "total": 5,
+          "items": [
+            {
+              "kind": "EntityLinkingLROResults",
+              "taskName": "3",
+              "lastUpdateDateTime": "2022-06-09T17:41:33.2166426Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "56",
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "0",
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "19",
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "1",
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/a0957e79-b001-493d-916e-e032ff215312?api-version=2022-05-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "21475e0d-16ab-46ae-931b-8dbdfb9ce33a",
+        "Content-Length": "2986",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 09 Jun 2022 17:41:39 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "251"
+      },
+      "ResponseBody": {
+        "jobId": "a0957e79-b001-493d-916e-e032ff215312",
+        "lastUpdatedDateTime": "2022-06-09T17:41:38Z",
+        "createdDateTime": "2022-06-09T17:41:28Z",
+        "expirationDateTime": "2022-06-10T17:41:28Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 5,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 5,
+          "items": [
+            {
+              "kind": "EntityRecognitionLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-06-09T17:41:36.445573Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "56",
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "0",
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "19",
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "1",
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "KeyPhraseExtractionLROResults",
+              "taskName": "1",
+              "lastUpdateDateTime": "2022-06-09T17:41:36.9599861Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "56",
+                    "keyPhrases": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "0",
+                    "keyPhrases": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "19",
+                    "keyPhrases": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "1",
+                    "keyPhrases": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "PiiEntityRecognitionLROResults",
+              "taskName": "2",
+              "lastUpdateDateTime": "2022-06-09T17:41:38.0749396Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "redactedText": ":)",
+                    "id": "56",
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "redactedText": ":(",
+                    "id": "0",
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "redactedText": ":P",
+                    "id": "19",
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "redactedText": ":D",
+                    "id": "1",
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-01-15"
+              }
+            },
+            {
+              "kind": "EntityLinkingLROResults",
+              "taskName": "3",
+              "lastUpdateDateTime": "2022-06-09T17:41:33.2166426Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "56",
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "0",
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "19",
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "1",
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "SentimentAnalysisLROResults",
+              "taskName": "4",
+              "lastUpdateDateTime": "2022-06-09T17:41:36.6770287Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "56",
+                    "sentiment": "positive",
+                    "confidenceScores": {
+                      "positive": 0.89,
+                      "neutral": 0.1,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "positive",
+                        "confidenceScores": {
+                          "positive": 0.89,
+                          "neutral": 0.1,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 2,
+                        "text": ":)"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "0",
+                    "sentiment": "negative",
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 0.02,
+                      "negative": 0.98
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 0.02,
+                          "negative": 0.98
+                        },
+                        "offset": 0,
+                        "length": 2,
+                        "text": ":("
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "19",
+                    "sentiment": "neutral",
+                    "confidenceScores": {
+                      "positive": 0.3,
+                      "neutral": 0.67,
+                      "negative": 0.03
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.3,
+                          "neutral": 0.67,
+                          "negative": 0.03
+                        },
+                        "offset": 0,
+                        "length": 2,
+                        "text": ":P"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "1",
+                    "sentiment": "positive",
+                    "confidenceScores": {
+                      "positive": 0.89,
+                      "neutral": 0.1,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "positive",
+                        "confidenceScores": {
+                          "positive": 0.89,
+                          "neutral": 0.1,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 2,
+                        "text": ":D"
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2020-04-01"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

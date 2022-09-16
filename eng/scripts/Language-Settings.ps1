@@ -4,6 +4,10 @@ $PackageRepository = "PyPI"
 $packagePattern = "*.zip"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/main/_data/releases/latest/python-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
+$GithubUri = "https://github.com/Azure/azure-sdk-for-python"
+$PackageRepositoryUri = "https://pypi.org/project"
+
+."$PSScriptRoot/docs/Docs-ToC.ps1"
 
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
 {
@@ -18,7 +22,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
   try
   {
     Push-Location $RepoRoot
-    pip install packaging==20.4 setuptools==44.1.1 -q -I
+    pip install "./tools/azure-sdk-tools[build]" -q -I
     $allPkgPropLines = python (Join-path eng scripts get_package_properties.py) -s $searchPath
   }
   catch
@@ -204,24 +208,27 @@ function DockerValidation{
     [string]$workingDirectory
   ) 
   if ($PackageSourceOverride) {
-    docker run -v "${workingDirectory}:/workdir/out" -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion `
-       -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId 2>&1 | Out-Null
+    Write-Host "docker run -v ${workingDirectory}:/workdir/out -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId"
+    $commandLine = docker run -v "${workingDirectory}:/workdir/out" -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion `
+       -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId 2>&1 
   }
   else {
-    docker run -v "${workingDirectory}:/workdir/out" `
-      -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -t $DocValidationImageId 2>&1 | Out-Null
+    Write-Host "docker run -v ${workingDirectory}:/workdir/out -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -t $DocValidationImageId"
+    $commandLine = docker run -v "${workingDirectory}:/workdir/out" `
+      -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -t $DocValidationImageId 2>&1
   }
   # The docker exit codes: https://docs.docker.com/engine/reference/run/#exit-status
   # If the docker failed because of docker itself instead of the application, 
   # we should skip the validation and keep the packages. 
+  
   if ($LASTEXITCODE -eq 125 -Or $LASTEXITCODE -eq 126 -Or $LASTEXITCODE -eq 127) { 
-    Write-Host $commandLine
+    $commandLine | ForEach-Object { Write-Debug $_ }
     LogWarning "The `docker` command does not work with exit code $LASTEXITCODE. Fall back to npm install $packageName directly."
-    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $installValidationFolder -PackageSourceOverride $PackageSourceOverride
+    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $workingDirectory -PackageSourceOverride $PackageSourceOverride
   }
   elseif ($LASTEXITCODE -ne 0) { 
-    Write-Host $commandLine
-    LogWarning "Package $($Package.name) ref docs validation failed."
+    $commandLine | ForEach-Object { Write-Debug $_ }
+    LogWarning "Package $packageName ref docs validation failed."
     return $false
   }
   return $true
@@ -285,6 +292,17 @@ $PackageExclusions = @{
   'azure-mgmt-signalr' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18085';
   'azure-mgmt-mixedreality' = 'Missing version info https://github.com/Azure/azure-sdk-for-python/issues/18457';
   'azure-mgmt-network' = 'Manual process used to build';
+
+  'azure-mgmt-compute' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-mgmt-consumption' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-mgmt-notificationhubs' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-servicebus' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-mgmt-web' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-mgmt-netapp' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-synapse-artifacts' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-mgmt-streamanalytics' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+
+  'azure-keyvault' = 'Metapackages should not be documented';
 }
 
 function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata, $PackageSourceOverride, $DocValidationImageId) {
@@ -480,7 +498,7 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
   $whlDirectory = (Join-Path -Path $artifactDir -ChildPath $artifactName.Replace("_","-"))
 
   Write-Host "Searching for $($artifactName) wheel in artifact path $($whlDirectory)"
-  $files = Get-ChildItem $whlDirectory | ? {$_.Name.EndsWith(".whl")}
+  $files = @(Get-ChildItem $whlDirectory | ? {$_.Name.EndsWith(".whl")})
   if (!$files)
   {
     Write-Host "$whlDirectory does not have wheel package for $($artifactName)"
@@ -505,8 +523,8 @@ function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseD
   {
     $ReleaseDate = Get-Date -Format "yyyy-MM-dd"
   }
-  pip install -r "$EngDir/versioning/requirements.txt" -q -I
-  python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version `
+  pip install "$RepoRoot/tools/azure-sdk-tools[build]" -q -I
+  sdk_set_version --package-name $PackageName --new-version $Version `
   --service $ServiceDirectory --release-date $ReleaseDate --replace-latest-entry-title $ReplaceLatestEntryTitle
 }
 
@@ -556,22 +574,19 @@ function Import-Dev-Cert-python
   Write-Host "Python Trust Methodology"
 
   $pathToScript = Resolve-Path (Join-Path -Path $PSScriptRoot -ChildPath "../../scripts/devops_tasks/trust_proxy_cert.py")
-
+  python -m pip install requests
   python $pathToScript
 }
 
-function Validate-Python-DocMsPackages
+function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSourceOverride, $DocValidationImageId)
 {
-  Param(
-    [Parameter(Mandatory=$true)]
-    [PSCustomObject]$PackageInfo,
-    [Parameter(Mandatory=$false)]
-    [string]$PackageSourceOverride,
-    [Parameter(Mandatory=$false)]
-    [string]$DocValidationImageId
-  )
-  $packageName = $packageInfo.Name
-  $packageVersion = $packageInfo.Version
-  ValidatePackage -packageName $packageName -packageVersion $packageVersion `
-      -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId
+  # While eng/common/scripts/Update-DocsMsMetadata.ps1 is still passing a single packageInfo, process as a batch
+  if (!$PackageInfos) {
+    $PackageInfos =  @($PackageInfo)
+  }
+
+  foreach ($package in $PackageInfos) {
+    ValidatePackage -packageName $package.Name -packageVersion $package.Version `
+        -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId
+  }
 }

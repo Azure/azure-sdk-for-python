@@ -1,23 +1,27 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
+from typing import Union, Any
 from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, HttpLoggingPolicy
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from ._generated import TextAnalyticsClient as _TextAnalyticsClient
-from ._policies import TextAnalyticsResponseHookPolicy
+from ._policies import TextAnalyticsResponseHookPolicy, QuotaExceededPolicy
 from ._user_agent import USER_AGENT
 from ._version import DEFAULT_API_VERSION
 
 
-class TextAnalyticsApiVersion(str, Enum):
-    """Text Analytics API versions supported by this package"""
+class TextAnalyticsApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cognitive Service for Language or Text Analytics API versions supported by this package"""
 
-    #: this is the default version
-    V3_2_PREVIEW = "v3.2-preview.2"
+    #: This is the default version and corresponds to the Cognitive Service for Language API.
+    V2022_05_01 = "2022-05-01"
+    #: This version corresponds to Text Analytics API.
     V3_1 = "v3.1"
+    #: This version corresponds to Text Analytics API.
     V3_0 = "v3.0"
 
 
@@ -37,8 +41,13 @@ def _authentication_policy(credential):
     return authentication_policy
 
 
-class TextAnalyticsClientBase(object):
-    def __init__(self, endpoint, credential, **kwargs):
+class TextAnalyticsClientBase:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, TokenCredential],
+        **kwargs: Any
+    ) -> None:
         http_logging_policy = HttpLoggingPolicy(**kwargs)
         http_logging_policy.allowed_header_names.update(
             {
@@ -60,17 +69,22 @@ class TextAnalyticsClientBase(object):
                 "$top",
                 "$skip",
                 "opinionMining",
+                "api-version"
             }
         )
-
+        try:
+            endpoint = endpoint.rstrip("/")
+        except AttributeError:
+            raise ValueError("Parameter 'endpoint' must be a string.")
         self._client = _TextAnalyticsClient(
             endpoint=endpoint,
-            credential=credential,
+            credential=credential,  # type: ignore
             api_version=kwargs.pop("api_version", DEFAULT_API_VERSION),
             sdk_moniker=USER_AGENT,
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             custom_hook_policy=kwargs.pop("custom_hook_policy", TextAnalyticsResponseHookPolicy(**kwargs)),
             http_logging_policy=kwargs.pop("http_logging_policy", http_logging_policy),
+            per_retry_policies=kwargs.get("per_retry_policies", QuotaExceededPolicy()),
             **kwargs
         )
 
@@ -81,8 +95,7 @@ class TextAnalyticsClientBase(object):
     def __exit__(self, *args):
         self._client.__exit__(*args)  # pylint:disable=no-member
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close sockets opened by the client.
         Calling this method is unnecessary when using the client as a context manager.
         """

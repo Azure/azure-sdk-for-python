@@ -15,28 +15,34 @@ from azure.core.pipeline import policies
 from .._version import VERSION
 
 
-class QuestionAnsweringClientConfiguration(Configuration):
+class QuestionAnsweringClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for QuestionAnsweringClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: Supported Cognitive Services endpoint (e.g., https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
+    :param endpoint: Supported Cognitive Services endpoint (e.g.,
+     https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AzureKeyCredential
+    :keyword api_version: Api Version. Default value is "2021-10-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+        super(QuestionAnsweringClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
+
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        super(QuestionAnsweringClientConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
         self.credential = credential
-        self.api_version = "2021-10-01"
+        self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "ai-language-questionanswering/{}".format(VERSION))
         self._configure(**kwargs)
 

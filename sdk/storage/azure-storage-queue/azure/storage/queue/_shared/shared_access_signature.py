@@ -10,7 +10,8 @@ from .parser import _str, _to_utc_datetime
 from .constants import X_MS_VERSION
 from . import sign_string, url_quote
 
-
+# cspell:ignoreRegExp rsc.
+# cspell:ignoreRegExp s..?id
 class QueryStringConstants(object):
     SIGNED_SIGNATURE = 'sig'
     SIGNED_PERMISSION = 'sp'
@@ -211,10 +212,12 @@ class _SharedAccessHelper(object):
              get_value_to_append(QueryStringConstants.SIGNED_EXPIRY) +
              get_value_to_append(QueryStringConstants.SIGNED_IP) +
              get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL) +
-             get_value_to_append(QueryStringConstants.SIGNED_VERSION))
+             get_value_to_append(QueryStringConstants.SIGNED_VERSION) +
+             '\n'   # Signed Encryption Scope - always empty for queue
+             )
 
         self._add_query(QueryStringConstants.SIGNED_SIGNATURE,
                         sign_string(account_key, string_to_sign))
 
     def get_token(self):
-        return '&'.join(['{0}={1}'.format(n, url_quote(v)) for n, v in self.query_dict.items() if v is not None])
+        return '&'.join([f'{n}={url_quote(v)}' for n, v in self.query_dict.items() if v is not None])

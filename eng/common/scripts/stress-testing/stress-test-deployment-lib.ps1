@@ -40,11 +40,18 @@ function Login([string]$subscription, [string]$clusterGroup, [switch]$pushImages
     $cluster = RunOrExitOnFailure az aks list -g $clusterGroup --subscription $subscription -o json
     $clusterName = ($cluster | ConvertFrom-Json).name
 
+    $kubeContext = (RunOrExitOnFailure kubectl config view -o json) | ConvertFrom-Json
+    $defaultNamespace = $kubeContext.contexts.Where({ $_.name -eq $clusterName }).context.namespace
+
     RunOrExitOnFailure az aks get-credentials `
         -n "$clusterName" `
         -g "$clusterGroup" `
         --subscription "$subscription" `
         --overwrite-existing
+
+    if ($defaultNamespace) {
+        RunOrExitOnFailure kubectl config set-context $clusterName --namespace $defaultNamespace
+    }
 
     if ($pushImages) {
         $registry = RunOrExitOnFailure az acr list -g $clusterGroup --subscription $subscription -o json
@@ -56,20 +63,29 @@ function Login([string]$subscription, [string]$clusterGroup, [switch]$pushImages
 function DeployStressTests(
     [string]$searchDirectory = '.',
     [hashtable]$filters = @{},
-    [string]$environment = 'test',
+    # Default to playground environment
+    [string]$environment = 'pg',
     [string]$repository = '',
     [switch]$pushImages,
     [string]$clusterGroup = '',
-    [string]$deployId = 'local',
+    [string]$deployId = '',
     [switch]$login,
     [string]$subscription = '',
-    [switch]$CI
-) {
-    if ($environment -eq 'test') {
-        if ($clusterGroup -or $subscription) {
-            Write-Warning "Overriding cluster group and subscription with defaults for 'test' environment."
+    [switch]$CI,
+    [string]$Namespace,
+    [ValidateScript({
+        if (!(Test-Path $_)) {
+            throw "LocalAddonsPath $LocalAddonsPath does not exist"
         }
-        $clusterGroup = 'rg-stress-cluster-test'
+        return $true
+    })]
+    [System.IO.FileInfo]$LocalAddonsPath
+) {
+    if ($environment -eq 'pg') {
+        if ($clusterGroup -or $subscription) {
+            Write-Warning "Overriding cluster group and subscription with defaults for 'pg' environment."
+        }
+        $clusterGroup = 'rg-stress-cluster-pg'
         $subscription = 'Azure SDK Developer Playground'
     } elseif ($environment -eq 'prod') {
         if ($clusterGroup -or $subscription) {
@@ -79,39 +95,44 @@ function DeployStressTests(
         $subscription = 'Azure SDK Test Resources'
     }
 
-    if (!$repository) {
-        $repository = if ($env:USER) { $env:USER } else { "${env:USERNAME}" }
-        # Remove spaces, etc. that may be in $namespace
-        $repository -replace '\W'
-    }
-
     if ($login) {
         if (!$clusterGroup -or !$subscription) {
-            throw "clusterGroup and subscription parameters must be specified when logging into an environment that is not test or prod."
+            throw "clusterGroup and subscription parameters must be specified when logging into an environment that is not pg or prod."
         }
         Login -subscription $subscription -clusterGroup $clusterGroup -pushImages:$pushImages
     }
 
-    RunOrExitOnFailure helm repo add stress-test-charts https://stresstestcharts.blob.core.windows.net/helm/
+    $chartRepoName = 'stress-test-charts'
+    if ($LocalAddonsPath) {
+        $absAddonsPath = Resolve-Path $LocalAddonsPath
+        if (!(helm plugin list | Select-String 'file')) {
+            RunOrExitOnFailure helm plugin add (Join-Path $absAddonsPath file-plugin)
+        }
+        RunOrExitOnFailure helm repo add --force-update $chartRepoName file://$absAddonsPath
+    } else {
+        RunOrExitOnFailure helm repo add --force-update $chartRepoName https://stresstestcharts.blob.core.windows.net/helm/
+    }
+
     Run helm repo update
     if ($LASTEXITCODE) { return $LASTEXITCODE }
 
-    $pkgs = FindStressPackages -directory $searchDirectory -filters $filters -CI:$CI
+    $deployer = if ($deployId) { $deployId } else { GetUsername }
+    $pkgs = FindStressPackages -directory $searchDirectory -filters $filters -CI:$CI -namespaceOverride $Namespace
     Write-Host "" "Found $($pkgs.Length) stress test packages:"
     Write-Host $pkgs.Directory ""
     foreach ($pkg in $pkgs) {
         Write-Host "Deploying stress test at '$($pkg.Directory)'"
         DeployStressPackage `
             -pkg $pkg `
-            -deployId $deployId `
+            -deployId $deployer `
             -environment $environment `
             -repositoryBase $repository `
             -pushImages:$pushImages `
             -login:$login
     }
 
-    Write-Host "Releases deployed by $deployId"
-    Run helm list --all-namespaces -l deployId=$deployId
+    Write-Host "Releases deployed by $deployer"
+    Run helm list --all-namespaces -l deployId=$deployer
 
     if ($FailedCommands) {
         Write-Warning "The following commands failed:"
@@ -149,11 +170,34 @@ function DeployStressPackage(
     }
     $imageTag += "/$($pkg.Namespace)/$($pkg.ReleaseName):${deployId}"
 
-    if ($pushImages) {
+    $dockerFilePath = if ($pkg.Dockerfile) {
+        Join-Path $pkg.Directory $pkg.Dockerfile
+    } else {
+        "$($pkg.Directory)/Dockerfile"
+    }
+    $dockerFilePath = [System.IO.Path]::GetFullPath($dockerFilePath)
+
+    if ($pushImages -and (Test-Path $dockerFilePath)) {
         Write-Host "Building and pushing stress test docker image '$imageTag'"
-        $dockerFile = Get-ChildItem "$($pkg.Directory)/Dockerfile"
-        Run docker build -t $imageTag -f $dockerFile.FullName $dockerFile.DirectoryName
+        $dockerFile = Get-ChildItem $dockerFilePath
+        $dockerBuildFolder = if ($pkg.DockerBuildDir) {
+            Join-Path $pkg.Directory $pkg.DockerBuildDir
+        } else {
+            $dockerFile.DirectoryName
+        }
+        $dockerBuildFolder = [System.IO.Path]::GetFullPath($dockerBuildFolder).Trim()
+
+        Run docker build -t $imageTag -f $dockerFile $dockerBuildFolder
         if ($LASTEXITCODE) { return }
+
+        Write-Host "`nContainer image '$imageTag' successfully built. To run commands on the container locally:" -ForegroundColor Blue
+        Write-Host "  docker run -it $imageTag" -ForegroundColor DarkBlue
+        Write-Host "  docker run -it $imageTag <shell, e.g. 'bash' 'pwsh' 'sh'>" -ForegroundColor DarkBlue
+        Write-Host "To show installed container images:" -ForegroundColor Blue
+        Write-Host "  docker image ls" -ForegroundColor DarkBlue
+        Write-Host "To show running containers:" -ForegroundColor Blue
+        Write-Host "  docker ps" -ForegroundColor DarkBlue
+
         Run docker push $imageTag
         if ($LASTEXITCODE) {
             if ($login) {
@@ -209,7 +253,7 @@ function CheckDependencies()
         },
         @{
             Command = "az";
-            Help = "Azure CLI must be installed: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli";
+            Help = "Azure CLI must be installed: https://docs.microsoft.com/cli/azure/install-azure-cli";
         }
     )
 

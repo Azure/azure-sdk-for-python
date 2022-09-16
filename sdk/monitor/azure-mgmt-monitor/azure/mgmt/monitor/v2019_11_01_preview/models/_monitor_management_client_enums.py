@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class KnownDataCollectionRuleAssociationProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class KnownDataCollectionRuleAssociationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The resource provisioning state.
     """
 
@@ -36,7 +20,7 @@ class KnownDataCollectionRuleAssociationProvisioningState(with_metaclass(_CaseIn
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class KnownDataCollectionRuleProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class KnownDataCollectionRuleProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The resource provisioning state.
     """
 
@@ -46,14 +30,14 @@ class KnownDataCollectionRuleProvisioningState(with_metaclass(_CaseInsensitiveEn
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class KnownDataCollectionRuleResourceKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class KnownDataCollectionRuleResourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of the resource.
     """
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
-class KnownDataFlowStreams(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class KnownDataFlowStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MICROSOFT_EVENT = "Microsoft-Event"
     MICROSOFT_INSIGHTS_METRICS = "Microsoft-InsightsMetrics"
@@ -61,7 +45,7 @@ class KnownDataFlowStreams(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MICROSOFT_SYSLOG = "Microsoft-Syslog"
     MICROSOFT_WINDOWS_EVENT = "Microsoft-WindowsEvent"
 
-class KnownExtensionDataSourceStreams(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class KnownExtensionDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MICROSOFT_EVENT = "Microsoft-Event"
     MICROSOFT_INSIGHTS_METRICS = "Microsoft-InsightsMetrics"
@@ -69,12 +53,12 @@ class KnownExtensionDataSourceStreams(with_metaclass(_CaseInsensitiveEnumMeta, s
     MICROSOFT_SYSLOG = "Microsoft-Syslog"
     MICROSOFT_WINDOWS_EVENT = "Microsoft-WindowsEvent"
 
-class KnownPerfCounterDataSourceStreams(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class KnownPerfCounterDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MICROSOFT_PERF = "Microsoft-Perf"
     MICROSOFT_INSIGHTS_METRICS = "Microsoft-InsightsMetrics"
 
-class KnownSyslogDataSourceFacilityNames(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class KnownSyslogDataSourceFacilityNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AUTH = "auth"
     AUTHPRIV = "authpriv"
@@ -98,7 +82,7 @@ class KnownSyslogDataSourceFacilityNames(with_metaclass(_CaseInsensitiveEnumMeta
     LOCAL7 = "local7"
     ASTERISK = "*"
 
-class KnownSyslogDataSourceLogLevels(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class KnownSyslogDataSourceLogLevels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DEBUG = "Debug"
     INFO = "Info"
@@ -110,11 +94,11 @@ class KnownSyslogDataSourceLogLevels(with_metaclass(_CaseInsensitiveEnumMeta, st
     EMERGENCY = "Emergency"
     ASTERISK = "*"
 
-class KnownSyslogDataSourceStreams(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class KnownSyslogDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MICROSOFT_SYSLOG = "Microsoft-Syslog"
 
-class KnownWindowsEventLogDataSourceStreams(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class KnownWindowsEventLogDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MICROSOFT_WINDOWS_EVENT = "Microsoft-WindowsEvent"
     MICROSOFT_EVENT = "Microsoft-Event"

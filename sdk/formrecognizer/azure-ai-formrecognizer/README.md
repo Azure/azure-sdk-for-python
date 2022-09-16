@@ -1,22 +1,23 @@
 # Azure Form Recognizer client library for Python
 
-Azure Cognitive Services Form Recognizer is a cloud service that uses machine learning to analyze text and structured data from your documents. It includes the following main features:
+Azure Form Recognizer is a cloud service that uses machine learning to analyze text and structured data from your documents. It includes the following main features:
 
 - Layout - Extract content and structure (ex. words, selection marks, tables) from documents.
-- Document - Analyze key-value pairs and entities in addition to general layout from documents.
-- Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents) using prebuilt models.
+- Document - Analyze key-value pairs in addition to general layout from documents.
+- Read - Read page information and detected languages from documents.
+- Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents, U.S. W-2 tax documents, among others) using prebuilt models.
 - Custom - Build custom models from your own data to extract tailored field values in addition to general layout from documents.
 
 [Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs] | [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
 ### Prerequisites
-* Python 2.7, or 3.6 or later is required to use this package.
+* Python 3.7 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and a
 [Cognitive Services or Form Recognizer resource][FR_or_CS_resource] to use this package.
 
@@ -24,27 +25,27 @@ _Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For
 Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-formrecognizer --pre
+pip install azure-ai-formrecognizer
 ```
 
-> Note: This version of the client library defaults to the `2021-09-30-preview` version of the service.
+> Note: This version of the client library defaults to the `2022-08-31` version of the service.
 
 This table shows the relationship between SDK versions and supported API versions of the service:
 
 |SDK version|Supported API version of service
 |-|-
-|3.2.0b2 - Latest beta release | 2.0, 2.1, 2021-09-30-preview
-|3.1.X - Latest GA release| 2.0, 2.1 (default)
+|3.2.0 - Latest GA release | 2.0, 2.1, 2022-08-31 (default)
+|3.1.X| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
-> Note: Starting with version `2021-09-30-preview`, a new set of clients were introduced to leverage the newest features
+> Note: Starting with version `3.2.X`, a new set of clients were introduced to leverage the newest features
 > of the Form Recognizer service. Please see the [Migration Guide][migration-guide] for detailed instructions on how to update application
 > code from client library version `3.1.X` or lower to the latest version. Additionally, see the [Changelog][changelog] for more detailed information.
 > The below table describes the relationship of each client and its supported API version(s):
 
 |API version|Supported clients
 |-|-
-|2021-09-30-preview | DocumentAnalysisClient and DocumentModelAdministrationClient
+|2022-08-31 | DocumentAnalysisClient and DocumentModelAdministrationClient
 |2.1 | FormRecognizerClient and FormTrainingClient
 |2.0 | FormRecognizerClient and FormTrainingClient
 
@@ -157,17 +158,7 @@ document_analysis_client = DocumentAnalysisClient(
 
 ### DocumentAnalysisClient
 `DocumentAnalysisClient` provides operations for analyzing input documents using prebuilt and custom models through the `begin_analyze_document` and `begin_analyze_document_from_url` APIs.
-Use the `model` parameter to select the type of model for analysis.
-
-|Model| Features
-|-|-
-|`prebuilt-layout`| Text extraction, selection marks, tables
-|`prebuilt-document`| Text extraction, selection marks, tables, key-value pairs and entities
-|`prebuilt-invoices`| Text extraction, selection marks, tables, and pre-trained fields and values pertaining to English invoices
-|`prebuilt-businessCard`| Text extraction and pre-trained fields and values pertaining to English business cards
-|`prebuilt-idDocument`| Text extraction and pre-trained fields and values pertaining to US driver licenses and international passports
-|`prebuilt-receipt`| Text extraction and pre-trained fields and values pertaining to English sales receipts
-|`{custom-model-id}`| Text extraction, selection marks, tables, labeled fields and values from your custom documents
+Use the `model_id` parameter to select the type of model for analysis. See a full list of supported models [here][fr-models].
 
 Sample code snippets are provided to illustrate using a DocumentAnalysisClient [here](#examples "Examples").
 More information about analyzing documents, including supported features, locales, and document types can be found in the [service documentation][fr-models].
@@ -175,10 +166,10 @@ More information about analyzing documents, including supported features, locale
 ### DocumentModelAdministrationClient
 `DocumentModelAdministrationClient` provides operations for:
 
-- Building custom models to analyze specific fields you specify by labeling your custom documents. A `DocumentModel` is returned indicating the document type(s) the model can analyze, as well as the estimated confidence for each field. See the [service documentation][fr-build-model] for a more detailed explanation.
+- Building custom models to analyze specific fields you specify by labeling your custom documents. A `DocumentModelDetails` is returned indicating the document type(s) the model can analyze, as well as the estimated confidence for each field. See the [service documentation][fr-build-model] for a more detailed explanation.
 - Creating a composed model from a collection of existing models.
 - Managing models created in your account.
-- Listing document model operations or getting a specific model operation created within the last 24 hours.
+- Listing operations or getting a specific model operation created within the last 24 hours.
 - Copying a custom model from one Form Recognizer resource to another.
 
 Please note that models can also be built using a graphical user interface such as [Form Recognizer Studio][fr-studio].
@@ -236,10 +227,10 @@ for page in result.pages:
 
     for line_idx, line in enumerate(page.lines):
         print(
-            "...Line # {} has content '{}' within bounding box '{}'".format(
+            "...Line # {} has content '{}' within bounding polygon '{}'".format(
                 line_idx,
                 line.content,
-                line.bounding_box,
+                line.polygon,
             )
         )
 
@@ -252,9 +243,9 @@ for page in result.pages:
 
     for selection_mark in page.selection_marks:
         print(
-            "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+            "...Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
                 selection_mark.state,
-                selection_mark.bounding_box,
+                selection_mark.polygon,
                 selection_mark.confidence,
             )
         )
@@ -270,7 +261,7 @@ for table_idx, table in enumerate(result.tables):
             "Table # {} location on page: {} is {}".format(
                 table_idx,
                 region.page_number,
-                region.bounding_box
+                region.polygon
             )
         )
     for cell in table.cells:
@@ -284,8 +275,8 @@ for table_idx, table in enumerate(result.tables):
 ```
 
 ### Using the General Document Model
-Analyze entities, key-value pairs, tables, styles, and selection marks from documents using the general document model provided by the Form Recognizer service.
-Select the General Document Model by passing `model="prebuilt-document"` into the `begin_analyze_document` method:
+Analyze key-value pairs, tables, styles, and selection marks from documents using the general document model provided by the Form Recognizer service.
+Select the General Document Model by passing `model_id="prebuilt-document"` into the `begin_analyze_document` method:
 
 ```python
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -301,13 +292,6 @@ with open("<path to your document>", "rb") as fd:
 
 poller = document_analysis_client.begin_analyze_document("prebuilt-document", document)
 result = poller.result()
-
-print("----Entities found in document----")
-for entity in result.entities:
-    print("Entity '{}' has category '{}' with sub-category '{}'".format(
-        entity.content, entity.category, entity.sub_category
-    ))
-    print("...with confidence {}\n".format(entity.confidence))
 
 print("----Key-value pairs found in document----")
 for kv_pair in result.key_value_pairs:
@@ -338,7 +322,7 @@ for table_idx, table in enumerate(result.tables):
             "Table # {} location on page: {} is {}".format(
                 table_idx,
                 region.page_number,
-                region.bounding_box,
+                region.polygon,
             )
         )
 
@@ -359,11 +343,11 @@ for page in result.pages:
     for line_idx, line in enumerate(page.lines):
         words = line.get_words()
         print(
-            "...Line # {} has {} words and text '{}' within bounding box '{}'".format(
+            "...Line # {} has {} words and text '{}' within bounding polygon '{}'".format(
                 line_idx,
                 len(words),
                 line.content,
-                line.bounding_box,
+                line.polygon,
             )
         )
 
@@ -376,9 +360,9 @@ for page in result.pages:
 
     for selection_mark in page.selection_marks:
         print(
-            "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+            "...Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
                 selection_mark.state,
-                selection_mark.bounding_box,
+                selection_mark.polygon,
                 selection_mark.confidence,
             )
         )
@@ -387,9 +371,9 @@ for page in result.pages:
 - Read more about the features provided by the `prebuilt-document` model [here][service_prebuilt_document].
 
 ### Using Prebuilt Models
-Extract fields from select document types such as receipts, invoices, business cards, and identity documents using prebuilt models provided by the Form Recognizer service.
+Extract fields from select document types such as receipts, invoices, business cards, identity documents, and U.S. W-2 tax documents using prebuilt models provided by the Form Recognizer service.
 
-For example, to analyze fields from a sales receipt, use the prebuilt receipt model provided by passing `model="prebuilt-receipt"` into the `begin_analyze_document` method:
+For example, to analyze fields from a sales receipt, use the prebuilt receipt model provided by passing `model_id="prebuilt-receipt"` into the `begin_analyze_document` method:
 
 ```python
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -419,12 +403,7 @@ for receipt in result.documents:
             print("{}: {} has confidence {}".format(name, field.value, field.confidence))
 ```
 
-You are not limited to receipts! There are a few prebuilt models to choose from, each of which has its own set of supported fields:
-- Analyze receipts using the `prebuilt-receipt` model (fields recognized by the service can be found [here][service_recognize_receipt])
-- Analyze business cards using the `prebuilt-businessCard` model (fields recognized by the service can be found [here][service_recognize_business_cards]).
-- Analyze invoices using the `prebuilt-invoice` model (fields recognized by the service can be found [here][service_recognize_invoice]).
-- Analyze identity documents using the `prebuilt-idDocuments` model (fields recognized by the service can be found [here][service_recognize_identity_documents]).
-
+You are not limited to receipts! There are a few prebuilt models to choose from, each of which has its own set of supported fields. See other supported prebuilt models [here][fr-models].
 
 ### Build a Custom Model
 Build a custom model on your own document type. The resulting model can be used to analyze values from the types of documents it was trained on.
@@ -442,8 +421,9 @@ credential = AzureKeyCredential("<api_key>")
 document_model_admin_client = DocumentModelAdministrationClient(endpoint, credential)
 
 container_sas_url = "<container-sas-url>"  # training documents uploaded to blob storage
-poller = document_model_admin_client.begin_build_model(
-    source=container_sas_url, model_id="my-first-model"
+poller = document_model_admin_client.begin_build_document_model(
+    # For more information about build_mode, see: https://aka.ms/azsdk/formrecognizer/buildmode
+    build_mode="template", blob_container_url=container_sas_url, model_id="my-first-model"
 )
 model = poller.result()
 
@@ -475,7 +455,7 @@ model_id = "<your custom model id>"
 with open("<path to your document>", "rb") as fd:
     document = fd.read()
 
-poller = document_analysis_client.begin_analyze_document(model=model_id, document=document)
+poller = document_analysis_client.begin_analyze_document(model_id=model_id, document=document)
 result = poller.result()
 
 for analyzed_document in result.documents:
@@ -521,7 +501,7 @@ Alternatively, a document URL can also be used to analyze documents using the `b
 
 ```python
 document_url = "<url_of_the_document>"
-poller = document_analysis_client.begin_analyze_document_from_url(model=model_id, document_url=document_url)
+poller = document_analysis_client.begin_analyze_document_from_url(model_id=model_id, document_url=document_url)
 result = poller.result()
 ```
 
@@ -538,13 +518,13 @@ credential = AzureKeyCredential("<api_key>")
 
 document_model_admin_client = DocumentModelAdministrationClient(endpoint, credential)
 
-account_info = document_model_admin_client.get_account_info()
+account_details = document_model_admin_client.get_resource_details()
 print("Our account has {} custom models, and we can have at most {} custom models".format(
-    account_info.model_count, account_info.model_limit
+    account_details.custom_document_models.count, account_details.custom_document_models.limit
 ))
 
 # Here we get a paged list of all of our models
-models = document_model_admin_client.list_models()
+models = document_model_admin_client.list_document_models()
 print("We have models with the following ids: {}".format(
     ", ".join([m.model_id for m in models])
 ))
@@ -552,16 +532,16 @@ print("We have models with the following ids: {}".format(
 # Replace with the custom model ID from the "Build a model" sample
 model_id = "<model_id from the Build a Model sample>"
 
-custom_model = document_model_admin_client.get_model(model_id=model_id)
+custom_model = document_model_admin_client.get_document_model(model_id=model_id)
 print("Model ID: {}".format(custom_model.model_id))
 print("Description: {}".format(custom_model.description))
 print("Model created on: {}\n".format(custom_model.created_on))
 
 # Finally, we will delete this model by ID
-document_model_admin_client.delete_model(model_id=custom_model.model_id)
+document_model_admin_client.delete_document_model(model_id=custom_model.model_id)
 
 try:
-    document_model_admin_client.get_model(model_id=custom_model.model_id)
+    document_model_admin_client.get_document_model(model_id=custom_model.model_id)
 except ResourceNotFoundError:
     print("Successfully deleted model with id {}".format(custom_model.model_id))
 ```
@@ -616,7 +596,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [azure_subscription]: https://azure.microsoft.com/free/
 [azure_portal]: https://ms.portal.azure.com/
-[regional_endpoints]: https://azure.microsoft.com/global-infrastructure/services/?products=azure-applied-ai-services
+[regional_endpoints]: https://azure.microsoft.com/global-infrastructure/services/?products=form-recognizer
 [FR_or_CS_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [pip]: https://pypi.org/project/pip/
 [cognitive_resource_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer
@@ -644,8 +624,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [service_recognize_business_cards]: https://aka.ms/azsdk/formrecognizer/businesscardfieldschema
 [service_recognize_invoice]: https://aka.ms/azsdk/formrecognizer/invoicefieldschema
 [service_recognize_identity_documents]: https://aka.ms/azsdk/formrecognizer/iddocumentfieldschema
+[service_recognize_tax_documents]: https://aka.ms/azsdk/formrecognizer/taxusw2fieldschema
 [service_prebuilt_document]: https://docs.microsoft.com/azure/applied-ai-services/form-recognizer/concept-general-document#general-document-features
-[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
+[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/sdk/azure-sdk-logging
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples
 [changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/CHANGELOG.md
 [migration-guide]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/MIGRATION_GUIDE.md

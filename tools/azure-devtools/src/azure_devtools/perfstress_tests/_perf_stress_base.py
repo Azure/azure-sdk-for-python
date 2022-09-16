@@ -155,7 +155,7 @@ class _PerfTestBase(_PerfTestABC):
         """
         return
 
-    async def cleanup(self):
+    async def cleanup(self) -> None:
         """
         Cleanup called once per parallel test instance.
         Used to cleanup state specific to this test instance.

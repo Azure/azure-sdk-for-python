@@ -1,0 +1,24 @@
+
+type: command
+
+
+name: convert_to_mltable_file_dataset
+display_name: Convert_To_Mltable_File_Dataset
+version: 1
+
+inputs:
+  input_data:
+    type: uri_folder
+
+outputs:
+  file_output_data:
+    type: mltable
+
+code: ./src
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+
+command: >-
+  python convert_data.py
+  --input_data ${{inputs.input_data}}
+  --file_output_data ${{outputs.file_output_data}}

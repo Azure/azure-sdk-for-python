@@ -3,158 +3,111 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import asyncio
-import functools
-import json
-from os.path import dirname, join, realpath
+import pytest
 
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
-from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
-from azure_devtools.scenario_tests import ReplayableTest
-
-from search_service_preparer import SearchServicePreparer
-
-CWD = dirname(realpath(__file__))
-
-SCHEMA = open(join(CWD, "..", "hotel_schema.json")).read()
-BATCH = json.load(open(join(CWD, "..", "hotel_small.json"), encoding='utf-8'))
-
-from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import HttpResponseError
 from azure.search.documents.aio import SearchClient
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureRecordedTestCase
 
-TIME_TO_SLEEP = 3
-
-def await_prepared_test(test_fn):
-    """Synchronous wrapper for async test methods. Used to avoid making changes
-    upstream to AbstractPreparer (which doesn't await the functions it wraps)
-    """
-
-    @functools.wraps(test_fn)
-    def run(test_class_instance, *args, **kwargs):
-        trim_kwargs_from_test_function(test_fn, kwargs)
-        loop = asyncio.get_event_loop()
-        return loop.run_until_complete(test_fn(test_class_instance, **kwargs))
-
-    return run
+from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
 
-class SearchClientTestAsync(AzureMgmtTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['api-key']
+class TestClientTestAsync(AzureRecordedTestCase):
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    async def test_get_search_simple(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchClient(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
+    @SearchEnvVarPreparer()
+    @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
+    @recorded_by_proxy_async
+    async def test_search_client(self, endpoint, api_key, index_name):
+        client = SearchClient(endpoint, index_name, api_key)
         async with client:
-            results = []
-            async for x in await client.search(search_text="hotel"):
-                results.append(x)
-            assert len(results) == 7
+            await self._test_get_search_simple(client)
+            await self._test_get_search_simple_with_top(client)
+            await self._test_get_search_filter(client)
+            await self._test_get_search_filter_array(client)
+            await self._test_get_search_counts(client)
+            await self._test_get_search_coverage(client)
+            await self._test_get_search_facets_none(client)
+            await self._test_get_search_facets_result(client)
+            await self._test_autocomplete(client)
+            await self._test_suggest(client)
 
-            results = []
-            async for x in await client.search(search_text="motel"):
-                results.append(x)
-            assert len(results) == 2
+    async def _test_get_search_simple(self, client):
+        results = []
+        async for x in await client.search(search_text="hotel"):
+            results.append(x)
+        assert len(results) == 7
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    async def test_get_search_simple_with_top(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchClient(
-            endpoint, index_name, AzureKeyCredential(api_key)
+        results = []
+        async for x in await client.search(search_text="motel"):
+            results.append(x)
+        assert len(results) == 2
+
+    async def _test_get_search_simple_with_top(self, client):
+        results = []
+        async for x in await client.search(search_text="hotel", top=3):
+            results.append(x)
+        assert len(results) == 3
+
+        results = []
+        async for x in await client.search(search_text="motel", top=3):
+            results.append(x)
+        assert len(results) == 2
+
+    async def _test_get_search_filter(self, client):
+        results = []
+        select = ["hotelName", "category", "description"]
+        async for x in await client.search(
+                search_text="WiFi",
+                filter="category eq 'Budget'",
+                select=",".join(select),
+                order_by="hotelName desc"
+        ):
+            results.append(x)
+        assert [x["hotelName"] for x in results] == sorted(
+            [x["hotelName"] for x in results], reverse=True
         )
-        async with client:
-            results = []
-            async for x in await client.search(search_text="hotel", top=3):
-                results.append(x)
-            assert len(results) == 3
+        expected = {
+            "category",
+            "hotelName",
+            "description",
+            "@search.score",
+            "@search.highlights",
+        }
+        assert all(set(x) == expected for x in results)
+        assert all(x["category"] == "Budget" for x in results)
 
-            results = []
-            async for x in await client.search(search_text="motel", top=3):
-                results.append(x)
-            assert len(results) == 2
-
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    async def test_get_search_filter(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchClient(
-            endpoint, index_name, AzureKeyCredential(api_key)
+    async def _test_get_search_filter_array(self, client):
+        results = []
+        select = ["hotelName", "category", "description"]
+        async for x in await client.search(
+                search_text="WiFi",
+                filter="category eq 'Budget'",
+                select=select,
+                order_by="hotelName desc"
+        ):
+            results.append(x)
+        assert [x["hotelName"] for x in results] == sorted(
+            [x["hotelName"] for x in results], reverse=True
         )
+        expected = {
+            "category",
+            "hotelName",
+            "description",
+            "@search.score",
+            "@search.highlights",
+        }
+        assert all(set(x) == expected for x in results)
+        assert all(x["category"] == "Budget" for x in results)
 
-        async with client:
-            results = []
-            select = ["hotelName", "category", "description"]
-            async for x in await client.search(
-                    search_text="WiFi",
-                    filter="category eq 'Budget'",
-                    select=",".join(select),
-                    order_by="hotelName desc"
-            ):
-                results.append(x)
-            assert [x["hotelName"] for x in results] == sorted(
-                [x["hotelName"] for x in results], reverse=True
-            )
-            expected = {
-                "category",
-                "hotelName",
-                "description",
-                "@search.score",
-                "@search.highlights",
-            }
-            assert all(set(x) == expected for x in results)
-            assert all(x["category"] == "Budget" for x in results)
-
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    async def test_get_search_filter_array(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchClient(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
-
-        async with client:
-            results = []
-            select = ["hotelName", "category", "description"]
-            async for x in await client.search(
-                    search_text="WiFi",
-                    filter="category eq 'Budget'",
-                    select=select,
-                    order_by="hotelName desc"
-            ):
-                results.append(x)
-            assert [x["hotelName"] for x in results] == sorted(
-                [x["hotelName"] for x in results], reverse=True
-            )
-            expected = {
-                "category",
-                "hotelName",
-                "description",
-                "@search.score",
-                "@search.highlights",
-            }
-            assert all(set(x) == expected for x in results)
-            assert all(x["category"] == "Budget" for x in results)
-
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    async def test_get_search_counts(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchClient(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
-
+    async def _test_get_search_counts(self, client):
         results = await client.search(search_text="hotel")
         assert await results.get_count() is None
 
         results = await client.search(search_text="hotel", include_total_count=True)
         assert await results.get_count() == 7
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    async def test_get_search_coverage(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchClient(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
-
+    async def _test_get_search_coverage(self, client):
         results = await client.search(search_text="hotel")
         assert await results.get_coverage() is None
 
@@ -163,65 +116,50 @@ class SearchClientTestAsync(AzureMgmtTestCase):
         assert isinstance(cov, float)
         assert cov >= 50.0
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    async def test_get_search_facets_none(
-        self, api_key, endpoint, index_name, **kwargs
-    ):
-        client = SearchClient(
-            endpoint, index_name, AzureKeyCredential(api_key)
+    async def _test_get_search_facets_none(self, client):
+        select = ("hotelName", "category", "description")
+        results = await client.search(
+            search_text="WiFi",
+            select=",".join(select)
         )
+        assert await results.get_facets() is None
 
-        async with client:
-            select = ("hotelName", "category", "description")
-            results = await client.search(
-                search_text="WiFi",
-                select=",".join(select)
-            )
-            assert await results.get_facets() is None
-
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    async def test_get_search_facets_result(
-        self, api_key, endpoint, index_name, **kwargs
-    ):
-        client = SearchClient(
-            endpoint, index_name, AzureKeyCredential(api_key)
+    async def _test_get_search_facets_result(self, client):
+        select = ("hotelName", "category", "description")
+        results = await client.search(
+            search_text="WiFi",
+            facets=["category"],
+            select=",".join(select)
         )
-
-        async with client:
-            select = ("hotelName", "category", "description")
-            results = await client.search(
-                search_text="WiFi",
-                facets=["category"],
-                select=",".join(select)
-            )
-            assert await results.get_facets() == {
-                "category": [
-                    {"value": "Budget", "count": 4},
-                    {"value": "Luxury", "count": 1},
-                ]
-            }
-
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    async def test_autocomplete(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchClient(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
-        async with client:
-            results = await client.autocomplete(search_text="mot", suggester_name="sg")
-            assert results == [{"text": "motel", "query_plus_text": "motel"}]
-
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    async def test_suggest(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchClient(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
-        async with client:
-            results = await client.suggest(search_text="mot", suggester_name="sg")
-            assert results == [
-                {"hotelId": "2", "text": "Cheapest hotel in town. Infact, a motel."},
-                {"hotelId": "9", "text": "Secret Point Motel"},
+        assert await results.get_facets() == {
+            "category": [
+                {"value": "Budget", "count": 4},
+                {"value": "Luxury", "count": 1},
             ]
+        }
+
+    async def _test_autocomplete(self, client):
+        results = await client.autocomplete(search_text="mot", suggester_name="sg")
+        assert results == [{"text": "motel", "query_plus_text": "motel"}]
+
+    async def _test_suggest(self, client):
+        results = await client.suggest(search_text="mot", suggester_name="sg")
+        assert results == [
+            {"hotelId": "2", "text": "Cheapest hotel in town. Infact, a motel."},
+            {"hotelId": "9", "text": "Secret Point Motel"},
+        ]
+
+    @SearchEnvVarPreparer()
+    @search_decorator(schema="hotel_schema.json", index_batch="hotel_large.json")
+    @recorded_by_proxy_async
+    async def test_search_client_large(self, endpoint, api_key, index_name):
+        client = SearchClient(endpoint, index_name, api_key)
+        async with client:
+            await self._test_get_search_simple_large(client)
+
+    async def _test_get_search_simple_large(self, client):
+        results = []
+        async for x in await client.search(search_text = ''):
+            results.append(x)
+        assert len(results) == 60
+            

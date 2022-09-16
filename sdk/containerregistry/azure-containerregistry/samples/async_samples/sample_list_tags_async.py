@@ -36,14 +36,15 @@ class ListTagsAsync(object):
         load_dotenv(find_dotenv())
 
     async def list_tags(self):
-        # Create a new ContainerRegistryClient      
+        # Instantiate an instance of ContainerRegistryClient    
         audience = "https://management.azure.com"
-        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         credential = DefaultAzureCredential()
-        client = ContainerRegistryClient(account_url, credential, audience=audience)
+        client = ContainerRegistryClient(endpoint, credential, audience=audience)
 
         manifest = await client.get_manifest_properties("library/hello-world", "latest")
         print(manifest.repository_name + ": ")
+        # Iterate through all the tags
         for tag in manifest.tags:
             print(tag + "\n")
 
@@ -54,5 +55,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

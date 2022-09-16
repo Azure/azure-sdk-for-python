@@ -7,55 +7,29 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
-class ConfigurationProfile(str, Enum):
-    """A value indicating configuration profile.
+
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
     """
 
-    azure_virtual_machine_best_practices_dev_test = "Azure virtual machine best practices – Dev/Test"
-    azure_virtual_machine_best_practices_production = "Azure virtual machine best practices – Production"
+    INTERNAL = "Internal"
 
-class EnableRealTimeProtection(str, Enum):
-    """Enables or disables Real Time Protection
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource.
     """
 
-    true = "True"
-    false = "False"
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
-class ProvisioningStatus(str, Enum):
-    """The state of onboarding, which only appears in the response.
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system"
     """
 
-    succeeded = "Succeeded"
-    failed = "Failed"
-    created = "Created"
-
-class ResourceIdentityType(str, Enum):
-    """The type of identity used for the Automanage account. Currently, the only supported type is
-    'SystemAssigned', which implicitly creates an identity.
-    """
-
-    system_assigned = "SystemAssigned"
-    none = "None"
-
-class RunScheduledScan(str, Enum):
-    """Enables or disables a periodic scan for antimalware
-    """
-
-    true = "True"
-    false = "False"
-
-class ScanType(str, Enum):
-    """Type of scheduled scan
-    """
-
-    quick = "Quick"
-    full = "Full"
-
-class UpdateStatus(str, Enum):
-    """The state of compliance, which only appears in the response.
-    """
-
-    succeeded = "Succeeded"
-    failed = "Failed"
-    created = "Created"
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"

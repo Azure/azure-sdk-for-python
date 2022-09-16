@@ -7,9 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._app_configuration_management_client import AppConfigurationManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['AppConfigurationManagementClient']
 
 try:

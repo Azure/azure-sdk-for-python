@@ -15,12 +15,12 @@ class Attributes(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param enabled: Determines whether the object is enabled.
-    :type enabled: bool
-    :param not_before: Not before date in UTC.
-    :type not_before: ~datetime.datetime
-    :param expires: Expiry date in UTC.
-    :type expires: ~datetime.datetime
+    :ivar enabled: Determines whether the object is enabled.
+    :vartype enabled: bool
+    :ivar not_before: Not before date in UTC.
+    :vartype not_before: ~datetime.datetime
+    :ivar expires: Expiry date in UTC.
+    :vartype expires: ~datetime.datetime
     :ivar created: Creation time in UTC.
     :vartype created: ~datetime.datetime
     :ivar updated: Last updated time in UTC.
@@ -44,6 +44,14 @@ class Attributes(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword enabled: Determines whether the object is enabled.
+        :paramtype enabled: bool
+        :keyword not_before: Not before date in UTC.
+        :paramtype not_before: ~datetime.datetime
+        :keyword expires: Expiry date in UTC.
+        :paramtype expires: ~datetime.datetime
+        """
         super(Attributes, self).__init__(**kwargs)
         self.enabled = kwargs.get('enabled', None)
         self.not_before = kwargs.get('not_before', None)
@@ -81,6 +89,8 @@ class Error(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Error, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -90,21 +100,21 @@ class Error(msrest.serialization.Model):
 class FullBackupOperation(msrest.serialization.Model):
     """Full backup operation.
 
-    :param status: Status of the backup operation.
-    :type status: str
-    :param status_details: The status details of backup operation.
-    :type status_details: str
-    :param error: Error encountered, if any, during the full backup operation.
-    :type error: ~azure.keyvault.v7_2.models.Error
-    :param start_time: The start time of the backup operation in UTC.
-    :type start_time: ~datetime.datetime
-    :param end_time: The end time of the backup operation in UTC.
-    :type end_time: ~datetime.datetime
-    :param job_id: Identifier for the full backup operation.
-    :type job_id: str
-    :param azure_storage_blob_container_uri: The Azure blob storage container Uri which contains
-     the full backup.
-    :type azure_storage_blob_container_uri: str
+    :ivar status: Status of the backup operation.
+    :vartype status: str
+    :ivar status_details: The status details of backup operation.
+    :vartype status_details: str
+    :ivar error: Error encountered, if any, during the full backup operation.
+    :vartype error: ~azure.keyvault.v7_2.models.Error
+    :ivar start_time: The start time of the backup operation in UTC.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the backup operation in UTC.
+    :vartype end_time: ~datetime.datetime
+    :ivar job_id: Identifier for the full backup operation.
+    :vartype job_id: str
+    :ivar azure_storage_blob_container_uri: The Azure blob storage container Uri which contains the
+     full backup.
+    :vartype azure_storage_blob_container_uri: str
     """
 
     _attribute_map = {
@@ -121,6 +131,23 @@ class FullBackupOperation(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword status: Status of the backup operation.
+        :paramtype status: str
+        :keyword status_details: The status details of backup operation.
+        :paramtype status_details: str
+        :keyword error: Error encountered, if any, during the full backup operation.
+        :paramtype error: ~azure.keyvault.v7_2.models.Error
+        :keyword start_time: The start time of the backup operation in UTC.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: The end time of the backup operation in UTC.
+        :paramtype end_time: ~datetime.datetime
+        :keyword job_id: Identifier for the full backup operation.
+        :paramtype job_id: str
+        :keyword azure_storage_blob_container_uri: The Azure blob storage container Uri which contains
+         the full backup.
+        :paramtype azure_storage_blob_container_uri: str
+        """
         super(FullBackupOperation, self).__init__(**kwargs)
         self.status = kwargs.get('status', None)
         self.status_details = kwargs.get('status_details', None)
@@ -152,6 +179,8 @@ class KeyVaultError(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(KeyVaultError, self).__init__(**kwargs)
         self.error = None
 
@@ -159,16 +188,16 @@ class KeyVaultError(msrest.serialization.Model):
 class Permission(msrest.serialization.Model):
     """Role definition permissions.
 
-    :param actions: Action permissions that are granted.
-    :type actions: list[str]
-    :param not_actions: Action permissions that are excluded but not denied. They may be granted by
+    :ivar actions: Action permissions that are granted.
+    :vartype actions: list[str]
+    :ivar not_actions: Action permissions that are excluded but not denied. They may be granted by
      other role definitions assigned to a principal.
-    :type not_actions: list[str]
-    :param data_actions: Data action permissions that are granted.
-    :type data_actions: list[str or ~azure.keyvault.v7_2.models.DataAction]
-    :param not_data_actions: Data action permissions that are excluded but not denied. They may be
+    :vartype not_actions: list[str]
+    :ivar data_actions: Data action permissions that are granted.
+    :vartype data_actions: list[str or ~azure.keyvault.v7_2.models.DataAction]
+    :ivar not_data_actions: Data action permissions that are excluded but not denied. They may be
      granted by other role definitions assigned to a principal.
-    :type not_data_actions: list[str or ~azure.keyvault.v7_2.models.DataAction]
+    :vartype not_data_actions: list[str or ~azure.keyvault.v7_2.models.DataAction]
     """
 
     _attribute_map = {
@@ -182,6 +211,18 @@ class Permission(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword actions: Action permissions that are granted.
+        :paramtype actions: list[str]
+        :keyword not_actions: Action permissions that are excluded but not denied. They may be granted
+         by other role definitions assigned to a principal.
+        :paramtype not_actions: list[str]
+        :keyword data_actions: Data action permissions that are granted.
+        :paramtype data_actions: list[str or ~azure.keyvault.v7_2.models.DataAction]
+        :keyword not_data_actions: Data action permissions that are excluded but not denied. They may
+         be granted by other role definitions assigned to a principal.
+        :paramtype not_data_actions: list[str or ~azure.keyvault.v7_2.models.DataAction]
+        """
         super(Permission, self).__init__(**kwargs)
         self.actions = kwargs.get('actions', None)
         self.not_actions = kwargs.get('not_actions', None)
@@ -192,18 +233,18 @@ class Permission(msrest.serialization.Model):
 class RestoreOperation(msrest.serialization.Model):
     """Restore operation.
 
-    :param status: Status of the restore operation.
-    :type status: str
-    :param status_details: The status details of restore operation.
-    :type status_details: str
-    :param error: Error encountered, if any, during the restore operation.
-    :type error: ~azure.keyvault.v7_2.models.Error
-    :param job_id: Identifier for the restore operation.
-    :type job_id: str
-    :param start_time: The start time of the restore operation.
-    :type start_time: ~datetime.datetime
-    :param end_time: The end time of the restore operation.
-    :type end_time: ~datetime.datetime
+    :ivar status: Status of the restore operation.
+    :vartype status: str
+    :ivar status_details: The status details of restore operation.
+    :vartype status_details: str
+    :ivar error: Error encountered, if any, during the restore operation.
+    :vartype error: ~azure.keyvault.v7_2.models.Error
+    :ivar job_id: Identifier for the restore operation.
+    :vartype job_id: str
+    :ivar start_time: The start time of the restore operation.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the restore operation.
+    :vartype end_time: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -219,6 +260,20 @@ class RestoreOperation(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword status: Status of the restore operation.
+        :paramtype status: str
+        :keyword status_details: The status details of restore operation.
+        :paramtype status_details: str
+        :keyword error: Error encountered, if any, during the restore operation.
+        :paramtype error: ~azure.keyvault.v7_2.models.Error
+        :keyword job_id: Identifier for the restore operation.
+        :paramtype job_id: str
+        :keyword start_time: The start time of the restore operation.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: The end time of the restore operation.
+        :paramtype end_time: ~datetime.datetime
+        """
         super(RestoreOperation, self).__init__(**kwargs)
         self.status = kwargs.get('status', None)
         self.status_details = kwargs.get('status_details', None)
@@ -233,12 +288,12 @@ class RestoreOperationParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sas_token_parameters: Required. SAS token parameter object containing Azure storage
+    :ivar sas_token_parameters: Required. SAS token parameter object containing Azure storage
      resourceUri and token.
-    :type sas_token_parameters: ~azure.keyvault.v7_2.models.SASTokenParameter
-    :param folder_to_restore: Required. The Folder name of the blob where the previous successful
+    :vartype sas_token_parameters: ~azure.keyvault.v7_2.models.SASTokenParameter
+    :ivar folder_to_restore: Required. The Folder name of the blob where the previous successful
      full backup was stored.
-    :type folder_to_restore: str
+    :vartype folder_to_restore: str
     """
 
     _validation = {
@@ -255,6 +310,14 @@ class RestoreOperationParameters(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword sas_token_parameters: Required. SAS token parameter object containing Azure storage
+         resourceUri and token.
+        :paramtype sas_token_parameters: ~azure.keyvault.v7_2.models.SASTokenParameter
+        :keyword folder_to_restore: Required. The Folder name of the blob where the previous successful
+         full backup was stored.
+        :paramtype folder_to_restore: str
+        """
         super(RestoreOperationParameters, self).__init__(**kwargs)
         self.sas_token_parameters = kwargs['sas_token_parameters']
         self.folder_to_restore = kwargs['folder_to_restore']
@@ -271,8 +334,8 @@ class RoleAssignment(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The role assignment type.
     :vartype type: str
-    :param properties: Role assignment properties.
-    :type properties: ~azure.keyvault.v7_2.models.RoleAssignmentPropertiesWithScope
+    :ivar properties: Role assignment properties.
+    :vartype properties: ~azure.keyvault.v7_2.models.RoleAssignmentPropertiesWithScope
     """
 
     _validation = {
@@ -292,6 +355,10 @@ class RoleAssignment(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword properties: Role assignment properties.
+        :paramtype properties: ~azure.keyvault.v7_2.models.RoleAssignmentPropertiesWithScope
+        """
         super(RoleAssignment, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -304,8 +371,8 @@ class RoleAssignmentCreateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param properties: Required. Role assignment properties.
-    :type properties: ~azure.keyvault.v7_2.models.RoleAssignmentProperties
+    :ivar properties: Required. Role assignment properties.
+    :vartype properties: ~azure.keyvault.v7_2.models.RoleAssignmentProperties
     """
 
     _validation = {
@@ -320,6 +387,10 @@ class RoleAssignmentCreateParameters(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword properties: Required. Role assignment properties.
+        :paramtype properties: ~azure.keyvault.v7_2.models.RoleAssignmentProperties
+        """
         super(RoleAssignmentCreateParameters, self).__init__(**kwargs)
         self.properties = kwargs['properties']
 
@@ -327,8 +398,8 @@ class RoleAssignmentCreateParameters(msrest.serialization.Model):
 class RoleAssignmentFilter(msrest.serialization.Model):
     """Role Assignments filter.
 
-    :param principal_id: Returns role assignment of the specific principal.
-    :type principal_id: str
+    :ivar principal_id: Returns role assignment of the specific principal.
+    :vartype principal_id: str
     """
 
     _attribute_map = {
@@ -339,6 +410,10 @@ class RoleAssignmentFilter(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword principal_id: Returns role assignment of the specific principal.
+        :paramtype principal_id: str
+        """
         super(RoleAssignmentFilter, self).__init__(**kwargs)
         self.principal_id = kwargs.get('principal_id', None)
 
@@ -346,10 +421,10 @@ class RoleAssignmentFilter(msrest.serialization.Model):
 class RoleAssignmentListResult(msrest.serialization.Model):
     """Role assignment list operation result.
 
-    :param value: Role assignment list.
-    :type value: list[~azure.keyvault.v7_2.models.RoleAssignment]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: Role assignment list.
+    :vartype value: list[~azure.keyvault.v7_2.models.RoleAssignment]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -361,6 +436,12 @@ class RoleAssignmentListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: Role assignment list.
+        :paramtype value: list[~azure.keyvault.v7_2.models.RoleAssignment]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(RoleAssignmentListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
@@ -371,11 +452,11 @@ class RoleAssignmentProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param role_definition_id: Required. The role definition ID used in the role assignment.
-    :type role_definition_id: str
-    :param principal_id: Required. The principal ID assigned to the role. This maps to the ID
-     inside the Active Directory. It can point to a user, service principal, or security group.
-    :type principal_id: str
+    :ivar role_definition_id: Required. The role definition ID used in the role assignment.
+    :vartype role_definition_id: str
+    :ivar principal_id: Required. The principal ID assigned to the role. This maps to the ID inside
+     the Active Directory. It can point to a user, service principal, or security group.
+    :vartype principal_id: str
     """
 
     _validation = {
@@ -392,6 +473,13 @@ class RoleAssignmentProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword role_definition_id: Required. The role definition ID used in the role assignment.
+        :paramtype role_definition_id: str
+        :keyword principal_id: Required. The principal ID assigned to the role. This maps to the ID
+         inside the Active Directory. It can point to a user, service principal, or security group.
+        :paramtype principal_id: str
+        """
         super(RoleAssignmentProperties, self).__init__(**kwargs)
         self.role_definition_id = kwargs['role_definition_id']
         self.principal_id = kwargs['principal_id']
@@ -400,12 +488,12 @@ class RoleAssignmentProperties(msrest.serialization.Model):
 class RoleAssignmentPropertiesWithScope(msrest.serialization.Model):
     """Role assignment properties with scope.
 
-    :param scope: The role scope. Possible values include: "/", "/keys".
-    :type scope: str or ~azure.keyvault.v7_2.models.RoleScope
-    :param role_definition_id: The role definition ID.
-    :type role_definition_id: str
-    :param principal_id: The principal ID.
-    :type principal_id: str
+    :ivar scope: The role scope. Possible values include: "/", "/keys".
+    :vartype scope: str or ~azure.keyvault.v7_2.models.RoleScope
+    :ivar role_definition_id: The role definition ID.
+    :vartype role_definition_id: str
+    :ivar principal_id: The principal ID.
+    :vartype principal_id: str
     """
 
     _attribute_map = {
@@ -418,6 +506,14 @@ class RoleAssignmentPropertiesWithScope(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword scope: The role scope. Possible values include: "/", "/keys".
+        :paramtype scope: str or ~azure.keyvault.v7_2.models.RoleScope
+        :keyword role_definition_id: The role definition ID.
+        :paramtype role_definition_id: str
+        :keyword principal_id: The principal ID.
+        :paramtype principal_id: str
+        """
         super(RoleAssignmentPropertiesWithScope, self).__init__(**kwargs)
         self.scope = kwargs.get('scope', None)
         self.role_definition_id = kwargs.get('role_definition_id', None)
@@ -436,16 +532,16 @@ class RoleDefinition(msrest.serialization.Model):
     :ivar type: The role definition type. Possible values include:
      "Microsoft.Authorization/roleDefinitions".
     :vartype type: str or ~azure.keyvault.v7_2.models.RoleDefinitionType
-    :param role_name: The role name.
-    :type role_name: str
-    :param description: The role definition description.
-    :type description: str
-    :param role_type: The role type. Possible values include: "AKVBuiltInRole", "CustomRole".
-    :type role_type: str or ~azure.keyvault.v7_2.models.RoleType
-    :param permissions: Role definition permissions.
-    :type permissions: list[~azure.keyvault.v7_2.models.Permission]
-    :param assignable_scopes: Role definition assignable scopes.
-    :type assignable_scopes: list[str or ~azure.keyvault.v7_2.models.RoleScope]
+    :ivar role_name: The role name.
+    :vartype role_name: str
+    :ivar description: The role definition description.
+    :vartype description: str
+    :ivar role_type: The role type. Possible values include: "AKVBuiltInRole", "CustomRole".
+    :vartype role_type: str or ~azure.keyvault.v7_2.models.RoleType
+    :ivar permissions: Role definition permissions.
+    :vartype permissions: list[~azure.keyvault.v7_2.models.Permission]
+    :ivar assignable_scopes: Role definition assignable scopes.
+    :vartype assignable_scopes: list[str or ~azure.keyvault.v7_2.models.RoleScope]
     """
 
     _validation = {
@@ -469,6 +565,18 @@ class RoleDefinition(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword role_name: The role name.
+        :paramtype role_name: str
+        :keyword description: The role definition description.
+        :paramtype description: str
+        :keyword role_type: The role type. Possible values include: "AKVBuiltInRole", "CustomRole".
+        :paramtype role_type: str or ~azure.keyvault.v7_2.models.RoleType
+        :keyword permissions: Role definition permissions.
+        :paramtype permissions: list[~azure.keyvault.v7_2.models.Permission]
+        :keyword assignable_scopes: Role definition assignable scopes.
+        :paramtype assignable_scopes: list[str or ~azure.keyvault.v7_2.models.RoleScope]
+        """
         super(RoleDefinition, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -485,8 +593,8 @@ class RoleDefinitionCreateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param properties: Required. Role definition properties.
-    :type properties: ~azure.keyvault.v7_2.models.RoleDefinitionProperties
+    :ivar properties: Required. Role definition properties.
+    :vartype properties: ~azure.keyvault.v7_2.models.RoleDefinitionProperties
     """
 
     _validation = {
@@ -501,6 +609,10 @@ class RoleDefinitionCreateParameters(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword properties: Required. Role definition properties.
+        :paramtype properties: ~azure.keyvault.v7_2.models.RoleDefinitionProperties
+        """
         super(RoleDefinitionCreateParameters, self).__init__(**kwargs)
         self.properties = kwargs['properties']
 
@@ -508,8 +620,8 @@ class RoleDefinitionCreateParameters(msrest.serialization.Model):
 class RoleDefinitionFilter(msrest.serialization.Model):
     """Role Definitions filter.
 
-    :param role_name: Returns role definition with the specific name.
-    :type role_name: str
+    :ivar role_name: Returns role definition with the specific name.
+    :vartype role_name: str
     """
 
     _attribute_map = {
@@ -520,6 +632,10 @@ class RoleDefinitionFilter(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword role_name: Returns role definition with the specific name.
+        :paramtype role_name: str
+        """
         super(RoleDefinitionFilter, self).__init__(**kwargs)
         self.role_name = kwargs.get('role_name', None)
 
@@ -527,10 +643,10 @@ class RoleDefinitionFilter(msrest.serialization.Model):
 class RoleDefinitionListResult(msrest.serialization.Model):
     """Role definition list operation result.
 
-    :param value: Role definition list.
-    :type value: list[~azure.keyvault.v7_2.models.RoleDefinition]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: Role definition list.
+    :vartype value: list[~azure.keyvault.v7_2.models.RoleDefinition]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -542,6 +658,12 @@ class RoleDefinitionListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: Role definition list.
+        :paramtype value: list[~azure.keyvault.v7_2.models.RoleDefinition]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(RoleDefinitionListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
@@ -550,16 +672,16 @@ class RoleDefinitionListResult(msrest.serialization.Model):
 class RoleDefinitionProperties(msrest.serialization.Model):
     """Role definition properties.
 
-    :param role_name: The role name.
-    :type role_name: str
-    :param description: The role definition description.
-    :type description: str
-    :param role_type: The role type. Possible values include: "AKVBuiltInRole", "CustomRole".
-    :type role_type: str or ~azure.keyvault.v7_2.models.RoleType
-    :param permissions: Role definition permissions.
-    :type permissions: list[~azure.keyvault.v7_2.models.Permission]
-    :param assignable_scopes: Role definition assignable scopes.
-    :type assignable_scopes: list[str or ~azure.keyvault.v7_2.models.RoleScope]
+    :ivar role_name: The role name.
+    :vartype role_name: str
+    :ivar description: The role definition description.
+    :vartype description: str
+    :ivar role_type: The role type. Possible values include: "AKVBuiltInRole", "CustomRole".
+    :vartype role_type: str or ~azure.keyvault.v7_2.models.RoleType
+    :ivar permissions: Role definition permissions.
+    :vartype permissions: list[~azure.keyvault.v7_2.models.Permission]
+    :ivar assignable_scopes: Role definition assignable scopes.
+    :vartype assignable_scopes: list[str or ~azure.keyvault.v7_2.models.RoleScope]
     """
 
     _attribute_map = {
@@ -574,6 +696,18 @@ class RoleDefinitionProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword role_name: The role name.
+        :paramtype role_name: str
+        :keyword description: The role definition description.
+        :paramtype description: str
+        :keyword role_type: The role type. Possible values include: "AKVBuiltInRole", "CustomRole".
+        :paramtype role_type: str or ~azure.keyvault.v7_2.models.RoleType
+        :keyword permissions: Role definition permissions.
+        :paramtype permissions: list[~azure.keyvault.v7_2.models.Permission]
+        :keyword assignable_scopes: Role definition assignable scopes.
+        :paramtype assignable_scopes: list[str or ~azure.keyvault.v7_2.models.RoleScope]
+        """
         super(RoleDefinitionProperties, self).__init__(**kwargs)
         self.role_name = kwargs.get('role_name', None)
         self.description = kwargs.get('description', None)
@@ -587,10 +721,10 @@ class SASTokenParameter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param storage_resource_uri: Required. Azure Blob storage container Uri.
-    :type storage_resource_uri: str
-    :param token: Required. The SAS token pointing to an Azure Blob storage container.
-    :type token: str
+    :ivar storage_resource_uri: Required. Azure Blob storage container Uri.
+    :vartype storage_resource_uri: str
+    :ivar token: Required. The SAS token pointing to an Azure Blob storage container.
+    :vartype token: str
     """
 
     _validation = {
@@ -607,6 +741,12 @@ class SASTokenParameter(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword storage_resource_uri: Required. Azure Blob storage container Uri.
+        :paramtype storage_resource_uri: str
+        :keyword token: Required. The SAS token pointing to an Azure Blob storage container.
+        :paramtype token: str
+        """
         super(SASTokenParameter, self).__init__(**kwargs)
         self.storage_resource_uri = kwargs['storage_resource_uri']
         self.token = kwargs['token']
@@ -615,18 +755,18 @@ class SASTokenParameter(msrest.serialization.Model):
 class SelectiveKeyRestoreOperation(msrest.serialization.Model):
     """Selective Key Restore operation.
 
-    :param status: Status of the restore operation.
-    :type status: str
-    :param status_details: The status details of restore operation.
-    :type status_details: str
-    :param error: Error encountered, if any, during the selective key restore operation.
-    :type error: ~azure.keyvault.v7_2.models.Error
-    :param job_id: Identifier for the selective key restore operation.
-    :type job_id: str
-    :param start_time: The start time of the restore operation.
-    :type start_time: ~datetime.datetime
-    :param end_time: The end time of the restore operation.
-    :type end_time: ~datetime.datetime
+    :ivar status: Status of the restore operation.
+    :vartype status: str
+    :ivar status_details: The status details of restore operation.
+    :vartype status_details: str
+    :ivar error: Error encountered, if any, during the selective key restore operation.
+    :vartype error: ~azure.keyvault.v7_2.models.Error
+    :ivar job_id: Identifier for the selective key restore operation.
+    :vartype job_id: str
+    :ivar start_time: The start time of the restore operation.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the restore operation.
+    :vartype end_time: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -642,6 +782,20 @@ class SelectiveKeyRestoreOperation(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword status: Status of the restore operation.
+        :paramtype status: str
+        :keyword status_details: The status details of restore operation.
+        :paramtype status_details: str
+        :keyword error: Error encountered, if any, during the selective key restore operation.
+        :paramtype error: ~azure.keyvault.v7_2.models.Error
+        :keyword job_id: Identifier for the selective key restore operation.
+        :paramtype job_id: str
+        :keyword start_time: The start time of the restore operation.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: The end time of the restore operation.
+        :paramtype end_time: ~datetime.datetime
+        """
         super(SelectiveKeyRestoreOperation, self).__init__(**kwargs)
         self.status = kwargs.get('status', None)
         self.status_details = kwargs.get('status_details', None)
@@ -656,12 +810,12 @@ class SelectiveKeyRestoreOperationParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sas_token_parameters: Required. SAS token parameter object containing Azure storage
+    :ivar sas_token_parameters: Required. SAS token parameter object containing Azure storage
      resourceUri and token.
-    :type sas_token_parameters: ~azure.keyvault.v7_2.models.SASTokenParameter
-    :param folder: Required. The Folder name of the blob where the previous successful full backup
+    :vartype sas_token_parameters: ~azure.keyvault.v7_2.models.SASTokenParameter
+    :ivar folder: Required. The Folder name of the blob where the previous successful full backup
      was stored.
-    :type folder: str
+    :vartype folder: str
     """
 
     _validation = {
@@ -678,6 +832,14 @@ class SelectiveKeyRestoreOperationParameters(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword sas_token_parameters: Required. SAS token parameter object containing Azure storage
+         resourceUri and token.
+        :paramtype sas_token_parameters: ~azure.keyvault.v7_2.models.SASTokenParameter
+        :keyword folder: Required. The Folder name of the blob where the previous successful full
+         backup was stored.
+        :paramtype folder: str
+        """
         super(SelectiveKeyRestoreOperationParameters, self).__init__(**kwargs)
         self.sas_token_parameters = kwargs['sas_token_parameters']
         self.folder = kwargs['folder']

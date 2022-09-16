@@ -1,0 +1,23 @@
+name: blue
+endpoint_name: my-new-endpoint
+model:
+  name: model-1
+  version: 1
+  path: ../../model-1/model/sklearn_regression_model.pkl
+code_configuration:
+  code: ../../model-1/onlinescoring/
+  scoring_script: score.py
+environment:
+  image: paledgeruseeacr.azurecr.io/byoc-sklearn
+  inference_config:
+    liveness_route:
+      port: "5001"
+      path: /
+    readiness_route:
+      port: "5001"
+      path: /
+    scoring_route:
+      port: "5001"
+      path: /
+instance_type: Standard_F2s_v2
+instance_count: 1

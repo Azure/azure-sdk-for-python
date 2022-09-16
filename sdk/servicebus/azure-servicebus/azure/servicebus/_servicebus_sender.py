@@ -5,6 +5,8 @@
 import logging
 import time
 import uuid
+import datetime
+import warnings
 from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
 
 import uamqp
@@ -41,9 +43,11 @@ from ._common.constants import (
 )
 
 if TYPE_CHECKING:
-    import datetime
-    from azure.core.credentials import TokenCredential, AzureSasCredential, AzureNamedKeyCredential
-
+    from azure.core.credentials import (
+        TokenCredential,
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+    )
     MessageTypes = Union[
         Mapping[str, Any],
         ServiceBusMessage,
@@ -61,7 +65,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class SenderMixin(object):
-    def _create_attribute(self):
+    def _create_attribute(self, **kwargs):
         self._auth_uri = "sb://{}/{}".format(
             self.fully_qualified_namespace, self._entity_name
         )
@@ -71,7 +75,7 @@ class SenderMixin(object):
         self._error_policy = _ServiceBusErrorPolicy(
             max_retries=self._config.retry_total
         )
-        self._name = "SBSender-{}".format(uuid.uuid4())
+        self._name = kwargs.get("client_identifier","SBSender-{}".format(uuid.uuid4()))
         self._max_message_size_on_link = 0
         self.entity_name = self._entity_name
 
@@ -143,14 +147,24 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Service Bus service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.servicebus.TransportType
-    :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
+    :keyword str client_identifier: A string-based identifier to uniquely identify the client instance.
+     Service Bus will associate it with some error messages for easier correlation of errors.
+     If not specified, a unique id will be generated.
     """
 
-    def __init__(self, fully_qualified_namespace, credential, **kwargs):
-        # type: (str, Union[TokenCredential, AzureSasCredential, AzureNamedKeyCredential], Any) -> None
+    def __init__(
+        self,
+        fully_qualified_namespace: str,
+        credential: Union["TokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"],
+        *,
+        queue_name: Optional[str] = None,
+        topic_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         if kwargs.get("entity_name"):
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -158,8 +172,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 **kwargs
             )
         else:
-            queue_name = kwargs.get("queue_name")
-            topic_name = kwargs.get("topic_name")
             if queue_name and topic_name:
                 raise ValueError(
                     "Queue/Topic name can not be specified simultaneously."
@@ -172,12 +184,14 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
-                entity_name=entity_name,
+                entity_name=str(entity_name),
+                queue_name=queue_name,
+                topic_name=topic_name,
                 **kwargs
             )
 
         self._max_message_size_on_link = 0
-        self._create_attribute()
+        self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
 
     @classmethod
@@ -195,7 +209,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.servicebus.TransportType
-        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
@@ -263,8 +277,14 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         finally:  # reset the timeout of the handler back to the default value
             self._set_msg_timeout(default_timeout, None)
 
-    def schedule_messages(self, messages, schedule_time_utc, **kwargs):
-        # type: (MessageTypes, datetime.datetime, Any) -> List[int]
+    def schedule_messages(
+        self,
+        messages: "MessageTypes",
+        schedule_time_utc: datetime.datetime,
+        *,
+        timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> List[int]:
         """Send Message or multiple Messages to be enqueued at a specific time.
         Returns a list of the sequence numbers of the enqueued messages.
 
@@ -286,11 +306,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :dedent: 4
                 :caption: Schedule a message to be sent in future
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         # pylint: disable=protected-access
 
         self._check_live()
         obj_messages = transform_messages_if_needed(messages, ServiceBusMessage)
-        timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
@@ -314,8 +335,13 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 timeout=timeout,
             )
 
-    def cancel_scheduled_messages(self, sequence_numbers, **kwargs):
-        # type: (Union[int, List[int]], Any) -> None
+    def cancel_scheduled_messages(
+        self,
+        sequence_numbers: Union[int, List[int]],
+        *,
+        timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> None:
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
 
@@ -336,8 +362,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :dedent: 4
                 :caption: Cancelling messages scheduled to be sent in future
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         self._check_live()
-        timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         if isinstance(sequence_numbers, int):
@@ -354,8 +381,13 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             timeout=timeout,
         )
 
-    def send_messages(self, message, **kwargs):
-        # type: (Union[MessageTypes, ServiceBusMessageBatch], Any) -> None
+    def send_messages(
+        self,
+        message: Union["MessageTypes", ServiceBusMessageBatch],
+        *,
+        timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> None:
         """Sends message and blocks until acknowledgement is received or operation times out.
 
         If a list of messages was provided, attempts to send them as a single batch, throwing a
@@ -386,8 +418,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         self._check_live()
-        timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
@@ -422,8 +455,10 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 require_last_exception=True,
             )
 
-    def create_message_batch(self, max_size_in_bytes=None):
-        # type: (Optional[int]) -> ServiceBusMessageBatch
+    def create_message_batch(
+        self,
+        max_size_in_bytes: Optional[int] = None
+    ) -> ServiceBusMessageBatch:
         """Create a ServiceBusMessageBatch object with the max size of all content being constrained by
         max_size_in_bytes. The max_size should be no greater than the max allowed message size defined by the service.
 
@@ -455,3 +490,15 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return ServiceBusMessageBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link)
         )
+
+    @property
+    def client_identifier(self) -> str:
+        """
+        Get the ServiceBusSender client_identifier associated with the sender instance.
+
+        :rtype: str
+        """
+        return self._name
+
+    def __str__(self) -> str:
+        return f"Sender client id: {self.client_identifier}, entity: {self.entity_name}"

@@ -97,6 +97,5 @@ async def create_consumer_client():
         print("Calling consumer client get eventhub properties:", await consumer_client.get_eventhub_properties())
 
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(create_producer_client())
-loop.run_until_complete(create_consumer_client())
+asyncio.run(create_producer_client())
+asyncio.run(create_consumer_client())

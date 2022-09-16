@@ -17,18 +17,18 @@ from ._container_registry_management_client_enums import *
 class BaseImageDependency(msrest.serialization.Model):
     """Properties that describe a base image dependency.
 
-    :param type: The type of the base image dependency. Possible values include: "BuildTime",
+    :ivar type: The type of the base image dependency. Possible values include: "BuildTime",
      "RunTime".
-    :type type: str or
+    :vartype type: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BaseImageDependencyType
-    :param registry: The registry login server.
-    :type registry: str
-    :param repository: The repository name.
-    :type repository: str
-    :param tag: The tag name.
-    :type tag: str
-    :param digest: The sha256-based digest of the image manifest.
-    :type digest: str
+    :ivar registry: The registry login server.
+    :vartype registry: str
+    :ivar repository: The repository name.
+    :vartype repository: str
+    :ivar tag: The tag name.
+    :vartype tag: str
+    :ivar digest: The sha256-based digest of the image manifest.
+    :vartype digest: str
     """
 
     _attribute_map = {
@@ -49,6 +49,20 @@ class BaseImageDependency(msrest.serialization.Model):
         digest: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword type: The type of the base image dependency. Possible values include: "BuildTime",
+         "RunTime".
+        :paramtype type: str or
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BaseImageDependencyType
+        :keyword registry: The registry login server.
+        :paramtype registry: str
+        :keyword repository: The repository name.
+        :paramtype repository: str
+        :keyword tag: The tag name.
+        :paramtype tag: str
+        :keyword digest: The sha256-based digest of the image manifest.
+        :paramtype digest: str
+        """
         super(BaseImageDependency, self).__init__(**kwargs)
         self.type = type
         self.registry = registry
@@ -86,6 +100,8 @@ class ProxyResource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -103,39 +119,39 @@ class Build(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param build_id: The unique identifier for the build.
-    :type build_id: str
-    :param status: The current status of the build. Possible values include: "Queued", "Started",
+    :ivar build_id: The unique identifier for the build.
+    :vartype build_id: str
+    :ivar status: The current status of the build. Possible values include: "Queued", "Started",
      "Running", "Succeeded", "Failed", "Canceled", "Error", "Timeout".
-    :type status: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStatus
-    :param last_updated_time: The last updated time for the build.
-    :type last_updated_time: ~datetime.datetime
-    :param build_type: The type of build. Possible values include: "AutoBuild", "QuickBuild".
-    :type build_type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildType
-    :param create_time: The time the build was created.
-    :type create_time: ~datetime.datetime
-    :param start_time: The time the build started.
-    :type start_time: ~datetime.datetime
-    :param finish_time: The time the build finished.
-    :type finish_time: ~datetime.datetime
-    :param output_images: The list of all images that were generated from the build.
-    :type output_images:
+    :vartype status: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStatus
+    :ivar last_updated_time: The last updated time for the build.
+    :vartype last_updated_time: ~datetime.datetime
+    :ivar build_type: The type of build. Possible values include: "AutoBuild", "QuickBuild".
+    :vartype build_type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildType
+    :ivar create_time: The time the build was created.
+    :vartype create_time: ~datetime.datetime
+    :ivar start_time: The time the build started.
+    :vartype start_time: ~datetime.datetime
+    :ivar finish_time: The time the build finished.
+    :vartype finish_time: ~datetime.datetime
+    :ivar output_images: The list of all images that were generated from the build.
+    :vartype output_images:
      list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.ImageDescriptor]
-    :param build_task: The build task with which the build was started.
-    :type build_task: str
-    :param image_update_trigger: The image update trigger that caused the build.
-    :type image_update_trigger:
+    :ivar build_task: The build task with which the build was started.
+    :vartype build_task: str
+    :ivar image_update_trigger: The image update trigger that caused the build.
+    :vartype image_update_trigger:
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.ImageUpdateTrigger
-    :param git_commit_trigger: The git commit trigger that caused the build.
-    :type git_commit_trigger:
+    :ivar git_commit_trigger: The git commit trigger that caused the build.
+    :vartype git_commit_trigger:
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.GitCommitTrigger
-    :param is_archive_enabled: The value that indicates whether archiving is enabled or not.
-    :type is_archive_enabled: bool
-    :param platform: The platform properties against which the build will happen.
-    :type platform: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.PlatformProperties
-    :param provisioning_state: The provisioning state of a build. Possible values include:
+    :ivar is_archive_enabled: The value that indicates whether archiving is enabled or not.
+    :vartype is_archive_enabled: bool
+    :ivar platform: The platform properties against which the build will happen.
+    :vartype platform: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.PlatformProperties
+    :ivar provisioning_state: The provisioning state of a build. Possible values include:
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
-    :type provisioning_state: str or
+    :vartype provisioning_state: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.ProvisioningState
     """
 
@@ -184,6 +200,44 @@ class Build(ProxyResource):
         provisioning_state: Optional[Union[str, "ProvisioningState"]] = None,
         **kwargs
     ):
+        """
+        :keyword build_id: The unique identifier for the build.
+        :paramtype build_id: str
+        :keyword status: The current status of the build. Possible values include: "Queued", "Started",
+         "Running", "Succeeded", "Failed", "Canceled", "Error", "Timeout".
+        :paramtype status: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStatus
+        :keyword last_updated_time: The last updated time for the build.
+        :paramtype last_updated_time: ~datetime.datetime
+        :keyword build_type: The type of build. Possible values include: "AutoBuild", "QuickBuild".
+        :paramtype build_type: str or
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildType
+        :keyword create_time: The time the build was created.
+        :paramtype create_time: ~datetime.datetime
+        :keyword start_time: The time the build started.
+        :paramtype start_time: ~datetime.datetime
+        :keyword finish_time: The time the build finished.
+        :paramtype finish_time: ~datetime.datetime
+        :keyword output_images: The list of all images that were generated from the build.
+        :paramtype output_images:
+         list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.ImageDescriptor]
+        :keyword build_task: The build task with which the build was started.
+        :paramtype build_task: str
+        :keyword image_update_trigger: The image update trigger that caused the build.
+        :paramtype image_update_trigger:
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.ImageUpdateTrigger
+        :keyword git_commit_trigger: The git commit trigger that caused the build.
+        :paramtype git_commit_trigger:
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.GitCommitTrigger
+        :keyword is_archive_enabled: The value that indicates whether archiving is enabled or not.
+        :paramtype is_archive_enabled: bool
+        :keyword platform: The platform properties against which the build will happen.
+        :paramtype platform:
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.PlatformProperties
+        :keyword provisioning_state: The provisioning state of a build. Possible values include:
+         "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+        :paramtype provisioning_state: str or
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.ProvisioningState
+        """
         super(Build, self).__init__(**kwargs)
         self.build_id = build_id
         self.status = status
@@ -206,16 +260,16 @@ class BuildArgument(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The type of the argument. Possible values include:
-     "DockerBuildArgument".
-    :type type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildArgumentType
-    :param name: Required. The name of the argument.
-    :type name: str
-    :param value: Required. The value of the argument.
-    :type value: str
-    :param is_secret: Flag to indicate whether the argument represents a secret and want to be
+    :ivar type: Required. The type of the argument. Possible values include: "DockerBuildArgument".
+    :vartype type: str or
+     ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildArgumentType
+    :ivar name: Required. The name of the argument.
+    :vartype name: str
+    :ivar value: Required. The value of the argument.
+    :vartype value: str
+    :ivar is_secret: Flag to indicate whether the argument represents a secret and want to be
      removed from build logs.
-    :type is_secret: bool
+    :vartype is_secret: bool
     """
 
     _validation = {
@@ -240,6 +294,19 @@ class BuildArgument(msrest.serialization.Model):
         is_secret: Optional[bool] = False,
         **kwargs
     ):
+        """
+        :keyword type: Required. The type of the argument. Possible values include:
+         "DockerBuildArgument".
+        :paramtype type: str or
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildArgumentType
+        :keyword name: Required. The name of the argument.
+        :paramtype name: str
+        :keyword value: Required. The value of the argument.
+        :paramtype value: str
+        :keyword is_secret: Flag to indicate whether the argument represents a secret and want to be
+         removed from build logs.
+        :paramtype is_secret: bool
+        """
         super(BuildArgument, self).__init__(**kwargs)
         self.type = type
         self.name = name
@@ -250,10 +317,10 @@ class BuildArgument(msrest.serialization.Model):
 class BuildArgumentList(msrest.serialization.Model):
     """The list of build arguments for a build step.
 
-    :param value: The collection value.
-    :type value: list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildArgument]
-    :param next_link: The URI that can be used to request the next set of paged results.
-    :type next_link: str
+    :ivar value: The collection value.
+    :vartype value: list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildArgument]
+    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -268,6 +335,12 @@ class BuildArgumentList(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection value.
+        :paramtype value: list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildArgument]
+        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :paramtype next_link: str
+        """
         super(BuildArgumentList, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -276,24 +349,24 @@ class BuildArgumentList(msrest.serialization.Model):
 class BuildFilter(msrest.serialization.Model):
     """Properties that are enabled for Odata querying.
 
-    :param build_id: The unique identifier for the build.
-    :type build_id: str
-    :param build_type: The type of build. Possible values include: "AutoBuild", "QuickBuild".
-    :type build_type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildType
-    :param status: The current status of the build. Possible values include: "Queued", "Started",
+    :ivar build_id: The unique identifier for the build.
+    :vartype build_id: str
+    :ivar build_type: The type of build. Possible values include: "AutoBuild", "QuickBuild".
+    :vartype build_type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildType
+    :ivar status: The current status of the build. Possible values include: "Queued", "Started",
      "Running", "Succeeded", "Failed", "Canceled", "Error", "Timeout".
-    :type status: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStatus
-    :param create_time: The create time for a build.
-    :type create_time: ~datetime.datetime
-    :param finish_time: The time the build finished.
-    :type finish_time: ~datetime.datetime
-    :param output_image_manifests: The list of comma-separated image manifests that were generated
+    :vartype status: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStatus
+    :ivar create_time: The create time for a build.
+    :vartype create_time: ~datetime.datetime
+    :ivar finish_time: The time the build finished.
+    :vartype finish_time: ~datetime.datetime
+    :ivar output_image_manifests: The list of comma-separated image manifests that were generated
      from the build.
-    :type output_image_manifests: str
-    :param is_archive_enabled: The value that indicates whether archiving is enabled or not.
-    :type is_archive_enabled: bool
-    :param build_task_name: The name of the build task that the build corresponds to.
-    :type build_task_name: str
+    :vartype output_image_manifests: str
+    :ivar is_archive_enabled: The value that indicates whether archiving is enabled or not.
+    :vartype is_archive_enabled: bool
+    :ivar build_task_name: The name of the build task that the build corresponds to.
+    :vartype build_task_name: str
     """
 
     _attribute_map = {
@@ -320,6 +393,27 @@ class BuildFilter(msrest.serialization.Model):
         build_task_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword build_id: The unique identifier for the build.
+        :paramtype build_id: str
+        :keyword build_type: The type of build. Possible values include: "AutoBuild", "QuickBuild".
+        :paramtype build_type: str or
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildType
+        :keyword status: The current status of the build. Possible values include: "Queued", "Started",
+         "Running", "Succeeded", "Failed", "Canceled", "Error", "Timeout".
+        :paramtype status: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStatus
+        :keyword create_time: The create time for a build.
+        :paramtype create_time: ~datetime.datetime
+        :keyword finish_time: The time the build finished.
+        :paramtype finish_time: ~datetime.datetime
+        :keyword output_image_manifests: The list of comma-separated image manifests that were
+         generated from the build.
+        :paramtype output_image_manifests: str
+        :keyword is_archive_enabled: The value that indicates whether archiving is enabled or not.
+        :paramtype is_archive_enabled: bool
+        :keyword build_task_name: The name of the build task that the build corresponds to.
+        :paramtype build_task_name: str
+        """
         super(BuildFilter, self).__init__(**kwargs)
         self.build_id = build_id
         self.build_type = build_type
@@ -334,8 +428,8 @@ class BuildFilter(msrest.serialization.Model):
 class BuildGetLogResult(msrest.serialization.Model):
     """The result of get log link operation.
 
-    :param log_link: The link to logs for a azure container registry build.
-    :type log_link: str
+    :ivar log_link: The link to logs for a azure container registry build.
+    :vartype log_link: str
     """
 
     _attribute_map = {
@@ -348,6 +442,10 @@ class BuildGetLogResult(msrest.serialization.Model):
         log_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword log_link: The link to logs for a azure container registry build.
+        :paramtype log_link: str
+        """
         super(BuildGetLogResult, self).__init__(**kwargs)
         self.log_link = log_link
 
@@ -355,10 +453,10 @@ class BuildGetLogResult(msrest.serialization.Model):
 class BuildListResult(msrest.serialization.Model):
     """Collection of builds.
 
-    :param value: The collection value.
-    :type value: list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.Build]
-    :param next_link: The URI that can be used to request the next set of paged results.
-    :type next_link: str
+    :ivar value: The collection value.
+    :vartype value: list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.Build]
+    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -373,6 +471,12 @@ class BuildListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection value.
+        :paramtype value: list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.Build]
+        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :paramtype next_link: str
+        """
         super(BuildListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -389,8 +493,9 @@ class BuildStep(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param properties: The properties of a build step.
-    :type properties: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStepProperties
+    :ivar properties: The properties of a build step.
+    :vartype properties:
+     ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStepProperties
     """
 
     _validation = {
@@ -412,6 +517,11 @@ class BuildStep(ProxyResource):
         properties: Optional["BuildStepProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: The properties of a build step.
+        :paramtype properties:
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStepProperties
+        """
         super(BuildStep, self).__init__(**kwargs)
         self.properties = properties
 
@@ -419,10 +529,10 @@ class BuildStep(ProxyResource):
 class BuildStepList(msrest.serialization.Model):
     """The collection of build items.
 
-    :param value: The collection value.
-    :type value: list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStep]
-    :param next_link: The URI that can be used to request the next set of paged results.
-    :type next_link: str
+    :ivar value: The collection value.
+    :vartype value: list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStep]
+    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -437,6 +547,12 @@ class BuildStepList(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection value.
+        :paramtype value: list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStep]
+        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :paramtype next_link: str
+        """
         super(BuildStepList, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -456,7 +572,7 @@ class BuildStepProperties(msrest.serialization.Model):
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.ProvisioningState
-    :ivar type: Required. The type of the step.Constant filled by server.  Possible values include:
+    :ivar type: Required. The type of the step.Constant filled by server. Possible values include:
      "Docker".
     :vartype type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStepType
     """
@@ -479,6 +595,8 @@ class BuildStepProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(BuildStepProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.type = None  # type: Optional[str]
@@ -494,7 +612,7 @@ class BuildStepPropertiesUpdateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the step.Constant filled by server.  Possible values include:
+    :ivar type: Required. The type of the step.Constant filled by server. Possible values include:
      "Docker".
     :vartype type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStepType
     """
@@ -515,6 +633,8 @@ class BuildStepPropertiesUpdateParameters(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(BuildStepPropertiesUpdateParameters, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -522,11 +642,11 @@ class BuildStepPropertiesUpdateParameters(msrest.serialization.Model):
 class BuildStepUpdateParameters(msrest.serialization.Model):
     """The parameters for updating a build step.
 
-    :param properties: The properties for updating a build step.
-    :type properties:
+    :ivar properties: The properties for updating a build step.
+    :vartype properties:
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStepPropertiesUpdateParameters
-    :param tags: A set of tags. The ARM resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. The ARM resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -541,6 +661,13 @@ class BuildStepUpdateParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword properties: The properties for updating a build step.
+        :paramtype properties:
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStepPropertiesUpdateParameters
+        :keyword tags: A set of tags. The ARM resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(BuildStepUpdateParameters, self).__init__(**kwargs)
         self.properties = properties
         self.tags = tags
@@ -559,11 +686,11 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: Required. The location of the resource. This cannot be changed after the
+    :ivar location: Required. The location of the resource. This cannot be changed after the
      resource is created.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
+    :vartype location: str
+    :ivar tags: A set of tags. The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -588,6 +715,13 @@ class Resource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The location of the resource. This cannot be changed after the
+         resource is created.
+        :paramtype location: str
+        :keyword tags: A set of tags. The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -609,29 +743,29 @@ class BuildTask(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: Required. The location of the resource. This cannot be changed after the
+    :ivar location: Required. The location of the resource. This cannot be changed after the
      resource is created.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
+    :vartype location: str
+    :ivar tags: A set of tags. The tags of the resource.
+    :vartype tags: dict[str, str]
     :ivar provisioning_state: The provisioning state of the build task. Possible values include:
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.ProvisioningState
     :ivar creation_date: The creation date of build task.
     :vartype creation_date: ~datetime.datetime
-    :param alias: The alternative updatable name for a build task.
-    :type alias: str
-    :param status: The current status of build task. Possible values include: "Disabled",
-     "Enabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildTaskStatus
-    :param source_repository: The properties that describes the source(code) for the build task.
-    :type source_repository:
+    :ivar alias: The alternative updatable name for a build task.
+    :vartype alias: str
+    :ivar status: The current status of build task. Possible values include: "Disabled", "Enabled".
+    :vartype status: str or
+     ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildTaskStatus
+    :ivar source_repository: The properties that describes the source(code) for the build task.
+    :vartype source_repository:
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.SourceRepositoryProperties
-    :param platform: The platform properties against which the build has to happen.
-    :type platform: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.PlatformProperties
-    :param timeout: Build timeout in seconds.
-    :type timeout: int
+    :ivar platform: The platform properties against which the build has to happen.
+    :vartype platform: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.PlatformProperties
+    :ivar timeout: Build timeout in seconds.
+    :vartype timeout: int
     """
 
     _validation = {
@@ -671,6 +805,27 @@ class BuildTask(Resource):
         timeout: Optional[int] = 3600,
         **kwargs
     ):
+        """
+        :keyword location: Required. The location of the resource. This cannot be changed after the
+         resource is created.
+        :paramtype location: str
+        :keyword tags: A set of tags. The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword alias: The alternative updatable name for a build task.
+        :paramtype alias: str
+        :keyword status: The current status of build task. Possible values include: "Disabled",
+         "Enabled".
+        :paramtype status: str or
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildTaskStatus
+        :keyword source_repository: The properties that describes the source(code) for the build task.
+        :paramtype source_repository:
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.SourceRepositoryProperties
+        :keyword platform: The platform properties against which the build has to happen.
+        :paramtype platform:
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.PlatformProperties
+        :keyword timeout: Build timeout in seconds.
+        :paramtype timeout: int
+        """
         super(BuildTask, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.creation_date = None
@@ -711,6 +866,8 @@ class QueueBuildRequest(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(QueueBuildRequest, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -724,8 +881,8 @@ class BuildTaskBuildRequest(QueueBuildRequest):
 
     :ivar type: Required. The type of the build request.Constant filled by server.
     :vartype type: str
-    :param build_task_name: Required. The name of build task against which build has to be queued.
-    :type build_task_name: str
+    :ivar build_task_name: Required. The name of build task against which build has to be queued.
+    :vartype build_task_name: str
     """
 
     _validation = {
@@ -744,6 +901,11 @@ class BuildTaskBuildRequest(QueueBuildRequest):
         build_task_name: str,
         **kwargs
     ):
+        """
+        :keyword build_task_name: Required. The name of build task against which build has to be
+         queued.
+        :paramtype build_task_name: str
+        """
         super(BuildTaskBuildRequest, self).__init__(**kwargs)
         self.type = 'BuildTask'  # type: str
         self.build_task_name = build_task_name
@@ -752,8 +914,8 @@ class BuildTaskBuildRequest(QueueBuildRequest):
 class BuildTaskFilter(msrest.serialization.Model):
     """The filter that can be used for listing build tasks.
 
-    :param alias: The alternative name for build task.
-    :type alias: str
+    :ivar alias: The alternative name for build task.
+    :vartype alias: str
     """
 
     _attribute_map = {
@@ -766,6 +928,10 @@ class BuildTaskFilter(msrest.serialization.Model):
         alias: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword alias: The alternative name for build task.
+        :paramtype alias: str
+        """
         super(BuildTaskFilter, self).__init__(**kwargs)
         self.alias = alias
 
@@ -773,10 +939,10 @@ class BuildTaskFilter(msrest.serialization.Model):
 class BuildTaskListResult(msrest.serialization.Model):
     """The collection of build tasks.
 
-    :param value: The collection value.
-    :type value: list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildTask]
-    :param next_link: The URI that can be used to request the next set of paged results.
-    :type next_link: str
+    :ivar value: The collection value.
+    :vartype value: list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildTask]
+    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -791,6 +957,12 @@ class BuildTaskListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection value.
+        :paramtype value: list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildTask]
+        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :paramtype next_link: str
+        """
         super(BuildTaskListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -799,19 +971,19 @@ class BuildTaskListResult(msrest.serialization.Model):
 class BuildTaskUpdateParameters(msrest.serialization.Model):
     """The parameters for updating a build task.
 
-    :param tags: A set of tags. The ARM resource tags.
-    :type tags: dict[str, str]
-    :param alias: The alternative updatable name for a build task.
-    :type alias: str
-    :param status: The current status of build task. Possible values include: "Disabled",
-     "Enabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildTaskStatus
-    :param platform: The platform properties against which the build has to happen.
-    :type platform: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.PlatformProperties
-    :param timeout: Build timeout in seconds.
-    :type timeout: int
-    :param source_repository: The properties that describes the source(code) for the build task.
-    :type source_repository:
+    :ivar tags: A set of tags. The ARM resource tags.
+    :vartype tags: dict[str, str]
+    :ivar alias: The alternative updatable name for a build task.
+    :vartype alias: str
+    :ivar status: The current status of build task. Possible values include: "Disabled", "Enabled".
+    :vartype status: str or
+     ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildTaskStatus
+    :ivar platform: The platform properties against which the build has to happen.
+    :vartype platform: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.PlatformProperties
+    :ivar timeout: Build timeout in seconds.
+    :vartype timeout: int
+    :ivar source_repository: The properties that describes the source(code) for the build task.
+    :vartype source_repository:
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.SourceRepositoryUpdateParameters
     """
 
@@ -839,6 +1011,24 @@ class BuildTaskUpdateParameters(msrest.serialization.Model):
         source_repository: Optional["SourceRepositoryUpdateParameters"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. The ARM resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword alias: The alternative updatable name for a build task.
+        :paramtype alias: str
+        :keyword status: The current status of build task. Possible values include: "Disabled",
+         "Enabled".
+        :paramtype status: str or
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildTaskStatus
+        :keyword platform: The platform properties against which the build has to happen.
+        :paramtype platform:
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.PlatformProperties
+        :keyword timeout: Build timeout in seconds.
+        :paramtype timeout: int
+        :keyword source_repository: The properties that describes the source(code) for the build task.
+        :paramtype source_repository:
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.SourceRepositoryUpdateParameters
+        """
         super(BuildTaskUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
         self.alias = alias
@@ -851,8 +1041,8 @@ class BuildTaskUpdateParameters(msrest.serialization.Model):
 class BuildUpdateParameters(msrest.serialization.Model):
     """The set of build properties that can be updated.
 
-    :param is_archive_enabled: The value that indicates whether archiving is enabled or not.
-    :type is_archive_enabled: bool
+    :ivar is_archive_enabled: The value that indicates whether archiving is enabled or not.
+    :vartype is_archive_enabled: bool
     """
 
     _attribute_map = {
@@ -865,6 +1055,10 @@ class BuildUpdateParameters(msrest.serialization.Model):
         is_archive_enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword is_archive_enabled: The value that indicates whether archiving is enabled or not.
+        :paramtype is_archive_enabled: bool
+        """
         super(BuildUpdateParameters, self).__init__(**kwargs)
         self.is_archive_enabled = is_archive_enabled
 
@@ -880,32 +1074,31 @@ class DockerBuildStep(BuildStepProperties):
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.ProvisioningState
-    :ivar type: Required. The type of the step.Constant filled by server.  Possible values include:
+    :ivar type: Required. The type of the step.Constant filled by server. Possible values include:
      "Docker".
     :vartype type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStepType
-    :param branch: The repository branch name.
-    :type branch: str
-    :param image_names: The fully qualified image names including the repository and tag.
-    :type image_names: list[str]
-    :param is_push_enabled: The value of this property indicates whether the image built should be
+    :ivar branch: The repository branch name.
+    :vartype branch: str
+    :ivar image_names: The fully qualified image names including the repository and tag.
+    :vartype image_names: list[str]
+    :ivar is_push_enabled: The value of this property indicates whether the image built should be
      pushed to the registry or not.
-    :type is_push_enabled: bool
-    :param no_cache: The value of this property indicates whether the image cache is enabled or
-     not.
-    :type no_cache: bool
-    :param docker_file_path: The Docker file path relative to the source control root.
-    :type docker_file_path: str
-    :param context_path: The relative context path for a docker build in the source.
-    :type context_path: str
-    :param build_arguments: The custom arguments for building this build step.
-    :type build_arguments:
+    :vartype is_push_enabled: bool
+    :ivar no_cache: The value of this property indicates whether the image cache is enabled or not.
+    :vartype no_cache: bool
+    :ivar docker_file_path: The Docker file path relative to the source control root.
+    :vartype docker_file_path: str
+    :ivar context_path: The relative context path for a docker build in the source.
+    :vartype context_path: str
+    :ivar build_arguments: The custom arguments for building this build step.
+    :vartype build_arguments:
      list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildArgument]
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
      list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BaseImageDependency]
-    :param base_image_trigger: The type of the auto trigger for base image dependency updates.
+    :ivar base_image_trigger: The type of the auto trigger for base image dependency updates.
      Possible values include: "All", "Runtime", "None".
-    :type base_image_trigger: str or
+    :vartype base_image_trigger: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BaseImageTriggerType
     """
 
@@ -942,6 +1135,29 @@ class DockerBuildStep(BuildStepProperties):
         base_image_trigger: Optional[Union[str, "BaseImageTriggerType"]] = None,
         **kwargs
     ):
+        """
+        :keyword branch: The repository branch name.
+        :paramtype branch: str
+        :keyword image_names: The fully qualified image names including the repository and tag.
+        :paramtype image_names: list[str]
+        :keyword is_push_enabled: The value of this property indicates whether the image built should
+         be pushed to the registry or not.
+        :paramtype is_push_enabled: bool
+        :keyword no_cache: The value of this property indicates whether the image cache is enabled or
+         not.
+        :paramtype no_cache: bool
+        :keyword docker_file_path: The Docker file path relative to the source control root.
+        :paramtype docker_file_path: str
+        :keyword context_path: The relative context path for a docker build in the source.
+        :paramtype context_path: str
+        :keyword build_arguments: The custom arguments for building this build step.
+        :paramtype build_arguments:
+         list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildArgument]
+        :keyword base_image_trigger: The type of the auto trigger for base image dependency updates.
+         Possible values include: "All", "Runtime", "None".
+        :paramtype base_image_trigger: str or
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BaseImageTriggerType
+        """
         super(DockerBuildStep, self).__init__(**kwargs)
         self.type = 'Docker'  # type: str
         self.branch = branch
@@ -962,29 +1178,28 @@ class DockerBuildStepUpdateParameters(BuildStepPropertiesUpdateParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the step.Constant filled by server.  Possible values include:
+    :ivar type: Required. The type of the step.Constant filled by server. Possible values include:
      "Docker".
     :vartype type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStepType
-    :param branch: The repository branch name.
-    :type branch: str
-    :param image_names: The fully qualified image names including the repository and tag.
-    :type image_names: list[str]
-    :param is_push_enabled: The value of this property indicates whether the image built should be
+    :ivar branch: The repository branch name.
+    :vartype branch: str
+    :ivar image_names: The fully qualified image names including the repository and tag.
+    :vartype image_names: list[str]
+    :ivar is_push_enabled: The value of this property indicates whether the image built should be
      pushed to the registry or not.
-    :type is_push_enabled: bool
-    :param no_cache: The value of this property indicates whether the image cache is enabled or
-     not.
-    :type no_cache: bool
-    :param docker_file_path: The Docker file path relative to the source control root.
-    :type docker_file_path: str
-    :param context_path: The relative context path for a docker build in the source.
-    :type context_path: str
-    :param build_arguments: The custom arguments for building this build step.
-    :type build_arguments:
+    :vartype is_push_enabled: bool
+    :ivar no_cache: The value of this property indicates whether the image cache is enabled or not.
+    :vartype no_cache: bool
+    :ivar docker_file_path: The Docker file path relative to the source control root.
+    :vartype docker_file_path: str
+    :ivar context_path: The relative context path for a docker build in the source.
+    :vartype context_path: str
+    :ivar build_arguments: The custom arguments for building this build step.
+    :vartype build_arguments:
      list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildArgument]
-    :param base_image_trigger: The type of the auto trigger for base image dependency updates.
+    :ivar base_image_trigger: The type of the auto trigger for base image dependency updates.
      Possible values include: "All", "Runtime", "None".
-    :type base_image_trigger: str or
+    :vartype base_image_trigger: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BaseImageTriggerType
     """
 
@@ -1017,6 +1232,29 @@ class DockerBuildStepUpdateParameters(BuildStepPropertiesUpdateParameters):
         base_image_trigger: Optional[Union[str, "BaseImageTriggerType"]] = None,
         **kwargs
     ):
+        """
+        :keyword branch: The repository branch name.
+        :paramtype branch: str
+        :keyword image_names: The fully qualified image names including the repository and tag.
+        :paramtype image_names: list[str]
+        :keyword is_push_enabled: The value of this property indicates whether the image built should
+         be pushed to the registry or not.
+        :paramtype is_push_enabled: bool
+        :keyword no_cache: The value of this property indicates whether the image cache is enabled or
+         not.
+        :paramtype no_cache: bool
+        :keyword docker_file_path: The Docker file path relative to the source control root.
+        :paramtype docker_file_path: str
+        :keyword context_path: The relative context path for a docker build in the source.
+        :paramtype context_path: str
+        :keyword build_arguments: The custom arguments for building this build step.
+        :paramtype build_arguments:
+         list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildArgument]
+        :keyword base_image_trigger: The type of the auto trigger for base image dependency updates.
+         Possible values include: "All", "Runtime", "None".
+        :paramtype base_image_trigger: str or
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BaseImageTriggerType
+        """
         super(DockerBuildStepUpdateParameters, self).__init__(**kwargs)
         self.type = 'Docker'  # type: str
         self.branch = branch
@@ -1032,16 +1270,16 @@ class DockerBuildStepUpdateParameters(BuildStepPropertiesUpdateParameters):
 class GitCommitTrigger(msrest.serialization.Model):
     """The git commit trigger that caused a build.
 
-    :param id: The unique ID of the trigger.
-    :type id: str
-    :param commit_id: The unique ID that identifies a commit.
-    :type commit_id: str
-    :param repository_url: The repository URL.
-    :type repository_url: str
-    :param branch_name: The branch name in the repository.
-    :type branch_name: str
-    :param provider_type: The source control provider type.
-    :type provider_type: str
+    :ivar id: The unique ID of the trigger.
+    :vartype id: str
+    :ivar commit_id: The unique ID that identifies a commit.
+    :vartype commit_id: str
+    :ivar repository_url: The repository URL.
+    :vartype repository_url: str
+    :ivar branch_name: The branch name in the repository.
+    :vartype branch_name: str
+    :ivar provider_type: The source control provider type.
+    :vartype provider_type: str
     """
 
     _attribute_map = {
@@ -1062,6 +1300,18 @@ class GitCommitTrigger(msrest.serialization.Model):
         provider_type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The unique ID of the trigger.
+        :paramtype id: str
+        :keyword commit_id: The unique ID that identifies a commit.
+        :paramtype commit_id: str
+        :keyword repository_url: The repository URL.
+        :paramtype repository_url: str
+        :keyword branch_name: The branch name in the repository.
+        :paramtype branch_name: str
+        :keyword provider_type: The source control provider type.
+        :paramtype provider_type: str
+        """
         super(GitCommitTrigger, self).__init__(**kwargs)
         self.id = id
         self.commit_id = commit_id
@@ -1073,14 +1323,14 @@ class GitCommitTrigger(msrest.serialization.Model):
 class ImageDescriptor(msrest.serialization.Model):
     """Properties for a registry image.
 
-    :param registry: The registry login server.
-    :type registry: str
-    :param repository: The repository name.
-    :type repository: str
-    :param tag: The tag name.
-    :type tag: str
-    :param digest: The sha256-based digest of the image manifest.
-    :type digest: str
+    :ivar registry: The registry login server.
+    :vartype registry: str
+    :ivar repository: The repository name.
+    :vartype repository: str
+    :ivar tag: The tag name.
+    :vartype tag: str
+    :ivar digest: The sha256-based digest of the image manifest.
+    :vartype digest: str
     """
 
     _attribute_map = {
@@ -1099,6 +1349,16 @@ class ImageDescriptor(msrest.serialization.Model):
         digest: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword registry: The registry login server.
+        :paramtype registry: str
+        :keyword repository: The repository name.
+        :paramtype repository: str
+        :keyword tag: The tag name.
+        :paramtype tag: str
+        :keyword digest: The sha256-based digest of the image manifest.
+        :paramtype digest: str
+        """
         super(ImageDescriptor, self).__init__(**kwargs)
         self.registry = registry
         self.repository = repository
@@ -1109,12 +1369,12 @@ class ImageDescriptor(msrest.serialization.Model):
 class ImageUpdateTrigger(msrest.serialization.Model):
     """The image update trigger that caused a build.
 
-    :param id: The unique ID of the trigger.
-    :type id: str
-    :param timestamp: The timestamp when the image update happened.
-    :type timestamp: ~datetime.datetime
-    :param images: The list of image updates that caused the build.
-    :type images: list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.ImageDescriptor]
+    :ivar id: The unique ID of the trigger.
+    :vartype id: str
+    :ivar timestamp: The timestamp when the image update happened.
+    :vartype timestamp: ~datetime.datetime
+    :ivar images: The list of image updates that caused the build.
+    :vartype images: list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.ImageDescriptor]
     """
 
     _attribute_map = {
@@ -1131,6 +1391,15 @@ class ImageUpdateTrigger(msrest.serialization.Model):
         images: Optional[List["ImageDescriptor"]] = None,
         **kwargs
     ):
+        """
+        :keyword id: The unique ID of the trigger.
+        :paramtype id: str
+        :keyword timestamp: The timestamp when the image update happened.
+        :paramtype timestamp: ~datetime.datetime
+        :keyword images: The list of image updates that caused the build.
+        :paramtype images:
+         list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.ImageDescriptor]
+        """
         super(ImageUpdateTrigger, self).__init__(**kwargs)
         self.id = id
         self.timestamp = timestamp
@@ -1142,11 +1411,11 @@ class PlatformProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param os_type: Required. The operating system type required for the build. Possible values
+    :ivar os_type: Required. The operating system type required for the build. Possible values
      include: "Windows", "Linux".
-    :type os_type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.OsType
-    :param cpu: The CPU configuration in terms of number of cores required for the build.
-    :type cpu: int
+    :vartype os_type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.OsType
+    :ivar cpu: The CPU configuration in terms of number of cores required for the build.
+    :vartype cpu: int
     """
 
     _validation = {
@@ -1165,6 +1434,13 @@ class PlatformProperties(msrest.serialization.Model):
         cpu: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword os_type: Required. The operating system type required for the build. Possible values
+         include: "Windows", "Linux".
+        :paramtype os_type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.OsType
+        :keyword cpu: The CPU configuration in terms of number of cores required for the build.
+        :paramtype cpu: int
+        """
         super(PlatformProperties, self).__init__(**kwargs)
         self.os_type = os_type
         self.cpu = cpu
@@ -1179,28 +1455,27 @@ class QuickBuildRequest(QueueBuildRequest):
 
     :ivar type: Required. The type of the build request.Constant filled by server.
     :vartype type: str
-    :param image_names: The fully qualified image names including the repository and tag.
-    :type image_names: list[str]
-    :param source_location: Required. The URL(absolute or relative) of the source that needs to be
+    :ivar image_names: The fully qualified image names including the repository and tag.
+    :vartype image_names: list[str]
+    :ivar source_location: Required. The URL(absolute or relative) of the source that needs to be
      built. For Docker build, it can be an URL to a tar or github repository as supported by Docker.
      If it is relative URL, the relative path should be obtained from calling getSourceUploadUrl
      API.
-    :type source_location: str
-    :param build_arguments: The collection of build arguments to be used.
-    :type build_arguments:
+    :vartype source_location: str
+    :ivar build_arguments: The collection of build arguments to be used.
+    :vartype build_arguments:
      list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildArgument]
-    :param is_push_enabled: The value of this property indicates whether the image built should be
+    :ivar is_push_enabled: The value of this property indicates whether the image built should be
      pushed to the registry or not.
-    :type is_push_enabled: bool
-    :param no_cache: The value of this property indicates whether the image cache is enabled or
-     not.
-    :type no_cache: bool
-    :param timeout: Build timeout in seconds.
-    :type timeout: int
-    :param platform: Required. The platform properties against which the build will happen.
-    :type platform: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.PlatformProperties
-    :param docker_file_path: Required. The Docker file path relative to the source location.
-    :type docker_file_path: str
+    :vartype is_push_enabled: bool
+    :ivar no_cache: The value of this property indicates whether the image cache is enabled or not.
+    :vartype no_cache: bool
+    :ivar timeout: Build timeout in seconds.
+    :vartype timeout: int
+    :ivar platform: Required. The platform properties against which the build will happen.
+    :vartype platform: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.PlatformProperties
+    :ivar docker_file_path: Required. The Docker file path relative to the source location.
+    :vartype docker_file_path: str
     """
 
     _validation = {
@@ -1236,6 +1511,32 @@ class QuickBuildRequest(QueueBuildRequest):
         timeout: Optional[int] = 3600,
         **kwargs
     ):
+        """
+        :keyword image_names: The fully qualified image names including the repository and tag.
+        :paramtype image_names: list[str]
+        :keyword source_location: Required. The URL(absolute or relative) of the source that needs to
+         be built. For Docker build, it can be an URL to a tar or github repository as supported by
+         Docker.
+         If it is relative URL, the relative path should be obtained from calling getSourceUploadUrl
+         API.
+        :paramtype source_location: str
+        :keyword build_arguments: The collection of build arguments to be used.
+        :paramtype build_arguments:
+         list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildArgument]
+        :keyword is_push_enabled: The value of this property indicates whether the image built should
+         be pushed to the registry or not.
+        :paramtype is_push_enabled: bool
+        :keyword no_cache: The value of this property indicates whether the image cache is enabled or
+         not.
+        :paramtype no_cache: bool
+        :keyword timeout: Build timeout in seconds.
+        :paramtype timeout: int
+        :keyword platform: Required. The platform properties against which the build will happen.
+        :paramtype platform:
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.PlatformProperties
+        :keyword docker_file_path: Required. The Docker file path relative to the source location.
+        :paramtype docker_file_path: str
+        """
         super(QuickBuildRequest, self).__init__(**kwargs)
         self.type = 'QuickBuild'  # type: str
         self.image_names = image_names
@@ -1253,16 +1554,16 @@ class SourceControlAuthInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param token_type: The type of Auth token. Possible values include: "PAT", "OAuth".
-    :type token_type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.TokenType
-    :param token: Required. The access token used to access the source control provider.
-    :type token: str
-    :param refresh_token: The refresh token used to refresh the access token.
-    :type refresh_token: str
-    :param scope: The scope of the access token.
-    :type scope: str
-    :param expires_in: Time in seconds that the token remains valid.
-    :type expires_in: int
+    :ivar token_type: The type of Auth token. Possible values include: "PAT", "OAuth".
+    :vartype token_type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.TokenType
+    :ivar token: Required. The access token used to access the source control provider.
+    :vartype token: str
+    :ivar refresh_token: The refresh token used to refresh the access token.
+    :vartype refresh_token: str
+    :ivar scope: The scope of the access token.
+    :vartype scope: str
+    :ivar expires_in: Time in seconds that the token remains valid.
+    :vartype expires_in: int
     """
 
     _validation = {
@@ -1287,6 +1588,19 @@ class SourceControlAuthInfo(msrest.serialization.Model):
         expires_in: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword token_type: The type of Auth token. Possible values include: "PAT", "OAuth".
+        :paramtype token_type: str or
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.TokenType
+        :keyword token: Required. The access token used to access the source control provider.
+        :paramtype token: str
+        :keyword refresh_token: The refresh token used to refresh the access token.
+        :paramtype refresh_token: str
+        :keyword scope: The scope of the access token.
+        :paramtype scope: str
+        :keyword expires_in: Time in seconds that the token remains valid.
+        :paramtype expires_in: int
+        """
         super(SourceControlAuthInfo, self).__init__(**kwargs)
         self.token_type = token_type
         self.token = token
@@ -1300,18 +1614,18 @@ class SourceRepositoryProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source_control_type: Required. The type of source control service. Possible values
+    :ivar source_control_type: Required. The type of source control service. Possible values
      include: "Github", "VisualStudioTeamService".
-    :type source_control_type: str or
+    :vartype source_control_type: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.SourceControlType
-    :param repository_url: Required. The full URL to the source code repository.
-    :type repository_url: str
-    :param is_commit_trigger_enabled: The value of this property indicates whether the source
+    :ivar repository_url: Required. The full URL to the source code repository.
+    :vartype repository_url: str
+    :ivar is_commit_trigger_enabled: The value of this property indicates whether the source
      control commit trigger is enabled or not.
-    :type is_commit_trigger_enabled: bool
-    :param source_control_auth_properties: The authorization properties for accessing the source
+    :vartype is_commit_trigger_enabled: bool
+    :ivar source_control_auth_properties: The authorization properties for accessing the source
      code repository.
-    :type source_control_auth_properties:
+    :vartype source_control_auth_properties:
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.SourceControlAuthInfo
     """
 
@@ -1336,6 +1650,21 @@ class SourceRepositoryProperties(msrest.serialization.Model):
         source_control_auth_properties: Optional["SourceControlAuthInfo"] = None,
         **kwargs
     ):
+        """
+        :keyword source_control_type: Required. The type of source control service. Possible values
+         include: "Github", "VisualStudioTeamService".
+        :paramtype source_control_type: str or
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.SourceControlType
+        :keyword repository_url: Required. The full URL to the source code repository.
+        :paramtype repository_url: str
+        :keyword is_commit_trigger_enabled: The value of this property indicates whether the source
+         control commit trigger is enabled or not.
+        :paramtype is_commit_trigger_enabled: bool
+        :keyword source_control_auth_properties: The authorization properties for accessing the source
+         code repository.
+        :paramtype source_control_auth_properties:
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.SourceControlAuthInfo
+        """
         super(SourceRepositoryProperties, self).__init__(**kwargs)
         self.source_control_type = source_control_type
         self.repository_url = repository_url
@@ -1346,13 +1675,13 @@ class SourceRepositoryProperties(msrest.serialization.Model):
 class SourceRepositoryUpdateParameters(msrest.serialization.Model):
     """The properties for updating the source code repository configuration.
 
-    :param source_control_auth_properties: The authorization properties for accessing the source
+    :ivar source_control_auth_properties: The authorization properties for accessing the source
      code repository.
-    :type source_control_auth_properties:
+    :vartype source_control_auth_properties:
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.SourceControlAuthInfo
-    :param is_commit_trigger_enabled: The value of this property indicates whether the source
+    :ivar is_commit_trigger_enabled: The value of this property indicates whether the source
      control commit trigger is enabled or not.
-    :type is_commit_trigger_enabled: bool
+    :vartype is_commit_trigger_enabled: bool
     """
 
     _attribute_map = {
@@ -1367,6 +1696,15 @@ class SourceRepositoryUpdateParameters(msrest.serialization.Model):
         is_commit_trigger_enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword source_control_auth_properties: The authorization properties for accessing the source
+         code repository.
+        :paramtype source_control_auth_properties:
+         ~azure.mgmt.containerregistry.v2018_02_01_preview.models.SourceControlAuthInfo
+        :keyword is_commit_trigger_enabled: The value of this property indicates whether the source
+         control commit trigger is enabled or not.
+        :paramtype is_commit_trigger_enabled: bool
+        """
         super(SourceRepositoryUpdateParameters, self).__init__(**kwargs)
         self.source_control_auth_properties = source_control_auth_properties
         self.is_commit_trigger_enabled = is_commit_trigger_enabled
@@ -1375,11 +1713,11 @@ class SourceRepositoryUpdateParameters(msrest.serialization.Model):
 class SourceUploadDefinition(msrest.serialization.Model):
     """The properties of a response to source upload request.
 
-    :param upload_url: The URL where the client can upload the source.
-    :type upload_url: str
-    :param relative_path: The relative path to the source. This is used to submit the subsequent
+    :ivar upload_url: The URL where the client can upload the source.
+    :vartype upload_url: str
+    :ivar relative_path: The relative path to the source. This is used to submit the subsequent
      queue build request.
-    :type relative_path: str
+    :vartype relative_path: str
     """
 
     _attribute_map = {
@@ -1394,6 +1732,13 @@ class SourceUploadDefinition(msrest.serialization.Model):
         relative_path: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword upload_url: The URL where the client can upload the source.
+        :paramtype upload_url: str
+        :keyword relative_path: The relative path to the source. This is used to submit the subsequent
+         queue build request.
+        :paramtype relative_path: str
+        """
         super(SourceUploadDefinition, self).__init__(**kwargs)
         self.upload_url = upload_url
         self.relative_path = relative_path

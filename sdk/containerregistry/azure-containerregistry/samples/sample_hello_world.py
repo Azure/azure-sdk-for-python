@@ -10,7 +10,8 @@
 FILE: sample_hello_world.py
 
 DESCRIPTION:
-    These samples demonstrate creating a ContainerRegistryClient and a ContainerRepository
+    This sample demonstrate creating a ContainerRegistryClient and iterating
+    through the collection of tags in the repository with anonymous access.
 
 USAGE:
     python sample_hello_world.py
@@ -26,24 +27,18 @@ from azure.containerregistry import ContainerRegistryClient
 from azure.identity import DefaultAzureCredential
 
 
-class CreateClients(object):
+class HelloWorld(object):
     def __init__(self):
         load_dotenv(find_dotenv())
 
-    def create_registry_client(self):
-        # Instantiate the ContainerRegistryClient
-        # [START create_registry_client]
-        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-        audience = "https://management.azure.com"
-        client = ContainerRegistryClient(account_url, DefaultAzureCredential(), audience=audience)
-        # [END create_registry_client]
-
     def basic_sample(self):
-        # Instantiate the client
-        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        # Instantiate an instance of ContainerRegistryClient
+        # [START create_registry_client]
         audience = "https://management.azure.com"
-        client = ContainerRegistryClient(account_url, DefaultAzureCredential(), audience=audience)
-        with client:
+        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]    
+        
+        with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience) as client:
+        # [END create_registry_client]
             # Iterate through all the repositories
             for repository_name in client.list_repository_names():
                 if repository_name == "hello-world":
@@ -56,6 +51,5 @@ class CreateClients(object):
 
 
 if __name__ == "__main__":
-    sample = CreateClients()
-    sample.create_registry_client()
+    sample = HelloWorld()
     sample.basic_sample()

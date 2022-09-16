@@ -28,5 +28,4 @@ async def send_message():
         async with client.get_queue_sender(QUEUE_NAME) as sender:
             await sender.send_messages([ServiceBusMessage("hello")])
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(send_message())
+asyncio.run(send_message())

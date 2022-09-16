@@ -24,7 +24,7 @@ class TableEntity(dict):
         return self._metadata
 
 
-class EdmType(str, Enum):
+class EdmType(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
     """
     Used by :class:`~.EntityProperty` to represent the type of the entity property
     to be stored by the Table service.
@@ -52,7 +52,7 @@ class EdmType(str, Enum):
     """ Represents a double. This type will be inferred for Python floating point numbers. """
 
     BOOLEAN = "Edm.Boolean"
-    """ Represents a boolean. This type will be inferred for Python bools. """
+    """ Represents a boolean. This type will be inferred for Python booleans. """
 
 
 EntityProperty = NamedTuple("EntityProperty", [("value", Any), ("edm_type", Union[str, EdmType])])

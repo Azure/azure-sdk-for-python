@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b5 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,23 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0b4 (2022-06-13)
+
+**Features**
+
+  - Support Atlas 2.2 APIs
+
+**Bugs Fixed**
+
+  - Add missing query parameter `includeTermHierarchy` for update term API
+  - Add missing query parameter `excludeRelationshipTypes` for get term API
+
+## 1.0.0b3 (2022-03-15)
+
+**Bugs Fixed**
+
+  - Fix `delete_by_guids` to get rid of bad request error #22487
 
 ## 1.0.0b2 (2021-09-29)
 

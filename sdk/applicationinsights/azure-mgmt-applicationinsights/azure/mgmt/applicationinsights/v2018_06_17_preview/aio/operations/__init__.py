@@ -7,7 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._workbooks_operations import WorkbooksOperations
+from ._operations import Operations
 
 __all__ = [
     'WorkbooksOperations',
+    'Operations',
 ]

@@ -46,8 +46,6 @@ class CertificateClient(KeyVaultClientBase):
         :mod:`azure.identity`
     :keyword api_version: version of the Key Vault API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.certificates.ApiVersion
-    :keyword transport: transport to use. Defaults to :class:`~azure.core.pipeline.transport.RequestsTransport`.
-    :paramtype transport: ~azure.core.pipeline.transport.HttpTransport
 
     Example:
         .. literalinclude:: ../tests/test_examples_certificates.py
@@ -414,7 +412,7 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def update_certificate_policy(self, certificate_name, policy, **kwargs):
         # type: (str, CertificatePolicy, **Any) -> CertificatePolicy
-        """Updates the policy for a certificate. Requires certificiates/update permission.
+        """Updates the policy for a certificate. Requires certificates/update permission.
 
         Set specified members in the certificate policy. Leaves others as null.
 

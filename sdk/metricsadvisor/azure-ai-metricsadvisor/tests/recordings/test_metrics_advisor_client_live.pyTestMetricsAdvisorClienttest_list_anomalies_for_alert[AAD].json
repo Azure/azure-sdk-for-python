@@ -1,0 +1,603 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.7.2 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1753",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:09:11 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=Ag0OyaGPd0pEibyG7M6Pa-LGLH8mEQAAAKaHTNkOAAAA; expires=Sat, 15-Jan-2022 01:09:11 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12261.15 - EUS ProdSlices",
+        "x-ms-request-id": "a4ea997d-add5-43b2-961f-f8be7e810c00"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/kerberos",
+        "tenant_region_scope": "WW",
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Cookie": "fpc=Ag0OyaGPd0pEibyG7M6Pa-LGLH8mEQAAAKaHTNkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.7.2 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "945",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:09:11 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=Ag0OyaGPd0pEibyG7M6Pa-LGLH8mEQAAAKaHTNkOAAAA; expires=Sat, 15-Jan-2022 01:09:12 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12261.14 - WUS2 ProdSlices",
+        "x-ms-request-id": "5fb05ce3-aaca-4e24-99e4-88ba802e0000"
+      },
+      "ResponseBody": {
+        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+        "api-version": "1.1",
+        "metadata": [
+          {
+            "preferred_network": "login.microsoftonline.com",
+            "preferred_cache": "login.windows.net",
+            "aliases": [
+              "login.microsoftonline.com",
+              "login.windows.net",
+              "login.microsoft.com",
+              "sts.windows.net"
+            ]
+          },
+          {
+            "preferred_network": "login.partner.microsoftonline.cn",
+            "preferred_cache": "login.partner.microsoftonline.cn",
+            "aliases": [
+              "login.partner.microsoftonline.cn",
+              "login.chinacloudapi.cn"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.de",
+            "preferred_cache": "login.microsoftonline.de",
+            "aliases": [
+              "login.microsoftonline.de"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.us",
+            "preferred_cache": "login.microsoftonline.us",
+            "aliases": [
+              "login.microsoftonline.us",
+              "login.usgovcloudapi.net"
+            ]
+          },
+          {
+            "preferred_network": "login-us.microsoftonline.com",
+            "preferred_cache": "login-us.microsoftonline.com",
+            "aliases": [
+              "login-us.microsoftonline.com"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations/metrics_advisor_anomaly_alert_configuration_id/alerts/metrics_advisor_alert_id/anomalies",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "c75543f1-5e0c-11ec-af6d-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "2c0cb031-c6ee-4372-967a-9f0941438716",
+        "Content-Length": "10283",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:09:13 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "140",
+        "X-Request-ID": "2c0cb031-c6ee-4372-967a-9f0941438716"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "anomalyStatus": "Active",
+              "value": 55791561.8,
+              "expectedValue": 52146711.57082515
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "anomalyStatus": "Active",
+              "value": 17763.6,
+              "expectedValue": 14939.115446142221
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "Miami",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "anomalyStatus": "Active",
+              "value": 44140.0,
+              "expectedValue": 40165.21522314834
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "anomalyStatus": "Active",
+              "value": 3637272.6,
+              "expectedValue": 3457374.1827957006
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "Tianjin",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "anomalyStatus": "Active",
+              "value": 18544.0,
+              "expectedValue": 18573.49119556344
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "anomalyStatus": "Active",
+              "value": 313939.2,
+              "expectedValue": 302983.7349080156
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "anomalyStatus": "Active",
+              "value": 5713417.0,
+              "expectedValue": 5388312.2772086505
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "anomalyStatus": "Active",
+              "value": 30842491.0,
+              "expectedValue": 29220589.251529176
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "anomalyStatus": "Active",
+              "value": 65120708.60000002,
+              "expectedValue": 60928226.58873364
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "New York",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "anomalyStatus": "Active",
+              "value": 2118757.4,
+              "expectedValue": 1990588.000879956
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "anomalyStatus": "Active",
+              "value": 15958.6,
+              "expectedValue": 14801.412700077344
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "Seoul",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "anomalyStatus": "Active",
+              "value": 3929462.2,
+              "expectedValue": 3747040.46482205
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "anomalyStatus": "Active",
+              "value": 50246.6,
+              "expectedValue": 47199.46740307129
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "Cairo",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "anomalyStatus": "Active",
+              "value": 99554.2,
+              "expectedValue": 98790.40651653314
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "__SUM__"
+            },
+            "property": {
+              "anomalySeverity": "High",
+              "anomalyStatus": "Active",
+              "value": 36613489.2,
+              "expectedValue": 34723916.07924643
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "__SUM__",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "anomalyStatus": "Active",
+              "value": 2129348.4,
+              "expectedValue": 2047309.0353815206
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Office Products"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "anomalyStatus": "Active",
+              "value": 1465438.4,
+              "expectedValue": 1406478.7844450518
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "anomalyStatus": "Active",
+              "value": 3390417.8,
+              "expectedValue": 3219749.022546579
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Shoes Handbags \u0026 Sunglasses"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "anomalyStatus": "Active",
+              "value": 1819508.4,
+              "expectedValue": 1702650.3766832482
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "New York",
+              "category": "Handmade"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "anomalyStatus": "Active",
+              "value": 172878.8,
+              "expectedValue": 162880.98413497326
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "Istanbul",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Low",
+              "anomalyStatus": "Active",
+              "value": 10715.2,
+              "expectedValue": 9806.569582296583
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "timestamp": "2021-09-07T00:00:00Z",
+            "createdTime": "2021-09-08T00:09:22.716Z",
+            "modifiedTime": "2021-09-08T00:09:22.716Z",
+            "dimension": {
+              "region": "Karachi",
+              "category": "Home \u0026 Garden"
+            },
+            "property": {
+              "anomalySeverity": "Medium",
+              "anomalyStatus": "Active",
+              "value": 915052.0,
+              "expectedValue": 860381.6543449762
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

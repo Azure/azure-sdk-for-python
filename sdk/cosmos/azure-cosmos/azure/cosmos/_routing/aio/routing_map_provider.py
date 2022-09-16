@@ -54,7 +54,7 @@ class PartitionKeyRangeCache(object):
         overlapping partition key ranges.
 
         :param str collection_link: The name of the collection.
-        :param list partition_key_range: List of partition key range.
+        :param list partition_key_ranges: List of partition key range.
         :return: List of overlapping partition key ranges.
         :rtype: list
         """
@@ -127,7 +127,7 @@ def _subtract_range(r, partition_key_range):
 
 class SmartRoutingMapProvider(PartitionKeyRangeCache):
     """
-    Efficiently uses PartitionKeyRangeCach and minimizes the unnecessary
+    Efficiently uses PartitionKeyRangeCache and minimizes the unnecessary
     invocation of CollectionRoutingMap.get_overlapping_ranges()
     """
 

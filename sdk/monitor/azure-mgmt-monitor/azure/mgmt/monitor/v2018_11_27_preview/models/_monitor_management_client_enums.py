@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class DataStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DataStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of VM Insights data from the resource. When reported as ``present`` the data array
     will contain information about the data containers to which data for the specified resource is
     being routed.
@@ -35,7 +19,7 @@ class DataStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PRESENT = "present"
     NOT_PRESENT = "notPresent"
 
-class OnboardingStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OnboardingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The onboarding status for the resource. Note that, a higher level scope, e.g., resource group
     or subscription, is considered onboarded if at least one resource under it is onboarded.
     """

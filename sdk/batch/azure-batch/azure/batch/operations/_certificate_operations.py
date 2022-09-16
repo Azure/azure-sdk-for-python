@@ -24,7 +24,7 @@ class CertificateOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2021-06-01.14.0".
+    :ivar api_version: The API version to use for the request. Constant value: "2022-01-01.15.0".
     """
 
     models = models
@@ -34,7 +34,7 @@ class CertificateOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2021-06-01.14.0"
+        self.api_version = "2022-01-01.15.0"
 
         self.config = config
 

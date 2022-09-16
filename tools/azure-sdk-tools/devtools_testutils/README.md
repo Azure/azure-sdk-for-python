@@ -14,10 +14,18 @@
 * [`StorageAccountPreparer`][storage_account_preparer]:
 * [`CachedStorageAccountPreparer`][cached_storage_account_preparer]:
 * [`KeyVaultPreparer`][kv_preparer]:
-* [`PowerShellPreparer`][powershell_preparer]: Abstract preparer for delivering secrets from environment variables to individual tests
+* [`EnvironmentVariableLoader`][env_loader]: Abstract preparer for delivering secrets from environment variables to individual tests
 * [`RetryCounter`][retry_counter]: Object for counting retries on a request.
 * [`ResponseCallback`][response_callback]: Object for mocking response callbacks.
-* [`FakeCredential`][fake_credential]: Fake credential used for authenticating in playback mode.
+* [`FakeCredential`][fake_credentials]: Fake credential used for authenticating in playback mode.
+* [`AsyncFakeCredential`][fake_credentials_async]: Fake async credential used for authenticating in playback mode.
+
+## Fake test credentials
+
+`devtools_testutils` also provides a central location for storing and fetching fake credentials for use in tests:
+[`fake_credentials.py`][fake_credentials]. Using credentials from this file helps us keep the repository free from
+credential leaks and false warnings from the [Credential Scanner (CredScan)][credscan] tool. For more information about
+the `azure-sdk-for-python`'s use of CredScan, please refer to the [CredScan monitoring guide][credscan_guide].
 
 
 <!-- LINKS -->
@@ -34,7 +42,10 @@
 [storage_account_preparer]: https://github.com/Azure/azure-sdk-for-python/blob/520ea7175e10a971eae9d3e6cd0735efd80447b1/tools/azure-sdk-tools/devtools_testutils/storage_testcase.py#L29
 [cached_storage_account_preparer]: https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/storage_testcase.py#L140
 [kv_preparer]: https://github.com/Azure/azure-sdk-for-python/blob/520ea7175e10a971eae9d3e6cd0735efd80447b1/tools/azure-sdk-tools/devtools_testutils/keyvault_preparer.py#L49
-[powershell_preparer]: https://github.com/Azure/azure-sdk-for-python/blob/520ea7175e10a971eae9d3e6cd0735efd80447b1/tools/azure-sdk-tools/devtools_testutils/powershell_preparer.py#L14
+[env_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py#L15
 [retry_counter]: https://github.com/Azure/azure-sdk-for-python/blob/ab7e7f1a7b2a6d7255abdc77a40e2d6a86c9de0a/tools/azure-sdk-tools/devtools_testutils/helpers.py#L6
 [response_callback]: https://github.com/Azure/azure-sdk-for-python/blob/ab7e7f1a7b2a6d7255abdc77a40e2d6a86c9de0a/tools/azure-sdk-tools/devtools_testutils/helpers.py#L14
-[fake_credential]: https://github.com/Azure/azure-sdk-for-python/blob/65ffc49fbdd0f4f83e68eb5c8e0c6d293f0569cd/tools/azure-sdk-tools/devtools_testutils/fake_credential.py
+[fake_credentials]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/fake_credentials.py
+[fake_credentials_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/fake_credentials_async.py
+[credscan]: https://aka.ms/credscan
+[credscan_guide]: https://github.com/Azure/azure-sdk-for-python/blob/18611efee7ecf4e591d59b61ba3762d6bdd86304/doc/dev/credscan_process.md

@@ -1,5 +1,41 @@
 # Release History
 
+## 2.0.0 (2022-04-20)
+
+**Features**
+
+  - Added operation ReservationOperations.list_all
+  - Added operation ReservationOrderOperations.change_directory
+  - Model CalculatePriceResponseProperties has a new parameter grand_total
+  - Model CalculatePriceResponseProperties has a new parameter is_tax_included
+  - Model CalculatePriceResponseProperties has a new parameter net_total
+  - Model CalculatePriceResponseProperties has a new parameter tax_total
+  - Model Catalog has a new parameter capabilities
+  - Model Catalog has a new parameter msrp
+  - Model Catalog has a new parameter size
+  - Model Catalog has a new parameter tier
+  - Model CurrentQuotaLimit has a new parameter id
+  - Model CurrentQuotaLimit has a new parameter name
+  - Model CurrentQuotaLimit has a new parameter type
+  - Model CurrentQuotaLimitBase has a new parameter id
+  - Model CurrentQuotaLimitBase has a new parameter name
+  - Model CurrentQuotaLimitBase has a new parameter type
+  - Model OperationResponse has a new parameter is_data_action
+  - Model OperationResponse has a new parameter properties
+  - Model QuotaRequestOneResourceSubmitResponse has a new parameter id_properties_id
+  - Model QuotaRequestOneResourceSubmitResponse has a new parameter name_properties_name
+  - Model QuotaRequestOneResourceSubmitResponse has a new parameter type_properties_type
+  - Model ReservationOrderResponse has a new parameter benefit_start_time
+  - Model ReservationOrderResponse has a new parameter system_data
+  - Model ReservationResponse has a new parameter kind
+  - Model ReservationResponse has a new parameter system_data
+
+**Breaking changes**
+
+  - Operation AzureReservationAPIOperationsMixin.get_catalog has a new parameter offer_id
+  - Operation AzureReservationAPIOperationsMixin.get_catalog has a new parameter plan_id
+  - Operation AzureReservationAPIOperationsMixin.get_catalog has a new parameter publisher_id
+
 ## 1.0.0 (2021-05-20)
 
 **Features**

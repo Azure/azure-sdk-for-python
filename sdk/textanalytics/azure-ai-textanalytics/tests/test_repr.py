@@ -1,4 +1,3 @@
-# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -190,7 +189,7 @@ def mined_opinion(target_sentiment, assessment_sentiment):
         target=target_sentiment[0],
         assessments=[assessment_sentiment[0]]
     )
-    model_repr = "MinedOpinion(target={}, assessments=[{}])".format(target_sentiment[1], assessment_sentiment[1])
+    model_repr = f"MinedOpinion(target={target_sentiment[1]}, assessments=[{assessment_sentiment[1]}])"
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -314,7 +313,7 @@ def healthcare_relation_role(healthcare_entity):
         entity=healthcare_entity[0]
     )
 
-    model_repr = "HealthcareRelationRole(name=ROLE, entity={})".format(healthcare_entity[1])
+    model_repr = f"HealthcareRelationRole(name=ROLE, entity={healthcare_entity[1]})"
 
     assert repr(model) == model_repr
     return model, model_repr
@@ -326,7 +325,7 @@ def healthcare_relation(healthcare_relation_role):
         roles=[healthcare_relation_role[0]]
     )
 
-    model_repr = "HealthcareRelation(relation_type=DOSAGE, roles=[{}])".format(healthcare_relation_role[1])
+    model_repr = f"HealthcareRelation(relation_type=DOSAGE, roles=[{healthcare_relation_role[1]}])"
 
     assert repr(model) == model_repr
     return model, model_repr
@@ -358,7 +357,7 @@ class TestRepr():
             error=text_analytics_error[0],
             is_error=True
         )
-        model_repr = "DocumentError(id=1, error={}, is_error=True)".format(text_analytics_error[1])
+        model_repr = f"DocumentError(id=1, error={text_analytics_error[1]}, is_error=True)"
 
         assert repr(model) == model_repr
 
@@ -390,7 +389,7 @@ class TestRepr():
 
         assert repr(model) == model_repr
 
-    def test_recognized_linked_entites_result(self, linked_entity, text_analytics_warning, text_document_statistics):
+    def test_recognized_linked_entities_result(self, linked_entity, text_analytics_warning, text_document_statistics):
         model = _models.RecognizeLinkedEntitiesResult(
             id="1",
             entities=[linked_entity[0]],

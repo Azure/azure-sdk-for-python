@@ -28,7 +28,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class MixedRealityStsClient(object):
+class MixedRealityStsClient(object): # pylint: disable=client-accepts-api-version-keyword
     """ A client to interact with the Mixed Reality STS service.
 
     :param str account_id:

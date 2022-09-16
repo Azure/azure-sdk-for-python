@@ -1,0 +1,73 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "185",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "EntityLinking",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "Test passing cls to endpoint",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "725a5622-3fa2-4019-9f8d-3a8dc19e157b",
+        "Content-Length": "371",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
+        "Date": "Wed, 08 Jun 2022 01:44:32 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "10"
+      },
+      "ResponseBody": {
+        "kind": "EntityLinkingResults",
+        "results": {
+          "documents": [
+            {
+              "id": "0",
+              "entities": [
+                {
+                  "bingId": "9d84a0ad-fb96-8089-b2e7-9bdb0ee2551e",
+                  "name": ".test",
+                  "matches": [
+                    {
+                      "text": "Test",
+                      "offset": 0,
+                      "length": 4,
+                      "confidenceScore": 0.02
+                    }
+                  ],
+                  "language": "en",
+                  "id": ".test",
+                  "url": "https://en.wikipedia.org/wiki/.test",
+                  "dataSource": "Wikipedia"
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-06-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

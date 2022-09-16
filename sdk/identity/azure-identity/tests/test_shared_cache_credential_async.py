@@ -130,6 +130,20 @@ async def test_user_agent():
     await credential.get_token("scope")
 
 
+@pytest.mark.asyncio
+async def test_tenant_id():
+    transport = async_validating_transport(
+        requests=[Request(required_headers={"User-Agent": USER_AGENT})],
+        responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
+
+    credential = SharedTokenCacheCredential(
+        _cache=populated_cache(get_account_event("test@user", "uid", "utid")), transport=transport
+    )
+
+    await credential.get_token("scope", tenant_id="tenant_id")
+
+
 @pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
 def test_authority(authority):
     """the credential should accept an authority, with or without scheme, as an argument or environment variable"""

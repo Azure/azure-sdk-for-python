@@ -14,10 +14,10 @@ from typing import TYPE_CHECKING
 from azure.core import PipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from msrest import Deserializer, Serializer
 
 from ._configuration import TextAnalyticsClientConfiguration
 from ._operations_mixin import TextAnalyticsClientOperationsMixin
+from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -43,9 +43,9 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com).
+    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com). Required.
     :type endpoint: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -54,11 +54,15 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = 'v3.2-preview.2'
+    DEFAULT_API_VERSION = 'v3.1'
     _PROFILE_TAG = "azure.ai.textanalytics.TextAnalyticsClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
+            'analyze_text': '2022-05-01',
+            'analyze_text_job_status': '2022-05-01',
+            'begin_analyze_text_cancel_job': '2022-05-01',
+            'begin_analyze_text_submit_job': '2022-05-01',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -71,12 +75,12 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
-        if api_version == 'v3.0':
+        if api_version == '2022-05-01':
+            base_url = '{Endpoint}/language'
+        elif api_version == 'v3.0':
             base_url = '{Endpoint}/text/analytics/v3.0'
         elif api_version == 'v3.1':
             base_url = '{Endpoint}/text/analytics/v3.1'
-        elif api_version == 'v3.2-preview.2':
-            base_url = '{Endpoint}/text/analytics/v3.2-preview.2'
         else:
             raise ValueError("API version {} is not available".format(api_version))
         self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
@@ -94,18 +98,18 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
+           * 2022-05-01: :mod:`v2022_05_01.models<azure.ai.textanalytics.v2022_05_01.models>`
            * v3.0: :mod:`v3_0.models<azure.ai.textanalytics.v3_0.models>`
            * v3.1: :mod:`v3_1.models<azure.ai.textanalytics.v3_1.models>`
-           * v3.2-preview.2: :mod:`v3_2_preview_2.models<azure.ai.textanalytics.v3_2_preview_2.models>`
         """
-        if api_version == 'v3.0':
+        if api_version == '2022-05-01':
+            from .v2022_05_01 import models
+            return models
+        elif api_version == 'v3.0':
             from .v3_0 import models
             return models
         elif api_version == 'v3.1':
             from .v3_1 import models
-            return models
-        elif api_version == 'v3.2-preview.2':
-            from .v3_2_preview_2 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 

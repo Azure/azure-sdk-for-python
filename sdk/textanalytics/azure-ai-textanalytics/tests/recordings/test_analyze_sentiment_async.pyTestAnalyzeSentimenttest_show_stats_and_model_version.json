@@ -1,0 +1,198 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01\u0026showStats=true",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "370",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "SentimentAnalysis",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "56",
+              "text": ":)",
+              "language": "en"
+            },
+            {
+              "id": "0",
+              "text": ":(",
+              "language": "en"
+            },
+            {
+              "id": "22",
+              "text": "",
+              "language": "en"
+            },
+            {
+              "id": "19",
+              "text": ":P",
+              "language": "en"
+            },
+            {
+              "id": "1",
+              "text": ":D",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "modelVersion": "latest",
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "502342fa-7b5b-4c27-9188-8cefcb0e3a0d",
+        "Content-Length": "1624",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=4,CognitiveServices.TextAnalytics.TextRecords=4",
+        "Date": "Wed, 08 Jun 2022 01:29:32 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "26"
+      },
+      "ResponseBody": {
+        "kind": "SentimentAnalysisResults",
+        "results": {
+          "statistics": {
+            "documentsCount": 5,
+            "validDocumentsCount": 4,
+            "erroneousDocumentsCount": 1,
+            "transactionsCount": 4
+          },
+          "documents": [
+            {
+              "id": "56",
+              "sentiment": "positive",
+              "statistics": {
+                "charactersCount": 2,
+                "transactionsCount": 1
+              },
+              "confidenceScores": {
+                "positive": 0.75,
+                "neutral": 0.2,
+                "negative": 0.05
+              },
+              "sentences": [
+                {
+                  "sentiment": "positive",
+                  "confidenceScores": {
+                    "positive": 0.75,
+                    "neutral": 0.2,
+                    "negative": 0.05
+                  },
+                  "offset": 0,
+                  "length": 2,
+                  "text": ":)"
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "0",
+              "sentiment": "positive",
+              "statistics": {
+                "charactersCount": 2,
+                "transactionsCount": 1
+              },
+              "confidenceScores": {
+                "positive": 0.38,
+                "neutral": 0.3,
+                "negative": 0.31
+              },
+              "sentences": [
+                {
+                  "sentiment": "positive",
+                  "confidenceScores": {
+                    "positive": 0.38,
+                    "neutral": 0.3,
+                    "negative": 0.31
+                  },
+                  "offset": 0,
+                  "length": 2,
+                  "text": ":("
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "19",
+              "sentiment": "neutral",
+              "statistics": {
+                "charactersCount": 2,
+                "transactionsCount": 1
+              },
+              "confidenceScores": {
+                "positive": 0.14,
+                "neutral": 0.81,
+                "negative": 0.05
+              },
+              "sentences": [
+                {
+                  "sentiment": "neutral",
+                  "confidenceScores": {
+                    "positive": 0.14,
+                    "neutral": 0.81,
+                    "negative": 0.05
+                  },
+                  "offset": 0,
+                  "length": 2,
+                  "text": ":P"
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "1",
+              "sentiment": "positive",
+              "statistics": {
+                "charactersCount": 2,
+                "transactionsCount": 1
+              },
+              "confidenceScores": {
+                "positive": 0.82,
+                "neutral": 0.14,
+                "negative": 0.04
+              },
+              "sentences": [
+                {
+                  "sentiment": "positive",
+                  "confidenceScores": {
+                    "positive": 0.82,
+                    "neutral": 0.14,
+                    "negative": 0.04
+                  },
+                  "offset": 0,
+                  "length": 2,
+                  "text": ":D"
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [
+            {
+              "id": "22",
+              "error": {
+                "code": "InvalidArgument",
+                "message": "Invalid Document in request.",
+                "innererror": {
+                  "code": "InvalidDocument",
+                  "message": "Document text is empty."
+                }
+              }
+            }
+          ],
+          "modelVersion": "2021-10-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

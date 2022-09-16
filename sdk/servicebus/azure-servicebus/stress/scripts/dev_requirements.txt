@@ -1,0 +1,6 @@
+aiohttp>=3.0; python_version >= '3.5'
+opencensus-ext-azure
+psutil
+pytest
+azure-servicebus
+python-dotenv

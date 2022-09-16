@@ -1,0 +1,28 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs(\u00271000\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=none",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "e8e50328-7fc3-11ec-a90a-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Thu, 27 Jan 2022 22:53:13 GMT",
+        "elapsed-time": "5",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "e8e50328-7fc3-11ec-a90a-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

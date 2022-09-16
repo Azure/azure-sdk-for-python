@@ -11,17 +11,33 @@ from ._application_type_versions_operations import ApplicationTypeVersionsOperat
 from ._applications_operations import ApplicationsOperations
 from ._services_operations import ServicesOperations
 from ._managed_clusters_operations import ManagedClustersOperations
+from ._managed_az_resiliency_status_operations import ManagedAzResiliencyStatusOperations
 from ._managed_cluster_version_operations import ManagedClusterVersionOperations
+from ._managed_unsupported_vm_sizes_operations import ManagedUnsupportedVMSizesOperations
+from ._operation_status_operations import OperationStatusOperations
+from ._operation_results_operations import OperationResultsOperations
 from ._operations import Operations
 from ._node_types_operations import NodeTypesOperations
+from ._node_type_skus_operations import NodeTypeSkusOperations
+
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ApplicationTypesOperations',
-    'ApplicationTypeVersionsOperations',
-    'ApplicationsOperations',
-    'ServicesOperations',
-    'ManagedClustersOperations',
-    'ManagedClusterVersionOperations',
-    'Operations',
-    'NodeTypesOperations',
+    "ApplicationTypesOperations",
+    "ApplicationTypeVersionsOperations",
+    "ApplicationsOperations",
+    "ServicesOperations",
+    "ManagedClustersOperations",
+    "ManagedAzResiliencyStatusOperations",
+    "ManagedClusterVersionOperations",
+    "ManagedUnsupportedVMSizesOperations",
+    "OperationStatusOperations",
+    "OperationResultsOperations",
+    "Operations",
+    "NodeTypesOperations",
+    "NodeTypeSkusOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -56,7 +55,9 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType]):
         continuation_token: str,
         **kwargs: Any
     ) -> "AsyncDocumentTranslationLROPoller":
-
+        """
+        :meta private:
+        """
         (
             client,
             initial_response,
@@ -71,7 +72,7 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
 
     def __init__(self, *args, **kwargs):
         self._cont_token_response = kwargs.pop("cont_token_response")
-        super(AsyncDocumentTranslationLROPollingMethod, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @property
     def _current_body(self) -> _TranslationStatus:
@@ -82,20 +83,20 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
             "Operation-Location"
         ].split("/batches/")[1]
 
-    def finished(self):
+    def finished(self) -> bool:
         """Is this polling finished?
         :rtype: bool
         """
         return self._finished(self.status())
 
     @staticmethod
-    def _finished(status):
+    def _finished(status) -> bool:
         if hasattr(status, "value"):
             status = status.value
         return str(status).lower() in _FINISHED
 
     @staticmethod
-    def _failed(status):
+    def _failed(status) -> bool:
         if hasattr(status, "value"):
             status = status.value
         return str(status).lower() in _FAILED
@@ -122,7 +123,7 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
 
         return client, self._cont_token_response, deserialization_callback
 
-    async def _poll(self):  # pylint:disable=invalid-overridden-method
+    async def _poll(self) -> None:
         """Poll status of operation so long as operation is incomplete and
         we have an endpoint to query.
 

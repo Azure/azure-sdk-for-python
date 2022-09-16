@@ -16,7 +16,7 @@ the target tag should only contain files from one folder:
 
 ![](one_folder.png)
 
-If your tag contains files from different folders, you need to define some split tags. For example: `ApplicationInsights` has [Tag: package-2021-11-01](https://github.com/Azure/azure-rest-api-specs/tree/main/specification/applicationinsights/resource-manager#tag-package-2021-11-01), but it contains different folders. If you want to publish the package for the tag, you need to split it to different tags: [[applicationinsights\] python multiapi config by RAY-316 · Pull Request #16799 · Azure/azure-rest-api-specs (github.com)](https://github.com/Azure/azure-rest-api-specs/pull/16799/files)
+If your tag contains files from different folders, you need to define some split tags. For example: `ApplicationInsights` has [Tag: package-2021-11-01](https://github.com/Azure/azure-rest-api-specs/tree/main/specification/applicationinsights/resource-manager#tag-package-2021-11-01), but it contains different folders. If you want to publish the package for the tag, you need to split it to different tags: [sample](https://github.com/Azure/azure-rest-api-specs/pull/16799/files)
 
 ![](different_folders.png)
 

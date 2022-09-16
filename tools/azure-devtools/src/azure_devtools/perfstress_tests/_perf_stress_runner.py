@@ -8,6 +8,7 @@ import asyncio
 import time
 import inspect
 import logging
+import math
 import os
 import pkgutil
 import sys
@@ -16,6 +17,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from ._perf_stress_base import _PerfTestABC
 from ._batch_perf_test import BatchPerfTest
+from ._event_perf_test import EventPerfTest
 from ._perf_stress_test import PerfStressTest
 from ._repeated_timer import RepeatedTimer
 
@@ -120,6 +122,7 @@ class _PerfStressRunner:
         self.logger.info("")
 
     def _discover_tests(self, test_folder_path):
+        base_classes = [PerfStressTest, BatchPerfTest, EventPerfTest]
         self._test_classes = {}
         if os.path.isdir(os.path.join(test_folder_path, 'tests')):
             test_folder_path = os.path.join(test_folder_path, 'tests')
@@ -136,7 +139,7 @@ class _PerfStressRunner:
                 if name.startswith("_"):
                     continue
                 if inspect.isclass(value):
-                    if issubclass(value, _PerfTestABC) and value not in [PerfStressTest, BatchPerfTest]:
+                    if issubclass(value, _PerfTestABC) and value not in base_classes:
                         self.logger.info("Loaded test class: {}".format(name))
                         self._test_classes[name] = value
 
@@ -205,8 +208,11 @@ class _PerfStressRunner:
             seconds_per_operation = 1 / operations_per_second
             weighted_average_seconds = total_operations / operations_per_second
             self.logger.info(
-                "Completed {:,} operations in a weighted-average of {:,.2f}s ({:,.2f} ops/s, {:,.3f} s/op)".format(
-                    total_operations, weighted_average_seconds, operations_per_second, seconds_per_operation
+                "Completed {:,} operations in a weighted-average of {}s ({} ops/s, {} s/op)".format(
+                    total_operations,
+                    self._format_number(weighted_average_seconds, 4),
+                    self._format_number(operations_per_second, 4),
+                    self._format_number(seconds_per_operation, 4)
                 )
             )
         else:
@@ -224,3 +230,31 @@ class _PerfStressRunner:
 
         self._operation_status_tracker = total_operations
         self.logger.info("{}\t\t{}\t\t{:.2f}".format(current_operations, total_operations, average_operations))
+
+    def _format_number(self, value, min_significant_digits):
+        """
+        Formats a number with a minimum number of significant digits.
+        Digits to the left of the decimal point are always significant.
+
+        This function has been ported from .NET for cross-language consistency.
+
+        Examples:
+        - _format_number(0, 4) -> "0.000"
+        - _format_number(12345, 4) -> "12,345"
+        - _format_number(1.2345, 4) -> "1.235"
+        - _format_number(0.00012345, 4) -> "0.0001235"
+        """
+
+        # Special case since log(0) is undefined
+        if value == 0:
+            return ("{:." + str(min_significant_digits - 1) + "f}").format(value)
+
+        log = math.log10(abs(value))
+        significant_digits = max(math.ceil(log), min_significant_digits)
+
+        divisor = 10 ** (math.ceil(log) - significant_digits)
+        rounded = divisor * round(value / divisor)
+
+        decimals = max(0, significant_digits - math.floor(log) - 1)
+
+        return ("{:,." + str(decimals) + "f}").format(rounded)

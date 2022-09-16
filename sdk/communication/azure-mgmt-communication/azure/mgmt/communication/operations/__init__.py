@@ -7,11 +7,13 @@
 # --------------------------------------------------------------------------
 
 from ._operations import Operations
-from ._communication_service_operations import CommunicationServiceOperations
-from ._operation_statuses_operations import OperationStatusesOperations
+from ._communication_services_operations import CommunicationServicesOperations
+from ._domains_operations import DomainsOperations
+from ._email_services_operations import EmailServicesOperations
 
 __all__ = [
     'Operations',
-    'CommunicationServiceOperations',
-    'OperationStatusesOperations',
+    'CommunicationServicesOperations',
+    'DomainsOperations',
+    'EmailServicesOperations',
 ]

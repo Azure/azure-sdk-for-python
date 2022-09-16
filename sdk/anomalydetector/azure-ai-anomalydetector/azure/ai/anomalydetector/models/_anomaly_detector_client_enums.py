@@ -6,35 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AlignMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """An optional field, indicates how we align different variables into the same time-range which is
-    required by the model.{Inner, Outer}
+class AlignMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """An optional field, indicating how we align different variables to the same time-range. Either
+    Inner or Outer.
     """
 
     INNER = "Inner"
     OUTER = "Outer"
 
-class AnomalyDetectorErrorCodes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AnomalyDetectorErrorCodes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The error code.
     """
 
@@ -47,9 +32,11 @@ class AnomalyDetectorErrorCodes(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     INVALID_JSON_FORMAT = "InvalidJsonFormat"
     REQUIRED_GRANULARITY = "RequiredGranularity"
     REQUIRED_SERIES = "RequiredSeries"
+    INVALID_IMPUTE_MODE = "InvalidImputeMode"
+    INVALID_IMPUTE_FIXED_VALUE = "InvalidImputeFixedValue"
 
-class DetectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Multivariate anomaly detection status
+class DetectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Status of detection results. One of CREATED, RUNNING, READY, and FAILED.
     """
 
     CREATED = "CREATED"
@@ -57,19 +44,30 @@ class DetectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     READY = "READY"
     FAILED = "FAILED"
 
-class FillNAMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """An optional field, indicates how missed values will be filled with. Can not be set to NotFill,
-    when alignMode is Outer.{Previous, Subsequent, Linear, Zero, Fix, NotFill}
+class FillNAMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """An optional field, indicating how missing values will be filled. One of Previous, Subsequent,
+    Linear, Zero, Fixed, and NotFill. Cannot be set to NotFill, when the alignMode is Outer.
     """
 
     PREVIOUS = "Previous"
     SUBSEQUENT = "Subsequent"
     LINEAR = "Linear"
     ZERO = "Zero"
-    PAD = "Pad"
+    FIXED = "Fixed"
     NOT_FILL = "NotFill"
 
-class ModelStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ImputeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Define the impute method, can be one of auto, previous, linear, fixed, zero, notFill.
+    """
+
+    AUTO = "auto"
+    PREVIOUS = "previous"
+    LINEAR = "linear"
+    FIXED = "fixed"
+    ZERO = "zero"
+    NOT_FILL = "notFill"
+
+class ModelStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Model training status.
     """
 
@@ -78,7 +76,7 @@ class ModelStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     READY = "READY"
     FAILED = "FAILED"
 
-class TimeGranularity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TimeGranularity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Optional argument, can be one of yearly, monthly, weekly, daily, hourly, minutely, secondly,
     microsecond or none. If granularity is not present, it will be none by default. If granularity
     is none, the timestamp property in time series point can be absent.

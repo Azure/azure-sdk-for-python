@@ -19,17 +19,17 @@ class Alias(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param name: The alias name.
-    :type name: str
-    :param paths: The paths for an alias.
-    :type paths: list[~azure.mgmt.resource.policy.v2020_09_01.models.AliasPath]
-    :param type: The type of the alias. Possible values include: "NotSpecified", "PlainText",
+    :ivar name: The alias name.
+    :vartype name: str
+    :ivar paths: The paths for an alias.
+    :vartype paths: list[~azure.mgmt.resource.policy.v2020_09_01.models.AliasPath]
+    :ivar type: The type of the alias. Possible values include: "NotSpecified", "PlainText",
      "Mask".
-    :type type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.AliasType
-    :param default_path: The default path for an alias.
-    :type default_path: str
-    :param default_pattern: The default pattern for an alias.
-    :type default_pattern: ~azure.mgmt.resource.policy.v2020_09_01.models.AliasPattern
+    :vartype type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.AliasType
+    :ivar default_path: The default path for an alias.
+    :vartype default_path: str
+    :ivar default_pattern: The default pattern for an alias.
+    :vartype default_pattern: ~azure.mgmt.resource.policy.v2020_09_01.models.AliasPattern
     :ivar default_metadata: The default alias path metadata. Applies to the default path and to any
      alias path that doesn't have metadata.
     :vartype default_metadata: ~azure.mgmt.resource.policy.v2020_09_01.models.AliasPathMetadata
@@ -58,6 +58,19 @@ class Alias(msrest.serialization.Model):
         default_pattern: Optional["AliasPattern"] = None,
         **kwargs
     ):
+        """
+        :keyword name: The alias name.
+        :paramtype name: str
+        :keyword paths: The paths for an alias.
+        :paramtype paths: list[~azure.mgmt.resource.policy.v2020_09_01.models.AliasPath]
+        :keyword type: The type of the alias. Possible values include: "NotSpecified", "PlainText",
+         "Mask".
+        :paramtype type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.AliasType
+        :keyword default_path: The default path for an alias.
+        :paramtype default_path: str
+        :keyword default_pattern: The default pattern for an alias.
+        :paramtype default_pattern: ~azure.mgmt.resource.policy.v2020_09_01.models.AliasPattern
+        """
         super(Alias, self).__init__(**kwargs)
         self.name = name
         self.paths = paths
@@ -72,12 +85,12 @@ class AliasPath(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param path: The path of an alias.
-    :type path: str
-    :param api_versions: The API versions.
-    :type api_versions: list[str]
-    :param pattern: The pattern for an alias path.
-    :type pattern: ~azure.mgmt.resource.policy.v2020_09_01.models.AliasPattern
+    :ivar path: The path of an alias.
+    :vartype path: str
+    :ivar api_versions: The API versions.
+    :vartype api_versions: list[str]
+    :ivar pattern: The pattern for an alias path.
+    :vartype pattern: ~azure.mgmt.resource.policy.v2020_09_01.models.AliasPattern
     :ivar metadata: The metadata of the alias path. If missing, fall back to the default metadata
      of the alias.
     :vartype metadata: ~azure.mgmt.resource.policy.v2020_09_01.models.AliasPathMetadata
@@ -102,6 +115,14 @@ class AliasPath(msrest.serialization.Model):
         pattern: Optional["AliasPattern"] = None,
         **kwargs
     ):
+        """
+        :keyword path: The path of an alias.
+        :paramtype path: str
+        :keyword api_versions: The API versions.
+        :paramtype api_versions: list[str]
+        :keyword pattern: The pattern for an alias path.
+        :paramtype pattern: ~azure.mgmt.resource.policy.v2020_09_01.models.AliasPattern
+        """
         super(AliasPath, self).__init__(**kwargs)
         self.path = path
         self.api_versions = api_versions
@@ -136,6 +157,8 @@ class AliasPathMetadata(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AliasPathMetadata, self).__init__(**kwargs)
         self.type = None
         self.attributes = None
@@ -144,12 +167,12 @@ class AliasPathMetadata(msrest.serialization.Model):
 class AliasPattern(msrest.serialization.Model):
     """The type of the pattern for an alias path.
 
-    :param phrase: The alias pattern phrase.
-    :type phrase: str
-    :param variable: The alias pattern variable.
-    :type variable: str
-    :param type: The type of alias pattern. Possible values include: "NotSpecified", "Extract".
-    :type type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.AliasPatternType
+    :ivar phrase: The alias pattern phrase.
+    :vartype phrase: str
+    :ivar variable: The alias pattern variable.
+    :vartype variable: str
+    :ivar type: The type of alias pattern. Possible values include: "NotSpecified", "Extract".
+    :vartype type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.AliasPatternType
     """
 
     _attribute_map = {
@@ -166,6 +189,14 @@ class AliasPattern(msrest.serialization.Model):
         type: Optional[Union[str, "AliasPatternType"]] = None,
         **kwargs
     ):
+        """
+        :keyword phrase: The alias pattern phrase.
+        :paramtype phrase: str
+        :keyword variable: The alias pattern variable.
+        :paramtype variable: str
+        :keyword type: The type of alias pattern. Possible values include: "NotSpecified", "Extract".
+        :paramtype type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.AliasPatternType
+        """
         super(AliasPattern, self).__init__(**kwargs)
         self.phrase = phrase
         self.variable = variable
@@ -175,10 +206,10 @@ class AliasPattern(msrest.serialization.Model):
 class DataEffect(msrest.serialization.Model):
     """The data effect definition.
 
-    :param name: The data effect name.
-    :type name: str
-    :param details_schema: The data effect details schema.
-    :type details_schema: any
+    :ivar name: The data effect name.
+    :vartype name: str
+    :ivar details_schema: The data effect details schema.
+    :vartype details_schema: any
     """
 
     _attribute_map = {
@@ -193,6 +224,12 @@ class DataEffect(msrest.serialization.Model):
         details_schema: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword name: The data effect name.
+        :paramtype name: str
+        :keyword details_schema: The data effect details schema.
+        :paramtype details_schema: any
+        """
         super(DataEffect, self).__init__(**kwargs)
         self.name = name
         self.details_schema = details_schema
@@ -201,18 +238,18 @@ class DataEffect(msrest.serialization.Model):
 class DataManifestCustomResourceFunctionDefinition(msrest.serialization.Model):
     """The custom resource function definition.
 
-    :param name: The function name as it will appear in the policy rule. eg - 'vault'.
-    :type name: str
-    :param fully_qualified_resource_type: The fully qualified control plane resource type that this
+    :ivar name: The function name as it will appear in the policy rule. eg - 'vault'.
+    :vartype name: str
+    :ivar fully_qualified_resource_type: The fully qualified control plane resource type that this
      function represents. eg - 'Microsoft.KeyVault/vaults'.
-    :type fully_qualified_resource_type: str
-    :param default_properties: The top-level properties that can be selected on the function's
+    :vartype fully_qualified_resource_type: str
+    :ivar default_properties: The top-level properties that can be selected on the function's
      output. eg - [ "name", "location" ] if vault().name and vault().location are supported.
-    :type default_properties: list[str]
-    :param allow_custom_properties: A value indicating whether the custom properties within the
+    :vartype default_properties: list[str]
+    :ivar allow_custom_properties: A value indicating whether the custom properties within the
      property bag are allowed. Needs api-version to be specified in the policy rule eg -
      vault('2019-06-01').
-    :type allow_custom_properties: bool
+    :vartype allow_custom_properties: bool
     """
 
     _attribute_map = {
@@ -231,6 +268,20 @@ class DataManifestCustomResourceFunctionDefinition(msrest.serialization.Model):
         allow_custom_properties: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword name: The function name as it will appear in the policy rule. eg - 'vault'.
+        :paramtype name: str
+        :keyword fully_qualified_resource_type: The fully qualified control plane resource type that
+         this function represents. eg - 'Microsoft.KeyVault/vaults'.
+        :paramtype fully_qualified_resource_type: str
+        :keyword default_properties: The top-level properties that can be selected on the function's
+         output. eg - [ "name", "location" ] if vault().name and vault().location are supported.
+        :paramtype default_properties: list[str]
+        :keyword allow_custom_properties: A value indicating whether the custom properties within the
+         property bag are allowed. Needs api-version to be specified in the policy rule eg -
+         vault('2019-06-01').
+        :paramtype allow_custom_properties: bool
+        """
         super(DataManifestCustomResourceFunctionDefinition, self).__init__(**kwargs)
         self.name = name
         self.fully_qualified_resource_type = fully_qualified_resource_type
@@ -249,24 +300,24 @@ class DataPolicyManifest(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The type of the resource (Microsoft.Authorization/dataPolicyManifests).
     :vartype type: str
-    :param namespaces: The list of namespaces for the data policy manifest.
-    :type namespaces: list[str]
-    :param policy_mode: The policy mode of the data policy manifest.
-    :type policy_mode: str
-    :param is_built_in_only: A value indicating whether policy mode is allowed only in built-in
+    :ivar namespaces: The list of namespaces for the data policy manifest.
+    :vartype namespaces: list[str]
+    :ivar policy_mode: The policy mode of the data policy manifest.
+    :vartype policy_mode: str
+    :ivar is_built_in_only: A value indicating whether policy mode is allowed only in built-in
      definitions.
-    :type is_built_in_only: bool
-    :param resource_type_aliases: An array of resource type aliases.
-    :type resource_type_aliases:
+    :vartype is_built_in_only: bool
+    :ivar resource_type_aliases: An array of resource type aliases.
+    :vartype resource_type_aliases:
      list[~azure.mgmt.resource.policy.v2020_09_01.models.ResourceTypeAliases]
-    :param effects: The effect definition.
-    :type effects: list[~azure.mgmt.resource.policy.v2020_09_01.models.DataEffect]
-    :param field_values: The non-alias field accessor values that can be used in the policy rule.
-    :type field_values: list[str]
-    :param standard: The standard resource functions (subscription and/or resourceGroup).
-    :type standard: list[str]
-    :param custom: An array of data manifest custom resource definition.
-    :type custom:
+    :ivar effects: The effect definition.
+    :vartype effects: list[~azure.mgmt.resource.policy.v2020_09_01.models.DataEffect]
+    :ivar field_values: The non-alias field accessor values that can be used in the policy rule.
+    :vartype field_values: list[str]
+    :ivar standard: The standard resource functions (subscription and/or resourceGroup).
+    :vartype standard: list[str]
+    :ivar custom: An array of data manifest custom resource definition.
+    :vartype custom:
      list[~azure.mgmt.resource.policy.v2020_09_01.models.DataManifestCustomResourceFunctionDefinition]
     """
 
@@ -303,6 +354,27 @@ class DataPolicyManifest(msrest.serialization.Model):
         custom: Optional[List["DataManifestCustomResourceFunctionDefinition"]] = None,
         **kwargs
     ):
+        """
+        :keyword namespaces: The list of namespaces for the data policy manifest.
+        :paramtype namespaces: list[str]
+        :keyword policy_mode: The policy mode of the data policy manifest.
+        :paramtype policy_mode: str
+        :keyword is_built_in_only: A value indicating whether policy mode is allowed only in built-in
+         definitions.
+        :paramtype is_built_in_only: bool
+        :keyword resource_type_aliases: An array of resource type aliases.
+        :paramtype resource_type_aliases:
+         list[~azure.mgmt.resource.policy.v2020_09_01.models.ResourceTypeAliases]
+        :keyword effects: The effect definition.
+        :paramtype effects: list[~azure.mgmt.resource.policy.v2020_09_01.models.DataEffect]
+        :keyword field_values: The non-alias field accessor values that can be used in the policy rule.
+        :paramtype field_values: list[str]
+        :keyword standard: The standard resource functions (subscription and/or resourceGroup).
+        :paramtype standard: list[str]
+        :keyword custom: An array of data manifest custom resource definition.
+        :paramtype custom:
+         list[~azure.mgmt.resource.policy.v2020_09_01.models.DataManifestCustomResourceFunctionDefinition]
+        """
         super(DataPolicyManifest, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -320,10 +392,10 @@ class DataPolicyManifest(msrest.serialization.Model):
 class DataPolicyManifestListResult(msrest.serialization.Model):
     """List of data policy manifests.
 
-    :param value: An array of data policy manifests.
-    :type value: list[~azure.mgmt.resource.policy.v2020_09_01.models.DataPolicyManifest]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: An array of data policy manifests.
+    :vartype value: list[~azure.mgmt.resource.policy.v2020_09_01.models.DataPolicyManifest]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -338,6 +410,12 @@ class DataPolicyManifestListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: An array of data policy manifests.
+        :paramtype value: list[~azure.mgmt.resource.policy.v2020_09_01.models.DataPolicyManifest]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(DataPolicyManifestListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -368,6 +446,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -411,6 +491,8 @@ class ErrorResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -428,9 +510,9 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of the resource identity.
     :vartype tenant_id: str
-    :param type: The identity type. This is the only required field when adding a system assigned
+    :ivar type: The identity type. This is the only required field when adding a system assigned
      identity to a resource. Possible values include: "SystemAssigned", "None".
-    :type type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.ResourceIdentityType
+    :vartype type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.ResourceIdentityType
     """
 
     _validation = {
@@ -450,6 +532,11 @@ class Identity(msrest.serialization.Model):
         type: Optional[Union[str, "ResourceIdentityType"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: The identity type. This is the only required field when adding a system assigned
+         identity to a resource. Possible values include: "SystemAssigned", "None".
+        :paramtype type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.ResourceIdentityType
+        """
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
@@ -461,15 +548,15 @@ class NonComplianceMessage(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param message: Required. A message that describes why a resource is non-compliant with the
+    :ivar message: Required. A message that describes why a resource is non-compliant with the
      policy. This is shown in 'deny' error messages and on resource's non-compliant compliance
      results.
-    :type message: str
-    :param policy_definition_reference_id: The policy definition reference ID within a policy set
+    :vartype message: str
+    :ivar policy_definition_reference_id: The policy definition reference ID within a policy set
      definition the message is intended for. This is only applicable if the policy assignment
      assigns a policy set definition. If this is not provided the message applies to all policies
      assigned by this policy assignment.
-    :type policy_definition_reference_id: str
+    :vartype policy_definition_reference_id: str
     """
 
     _validation = {
@@ -488,6 +575,17 @@ class NonComplianceMessage(msrest.serialization.Model):
         policy_definition_reference_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword message: Required. A message that describes why a resource is non-compliant with the
+         policy. This is shown in 'deny' error messages and on resource's non-compliant compliance
+         results.
+        :paramtype message: str
+        :keyword policy_definition_reference_id: The policy definition reference ID within a policy set
+         definition the message is intended for. This is only applicable if the policy assignment
+         assigns a policy set definition. If this is not provided the message applies to all policies
+         assigned by this policy assignment.
+        :paramtype policy_definition_reference_id: str
+        """
         super(NonComplianceMessage, self).__init__(**kwargs)
         self.message = message
         self.policy_definition_reference_id = policy_definition_reference_id
@@ -496,15 +594,15 @@ class NonComplianceMessage(msrest.serialization.Model):
 class ParameterDefinitionsValue(msrest.serialization.Model):
     """The definition of a parameter that can be provided to the policy.
 
-    :param type: The data type of the parameter. Possible values include: "String", "Array",
+    :ivar type: The data type of the parameter. Possible values include: "String", "Array",
      "Object", "Boolean", "Integer", "Float", "DateTime".
-    :type type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.ParameterType
-    :param allowed_values: The allowed values for the parameter.
-    :type allowed_values: list[any]
-    :param default_value: The default value for the parameter if no value is provided.
-    :type default_value: any
-    :param metadata: General metadata for the parameter.
-    :type metadata:
+    :vartype type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.ParameterType
+    :ivar allowed_values: The allowed values for the parameter.
+    :vartype allowed_values: list[any]
+    :ivar default_value: The default value for the parameter if no value is provided.
+    :vartype default_value: any
+    :ivar metadata: General metadata for the parameter.
+    :vartype metadata:
      ~azure.mgmt.resource.policy.v2020_09_01.models.ParameterDefinitionsValueMetadata
     """
 
@@ -524,6 +622,18 @@ class ParameterDefinitionsValue(msrest.serialization.Model):
         metadata: Optional["ParameterDefinitionsValueMetadata"] = None,
         **kwargs
     ):
+        """
+        :keyword type: The data type of the parameter. Possible values include: "String", "Array",
+         "Object", "Boolean", "Integer", "Float", "DateTime".
+        :paramtype type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.ParameterType
+        :keyword allowed_values: The allowed values for the parameter.
+        :paramtype allowed_values: list[any]
+        :keyword default_value: The default value for the parameter if no value is provided.
+        :paramtype default_value: any
+        :keyword metadata: General metadata for the parameter.
+        :paramtype metadata:
+         ~azure.mgmt.resource.policy.v2020_09_01.models.ParameterDefinitionsValueMetadata
+        """
         super(ParameterDefinitionsValue, self).__init__(**kwargs)
         self.type = type
         self.allowed_values = allowed_values
@@ -534,20 +644,20 @@ class ParameterDefinitionsValue(msrest.serialization.Model):
 class ParameterDefinitionsValueMetadata(msrest.serialization.Model):
     """General metadata for the parameter.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param display_name: The display name for the parameter.
-    :type display_name: str
-    :param description: The description of the parameter.
-    :type description: str
-    :param strong_type: Used when assigning the policy definition through the portal. Provides a
+    :vartype additional_properties: dict[str, any]
+    :ivar display_name: The display name for the parameter.
+    :vartype display_name: str
+    :ivar description: The description of the parameter.
+    :vartype description: str
+    :ivar strong_type: Used when assigning the policy definition through the portal. Provides a
      context aware list of values for the user to choose from.
-    :type strong_type: str
-    :param assign_permissions: Set to true to have Azure portal create role assignments on the
+    :vartype strong_type: str
+    :ivar assign_permissions: Set to true to have Azure portal create role assignments on the
      resource ID or resource scope value of this parameter during policy assignment. This property
      is useful in case you wish to assign permissions outside the assignment scope.
-    :type assign_permissions: bool
+    :vartype assign_permissions: bool
     """
 
     _attribute_map = {
@@ -568,6 +678,22 @@ class ParameterDefinitionsValueMetadata(msrest.serialization.Model):
         assign_permissions: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword display_name: The display name for the parameter.
+        :paramtype display_name: str
+        :keyword description: The description of the parameter.
+        :paramtype description: str
+        :keyword strong_type: Used when assigning the policy definition through the portal. Provides a
+         context aware list of values for the user to choose from.
+        :paramtype strong_type: str
+        :keyword assign_permissions: Set to true to have Azure portal create role assignments on the
+         resource ID or resource scope value of this parameter during policy assignment. This property
+         is useful in case you wish to assign permissions outside the assignment scope.
+        :paramtype assign_permissions: bool
+        """
         super(ParameterDefinitionsValueMetadata, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.display_name = display_name
@@ -579,8 +705,8 @@ class ParameterDefinitionsValueMetadata(msrest.serialization.Model):
 class ParameterValuesValue(msrest.serialization.Model):
     """The value of a parameter.
 
-    :param value: The value of the parameter.
-    :type value: any
+    :ivar value: The value of the parameter.
+    :vartype value: any
     """
 
     _attribute_map = {
@@ -593,6 +719,10 @@ class ParameterValuesValue(msrest.serialization.Model):
         value: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword value: The value of the parameter.
+        :paramtype value: any
+        """
         super(ParameterValuesValue, self).__init__(**kwargs)
         self.value = value
 
@@ -608,35 +738,36 @@ class PolicyAssignment(msrest.serialization.Model):
     :vartype type: str
     :ivar name: The name of the policy assignment.
     :vartype name: str
-    :param location: The location of the policy assignment. Only required when utilizing managed
+    :ivar location: The location of the policy assignment. Only required when utilizing managed
      identity.
-    :type location: str
-    :param identity: The managed identity associated with the policy assignment.
-    :type identity: ~azure.mgmt.resource.policy.v2020_09_01.models.Identity
-    :param display_name: The display name of the policy assignment.
-    :type display_name: str
-    :param policy_definition_id: The ID of the policy definition or policy set definition being
+    :vartype location: str
+    :ivar identity: The managed identity associated with the policy assignment.
+    :vartype identity: ~azure.mgmt.resource.policy.v2020_09_01.models.Identity
+    :ivar display_name: The display name of the policy assignment.
+    :vartype display_name: str
+    :ivar policy_definition_id: The ID of the policy definition or policy set definition being
      assigned.
-    :type policy_definition_id: str
+    :vartype policy_definition_id: str
     :ivar scope: The scope for the policy assignment.
     :vartype scope: str
-    :param not_scopes: The policy's excluded scopes.
-    :type not_scopes: list[str]
-    :param parameters: The parameter values for the assigned policy rule. The keys are the
-     parameter names.
-    :type parameters: dict[str,
+    :ivar not_scopes: The policy's excluded scopes.
+    :vartype not_scopes: list[str]
+    :ivar parameters: The parameter values for the assigned policy rule. The keys are the parameter
+     names.
+    :vartype parameters: dict[str,
      ~azure.mgmt.resource.policy.v2020_09_01.models.ParameterValuesValue]
-    :param description: This message will be part of response in case of policy violation.
-    :type description: str
-    :param metadata: The policy assignment metadata. Metadata is an open ended object and is
+    :ivar description: This message will be part of response in case of policy violation.
+    :vartype description: str
+    :ivar metadata: The policy assignment metadata. Metadata is an open ended object and is
      typically a collection of key value pairs.
-    :type metadata: any
-    :param enforcement_mode: The policy assignment enforcement mode. Possible values are Default
-     and DoNotEnforce. Possible values include: "Default", "DoNotEnforce". Default value: "Default".
-    :type enforcement_mode: str or ~azure.mgmt.resource.policy.v2020_09_01.models.EnforcementMode
-    :param non_compliance_messages: The messages that describe why a resource is non-compliant with
+    :vartype metadata: any
+    :ivar enforcement_mode: The policy assignment enforcement mode. Possible values are Default and
+     DoNotEnforce. Possible values include: "Default", "DoNotEnforce". Default value: "Default".
+    :vartype enforcement_mode: str or
+     ~azure.mgmt.resource.policy.v2020_09_01.models.EnforcementMode
+    :ivar non_compliance_messages: The messages that describe why a resource is non-compliant with
      the policy.
-    :type non_compliance_messages:
+    :vartype non_compliance_messages:
      list[~azure.mgmt.resource.policy.v2020_09_01.models.NonComplianceMessage]
     """
 
@@ -679,6 +810,37 @@ class PolicyAssignment(msrest.serialization.Model):
         non_compliance_messages: Optional[List["NonComplianceMessage"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: The location of the policy assignment. Only required when utilizing managed
+         identity.
+        :paramtype location: str
+        :keyword identity: The managed identity associated with the policy assignment.
+        :paramtype identity: ~azure.mgmt.resource.policy.v2020_09_01.models.Identity
+        :keyword display_name: The display name of the policy assignment.
+        :paramtype display_name: str
+        :keyword policy_definition_id: The ID of the policy definition or policy set definition being
+         assigned.
+        :paramtype policy_definition_id: str
+        :keyword not_scopes: The policy's excluded scopes.
+        :paramtype not_scopes: list[str]
+        :keyword parameters: The parameter values for the assigned policy rule. The keys are the
+         parameter names.
+        :paramtype parameters: dict[str,
+         ~azure.mgmt.resource.policy.v2020_09_01.models.ParameterValuesValue]
+        :keyword description: This message will be part of response in case of policy violation.
+        :paramtype description: str
+        :keyword metadata: The policy assignment metadata. Metadata is an open ended object and is
+         typically a collection of key value pairs.
+        :paramtype metadata: any
+        :keyword enforcement_mode: The policy assignment enforcement mode. Possible values are Default
+         and DoNotEnforce. Possible values include: "Default", "DoNotEnforce". Default value: "Default".
+        :paramtype enforcement_mode: str or
+         ~azure.mgmt.resource.policy.v2020_09_01.models.EnforcementMode
+        :keyword non_compliance_messages: The messages that describe why a resource is non-compliant
+         with the policy.
+        :paramtype non_compliance_messages:
+         list[~azure.mgmt.resource.policy.v2020_09_01.models.NonComplianceMessage]
+        """
         super(PolicyAssignment, self).__init__(**kwargs)
         self.id = None
         self.type = None
@@ -699,10 +861,10 @@ class PolicyAssignment(msrest.serialization.Model):
 class PolicyAssignmentListResult(msrest.serialization.Model):
     """List of policy assignments.
 
-    :param value: An array of policy assignments.
-    :type value: list[~azure.mgmt.resource.policy.v2020_09_01.models.PolicyAssignment]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: An array of policy assignments.
+    :vartype value: list[~azure.mgmt.resource.policy.v2020_09_01.models.PolicyAssignment]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -717,6 +879,12 @@ class PolicyAssignmentListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: An array of policy assignments.
+        :paramtype value: list[~azure.mgmt.resource.policy.v2020_09_01.models.PolicyAssignment]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(PolicyAssignmentListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -733,24 +901,24 @@ class PolicyDefinition(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The type of the resource (Microsoft.Authorization/policyDefinitions).
     :vartype type: str
-    :param policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
+    :ivar policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
      Custom, and Static. Possible values include: "NotSpecified", "BuiltIn", "Custom", "Static".
-    :type policy_type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.PolicyType
-    :param mode: The policy definition mode. Some examples are All, Indexed,
+    :vartype policy_type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.PolicyType
+    :ivar mode: The policy definition mode. Some examples are All, Indexed,
      Microsoft.KeyVault.Data.
-    :type mode: str
-    :param display_name: The display name of the policy definition.
-    :type display_name: str
-    :param description: The policy definition description.
-    :type description: str
-    :param policy_rule: The policy rule.
-    :type policy_rule: any
-    :param metadata: The policy definition metadata.  Metadata is an open ended object and is
+    :vartype mode: str
+    :ivar display_name: The display name of the policy definition.
+    :vartype display_name: str
+    :ivar description: The policy definition description.
+    :vartype description: str
+    :ivar policy_rule: The policy rule.
+    :vartype policy_rule: any
+    :ivar metadata: The policy definition metadata.  Metadata is an open ended object and is
      typically a collection of key value pairs.
-    :type metadata: any
-    :param parameters: The parameter definitions for parameters used in the policy rule. The keys
+    :vartype metadata: any
+    :ivar parameters: The parameter definitions for parameters used in the policy rule. The keys
      are the parameter names.
-    :type parameters: dict[str,
+    :vartype parameters: dict[str,
      ~azure.mgmt.resource.policy.v2020_09_01.models.ParameterDefinitionsValue]
     """
 
@@ -785,6 +953,27 @@ class PolicyDefinition(msrest.serialization.Model):
         parameters: Optional[Dict[str, "ParameterDefinitionsValue"]] = None,
         **kwargs
     ):
+        """
+        :keyword policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
+         Custom, and Static. Possible values include: "NotSpecified", "BuiltIn", "Custom", "Static".
+        :paramtype policy_type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.PolicyType
+        :keyword mode: The policy definition mode. Some examples are All, Indexed,
+         Microsoft.KeyVault.Data.
+        :paramtype mode: str
+        :keyword display_name: The display name of the policy definition.
+        :paramtype display_name: str
+        :keyword description: The policy definition description.
+        :paramtype description: str
+        :keyword policy_rule: The policy rule.
+        :paramtype policy_rule: any
+        :keyword metadata: The policy definition metadata.  Metadata is an open ended object and is
+         typically a collection of key value pairs.
+        :paramtype metadata: any
+        :keyword parameters: The parameter definitions for parameters used in the policy rule. The keys
+         are the parameter names.
+        :paramtype parameters: dict[str,
+         ~azure.mgmt.resource.policy.v2020_09_01.models.ParameterDefinitionsValue]
+        """
         super(PolicyDefinition, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -803,17 +992,17 @@ class PolicyDefinitionGroup(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the group.
-    :type name: str
-    :param display_name: The group's display name.
-    :type display_name: str
-    :param category: The group's category.
-    :type category: str
-    :param description: The group's description.
-    :type description: str
-    :param additional_metadata_id: A resource ID of a resource that contains additional metadata
+    :ivar name: Required. The name of the group.
+    :vartype name: str
+    :ivar display_name: The group's display name.
+    :vartype display_name: str
+    :ivar category: The group's category.
+    :vartype category: str
+    :ivar description: The group's description.
+    :vartype description: str
+    :ivar additional_metadata_id: A resource ID of a resource that contains additional metadata
      about the group.
-    :type additional_metadata_id: str
+    :vartype additional_metadata_id: str
     """
 
     _validation = {
@@ -838,6 +1027,19 @@ class PolicyDefinitionGroup(msrest.serialization.Model):
         additional_metadata_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the group.
+        :paramtype name: str
+        :keyword display_name: The group's display name.
+        :paramtype display_name: str
+        :keyword category: The group's category.
+        :paramtype category: str
+        :keyword description: The group's description.
+        :paramtype description: str
+        :keyword additional_metadata_id: A resource ID of a resource that contains additional metadata
+         about the group.
+        :paramtype additional_metadata_id: str
+        """
         super(PolicyDefinitionGroup, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -849,10 +1051,10 @@ class PolicyDefinitionGroup(msrest.serialization.Model):
 class PolicyDefinitionListResult(msrest.serialization.Model):
     """List of policy definitions.
 
-    :param value: An array of policy definitions.
-    :type value: list[~azure.mgmt.resource.policy.v2020_09_01.models.PolicyDefinition]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: An array of policy definitions.
+    :vartype value: list[~azure.mgmt.resource.policy.v2020_09_01.models.PolicyDefinition]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -867,6 +1069,12 @@ class PolicyDefinitionListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: An array of policy definitions.
+        :paramtype value: list[~azure.mgmt.resource.policy.v2020_09_01.models.PolicyDefinition]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(PolicyDefinitionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -877,18 +1085,17 @@ class PolicyDefinitionReference(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param policy_definition_id: Required. The ID of the policy definition or policy set
-     definition.
-    :type policy_definition_id: str
-    :param parameters: The parameter values for the referenced policy rule. The keys are the
+    :ivar policy_definition_id: Required. The ID of the policy definition or policy set definition.
+    :vartype policy_definition_id: str
+    :ivar parameters: The parameter values for the referenced policy rule. The keys are the
      parameter names.
-    :type parameters: dict[str,
+    :vartype parameters: dict[str,
      ~azure.mgmt.resource.policy.v2020_09_01.models.ParameterValuesValue]
-    :param policy_definition_reference_id: A unique id (within the policy set definition) for this
+    :ivar policy_definition_reference_id: A unique id (within the policy set definition) for this
      policy definition reference.
-    :type policy_definition_reference_id: str
-    :param group_names: The name of the groups that this policy definition reference belongs to.
-    :type group_names: list[str]
+    :vartype policy_definition_reference_id: str
+    :ivar group_names: The name of the groups that this policy definition reference belongs to.
+    :vartype group_names: list[str]
     """
 
     _validation = {
@@ -911,6 +1118,20 @@ class PolicyDefinitionReference(msrest.serialization.Model):
         group_names: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword policy_definition_id: Required. The ID of the policy definition or policy set
+         definition.
+        :paramtype policy_definition_id: str
+        :keyword parameters: The parameter values for the referenced policy rule. The keys are the
+         parameter names.
+        :paramtype parameters: dict[str,
+         ~azure.mgmt.resource.policy.v2020_09_01.models.ParameterValuesValue]
+        :keyword policy_definition_reference_id: A unique id (within the policy set definition) for
+         this policy definition reference.
+        :paramtype policy_definition_reference_id: str
+        :keyword group_names: The name of the groups that this policy definition reference belongs to.
+        :paramtype group_names: list[str]
+        """
         super(PolicyDefinitionReference, self).__init__(**kwargs)
         self.policy_definition_id = policy_definition_id
         self.parameters = parameters
@@ -934,25 +1155,25 @@ class PolicyExemption(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The type of the resource (Microsoft.Authorization/policyExemptions).
     :vartype type: str
-    :param policy_assignment_id: Required. The ID of the policy assignment that is being exempted.
-    :type policy_assignment_id: str
-    :param policy_definition_reference_ids: The policy definition reference ID list when the
+    :ivar policy_assignment_id: Required. The ID of the policy assignment that is being exempted.
+    :vartype policy_assignment_id: str
+    :ivar policy_definition_reference_ids: The policy definition reference ID list when the
      associated policy assignment is an assignment of a policy set definition.
-    :type policy_definition_reference_ids: list[str]
-    :param exemption_category: Required. The policy exemption category. Possible values are Waiver
+    :vartype policy_definition_reference_ids: list[str]
+    :ivar exemption_category: Required. The policy exemption category. Possible values are Waiver
      and Mitigated. Possible values include: "Waiver", "Mitigated".
-    :type exemption_category: str or
+    :vartype exemption_category: str or
      ~azure.mgmt.resource.policy.v2020_09_01.models.ExemptionCategory
-    :param expires_on: The expiration date and time (in UTC ISO 8601 format yyyy-MM-ddTHH:mm:ssZ)
-     of the policy exemption.
-    :type expires_on: ~datetime.datetime
-    :param display_name: The display name of the policy exemption.
-    :type display_name: str
-    :param description: The description of the policy exemption.
-    :type description: str
-    :param metadata: The policy exemption metadata. Metadata is an open ended object and is
+    :ivar expires_on: The expiration date and time (in UTC ISO 8601 format yyyy-MM-ddTHH:mm:ssZ) of
+     the policy exemption.
+    :vartype expires_on: ~datetime.datetime
+    :ivar display_name: The display name of the policy exemption.
+    :vartype display_name: str
+    :ivar description: The description of the policy exemption.
+    :vartype description: str
+    :ivar metadata: The policy exemption metadata. Metadata is an open ended object and is
      typically a collection of key value pairs.
-    :type metadata: any
+    :vartype metadata: any
     """
 
     _validation = {
@@ -990,6 +1211,28 @@ class PolicyExemption(msrest.serialization.Model):
         metadata: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword policy_assignment_id: Required. The ID of the policy assignment that is being
+         exempted.
+        :paramtype policy_assignment_id: str
+        :keyword policy_definition_reference_ids: The policy definition reference ID list when the
+         associated policy assignment is an assignment of a policy set definition.
+        :paramtype policy_definition_reference_ids: list[str]
+        :keyword exemption_category: Required. The policy exemption category. Possible values are
+         Waiver and Mitigated. Possible values include: "Waiver", "Mitigated".
+        :paramtype exemption_category: str or
+         ~azure.mgmt.resource.policy.v2020_09_01.models.ExemptionCategory
+        :keyword expires_on: The expiration date and time (in UTC ISO 8601 format yyyy-MM-ddTHH:mm:ssZ)
+         of the policy exemption.
+        :paramtype expires_on: ~datetime.datetime
+        :keyword display_name: The display name of the policy exemption.
+        :paramtype display_name: str
+        :keyword description: The description of the policy exemption.
+        :paramtype description: str
+        :keyword metadata: The policy exemption metadata. Metadata is an open ended object and is
+         typically a collection of key value pairs.
+        :paramtype metadata: any
+        """
         super(PolicyExemption, self).__init__(**kwargs)
         self.system_data = None
         self.id = None
@@ -1009,8 +1252,8 @@ class PolicyExemptionListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: An array of policy exemptions.
-    :type value: list[~azure.mgmt.resource.policy.v2020_09_01.models.PolicyExemption]
+    :ivar value: An array of policy exemptions.
+    :vartype value: list[~azure.mgmt.resource.policy.v2020_09_01.models.PolicyExemption]
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     """
@@ -1030,6 +1273,10 @@ class PolicyExemptionListResult(msrest.serialization.Model):
         value: Optional[List["PolicyExemption"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: An array of policy exemptions.
+        :paramtype value: list[~azure.mgmt.resource.policy.v2020_09_01.models.PolicyExemption]
+        """
         super(PolicyExemptionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -1046,26 +1293,26 @@ class PolicySetDefinition(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The type of the resource (Microsoft.Authorization/policySetDefinitions).
     :vartype type: str
-    :param policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
+    :ivar policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
      Custom, and Static. Possible values include: "NotSpecified", "BuiltIn", "Custom", "Static".
-    :type policy_type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.PolicyType
-    :param display_name: The display name of the policy set definition.
-    :type display_name: str
-    :param description: The policy set definition description.
-    :type description: str
-    :param metadata: The policy set definition metadata.  Metadata is an open ended object and is
+    :vartype policy_type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.PolicyType
+    :ivar display_name: The display name of the policy set definition.
+    :vartype display_name: str
+    :ivar description: The policy set definition description.
+    :vartype description: str
+    :ivar metadata: The policy set definition metadata.  Metadata is an open ended object and is
      typically a collection of key value pairs.
-    :type metadata: any
-    :param parameters: The policy set definition parameters that can be used in policy definition
+    :vartype metadata: any
+    :ivar parameters: The policy set definition parameters that can be used in policy definition
      references.
-    :type parameters: dict[str,
+    :vartype parameters: dict[str,
      ~azure.mgmt.resource.policy.v2020_09_01.models.ParameterDefinitionsValue]
-    :param policy_definitions: An array of policy definition references.
-    :type policy_definitions:
+    :ivar policy_definitions: An array of policy definition references.
+    :vartype policy_definitions:
      list[~azure.mgmt.resource.policy.v2020_09_01.models.PolicyDefinitionReference]
-    :param policy_definition_groups: The metadata describing groups of policy definition references
+    :ivar policy_definition_groups: The metadata describing groups of policy definition references
      within the policy set definition.
-    :type policy_definition_groups:
+    :vartype policy_definition_groups:
      list[~azure.mgmt.resource.policy.v2020_09_01.models.PolicyDefinitionGroup]
     """
 
@@ -1100,6 +1347,29 @@ class PolicySetDefinition(msrest.serialization.Model):
         policy_definition_groups: Optional[List["PolicyDefinitionGroup"]] = None,
         **kwargs
     ):
+        """
+        :keyword policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
+         Custom, and Static. Possible values include: "NotSpecified", "BuiltIn", "Custom", "Static".
+        :paramtype policy_type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.PolicyType
+        :keyword display_name: The display name of the policy set definition.
+        :paramtype display_name: str
+        :keyword description: The policy set definition description.
+        :paramtype description: str
+        :keyword metadata: The policy set definition metadata.  Metadata is an open ended object and is
+         typically a collection of key value pairs.
+        :paramtype metadata: any
+        :keyword parameters: The policy set definition parameters that can be used in policy definition
+         references.
+        :paramtype parameters: dict[str,
+         ~azure.mgmt.resource.policy.v2020_09_01.models.ParameterDefinitionsValue]
+        :keyword policy_definitions: An array of policy definition references.
+        :paramtype policy_definitions:
+         list[~azure.mgmt.resource.policy.v2020_09_01.models.PolicyDefinitionReference]
+        :keyword policy_definition_groups: The metadata describing groups of policy definition
+         references within the policy set definition.
+        :paramtype policy_definition_groups:
+         list[~azure.mgmt.resource.policy.v2020_09_01.models.PolicyDefinitionGroup]
+        """
         super(PolicySetDefinition, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1116,10 +1386,10 @@ class PolicySetDefinition(msrest.serialization.Model):
 class PolicySetDefinitionListResult(msrest.serialization.Model):
     """List of policy set definitions.
 
-    :param value: An array of policy set definitions.
-    :type value: list[~azure.mgmt.resource.policy.v2020_09_01.models.PolicySetDefinition]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: An array of policy set definitions.
+    :vartype value: list[~azure.mgmt.resource.policy.v2020_09_01.models.PolicySetDefinition]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1134,6 +1404,12 @@ class PolicySetDefinitionListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: An array of policy set definitions.
+        :paramtype value: list[~azure.mgmt.resource.policy.v2020_09_01.models.PolicySetDefinition]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(PolicySetDefinitionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1142,10 +1418,10 @@ class PolicySetDefinitionListResult(msrest.serialization.Model):
 class ResourceTypeAliases(msrest.serialization.Model):
     """The resource type aliases definition.
 
-    :param resource_type: The resource type name.
-    :type resource_type: str
-    :param aliases: The aliases for property names.
-    :type aliases: list[~azure.mgmt.resource.policy.v2020_09_01.models.Alias]
+    :ivar resource_type: The resource type name.
+    :vartype resource_type: str
+    :ivar aliases: The aliases for property names.
+    :vartype aliases: list[~azure.mgmt.resource.policy.v2020_09_01.models.Alias]
     """
 
     _attribute_map = {
@@ -1160,6 +1436,12 @@ class ResourceTypeAliases(msrest.serialization.Model):
         aliases: Optional[List["Alias"]] = None,
         **kwargs
     ):
+        """
+        :keyword resource_type: The resource type name.
+        :paramtype resource_type: str
+        :keyword aliases: The aliases for property names.
+        :paramtype aliases: list[~azure.mgmt.resource.policy.v2020_09_01.models.Alias]
+        """
         super(ResourceTypeAliases, self).__init__(**kwargs)
         self.resource_type = resource_type
         self.aliases = aliases
@@ -1168,21 +1450,21 @@ class ResourceTypeAliases(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or
+    :vartype last_modified_by_type: str or
      ~azure.mgmt.resource.policy.v2020_09_01.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -1205,6 +1487,23 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.resource.policy.v2020_09_01.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or
+         ~azure.mgmt.resource.policy.v2020_09_01.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type

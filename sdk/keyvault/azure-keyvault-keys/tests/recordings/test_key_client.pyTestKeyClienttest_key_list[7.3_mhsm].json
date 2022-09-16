@@ -1,0 +1,1832 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey05c9027ba/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "WWW-Authenticate": "Bearer authorization=\u0022https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000\u0022, resource=\u0022https://managedhsm.azure.net\u0022",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-server-latency": "1"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.10.0b2 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1753",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 22 Apr 2022 15:51:20 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=AoYECHYVsYZBnicRrY_2H34hRuoAFAAAABTF9NkOAAAA; expires=Sun, 22-May-2022 15:51:20 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12651.7 - SCUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+        "tenant_region_scope": "WW",
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Cookie": "fpc=AoYECHYVsYZBnicRrY_2H34hRuoAFAAAABTF9NkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.10.0b2 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "945",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 22 Apr 2022 15:51:20 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=AoYECHYVsYZBnicRrY_2H34hRuoAFAAAABTF9NkOAAAA; expires=Sun, 22-May-2022 15:51:21 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12651.7 - WUS2 ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+        "api-version": "1.1",
+        "metadata": [
+          {
+            "preferred_network": "login.microsoftonline.com",
+            "preferred_cache": "login.windows.net",
+            "aliases": [
+              "login.microsoftonline.com",
+              "login.windows.net",
+              "login.microsoft.com",
+              "sts.windows.net"
+            ]
+          },
+          {
+            "preferred_network": "login.partner.microsoftonline.cn",
+            "preferred_cache": "login.partner.microsoftonline.cn",
+            "aliases": [
+              "login.partner.microsoftonline.cn",
+              "login.chinacloudapi.cn"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.de",
+            "preferred_cache": "login.microsoftonline.de",
+            "aliases": [
+              "login.microsoftonline.de"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.us",
+            "preferred_cache": "login.microsoftonline.us",
+            "aliases": [
+              "login.microsoftonline.us",
+              "login.usgovcloudapi.net"
+            ]
+          },
+          {
+            "preferred_network": "login-us.microsoftonline.com",
+            "preferred_cache": "login-us.microsoftonline.com",
+            "aliases": [
+              "login-us.microsoftonline.com"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey05c9027ba/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "18",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kty": "RSA-HSM"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "729",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "227"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650642681,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650642681
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "decrypt",
+            "encrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey05c9027ba/20de2eb597bd421912b8533ffd9ccae5",
+          "kty": "RSA-HSM",
+          "n": "02flL_QdLYVMAjRcKIjIJ9-ImuI8ekVjEGEbrPZpA8iNNLnviH_PiXtFt_se9cNim6bDVIzc8ceGDrxUOKH2vFk787HaSSn6DUzcHVjr7gDztp5hBP9MVsM_b6-QW2JYaCXVwFE_IVVvKByVqtalyXDRoN7Qwy8HRCfB196Fz8kNMDgO-ipQjWl-u80M5sPVJFDLTfcOxaH3PLLq1SsbN-W-GUJc_lDRyJUuTNSultGkx8Ae5omMXx0pPIvNR9KISJHShFuxiOQ_kGegzbD98lpmR6PVlumIF5qdrtLGhF1K87KLLiwvTPW3ZumlgjbEPqSBoKgSXhPBjF7v_QsDnw"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey15c9027ba/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "18",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kty": "RSA-HSM"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "729",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "212"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650642683,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650642683
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "decrypt",
+            "encrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey15c9027ba/8e65c903072c02d99756edc7dd68db6a",
+          "kty": "RSA-HSM",
+          "n": "nkQqsa_Nu_0X0SMIbItv3SbsCoqqjMiAOxsD2XYq8Ey6ee8E2Lal9hTM3jm1TbYy9DYs7LAQMjpDbx0dCOiocKVIkq_ye7jN5lRufXz94HGjugy1RwBBoy_AhEzeXoYTbDFPJspApE4UdqCB4sCYb8FZz6RHzGuiD9bt_caqVYQPCu7FAWm7WDMrI468Uo37VaAGejpGTWXnUl5oPYYuHsVxyOMfa0iTE1u3RcfoFhTfMrh6LXLP94-5CbLX14PEi0qq2R3IrReRihkuB-oPSqD1IlGCSJJFkg8Lt96vqZLsDg62UTlKHLI465Q07ASYW0bLS7q1XyDjS3pJzznT3w"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey25c9027ba/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "18",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kty": "RSA-HSM"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "729",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "224"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650642686,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650642686
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "decrypt",
+            "encrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey25c9027ba/6af72eea6951014493836450a945275f",
+          "kty": "RSA-HSM",
+          "n": "qoXgSEQLMNEWDd6z7kt33Eh1uJfVIzjaxMuEqCrUjLg5NESTgjb1VmigDC6BNvhkH2vUPyu_CpEc4SZklzHribjCiJRCxzkA1088xx_vVl8a-8uYAJvOHiD6jRtPB3KqJBDU8Zzbg28H2zkGwQg0pVuYTcgKjGo328AA6DUUYGYc_qSbsNOKbhwZbwlr_GIjKmeem8l4wsnEh9Lf7TGS2NKfMCL6CQ6Uot1zHezT24DTvndqBqbIaJlH-ZxgQbin6zFN9Qo63eLNmAEoxJ9VYucZxbYbVX-ib_PZS3a7lFnuJwb1yMB2sV0vYTSbrD-EvzbsBk2d9A2s9xEcV2Y5Mw"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey35c9027ba/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "18",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kty": "RSA-HSM"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "729",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "230"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650642688,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650642688
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "decrypt",
+            "encrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey35c9027ba/e92bcd1cfa3d05222476ebb7a383542d",
+          "kty": "RSA-HSM",
+          "n": "lLE85lQ5MNqW_UFM_nwAgZ_ulNs77ZxLAaH8h4YwC097k98E7L9W3R9BFoXiNvRiOo9SnvujucA9wun_nWbim8Z6Nyv9eoQxRuGSuSvUdDxohsnKCwjaSrZ6DrKMxvFYMBfdJptcjhlktAJPyGY_i8a129bB-f-dQF7rIxNxNpHKtnbnNExQ8Yau07ilWo8rdXKHnpyX37fiKs0oUEiZiOKtQPZFCf2h0UhvGxZYzzOL2-fAimzEbIVccubPBOYnenughq0OuCZS1eTeiluhgYFPL2YYMraNkdqH5-KH_KOGDjkOgybSmL1LoblbnrpD3ePvD794qFy87SUGGFww-Q"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey45c9027ba/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "18",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kty": "RSA-HSM"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "729",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "203"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650642690,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650642690
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "decrypt",
+            "encrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey45c9027ba/3b38a0959cad4ddc3ad5a698c006c2ce",
+          "kty": "RSA-HSM",
+          "n": "t00Gpn2KmI1X3Bm0Ur-N1YK_Y4m6YrlyHfAGKOHB_UDL4v3Z2_5BhptQ2n8DQqmcFAXZjbZKBGHPulJ3KwoJ5_E7RVuqI40vDcV2ZIFs0Z_rgzQr2HW_0qGsFgY-29wf2m_Z2RHhLuDOyGknP-rFQkwktVRElsfLsJvUJaWlgoNiJvr6PdG3NrRUxN-SXi-Exa1tziNMnrFdCCv7q9NLNNRgkeTCrKTX1j9qstZQKAgLMHE986zfKHD3jMHEyyJaqGLR31XymGhTSfQc_D-n2CDch3buVjSe8E_VsCIEZC2CbkqgaB0422vpmITyKXO2sCcjH7JyZ_68XxYHuskzlQ"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey55c9027ba/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "18",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kty": "RSA-HSM"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "729",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "224"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650642692,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650642692
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "decrypt",
+            "encrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey55c9027ba/39222cea21040da43d09a3e625024043",
+          "kty": "RSA-HSM",
+          "n": "yuS95COyvbsYvmygXpyA_OUpRU7krY1YvaUNtz4SsvdSlfI5Ne-Be5Bykwq9CwX-Y4mjNoTkI_G1p50MkiUsqkVs2iE8r4UXXHpgIJtBpEnEX_BbNjvIql1ZoPKpclAx3v5TtyspKrydW-T_Fr-hT80yswECl20i_lLsFs0FnH9o2LH-cqXOnxOXU1O7JPBRagZvmqkMokER3AJuLXsJ2u5uiNwNNVshWj3BSYzFWN4dC9KFmcxsRY_3IzF9cDp_u6-889yVhmsbQch8Q-dcRjxW4h8Wd3SEfDndjnszHdxfa76UmtRfs8YA4JT-JghEJhsNzcFRikXQYW3udLlsnw"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey65c9027ba/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "18",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kty": "RSA-HSM"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "729",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "221"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650642695,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650642695
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "decrypt",
+            "encrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey65c9027ba/1b73a57013860f2531ebd2cc1c4e754c",
+          "kty": "RSA-HSM",
+          "n": "ijz6xpKQa0inPD_qT3HN5iCeO1w9WWUkswj0rcvFwx_aN8VpaIZBcWvgCOxXsr9rRKt2fvFmUkiXQqshOA00dkz35N28ZpDu6pgB4blGGZYZpF-FjKHbwUfiA4Xbfl0drIgddJZbiKTTzysiQTCLyZldYj4f-LkIuN5bEwT_hctIyDWKy0v8fSggggX4mXG_GAfr41yjDL8kPFw0P6JLq1zlBiJ3a_TVL35pZphvBTbCZFNIm0VqH4s7BoTcmG6COOlIZvrfyQ2NoADOnD1lztk7TxtHhR0mE4YQKWa9ahQdRgem9DJVYmLgij4lN-ErfM2m4yccZ0cJWqvvZa9ykw"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1653",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "29"
+      },
+      "ResponseBody": {
+        "nextLink": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2tSQUFBQUFBQUFBQT09I1JUOjEjVFJDOjYjSVNWOjIjSUVPOjY1NTY3",
+        "value": [
+          {
+            "attributes": {
+              "created": 1650642454,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642454
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestmultitenant-key1ab83264"
+          },
+          {
+            "attributes": {
+              "created": 1650642457,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642457
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtesteckey94072aa2"
+          },
+          {
+            "attributes": {
+              "created": 1650642461,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642461
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtesteckey93f92aa1"
+          },
+          {
+            "attributes": {
+              "created": 1650642465,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642465
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsakeyc2dc2b20"
+          },
+          {
+            "attributes": {
+              "created": 1650642469,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642469
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsakeyc2ce2b1f"
+          },
+          {
+            "attributes": {
+              "created": 1650642470,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642470
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkeycrypt6aac2ef7"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026api-version=7.3\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2tSQUFBQUFBQUFBQT09I1JUOjEjVFJDOjYjSVNWOjIjSUVPOjY1NTY3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1663",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "28"
+      },
+      "ResponseBody": {
+        "nextLink": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2tkQUFBQUFBQUFBQT09I1JUOjIjVFJDOjEyI0lTVjoyI0lFTzo2NTU2Nw",
+        "value": [
+          {
+            "attributes": {
+              "created": 1650642473,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642473
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkeycrypt6a9e2ef6"
+          },
+          {
+            "attributes": {
+              "created": 1650642474,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642474
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkeysigna9482d3d"
+          },
+          {
+            "attributes": {
+              "created": 1650642476,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642476
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkeysigna93a2d3c"
+          },
+          {
+            "attributes": {
+              "created": 1650642480,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642480
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkeywrapab302d4e"
+          },
+          {
+            "attributes": {
+              "created": 1650642483,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642483
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkeywrapab222d4d"
+          },
+          {
+            "attributes": {
+              "created": 1650642485,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642485
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt6af83333"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026api-version=7.3\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2tkQUFBQUFBQUFBQT09I1JUOjIjVFJDOjEyI0lTVjoyI0lFTzo2NTU2Nw",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1690",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "31"
+      },
+      "ResponseBody": {
+        "nextLink": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2twQUFBQUFBQUFBQT09I1JUOjMjVFJDOjE4I0lTVjoyI0lFTzo2NTU2Nw",
+        "value": [
+          {
+            "attributes": {
+              "created": 1650642487,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642487
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt6aea3332"
+          },
+          {
+            "attributes": {
+              "created": 1650642489,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642489
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-kw9a8c318a"
+          },
+          {
+            "attributes": {
+              "created": 1650642490,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642490
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-kw9a7e3189"
+          },
+          {
+            "attributes": {
+              "created": 1650642494,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642494
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestencrypt-local4dd12c75"
+          },
+          {
+            "attributes": {
+              "created": 1650642498,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642498
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestencrypt-local4dc32c74"
+          },
+          {
+            "attributes": {
+              "created": 1650642501,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642501
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestencrypt-localff153033"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026api-version=7.3\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2twQUFBQUFBQUFBQT09I1JUOjMjVFJDOjE4I0lTVjoyI0lFTzo2NTU2Nw",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1701",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "30"
+      },
+      "ResponseBody": {
+        "nextLink": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2sxQUFBQUFBQUFBQT09I1JUOjQjVFJDOjI0I0lTVjoyI0lFTzo2NTU2Nw",
+        "value": [
+          {
+            "attributes": {
+              "created": 1650642505,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642505
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestencrypt-localff073032"
+          },
+          {
+            "attributes": {
+              "created": 1650642507,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642507
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt34b530b1"
+          },
+          {
+            "attributes": {
+              "created": 1650642509,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642509
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt34a730b0"
+          },
+          {
+            "attributes": {
+              "created": 1650642510,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642510
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt339230a7"
+          },
+          {
+            "attributes": {
+              "created": 1650642512,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642512
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt338430a6"
+          },
+          {
+            "attributes": {
+              "created": 1650642515,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642515
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestwrap-localc3dd2b2a"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026api-version=7.3\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2sxQUFBQUFBQUFBQT09I1JUOjQjVFJDOjI0I0lTVjoyI0lFTzo2NTU2Nw",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1685",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "37"
+      },
+      "ResponseBody": {
+        "nextLink": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2xCQUFBQUFBQUFBQT09I1JUOjUjVFJDOjMwI0lTVjoyI0lFTzo2NTU2Nw",
+        "value": [
+          {
+            "attributes": {
+              "created": 1650642520,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642520
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestwrap-localc3cf2b29"
+          },
+          {
+            "attributes": {
+              "created": 1650642524,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642524
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestwrap-local698d2ee8"
+          },
+          {
+            "attributes": {
+              "created": 1650642527,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642527
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestwrap-local697f2ee7"
+          },
+          {
+            "attributes": {
+              "created": 1650642531,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642531
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-verify-2048d9ab2daa"
+          },
+          {
+            "attributes": {
+              "created": 1650642535,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642535
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-verify-3072d9ab2daa"
+          },
+          {
+            "attributes": {
+              "created": 1650642538,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642538
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-verify-4096d9ab2daa"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026api-version=7.3\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2xCQUFBQUFBQUFBQT09I1JUOjUjVFJDOjMwI0lTVjoyI0lFTzo2NTU2Nw",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1700",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "31"
+      },
+      "ResponseBody": {
+        "nextLink": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2xOQUFBQUFBQUFBQT09I1JUOjYjVFJDOjM2I0lTVjoyI0lFTzo2NTU2Nw",
+        "value": [
+          {
+            "attributes": {
+              "created": 1650642542,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642542
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-verify-2048d99d2da9"
+          },
+          {
+            "attributes": {
+              "created": 1650642546,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642546
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-verify-3072d99d2da9"
+          },
+          {
+            "attributes": {
+              "created": 1650642549,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642549
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-verify-4096d99d2da9"
+          },
+          {
+            "attributes": {
+              "created": 1650642553,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642553
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-verify-204895db3168"
+          },
+          {
+            "attributes": {
+              "created": 1650642557,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642557
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-verify-307295db3168"
+          },
+          {
+            "attributes": {
+              "created": 1650642560,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642560
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-verify-409695db3168"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026api-version=7.3\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2xOQUFBQUFBQUFBQT09I1JUOjYjVFJDOjM2I0lTVjoyI0lFTzo2NTU2Nw",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1701",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "41"
+      },
+      "ResponseBody": {
+        "nextLink": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2xaQUFBQUFBQUFBQT09I1JUOjcjVFJDOjQyI0lTVjoyI0lFTzo2NTU2Nw",
+        "value": [
+          {
+            "attributes": {
+              "created": 1650642564,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642564
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-verify-204895cd3167"
+          },
+          {
+            "attributes": {
+              "created": 1650642567,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642567
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-verify-307295cd3167"
+          },
+          {
+            "attributes": {
+              "created": 1650642571,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642571
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-verify-409695cd3167"
+          },
+          {
+            "attributes": {
+              "created": 1650642575,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642575
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-256a7e22d2c"
+          },
+          {
+            "attributes": {
+              "created": 1650642578,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642578
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-256Ka7e22d2c"
+          },
+          {
+            "attributes": {
+              "created": 1650642581,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642581
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-384a7e22d2c"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026api-version=7.3\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2xaQUFBQUFBQUFBQT09I1JUOjcjVFJDOjQyI0lTVjoyI0lFTzo2NTU2Nw",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1701",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "27"
+      },
+      "ResponseBody": {
+        "nextLink": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2xsQUFBQUFBQUFBQT09I1JUOjgjVFJDOjQ4I0lTVjoyI0lFTzo2NTU2Nw",
+        "value": [
+          {
+            "attributes": {
+              "created": 1650642584,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642584
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-521a7e22d2c"
+          },
+          {
+            "attributes": {
+              "created": 1650642588,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642588
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-256a7d42d2b"
+          },
+          {
+            "attributes": {
+              "created": 1650642591,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642591
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-256Ka7d42d2b"
+          },
+          {
+            "attributes": {
+              "created": 1650642594,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642594
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-384a7d42d2b"
+          },
+          {
+            "attributes": {
+              "created": 1650642597,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642597
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-521a7d42d2b"
+          },
+          {
+            "attributes": {
+              "created": 1650642601,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642601
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-2565fa430ea"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026api-version=7.3\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2xsQUFBQUFBQUFBQT09I1JUOjgjVFJDOjQ4I0lTVjoyI0lFTzo2NTU2Nw",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1702",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "33"
+      },
+      "ResponseBody": {
+        "nextLink": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2x4QUFBQUFBQUFBQT09I1JUOjkjVFJDOjU0I0lTVjoyI0lFTzo2NTU2Nw",
+        "value": [
+          {
+            "attributes": {
+              "created": 1650642604,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642604
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-256K5fa430ea"
+          },
+          {
+            "attributes": {
+              "created": 1650642607,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642607
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-3845fa430ea"
+          },
+          {
+            "attributes": {
+              "created": 1650642610,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642610
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-5215fa430ea"
+          },
+          {
+            "attributes": {
+              "created": 1650642614,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642614
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-2565f9630e9"
+          },
+          {
+            "attributes": {
+              "created": 1650642617,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642617
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-256K5f9630e9"
+          },
+          {
+            "attributes": {
+              "created": 1650642620,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642620
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-3845f9630e9"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026api-version=7.3\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2x4QUFBQUFBQUFBQT09I1JUOjkjVFJDOjU0I0lTVjoyI0lFTzo2NTU2Nw",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1795",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "32"
+      },
+      "ResponseBody": {
+        "nextLink": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2w5QUFBQUFBQUFBQT09I1JUOjEwI1RSQzo2MCNJU1Y6MiNJRU86NjU1Njc",
+        "value": [
+          {
+            "attributes": {
+              "created": 1650642623,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642623
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-5215f9630e9"
+          },
+          {
+            "attributes": {
+              "created": 1650642627,
+              "enabled": true,
+              "exportable": false,
+              "nbf": 32503680000,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642627
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-not-yet-valid3a5634ad"
+          },
+          {
+            "attributes": {
+              "created": 1650642629,
+              "enabled": true,
+              "exp": 946684800,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642629
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-expired3a5634ad"
+          },
+          {
+            "attributes": {
+              "created": 1650642632,
+              "enabled": true,
+              "exp": 32535216000,
+              "exportable": false,
+              "nbf": 32503680000,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642632
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-valid3a5634ad"
+          },
+          {
+            "attributes": {
+              "created": 1650642635,
+              "enabled": true,
+              "exportable": false,
+              "nbf": 32503680000,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642635
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-not-yet-valid3a4834ac"
+          },
+          {
+            "attributes": {
+              "created": 1650642637,
+              "enabled": true,
+              "exp": 946684800,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642637
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-expired3a4834ac"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026api-version=7.3\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2w5QUFBQUFBQUFBQT09I1JUOjEwI1RSQzo2MCNJU1Y6MiNJRU86NjU1Njc",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1849",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "30"
+      },
+      "ResponseBody": {
+        "nextLink": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS21MQUFBQUFBQUFBQT09I1JUOjExI1RSQzo2NiNJU1Y6MiNJRU86NjU1Njc",
+        "value": [
+          {
+            "attributes": {
+              "created": 1650642639,
+              "enabled": true,
+              "exp": 32535216000,
+              "exportable": false,
+              "nbf": 32503680000,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642639
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-valid3a4834ac"
+          },
+          {
+            "attributes": {
+              "created": 1650642642,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642642
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestcrud-ec-key3e722c4f",
+            "tags": {
+              "purpose": "unit test",
+              "test name": "CreateECKeyTest"
+            }
+          },
+          {
+            "attributes": {
+              "created": 1650642645,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642645
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestcrud-P-256-ec-key3e722c4f"
+          },
+          {
+            "attributes": {
+              "created": 1650642645,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642645
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestimport-test-key3e722c4f"
+          },
+          {
+            "attributes": {
+              "created": 1650642654,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642654
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestcrud-ec-key3e642c4e",
+            "tags": {
+              "purpose": "unit test",
+              "test name": "CreateECKeyTest"
+            }
+          },
+          {
+            "attributes": {
+              "created": 1650642657,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642657
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestcrud-P-256-ec-key3e642c4e"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026api-version=7.3\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS21MQUFBQUFBQUFBQT09I1JUOjExI1RSQzo2NiNJU1Y6MiNJRU86NjU1Njc",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1654",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "26"
+      },
+      "ResponseBody": {
+        "nextLink": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS21aQUFBQUFBQUFBQT09I1JUOjEyI1RSQzo3MiNJU1Y6MiNJRU86NjU1Njc",
+        "value": [
+          {
+            "attributes": {
+              "created": 1650642657,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642657
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestimport-test-key3e642c4e"
+          },
+          {
+            "attributes": {
+              "created": 1650642666,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642666
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-key3e1b2c4a"
+          },
+          {
+            "attributes": {
+              "created": 1650642670,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642670
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-key3e0d2c49"
+          },
+          {
+            "attributes": {
+              "created": 1650642673,
+              "enabled": true,
+              "exportable": true,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642673
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkeybak5bd22a2f"
+          },
+          {
+            "attributes": {
+              "created": 1650642677,
+              "enabled": true,
+              "exportable": true,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642677
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkeybak5bc42a2e"
+          },
+          {
+            "attributes": {
+              "created": 1650642681,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642681
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey05c9027ba"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys?maxresults=6\u0026api-version=7.3\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS21aQUFBQUFBQUFBQT09I1JUOjEyI1RSQzo3MiNJU1Y6MiNJRU86NjU1Njc",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1469",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "29"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "attributes": {
+              "created": 1650642683,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642683
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey15c9027ba"
+          },
+          {
+            "attributes": {
+              "created": 1650642686,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642686
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey25c9027ba"
+          },
+          {
+            "attributes": {
+              "created": 1650642688,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642688
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey35c9027ba"
+          },
+          {
+            "attributes": {
+              "created": 1650642690,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642690
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey45c9027ba"
+          },
+          {
+            "attributes": {
+              "created": 1650642692,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642692
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey55c9027ba"
+          },
+          {
+            "attributes": {
+              "created": 1650642695,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642695
+            },
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey65c9027ba"
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

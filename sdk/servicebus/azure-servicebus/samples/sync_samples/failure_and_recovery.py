@@ -12,8 +12,6 @@ Many of these catches are present for illustrative or duplicate purposes, and co
 in a production scenario depending on the system design.
 """
 
-# pylint: disable=C0111
-
 import os
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 from azure.servicebus.exceptions import (

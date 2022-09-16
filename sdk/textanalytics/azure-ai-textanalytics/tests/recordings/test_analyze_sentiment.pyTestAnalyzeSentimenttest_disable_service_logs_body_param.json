@@ -1,0 +1,76 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "208",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "SentimentAnalysis",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "Test for logging disable",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "loggingOptOut": true,
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "20e4dbbd-ba4a-4345-ab8c-193656ae41db",
+        "Content-Length": "379",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
+        "Date": "Wed, 08 Jun 2022 01:14:58 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "16"
+      },
+      "ResponseBody": {
+        "kind": "SentimentAnalysisResults",
+        "results": {
+          "documents": [
+            {
+              "id": "0",
+              "sentiment": "neutral",
+              "confidenceScores": {
+                "positive": 0.01,
+                "neutral": 0.86,
+                "negative": 0.13
+              },
+              "sentences": [
+                {
+                  "sentiment": "neutral",
+                  "confidenceScores": {
+                    "positive": 0.01,
+                    "neutral": 0.86,
+                    "negative": 0.13
+                  },
+                  "offset": 0,
+                  "length": 24,
+                  "text": "Test for logging disable"
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-10-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

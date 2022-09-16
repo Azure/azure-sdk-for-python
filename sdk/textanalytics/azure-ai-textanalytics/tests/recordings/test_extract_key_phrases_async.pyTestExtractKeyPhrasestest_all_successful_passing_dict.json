@@ -1,0 +1,86 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01\u0026showStats=true",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "268",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "KeyPhraseExtraction",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "Microsoft was founded by Bill Gates and Paul Allen",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "Microsoft fue fundado por Bill Gates y Paul Allen",
+              "language": "es"
+            }
+          ]
+        },
+        "parameters": {}
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "cd645a54-31ac-46db-911f-dc7e2ce8af53",
+        "Content-Length": "483",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=2,CognitiveServices.TextAnalytics.TextRecords=2",
+        "Date": "Wed, 08 Jun 2022 18:31:10 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "12"
+      },
+      "ResponseBody": {
+        "kind": "KeyPhraseExtractionResults",
+        "results": {
+          "statistics": {
+            "documentsCount": 2,
+            "validDocumentsCount": 2,
+            "erroneousDocumentsCount": 0,
+            "transactionsCount": 2
+          },
+          "documents": [
+            {
+              "id": "1",
+              "keyPhrases": [
+                "Bill Gates",
+                "Paul Allen",
+                "Microsoft"
+              ],
+              "statistics": {
+                "charactersCount": 50,
+                "transactionsCount": 1
+              },
+              "warnings": []
+            },
+            {
+              "id": "2",
+              "keyPhrases": [
+                "Bill Gates",
+                "Paul Allen",
+                "Microsoft"
+              ],
+              "statistics": {
+                "charactersCount": 49,
+                "transactionsCount": 1
+              },
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-06-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -40,7 +40,7 @@ from . import mgmt_settings_fake as fake_settings
 
 try:
     # Try to import the AsyncFakeCredential, if we cannot assume it is Python 2
-    from .fake_async_credential import AsyncFakeCredential
+    from .fake_credentials_async import AsyncFakeCredential
 except SyntaxError:
     pass
 
@@ -94,7 +94,8 @@ def get_region_override(default="westus"):
 
 
 def _is_autorest_v3(client_class):
-    """IS this client a autorestv3/track2 one?.
+    """Is this client a autorest v3/track2 one?
+
     Could be refined later if necessary.
     """
     args = get_arg_spec(client_class.__init__).args
@@ -273,7 +274,7 @@ class AzureTestCase(ReplayableTest):
         return client
 
     def create_basic_client(self, client_class, **kwargs):
-        """ DO NOT USE ME ANYMORE."""
+        """DO NOT USE ME ANYMORE."""
         logger = logging.getLogger()
         logger.warning(
             "'create_basic_client' will be deprecated in the future. It is recommended that you use \
@@ -348,9 +349,9 @@ class AzureTestCase(ReplayableTest):
 
     def _register_encodings(self, token, fake_token):
         self.scrubber.register_name_pair(token, fake_token)
-        url_safe_token = token.replace("/", u"%2F")
+        url_safe_token = token.replace("/", "%2F")
         self.scrubber.register_name_pair(url_safe_token, fake_token)
-        async_token = token.replace(u"%3A", ":")
+        async_token = token.replace("%3A", ":")
         self.scrubber.register_name_pair(async_token, fake_token)
 
     def _create_fake_token(self, token, fake_value):

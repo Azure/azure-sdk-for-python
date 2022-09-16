@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+
 ## 0.4.0 (2021-08-10)
 
 - Updated API version to "2020-12-01" which is the default API version

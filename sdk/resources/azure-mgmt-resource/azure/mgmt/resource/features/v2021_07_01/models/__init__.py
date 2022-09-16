@@ -6,34 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AuthorizationProfile
-    from ._models_py3 import ErrorDefinition
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import FeatureOperationsListResult
-    from ._models_py3 import FeatureProperties
-    from ._models_py3 import FeatureResult
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import SubscriptionFeatureRegistration
-    from ._models_py3 import SubscriptionFeatureRegistrationList
-    from ._models_py3 import SubscriptionFeatureRegistrationProperties
-except (SyntaxError, ImportError):
-    from ._models import AuthorizationProfile  # type: ignore
-    from ._models import ErrorDefinition  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import FeatureOperationsListResult  # type: ignore
-    from ._models import FeatureProperties  # type: ignore
-    from ._models import FeatureResult  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import SubscriptionFeatureRegistration  # type: ignore
-    from ._models import SubscriptionFeatureRegistrationList  # type: ignore
-    from ._models import SubscriptionFeatureRegistrationProperties  # type: ignore
+from ._models_py3 import AuthorizationProfile
+from ._models_py3 import ErrorDefinition
+from ._models_py3 import ErrorResponse
+from ._models_py3 import FeatureOperationsListResult
+from ._models_py3 import FeatureProperties
+from ._models_py3 import FeatureResult
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import ProxyResource
+from ._models_py3 import SubscriptionFeatureRegistration
+from ._models_py3 import SubscriptionFeatureRegistrationList
+from ._models_py3 import SubscriptionFeatureRegistrationProperties
+
 
 from ._feature_client_enums import (
     SubscriptionFeatureRegistrationApprovalType,

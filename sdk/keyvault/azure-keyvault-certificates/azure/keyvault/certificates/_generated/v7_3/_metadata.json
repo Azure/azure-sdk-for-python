@@ -1,0 +1,395 @@
+{
+    "chosen_version": "7.3",
+    "total_api_version_list": ["7.3"],
+    "client": {
+        "name": "KeyVaultClient",
+        "filename": "_key_vault_client",
+        "description": "The key vault client performs cryptographic key operations and vault operations against the Key Vault service.",
+        "host_value": null,
+        "parameterized_host_template": "\u0027{vaultBaseUrl}\u0027",
+        "azure_arm": false,
+        "has_lro_operations": false,
+        "client_side_validation": false,
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.core\": [\"PipelineClient\"]}, \"local\": {\"._configuration\": [\"KeyVaultClientConfiguration\"], \"._operations_mixin\": [\"KeyVaultClientOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.core\": [\"AsyncPipelineClient\"]}, \"local\": {\"._configuration\": [\"KeyVaultClientConfiguration\"], \"._operations_mixin\": [\"KeyVaultClientOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
+    },
+    "global_parameters": {
+        "sync": {
+        },
+        "async": {
+        },
+        "constant": {
+        },
+        "call": "",
+        "service_client_specific": {
+            "sync": {
+                "api_version": {
+                    "signature": "api_version=None, # type: Optional[str]",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            },
+            "async": {
+                "api_version": {
+                    "signature": "api_version: Optional[str] = None,",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile: KnownProfiles = KnownProfiles.default,",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            }
+        }
+    },
+    "config": {
+        "credential": false,
+        "credential_scopes": null,
+        "credential_call_sync": null,
+        "credential_call_async": null,
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}}"
+    },
+    "operation_groups": {
+    },
+    "operation_mixins": {
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Iterable\", \"Optional\"]}, \"azurecore\": {\"azure.core.paging\": [\"ItemPaged\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\", \"Optional\"]}, \"azurecore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}}}",
+        "operations": {
+            "get_certificates" : {
+                "sync": {
+                    "signature": "def get_certificates(\n    self,\n    vault_base_url,  # type: str\n    maxresults=None,  # type: Optional[int]\n    include_pending=None,  # type: Optional[bool]\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e Iterable[\"_models.CertificateListResult\"]\n",
+                    "doc": "\"\"\"List certificates in a specified key vault.\n\nThe GetCertificates operation returns the set of certificates resources in the specified key\nvault. This operation requires the certificates/list permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param maxresults: Maximum number of results to return in a page. If not specified the service\n will return up to 25 results. Default value is None.\n:type maxresults: int\n:param include_pending: Specifies whether to include certificates which are not completely\n provisioned. Default value is None.\n:type include_pending: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either CertificateListResult or the result of\n cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_3.models.CertificateListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": false,
+                    "signature": "def get_certificates(\n    self,\n    vault_base_url: str,\n    maxresults: Optional[int] = None,\n    include_pending: Optional[bool] = None,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.CertificateListResult\"]:\n",
+                    "doc": "\"\"\"List certificates in a specified key vault.\n\nThe GetCertificates operation returns the set of certificates resources in the specified key\nvault. This operation requires the certificates/list permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param maxresults: Maximum number of results to return in a page. If not specified the service\n will return up to 25 results. Default value is None.\n:type maxresults: int\n:param include_pending: Specifies whether to include certificates which are not completely\n provisioned. Default value is None.\n:type include_pending: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either CertificateListResult or the result of\n cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_3.models.CertificateListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, maxresults, include_pending"
+            },
+            "delete_certificate" : {
+                "sync": {
+                    "signature": "def delete_certificate(\n    self,\n    vault_base_url,  # type: str\n    certificate_name,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.DeletedCertificateBundle\"\n",
+                    "doc": "\"\"\"Deletes a certificate from a specified key vault.\n\nDeletes all versions of a certificate object along with its associated policy. Delete\ncertificate cannot be used to remove individual versions of a certificate object. This\noperation requires the certificates/delete permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DeletedCertificateBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.DeletedCertificateBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def delete_certificate(\n    self,\n    vault_base_url: str,\n    certificate_name: str,\n    **kwargs: Any\n) -\u003e \"_models.DeletedCertificateBundle\":\n",
+                    "doc": "\"\"\"Deletes a certificate from a specified key vault.\n\nDeletes all versions of a certificate object along with its associated policy. Delete\ncertificate cannot be used to remove individual versions of a certificate object. This\noperation requires the certificates/delete permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DeletedCertificateBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.DeletedCertificateBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, certificate_name"
+            },
+            "set_certificate_contacts" : {
+                "sync": {
+                    "signature": "def set_certificate_contacts(\n    self,\n    vault_base_url,  # type: str\n    contacts,  # type: \"_models.Contacts\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.Contacts\"\n",
+                    "doc": "\"\"\"Sets the certificate contacts for the specified key vault.\n\nSets the certificate contacts for the specified key vault. This operation requires the\ncertificates/managecontacts permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param contacts: The contacts for the key vault certificate.\n:type contacts: ~azure.keyvault.v7_3.models.Contacts\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: Contacts, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.Contacts\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def set_certificate_contacts(\n    self,\n    vault_base_url: str,\n    contacts: \"_models.Contacts\",\n    **kwargs: Any\n) -\u003e \"_models.Contacts\":\n",
+                    "doc": "\"\"\"Sets the certificate contacts for the specified key vault.\n\nSets the certificate contacts for the specified key vault. This operation requires the\ncertificates/managecontacts permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param contacts: The contacts for the key vault certificate.\n:type contacts: ~azure.keyvault.v7_3.models.Contacts\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: Contacts, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.Contacts\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, contacts"
+            },
+            "get_certificate_contacts" : {
+                "sync": {
+                    "signature": "def get_certificate_contacts(\n    self,\n    vault_base_url,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.Contacts\"\n",
+                    "doc": "\"\"\"Lists the certificate contacts for a specified key vault.\n\nThe GetCertificateContacts operation returns the set of certificate contact resources in the\nspecified key vault. This operation requires the certificates/managecontacts permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: Contacts, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.Contacts\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def get_certificate_contacts(\n    self,\n    vault_base_url: str,\n    **kwargs: Any\n) -\u003e \"_models.Contacts\":\n",
+                    "doc": "\"\"\"Lists the certificate contacts for a specified key vault.\n\nThe GetCertificateContacts operation returns the set of certificate contact resources in the\nspecified key vault. This operation requires the certificates/managecontacts permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: Contacts, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.Contacts\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url"
+            },
+            "delete_certificate_contacts" : {
+                "sync": {
+                    "signature": "def delete_certificate_contacts(\n    self,\n    vault_base_url,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.Contacts\"\n",
+                    "doc": "\"\"\"Deletes the certificate contacts for a specified key vault.\n\nDeletes the certificate contacts for a specified key vault certificate. This operation requires\nthe certificates/managecontacts permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: Contacts, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.Contacts\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def delete_certificate_contacts(\n    self,\n    vault_base_url: str,\n    **kwargs: Any\n) -\u003e \"_models.Contacts\":\n",
+                    "doc": "\"\"\"Deletes the certificate contacts for a specified key vault.\n\nDeletes the certificate contacts for a specified key vault certificate. This operation requires\nthe certificates/managecontacts permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: Contacts, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.Contacts\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url"
+            },
+            "get_certificate_issuers" : {
+                "sync": {
+                    "signature": "def get_certificate_issuers(\n    self,\n    vault_base_url,  # type: str\n    maxresults=None,  # type: Optional[int]\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e Iterable[\"_models.CertificateIssuerListResult\"]\n",
+                    "doc": "\"\"\"List certificate issuers for a specified key vault.\n\nThe GetCertificateIssuers operation returns the set of certificate issuer resources in the\nspecified key vault. This operation requires the certificates/manageissuers/getissuers\npermission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param maxresults: Maximum number of results to return in a page. If not specified the service\n will return up to 25 results. Default value is None.\n:type maxresults: int\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either CertificateIssuerListResult or the result of\n cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_3.models.CertificateIssuerListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": false,
+                    "signature": "def get_certificate_issuers(\n    self,\n    vault_base_url: str,\n    maxresults: Optional[int] = None,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.CertificateIssuerListResult\"]:\n",
+                    "doc": "\"\"\"List certificate issuers for a specified key vault.\n\nThe GetCertificateIssuers operation returns the set of certificate issuer resources in the\nspecified key vault. This operation requires the certificates/manageissuers/getissuers\npermission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param maxresults: Maximum number of results to return in a page. If not specified the service\n will return up to 25 results. Default value is None.\n:type maxresults: int\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either CertificateIssuerListResult or the result of\n cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_3.models.CertificateIssuerListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, maxresults"
+            },
+            "set_certificate_issuer" : {
+                "sync": {
+                    "signature": "def set_certificate_issuer(\n    self,\n    vault_base_url,  # type: str\n    issuer_name,  # type: str\n    parameter,  # type: \"_models.CertificateIssuerSetParameters\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.IssuerBundle\"\n",
+                    "doc": "\"\"\"Sets the specified certificate issuer.\n\nThe SetCertificateIssuer operation adds or updates the specified certificate issuer. This\noperation requires the certificates/setissuers permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param issuer_name: The name of the issuer.\n:type issuer_name: str\n:param parameter: Certificate issuer set parameter.\n:type parameter: ~azure.keyvault.v7_3.models.CertificateIssuerSetParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: IssuerBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.IssuerBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def set_certificate_issuer(\n    self,\n    vault_base_url: str,\n    issuer_name: str,\n    parameter: \"_models.CertificateIssuerSetParameters\",\n    **kwargs: Any\n) -\u003e \"_models.IssuerBundle\":\n",
+                    "doc": "\"\"\"Sets the specified certificate issuer.\n\nThe SetCertificateIssuer operation adds or updates the specified certificate issuer. This\noperation requires the certificates/setissuers permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param issuer_name: The name of the issuer.\n:type issuer_name: str\n:param parameter: Certificate issuer set parameter.\n:type parameter: ~azure.keyvault.v7_3.models.CertificateIssuerSetParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: IssuerBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.IssuerBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, issuer_name, parameter"
+            },
+            "update_certificate_issuer" : {
+                "sync": {
+                    "signature": "def update_certificate_issuer(\n    self,\n    vault_base_url,  # type: str\n    issuer_name,  # type: str\n    parameter,  # type: \"_models.CertificateIssuerUpdateParameters\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.IssuerBundle\"\n",
+                    "doc": "\"\"\"Updates the specified certificate issuer.\n\nThe UpdateCertificateIssuer operation performs an update on the specified certificate issuer\nentity. This operation requires the certificates/setissuers permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param issuer_name: The name of the issuer.\n:type issuer_name: str\n:param parameter: Certificate issuer update parameter.\n:type parameter: ~azure.keyvault.v7_3.models.CertificateIssuerUpdateParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: IssuerBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.IssuerBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def update_certificate_issuer(\n    self,\n    vault_base_url: str,\n    issuer_name: str,\n    parameter: \"_models.CertificateIssuerUpdateParameters\",\n    **kwargs: Any\n) -\u003e \"_models.IssuerBundle\":\n",
+                    "doc": "\"\"\"Updates the specified certificate issuer.\n\nThe UpdateCertificateIssuer operation performs an update on the specified certificate issuer\nentity. This operation requires the certificates/setissuers permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param issuer_name: The name of the issuer.\n:type issuer_name: str\n:param parameter: Certificate issuer update parameter.\n:type parameter: ~azure.keyvault.v7_3.models.CertificateIssuerUpdateParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: IssuerBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.IssuerBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, issuer_name, parameter"
+            },
+            "get_certificate_issuer" : {
+                "sync": {
+                    "signature": "def get_certificate_issuer(\n    self,\n    vault_base_url,  # type: str\n    issuer_name,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.IssuerBundle\"\n",
+                    "doc": "\"\"\"Lists the specified certificate issuer.\n\nThe GetCertificateIssuer operation returns the specified certificate issuer resources in the\nspecified key vault. This operation requires the certificates/manageissuers/getissuers\npermission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param issuer_name: The name of the issuer.\n:type issuer_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: IssuerBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.IssuerBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def get_certificate_issuer(\n    self,\n    vault_base_url: str,\n    issuer_name: str,\n    **kwargs: Any\n) -\u003e \"_models.IssuerBundle\":\n",
+                    "doc": "\"\"\"Lists the specified certificate issuer.\n\nThe GetCertificateIssuer operation returns the specified certificate issuer resources in the\nspecified key vault. This operation requires the certificates/manageissuers/getissuers\npermission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param issuer_name: The name of the issuer.\n:type issuer_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: IssuerBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.IssuerBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, issuer_name"
+            },
+            "delete_certificate_issuer" : {
+                "sync": {
+                    "signature": "def delete_certificate_issuer(\n    self,\n    vault_base_url,  # type: str\n    issuer_name,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.IssuerBundle\"\n",
+                    "doc": "\"\"\"Deletes the specified certificate issuer.\n\nThe DeleteCertificateIssuer operation permanently removes the specified certificate issuer from\nthe vault. This operation requires the certificates/manageissuers/deleteissuers permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param issuer_name: The name of the issuer.\n:type issuer_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: IssuerBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.IssuerBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def delete_certificate_issuer(\n    self,\n    vault_base_url: str,\n    issuer_name: str,\n    **kwargs: Any\n) -\u003e \"_models.IssuerBundle\":\n",
+                    "doc": "\"\"\"Deletes the specified certificate issuer.\n\nThe DeleteCertificateIssuer operation permanently removes the specified certificate issuer from\nthe vault. This operation requires the certificates/manageissuers/deleteissuers permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param issuer_name: The name of the issuer.\n:type issuer_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: IssuerBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.IssuerBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, issuer_name"
+            },
+            "create_certificate" : {
+                "sync": {
+                    "signature": "def create_certificate(\n    self,\n    vault_base_url,  # type: str\n    certificate_name,  # type: str\n    parameters,  # type: \"_models.CertificateCreateParameters\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.CertificateOperation\"\n",
+                    "doc": "\"\"\"Creates a new certificate.\n\nIf this is the first version, the certificate resource is created. This operation requires the\ncertificates/create permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:param parameters: The parameters to create a certificate.\n:type parameters: ~azure.keyvault.v7_3.models.CertificateCreateParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateOperation, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateOperation\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def create_certificate(\n    self,\n    vault_base_url: str,\n    certificate_name: str,\n    parameters: \"_models.CertificateCreateParameters\",\n    **kwargs: Any\n) -\u003e \"_models.CertificateOperation\":\n",
+                    "doc": "\"\"\"Creates a new certificate.\n\nIf this is the first version, the certificate resource is created. This operation requires the\ncertificates/create permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:param parameters: The parameters to create a certificate.\n:type parameters: ~azure.keyvault.v7_3.models.CertificateCreateParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateOperation, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateOperation\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, certificate_name, parameters"
+            },
+            "import_certificate" : {
+                "sync": {
+                    "signature": "def import_certificate(\n    self,\n    vault_base_url,  # type: str\n    certificate_name,  # type: str\n    parameters,  # type: \"_models.CertificateImportParameters\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.CertificateBundle\"\n",
+                    "doc": "\"\"\"Imports a certificate into a specified key vault.\n\nImports an existing valid certificate, containing a private key, into Azure Key Vault. This\noperation requires the certificates/import permission. The certificate to be imported can be in\neither PFX or PEM format. If the certificate is in PEM format the PEM file must contain the key\nas well as x509 certificates. Key Vault will only accept a key in PKCS#8 format.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:param parameters: The parameters to import the certificate.\n:type parameters: ~azure.keyvault.v7_3.models.CertificateImportParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def import_certificate(\n    self,\n    vault_base_url: str,\n    certificate_name: str,\n    parameters: \"_models.CertificateImportParameters\",\n    **kwargs: Any\n) -\u003e \"_models.CertificateBundle\":\n",
+                    "doc": "\"\"\"Imports a certificate into a specified key vault.\n\nImports an existing valid certificate, containing a private key, into Azure Key Vault. This\noperation requires the certificates/import permission. The certificate to be imported can be in\neither PFX or PEM format. If the certificate is in PEM format the PEM file must contain the key\nas well as x509 certificates. Key Vault will only accept a key in PKCS#8 format.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:param parameters: The parameters to import the certificate.\n:type parameters: ~azure.keyvault.v7_3.models.CertificateImportParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, certificate_name, parameters"
+            },
+            "get_certificate_versions" : {
+                "sync": {
+                    "signature": "def get_certificate_versions(\n    self,\n    vault_base_url,  # type: str\n    certificate_name,  # type: str\n    maxresults=None,  # type: Optional[int]\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e Iterable[\"_models.CertificateListResult\"]\n",
+                    "doc": "\"\"\"List the versions of a certificate.\n\nThe GetCertificateVersions operation returns the versions of a certificate in the specified key\nvault. This operation requires the certificates/list permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:param maxresults: Maximum number of results to return in a page. If not specified the service\n will return up to 25 results. Default value is None.\n:type maxresults: int\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either CertificateListResult or the result of\n cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_3.models.CertificateListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": false,
+                    "signature": "def get_certificate_versions(\n    self,\n    vault_base_url: str,\n    certificate_name: str,\n    maxresults: Optional[int] = None,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.CertificateListResult\"]:\n",
+                    "doc": "\"\"\"List the versions of a certificate.\n\nThe GetCertificateVersions operation returns the versions of a certificate in the specified key\nvault. This operation requires the certificates/list permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:param maxresults: Maximum number of results to return in a page. If not specified the service\n will return up to 25 results. Default value is None.\n:type maxresults: int\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either CertificateListResult or the result of\n cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_3.models.CertificateListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, certificate_name, maxresults"
+            },
+            "get_certificate_policy" : {
+                "sync": {
+                    "signature": "def get_certificate_policy(\n    self,\n    vault_base_url,  # type: str\n    certificate_name,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.CertificatePolicy\"\n",
+                    "doc": "\"\"\"Lists the policy for a certificate.\n\nThe GetCertificatePolicy operation returns the specified certificate policy resources in the\nspecified key vault. This operation requires the certificates/get permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate in a given key vault.\n:type certificate_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificatePolicy, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificatePolicy\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def get_certificate_policy(\n    self,\n    vault_base_url: str,\n    certificate_name: str,\n    **kwargs: Any\n) -\u003e \"_models.CertificatePolicy\":\n",
+                    "doc": "\"\"\"Lists the policy for a certificate.\n\nThe GetCertificatePolicy operation returns the specified certificate policy resources in the\nspecified key vault. This operation requires the certificates/get permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate in a given key vault.\n:type certificate_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificatePolicy, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificatePolicy\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, certificate_name"
+            },
+            "update_certificate_policy" : {
+                "sync": {
+                    "signature": "def update_certificate_policy(\n    self,\n    vault_base_url,  # type: str\n    certificate_name,  # type: str\n    certificate_policy,  # type: \"_models.CertificatePolicy\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.CertificatePolicy\"\n",
+                    "doc": "\"\"\"Updates the policy for a certificate.\n\nSet specified members in the certificate policy. Leave others as null. This operation requires\nthe certificates/update permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate in the given vault.\n:type certificate_name: str\n:param certificate_policy: The policy for the certificate.\n:type certificate_policy: ~azure.keyvault.v7_3.models.CertificatePolicy\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificatePolicy, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificatePolicy\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def update_certificate_policy(\n    self,\n    vault_base_url: str,\n    certificate_name: str,\n    certificate_policy: \"_models.CertificatePolicy\",\n    **kwargs: Any\n) -\u003e \"_models.CertificatePolicy\":\n",
+                    "doc": "\"\"\"Updates the policy for a certificate.\n\nSet specified members in the certificate policy. Leave others as null. This operation requires\nthe certificates/update permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate in the given vault.\n:type certificate_name: str\n:param certificate_policy: The policy for the certificate.\n:type certificate_policy: ~azure.keyvault.v7_3.models.CertificatePolicy\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificatePolicy, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificatePolicy\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, certificate_name, certificate_policy"
+            },
+            "update_certificate" : {
+                "sync": {
+                    "signature": "def update_certificate(\n    self,\n    vault_base_url,  # type: str\n    certificate_name,  # type: str\n    certificate_version,  # type: str\n    parameters,  # type: \"_models.CertificateUpdateParameters\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.CertificateBundle\"\n",
+                    "doc": "\"\"\"Updates the specified attributes associated with the given certificate.\n\nThe UpdateCertificate operation applies the specified update on the given certificate; the only\nelements updated are the certificate\u0027s attributes. This operation requires the\ncertificates/update permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate in the given key vault.\n:type certificate_name: str\n:param certificate_version: The version of the certificate.\n:type certificate_version: str\n:param parameters: The parameters for certificate update.\n:type parameters: ~azure.keyvault.v7_3.models.CertificateUpdateParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def update_certificate(\n    self,\n    vault_base_url: str,\n    certificate_name: str,\n    certificate_version: str,\n    parameters: \"_models.CertificateUpdateParameters\",\n    **kwargs: Any\n) -\u003e \"_models.CertificateBundle\":\n",
+                    "doc": "\"\"\"Updates the specified attributes associated with the given certificate.\n\nThe UpdateCertificate operation applies the specified update on the given certificate; the only\nelements updated are the certificate\u0027s attributes. This operation requires the\ncertificates/update permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate in the given key vault.\n:type certificate_name: str\n:param certificate_version: The version of the certificate.\n:type certificate_version: str\n:param parameters: The parameters for certificate update.\n:type parameters: ~azure.keyvault.v7_3.models.CertificateUpdateParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, certificate_name, certificate_version, parameters"
+            },
+            "get_certificate" : {
+                "sync": {
+                    "signature": "def get_certificate(\n    self,\n    vault_base_url,  # type: str\n    certificate_name,  # type: str\n    certificate_version,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.CertificateBundle\"\n",
+                    "doc": "\"\"\"Gets information about a certificate.\n\nGets information about a specific certificate. This operation requires the certificates/get\npermission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate in the given vault.\n:type certificate_name: str\n:param certificate_version: The version of the certificate. This URI fragment is optional. If\n not specified, the latest version of the certificate is returned.\n:type certificate_version: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def get_certificate(\n    self,\n    vault_base_url: str,\n    certificate_name: str,\n    certificate_version: str,\n    **kwargs: Any\n) -\u003e \"_models.CertificateBundle\":\n",
+                    "doc": "\"\"\"Gets information about a certificate.\n\nGets information about a specific certificate. This operation requires the certificates/get\npermission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate in the given vault.\n:type certificate_name: str\n:param certificate_version: The version of the certificate. This URI fragment is optional. If\n not specified, the latest version of the certificate is returned.\n:type certificate_version: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, certificate_name, certificate_version"
+            },
+            "update_certificate_operation" : {
+                "sync": {
+                    "signature": "def update_certificate_operation(\n    self,\n    vault_base_url,  # type: str\n    certificate_name,  # type: str\n    certificate_operation,  # type: \"_models.CertificateOperationUpdateParameter\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.CertificateOperation\"\n",
+                    "doc": "\"\"\"Updates a certificate operation.\n\nUpdates a certificate creation operation that is already in progress. This operation requires\nthe certificates/update permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:param certificate_operation: The certificate operation response.\n:type certificate_operation: ~azure.keyvault.v7_3.models.CertificateOperationUpdateParameter\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateOperation, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateOperation\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def update_certificate_operation(\n    self,\n    vault_base_url: str,\n    certificate_name: str,\n    certificate_operation: \"_models.CertificateOperationUpdateParameter\",\n    **kwargs: Any\n) -\u003e \"_models.CertificateOperation\":\n",
+                    "doc": "\"\"\"Updates a certificate operation.\n\nUpdates a certificate creation operation that is already in progress. This operation requires\nthe certificates/update permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:param certificate_operation: The certificate operation response.\n:type certificate_operation: ~azure.keyvault.v7_3.models.CertificateOperationUpdateParameter\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateOperation, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateOperation\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, certificate_name, certificate_operation"
+            },
+            "get_certificate_operation" : {
+                "sync": {
+                    "signature": "def get_certificate_operation(\n    self,\n    vault_base_url,  # type: str\n    certificate_name,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.CertificateOperation\"\n",
+                    "doc": "\"\"\"Gets the creation operation of a certificate.\n\nGets the creation operation associated with a specified certificate. This operation requires\nthe certificates/get permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateOperation, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateOperation\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def get_certificate_operation(\n    self,\n    vault_base_url: str,\n    certificate_name: str,\n    **kwargs: Any\n) -\u003e \"_models.CertificateOperation\":\n",
+                    "doc": "\"\"\"Gets the creation operation of a certificate.\n\nGets the creation operation associated with a specified certificate. This operation requires\nthe certificates/get permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateOperation, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateOperation\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, certificate_name"
+            },
+            "delete_certificate_operation" : {
+                "sync": {
+                    "signature": "def delete_certificate_operation(\n    self,\n    vault_base_url,  # type: str\n    certificate_name,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.CertificateOperation\"\n",
+                    "doc": "\"\"\"Deletes the creation operation for a specific certificate.\n\nDeletes the creation operation for a specified certificate that is in the process of being\ncreated. The certificate is no longer created. This operation requires the certificates/update\npermission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateOperation, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateOperation\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def delete_certificate_operation(\n    self,\n    vault_base_url: str,\n    certificate_name: str,\n    **kwargs: Any\n) -\u003e \"_models.CertificateOperation\":\n",
+                    "doc": "\"\"\"Deletes the creation operation for a specific certificate.\n\nDeletes the creation operation for a specified certificate that is in the process of being\ncreated. The certificate is no longer created. This operation requires the certificates/update\npermission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateOperation, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateOperation\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, certificate_name"
+            },
+            "merge_certificate" : {
+                "sync": {
+                    "signature": "def merge_certificate(\n    self,\n    vault_base_url,  # type: str\n    certificate_name,  # type: str\n    parameters,  # type: \"_models.CertificateMergeParameters\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.CertificateBundle\"\n",
+                    "doc": "\"\"\"Merges a certificate or a certificate chain with a key pair existing on the server.\n\nThe MergeCertificate operation performs the merging of a certificate or certificate chain with\na key pair currently available in the service. This operation requires the certificates/create\npermission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:param parameters: The parameters to merge certificate.\n:type parameters: ~azure.keyvault.v7_3.models.CertificateMergeParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def merge_certificate(\n    self,\n    vault_base_url: str,\n    certificate_name: str,\n    parameters: \"_models.CertificateMergeParameters\",\n    **kwargs: Any\n) -\u003e \"_models.CertificateBundle\":\n",
+                    "doc": "\"\"\"Merges a certificate or a certificate chain with a key pair existing on the server.\n\nThe MergeCertificate operation performs the merging of a certificate or certificate chain with\na key pair currently available in the service. This operation requires the certificates/create\npermission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:param parameters: The parameters to merge certificate.\n:type parameters: ~azure.keyvault.v7_3.models.CertificateMergeParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, certificate_name, parameters"
+            },
+            "backup_certificate" : {
+                "sync": {
+                    "signature": "def backup_certificate(\n    self,\n    vault_base_url,  # type: str\n    certificate_name,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.BackupCertificateResult\"\n",
+                    "doc": "\"\"\"Backs up the specified certificate.\n\nRequests that a backup of the specified certificate be downloaded to the client. All versions\nof the certificate will be downloaded. This operation requires the certificates/backup\npermission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: BackupCertificateResult, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.BackupCertificateResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def backup_certificate(\n    self,\n    vault_base_url: str,\n    certificate_name: str,\n    **kwargs: Any\n) -\u003e \"_models.BackupCertificateResult\":\n",
+                    "doc": "\"\"\"Backs up the specified certificate.\n\nRequests that a backup of the specified certificate be downloaded to the client. All versions\nof the certificate will be downloaded. This operation requires the certificates/backup\npermission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: BackupCertificateResult, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.BackupCertificateResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, certificate_name"
+            },
+            "restore_certificate" : {
+                "sync": {
+                    "signature": "def restore_certificate(\n    self,\n    vault_base_url,  # type: str\n    parameters,  # type: \"_models.CertificateRestoreParameters\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.CertificateBundle\"\n",
+                    "doc": "\"\"\"Restores a backed up certificate to a vault.\n\nRestores a backed up certificate, and all its versions, to a vault. This operation requires the\ncertificates/restore permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param parameters: The parameters to restore the certificate.\n:type parameters: ~azure.keyvault.v7_3.models.CertificateRestoreParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def restore_certificate(\n    self,\n    vault_base_url: str,\n    parameters: \"_models.CertificateRestoreParameters\",\n    **kwargs: Any\n) -\u003e \"_models.CertificateBundle\":\n",
+                    "doc": "\"\"\"Restores a backed up certificate to a vault.\n\nRestores a backed up certificate, and all its versions, to a vault. This operation requires the\ncertificates/restore permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param parameters: The parameters to restore the certificate.\n:type parameters: ~azure.keyvault.v7_3.models.CertificateRestoreParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, parameters"
+            },
+            "get_deleted_certificates" : {
+                "sync": {
+                    "signature": "def get_deleted_certificates(\n    self,\n    vault_base_url,  # type: str\n    maxresults=None,  # type: Optional[int]\n    include_pending=None,  # type: Optional[bool]\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e Iterable[\"_models.DeletedCertificateListResult\"]\n",
+                    "doc": "\"\"\"Lists the deleted certificates in the specified vault currently available for recovery.\n\nThe GetDeletedCertificates operation retrieves the certificates in the current vault which are\nin a deleted state and ready for recovery or purging. This operation includes deletion-specific\ninformation. This operation requires the certificates/get/list permission. This operation can\nonly be enabled on soft-delete enabled vaults.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param maxresults: Maximum number of results to return in a page. If not specified the service\n will return up to 25 results. Default value is None.\n:type maxresults: int\n:param include_pending: Specifies whether to include certificates which are not completely\n provisioned. Default value is None.\n:type include_pending: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either DeletedCertificateListResult or the result of\n cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_3.models.DeletedCertificateListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": false,
+                    "signature": "def get_deleted_certificates(\n    self,\n    vault_base_url: str,\n    maxresults: Optional[int] = None,\n    include_pending: Optional[bool] = None,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.DeletedCertificateListResult\"]:\n",
+                    "doc": "\"\"\"Lists the deleted certificates in the specified vault currently available for recovery.\n\nThe GetDeletedCertificates operation retrieves the certificates in the current vault which are\nin a deleted state and ready for recovery or purging. This operation includes deletion-specific\ninformation. This operation requires the certificates/get/list permission. This operation can\nonly be enabled on soft-delete enabled vaults.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param maxresults: Maximum number of results to return in a page. If not specified the service\n will return up to 25 results. Default value is None.\n:type maxresults: int\n:param include_pending: Specifies whether to include certificates which are not completely\n provisioned. Default value is None.\n:type include_pending: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either DeletedCertificateListResult or the result of\n cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_3.models.DeletedCertificateListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, maxresults, include_pending"
+            },
+            "get_deleted_certificate" : {
+                "sync": {
+                    "signature": "def get_deleted_certificate(\n    self,\n    vault_base_url,  # type: str\n    certificate_name,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.DeletedCertificateBundle\"\n",
+                    "doc": "\"\"\"Retrieves information about the specified deleted certificate.\n\nThe GetDeletedCertificate operation retrieves the deleted certificate information plus its\nattributes, such as retention interval, scheduled permanent deletion and the current deletion\nrecovery level. This operation requires the certificates/get permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DeletedCertificateBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.DeletedCertificateBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def get_deleted_certificate(\n    self,\n    vault_base_url: str,\n    certificate_name: str,\n    **kwargs: Any\n) -\u003e \"_models.DeletedCertificateBundle\":\n",
+                    "doc": "\"\"\"Retrieves information about the specified deleted certificate.\n\nThe GetDeletedCertificate operation retrieves the deleted certificate information plus its\nattributes, such as retention interval, scheduled permanent deletion and the current deletion\nrecovery level. This operation requires the certificates/get permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DeletedCertificateBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.DeletedCertificateBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, certificate_name"
+            },
+            "purge_deleted_certificate" : {
+                "sync": {
+                    "signature": "def purge_deleted_certificate(  # pylint: disable=inconsistent-return-statements\n    self,\n    vault_base_url,  # type: str\n    certificate_name,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e None\n",
+                    "doc": "\"\"\"Permanently deletes the specified deleted certificate.\n\nThe PurgeDeletedCertificate operation performs an irreversible deletion of the specified\ncertificate, without possibility for recovery. The operation is not available if the recovery\nlevel does not specify \u0027Purgeable\u0027. This operation requires the certificate/purge permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def purge_deleted_certificate(  # pylint: disable=inconsistent-return-statements\n    self,\n    vault_base_url: str,\n    certificate_name: str,\n    **kwargs: Any\n) -\u003e None:\n",
+                    "doc": "\"\"\"Permanently deletes the specified deleted certificate.\n\nThe PurgeDeletedCertificate operation performs an irreversible deletion of the specified\ncertificate, without possibility for recovery. The operation is not available if the recovery\nlevel does not specify \u0027Purgeable\u0027. This operation requires the certificate/purge permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the certificate.\n:type certificate_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, certificate_name"
+            },
+            "recover_deleted_certificate" : {
+                "sync": {
+                    "signature": "def recover_deleted_certificate(\n    self,\n    vault_base_url,  # type: str\n    certificate_name,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.CertificateBundle\"\n",
+                    "doc": "\"\"\"Recovers the deleted certificate back to its current version under /certificates.\n\nThe RecoverDeletedCertificate operation performs the reversal of the Delete operation. The\noperation is applicable in vaults enabled for soft-delete, and must be issued during the\nretention interval (available in the deleted certificate\u0027s attributes). This operation requires\nthe certificates/recover permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the deleted certificate.\n:type certificate_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def recover_deleted_certificate(\n    self,\n    vault_base_url: str,\n    certificate_name: str,\n    **kwargs: Any\n) -\u003e \"_models.CertificateBundle\":\n",
+                    "doc": "\"\"\"Recovers the deleted certificate back to its current version under /certificates.\n\nThe RecoverDeletedCertificate operation performs the reversal of the Delete operation. The\noperation is applicable in vaults enabled for soft-delete, and must be issued during the\nretention interval (available in the deleted certificate\u0027s attributes). This operation requires\nthe certificates/recover permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param certificate_name: The name of the deleted certificate.\n:type certificate_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CertificateBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_3.models.CertificateBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, certificate_name"
+            }
+        }
+    }
+}

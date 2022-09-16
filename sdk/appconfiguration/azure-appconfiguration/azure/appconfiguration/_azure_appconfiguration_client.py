@@ -44,7 +44,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AzureAppConfigurationClient:
+class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-keyword
     # pylint:disable=line-too-long
     """Represents a client that calls restful API of Azure App Configuration service.
 

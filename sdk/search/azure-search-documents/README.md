@@ -42,7 +42,7 @@ Use the Azure.Search.Documents client library to:
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
@@ -56,7 +56,7 @@ pip install azure-search-documents
 
 ### Prerequisites
 
-* Python 2.7, or 3.5 or later is required to use this package.
+* Python 3.7 or later is required to use this package.
 * You need an [Azure subscription][azure_sub] and a
 [Azure Cognitive Search service][search_resource] to use this package.
 
@@ -275,6 +275,26 @@ result = search_client.upload_documents(documents=[DOCUMENT])
 print("Upload of new document succeeded: {}".format(result[0].succeeded))
 ```
 
+### Authenticate in a National Cloud
+
+To authenticate in a [National Cloud](https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud), you will need to make the following additions to your client configuration:
+
+- Set the `AuthorityHost` in the credential options or via the `AZURE_AUTHORITY_HOST` environment variable
+- Set the `audience` in `SearchClient`, `SearchIndexClient`, or `SearchIndexerClient`
+
+```python
+# Create a SearchClient that will authenticate through AAD in the China national cloud.
+import os
+from azure.identity import DefaultAzureCredential, AzureAuthorityHosts
+from azure.search.documents import SearchClient
+
+index_name = "hotels"
+endpoint = os.environ["SEARCH_ENDPOINT"]
+key = os.environ["SEARCH_API_KEY"]
+credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_CHINA)
+
+search_client = SearchClient(endpoint, index_name, crdential=credential, audience="https://search.azure.cn")
+```
 
 ### Retrieving a specific document from your index
 
@@ -304,7 +324,7 @@ print("    Category: {}".format(result["Category"]))
 
 
 ### Async APIs
-This library includes a complete async API supported on Python 3.5+. To use it, you must
+This library includes a complete async API. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
 [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#transport)

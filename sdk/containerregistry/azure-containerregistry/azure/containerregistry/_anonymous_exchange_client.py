@@ -15,13 +15,13 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AnonymousACRExchangeClient(object):
+class AnonymousACRExchangeClient(object): # pylint: disable=client-accepts-api-version-keyword
     """Class for handling oauth authentication requests
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
     :param credential: Credential which provides tokens to authenticate requests
-    :type credential: :class:`~azure.core.credentials.TokenCredential`
+    :type credential: ~azure.core.credentials.TokenCredential
     """
 
     def __init__(self, endpoint, **kwargs):  # pylint: disable=missing-client-constructor-parameter-credential

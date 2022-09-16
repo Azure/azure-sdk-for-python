@@ -1,0 +1,680 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "1481",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "Test for logging disable",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "EntityRecognition",
+            "parameters": {
+              "loggingOptOut": true,
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "1",
+            "kind": "KeyPhraseExtraction",
+            "parameters": {
+              "loggingOptOut": true
+            }
+          },
+          {
+            "taskName": "2",
+            "kind": "PiiEntityRecognition",
+            "parameters": {
+              "loggingOptOut": true,
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "3",
+            "kind": "EntityLinking",
+            "parameters": {
+              "loggingOptOut": true,
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "4",
+            "kind": "SentimentAnalysis",
+            "parameters": {
+              "loggingOptOut": true,
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "5",
+            "kind": "CustomSingleLabelClassification",
+            "parameters": {
+              "loggingOptOut": true,
+              "projectName": "single_category_classify_project_name",
+              "deploymentName": "single_category_classify_project_name"
+            }
+          },
+          {
+            "taskName": "6",
+            "kind": "CustomMultiLabelClassification",
+            "parameters": {
+              "loggingOptOut": true,
+              "projectName": "multi_category_classify_project_name",
+              "deploymentName": "multi_category_classify_project_name"
+            }
+          },
+          {
+            "taskName": "7",
+            "kind": "CustomEntityRecognition",
+            "parameters": {
+              "loggingOptOut": true,
+              "projectName": "custom_entities_project_name",
+              "deploymentName": "custom_entities_project_name",
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "8",
+            "kind": "Healthcare",
+            "parameters": {
+              "loggingOptOut": true,
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "86640225-1fef-4275-a08f-45a8571634ba",
+        "Content-Length": "0",
+        "Date": "Thu, 09 Jun 2022 17:42:34 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ca3a7349-ba48-4644-8268-5fcd66264bd7?api-version=2022-05-01",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "718"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ca3a7349-ba48-4644-8268-5fcd66264bd7?api-version=2022-05-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "3e2c1447-77f5-4f8f-bc0f-d687e3356eb1",
+        "Content-Length": "1517",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 09 Jun 2022 17:42:39 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "109"
+      },
+      "ResponseBody": {
+        "jobId": "ca3a7349-ba48-4644-8268-5fcd66264bd7",
+        "lastUpdatedDateTime": "2022-06-09T17:42:35Z",
+        "createdDateTime": "2022-06-09T17:42:34Z",
+        "expirationDateTime": "2022-06-10T17:42:34Z",
+        "status": "running",
+        "errors": [],
+        "tasks": {
+          "completed": 4,
+          "failed": 0,
+          "inProgress": 5,
+          "total": 9,
+          "items": [
+            {
+              "kind": "HealthcareLROResults",
+              "taskName": "8",
+              "lastUpdateDateTime": "2022-06-09T17:42:35.7175733Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "entities": [],
+                    "relations": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2022-03-01"
+              }
+            },
+            {
+              "kind": "CustomSingleLabelClassificationLROResults",
+              "taskName": "5",
+              "lastUpdateDateTime": "2022-06-09T17:42:35.1033753Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "class": [
+                      {
+                        "category": "PlayMusic",
+                        "confidenceScore": 0.6
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "projectName": "single_category_classify_project_name",
+                "deploymentName": "single_category_classify_project_name"
+              }
+            },
+            {
+              "kind": "CustomMultiLabelClassificationLROResults",
+              "taskName": "6",
+              "lastUpdateDateTime": "2022-06-09T17:42:35.1143347Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "class": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "projectName": "multi_category_classify_project_name",
+                "deploymentName": "multi_category_classify_project_name"
+              }
+            },
+            {
+              "kind": "CustomEntityRecognitionLROResults",
+              "taskName": "7",
+              "lastUpdateDateTime": "2022-06-09T17:42:34.8427761Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "projectName": "custom_entities_project_name",
+                "deploymentName": "custom_entities_project_name"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ca3a7349-ba48-4644-8268-5fcd66264bd7?api-version=2022-05-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "29f6bda7-443b-4f9e-9b38-84ce5f5634ed",
+        "Content-Length": "2636",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 09 Jun 2022 17:42:45 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "190"
+      },
+      "ResponseBody": {
+        "jobId": "ca3a7349-ba48-4644-8268-5fcd66264bd7",
+        "lastUpdatedDateTime": "2022-06-09T17:42:43Z",
+        "createdDateTime": "2022-06-09T17:42:34Z",
+        "expirationDateTime": "2022-06-10T17:42:34Z",
+        "status": "running",
+        "errors": [],
+        "tasks": {
+          "completed": 7,
+          "failed": 0,
+          "inProgress": 2,
+          "total": 9,
+          "items": [
+            {
+              "kind": "HealthcareLROResults",
+              "taskName": "8",
+              "lastUpdateDateTime": "2022-06-09T17:42:35.7175733Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "entities": [],
+                    "relations": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2022-03-01"
+              }
+            },
+            {
+              "kind": "EntityRecognitionLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-06-09T17:42:43.6041294Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "entities": [
+                      {
+                        "text": "Test",
+                        "category": "Skill",
+                        "offset": 0,
+                        "length": 4,
+                        "confidenceScore": 0.83
+                      },
+                      {
+                        "text": "logging",
+                        "category": "Skill",
+                        "offset": 9,
+                        "length": 7,
+                        "confidenceScore": 0.69
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "KeyPhraseExtractionLROResults",
+              "taskName": "1",
+              "lastUpdateDateTime": "2022-06-09T17:42:41.9590452Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "keyPhrases": [
+                      "Test",
+                      "logging"
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "SentimentAnalysisLROResults",
+              "taskName": "4",
+              "lastUpdateDateTime": "2022-06-09T17:42:42.3441072Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "sentiment": "negative",
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.12,
+                      "negative": 0.86
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.12,
+                          "negative": 0.86
+                        },
+                        "offset": 0,
+                        "length": 24,
+                        "text": "Test for logging disable"
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2020-04-01"
+              }
+            },
+            {
+              "kind": "CustomSingleLabelClassificationLROResults",
+              "taskName": "5",
+              "lastUpdateDateTime": "2022-06-09T17:42:35.1033753Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "class": [
+                      {
+                        "category": "PlayMusic",
+                        "confidenceScore": 0.6
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "projectName": "single_category_classify_project_name",
+                "deploymentName": "single_category_classify_project_name"
+              }
+            },
+            {
+              "kind": "CustomMultiLabelClassificationLROResults",
+              "taskName": "6",
+              "lastUpdateDateTime": "2022-06-09T17:42:35.1143347Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "class": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "projectName": "multi_category_classify_project_name",
+                "deploymentName": "multi_category_classify_project_name"
+              }
+            },
+            {
+              "kind": "CustomEntityRecognitionLROResults",
+              "taskName": "7",
+              "lastUpdateDateTime": "2022-06-09T17:42:34.8427761Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "projectName": "custom_entities_project_name",
+                "deploymentName": "custom_entities_project_name"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ca3a7349-ba48-4644-8268-5fcd66264bd7?api-version=2022-05-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "4a99c5ee-1bed-484f-8406-286996a22776",
+        "Content-Length": "3414",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 09 Jun 2022 17:42:50 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "244"
+      },
+      "ResponseBody": {
+        "jobId": "ca3a7349-ba48-4644-8268-5fcd66264bd7",
+        "lastUpdatedDateTime": "2022-06-09T17:42:48Z",
+        "createdDateTime": "2022-06-09T17:42:34Z",
+        "expirationDateTime": "2022-06-10T17:42:34Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 9,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 9,
+          "items": [
+            {
+              "kind": "HealthcareLROResults",
+              "taskName": "8",
+              "lastUpdateDateTime": "2022-06-09T17:42:35.7175733Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "entities": [],
+                    "relations": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2022-03-01"
+              }
+            },
+            {
+              "kind": "EntityRecognitionLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-06-09T17:42:43.6041294Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "entities": [
+                      {
+                        "text": "Test",
+                        "category": "Skill",
+                        "offset": 0,
+                        "length": 4,
+                        "confidenceScore": 0.83
+                      },
+                      {
+                        "text": "logging",
+                        "category": "Skill",
+                        "offset": 9,
+                        "length": 7,
+                        "confidenceScore": 0.69
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "KeyPhraseExtractionLROResults",
+              "taskName": "1",
+              "lastUpdateDateTime": "2022-06-09T17:42:41.9590452Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "keyPhrases": [
+                      "Test",
+                      "logging"
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "PiiEntityRecognitionLROResults",
+              "taskName": "2",
+              "lastUpdateDateTime": "2022-06-09T17:42:47.9545815Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "redactedText": "Test for logging disable",
+                    "id": "0",
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-01-15"
+              }
+            },
+            {
+              "kind": "EntityLinkingLROResults",
+              "taskName": "3",
+              "lastUpdateDateTime": "2022-06-09T17:42:48.1262682Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "entities": [
+                      {
+                        "bingId": "a7b11e27-5b63-19a5-b4dd-37b71149ecac",
+                        "name": "Test (assessment)",
+                        "matches": [
+                          {
+                            "text": "Test",
+                            "offset": 0,
+                            "length": 4,
+                            "confidenceScore": 0.04
+                          }
+                        ],
+                        "language": "en",
+                        "id": "Test (assessment)",
+                        "url": "https://en.wikipedia.org/wiki/Test_(assessment)",
+                        "dataSource": "Wikipedia"
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "SentimentAnalysisLROResults",
+              "taskName": "4",
+              "lastUpdateDateTime": "2022-06-09T17:42:42.3441072Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "sentiment": "negative",
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.12,
+                      "negative": 0.86
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "negative",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.12,
+                          "negative": 0.86
+                        },
+                        "offset": 0,
+                        "length": 24,
+                        "text": "Test for logging disable"
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2020-04-01"
+              }
+            },
+            {
+              "kind": "CustomSingleLabelClassificationLROResults",
+              "taskName": "5",
+              "lastUpdateDateTime": "2022-06-09T17:42:35.1033753Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "class": [
+                      {
+                        "category": "PlayMusic",
+                        "confidenceScore": 0.6
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "projectName": "single_category_classify_project_name",
+                "deploymentName": "single_category_classify_project_name"
+              }
+            },
+            {
+              "kind": "CustomMultiLabelClassificationLROResults",
+              "taskName": "6",
+              "lastUpdateDateTime": "2022-06-09T17:42:35.1143347Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "class": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "projectName": "multi_category_classify_project_name",
+                "deploymentName": "multi_category_classify_project_name"
+              }
+            },
+            {
+              "kind": "CustomEntityRecognitionLROResults",
+              "taskName": "7",
+              "lastUpdateDateTime": "2022-06-09T17:42:34.8427761Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "projectName": "custom_entities_project_name",
+                "deploymentName": "custom_entities_project_name"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

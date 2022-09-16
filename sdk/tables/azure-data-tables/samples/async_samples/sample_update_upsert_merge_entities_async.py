@@ -16,12 +16,13 @@ USAGE:
     python sample_update_upsert_merge_entities_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) TABLES_STORAGE_ENDPOINT_SUFFIX - the Table service account URL suffix
+    2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
+    3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
-from time import sleep
 from uuid import uuid4
 import asyncio
 from dotenv import find_dotenv, load_dotenv
@@ -33,7 +34,6 @@ class TableEntitySamples(object):
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name, self.access_key, self.endpoint_suffix
         )
@@ -58,7 +58,7 @@ class TableEntitySamples(object):
                 "last_updated": datetime.today(),
                 "product_id": uuid4(),
                 "inventory_count": 42,
-                "barcode": b"135aefg8oj0ld58"
+                "barcode": b"135aefg8oj0ld58" # cspell:disable-line
             }
 
             try:
@@ -186,24 +186,12 @@ class TableEntitySamples(object):
             finally:
                 await table.delete_table()
 
-    async def clean_up(self):
-        from azure.data.tables.aio import TableServiceClient
-
-        tsc = TableServiceClient.from_connection_string(self.connection_string)
-
-        async with tsc:
-            async for table in tsc.list_tables():
-                await tsc.delete_table(table.name)
-
-        print("Cleaned up")
-
 
 async def main():
     sample = TableEntitySamples()
     await sample.create_and_get_entities()
     await sample.list_all_entities()
     await sample.update_entities()
-    await sample.clean_up()
 
 
 if __name__ == "__main__":

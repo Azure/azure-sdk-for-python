@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -18,12 +18,12 @@ from ._logic_management_client_enums import *
 class AgreementContent(msrest.serialization.Model):
     """The integration account agreement content.
 
-    :param a_s2: The AS2 agreement content.
-    :type a_s2: ~azure.mgmt.logic.models.AS2AgreementContent
-    :param x12: The X12 agreement content.
-    :type x12: ~azure.mgmt.logic.models.X12AgreementContent
-    :param edifact: The EDIFACT agreement content.
-    :type edifact: ~azure.mgmt.logic.models.EdifactAgreementContent
+    :ivar a_s2: The AS2 agreement content.
+    :vartype a_s2: ~azure.mgmt.logic.models.AS2AgreementContent
+    :ivar x12: The X12 agreement content.
+    :vartype x12: ~azure.mgmt.logic.models.X12AgreementContent
+    :ivar edifact: The EDIFACT agreement content.
+    :vartype edifact: ~azure.mgmt.logic.models.EdifactAgreementContent
     """
 
     _attribute_map = {
@@ -40,6 +40,14 @@ class AgreementContent(msrest.serialization.Model):
         edifact: Optional["EdifactAgreementContent"] = None,
         **kwargs
     ):
+        """
+        :keyword a_s2: The AS2 agreement content.
+        :paramtype a_s2: ~azure.mgmt.logic.models.AS2AgreementContent
+        :keyword x12: The X12 agreement content.
+        :paramtype x12: ~azure.mgmt.logic.models.X12AgreementContent
+        :keyword edifact: The EDIFACT agreement content.
+        :paramtype edifact: ~azure.mgmt.logic.models.EdifactAgreementContent
+        """
         super(AgreementContent, self).__init__(**kwargs)
         self.a_s2 = a_s2
         self.x12 = x12
@@ -49,17 +57,17 @@ class AgreementContent(msrest.serialization.Model):
 class ApiDeploymentParameterMetadata(msrest.serialization.Model):
     """The API deployment parameter metadata.
 
-    :param type: The type.
-    :type type: str
-    :param is_required: Indicates whether its required.
-    :type is_required: bool
-    :param display_name: The display name.
-    :type display_name: str
-    :param description: The description.
-    :type description: str
-    :param visibility: The visibility. Possible values include: "NotSpecified", "Default",
+    :ivar type: The type.
+    :vartype type: str
+    :ivar is_required: Indicates whether its required.
+    :vartype is_required: bool
+    :ivar display_name: The display name.
+    :vartype display_name: str
+    :ivar description: The description.
+    :vartype description: str
+    :ivar visibility: The visibility. Possible values include: "NotSpecified", "Default",
      "Internal".
-    :type visibility: str or ~azure.mgmt.logic.models.ApiDeploymentParameterVisibility
+    :vartype visibility: str or ~azure.mgmt.logic.models.ApiDeploymentParameterVisibility
     """
 
     _attribute_map = {
@@ -80,6 +88,19 @@ class ApiDeploymentParameterMetadata(msrest.serialization.Model):
         visibility: Optional[Union[str, "ApiDeploymentParameterVisibility"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: The type.
+        :paramtype type: str
+        :keyword is_required: Indicates whether its required.
+        :paramtype is_required: bool
+        :keyword display_name: The display name.
+        :paramtype display_name: str
+        :keyword description: The description.
+        :paramtype description: str
+        :keyword visibility: The visibility. Possible values include: "NotSpecified", "Default",
+         "Internal".
+        :paramtype visibility: str or ~azure.mgmt.logic.models.ApiDeploymentParameterVisibility
+        """
         super(ApiDeploymentParameterMetadata, self).__init__(**kwargs)
         self.type = type
         self.is_required = is_required
@@ -91,10 +112,10 @@ class ApiDeploymentParameterMetadata(msrest.serialization.Model):
 class ApiDeploymentParameterMetadataSet(msrest.serialization.Model):
     """The API deployment parameters metadata.
 
-    :param package_content_link: The package content link parameter.
-    :type package_content_link: ~azure.mgmt.logic.models.ApiDeploymentParameterMetadata
-    :param redis_cache_connection_string: The package content link parameter.
-    :type redis_cache_connection_string: ~azure.mgmt.logic.models.ApiDeploymentParameterMetadata
+    :ivar package_content_link: The package content link parameter.
+    :vartype package_content_link: ~azure.mgmt.logic.models.ApiDeploymentParameterMetadata
+    :ivar redis_cache_connection_string: The package content link parameter.
+    :vartype redis_cache_connection_string: ~azure.mgmt.logic.models.ApiDeploymentParameterMetadata
     """
 
     _attribute_map = {
@@ -109,6 +130,13 @@ class ApiDeploymentParameterMetadataSet(msrest.serialization.Model):
         redis_cache_connection_string: Optional["ApiDeploymentParameterMetadata"] = None,
         **kwargs
     ):
+        """
+        :keyword package_content_link: The package content link parameter.
+        :paramtype package_content_link: ~azure.mgmt.logic.models.ApiDeploymentParameterMetadata
+        :keyword redis_cache_connection_string: The package content link parameter.
+        :paramtype redis_cache_connection_string:
+         ~azure.mgmt.logic.models.ApiDeploymentParameterMetadata
+        """
         super(ApiDeploymentParameterMetadataSet, self).__init__(**kwargs)
         self.package_content_link = package_content_link
         self.redis_cache_connection_string = redis_cache_connection_string
@@ -125,10 +153,10 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -152,6 +180,12 @@ class Resource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -171,12 +205,12 @@ class ApiOperation(Resource):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param properties: The api operations properties.
-    :type properties: ~azure.mgmt.logic.models.ApiOperationPropertiesDefinition
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The api operations properties.
+    :vartype properties: ~azure.mgmt.logic.models.ApiOperationPropertiesDefinition
     """
 
     _validation = {
@@ -202,6 +236,14 @@ class ApiOperation(Resource):
         properties: Optional["ApiOperationPropertiesDefinition"] = None,
         **kwargs
     ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: The api operations properties.
+        :paramtype properties: ~azure.mgmt.logic.models.ApiOperationPropertiesDefinition
+        """
         super(ApiOperation, self).__init__(location=location, tags=tags, **kwargs)
         self.properties = properties
 
@@ -209,13 +251,13 @@ class ApiOperation(Resource):
 class ApiOperationAnnotation(msrest.serialization.Model):
     """The Api Operation Annotation.
 
-    :param status: The status annotation. Possible values include: "NotSpecified", "Preview",
+    :ivar status: The status annotation. Possible values include: "NotSpecified", "Preview",
      "Production".
-    :type status: str or ~azure.mgmt.logic.models.StatusAnnotation
-    :param family: The family.
-    :type family: str
-    :param revision: The revision.
-    :type revision: int
+    :vartype status: str or ~azure.mgmt.logic.models.StatusAnnotation
+    :ivar family: The family.
+    :vartype family: str
+    :ivar revision: The revision.
+    :vartype revision: int
     """
 
     _attribute_map = {
@@ -232,6 +274,15 @@ class ApiOperationAnnotation(msrest.serialization.Model):
         revision: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword status: The status annotation. Possible values include: "NotSpecified", "Preview",
+         "Production".
+        :paramtype status: str or ~azure.mgmt.logic.models.StatusAnnotation
+        :keyword family: The family.
+        :paramtype family: str
+        :keyword revision: The revision.
+        :paramtype revision: int
+        """
         super(ApiOperationAnnotation, self).__init__(**kwargs)
         self.status = status
         self.family = family
@@ -241,10 +292,10 @@ class ApiOperationAnnotation(msrest.serialization.Model):
 class ApiOperationListResult(msrest.serialization.Model):
     """The list of managed API operations.
 
-    :param value: The api operation definitions for an API.
-    :type value: list[~azure.mgmt.logic.models.ApiOperation]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: The api operation definitions for an API.
+    :vartype value: list[~azure.mgmt.logic.models.ApiOperation]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -259,6 +310,12 @@ class ApiOperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The api operation definitions for an API.
+        :paramtype value: list[~azure.mgmt.logic.models.ApiOperation]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(ApiOperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -267,30 +324,30 @@ class ApiOperationListResult(msrest.serialization.Model):
 class ApiOperationPropertiesDefinition(msrest.serialization.Model):
     """The api operations properties.
 
-    :param summary: The summary of the api operation.
-    :type summary: str
-    :param description: The description of the api operation.
-    :type description: str
-    :param visibility: The visibility of the api operation.
-    :type visibility: str
-    :param trigger: The trigger type of api operation.
-    :type trigger: str
-    :param trigger_hint: The trigger hint for the api operation.
-    :type trigger_hint: str
-    :param pageable: Indicates whether the api operation is pageable.
-    :type pageable: bool
-    :param annotation: The annotation of api operation.
-    :type annotation: ~azure.mgmt.logic.models.ApiOperationAnnotation
-    :param api: The api reference.
-    :type api: ~azure.mgmt.logic.models.ApiReference
-    :param inputs_definition: The operation inputs definition schema.
-    :type inputs_definition: ~azure.mgmt.logic.models.SwaggerSchema
-    :param responses_definition: The operation responses definition schemas.
-    :type responses_definition: dict[str, ~azure.mgmt.logic.models.SwaggerSchema]
-    :param is_webhook: Indicates whether the API operation is webhook or not.
-    :type is_webhook: bool
-    :param is_notification: Indicates whether the API operation is notification or not.
-    :type is_notification: bool
+    :ivar summary: The summary of the api operation.
+    :vartype summary: str
+    :ivar description: The description of the api operation.
+    :vartype description: str
+    :ivar visibility: The visibility of the api operation.
+    :vartype visibility: str
+    :ivar trigger: The trigger type of api operation.
+    :vartype trigger: str
+    :ivar trigger_hint: The trigger hint for the api operation.
+    :vartype trigger_hint: str
+    :ivar pageable: Indicates whether the api operation is pageable.
+    :vartype pageable: bool
+    :ivar annotation: The annotation of api operation.
+    :vartype annotation: ~azure.mgmt.logic.models.ApiOperationAnnotation
+    :ivar api: The api reference.
+    :vartype api: ~azure.mgmt.logic.models.ApiReference
+    :ivar inputs_definition: The operation inputs definition schema.
+    :vartype inputs_definition: ~azure.mgmt.logic.models.SwaggerSchema
+    :ivar responses_definition: The operation responses definition schemas.
+    :vartype responses_definition: dict[str, ~azure.mgmt.logic.models.SwaggerSchema]
+    :ivar is_webhook: Indicates whether the API operation is webhook or not.
+    :vartype is_webhook: bool
+    :ivar is_notification: Indicates whether the API operation is notification or not.
+    :vartype is_notification: bool
     """
 
     _attribute_map = {
@@ -325,6 +382,32 @@ class ApiOperationPropertiesDefinition(msrest.serialization.Model):
         is_notification: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword summary: The summary of the api operation.
+        :paramtype summary: str
+        :keyword description: The description of the api operation.
+        :paramtype description: str
+        :keyword visibility: The visibility of the api operation.
+        :paramtype visibility: str
+        :keyword trigger: The trigger type of api operation.
+        :paramtype trigger: str
+        :keyword trigger_hint: The trigger hint for the api operation.
+        :paramtype trigger_hint: str
+        :keyword pageable: Indicates whether the api operation is pageable.
+        :paramtype pageable: bool
+        :keyword annotation: The annotation of api operation.
+        :paramtype annotation: ~azure.mgmt.logic.models.ApiOperationAnnotation
+        :keyword api: The api reference.
+        :paramtype api: ~azure.mgmt.logic.models.ApiReference
+        :keyword inputs_definition: The operation inputs definition schema.
+        :paramtype inputs_definition: ~azure.mgmt.logic.models.SwaggerSchema
+        :keyword responses_definition: The operation responses definition schemas.
+        :paramtype responses_definition: dict[str, ~azure.mgmt.logic.models.SwaggerSchema]
+        :keyword is_webhook: Indicates whether the API operation is webhook or not.
+        :paramtype is_webhook: bool
+        :keyword is_notification: Indicates whether the API operation is notification or not.
+        :paramtype is_notification: bool
+        """
         super(ApiOperationPropertiesDefinition, self).__init__(**kwargs)
         self.summary = summary
         self.description = description
@@ -345,8 +428,8 @@ class ResourceReference(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: The resource id.
-    :type id: str
+    :ivar id: The resource id.
+    :vartype id: str
     :ivar name: Gets the resource name.
     :vartype name: str
     :ivar type: Gets the resource type.
@@ -370,6 +453,10 @@ class ResourceReference(msrest.serialization.Model):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The resource id.
+        :paramtype id: str
+        """
         super(ResourceReference, self).__init__(**kwargs)
         self.id = id
         self.name = None
@@ -381,27 +468,27 @@ class ApiReference(ResourceReference):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: The resource id.
-    :type id: str
+    :ivar id: The resource id.
+    :vartype id: str
     :ivar name: Gets the resource name.
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param display_name: The display name of the api.
-    :type display_name: str
-    :param description: The description of the api.
-    :type description: str
-    :param icon_uri: The icon uri of the api.
-    :type icon_uri: str
-    :param swagger: The swagger of the api.
-    :type swagger: object
-    :param brand_color: The brand color of the api.
-    :type brand_color: str
-    :param category: The tier. Possible values include: "NotSpecified", "Enterprise", "Standard",
+    :ivar display_name: The display name of the api.
+    :vartype display_name: str
+    :ivar description: The description of the api.
+    :vartype description: str
+    :ivar icon_uri: The icon uri of the api.
+    :vartype icon_uri: str
+    :ivar swagger: The swagger of the api.
+    :vartype swagger: any
+    :ivar brand_color: The brand color of the api.
+    :vartype brand_color: str
+    :ivar category: The tier. Possible values include: "NotSpecified", "Enterprise", "Standard",
      "Premium".
-    :type category: str or ~azure.mgmt.logic.models.ApiTier
-    :param integration_service_environment: The integration service environment reference.
-    :type integration_service_environment: ~azure.mgmt.logic.models.ResourceReference
+    :vartype category: str or ~azure.mgmt.logic.models.ApiTier
+    :ivar integration_service_environment: The integration service environment reference.
+    :vartype integration_service_environment: ~azure.mgmt.logic.models.ResourceReference
     """
 
     _validation = {
@@ -429,12 +516,31 @@ class ApiReference(ResourceReference):
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         icon_uri: Optional[str] = None,
-        swagger: Optional[object] = None,
+        swagger: Optional[Any] = None,
         brand_color: Optional[str] = None,
         category: Optional[Union[str, "ApiTier"]] = None,
         integration_service_environment: Optional["ResourceReference"] = None,
         **kwargs
     ):
+        """
+        :keyword id: The resource id.
+        :paramtype id: str
+        :keyword display_name: The display name of the api.
+        :paramtype display_name: str
+        :keyword description: The description of the api.
+        :paramtype description: str
+        :keyword icon_uri: The icon uri of the api.
+        :paramtype icon_uri: str
+        :keyword swagger: The swagger of the api.
+        :paramtype swagger: any
+        :keyword brand_color: The brand color of the api.
+        :paramtype brand_color: str
+        :keyword category: The tier. Possible values include: "NotSpecified", "Enterprise", "Standard",
+         "Premium".
+        :paramtype category: str or ~azure.mgmt.logic.models.ApiTier
+        :keyword integration_service_environment: The integration service environment reference.
+        :paramtype integration_service_environment: ~azure.mgmt.logic.models.ResourceReference
+        """
         super(ApiReference, self).__init__(id=id, **kwargs)
         self.display_name = display_name
         self.description = description
@@ -448,8 +554,8 @@ class ApiReference(ResourceReference):
 class ApiResourceBackendService(msrest.serialization.Model):
     """The API backend service.
 
-    :param service_url: The service URL.
-    :type service_url: str
+    :ivar service_url: The service URL.
+    :vartype service_url: str
     """
 
     _attribute_map = {
@@ -462,6 +568,10 @@ class ApiResourceBackendService(msrest.serialization.Model):
         service_url: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword service_url: The service URL.
+        :paramtype service_url: str
+        """
         super(ApiResourceBackendService, self).__init__(**kwargs)
         self.service_url = service_url
 
@@ -469,10 +579,10 @@ class ApiResourceBackendService(msrest.serialization.Model):
 class ApiResourceDefinitions(msrest.serialization.Model):
     """The Api resource definition.
 
-    :param original_swagger_url: The original swagger url.
-    :type original_swagger_url: str
-    :param modified_swagger_url: The modified swagger url.
-    :type modified_swagger_url: str
+    :ivar original_swagger_url: The original swagger url.
+    :vartype original_swagger_url: str
+    :ivar modified_swagger_url: The modified swagger url.
+    :vartype modified_swagger_url: str
     """
 
     _attribute_map = {
@@ -487,6 +597,12 @@ class ApiResourceDefinitions(msrest.serialization.Model):
         modified_swagger_url: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword original_swagger_url: The original swagger url.
+        :paramtype original_swagger_url: str
+        :keyword modified_swagger_url: The modified swagger url.
+        :paramtype modified_swagger_url: str
+        """
         super(ApiResourceDefinitions, self).__init__(**kwargs)
         self.original_swagger_url = original_swagger_url
         self.modified_swagger_url = modified_swagger_url
@@ -495,19 +611,19 @@ class ApiResourceDefinitions(msrest.serialization.Model):
 class ApiResourceGeneralInformation(msrest.serialization.Model):
     """The API general information.
 
-    :param icon_url: The icon url.
-    :type icon_url: str
-    :param display_name: The display name.
-    :type display_name: str
-    :param description: The description.
-    :type description: str
-    :param terms_of_use_url: The terms of use url.
-    :type terms_of_use_url: str
-    :param release_tag: The release tag.
-    :type release_tag: str
-    :param tier: The tier. Possible values include: "NotSpecified", "Enterprise", "Standard",
+    :ivar icon_url: The icon url.
+    :vartype icon_url: str
+    :ivar display_name: The display name.
+    :vartype display_name: str
+    :ivar description: The description.
+    :vartype description: str
+    :ivar terms_of_use_url: The terms of use url.
+    :vartype terms_of_use_url: str
+    :ivar release_tag: The release tag.
+    :vartype release_tag: str
+    :ivar tier: The tier. Possible values include: "NotSpecified", "Enterprise", "Standard",
      "Premium".
-    :type tier: str or ~azure.mgmt.logic.models.ApiTier
+    :vartype tier: str or ~azure.mgmt.logic.models.ApiTier
     """
 
     _attribute_map = {
@@ -530,6 +646,21 @@ class ApiResourceGeneralInformation(msrest.serialization.Model):
         tier: Optional[Union[str, "ApiTier"]] = None,
         **kwargs
     ):
+        """
+        :keyword icon_url: The icon url.
+        :paramtype icon_url: str
+        :keyword display_name: The display name.
+        :paramtype display_name: str
+        :keyword description: The description.
+        :paramtype description: str
+        :keyword terms_of_use_url: The terms of use url.
+        :paramtype terms_of_use_url: str
+        :keyword release_tag: The release tag.
+        :paramtype release_tag: str
+        :keyword tier: The tier. Possible values include: "NotSpecified", "Enterprise", "Standard",
+         "Premium".
+        :paramtype tier: str or ~azure.mgmt.logic.models.ApiTier
+        """
         super(ApiResourceGeneralInformation, self).__init__(**kwargs)
         self.icon_url = icon_url
         self.display_name = display_name
@@ -542,30 +673,30 @@ class ApiResourceGeneralInformation(msrest.serialization.Model):
 class ApiResourceMetadata(msrest.serialization.Model):
     """The api resource metadata.
 
-    :param source: The source.
-    :type source: str
-    :param brand_color: The brand color.
-    :type brand_color: str
-    :param hide_key: The hide key.
-    :type hide_key: str
-    :param tags: A set of tags. The tags.
-    :type tags: dict[str, str]
-    :param api_type: The api type. Possible values include: "NotSpecified", "Rest", "Soap".
-    :type api_type: str or ~azure.mgmt.logic.models.ApiType
-    :param wsdl_service: The WSDL service.
-    :type wsdl_service: ~azure.mgmt.logic.models.WsdlService
-    :param wsdl_import_method: The WSDL import method. Possible values include: "NotSpecified",
+    :ivar source: The source.
+    :vartype source: str
+    :ivar brand_color: The brand color.
+    :vartype brand_color: str
+    :ivar hide_key: The hide key.
+    :vartype hide_key: str
+    :ivar tags: A set of tags. The tags.
+    :vartype tags: dict[str, str]
+    :ivar api_type: The api type. Possible values include: "NotSpecified", "Rest", "Soap".
+    :vartype api_type: str or ~azure.mgmt.logic.models.ApiType
+    :ivar wsdl_service: The WSDL service.
+    :vartype wsdl_service: ~azure.mgmt.logic.models.WsdlService
+    :ivar wsdl_import_method: The WSDL import method. Possible values include: "NotSpecified",
      "SoapToRest", "SoapPassThrough".
-    :type wsdl_import_method: str or ~azure.mgmt.logic.models.WsdlImportMethod
-    :param connection_type: The connection type.
-    :type connection_type: str
-    :param provisioning_state: The provisioning state. Possible values include: "NotSpecified",
+    :vartype wsdl_import_method: str or ~azure.mgmt.logic.models.WsdlImportMethod
+    :ivar connection_type: The connection type.
+    :vartype connection_type: str
+    :ivar provisioning_state: The provisioning state. Possible values include: "NotSpecified",
      "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
      "Failed", "Succeeded", "Moving", "Updating", "Registering", "Registered", "Unregistering",
      "Unregistered", "Completed", "Renewing", "Pending", "Waiting", "InProgress".
-    :type provisioning_state: str or ~azure.mgmt.logic.models.WorkflowProvisioningState
-    :param deployment_parameters: The connector deployment parameters metadata.
-    :type deployment_parameters: ~azure.mgmt.logic.models.ApiDeploymentParameterMetadataSet
+    :vartype provisioning_state: str or ~azure.mgmt.logic.models.WorkflowProvisioningState
+    :ivar deployment_parameters: The connector deployment parameters metadata.
+    :vartype deployment_parameters: ~azure.mgmt.logic.models.ApiDeploymentParameterMetadataSet
     """
 
     _attribute_map = {
@@ -596,6 +727,32 @@ class ApiResourceMetadata(msrest.serialization.Model):
         deployment_parameters: Optional["ApiDeploymentParameterMetadataSet"] = None,
         **kwargs
     ):
+        """
+        :keyword source: The source.
+        :paramtype source: str
+        :keyword brand_color: The brand color.
+        :paramtype brand_color: str
+        :keyword hide_key: The hide key.
+        :paramtype hide_key: str
+        :keyword tags: A set of tags. The tags.
+        :paramtype tags: dict[str, str]
+        :keyword api_type: The api type. Possible values include: "NotSpecified", "Rest", "Soap".
+        :paramtype api_type: str or ~azure.mgmt.logic.models.ApiType
+        :keyword wsdl_service: The WSDL service.
+        :paramtype wsdl_service: ~azure.mgmt.logic.models.WsdlService
+        :keyword wsdl_import_method: The WSDL import method. Possible values include: "NotSpecified",
+         "SoapToRest", "SoapPassThrough".
+        :paramtype wsdl_import_method: str or ~azure.mgmt.logic.models.WsdlImportMethod
+        :keyword connection_type: The connection type.
+        :paramtype connection_type: str
+        :keyword provisioning_state: The provisioning state. Possible values include: "NotSpecified",
+         "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
+         "Failed", "Succeeded", "Moving", "Updating", "Registering", "Registered", "Unregistering",
+         "Unregistered", "Completed", "Renewing", "Pending", "Waiting", "InProgress".
+        :paramtype provisioning_state: str or ~azure.mgmt.logic.models.WorkflowProvisioningState
+        :keyword deployment_parameters: The connector deployment parameters metadata.
+        :paramtype deployment_parameters: ~azure.mgmt.logic.models.ApiDeploymentParameterMetadataSet
+        """
         super(ApiResourceMetadata, self).__init__(**kwargs)
         self.source = source
         self.brand_color = brand_color
@@ -612,10 +769,10 @@ class ApiResourceMetadata(msrest.serialization.Model):
 class ApiResourcePolicies(msrest.serialization.Model):
     """The API resource policies.
 
-    :param content: The API level only policies XML as embedded content.
-    :type content: str
-    :param content_link: The content link to the policies.
-    :type content_link: str
+    :ivar content: The API level only policies XML as embedded content.
+    :vartype content: str
+    :ivar content_link: The content link to the policies.
+    :vartype content_link: str
     """
 
     _attribute_map = {
@@ -630,6 +787,12 @@ class ApiResourcePolicies(msrest.serialization.Model):
         content_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword content: The API level only policies XML as embedded content.
+        :paramtype content: str
+        :keyword content_link: The content link to the policies.
+        :paramtype content_link: str
+        """
         super(ApiResourcePolicies, self).__init__(**kwargs)
         self.content = content
         self.content_link = content_link
@@ -638,37 +801,54 @@ class ApiResourcePolicies(msrest.serialization.Model):
 class ApiResourceProperties(msrest.serialization.Model):
     """The API resource properties.
 
-    :param name: The name.
-    :type name: str
-    :param connection_parameters: The connection parameters.
-    :type connection_parameters: dict[str, object]
-    :param metadata: The metadata.
-    :type metadata: ~azure.mgmt.logic.models.ApiResourceMetadata
-    :param runtime_urls: The runtime urls.
-    :type runtime_urls: list[str]
-    :param general_information: The api general information.
-    :type general_information: ~azure.mgmt.logic.models.ApiResourceGeneralInformation
-    :param capabilities: The capabilities.
-    :type capabilities: list[str]
-    :param backend_service: The backend service.
-    :type backend_service: ~azure.mgmt.logic.models.ApiResourceBackendService
-    :param policies: The policies for the API.
-    :type policies: ~azure.mgmt.logic.models.ApiResourcePolicies
-    :param api_definition_url: The API definition.
-    :type api_definition_url: str
-    :param api_definitions: The api definitions.
-    :type api_definitions: ~azure.mgmt.logic.models.ApiResourceDefinitions
-    :param integration_service_environment: The integration service environment reference.
-    :type integration_service_environment: ~azure.mgmt.logic.models.ResourceReference
-    :param provisioning_state: The provisioning state. Possible values include: "NotSpecified",
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name.
+    :vartype name: str
+    :ivar connection_parameters: The connection parameters.
+    :vartype connection_parameters: dict[str, any]
+    :ivar metadata: The metadata.
+    :vartype metadata: ~azure.mgmt.logic.models.ApiResourceMetadata
+    :ivar runtime_urls: The runtime urls.
+    :vartype runtime_urls: list[str]
+    :ivar general_information: The api general information.
+    :vartype general_information: ~azure.mgmt.logic.models.ApiResourceGeneralInformation
+    :ivar capabilities: The capabilities.
+    :vartype capabilities: list[str]
+    :ivar backend_service: The backend service.
+    :vartype backend_service: ~azure.mgmt.logic.models.ApiResourceBackendService
+    :ivar policies: The policies for the API.
+    :vartype policies: ~azure.mgmt.logic.models.ApiResourcePolicies
+    :ivar api_definition_url: The API definition.
+    :vartype api_definition_url: str
+    :ivar api_definitions: The api definitions.
+    :vartype api_definitions: ~azure.mgmt.logic.models.ApiResourceDefinitions
+    :ivar integration_service_environment: The integration service environment reference.
+    :vartype integration_service_environment: ~azure.mgmt.logic.models.ResourceReference
+    :ivar provisioning_state: The provisioning state. Possible values include: "NotSpecified",
      "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
      "Failed", "Succeeded", "Moving", "Updating", "Registering", "Registered", "Unregistering",
      "Unregistered", "Completed", "Renewing", "Pending", "Waiting", "InProgress".
-    :type provisioning_state: str or ~azure.mgmt.logic.models.WorkflowProvisioningState
-    :param category: The category. Possible values include: "NotSpecified", "Enterprise",
+    :vartype provisioning_state: str or ~azure.mgmt.logic.models.WorkflowProvisioningState
+    :ivar category: The category. Possible values include: "NotSpecified", "Enterprise",
      "Standard", "Premium".
-    :type category: str or ~azure.mgmt.logic.models.ApiTier
+    :vartype category: str or ~azure.mgmt.logic.models.ApiTier
     """
+
+    _validation = {
+        'name': {'readonly': True},
+        'connection_parameters': {'readonly': True},
+        'metadata': {'readonly': True},
+        'runtime_urls': {'readonly': True},
+        'general_information': {'readonly': True},
+        'capabilities': {'readonly': True},
+        'backend_service': {'readonly': True},
+        'policies': {'readonly': True},
+        'api_definition_url': {'readonly': True},
+        'api_definitions': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'category': {'readonly': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -689,46 +869,38 @@ class ApiResourceProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: Optional[str] = None,
-        connection_parameters: Optional[Dict[str, object]] = None,
-        metadata: Optional["ApiResourceMetadata"] = None,
-        runtime_urls: Optional[List[str]] = None,
-        general_information: Optional["ApiResourceGeneralInformation"] = None,
-        capabilities: Optional[List[str]] = None,
-        backend_service: Optional["ApiResourceBackendService"] = None,
-        policies: Optional["ApiResourcePolicies"] = None,
-        api_definition_url: Optional[str] = None,
-        api_definitions: Optional["ApiResourceDefinitions"] = None,
         integration_service_environment: Optional["ResourceReference"] = None,
-        provisioning_state: Optional[Union[str, "WorkflowProvisioningState"]] = None,
-        category: Optional[Union[str, "ApiTier"]] = None,
         **kwargs
     ):
+        """
+        :keyword integration_service_environment: The integration service environment reference.
+        :paramtype integration_service_environment: ~azure.mgmt.logic.models.ResourceReference
+        """
         super(ApiResourceProperties, self).__init__(**kwargs)
-        self.name = name
-        self.connection_parameters = connection_parameters
-        self.metadata = metadata
-        self.runtime_urls = runtime_urls
-        self.general_information = general_information
-        self.capabilities = capabilities
-        self.backend_service = backend_service
-        self.policies = policies
-        self.api_definition_url = api_definition_url
-        self.api_definitions = api_definitions
+        self.name = None
+        self.connection_parameters = None
+        self.metadata = None
+        self.runtime_urls = None
+        self.general_information = None
+        self.capabilities = None
+        self.backend_service = None
+        self.policies = None
+        self.api_definition_url = None
+        self.api_definitions = None
         self.integration_service_environment = integration_service_environment
-        self.provisioning_state = provisioning_state
-        self.category = category
+        self.provisioning_state = None
+        self.category = None
 
 
 class ArtifactProperties(msrest.serialization.Model):
     """The artifact properties definition.
 
-    :param created_time: The artifact creation time.
-    :type created_time: ~datetime.datetime
-    :param changed_time: The artifact changed time.
-    :type changed_time: ~datetime.datetime
-    :param metadata: Any object.
-    :type metadata: object
+    :ivar created_time: The artifact creation time.
+    :vartype created_time: ~datetime.datetime
+    :ivar changed_time: The artifact changed time.
+    :vartype changed_time: ~datetime.datetime
+    :ivar metadata: Anything.
+    :vartype metadata: any
     """
 
     _attribute_map = {
@@ -742,9 +914,17 @@ class ArtifactProperties(msrest.serialization.Model):
         *,
         created_time: Optional[datetime.datetime] = None,
         changed_time: Optional[datetime.datetime] = None,
-        metadata: Optional[object] = None,
+        metadata: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword created_time: The artifact creation time.
+        :paramtype created_time: ~datetime.datetime
+        :keyword changed_time: The artifact changed time.
+        :paramtype changed_time: ~datetime.datetime
+        :keyword metadata: Anything.
+        :paramtype metadata: any
+        """
         super(ArtifactProperties, self).__init__(**kwargs)
         self.created_time = created_time
         self.changed_time = changed_time
@@ -754,18 +934,18 @@ class ArtifactProperties(msrest.serialization.Model):
 class ArtifactContentPropertiesDefinition(ArtifactProperties):
     """The artifact content properties definition.
 
-    :param created_time: The artifact creation time.
-    :type created_time: ~datetime.datetime
-    :param changed_time: The artifact changed time.
-    :type changed_time: ~datetime.datetime
-    :param metadata: Any object.
-    :type metadata: object
-    :param content: Any object.
-    :type content: object
-    :param content_type: The content type.
-    :type content_type: str
-    :param content_link: The content link.
-    :type content_link: ~azure.mgmt.logic.models.ContentLink
+    :ivar created_time: The artifact creation time.
+    :vartype created_time: ~datetime.datetime
+    :ivar changed_time: The artifact changed time.
+    :vartype changed_time: ~datetime.datetime
+    :ivar metadata: Anything.
+    :vartype metadata: any
+    :ivar content: Anything.
+    :vartype content: any
+    :ivar content_type: The content type.
+    :vartype content_type: str
+    :ivar content_link: The content link.
+    :vartype content_link: ~azure.mgmt.logic.models.ContentLink
     """
 
     _attribute_map = {
@@ -782,12 +962,26 @@ class ArtifactContentPropertiesDefinition(ArtifactProperties):
         *,
         created_time: Optional[datetime.datetime] = None,
         changed_time: Optional[datetime.datetime] = None,
-        metadata: Optional[object] = None,
-        content: Optional[object] = None,
+        metadata: Optional[Any] = None,
+        content: Optional[Any] = None,
         content_type: Optional[str] = None,
         content_link: Optional["ContentLink"] = None,
         **kwargs
     ):
+        """
+        :keyword created_time: The artifact creation time.
+        :paramtype created_time: ~datetime.datetime
+        :keyword changed_time: The artifact changed time.
+        :paramtype changed_time: ~datetime.datetime
+        :keyword metadata: Anything.
+        :paramtype metadata: any
+        :keyword content: Anything.
+        :paramtype content: any
+        :keyword content_type: The content type.
+        :paramtype content_type: str
+        :keyword content_link: The content link.
+        :paramtype content_link: ~azure.mgmt.logic.models.ContentLink
+        """
         super(ArtifactContentPropertiesDefinition, self).__init__(created_time=created_time, changed_time=changed_time, metadata=metadata, **kwargs)
         self.content = content
         self.content_type = content_type
@@ -799,16 +993,16 @@ class AS2AcknowledgementConnectionSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param ignore_certificate_name_mismatch: Required. Indicates whether to ignore mismatch in
+    :ivar ignore_certificate_name_mismatch: Required. Indicates whether to ignore mismatch in
      certificate name.
-    :type ignore_certificate_name_mismatch: bool
-    :param support_http_status_code_continue: Required. Indicates whether to support HTTP status
+    :vartype ignore_certificate_name_mismatch: bool
+    :ivar support_http_status_code_continue: Required. Indicates whether to support HTTP status
      code 'CONTINUE'.
-    :type support_http_status_code_continue: bool
-    :param keep_http_connection_alive: Required. Indicates whether to keep the connection alive.
-    :type keep_http_connection_alive: bool
-    :param unfold_http_headers: Required. Indicates whether to unfold the HTTP headers.
-    :type unfold_http_headers: bool
+    :vartype support_http_status_code_continue: bool
+    :ivar keep_http_connection_alive: Required. Indicates whether to keep the connection alive.
+    :vartype keep_http_connection_alive: bool
+    :ivar unfold_http_headers: Required. Indicates whether to unfold the HTTP headers.
+    :vartype unfold_http_headers: bool
     """
 
     _validation = {
@@ -834,6 +1028,18 @@ class AS2AcknowledgementConnectionSettings(msrest.serialization.Model):
         unfold_http_headers: bool,
         **kwargs
     ):
+        """
+        :keyword ignore_certificate_name_mismatch: Required. Indicates whether to ignore mismatch in
+         certificate name.
+        :paramtype ignore_certificate_name_mismatch: bool
+        :keyword support_http_status_code_continue: Required. Indicates whether to support HTTP status
+         code 'CONTINUE'.
+        :paramtype support_http_status_code_continue: bool
+        :keyword keep_http_connection_alive: Required. Indicates whether to keep the connection alive.
+        :paramtype keep_http_connection_alive: bool
+        :keyword unfold_http_headers: Required. Indicates whether to unfold the HTTP headers.
+        :paramtype unfold_http_headers: bool
+        """
         super(AS2AcknowledgementConnectionSettings, self).__init__(**kwargs)
         self.ignore_certificate_name_mismatch = ignore_certificate_name_mismatch
         self.support_http_status_code_continue = support_http_status_code_continue
@@ -846,10 +1052,10 @@ class AS2AgreementContent(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param receive_agreement: Required. The AS2 one-way receive agreement.
-    :type receive_agreement: ~azure.mgmt.logic.models.AS2OneWayAgreement
-    :param send_agreement: Required. The AS2 one-way send agreement.
-    :type send_agreement: ~azure.mgmt.logic.models.AS2OneWayAgreement
+    :ivar receive_agreement: Required. The AS2 one-way receive agreement.
+    :vartype receive_agreement: ~azure.mgmt.logic.models.AS2OneWayAgreement
+    :ivar send_agreement: Required. The AS2 one-way send agreement.
+    :vartype send_agreement: ~azure.mgmt.logic.models.AS2OneWayAgreement
     """
 
     _validation = {
@@ -869,6 +1075,12 @@ class AS2AgreementContent(msrest.serialization.Model):
         send_agreement: "AS2OneWayAgreement",
         **kwargs
     ):
+        """
+        :keyword receive_agreement: Required. The AS2 one-way receive agreement.
+        :paramtype receive_agreement: ~azure.mgmt.logic.models.AS2OneWayAgreement
+        :keyword send_agreement: Required. The AS2 one-way send agreement.
+        :paramtype send_agreement: ~azure.mgmt.logic.models.AS2OneWayAgreement
+        """
         super(AS2AgreementContent, self).__init__(**kwargs)
         self.receive_agreement = receive_agreement
         self.send_agreement = send_agreement
@@ -879,19 +1091,19 @@ class AS2EnvelopeSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param message_content_type: Required. The message content type.
-    :type message_content_type: str
-    :param transmit_file_name_in_mime_header: Required. The value indicating whether to transmit
+    :ivar message_content_type: Required. The message content type.
+    :vartype message_content_type: str
+    :ivar transmit_file_name_in_mime_header: Required. The value indicating whether to transmit
      file name in mime header.
-    :type transmit_file_name_in_mime_header: bool
-    :param file_name_template: Required. The template for file name.
-    :type file_name_template: str
-    :param suspend_message_on_file_name_generation_error: Required. The value indicating whether to
+    :vartype transmit_file_name_in_mime_header: bool
+    :ivar file_name_template: Required. The template for file name.
+    :vartype file_name_template: str
+    :ivar suspend_message_on_file_name_generation_error: Required. The value indicating whether to
      suspend message on file name generation error.
-    :type suspend_message_on_file_name_generation_error: bool
-    :param autogenerate_file_name: Required. The value indicating whether to auto generate file
+    :vartype suspend_message_on_file_name_generation_error: bool
+    :ivar autogenerate_file_name: Required. The value indicating whether to auto generate file
      name.
-    :type autogenerate_file_name: bool
+    :vartype autogenerate_file_name: bool
     """
 
     _validation = {
@@ -920,6 +1132,21 @@ class AS2EnvelopeSettings(msrest.serialization.Model):
         autogenerate_file_name: bool,
         **kwargs
     ):
+        """
+        :keyword message_content_type: Required. The message content type.
+        :paramtype message_content_type: str
+        :keyword transmit_file_name_in_mime_header: Required. The value indicating whether to transmit
+         file name in mime header.
+        :paramtype transmit_file_name_in_mime_header: bool
+        :keyword file_name_template: Required. The template for file name.
+        :paramtype file_name_template: str
+        :keyword suspend_message_on_file_name_generation_error: Required. The value indicating whether
+         to suspend message on file name generation error.
+        :paramtype suspend_message_on_file_name_generation_error: bool
+        :keyword autogenerate_file_name: Required. The value indicating whether to auto generate file
+         name.
+        :paramtype autogenerate_file_name: bool
+        """
         super(AS2EnvelopeSettings, self).__init__(**kwargs)
         self.message_content_type = message_content_type
         self.transmit_file_name_in_mime_header = transmit_file_name_in_mime_header
@@ -933,12 +1160,12 @@ class AS2ErrorSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param suspend_duplicate_message: Required. The value indicating whether to suspend duplicate
+    :ivar suspend_duplicate_message: Required. The value indicating whether to suspend duplicate
      message.
-    :type suspend_duplicate_message: bool
-    :param resend_if_mdn_not_received: Required. The value indicating whether to resend message If
+    :vartype suspend_duplicate_message: bool
+    :ivar resend_if_mdn_not_received: Required. The value indicating whether to resend message If
      MDN is not received.
-    :type resend_if_mdn_not_received: bool
+    :vartype resend_if_mdn_not_received: bool
     """
 
     _validation = {
@@ -958,6 +1185,14 @@ class AS2ErrorSettings(msrest.serialization.Model):
         resend_if_mdn_not_received: bool,
         **kwargs
     ):
+        """
+        :keyword suspend_duplicate_message: Required. The value indicating whether to suspend duplicate
+         message.
+        :paramtype suspend_duplicate_message: bool
+        :keyword resend_if_mdn_not_received: Required. The value indicating whether to resend message
+         If MDN is not received.
+        :paramtype resend_if_mdn_not_received: bool
+        """
         super(AS2ErrorSettings, self).__init__(**kwargs)
         self.suspend_duplicate_message = suspend_duplicate_message
         self.resend_if_mdn_not_received = resend_if_mdn_not_received
@@ -968,28 +1203,28 @@ class AS2MdnSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param need_mdn: Required. The value indicating whether to send or request a MDN.
-    :type need_mdn: bool
-    :param sign_mdn: Required. The value indicating whether the MDN needs to be signed or not.
-    :type sign_mdn: bool
-    :param send_mdn_asynchronously: Required. The value indicating whether to send the asynchronous
+    :ivar need_mdn: Required. The value indicating whether to send or request a MDN.
+    :vartype need_mdn: bool
+    :ivar sign_mdn: Required. The value indicating whether the MDN needs to be signed or not.
+    :vartype sign_mdn: bool
+    :ivar send_mdn_asynchronously: Required. The value indicating whether to send the asynchronous
      MDN.
-    :type send_mdn_asynchronously: bool
-    :param receipt_delivery_url: The receipt delivery URL.
-    :type receipt_delivery_url: str
-    :param disposition_notification_to: The disposition notification to header value.
-    :type disposition_notification_to: str
-    :param sign_outbound_mdn_if_optional: Required. The value indicating whether to sign the
+    :vartype send_mdn_asynchronously: bool
+    :ivar receipt_delivery_url: The receipt delivery URL.
+    :vartype receipt_delivery_url: str
+    :ivar disposition_notification_to: The disposition notification to header value.
+    :vartype disposition_notification_to: str
+    :ivar sign_outbound_mdn_if_optional: Required. The value indicating whether to sign the
      outbound MDN if optional.
-    :type sign_outbound_mdn_if_optional: bool
-    :param mdn_text: The MDN text.
-    :type mdn_text: str
-    :param send_inbound_mdn_to_message_box: Required. The value indicating whether to send inbound
+    :vartype sign_outbound_mdn_if_optional: bool
+    :ivar mdn_text: The MDN text.
+    :vartype mdn_text: str
+    :ivar send_inbound_mdn_to_message_box: Required. The value indicating whether to send inbound
      MDN to message box.
-    :type send_inbound_mdn_to_message_box: bool
-    :param mic_hashing_algorithm: Required. The signing or hashing algorithm. Possible values
+    :vartype send_inbound_mdn_to_message_box: bool
+    :ivar mic_hashing_algorithm: Required. The signing or hashing algorithm. Possible values
      include: "NotSpecified", "None", "MD5", "SHA1", "SHA2256", "SHA2384", "SHA2512".
-    :type mic_hashing_algorithm: str or ~azure.mgmt.logic.models.HashingAlgorithm
+    :vartype mic_hashing_algorithm: str or ~azure.mgmt.logic.models.HashingAlgorithm
     """
 
     _validation = {
@@ -1027,6 +1262,30 @@ class AS2MdnSettings(msrest.serialization.Model):
         mdn_text: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword need_mdn: Required. The value indicating whether to send or request a MDN.
+        :paramtype need_mdn: bool
+        :keyword sign_mdn: Required. The value indicating whether the MDN needs to be signed or not.
+        :paramtype sign_mdn: bool
+        :keyword send_mdn_asynchronously: Required. The value indicating whether to send the
+         asynchronous MDN.
+        :paramtype send_mdn_asynchronously: bool
+        :keyword receipt_delivery_url: The receipt delivery URL.
+        :paramtype receipt_delivery_url: str
+        :keyword disposition_notification_to: The disposition notification to header value.
+        :paramtype disposition_notification_to: str
+        :keyword sign_outbound_mdn_if_optional: Required. The value indicating whether to sign the
+         outbound MDN if optional.
+        :paramtype sign_outbound_mdn_if_optional: bool
+        :keyword mdn_text: The MDN text.
+        :paramtype mdn_text: str
+        :keyword send_inbound_mdn_to_message_box: Required. The value indicating whether to send
+         inbound MDN to message box.
+        :paramtype send_inbound_mdn_to_message_box: bool
+        :keyword mic_hashing_algorithm: Required. The signing or hashing algorithm. Possible values
+         include: "NotSpecified", "None", "MD5", "SHA1", "SHA2256", "SHA2384", "SHA2512".
+        :paramtype mic_hashing_algorithm: str or ~azure.mgmt.logic.models.HashingAlgorithm
+        """
         super(AS2MdnSettings, self).__init__(**kwargs)
         self.need_mdn = need_mdn
         self.sign_mdn = sign_mdn
@@ -1044,17 +1303,17 @@ class AS2MessageConnectionSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param ignore_certificate_name_mismatch: Required. The value indicating whether to ignore
+    :ivar ignore_certificate_name_mismatch: Required. The value indicating whether to ignore
      mismatch in certificate name.
-    :type ignore_certificate_name_mismatch: bool
-    :param support_http_status_code_continue: Required. The value indicating whether to support
-     HTTP status code 'CONTINUE'.
-    :type support_http_status_code_continue: bool
-    :param keep_http_connection_alive: Required. The value indicating whether to keep the
-     connection alive.
-    :type keep_http_connection_alive: bool
-    :param unfold_http_headers: Required. The value indicating whether to unfold the HTTP headers.
-    :type unfold_http_headers: bool
+    :vartype ignore_certificate_name_mismatch: bool
+    :ivar support_http_status_code_continue: Required. The value indicating whether to support HTTP
+     status code 'CONTINUE'.
+    :vartype support_http_status_code_continue: bool
+    :ivar keep_http_connection_alive: Required. The value indicating whether to keep the connection
+     alive.
+    :vartype keep_http_connection_alive: bool
+    :ivar unfold_http_headers: Required. The value indicating whether to unfold the HTTP headers.
+    :vartype unfold_http_headers: bool
     """
 
     _validation = {
@@ -1080,6 +1339,20 @@ class AS2MessageConnectionSettings(msrest.serialization.Model):
         unfold_http_headers: bool,
         **kwargs
     ):
+        """
+        :keyword ignore_certificate_name_mismatch: Required. The value indicating whether to ignore
+         mismatch in certificate name.
+        :paramtype ignore_certificate_name_mismatch: bool
+        :keyword support_http_status_code_continue: Required. The value indicating whether to support
+         HTTP status code 'CONTINUE'.
+        :paramtype support_http_status_code_continue: bool
+        :keyword keep_http_connection_alive: Required. The value indicating whether to keep the
+         connection alive.
+        :paramtype keep_http_connection_alive: bool
+        :keyword unfold_http_headers: Required. The value indicating whether to unfold the HTTP
+         headers.
+        :paramtype unfold_http_headers: bool
+        """
         super(AS2MessageConnectionSettings, self).__init__(**kwargs)
         self.ignore_certificate_name_mismatch = ignore_certificate_name_mismatch
         self.support_http_status_code_continue = support_http_status_code_continue
@@ -1092,12 +1365,12 @@ class AS2OneWayAgreement(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sender_business_identity: Required. The sender business identity.
-    :type sender_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
-    :param receiver_business_identity: Required. The receiver business identity.
-    :type receiver_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
-    :param protocol_settings: Required. The AS2 protocol settings.
-    :type protocol_settings: ~azure.mgmt.logic.models.AS2ProtocolSettings
+    :ivar sender_business_identity: Required. The sender business identity.
+    :vartype sender_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
+    :ivar receiver_business_identity: Required. The receiver business identity.
+    :vartype receiver_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
+    :ivar protocol_settings: Required. The AS2 protocol settings.
+    :vartype protocol_settings: ~azure.mgmt.logic.models.AS2ProtocolSettings
     """
 
     _validation = {
@@ -1120,6 +1393,14 @@ class AS2OneWayAgreement(msrest.serialization.Model):
         protocol_settings: "AS2ProtocolSettings",
         **kwargs
     ):
+        """
+        :keyword sender_business_identity: Required. The sender business identity.
+        :paramtype sender_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
+        :keyword receiver_business_identity: Required. The receiver business identity.
+        :paramtype receiver_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
+        :keyword protocol_settings: Required. The AS2 protocol settings.
+        :paramtype protocol_settings: ~azure.mgmt.logic.models.AS2ProtocolSettings
+        """
         super(AS2OneWayAgreement, self).__init__(**kwargs)
         self.sender_business_identity = sender_business_identity
         self.receiver_business_identity = receiver_business_identity
@@ -1131,21 +1412,21 @@ class AS2ProtocolSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param message_connection_settings: Required. The message connection settings.
-    :type message_connection_settings: ~azure.mgmt.logic.models.AS2MessageConnectionSettings
-    :param acknowledgement_connection_settings: Required. The acknowledgement connection settings.
-    :type acknowledgement_connection_settings:
+    :ivar message_connection_settings: Required. The message connection settings.
+    :vartype message_connection_settings: ~azure.mgmt.logic.models.AS2MessageConnectionSettings
+    :ivar acknowledgement_connection_settings: Required. The acknowledgement connection settings.
+    :vartype acknowledgement_connection_settings:
      ~azure.mgmt.logic.models.AS2AcknowledgementConnectionSettings
-    :param mdn_settings: Required. The MDN settings.
-    :type mdn_settings: ~azure.mgmt.logic.models.AS2MdnSettings
-    :param security_settings: Required. The security settings.
-    :type security_settings: ~azure.mgmt.logic.models.AS2SecuritySettings
-    :param validation_settings: Required. The validation settings.
-    :type validation_settings: ~azure.mgmt.logic.models.AS2ValidationSettings
-    :param envelope_settings: Required. The envelope settings.
-    :type envelope_settings: ~azure.mgmt.logic.models.AS2EnvelopeSettings
-    :param error_settings: Required. The error settings.
-    :type error_settings: ~azure.mgmt.logic.models.AS2ErrorSettings
+    :ivar mdn_settings: Required. The MDN settings.
+    :vartype mdn_settings: ~azure.mgmt.logic.models.AS2MdnSettings
+    :ivar security_settings: Required. The security settings.
+    :vartype security_settings: ~azure.mgmt.logic.models.AS2SecuritySettings
+    :ivar validation_settings: Required. The validation settings.
+    :vartype validation_settings: ~azure.mgmt.logic.models.AS2ValidationSettings
+    :ivar envelope_settings: Required. The envelope settings.
+    :vartype envelope_settings: ~azure.mgmt.logic.models.AS2EnvelopeSettings
+    :ivar error_settings: Required. The error settings.
+    :vartype error_settings: ~azure.mgmt.logic.models.AS2ErrorSettings
     """
 
     _validation = {
@@ -1180,6 +1461,24 @@ class AS2ProtocolSettings(msrest.serialization.Model):
         error_settings: "AS2ErrorSettings",
         **kwargs
     ):
+        """
+        :keyword message_connection_settings: Required. The message connection settings.
+        :paramtype message_connection_settings: ~azure.mgmt.logic.models.AS2MessageConnectionSettings
+        :keyword acknowledgement_connection_settings: Required. The acknowledgement connection
+         settings.
+        :paramtype acknowledgement_connection_settings:
+         ~azure.mgmt.logic.models.AS2AcknowledgementConnectionSettings
+        :keyword mdn_settings: Required. The MDN settings.
+        :paramtype mdn_settings: ~azure.mgmt.logic.models.AS2MdnSettings
+        :keyword security_settings: Required. The security settings.
+        :paramtype security_settings: ~azure.mgmt.logic.models.AS2SecuritySettings
+        :keyword validation_settings: Required. The validation settings.
+        :paramtype validation_settings: ~azure.mgmt.logic.models.AS2ValidationSettings
+        :keyword envelope_settings: Required. The envelope settings.
+        :paramtype envelope_settings: ~azure.mgmt.logic.models.AS2EnvelopeSettings
+        :keyword error_settings: Required. The error settings.
+        :paramtype error_settings: ~azure.mgmt.logic.models.AS2ErrorSettings
+        """
         super(AS2ProtocolSettings, self).__init__(**kwargs)
         self.message_connection_settings = message_connection_settings
         self.acknowledgement_connection_settings = acknowledgement_connection_settings
@@ -1195,34 +1494,34 @@ class AS2SecuritySettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param override_group_signing_certificate: Required. The value indicating whether to send or
+    :ivar override_group_signing_certificate: Required. The value indicating whether to send or
      request a MDN.
-    :type override_group_signing_certificate: bool
-    :param signing_certificate_name: The name of the signing certificate.
-    :type signing_certificate_name: str
-    :param encryption_certificate_name: The name of the encryption certificate.
-    :type encryption_certificate_name: str
-    :param enable_nrr_for_inbound_encoded_messages: Required. The value indicating whether to
-     enable NRR for inbound encoded messages.
-    :type enable_nrr_for_inbound_encoded_messages: bool
-    :param enable_nrr_for_inbound_decoded_messages: Required. The value indicating whether to
-     enable NRR for inbound decoded messages.
-    :type enable_nrr_for_inbound_decoded_messages: bool
-    :param enable_nrr_for_outbound_mdn: Required. The value indicating whether to enable NRR for
+    :vartype override_group_signing_certificate: bool
+    :ivar signing_certificate_name: The name of the signing certificate.
+    :vartype signing_certificate_name: str
+    :ivar encryption_certificate_name: The name of the encryption certificate.
+    :vartype encryption_certificate_name: str
+    :ivar enable_nrr_for_inbound_encoded_messages: Required. The value indicating whether to enable
+     NRR for inbound encoded messages.
+    :vartype enable_nrr_for_inbound_encoded_messages: bool
+    :ivar enable_nrr_for_inbound_decoded_messages: Required. The value indicating whether to enable
+     NRR for inbound decoded messages.
+    :vartype enable_nrr_for_inbound_decoded_messages: bool
+    :ivar enable_nrr_for_outbound_mdn: Required. The value indicating whether to enable NRR for
      outbound MDN.
-    :type enable_nrr_for_outbound_mdn: bool
-    :param enable_nrr_for_outbound_encoded_messages: Required. The value indicating whether to
+    :vartype enable_nrr_for_outbound_mdn: bool
+    :ivar enable_nrr_for_outbound_encoded_messages: Required. The value indicating whether to
      enable NRR for outbound encoded messages.
-    :type enable_nrr_for_outbound_encoded_messages: bool
-    :param enable_nrr_for_outbound_decoded_messages: Required. The value indicating whether to
+    :vartype enable_nrr_for_outbound_encoded_messages: bool
+    :ivar enable_nrr_for_outbound_decoded_messages: Required. The value indicating whether to
      enable NRR for outbound decoded messages.
-    :type enable_nrr_for_outbound_decoded_messages: bool
-    :param enable_nrr_for_inbound_mdn: Required. The value indicating whether to enable NRR for
+    :vartype enable_nrr_for_outbound_decoded_messages: bool
+    :ivar enable_nrr_for_inbound_mdn: Required. The value indicating whether to enable NRR for
      inbound MDN.
-    :type enable_nrr_for_inbound_mdn: bool
-    :param sha2_algorithm_format: The Sha2 algorithm format. Valid values are Sha2, ShaHashSize,
+    :vartype enable_nrr_for_inbound_mdn: bool
+    :ivar sha2_algorithm_format: The Sha2 algorithm format. Valid values are Sha2, ShaHashSize,
      ShaHyphenHashSize, Sha2UnderscoreHashSize.
-    :type sha2_algorithm_format: str
+    :vartype sha2_algorithm_format: str
     """
 
     _validation = {
@@ -1263,6 +1562,36 @@ class AS2SecuritySettings(msrest.serialization.Model):
         sha2_algorithm_format: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword override_group_signing_certificate: Required. The value indicating whether to send or
+         request a MDN.
+        :paramtype override_group_signing_certificate: bool
+        :keyword signing_certificate_name: The name of the signing certificate.
+        :paramtype signing_certificate_name: str
+        :keyword encryption_certificate_name: The name of the encryption certificate.
+        :paramtype encryption_certificate_name: str
+        :keyword enable_nrr_for_inbound_encoded_messages: Required. The value indicating whether to
+         enable NRR for inbound encoded messages.
+        :paramtype enable_nrr_for_inbound_encoded_messages: bool
+        :keyword enable_nrr_for_inbound_decoded_messages: Required. The value indicating whether to
+         enable NRR for inbound decoded messages.
+        :paramtype enable_nrr_for_inbound_decoded_messages: bool
+        :keyword enable_nrr_for_outbound_mdn: Required. The value indicating whether to enable NRR for
+         outbound MDN.
+        :paramtype enable_nrr_for_outbound_mdn: bool
+        :keyword enable_nrr_for_outbound_encoded_messages: Required. The value indicating whether to
+         enable NRR for outbound encoded messages.
+        :paramtype enable_nrr_for_outbound_encoded_messages: bool
+        :keyword enable_nrr_for_outbound_decoded_messages: Required. The value indicating whether to
+         enable NRR for outbound decoded messages.
+        :paramtype enable_nrr_for_outbound_decoded_messages: bool
+        :keyword enable_nrr_for_inbound_mdn: Required. The value indicating whether to enable NRR for
+         inbound MDN.
+        :paramtype enable_nrr_for_inbound_mdn: bool
+        :keyword sha2_algorithm_format: The Sha2 algorithm format. Valid values are Sha2, ShaHashSize,
+         ShaHyphenHashSize, Sha2UnderscoreHashSize.
+        :paramtype sha2_algorithm_format: str
+        """
         super(AS2SecuritySettings, self).__init__(**kwargs)
         self.override_group_signing_certificate = override_group_signing_certificate
         self.signing_certificate_name = signing_certificate_name
@@ -1281,34 +1610,34 @@ class AS2ValidationSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param override_message_properties: Required. The value indicating whether to override incoming
+    :ivar override_message_properties: Required. The value indicating whether to override incoming
      message properties with those in agreement.
-    :type override_message_properties: bool
-    :param encrypt_message: Required. The value indicating whether the message has to be encrypted.
-    :type encrypt_message: bool
-    :param sign_message: Required. The value indicating whether the message has to be signed.
-    :type sign_message: bool
-    :param compress_message: Required. The value indicating whether the message has to be
+    :vartype override_message_properties: bool
+    :ivar encrypt_message: Required. The value indicating whether the message has to be encrypted.
+    :vartype encrypt_message: bool
+    :ivar sign_message: Required. The value indicating whether the message has to be signed.
+    :vartype sign_message: bool
+    :ivar compress_message: Required. The value indicating whether the message has to be
      compressed.
-    :type compress_message: bool
-    :param check_duplicate_message: Required. The value indicating whether to check for duplicate
+    :vartype compress_message: bool
+    :ivar check_duplicate_message: Required. The value indicating whether to check for duplicate
      message.
-    :type check_duplicate_message: bool
-    :param interchange_duplicates_validity_days: Required. The number of days to look back for
+    :vartype check_duplicate_message: bool
+    :ivar interchange_duplicates_validity_days: Required. The number of days to look back for
      duplicate interchange.
-    :type interchange_duplicates_validity_days: int
-    :param check_certificate_revocation_list_on_send: Required. The value indicating whether to
+    :vartype interchange_duplicates_validity_days: int
+    :ivar check_certificate_revocation_list_on_send: Required. The value indicating whether to
      check for certificate revocation list on send.
-    :type check_certificate_revocation_list_on_send: bool
-    :param check_certificate_revocation_list_on_receive: Required. The value indicating whether to
+    :vartype check_certificate_revocation_list_on_send: bool
+    :ivar check_certificate_revocation_list_on_receive: Required. The value indicating whether to
      check for certificate revocation list on receive.
-    :type check_certificate_revocation_list_on_receive: bool
-    :param encryption_algorithm: Required. The encryption algorithm. Possible values include:
+    :vartype check_certificate_revocation_list_on_receive: bool
+    :ivar encryption_algorithm: Required. The encryption algorithm. Possible values include:
      "NotSpecified", "None", "DES3", "RC2", "AES128", "AES192", "AES256".
-    :type encryption_algorithm: str or ~azure.mgmt.logic.models.EncryptionAlgorithm
-    :param signing_algorithm: The signing algorithm. Possible values include: "NotSpecified",
+    :vartype encryption_algorithm: str or ~azure.mgmt.logic.models.EncryptionAlgorithm
+    :ivar signing_algorithm: The signing algorithm. Possible values include: "NotSpecified",
      "Default", "SHA1", "SHA2256", "SHA2384", "SHA2512".
-    :type signing_algorithm: str or ~azure.mgmt.logic.models.SigningAlgorithm
+    :vartype signing_algorithm: str or ~azure.mgmt.logic.models.SigningAlgorithm
     """
 
     _validation = {
@@ -1351,6 +1680,37 @@ class AS2ValidationSettings(msrest.serialization.Model):
         signing_algorithm: Optional[Union[str, "SigningAlgorithm"]] = None,
         **kwargs
     ):
+        """
+        :keyword override_message_properties: Required. The value indicating whether to override
+         incoming message properties with those in agreement.
+        :paramtype override_message_properties: bool
+        :keyword encrypt_message: Required. The value indicating whether the message has to be
+         encrypted.
+        :paramtype encrypt_message: bool
+        :keyword sign_message: Required. The value indicating whether the message has to be signed.
+        :paramtype sign_message: bool
+        :keyword compress_message: Required. The value indicating whether the message has to be
+         compressed.
+        :paramtype compress_message: bool
+        :keyword check_duplicate_message: Required. The value indicating whether to check for duplicate
+         message.
+        :paramtype check_duplicate_message: bool
+        :keyword interchange_duplicates_validity_days: Required. The number of days to look back for
+         duplicate interchange.
+        :paramtype interchange_duplicates_validity_days: int
+        :keyword check_certificate_revocation_list_on_send: Required. The value indicating whether to
+         check for certificate revocation list on send.
+        :paramtype check_certificate_revocation_list_on_send: bool
+        :keyword check_certificate_revocation_list_on_receive: Required. The value indicating whether
+         to check for certificate revocation list on receive.
+        :paramtype check_certificate_revocation_list_on_receive: bool
+        :keyword encryption_algorithm: Required. The encryption algorithm. Possible values include:
+         "NotSpecified", "None", "DES3", "RC2", "AES128", "AES192", "AES256".
+        :paramtype encryption_algorithm: str or ~azure.mgmt.logic.models.EncryptionAlgorithm
+        :keyword signing_algorithm: The signing algorithm. Possible values include: "NotSpecified",
+         "Default", "SHA1", "SHA2256", "SHA2384", "SHA2512".
+        :paramtype signing_algorithm: str or ~azure.mgmt.logic.models.SigningAlgorithm
+        """
         super(AS2ValidationSettings, self).__init__(**kwargs)
         self.override_message_properties = override_message_properties
         self.encrypt_message = encrypt_message
@@ -1367,8 +1727,8 @@ class AS2ValidationSettings(msrest.serialization.Model):
 class AssemblyCollection(msrest.serialization.Model):
     """A collection of assembly definitions.
 
-    :param value:
-    :type value: list[~azure.mgmt.logic.models.AssemblyDefinition]
+    :ivar value:
+    :vartype value: list[~azure.mgmt.logic.models.AssemblyDefinition]
     """
 
     _attribute_map = {
@@ -1381,6 +1741,10 @@ class AssemblyCollection(msrest.serialization.Model):
         value: Optional[List["AssemblyDefinition"]] = None,
         **kwargs
     ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.logic.models.AssemblyDefinition]
+        """
         super(AssemblyCollection, self).__init__(**kwargs)
         self.value = value
 
@@ -1398,12 +1762,12 @@ class AssemblyDefinition(Resource):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param properties: Required. The assembly properties.
-    :type properties: ~azure.mgmt.logic.models.AssemblyProperties
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Required. The assembly properties.
+    :vartype properties: ~azure.mgmt.logic.models.AssemblyProperties
     """
 
     _validation = {
@@ -1430,6 +1794,14 @@ class AssemblyDefinition(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Required. The assembly properties.
+        :paramtype properties: ~azure.mgmt.logic.models.AssemblyProperties
+        """
         super(AssemblyDefinition, self).__init__(location=location, tags=tags, **kwargs)
         self.properties = properties
 
@@ -1439,26 +1811,26 @@ class AssemblyProperties(ArtifactContentPropertiesDefinition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param created_time: The artifact creation time.
-    :type created_time: ~datetime.datetime
-    :param changed_time: The artifact changed time.
-    :type changed_time: ~datetime.datetime
-    :param metadata: Any object.
-    :type metadata: object
-    :param content: Any object.
-    :type content: object
-    :param content_type: The content type.
-    :type content_type: str
-    :param content_link: The content link.
-    :type content_link: ~azure.mgmt.logic.models.ContentLink
-    :param assembly_name: Required. The assembly name.
-    :type assembly_name: str
-    :param assembly_version: The assembly version.
-    :type assembly_version: str
-    :param assembly_culture: The assembly culture.
-    :type assembly_culture: str
-    :param assembly_public_key_token: The assembly public key token.
-    :type assembly_public_key_token: str
+    :ivar created_time: The artifact creation time.
+    :vartype created_time: ~datetime.datetime
+    :ivar changed_time: The artifact changed time.
+    :vartype changed_time: ~datetime.datetime
+    :ivar metadata: Anything.
+    :vartype metadata: any
+    :ivar content: Anything.
+    :vartype content: any
+    :ivar content_type: The content type.
+    :vartype content_type: str
+    :ivar content_link: The content link.
+    :vartype content_link: ~azure.mgmt.logic.models.ContentLink
+    :ivar assembly_name: Required. The assembly name.
+    :vartype assembly_name: str
+    :ivar assembly_version: The assembly version.
+    :vartype assembly_version: str
+    :ivar assembly_culture: The assembly culture.
+    :vartype assembly_culture: str
+    :ivar assembly_public_key_token: The assembly public key token.
+    :vartype assembly_public_key_token: str
     """
 
     _validation = {
@@ -1484,8 +1856,8 @@ class AssemblyProperties(ArtifactContentPropertiesDefinition):
         assembly_name: str,
         created_time: Optional[datetime.datetime] = None,
         changed_time: Optional[datetime.datetime] = None,
-        metadata: Optional[object] = None,
-        content: Optional[object] = None,
+        metadata: Optional[Any] = None,
+        content: Optional[Any] = None,
         content_type: Optional[str] = None,
         content_link: Optional["ContentLink"] = None,
         assembly_version: Optional[str] = None,
@@ -1493,6 +1865,28 @@ class AssemblyProperties(ArtifactContentPropertiesDefinition):
         assembly_public_key_token: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword created_time: The artifact creation time.
+        :paramtype created_time: ~datetime.datetime
+        :keyword changed_time: The artifact changed time.
+        :paramtype changed_time: ~datetime.datetime
+        :keyword metadata: Anything.
+        :paramtype metadata: any
+        :keyword content: Anything.
+        :paramtype content: any
+        :keyword content_type: The content type.
+        :paramtype content_type: str
+        :keyword content_link: The content link.
+        :paramtype content_link: ~azure.mgmt.logic.models.ContentLink
+        :keyword assembly_name: Required. The assembly name.
+        :paramtype assembly_name: str
+        :keyword assembly_version: The assembly version.
+        :paramtype assembly_version: str
+        :keyword assembly_culture: The assembly culture.
+        :paramtype assembly_culture: str
+        :keyword assembly_public_key_token: The assembly public key token.
+        :paramtype assembly_public_key_token: str
+        """
         super(AssemblyProperties, self).__init__(created_time=created_time, changed_time=changed_time, metadata=metadata, content=content, content_type=content_type, content_link=content_link, **kwargs)
         self.assembly_name = assembly_name
         self.assembly_version = assembly_version
@@ -1505,8 +1899,8 @@ class ErrorInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. The error code.
-    :type code: str
+    :ivar code: Required. The error code.
+    :vartype code: str
     """
 
     _validation = {
@@ -1523,6 +1917,10 @@ class ErrorInfo(msrest.serialization.Model):
         code: str,
         **kwargs
     ):
+        """
+        :keyword code: Required. The error code.
+        :paramtype code: str
+        """
         super(ErrorInfo, self).__init__(**kwargs)
         self.code = code
 
@@ -1532,12 +1930,12 @@ class AzureResourceErrorInfo(ErrorInfo):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. The error code.
-    :type code: str
-    :param message: Required. The error message.
-    :type message: str
-    :param details: The error details.
-    :type details: list[~azure.mgmt.logic.models.AzureResourceErrorInfo]
+    :ivar code: Required. The error code.
+    :vartype code: str
+    :ivar message: Required. The error message.
+    :vartype message: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.logic.models.AzureResourceErrorInfo]
     """
 
     _validation = {
@@ -1559,6 +1957,14 @@ class AzureResourceErrorInfo(ErrorInfo):
         details: Optional[List["AzureResourceErrorInfo"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: Required. The error code.
+        :paramtype code: str
+        :keyword message: Required. The error message.
+        :paramtype message: str
+        :keyword details: The error details.
+        :paramtype details: list[~azure.mgmt.logic.models.AzureResourceErrorInfo]
+        """
         super(AzureResourceErrorInfo, self).__init__(code=code, **kwargs)
         self.message = message
         self.details = details
@@ -1567,8 +1973,8 @@ class AzureResourceErrorInfo(ErrorInfo):
 class B2BPartnerContent(msrest.serialization.Model):
     """The B2B partner content.
 
-    :param business_identities: The list of partner business identities.
-    :type business_identities: list[~azure.mgmt.logic.models.BusinessIdentity]
+    :ivar business_identities: The list of partner business identities.
+    :vartype business_identities: list[~azure.mgmt.logic.models.BusinessIdentity]
     """
 
     _attribute_map = {
@@ -1581,6 +1987,10 @@ class B2BPartnerContent(msrest.serialization.Model):
         business_identities: Optional[List["BusinessIdentity"]] = None,
         **kwargs
     ):
+        """
+        :keyword business_identities: The list of partner business identities.
+        :paramtype business_identities: list[~azure.mgmt.logic.models.BusinessIdentity]
+        """
         super(B2BPartnerContent, self).__init__(**kwargs)
         self.business_identities = business_identities
 
@@ -1598,12 +2008,12 @@ class BatchConfiguration(Resource):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param properties: Required. The batch configuration properties.
-    :type properties: ~azure.mgmt.logic.models.BatchConfigurationProperties
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Required. The batch configuration properties.
+    :vartype properties: ~azure.mgmt.logic.models.BatchConfigurationProperties
     """
 
     _validation = {
@@ -1630,6 +2040,14 @@ class BatchConfiguration(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Required. The batch configuration properties.
+        :paramtype properties: ~azure.mgmt.logic.models.BatchConfigurationProperties
+        """
         super(BatchConfiguration, self).__init__(location=location, tags=tags, **kwargs)
         self.properties = properties
 
@@ -1637,8 +2055,8 @@ class BatchConfiguration(Resource):
 class BatchConfigurationCollection(msrest.serialization.Model):
     """A collection of batch configurations.
 
-    :param value:
-    :type value: list[~azure.mgmt.logic.models.BatchConfiguration]
+    :ivar value:
+    :vartype value: list[~azure.mgmt.logic.models.BatchConfiguration]
     """
 
     _attribute_map = {
@@ -1651,6 +2069,10 @@ class BatchConfigurationCollection(msrest.serialization.Model):
         value: Optional[List["BatchConfiguration"]] = None,
         **kwargs
     ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.logic.models.BatchConfiguration]
+        """
         super(BatchConfigurationCollection, self).__init__(**kwargs)
         self.value = value
 
@@ -1660,16 +2082,16 @@ class BatchConfigurationProperties(ArtifactProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param created_time: The artifact creation time.
-    :type created_time: ~datetime.datetime
-    :param changed_time: The artifact changed time.
-    :type changed_time: ~datetime.datetime
-    :param metadata: Any object.
-    :type metadata: object
-    :param batch_group_name: Required. The name of the batch group.
-    :type batch_group_name: str
-    :param release_criteria: Required. The batch release criteria.
-    :type release_criteria: ~azure.mgmt.logic.models.BatchReleaseCriteria
+    :ivar created_time: The artifact creation time.
+    :vartype created_time: ~datetime.datetime
+    :ivar changed_time: The artifact changed time.
+    :vartype changed_time: ~datetime.datetime
+    :ivar metadata: Anything.
+    :vartype metadata: any
+    :ivar batch_group_name: Required. The name of the batch group.
+    :vartype batch_group_name: str
+    :ivar release_criteria: Required. The batch release criteria.
+    :vartype release_criteria: ~azure.mgmt.logic.models.BatchReleaseCriteria
     """
 
     _validation = {
@@ -1692,9 +2114,21 @@ class BatchConfigurationProperties(ArtifactProperties):
         release_criteria: "BatchReleaseCriteria",
         created_time: Optional[datetime.datetime] = None,
         changed_time: Optional[datetime.datetime] = None,
-        metadata: Optional[object] = None,
+        metadata: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword created_time: The artifact creation time.
+        :paramtype created_time: ~datetime.datetime
+        :keyword changed_time: The artifact changed time.
+        :paramtype changed_time: ~datetime.datetime
+        :keyword metadata: Anything.
+        :paramtype metadata: any
+        :keyword batch_group_name: Required. The name of the batch group.
+        :paramtype batch_group_name: str
+        :keyword release_criteria: Required. The batch release criteria.
+        :paramtype release_criteria: ~azure.mgmt.logic.models.BatchReleaseCriteria
+        """
         super(BatchConfigurationProperties, self).__init__(created_time=created_time, changed_time=changed_time, metadata=metadata, **kwargs)
         self.batch_group_name = batch_group_name
         self.release_criteria = release_criteria
@@ -1703,12 +2137,12 @@ class BatchConfigurationProperties(ArtifactProperties):
 class BatchReleaseCriteria(msrest.serialization.Model):
     """The batch release criteria.
 
-    :param message_count: The message count.
-    :type message_count: int
-    :param batch_size: The batch size in bytes.
-    :type batch_size: int
-    :param recurrence: The recurrence.
-    :type recurrence: ~azure.mgmt.logic.models.WorkflowTriggerRecurrence
+    :ivar message_count: The message count.
+    :vartype message_count: int
+    :ivar batch_size: The batch size in bytes.
+    :vartype batch_size: int
+    :ivar recurrence: The recurrence.
+    :vartype recurrence: ~azure.mgmt.logic.models.WorkflowTriggerRecurrence
     """
 
     _attribute_map = {
@@ -1725,6 +2159,14 @@ class BatchReleaseCriteria(msrest.serialization.Model):
         recurrence: Optional["WorkflowTriggerRecurrence"] = None,
         **kwargs
     ):
+        """
+        :keyword message_count: The message count.
+        :paramtype message_count: int
+        :keyword batch_size: The batch size in bytes.
+        :paramtype batch_size: int
+        :keyword recurrence: The recurrence.
+        :paramtype recurrence: ~azure.mgmt.logic.models.WorkflowTriggerRecurrence
+        """
         super(BatchReleaseCriteria, self).__init__(**kwargs)
         self.message_count = message_count
         self.batch_size = batch_size
@@ -1736,10 +2178,10 @@ class BusinessIdentity(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param qualifier: Required. The business identity qualifier e.g. as2identity, ZZ, ZZZ, 31, 32.
-    :type qualifier: str
-    :param value: Required. The user defined business identity value.
-    :type value: str
+    :ivar qualifier: Required. The business identity qualifier e.g. as2identity, ZZ, ZZZ, 31, 32.
+    :vartype qualifier: str
+    :ivar value: Required. The user defined business identity value.
+    :vartype value: str
     """
 
     _validation = {
@@ -1759,6 +2201,13 @@ class BusinessIdentity(msrest.serialization.Model):
         value: str,
         **kwargs
     ):
+        """
+        :keyword qualifier: Required. The business identity qualifier e.g. as2identity, ZZ, ZZZ, 31,
+         32.
+        :paramtype qualifier: str
+        :keyword value: Required. The user defined business identity value.
+        :paramtype value: str
+        """
         super(BusinessIdentity, self).__init__(**kwargs)
         self.qualifier = qualifier
         self.value = value
@@ -1767,8 +2216,8 @@ class BusinessIdentity(msrest.serialization.Model):
 class CallbackUrl(msrest.serialization.Model):
     """The callback url.
 
-    :param value: The URL value.
-    :type value: str
+    :ivar value: The URL value.
+    :vartype value: str
     """
 
     _attribute_map = {
@@ -1781,6 +2230,10 @@ class CallbackUrl(msrest.serialization.Model):
         value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The URL value.
+        :paramtype value: str
+        """
         super(CallbackUrl, self).__init__(**kwargs)
         self.value = value
 
@@ -1788,10 +2241,10 @@ class CallbackUrl(msrest.serialization.Model):
 class ContentHash(msrest.serialization.Model):
     """The content hash.
 
-    :param algorithm: The algorithm of the content hash.
-    :type algorithm: str
-    :param value: The value of the content hash.
-    :type value: str
+    :ivar algorithm: The algorithm of the content hash.
+    :vartype algorithm: str
+    :ivar value: The value of the content hash.
+    :vartype value: str
     """
 
     _attribute_map = {
@@ -1806,6 +2259,12 @@ class ContentHash(msrest.serialization.Model):
         value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword algorithm: The algorithm of the content hash.
+        :paramtype algorithm: str
+        :keyword value: The value of the content hash.
+        :paramtype value: str
+        """
         super(ContentHash, self).__init__(**kwargs)
         self.algorithm = algorithm
         self.value = value
@@ -1814,17 +2273,26 @@ class ContentHash(msrest.serialization.Model):
 class ContentLink(msrest.serialization.Model):
     """The content link.
 
-    :param uri: The content link URI.
-    :type uri: str
-    :param content_version: The content version.
-    :type content_version: str
-    :param content_size: The content size.
-    :type content_size: long
-    :param content_hash: The content hash.
-    :type content_hash: ~azure.mgmt.logic.models.ContentHash
-    :param metadata: The metadata.
-    :type metadata: object
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar uri: The content link URI.
+    :vartype uri: str
+    :ivar content_version: The content version.
+    :vartype content_version: str
+    :ivar content_size: The content size.
+    :vartype content_size: long
+    :ivar content_hash: The content hash.
+    :vartype content_hash: ~azure.mgmt.logic.models.ContentHash
+    :ivar metadata: The metadata.
+    :vartype metadata: any
     """
+
+    _validation = {
+        'content_version': {'readonly': True},
+        'content_size': {'readonly': True},
+        'content_hash': {'readonly': True},
+        'metadata': {'readonly': True},
+    }
 
     _attribute_map = {
         'uri': {'key': 'uri', 'type': 'str'},
@@ -1838,25 +2306,25 @@ class ContentLink(msrest.serialization.Model):
         self,
         *,
         uri: Optional[str] = None,
-        content_version: Optional[str] = None,
-        content_size: Optional[int] = None,
-        content_hash: Optional["ContentHash"] = None,
-        metadata: Optional[object] = None,
         **kwargs
     ):
+        """
+        :keyword uri: The content link URI.
+        :paramtype uri: str
+        """
         super(ContentLink, self).__init__(**kwargs)
         self.uri = uri
-        self.content_version = content_version
-        self.content_size = content_size
-        self.content_hash = content_hash
-        self.metadata = metadata
+        self.content_version = None
+        self.content_size = None
+        self.content_hash = None
+        self.metadata = None
 
 
 class Correlation(msrest.serialization.Model):
     """The correlation property.
 
-    :param client_tracking_id: The client tracking id.
-    :type client_tracking_id: str
+    :ivar client_tracking_id: The client tracking id.
+    :vartype client_tracking_id: str
     """
 
     _attribute_map = {
@@ -1869,6 +2337,10 @@ class Correlation(msrest.serialization.Model):
         client_tracking_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword client_tracking_id: The client tracking id.
+        :paramtype client_tracking_id: str
+        """
         super(Correlation, self).__init__(**kwargs)
         self.client_tracking_id = client_tracking_id
 
@@ -1878,37 +2350,37 @@ class EdifactAcknowledgementSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param need_technical_acknowledgement: Required. The value indicating whether technical
+    :ivar need_technical_acknowledgement: Required. The value indicating whether technical
      acknowledgement is needed.
-    :type need_technical_acknowledgement: bool
-    :param batch_technical_acknowledgements: Required. The value indicating whether to batch the
+    :vartype need_technical_acknowledgement: bool
+    :ivar batch_technical_acknowledgements: Required. The value indicating whether to batch the
      technical acknowledgements.
-    :type batch_technical_acknowledgements: bool
-    :param need_functional_acknowledgement: Required. The value indicating whether functional
+    :vartype batch_technical_acknowledgements: bool
+    :ivar need_functional_acknowledgement: Required. The value indicating whether functional
      acknowledgement is needed.
-    :type need_functional_acknowledgement: bool
-    :param batch_functional_acknowledgements: Required. The value indicating whether to batch
+    :vartype need_functional_acknowledgement: bool
+    :ivar batch_functional_acknowledgements: Required. The value indicating whether to batch
      functional acknowledgements.
-    :type batch_functional_acknowledgements: bool
-    :param need_loop_for_valid_messages: Required. The value indicating whether a loop is needed
-     for valid messages.
-    :type need_loop_for_valid_messages: bool
-    :param send_synchronous_acknowledgement: Required. The value indicating whether to send
+    :vartype batch_functional_acknowledgements: bool
+    :ivar need_loop_for_valid_messages: Required. The value indicating whether a loop is needed for
+     valid messages.
+    :vartype need_loop_for_valid_messages: bool
+    :ivar send_synchronous_acknowledgement: Required. The value indicating whether to send
      synchronous acknowledgement.
-    :type send_synchronous_acknowledgement: bool
-    :param acknowledgement_control_number_prefix: The acknowledgement control number prefix.
-    :type acknowledgement_control_number_prefix: str
-    :param acknowledgement_control_number_suffix: The acknowledgement control number suffix.
-    :type acknowledgement_control_number_suffix: str
-    :param acknowledgement_control_number_lower_bound: Required. The acknowledgement control number
+    :vartype send_synchronous_acknowledgement: bool
+    :ivar acknowledgement_control_number_prefix: The acknowledgement control number prefix.
+    :vartype acknowledgement_control_number_prefix: str
+    :ivar acknowledgement_control_number_suffix: The acknowledgement control number suffix.
+    :vartype acknowledgement_control_number_suffix: str
+    :ivar acknowledgement_control_number_lower_bound: Required. The acknowledgement control number
      lower bound.
-    :type acknowledgement_control_number_lower_bound: int
-    :param acknowledgement_control_number_upper_bound: Required. The acknowledgement control number
+    :vartype acknowledgement_control_number_lower_bound: int
+    :ivar acknowledgement_control_number_upper_bound: Required. The acknowledgement control number
      upper bound.
-    :type acknowledgement_control_number_upper_bound: int
-    :param rollover_acknowledgement_control_number: Required. The value indicating whether to
+    :vartype acknowledgement_control_number_upper_bound: int
+    :ivar rollover_acknowledgement_control_number: Required. The value indicating whether to
      rollover acknowledgement control number.
-    :type rollover_acknowledgement_control_number: bool
+    :vartype rollover_acknowledgement_control_number: bool
     """
 
     _validation = {
@@ -1953,6 +2425,39 @@ class EdifactAcknowledgementSettings(msrest.serialization.Model):
         acknowledgement_control_number_suffix: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword need_technical_acknowledgement: Required. The value indicating whether technical
+         acknowledgement is needed.
+        :paramtype need_technical_acknowledgement: bool
+        :keyword batch_technical_acknowledgements: Required. The value indicating whether to batch the
+         technical acknowledgements.
+        :paramtype batch_technical_acknowledgements: bool
+        :keyword need_functional_acknowledgement: Required. The value indicating whether functional
+         acknowledgement is needed.
+        :paramtype need_functional_acknowledgement: bool
+        :keyword batch_functional_acknowledgements: Required. The value indicating whether to batch
+         functional acknowledgements.
+        :paramtype batch_functional_acknowledgements: bool
+        :keyword need_loop_for_valid_messages: Required. The value indicating whether a loop is needed
+         for valid messages.
+        :paramtype need_loop_for_valid_messages: bool
+        :keyword send_synchronous_acknowledgement: Required. The value indicating whether to send
+         synchronous acknowledgement.
+        :paramtype send_synchronous_acknowledgement: bool
+        :keyword acknowledgement_control_number_prefix: The acknowledgement control number prefix.
+        :paramtype acknowledgement_control_number_prefix: str
+        :keyword acknowledgement_control_number_suffix: The acknowledgement control number suffix.
+        :paramtype acknowledgement_control_number_suffix: str
+        :keyword acknowledgement_control_number_lower_bound: Required. The acknowledgement control
+         number lower bound.
+        :paramtype acknowledgement_control_number_lower_bound: int
+        :keyword acknowledgement_control_number_upper_bound: Required. The acknowledgement control
+         number upper bound.
+        :paramtype acknowledgement_control_number_upper_bound: int
+        :keyword rollover_acknowledgement_control_number: Required. The value indicating whether to
+         rollover acknowledgement control number.
+        :paramtype rollover_acknowledgement_control_number: bool
+        """
         super(EdifactAcknowledgementSettings, self).__init__(**kwargs)
         self.need_technical_acknowledgement = need_technical_acknowledgement
         self.batch_technical_acknowledgements = batch_technical_acknowledgements
@@ -1972,10 +2477,10 @@ class EdifactAgreementContent(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param receive_agreement: Required. The EDIFACT one-way receive agreement.
-    :type receive_agreement: ~azure.mgmt.logic.models.EdifactOneWayAgreement
-    :param send_agreement: Required. The EDIFACT one-way send agreement.
-    :type send_agreement: ~azure.mgmt.logic.models.EdifactOneWayAgreement
+    :ivar receive_agreement: Required. The EDIFACT one-way receive agreement.
+    :vartype receive_agreement: ~azure.mgmt.logic.models.EdifactOneWayAgreement
+    :ivar send_agreement: Required. The EDIFACT one-way send agreement.
+    :vartype send_agreement: ~azure.mgmt.logic.models.EdifactOneWayAgreement
     """
 
     _validation = {
@@ -1995,6 +2500,12 @@ class EdifactAgreementContent(msrest.serialization.Model):
         send_agreement: "EdifactOneWayAgreement",
         **kwargs
     ):
+        """
+        :keyword receive_agreement: Required. The EDIFACT one-way receive agreement.
+        :paramtype receive_agreement: ~azure.mgmt.logic.models.EdifactOneWayAgreement
+        :keyword send_agreement: Required. The EDIFACT one-way send agreement.
+        :paramtype send_agreement: ~azure.mgmt.logic.models.EdifactOneWayAgreement
+        """
         super(EdifactAgreementContent, self).__init__(**kwargs)
         self.receive_agreement = receive_agreement
         self.send_agreement = send_agreement
@@ -2005,33 +2516,33 @@ class EdifactDelimiterOverride(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param message_id: The message id.
-    :type message_id: str
-    :param message_version: The message version.
-    :type message_version: str
-    :param message_release: The message release.
-    :type message_release: str
-    :param data_element_separator: Required. The data element separator.
-    :type data_element_separator: int
-    :param component_separator: Required. The component separator.
-    :type component_separator: int
-    :param segment_terminator: Required. The segment terminator.
-    :type segment_terminator: int
-    :param repetition_separator: Required. The repetition separator.
-    :type repetition_separator: int
-    :param segment_terminator_suffix: Required. The segment terminator suffix. Possible values
+    :ivar message_id: The message id.
+    :vartype message_id: str
+    :ivar message_version: The message version.
+    :vartype message_version: str
+    :ivar message_release: The message release.
+    :vartype message_release: str
+    :ivar data_element_separator: Required. The data element separator.
+    :vartype data_element_separator: int
+    :ivar component_separator: Required. The component separator.
+    :vartype component_separator: int
+    :ivar segment_terminator: Required. The segment terminator.
+    :vartype segment_terminator: int
+    :ivar repetition_separator: Required. The repetition separator.
+    :vartype repetition_separator: int
+    :ivar segment_terminator_suffix: Required. The segment terminator suffix. Possible values
      include: "NotSpecified", "None", "CR", "LF", "CRLF".
-    :type segment_terminator_suffix: str or ~azure.mgmt.logic.models.SegmentTerminatorSuffix
-    :param decimal_point_indicator: Required. The decimal point indicator. Possible values include:
+    :vartype segment_terminator_suffix: str or ~azure.mgmt.logic.models.SegmentTerminatorSuffix
+    :ivar decimal_point_indicator: Required. The decimal point indicator. Possible values include:
      "NotSpecified", "Comma", "Decimal".
-    :type decimal_point_indicator: str or ~azure.mgmt.logic.models.EdifactDecimalIndicator
-    :param release_indicator: Required. The release indicator.
-    :type release_indicator: int
-    :param message_association_assigned_code: The message association assigned code.
-    :type message_association_assigned_code: str
-    :param target_namespace: The target namespace on which this delimiter settings has to be
+    :vartype decimal_point_indicator: str or ~azure.mgmt.logic.models.EdifactDecimalIndicator
+    :ivar release_indicator: Required. The release indicator.
+    :vartype release_indicator: int
+    :ivar message_association_assigned_code: The message association assigned code.
+    :vartype message_association_assigned_code: str
+    :ivar target_namespace: The target namespace on which this delimiter settings has to be
      applied.
-    :type target_namespace: str
+    :vartype target_namespace: str
     """
 
     _validation = {
@@ -2076,6 +2587,35 @@ class EdifactDelimiterOverride(msrest.serialization.Model):
         target_namespace: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword message_id: The message id.
+        :paramtype message_id: str
+        :keyword message_version: The message version.
+        :paramtype message_version: str
+        :keyword message_release: The message release.
+        :paramtype message_release: str
+        :keyword data_element_separator: Required. The data element separator.
+        :paramtype data_element_separator: int
+        :keyword component_separator: Required. The component separator.
+        :paramtype component_separator: int
+        :keyword segment_terminator: Required. The segment terminator.
+        :paramtype segment_terminator: int
+        :keyword repetition_separator: Required. The repetition separator.
+        :paramtype repetition_separator: int
+        :keyword segment_terminator_suffix: Required. The segment terminator suffix. Possible values
+         include: "NotSpecified", "None", "CR", "LF", "CRLF".
+        :paramtype segment_terminator_suffix: str or ~azure.mgmt.logic.models.SegmentTerminatorSuffix
+        :keyword decimal_point_indicator: Required. The decimal point indicator. Possible values
+         include: "NotSpecified", "Comma", "Decimal".
+        :paramtype decimal_point_indicator: str or ~azure.mgmt.logic.models.EdifactDecimalIndicator
+        :keyword release_indicator: Required. The release indicator.
+        :paramtype release_indicator: int
+        :keyword message_association_assigned_code: The message association assigned code.
+        :paramtype message_association_assigned_code: str
+        :keyword target_namespace: The target namespace on which this delimiter settings has to be
+         applied.
+        :paramtype target_namespace: str
+        """
         super(EdifactDelimiterOverride, self).__init__(**kwargs)
         self.message_id = message_id
         self.message_version = message_version
@@ -2094,38 +2634,37 @@ class EdifactDelimiterOverride(msrest.serialization.Model):
 class EdifactEnvelopeOverride(msrest.serialization.Model):
     """The Edifact envelope override settings.
 
-    :param message_id: The message id on which this envelope settings has to be applied.
-    :type message_id: str
-    :param message_version: The message version on which this envelope settings has to be applied.
-    :type message_version: str
-    :param message_release: The message release version on which this envelope settings has to be
+    :ivar message_id: The message id on which this envelope settings has to be applied.
+    :vartype message_id: str
+    :ivar message_version: The message version on which this envelope settings has to be applied.
+    :vartype message_version: str
+    :ivar message_release: The message release version on which this envelope settings has to be
      applied.
-    :type message_release: str
-    :param message_association_assigned_code: The message association assigned code.
-    :type message_association_assigned_code: str
-    :param target_namespace: The target namespace on which this envelope settings has to be
-     applied.
-    :type target_namespace: str
-    :param functional_group_id: The functional group id.
-    :type functional_group_id: str
-    :param sender_application_qualifier: The sender application qualifier.
-    :type sender_application_qualifier: str
-    :param sender_application_id: The sender application id.
-    :type sender_application_id: str
-    :param receiver_application_qualifier: The receiver application qualifier.
-    :type receiver_application_qualifier: str
-    :param receiver_application_id: The receiver application id.
-    :type receiver_application_id: str
-    :param controlling_agency_code: The controlling agency code.
-    :type controlling_agency_code: str
-    :param group_header_message_version: The group header message version.
-    :type group_header_message_version: str
-    :param group_header_message_release: The group header message release.
-    :type group_header_message_release: str
-    :param association_assigned_code: The association assigned code.
-    :type association_assigned_code: str
-    :param application_password: The application password.
-    :type application_password: str
+    :vartype message_release: str
+    :ivar message_association_assigned_code: The message association assigned code.
+    :vartype message_association_assigned_code: str
+    :ivar target_namespace: The target namespace on which this envelope settings has to be applied.
+    :vartype target_namespace: str
+    :ivar functional_group_id: The functional group id.
+    :vartype functional_group_id: str
+    :ivar sender_application_qualifier: The sender application qualifier.
+    :vartype sender_application_qualifier: str
+    :ivar sender_application_id: The sender application id.
+    :vartype sender_application_id: str
+    :ivar receiver_application_qualifier: The receiver application qualifier.
+    :vartype receiver_application_qualifier: str
+    :ivar receiver_application_id: The receiver application id.
+    :vartype receiver_application_id: str
+    :ivar controlling_agency_code: The controlling agency code.
+    :vartype controlling_agency_code: str
+    :ivar group_header_message_version: The group header message version.
+    :vartype group_header_message_version: str
+    :ivar group_header_message_release: The group header message release.
+    :vartype group_header_message_release: str
+    :ivar association_assigned_code: The association assigned code.
+    :vartype association_assigned_code: str
+    :ivar application_password: The application password.
+    :vartype application_password: str
     """
 
     _attribute_map = {
@@ -2166,6 +2705,41 @@ class EdifactEnvelopeOverride(msrest.serialization.Model):
         application_password: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword message_id: The message id on which this envelope settings has to be applied.
+        :paramtype message_id: str
+        :keyword message_version: The message version on which this envelope settings has to be
+         applied.
+        :paramtype message_version: str
+        :keyword message_release: The message release version on which this envelope settings has to be
+         applied.
+        :paramtype message_release: str
+        :keyword message_association_assigned_code: The message association assigned code.
+        :paramtype message_association_assigned_code: str
+        :keyword target_namespace: The target namespace on which this envelope settings has to be
+         applied.
+        :paramtype target_namespace: str
+        :keyword functional_group_id: The functional group id.
+        :paramtype functional_group_id: str
+        :keyword sender_application_qualifier: The sender application qualifier.
+        :paramtype sender_application_qualifier: str
+        :keyword sender_application_id: The sender application id.
+        :paramtype sender_application_id: str
+        :keyword receiver_application_qualifier: The receiver application qualifier.
+        :paramtype receiver_application_qualifier: str
+        :keyword receiver_application_id: The receiver application id.
+        :paramtype receiver_application_id: str
+        :keyword controlling_agency_code: The controlling agency code.
+        :paramtype controlling_agency_code: str
+        :keyword group_header_message_version: The group header message version.
+        :paramtype group_header_message_version: str
+        :keyword group_header_message_release: The group header message release.
+        :paramtype group_header_message_release: str
+        :keyword association_assigned_code: The association assigned code.
+        :paramtype association_assigned_code: str
+        :keyword application_password: The application password.
+        :paramtype application_password: str
+        """
         super(EdifactEnvelopeOverride, self).__init__(**kwargs)
         self.message_id = message_id
         self.message_version = message_version
@@ -2189,100 +2763,100 @@ class EdifactEnvelopeSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param group_association_assigned_code: The group association assigned code.
-    :type group_association_assigned_code: str
-    :param communication_agreement_id: The communication agreement id.
-    :type communication_agreement_id: str
-    :param apply_delimiter_string_advice: Required. The value indicating whether to apply delimiter
+    :ivar group_association_assigned_code: The group association assigned code.
+    :vartype group_association_assigned_code: str
+    :ivar communication_agreement_id: The communication agreement id.
+    :vartype communication_agreement_id: str
+    :ivar apply_delimiter_string_advice: Required. The value indicating whether to apply delimiter
      string advice.
-    :type apply_delimiter_string_advice: bool
-    :param create_grouping_segments: Required. The value indicating whether to create grouping
+    :vartype apply_delimiter_string_advice: bool
+    :ivar create_grouping_segments: Required. The value indicating whether to create grouping
      segments.
-    :type create_grouping_segments: bool
-    :param enable_default_group_headers: Required. The value indicating whether to enable default
+    :vartype create_grouping_segments: bool
+    :ivar enable_default_group_headers: Required. The value indicating whether to enable default
      group headers.
-    :type enable_default_group_headers: bool
-    :param recipient_reference_password_value: The recipient reference password value.
-    :type recipient_reference_password_value: str
-    :param recipient_reference_password_qualifier: The recipient reference password qualifier.
-    :type recipient_reference_password_qualifier: str
-    :param application_reference_id: The application reference id.
-    :type application_reference_id: str
-    :param processing_priority_code: The processing priority code.
-    :type processing_priority_code: str
-    :param interchange_control_number_lower_bound: Required. The interchange control number lower
+    :vartype enable_default_group_headers: bool
+    :ivar recipient_reference_password_value: The recipient reference password value.
+    :vartype recipient_reference_password_value: str
+    :ivar recipient_reference_password_qualifier: The recipient reference password qualifier.
+    :vartype recipient_reference_password_qualifier: str
+    :ivar application_reference_id: The application reference id.
+    :vartype application_reference_id: str
+    :ivar processing_priority_code: The processing priority code.
+    :vartype processing_priority_code: str
+    :ivar interchange_control_number_lower_bound: Required. The interchange control number lower
      bound.
-    :type interchange_control_number_lower_bound: long
-    :param interchange_control_number_upper_bound: Required. The interchange control number upper
+    :vartype interchange_control_number_lower_bound: long
+    :ivar interchange_control_number_upper_bound: Required. The interchange control number upper
      bound.
-    :type interchange_control_number_upper_bound: long
-    :param rollover_interchange_control_number: Required. The value indicating whether to rollover
+    :vartype interchange_control_number_upper_bound: long
+    :ivar rollover_interchange_control_number: Required. The value indicating whether to rollover
      interchange control number.
-    :type rollover_interchange_control_number: bool
-    :param interchange_control_number_prefix: The interchange control number prefix.
-    :type interchange_control_number_prefix: str
-    :param interchange_control_number_suffix: The interchange control number suffix.
-    :type interchange_control_number_suffix: str
-    :param sender_reverse_routing_address: The sender reverse routing address.
-    :type sender_reverse_routing_address: str
-    :param receiver_reverse_routing_address: The receiver reverse routing address.
-    :type receiver_reverse_routing_address: str
-    :param functional_group_id: The functional group id.
-    :type functional_group_id: str
-    :param group_controlling_agency_code: The group controlling agency code.
-    :type group_controlling_agency_code: str
-    :param group_message_version: The group message version.
-    :type group_message_version: str
-    :param group_message_release: The group message release.
-    :type group_message_release: str
-    :param group_control_number_lower_bound: Required. The group control number lower bound.
-    :type group_control_number_lower_bound: long
-    :param group_control_number_upper_bound: Required. The group control number upper bound.
-    :type group_control_number_upper_bound: long
-    :param rollover_group_control_number: Required. The value indicating whether to rollover group
+    :vartype rollover_interchange_control_number: bool
+    :ivar interchange_control_number_prefix: The interchange control number prefix.
+    :vartype interchange_control_number_prefix: str
+    :ivar interchange_control_number_suffix: The interchange control number suffix.
+    :vartype interchange_control_number_suffix: str
+    :ivar sender_reverse_routing_address: The sender reverse routing address.
+    :vartype sender_reverse_routing_address: str
+    :ivar receiver_reverse_routing_address: The receiver reverse routing address.
+    :vartype receiver_reverse_routing_address: str
+    :ivar functional_group_id: The functional group id.
+    :vartype functional_group_id: str
+    :ivar group_controlling_agency_code: The group controlling agency code.
+    :vartype group_controlling_agency_code: str
+    :ivar group_message_version: The group message version.
+    :vartype group_message_version: str
+    :ivar group_message_release: The group message release.
+    :vartype group_message_release: str
+    :ivar group_control_number_lower_bound: Required. The group control number lower bound.
+    :vartype group_control_number_lower_bound: long
+    :ivar group_control_number_upper_bound: Required. The group control number upper bound.
+    :vartype group_control_number_upper_bound: long
+    :ivar rollover_group_control_number: Required. The value indicating whether to rollover group
      control number.
-    :type rollover_group_control_number: bool
-    :param group_control_number_prefix: The group control number prefix.
-    :type group_control_number_prefix: str
-    :param group_control_number_suffix: The group control number suffix.
-    :type group_control_number_suffix: str
-    :param group_application_receiver_qualifier: The group application receiver qualifier.
-    :type group_application_receiver_qualifier: str
-    :param group_application_receiver_id: The group application receiver id.
-    :type group_application_receiver_id: str
-    :param group_application_sender_qualifier: The group application sender qualifier.
-    :type group_application_sender_qualifier: str
-    :param group_application_sender_id: The group application sender id.
-    :type group_application_sender_id: str
-    :param group_application_password: The group application password.
-    :type group_application_password: str
-    :param overwrite_existing_transaction_set_control_number: Required. The value indicating
-     whether to overwrite existing transaction set control number.
-    :type overwrite_existing_transaction_set_control_number: bool
-    :param transaction_set_control_number_prefix: The transaction set control number prefix.
-    :type transaction_set_control_number_prefix: str
-    :param transaction_set_control_number_suffix: The transaction set control number suffix.
-    :type transaction_set_control_number_suffix: str
-    :param transaction_set_control_number_lower_bound: Required. The transaction set control number
+    :vartype rollover_group_control_number: bool
+    :ivar group_control_number_prefix: The group control number prefix.
+    :vartype group_control_number_prefix: str
+    :ivar group_control_number_suffix: The group control number suffix.
+    :vartype group_control_number_suffix: str
+    :ivar group_application_receiver_qualifier: The group application receiver qualifier.
+    :vartype group_application_receiver_qualifier: str
+    :ivar group_application_receiver_id: The group application receiver id.
+    :vartype group_application_receiver_id: str
+    :ivar group_application_sender_qualifier: The group application sender qualifier.
+    :vartype group_application_sender_qualifier: str
+    :ivar group_application_sender_id: The group application sender id.
+    :vartype group_application_sender_id: str
+    :ivar group_application_password: The group application password.
+    :vartype group_application_password: str
+    :ivar overwrite_existing_transaction_set_control_number: Required. The value indicating whether
+     to overwrite existing transaction set control number.
+    :vartype overwrite_existing_transaction_set_control_number: bool
+    :ivar transaction_set_control_number_prefix: The transaction set control number prefix.
+    :vartype transaction_set_control_number_prefix: str
+    :ivar transaction_set_control_number_suffix: The transaction set control number suffix.
+    :vartype transaction_set_control_number_suffix: str
+    :ivar transaction_set_control_number_lower_bound: Required. The transaction set control number
      lower bound.
-    :type transaction_set_control_number_lower_bound: long
-    :param transaction_set_control_number_upper_bound: Required. The transaction set control number
+    :vartype transaction_set_control_number_lower_bound: long
+    :ivar transaction_set_control_number_upper_bound: Required. The transaction set control number
      upper bound.
-    :type transaction_set_control_number_upper_bound: long
-    :param rollover_transaction_set_control_number: Required. The value indicating whether to
+    :vartype transaction_set_control_number_upper_bound: long
+    :ivar rollover_transaction_set_control_number: Required. The value indicating whether to
      rollover transaction set control number.
-    :type rollover_transaction_set_control_number: bool
-    :param is_test_interchange: Required. The value indicating whether the message is a test
+    :vartype rollover_transaction_set_control_number: bool
+    :ivar is_test_interchange: Required. The value indicating whether the message is a test
      interchange.
-    :type is_test_interchange: bool
-    :param sender_internal_identification: The sender internal identification.
-    :type sender_internal_identification: str
-    :param sender_internal_sub_identification: The sender internal sub identification.
-    :type sender_internal_sub_identification: str
-    :param receiver_internal_identification: The receiver internal identification.
-    :type receiver_internal_identification: str
-    :param receiver_internal_sub_identification: The receiver internal sub identification.
-    :type receiver_internal_sub_identification: str
+    :vartype is_test_interchange: bool
+    :ivar sender_internal_identification: The sender internal identification.
+    :vartype sender_internal_identification: str
+    :ivar sender_internal_sub_identification: The sender internal sub identification.
+    :vartype sender_internal_sub_identification: str
+    :ivar receiver_internal_identification: The receiver internal identification.
+    :vartype receiver_internal_identification: str
+    :ivar receiver_internal_sub_identification: The receiver internal sub identification.
+    :vartype receiver_internal_sub_identification: str
     """
 
     _validation = {
@@ -2392,6 +2966,102 @@ class EdifactEnvelopeSettings(msrest.serialization.Model):
         receiver_internal_sub_identification: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword group_association_assigned_code: The group association assigned code.
+        :paramtype group_association_assigned_code: str
+        :keyword communication_agreement_id: The communication agreement id.
+        :paramtype communication_agreement_id: str
+        :keyword apply_delimiter_string_advice: Required. The value indicating whether to apply
+         delimiter string advice.
+        :paramtype apply_delimiter_string_advice: bool
+        :keyword create_grouping_segments: Required. The value indicating whether to create grouping
+         segments.
+        :paramtype create_grouping_segments: bool
+        :keyword enable_default_group_headers: Required. The value indicating whether to enable default
+         group headers.
+        :paramtype enable_default_group_headers: bool
+        :keyword recipient_reference_password_value: The recipient reference password value.
+        :paramtype recipient_reference_password_value: str
+        :keyword recipient_reference_password_qualifier: The recipient reference password qualifier.
+        :paramtype recipient_reference_password_qualifier: str
+        :keyword application_reference_id: The application reference id.
+        :paramtype application_reference_id: str
+        :keyword processing_priority_code: The processing priority code.
+        :paramtype processing_priority_code: str
+        :keyword interchange_control_number_lower_bound: Required. The interchange control number lower
+         bound.
+        :paramtype interchange_control_number_lower_bound: long
+        :keyword interchange_control_number_upper_bound: Required. The interchange control number upper
+         bound.
+        :paramtype interchange_control_number_upper_bound: long
+        :keyword rollover_interchange_control_number: Required. The value indicating whether to
+         rollover interchange control number.
+        :paramtype rollover_interchange_control_number: bool
+        :keyword interchange_control_number_prefix: The interchange control number prefix.
+        :paramtype interchange_control_number_prefix: str
+        :keyword interchange_control_number_suffix: The interchange control number suffix.
+        :paramtype interchange_control_number_suffix: str
+        :keyword sender_reverse_routing_address: The sender reverse routing address.
+        :paramtype sender_reverse_routing_address: str
+        :keyword receiver_reverse_routing_address: The receiver reverse routing address.
+        :paramtype receiver_reverse_routing_address: str
+        :keyword functional_group_id: The functional group id.
+        :paramtype functional_group_id: str
+        :keyword group_controlling_agency_code: The group controlling agency code.
+        :paramtype group_controlling_agency_code: str
+        :keyword group_message_version: The group message version.
+        :paramtype group_message_version: str
+        :keyword group_message_release: The group message release.
+        :paramtype group_message_release: str
+        :keyword group_control_number_lower_bound: Required. The group control number lower bound.
+        :paramtype group_control_number_lower_bound: long
+        :keyword group_control_number_upper_bound: Required. The group control number upper bound.
+        :paramtype group_control_number_upper_bound: long
+        :keyword rollover_group_control_number: Required. The value indicating whether to rollover
+         group control number.
+        :paramtype rollover_group_control_number: bool
+        :keyword group_control_number_prefix: The group control number prefix.
+        :paramtype group_control_number_prefix: str
+        :keyword group_control_number_suffix: The group control number suffix.
+        :paramtype group_control_number_suffix: str
+        :keyword group_application_receiver_qualifier: The group application receiver qualifier.
+        :paramtype group_application_receiver_qualifier: str
+        :keyword group_application_receiver_id: The group application receiver id.
+        :paramtype group_application_receiver_id: str
+        :keyword group_application_sender_qualifier: The group application sender qualifier.
+        :paramtype group_application_sender_qualifier: str
+        :keyword group_application_sender_id: The group application sender id.
+        :paramtype group_application_sender_id: str
+        :keyword group_application_password: The group application password.
+        :paramtype group_application_password: str
+        :keyword overwrite_existing_transaction_set_control_number: Required. The value indicating
+         whether to overwrite existing transaction set control number.
+        :paramtype overwrite_existing_transaction_set_control_number: bool
+        :keyword transaction_set_control_number_prefix: The transaction set control number prefix.
+        :paramtype transaction_set_control_number_prefix: str
+        :keyword transaction_set_control_number_suffix: The transaction set control number suffix.
+        :paramtype transaction_set_control_number_suffix: str
+        :keyword transaction_set_control_number_lower_bound: Required. The transaction set control
+         number lower bound.
+        :paramtype transaction_set_control_number_lower_bound: long
+        :keyword transaction_set_control_number_upper_bound: Required. The transaction set control
+         number upper bound.
+        :paramtype transaction_set_control_number_upper_bound: long
+        :keyword rollover_transaction_set_control_number: Required. The value indicating whether to
+         rollover transaction set control number.
+        :paramtype rollover_transaction_set_control_number: bool
+        :keyword is_test_interchange: Required. The value indicating whether the message is a test
+         interchange.
+        :paramtype is_test_interchange: bool
+        :keyword sender_internal_identification: The sender internal identification.
+        :paramtype sender_internal_identification: str
+        :keyword sender_internal_sub_identification: The sender internal sub identification.
+        :paramtype sender_internal_sub_identification: str
+        :keyword receiver_internal_identification: The receiver internal identification.
+        :paramtype receiver_internal_identification: str
+        :keyword receiver_internal_sub_identification: The receiver internal sub identification.
+        :paramtype receiver_internal_sub_identification: str
+        """
         super(EdifactEnvelopeSettings, self).__init__(**kwargs)
         self.group_association_assigned_code = group_association_assigned_code
         self.communication_agreement_id = communication_agreement_id
@@ -2441,32 +3111,32 @@ class EdifactFramingSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param service_code_list_directory_version: The service code list directory version.
-    :type service_code_list_directory_version: str
-    :param character_encoding: The character encoding.
-    :type character_encoding: str
-    :param protocol_version: Required. The protocol version.
-    :type protocol_version: int
-    :param data_element_separator: Required. The data element separator.
-    :type data_element_separator: int
-    :param component_separator: Required. The component separator.
-    :type component_separator: int
-    :param segment_terminator: Required. The segment terminator.
-    :type segment_terminator: int
-    :param release_indicator: Required. The release indicator.
-    :type release_indicator: int
-    :param repetition_separator: Required. The repetition separator.
-    :type repetition_separator: int
-    :param character_set: Required. The EDIFACT frame setting characterSet. Possible values
-     include: "NotSpecified", "UNOB", "UNOA", "UNOC", "UNOD", "UNOE", "UNOF", "UNOG", "UNOH",
-     "UNOI", "UNOJ", "UNOK", "UNOX", "UNOY", "KECA".
-    :type character_set: str or ~azure.mgmt.logic.models.EdifactCharacterSet
-    :param decimal_point_indicator: Required. The EDIFACT frame setting decimal indicator. Possible
+    :ivar service_code_list_directory_version: The service code list directory version.
+    :vartype service_code_list_directory_version: str
+    :ivar character_encoding: The character encoding.
+    :vartype character_encoding: str
+    :ivar protocol_version: Required. The protocol version.
+    :vartype protocol_version: int
+    :ivar data_element_separator: Required. The data element separator.
+    :vartype data_element_separator: int
+    :ivar component_separator: Required. The component separator.
+    :vartype component_separator: int
+    :ivar segment_terminator: Required. The segment terminator.
+    :vartype segment_terminator: int
+    :ivar release_indicator: Required. The release indicator.
+    :vartype release_indicator: int
+    :ivar repetition_separator: Required. The repetition separator.
+    :vartype repetition_separator: int
+    :ivar character_set: Required. The EDIFACT frame setting characterSet. Possible values include:
+     "NotSpecified", "UNOB", "UNOA", "UNOC", "UNOD", "UNOE", "UNOF", "UNOG", "UNOH", "UNOI", "UNOJ",
+     "UNOK", "UNOX", "UNOY", "KECA".
+    :vartype character_set: str or ~azure.mgmt.logic.models.EdifactCharacterSet
+    :ivar decimal_point_indicator: Required. The EDIFACT frame setting decimal indicator. Possible
      values include: "NotSpecified", "Comma", "Decimal".
-    :type decimal_point_indicator: str or ~azure.mgmt.logic.models.EdifactDecimalIndicator
-    :param segment_terminator_suffix: Required. The EDIFACT frame setting segment terminator
-     suffix. Possible values include: "NotSpecified", "None", "CR", "LF", "CRLF".
-    :type segment_terminator_suffix: str or ~azure.mgmt.logic.models.SegmentTerminatorSuffix
+    :vartype decimal_point_indicator: str or ~azure.mgmt.logic.models.EdifactDecimalIndicator
+    :ivar segment_terminator_suffix: Required. The EDIFACT frame setting segment terminator suffix.
+     Possible values include: "NotSpecified", "None", "CR", "LF", "CRLF".
+    :vartype segment_terminator_suffix: str or ~azure.mgmt.logic.models.SegmentTerminatorSuffix
     """
 
     _validation = {
@@ -2511,6 +3181,34 @@ class EdifactFramingSettings(msrest.serialization.Model):
         character_encoding: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword service_code_list_directory_version: The service code list directory version.
+        :paramtype service_code_list_directory_version: str
+        :keyword character_encoding: The character encoding.
+        :paramtype character_encoding: str
+        :keyword protocol_version: Required. The protocol version.
+        :paramtype protocol_version: int
+        :keyword data_element_separator: Required. The data element separator.
+        :paramtype data_element_separator: int
+        :keyword component_separator: Required. The component separator.
+        :paramtype component_separator: int
+        :keyword segment_terminator: Required. The segment terminator.
+        :paramtype segment_terminator: int
+        :keyword release_indicator: Required. The release indicator.
+        :paramtype release_indicator: int
+        :keyword repetition_separator: Required. The repetition separator.
+        :paramtype repetition_separator: int
+        :keyword character_set: Required. The EDIFACT frame setting characterSet. Possible values
+         include: "NotSpecified", "UNOB", "UNOA", "UNOC", "UNOD", "UNOE", "UNOF", "UNOG", "UNOH",
+         "UNOI", "UNOJ", "UNOK", "UNOX", "UNOY", "KECA".
+        :paramtype character_set: str or ~azure.mgmt.logic.models.EdifactCharacterSet
+        :keyword decimal_point_indicator: Required. The EDIFACT frame setting decimal indicator.
+         Possible values include: "NotSpecified", "Comma", "Decimal".
+        :paramtype decimal_point_indicator: str or ~azure.mgmt.logic.models.EdifactDecimalIndicator
+        :keyword segment_terminator_suffix: Required. The EDIFACT frame setting segment terminator
+         suffix. Possible values include: "NotSpecified", "None", "CR", "LF", "CRLF".
+        :paramtype segment_terminator_suffix: str or ~azure.mgmt.logic.models.SegmentTerminatorSuffix
+        """
         super(EdifactFramingSettings, self).__init__(**kwargs)
         self.service_code_list_directory_version = service_code_list_directory_version
         self.character_encoding = character_encoding
@@ -2530,9 +3228,9 @@ class EdifactMessageFilter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param message_filter_type: Required. The message filter type. Possible values include:
+    :ivar message_filter_type: Required. The message filter type. Possible values include:
      "NotSpecified", "Include", "Exclude".
-    :type message_filter_type: str or ~azure.mgmt.logic.models.MessageFilterType
+    :vartype message_filter_type: str or ~azure.mgmt.logic.models.MessageFilterType
     """
 
     _validation = {
@@ -2549,6 +3247,11 @@ class EdifactMessageFilter(msrest.serialization.Model):
         message_filter_type: Union[str, "MessageFilterType"],
         **kwargs
     ):
+        """
+        :keyword message_filter_type: Required. The message filter type. Possible values include:
+         "NotSpecified", "Include", "Exclude".
+        :paramtype message_filter_type: str or ~azure.mgmt.logic.models.MessageFilterType
+        """
         super(EdifactMessageFilter, self).__init__(**kwargs)
         self.message_filter_type = message_filter_type
 
@@ -2558,8 +3261,8 @@ class EdifactMessageIdentifier(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param message_id: Required. The message id on which this envelope settings has to be applied.
-    :type message_id: str
+    :ivar message_id: Required. The message id on which this envelope settings has to be applied.
+    :vartype message_id: str
     """
 
     _validation = {
@@ -2576,6 +3279,11 @@ class EdifactMessageIdentifier(msrest.serialization.Model):
         message_id: str,
         **kwargs
     ):
+        """
+        :keyword message_id: Required. The message id on which this envelope settings has to be
+         applied.
+        :paramtype message_id: str
+        """
         super(EdifactMessageIdentifier, self).__init__(**kwargs)
         self.message_id = message_id
 
@@ -2585,12 +3293,12 @@ class EdifactOneWayAgreement(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sender_business_identity: Required. The sender business identity.
-    :type sender_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
-    :param receiver_business_identity: Required. The receiver business identity.
-    :type receiver_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
-    :param protocol_settings: Required. The EDIFACT protocol settings.
-    :type protocol_settings: ~azure.mgmt.logic.models.EdifactProtocolSettings
+    :ivar sender_business_identity: Required. The sender business identity.
+    :vartype sender_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
+    :ivar receiver_business_identity: Required. The receiver business identity.
+    :vartype receiver_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
+    :ivar protocol_settings: Required. The EDIFACT protocol settings.
+    :vartype protocol_settings: ~azure.mgmt.logic.models.EdifactProtocolSettings
     """
 
     _validation = {
@@ -2613,6 +3321,14 @@ class EdifactOneWayAgreement(msrest.serialization.Model):
         protocol_settings: "EdifactProtocolSettings",
         **kwargs
     ):
+        """
+        :keyword sender_business_identity: Required. The sender business identity.
+        :paramtype sender_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
+        :keyword receiver_business_identity: Required. The receiver business identity.
+        :paramtype receiver_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
+        :keyword protocol_settings: Required. The EDIFACT protocol settings.
+        :paramtype protocol_settings: ~azure.mgmt.logic.models.EdifactProtocolSettings
+        """
         super(EdifactOneWayAgreement, self).__init__(**kwargs)
         self.sender_business_identity = sender_business_identity
         self.receiver_business_identity = receiver_business_identity
@@ -2624,19 +3340,19 @@ class EdifactProcessingSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param mask_security_info: Required. The value indicating whether to mask security information.
-    :type mask_security_info: bool
-    :param preserve_interchange: Required. The value indicating whether to preserve interchange.
-    :type preserve_interchange: bool
-    :param suspend_interchange_on_error: Required. The value indicating whether to suspend
+    :ivar mask_security_info: Required. The value indicating whether to mask security information.
+    :vartype mask_security_info: bool
+    :ivar preserve_interchange: Required. The value indicating whether to preserve interchange.
+    :vartype preserve_interchange: bool
+    :ivar suspend_interchange_on_error: Required. The value indicating whether to suspend
      interchange on error.
-    :type suspend_interchange_on_error: bool
-    :param create_empty_xml_tags_for_trailing_separators: Required. The value indicating whether to
+    :vartype suspend_interchange_on_error: bool
+    :ivar create_empty_xml_tags_for_trailing_separators: Required. The value indicating whether to
      create empty xml tags for trailing separators.
-    :type create_empty_xml_tags_for_trailing_separators: bool
-    :param use_dot_as_decimal_separator: Required. The value indicating whether to use dot as
+    :vartype create_empty_xml_tags_for_trailing_separators: bool
+    :ivar use_dot_as_decimal_separator: Required. The value indicating whether to use dot as
      decimal separator.
-    :type use_dot_as_decimal_separator: bool
+    :vartype use_dot_as_decimal_separator: bool
     """
 
     _validation = {
@@ -2665,6 +3381,22 @@ class EdifactProcessingSettings(msrest.serialization.Model):
         use_dot_as_decimal_separator: bool,
         **kwargs
     ):
+        """
+        :keyword mask_security_info: Required. The value indicating whether to mask security
+         information.
+        :paramtype mask_security_info: bool
+        :keyword preserve_interchange: Required. The value indicating whether to preserve interchange.
+        :paramtype preserve_interchange: bool
+        :keyword suspend_interchange_on_error: Required. The value indicating whether to suspend
+         interchange on error.
+        :paramtype suspend_interchange_on_error: bool
+        :keyword create_empty_xml_tags_for_trailing_separators: Required. The value indicating whether
+         to create empty xml tags for trailing separators.
+        :paramtype create_empty_xml_tags_for_trailing_separators: bool
+        :keyword use_dot_as_decimal_separator: Required. The value indicating whether to use dot as
+         decimal separator.
+        :paramtype use_dot_as_decimal_separator: bool
+        """
         super(EdifactProcessingSettings, self).__init__(**kwargs)
         self.mask_security_info = mask_security_info
         self.preserve_interchange = preserve_interchange
@@ -2678,28 +3410,28 @@ class EdifactProtocolSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param validation_settings: Required. The EDIFACT validation settings.
-    :type validation_settings: ~azure.mgmt.logic.models.EdifactValidationSettings
-    :param framing_settings: Required. The EDIFACT framing settings.
-    :type framing_settings: ~azure.mgmt.logic.models.EdifactFramingSettings
-    :param envelope_settings: Required. The EDIFACT envelope settings.
-    :type envelope_settings: ~azure.mgmt.logic.models.EdifactEnvelopeSettings
-    :param acknowledgement_settings: Required. The EDIFACT acknowledgement settings.
-    :type acknowledgement_settings: ~azure.mgmt.logic.models.EdifactAcknowledgementSettings
-    :param message_filter: Required. The EDIFACT message filter.
-    :type message_filter: ~azure.mgmt.logic.models.EdifactMessageFilter
-    :param processing_settings: Required. The EDIFACT processing Settings.
-    :type processing_settings: ~azure.mgmt.logic.models.EdifactProcessingSettings
-    :param envelope_overrides: The EDIFACT envelope override settings.
-    :type envelope_overrides: list[~azure.mgmt.logic.models.EdifactEnvelopeOverride]
-    :param message_filter_list: The EDIFACT message filter list.
-    :type message_filter_list: list[~azure.mgmt.logic.models.EdifactMessageIdentifier]
-    :param schema_references: Required. The EDIFACT schema references.
-    :type schema_references: list[~azure.mgmt.logic.models.EdifactSchemaReference]
-    :param validation_overrides: The EDIFACT validation override settings.
-    :type validation_overrides: list[~azure.mgmt.logic.models.EdifactValidationOverride]
-    :param edifact_delimiter_overrides: The EDIFACT delimiter override settings.
-    :type edifact_delimiter_overrides: list[~azure.mgmt.logic.models.EdifactDelimiterOverride]
+    :ivar validation_settings: Required. The EDIFACT validation settings.
+    :vartype validation_settings: ~azure.mgmt.logic.models.EdifactValidationSettings
+    :ivar framing_settings: Required. The EDIFACT framing settings.
+    :vartype framing_settings: ~azure.mgmt.logic.models.EdifactFramingSettings
+    :ivar envelope_settings: Required. The EDIFACT envelope settings.
+    :vartype envelope_settings: ~azure.mgmt.logic.models.EdifactEnvelopeSettings
+    :ivar acknowledgement_settings: Required. The EDIFACT acknowledgement settings.
+    :vartype acknowledgement_settings: ~azure.mgmt.logic.models.EdifactAcknowledgementSettings
+    :ivar message_filter: Required. The EDIFACT message filter.
+    :vartype message_filter: ~azure.mgmt.logic.models.EdifactMessageFilter
+    :ivar processing_settings: Required. The EDIFACT processing Settings.
+    :vartype processing_settings: ~azure.mgmt.logic.models.EdifactProcessingSettings
+    :ivar envelope_overrides: The EDIFACT envelope override settings.
+    :vartype envelope_overrides: list[~azure.mgmt.logic.models.EdifactEnvelopeOverride]
+    :ivar message_filter_list: The EDIFACT message filter list.
+    :vartype message_filter_list: list[~azure.mgmt.logic.models.EdifactMessageIdentifier]
+    :ivar schema_references: Required. The EDIFACT schema references.
+    :vartype schema_references: list[~azure.mgmt.logic.models.EdifactSchemaReference]
+    :ivar validation_overrides: The EDIFACT validation override settings.
+    :vartype validation_overrides: list[~azure.mgmt.logic.models.EdifactValidationOverride]
+    :ivar edifact_delimiter_overrides: The EDIFACT delimiter override settings.
+    :vartype edifact_delimiter_overrides: list[~azure.mgmt.logic.models.EdifactDelimiterOverride]
     """
 
     _validation = {
@@ -2742,6 +3474,30 @@ class EdifactProtocolSettings(msrest.serialization.Model):
         edifact_delimiter_overrides: Optional[List["EdifactDelimiterOverride"]] = None,
         **kwargs
     ):
+        """
+        :keyword validation_settings: Required. The EDIFACT validation settings.
+        :paramtype validation_settings: ~azure.mgmt.logic.models.EdifactValidationSettings
+        :keyword framing_settings: Required. The EDIFACT framing settings.
+        :paramtype framing_settings: ~azure.mgmt.logic.models.EdifactFramingSettings
+        :keyword envelope_settings: Required. The EDIFACT envelope settings.
+        :paramtype envelope_settings: ~azure.mgmt.logic.models.EdifactEnvelopeSettings
+        :keyword acknowledgement_settings: Required. The EDIFACT acknowledgement settings.
+        :paramtype acknowledgement_settings: ~azure.mgmt.logic.models.EdifactAcknowledgementSettings
+        :keyword message_filter: Required. The EDIFACT message filter.
+        :paramtype message_filter: ~azure.mgmt.logic.models.EdifactMessageFilter
+        :keyword processing_settings: Required. The EDIFACT processing Settings.
+        :paramtype processing_settings: ~azure.mgmt.logic.models.EdifactProcessingSettings
+        :keyword envelope_overrides: The EDIFACT envelope override settings.
+        :paramtype envelope_overrides: list[~azure.mgmt.logic.models.EdifactEnvelopeOverride]
+        :keyword message_filter_list: The EDIFACT message filter list.
+        :paramtype message_filter_list: list[~azure.mgmt.logic.models.EdifactMessageIdentifier]
+        :keyword schema_references: Required. The EDIFACT schema references.
+        :paramtype schema_references: list[~azure.mgmt.logic.models.EdifactSchemaReference]
+        :keyword validation_overrides: The EDIFACT validation override settings.
+        :paramtype validation_overrides: list[~azure.mgmt.logic.models.EdifactValidationOverride]
+        :keyword edifact_delimiter_overrides: The EDIFACT delimiter override settings.
+        :paramtype edifact_delimiter_overrides: list[~azure.mgmt.logic.models.EdifactDelimiterOverride]
+        """
         super(EdifactProtocolSettings, self).__init__(**kwargs)
         self.validation_settings = validation_settings
         self.framing_settings = framing_settings
@@ -2761,20 +3517,20 @@ class EdifactSchemaReference(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param message_id: Required. The message id.
-    :type message_id: str
-    :param message_version: Required. The message version.
-    :type message_version: str
-    :param message_release: Required. The message release version.
-    :type message_release: str
-    :param sender_application_id: The sender application id.
-    :type sender_application_id: str
-    :param sender_application_qualifier: The sender application qualifier.
-    :type sender_application_qualifier: str
-    :param association_assigned_code: The association assigned code.
-    :type association_assigned_code: str
-    :param schema_name: Required. The schema name.
-    :type schema_name: str
+    :ivar message_id: Required. The message id.
+    :vartype message_id: str
+    :ivar message_version: Required. The message version.
+    :vartype message_version: str
+    :ivar message_release: Required. The message release version.
+    :vartype message_release: str
+    :ivar sender_application_id: The sender application id.
+    :vartype sender_application_id: str
+    :ivar sender_application_qualifier: The sender application qualifier.
+    :vartype sender_application_qualifier: str
+    :ivar association_assigned_code: The association assigned code.
+    :vartype association_assigned_code: str
+    :ivar schema_name: Required. The schema name.
+    :vartype schema_name: str
     """
 
     _validation = {
@@ -2806,6 +3562,22 @@ class EdifactSchemaReference(msrest.serialization.Model):
         association_assigned_code: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword message_id: Required. The message id.
+        :paramtype message_id: str
+        :keyword message_version: Required. The message version.
+        :paramtype message_version: str
+        :keyword message_release: Required. The message release version.
+        :paramtype message_release: str
+        :keyword sender_application_id: The sender application id.
+        :paramtype sender_application_id: str
+        :keyword sender_application_qualifier: The sender application qualifier.
+        :paramtype sender_application_qualifier: str
+        :keyword association_assigned_code: The association assigned code.
+        :paramtype association_assigned_code: str
+        :keyword schema_name: Required. The schema name.
+        :paramtype schema_name: str
+        """
         super(EdifactSchemaReference, self).__init__(**kwargs)
         self.message_id = message_id
         self.message_version = message_version
@@ -2821,23 +3593,23 @@ class EdifactValidationOverride(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param message_id: Required. The message id on which the validation settings has to be applied.
-    :type message_id: str
-    :param enforce_character_set: Required. The value indicating whether to validate character Set.
-    :type enforce_character_set: bool
-    :param validate_edi_types: Required. The value indicating whether to validate EDI types.
-    :type validate_edi_types: bool
-    :param validate_xsd_types: Required. The value indicating whether to validate XSD types.
-    :type validate_xsd_types: bool
-    :param allow_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
+    :ivar message_id: Required. The message id on which the validation settings has to be applied.
+    :vartype message_id: str
+    :ivar enforce_character_set: Required. The value indicating whether to validate character Set.
+    :vartype enforce_character_set: bool
+    :ivar validate_edi_types: Required. The value indicating whether to validate EDI types.
+    :vartype validate_edi_types: bool
+    :ivar validate_xsd_types: Required. The value indicating whether to validate XSD types.
+    :vartype validate_xsd_types: bool
+    :ivar allow_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
      allow leading and trailing spaces and zeroes.
-    :type allow_leading_and_trailing_spaces_and_zeroes: bool
-    :param trailing_separator_policy: Required. The trailing separator policy. Possible values
+    :vartype allow_leading_and_trailing_spaces_and_zeroes: bool
+    :ivar trailing_separator_policy: Required. The trailing separator policy. Possible values
      include: "NotSpecified", "NotAllowed", "Optional", "Mandatory".
-    :type trailing_separator_policy: str or ~azure.mgmt.logic.models.TrailingSeparatorPolicy
-    :param trim_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
+    :vartype trailing_separator_policy: str or ~azure.mgmt.logic.models.TrailingSeparatorPolicy
+    :ivar trim_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
      trim leading and trailing spaces and zeroes.
-    :type trim_leading_and_trailing_spaces_and_zeroes: bool
+    :vartype trim_leading_and_trailing_spaces_and_zeroes: bool
     """
 
     _validation = {
@@ -2872,6 +3644,27 @@ class EdifactValidationOverride(msrest.serialization.Model):
         trim_leading_and_trailing_spaces_and_zeroes: bool,
         **kwargs
     ):
+        """
+        :keyword message_id: Required. The message id on which the validation settings has to be
+         applied.
+        :paramtype message_id: str
+        :keyword enforce_character_set: Required. The value indicating whether to validate character
+         Set.
+        :paramtype enforce_character_set: bool
+        :keyword validate_edi_types: Required. The value indicating whether to validate EDI types.
+        :paramtype validate_edi_types: bool
+        :keyword validate_xsd_types: Required. The value indicating whether to validate XSD types.
+        :paramtype validate_xsd_types: bool
+        :keyword allow_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether
+         to allow leading and trailing spaces and zeroes.
+        :paramtype allow_leading_and_trailing_spaces_and_zeroes: bool
+        :keyword trailing_separator_policy: Required. The trailing separator policy. Possible values
+         include: "NotSpecified", "NotAllowed", "Optional", "Mandatory".
+        :paramtype trailing_separator_policy: str or ~azure.mgmt.logic.models.TrailingSeparatorPolicy
+        :keyword trim_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
+         trim leading and trailing spaces and zeroes.
+        :paramtype trim_leading_and_trailing_spaces_and_zeroes: bool
+        """
         super(EdifactValidationOverride, self).__init__(**kwargs)
         self.message_id = message_id
         self.enforce_character_set = enforce_character_set
@@ -2887,36 +3680,36 @@ class EdifactValidationSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param validate_character_set: Required. The value indicating whether to validate character set
+    :ivar validate_character_set: Required. The value indicating whether to validate character set
      in the message.
-    :type validate_character_set: bool
-    :param check_duplicate_interchange_control_number: Required. The value indicating whether to
+    :vartype validate_character_set: bool
+    :ivar check_duplicate_interchange_control_number: Required. The value indicating whether to
      check for duplicate interchange control number.
-    :type check_duplicate_interchange_control_number: bool
-    :param interchange_control_number_validity_days: Required. The validity period of interchange
+    :vartype check_duplicate_interchange_control_number: bool
+    :ivar interchange_control_number_validity_days: Required. The validity period of interchange
      control number.
-    :type interchange_control_number_validity_days: int
-    :param check_duplicate_group_control_number: Required. The value indicating whether to check
-     for duplicate group control number.
-    :type check_duplicate_group_control_number: bool
-    :param check_duplicate_transaction_set_control_number: Required. The value indicating whether
-     to check for duplicate transaction set control number.
-    :type check_duplicate_transaction_set_control_number: bool
-    :param validate_edi_types: Required. The value indicating whether to Whether to validate EDI
+    :vartype interchange_control_number_validity_days: int
+    :ivar check_duplicate_group_control_number: Required. The value indicating whether to check for
+     duplicate group control number.
+    :vartype check_duplicate_group_control_number: bool
+    :ivar check_duplicate_transaction_set_control_number: Required. The value indicating whether to
+     check for duplicate transaction set control number.
+    :vartype check_duplicate_transaction_set_control_number: bool
+    :ivar validate_edi_types: Required. The value indicating whether to Whether to validate EDI
      types.
-    :type validate_edi_types: bool
-    :param validate_xsd_types: Required. The value indicating whether to Whether to validate XSD
+    :vartype validate_edi_types: bool
+    :ivar validate_xsd_types: Required. The value indicating whether to Whether to validate XSD
      types.
-    :type validate_xsd_types: bool
-    :param allow_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
+    :vartype validate_xsd_types: bool
+    :ivar allow_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
      allow leading and trailing spaces and zeroes.
-    :type allow_leading_and_trailing_spaces_and_zeroes: bool
-    :param trim_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
+    :vartype allow_leading_and_trailing_spaces_and_zeroes: bool
+    :ivar trim_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
      trim leading and trailing spaces and zeroes.
-    :type trim_leading_and_trailing_spaces_and_zeroes: bool
-    :param trailing_separator_policy: Required. The trailing separator policy. Possible values
+    :vartype trim_leading_and_trailing_spaces_and_zeroes: bool
+    :ivar trailing_separator_policy: Required. The trailing separator policy. Possible values
      include: "NotSpecified", "NotAllowed", "Optional", "Mandatory".
-    :type trailing_separator_policy: str or ~azure.mgmt.logic.models.TrailingSeparatorPolicy
+    :vartype trailing_separator_policy: str or ~azure.mgmt.logic.models.TrailingSeparatorPolicy
     """
 
     _validation = {
@@ -2960,6 +3753,38 @@ class EdifactValidationSettings(msrest.serialization.Model):
         trailing_separator_policy: Union[str, "TrailingSeparatorPolicy"],
         **kwargs
     ):
+        """
+        :keyword validate_character_set: Required. The value indicating whether to validate character
+         set in the message.
+        :paramtype validate_character_set: bool
+        :keyword check_duplicate_interchange_control_number: Required. The value indicating whether to
+         check for duplicate interchange control number.
+        :paramtype check_duplicate_interchange_control_number: bool
+        :keyword interchange_control_number_validity_days: Required. The validity period of interchange
+         control number.
+        :paramtype interchange_control_number_validity_days: int
+        :keyword check_duplicate_group_control_number: Required. The value indicating whether to check
+         for duplicate group control number.
+        :paramtype check_duplicate_group_control_number: bool
+        :keyword check_duplicate_transaction_set_control_number: Required. The value indicating whether
+         to check for duplicate transaction set control number.
+        :paramtype check_duplicate_transaction_set_control_number: bool
+        :keyword validate_edi_types: Required. The value indicating whether to Whether to validate EDI
+         types.
+        :paramtype validate_edi_types: bool
+        :keyword validate_xsd_types: Required. The value indicating whether to Whether to validate XSD
+         types.
+        :paramtype validate_xsd_types: bool
+        :keyword allow_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether
+         to allow leading and trailing spaces and zeroes.
+        :paramtype allow_leading_and_trailing_spaces_and_zeroes: bool
+        :keyword trim_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
+         trim leading and trailing spaces and zeroes.
+        :paramtype trim_leading_and_trailing_spaces_and_zeroes: bool
+        :keyword trailing_separator_policy: Required. The trailing separator policy. Possible values
+         include: "NotSpecified", "NotAllowed", "Optional", "Mandatory".
+        :paramtype trailing_separator_policy: str or ~azure.mgmt.logic.models.TrailingSeparatorPolicy
+        """
         super(EdifactValidationSettings, self).__init__(**kwargs)
         self.validate_character_set = validate_character_set
         self.check_duplicate_interchange_control_number = check_duplicate_interchange_control_number
@@ -2976,10 +3801,10 @@ class EdifactValidationSettings(msrest.serialization.Model):
 class ErrorProperties(msrest.serialization.Model):
     """Error properties indicate why the Logic service was not able to process the incoming request. The reason is provided in the error message.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -2994,6 +3819,12 @@ class ErrorProperties(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Error message indicating why the operation failed.
+        :paramtype message: str
+        """
         super(ErrorProperties, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -3002,8 +3833,8 @@ class ErrorProperties(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Error response indicates Logic service is not able to process the incoming request. The error property contains the error details.
 
-    :param error: The error properties.
-    :type error: ~azure.mgmt.logic.models.ErrorProperties
+    :ivar error: The error properties.
+    :vartype error: ~azure.mgmt.logic.models.ErrorProperties
     """
 
     _attribute_map = {
@@ -3016,6 +3847,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error properties.
+        :paramtype error: ~azure.mgmt.logic.models.ErrorProperties
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -3023,14 +3858,14 @@ class ErrorResponse(msrest.serialization.Model):
 class Expression(msrest.serialization.Model):
     """The expression.
 
-    :param text: The text.
-    :type text: str
-    :param value: Any object.
-    :type value: object
-    :param subexpressions: The sub expressions.
-    :type subexpressions: list[~azure.mgmt.logic.models.Expression]
-    :param error: The azure resource error info.
-    :type error: ~azure.mgmt.logic.models.AzureResourceErrorInfo
+    :ivar text: The text.
+    :vartype text: str
+    :ivar value: Anything.
+    :vartype value: any
+    :ivar subexpressions: The sub expressions.
+    :vartype subexpressions: list[~azure.mgmt.logic.models.Expression]
+    :ivar error: The azure resource error info.
+    :vartype error: ~azure.mgmt.logic.models.AzureResourceErrorInfo
     """
 
     _attribute_map = {
@@ -3044,11 +3879,21 @@ class Expression(msrest.serialization.Model):
         self,
         *,
         text: Optional[str] = None,
-        value: Optional[object] = None,
+        value: Optional[Any] = None,
         subexpressions: Optional[List["Expression"]] = None,
         error: Optional["AzureResourceErrorInfo"] = None,
         **kwargs
     ):
+        """
+        :keyword text: The text.
+        :paramtype text: str
+        :keyword value: Anything.
+        :paramtype value: any
+        :keyword subexpressions: The sub expressions.
+        :paramtype subexpressions: list[~azure.mgmt.logic.models.Expression]
+        :keyword error: The azure resource error info.
+        :paramtype error: ~azure.mgmt.logic.models.AzureResourceErrorInfo
+        """
         super(Expression, self).__init__(**kwargs)
         self.text = text
         self.value = value
@@ -3059,16 +3904,16 @@ class Expression(msrest.serialization.Model):
 class ExpressionRoot(Expression):
     """The expression root.
 
-    :param text: The text.
-    :type text: str
-    :param value: Any object.
-    :type value: object
-    :param subexpressions: The sub expressions.
-    :type subexpressions: list[~azure.mgmt.logic.models.Expression]
-    :param error: The azure resource error info.
-    :type error: ~azure.mgmt.logic.models.AzureResourceErrorInfo
-    :param path: The path.
-    :type path: str
+    :ivar text: The text.
+    :vartype text: str
+    :ivar value: Anything.
+    :vartype value: any
+    :ivar subexpressions: The sub expressions.
+    :vartype subexpressions: list[~azure.mgmt.logic.models.Expression]
+    :ivar error: The azure resource error info.
+    :vartype error: ~azure.mgmt.logic.models.AzureResourceErrorInfo
+    :ivar path: The path.
+    :vartype path: str
     """
 
     _attribute_map = {
@@ -3083,12 +3928,24 @@ class ExpressionRoot(Expression):
         self,
         *,
         text: Optional[str] = None,
-        value: Optional[object] = None,
+        value: Optional[Any] = None,
         subexpressions: Optional[List["Expression"]] = None,
         error: Optional["AzureResourceErrorInfo"] = None,
         path: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword text: The text.
+        :paramtype text: str
+        :keyword value: Anything.
+        :paramtype value: any
+        :keyword subexpressions: The sub expressions.
+        :paramtype subexpressions: list[~azure.mgmt.logic.models.Expression]
+        :keyword error: The azure resource error info.
+        :paramtype error: ~azure.mgmt.logic.models.AzureResourceErrorInfo
+        :keyword path: The path.
+        :paramtype path: str
+        """
         super(ExpressionRoot, self).__init__(text=text, value=value, subexpressions=subexpressions, error=error, **kwargs)
         self.path = path
 
@@ -3096,8 +3953,8 @@ class ExpressionRoot(Expression):
 class ExpressionTraces(msrest.serialization.Model):
     """The expression traces.
 
-    :param inputs:
-    :type inputs: list[~azure.mgmt.logic.models.ExpressionRoot]
+    :ivar inputs:
+    :vartype inputs: list[~azure.mgmt.logic.models.ExpressionRoot]
     """
 
     _attribute_map = {
@@ -3110,6 +3967,10 @@ class ExpressionTraces(msrest.serialization.Model):
         inputs: Optional[List["ExpressionRoot"]] = None,
         **kwargs
     ):
+        """
+        :keyword inputs:
+        :paramtype inputs: list[~azure.mgmt.logic.models.ExpressionRoot]
+        """
         super(ExpressionTraces, self).__init__(**kwargs)
         self.inputs = inputs
 
@@ -3119,15 +3980,15 @@ class ExtendedErrorInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. The error code. Possible values include: "NotSpecified",
+    :ivar code: Required. The error code. Possible values include: "NotSpecified",
      "IntegrationServiceEnvironmentNotFound", "InternalServerError", "InvalidOperationId".
-    :type code: str or ~azure.mgmt.logic.models.ErrorResponseCode
-    :param message: Required. The error message.
-    :type message: str
-    :param details: The error message details.
-    :type details: list[~azure.mgmt.logic.models.ExtendedErrorInfo]
-    :param inner_error: The inner error.
-    :type inner_error: object
+    :vartype code: str or ~azure.mgmt.logic.models.ErrorResponseCode
+    :ivar message: Required. The error message.
+    :vartype message: str
+    :ivar details: The error message details.
+    :vartype details: list[~azure.mgmt.logic.models.ExtendedErrorInfo]
+    :ivar inner_error: The inner error.
+    :vartype inner_error: any
     """
 
     _validation = {
@@ -3148,9 +4009,20 @@ class ExtendedErrorInfo(msrest.serialization.Model):
         code: Union[str, "ErrorResponseCode"],
         message: str,
         details: Optional[List["ExtendedErrorInfo"]] = None,
-        inner_error: Optional[object] = None,
+        inner_error: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword code: Required. The error code. Possible values include: "NotSpecified",
+         "IntegrationServiceEnvironmentNotFound", "InternalServerError", "InvalidOperationId".
+        :paramtype code: str or ~azure.mgmt.logic.models.ErrorResponseCode
+        :keyword message: Required. The error message.
+        :paramtype message: str
+        :keyword details: The error message details.
+        :paramtype details: list[~azure.mgmt.logic.models.ExtendedErrorInfo]
+        :keyword inner_error: The inner error.
+        :paramtype inner_error: any
+        """
         super(ExtendedErrorInfo, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -3161,14 +4033,14 @@ class ExtendedErrorInfo(msrest.serialization.Model):
 class FlowAccessControlConfiguration(msrest.serialization.Model):
     """The access control configuration.
 
-    :param triggers: The access control configuration for invoking workflow triggers.
-    :type triggers: ~azure.mgmt.logic.models.FlowAccessControlConfigurationPolicy
-    :param contents: The access control configuration for accessing workflow run contents.
-    :type contents: ~azure.mgmt.logic.models.FlowAccessControlConfigurationPolicy
-    :param actions: The access control configuration for workflow actions.
-    :type actions: ~azure.mgmt.logic.models.FlowAccessControlConfigurationPolicy
-    :param workflow_management: The access control configuration for workflow management.
-    :type workflow_management: ~azure.mgmt.logic.models.FlowAccessControlConfigurationPolicy
+    :ivar triggers: The access control configuration for invoking workflow triggers.
+    :vartype triggers: ~azure.mgmt.logic.models.FlowAccessControlConfigurationPolicy
+    :ivar contents: The access control configuration for accessing workflow run contents.
+    :vartype contents: ~azure.mgmt.logic.models.FlowAccessControlConfigurationPolicy
+    :ivar actions: The access control configuration for workflow actions.
+    :vartype actions: ~azure.mgmt.logic.models.FlowAccessControlConfigurationPolicy
+    :ivar workflow_management: The access control configuration for workflow management.
+    :vartype workflow_management: ~azure.mgmt.logic.models.FlowAccessControlConfigurationPolicy
     """
 
     _attribute_map = {
@@ -3187,6 +4059,16 @@ class FlowAccessControlConfiguration(msrest.serialization.Model):
         workflow_management: Optional["FlowAccessControlConfigurationPolicy"] = None,
         **kwargs
     ):
+        """
+        :keyword triggers: The access control configuration for invoking workflow triggers.
+        :paramtype triggers: ~azure.mgmt.logic.models.FlowAccessControlConfigurationPolicy
+        :keyword contents: The access control configuration for accessing workflow run contents.
+        :paramtype contents: ~azure.mgmt.logic.models.FlowAccessControlConfigurationPolicy
+        :keyword actions: The access control configuration for workflow actions.
+        :paramtype actions: ~azure.mgmt.logic.models.FlowAccessControlConfigurationPolicy
+        :keyword workflow_management: The access control configuration for workflow management.
+        :paramtype workflow_management: ~azure.mgmt.logic.models.FlowAccessControlConfigurationPolicy
+        """
         super(FlowAccessControlConfiguration, self).__init__(**kwargs)
         self.triggers = triggers
         self.contents = contents
@@ -3197,10 +4079,11 @@ class FlowAccessControlConfiguration(msrest.serialization.Model):
 class FlowAccessControlConfigurationPolicy(msrest.serialization.Model):
     """The access control configuration policy.
 
-    :param allowed_caller_ip_addresses: The allowed caller IP address ranges.
-    :type allowed_caller_ip_addresses: list[~azure.mgmt.logic.models.IpAddressRange]
-    :param open_authentication_policies: The authentication policies for workflow.
-    :type open_authentication_policies: ~azure.mgmt.logic.models.OpenAuthenticationAccessPolicies
+    :ivar allowed_caller_ip_addresses: The allowed caller IP address ranges.
+    :vartype allowed_caller_ip_addresses: list[~azure.mgmt.logic.models.IpAddressRange]
+    :ivar open_authentication_policies: The authentication policies for workflow.
+    :vartype open_authentication_policies:
+     ~azure.mgmt.logic.models.OpenAuthenticationAccessPolicies
     """
 
     _attribute_map = {
@@ -3215,6 +4098,13 @@ class FlowAccessControlConfigurationPolicy(msrest.serialization.Model):
         open_authentication_policies: Optional["OpenAuthenticationAccessPolicies"] = None,
         **kwargs
     ):
+        """
+        :keyword allowed_caller_ip_addresses: The allowed caller IP address ranges.
+        :paramtype allowed_caller_ip_addresses: list[~azure.mgmt.logic.models.IpAddressRange]
+        :keyword open_authentication_policies: The authentication policies for workflow.
+        :paramtype open_authentication_policies:
+         ~azure.mgmt.logic.models.OpenAuthenticationAccessPolicies
+        """
         super(FlowAccessControlConfigurationPolicy, self).__init__(**kwargs)
         self.allowed_caller_ip_addresses = allowed_caller_ip_addresses
         self.open_authentication_policies = open_authentication_policies
@@ -3223,10 +4113,10 @@ class FlowAccessControlConfigurationPolicy(msrest.serialization.Model):
 class FlowEndpoints(msrest.serialization.Model):
     """The flow endpoints configuration.
 
-    :param outgoing_ip_addresses: The outgoing ip address.
-    :type outgoing_ip_addresses: list[~azure.mgmt.logic.models.IpAddress]
-    :param access_endpoint_ip_addresses: The access endpoint ip address.
-    :type access_endpoint_ip_addresses: list[~azure.mgmt.logic.models.IpAddress]
+    :ivar outgoing_ip_addresses: The outgoing ip address.
+    :vartype outgoing_ip_addresses: list[~azure.mgmt.logic.models.IpAddress]
+    :ivar access_endpoint_ip_addresses: The access endpoint ip address.
+    :vartype access_endpoint_ip_addresses: list[~azure.mgmt.logic.models.IpAddress]
     """
 
     _attribute_map = {
@@ -3241,6 +4131,12 @@ class FlowEndpoints(msrest.serialization.Model):
         access_endpoint_ip_addresses: Optional[List["IpAddress"]] = None,
         **kwargs
     ):
+        """
+        :keyword outgoing_ip_addresses: The outgoing ip address.
+        :paramtype outgoing_ip_addresses: list[~azure.mgmt.logic.models.IpAddress]
+        :keyword access_endpoint_ip_addresses: The access endpoint ip address.
+        :paramtype access_endpoint_ip_addresses: list[~azure.mgmt.logic.models.IpAddress]
+        """
         super(FlowEndpoints, self).__init__(**kwargs)
         self.outgoing_ip_addresses = outgoing_ip_addresses
         self.access_endpoint_ip_addresses = access_endpoint_ip_addresses
@@ -3249,10 +4145,10 @@ class FlowEndpoints(msrest.serialization.Model):
 class FlowEndpointsConfiguration(msrest.serialization.Model):
     """The endpoints configuration.
 
-    :param workflow: The workflow endpoints.
-    :type workflow: ~azure.mgmt.logic.models.FlowEndpoints
-    :param connector: The connector endpoints.
-    :type connector: ~azure.mgmt.logic.models.FlowEndpoints
+    :ivar workflow: The workflow endpoints.
+    :vartype workflow: ~azure.mgmt.logic.models.FlowEndpoints
+    :ivar connector: The connector endpoints.
+    :vartype connector: ~azure.mgmt.logic.models.FlowEndpoints
     """
 
     _attribute_map = {
@@ -3267,6 +4163,12 @@ class FlowEndpointsConfiguration(msrest.serialization.Model):
         connector: Optional["FlowEndpoints"] = None,
         **kwargs
     ):
+        """
+        :keyword workflow: The workflow endpoints.
+        :paramtype workflow: ~azure.mgmt.logic.models.FlowEndpoints
+        :keyword connector: The connector endpoints.
+        :paramtype connector: ~azure.mgmt.logic.models.FlowEndpoints
+        """
         super(FlowEndpointsConfiguration, self).__init__(**kwargs)
         self.workflow = workflow
         self.connector = connector
@@ -3275,8 +4177,8 @@ class FlowEndpointsConfiguration(msrest.serialization.Model):
 class GenerateUpgradedDefinitionParameters(msrest.serialization.Model):
     """The parameters to generate upgraded definition.
 
-    :param target_schema_version: The target schema version.
-    :type target_schema_version: str
+    :ivar target_schema_version: The target schema version.
+    :vartype target_schema_version: str
     """
 
     _attribute_map = {
@@ -3289,6 +4191,10 @@ class GenerateUpgradedDefinitionParameters(msrest.serialization.Model):
         target_schema_version: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword target_schema_version: The target schema version.
+        :paramtype target_schema_version: str
+        """
         super(GenerateUpgradedDefinitionParameters, self).__init__(**kwargs)
         self.target_schema_version = target_schema_version
 
@@ -3296,10 +4202,10 @@ class GenerateUpgradedDefinitionParameters(msrest.serialization.Model):
 class GetCallbackUrlParameters(msrest.serialization.Model):
     """The callback url parameters.
 
-    :param not_after: The expiry time.
-    :type not_after: ~datetime.datetime
-    :param key_type: The key type. Possible values include: "NotSpecified", "Primary", "Secondary".
-    :type key_type: str or ~azure.mgmt.logic.models.KeyType
+    :ivar not_after: The expiry time.
+    :vartype not_after: ~datetime.datetime
+    :ivar key_type: The key type. Possible values include: "NotSpecified", "Primary", "Secondary".
+    :vartype key_type: str or ~azure.mgmt.logic.models.KeyType
     """
 
     _attribute_map = {
@@ -3314,6 +4220,13 @@ class GetCallbackUrlParameters(msrest.serialization.Model):
         key_type: Optional[Union[str, "KeyType"]] = None,
         **kwargs
     ):
+        """
+        :keyword not_after: The expiry time.
+        :paramtype not_after: ~datetime.datetime
+        :keyword key_type: The key type. Possible values include: "NotSpecified", "Primary",
+         "Secondary".
+        :paramtype key_type: str or ~azure.mgmt.logic.models.KeyType
+        """
         super(GetCallbackUrlParameters, self).__init__(**kwargs)
         self.not_after = not_after
         self.key_type = key_type
@@ -3330,17 +4243,17 @@ class IntegrationAccount(Resource):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param sku: The sku.
-    :type sku: ~azure.mgmt.logic.models.IntegrationAccountSku
-    :param integration_service_environment: The integration service environment.
-    :type integration_service_environment: ~azure.mgmt.logic.models.IntegrationServiceEnvironment
-    :param state: The workflow state. Possible values include: "NotSpecified", "Completed",
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The sku.
+    :vartype sku: ~azure.mgmt.logic.models.IntegrationAccountSku
+    :ivar integration_service_environment: The integration service environment.
+    :vartype integration_service_environment: ~azure.mgmt.logic.models.ResourceReference
+    :ivar state: The workflow state. Possible values include: "NotSpecified", "Completed",
      "Enabled", "Disabled", "Deleted", "Suspended".
-    :type state: str or ~azure.mgmt.logic.models.WorkflowState
+    :vartype state: str or ~azure.mgmt.logic.models.WorkflowState
     """
 
     _validation = {
@@ -3356,7 +4269,7 @@ class IntegrationAccount(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'IntegrationAccountSku'},
-        'integration_service_environment': {'key': 'properties.integrationServiceEnvironment', 'type': 'IntegrationServiceEnvironment'},
+        'integration_service_environment': {'key': 'properties.integrationServiceEnvironment', 'type': 'ResourceReference'},
         'state': {'key': 'properties.state', 'type': 'str'},
     }
 
@@ -3366,10 +4279,23 @@ class IntegrationAccount(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["IntegrationAccountSku"] = None,
-        integration_service_environment: Optional["IntegrationServiceEnvironment"] = None,
+        integration_service_environment: Optional["ResourceReference"] = None,
         state: Optional[Union[str, "WorkflowState"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The sku.
+        :paramtype sku: ~azure.mgmt.logic.models.IntegrationAccountSku
+        :keyword integration_service_environment: The integration service environment.
+        :paramtype integration_service_environment: ~azure.mgmt.logic.models.ResourceReference
+        :keyword state: The workflow state. Possible values include: "NotSpecified", "Completed",
+         "Enabled", "Disabled", "Deleted", "Suspended".
+        :paramtype state: str or ~azure.mgmt.logic.models.WorkflowState
+        """
         super(IntegrationAccount, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.integration_service_environment = integration_service_environment
@@ -3389,31 +4315,31 @@ class IntegrationAccountAgreement(Resource):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
     :ivar created_time: The created time.
     :vartype created_time: ~datetime.datetime
     :ivar changed_time: The changed time.
     :vartype changed_time: ~datetime.datetime
-    :param metadata: The metadata.
-    :type metadata: object
-    :param agreement_type: Required. The agreement type. Possible values include: "NotSpecified",
+    :ivar metadata: The metadata.
+    :vartype metadata: any
+    :ivar agreement_type: Required. The agreement type. Possible values include: "NotSpecified",
      "AS2", "X12", "Edifact".
-    :type agreement_type: str or ~azure.mgmt.logic.models.AgreementType
-    :param host_partner: Required. The integration account partner that is set as host partner for
+    :vartype agreement_type: str or ~azure.mgmt.logic.models.AgreementType
+    :ivar host_partner: Required. The integration account partner that is set as host partner for
      this agreement.
-    :type host_partner: str
-    :param guest_partner: Required. The integration account partner that is set as guest partner
-     for this agreement.
-    :type guest_partner: str
-    :param host_identity: Required. The business identity of the host partner.
-    :type host_identity: ~azure.mgmt.logic.models.BusinessIdentity
-    :param guest_identity: Required. The business identity of the guest partner.
-    :type guest_identity: ~azure.mgmt.logic.models.BusinessIdentity
-    :param content: Required. The agreement content.
-    :type content: ~azure.mgmt.logic.models.AgreementContent
+    :vartype host_partner: str
+    :ivar guest_partner: Required. The integration account partner that is set as guest partner for
+     this agreement.
+    :vartype guest_partner: str
+    :ivar host_identity: Required. The business identity of the host partner.
+    :vartype host_identity: ~azure.mgmt.logic.models.BusinessIdentity
+    :ivar guest_identity: Required. The business identity of the guest partner.
+    :vartype guest_identity: ~azure.mgmt.logic.models.BusinessIdentity
+    :ivar content: Required. The agreement content.
+    :vartype content: ~azure.mgmt.logic.models.AgreementContent
     """
 
     _validation = {
@@ -3458,9 +4384,32 @@ class IntegrationAccountAgreement(Resource):
         content: "AgreementContent",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        metadata: Optional[object] = None,
+        metadata: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword metadata: The metadata.
+        :paramtype metadata: any
+        :keyword agreement_type: Required. The agreement type. Possible values include: "NotSpecified",
+         "AS2", "X12", "Edifact".
+        :paramtype agreement_type: str or ~azure.mgmt.logic.models.AgreementType
+        :keyword host_partner: Required. The integration account partner that is set as host partner
+         for this agreement.
+        :paramtype host_partner: str
+        :keyword guest_partner: Required. The integration account partner that is set as guest partner
+         for this agreement.
+        :paramtype guest_partner: str
+        :keyword host_identity: Required. The business identity of the host partner.
+        :paramtype host_identity: ~azure.mgmt.logic.models.BusinessIdentity
+        :keyword guest_identity: Required. The business identity of the guest partner.
+        :paramtype guest_identity: ~azure.mgmt.logic.models.BusinessIdentity
+        :keyword content: Required. The agreement content.
+        :paramtype content: ~azure.mgmt.logic.models.AgreementContent
+        """
         super(IntegrationAccountAgreement, self).__init__(location=location, tags=tags, **kwargs)
         self.created_time = None
         self.changed_time = None
@@ -3478,9 +4427,9 @@ class IntegrationAccountAgreementFilter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param agreement_type: Required. The agreement type of integration account agreement. Possible
+    :ivar agreement_type: Required. The agreement type of integration account agreement. Possible
      values include: "NotSpecified", "AS2", "X12", "Edifact".
-    :type agreement_type: str or ~azure.mgmt.logic.models.AgreementType
+    :vartype agreement_type: str or ~azure.mgmt.logic.models.AgreementType
     """
 
     _validation = {
@@ -3497,6 +4446,11 @@ class IntegrationAccountAgreementFilter(msrest.serialization.Model):
         agreement_type: Union[str, "AgreementType"],
         **kwargs
     ):
+        """
+        :keyword agreement_type: Required. The agreement type of integration account agreement.
+         Possible values include: "NotSpecified", "AS2", "X12", "Edifact".
+        :paramtype agreement_type: str or ~azure.mgmt.logic.models.AgreementType
+        """
         super(IntegrationAccountAgreementFilter, self).__init__(**kwargs)
         self.agreement_type = agreement_type
 
@@ -3504,10 +4458,10 @@ class IntegrationAccountAgreementFilter(msrest.serialization.Model):
 class IntegrationAccountAgreementListResult(msrest.serialization.Model):
     """The list of integration account agreements.
 
-    :param value: The list of integration account agreements.
-    :type value: list[~azure.mgmt.logic.models.IntegrationAccountAgreement]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: The list of integration account agreements.
+    :vartype value: list[~azure.mgmt.logic.models.IntegrationAccountAgreement]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -3522,6 +4476,12 @@ class IntegrationAccountAgreementListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of integration account agreements.
+        :paramtype value: list[~azure.mgmt.logic.models.IntegrationAccountAgreement]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(IntegrationAccountAgreementListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -3538,20 +4498,20 @@ class IntegrationAccountCertificate(Resource):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
     :ivar created_time: The created time.
     :vartype created_time: ~datetime.datetime
     :ivar changed_time: The changed time.
     :vartype changed_time: ~datetime.datetime
-    :param metadata: The metadata.
-    :type metadata: object
-    :param key: The key details in the key vault.
-    :type key: ~azure.mgmt.logic.models.KeyVaultKeyReference
-    :param public_certificate: The public certificate.
-    :type public_certificate: str
+    :ivar metadata: The metadata.
+    :vartype metadata: any
+    :ivar key: The key details in the key vault.
+    :vartype key: ~azure.mgmt.logic.models.KeyVaultKeyReference
+    :ivar public_certificate: The public certificate.
+    :vartype public_certificate: str
     """
 
     _validation = {
@@ -3580,11 +4540,23 @@ class IntegrationAccountCertificate(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        metadata: Optional[object] = None,
+        metadata: Optional[Any] = None,
         key: Optional["KeyVaultKeyReference"] = None,
         public_certificate: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword metadata: The metadata.
+        :paramtype metadata: any
+        :keyword key: The key details in the key vault.
+        :paramtype key: ~azure.mgmt.logic.models.KeyVaultKeyReference
+        :keyword public_certificate: The public certificate.
+        :paramtype public_certificate: str
+        """
         super(IntegrationAccountCertificate, self).__init__(location=location, tags=tags, **kwargs)
         self.created_time = None
         self.changed_time = None
@@ -3596,10 +4568,10 @@ class IntegrationAccountCertificate(Resource):
 class IntegrationAccountCertificateListResult(msrest.serialization.Model):
     """The list of integration account certificates.
 
-    :param value: The list of integration account certificates.
-    :type value: list[~azure.mgmt.logic.models.IntegrationAccountCertificate]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: The list of integration account certificates.
+    :vartype value: list[~azure.mgmt.logic.models.IntegrationAccountCertificate]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -3614,6 +4586,12 @@ class IntegrationAccountCertificateListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of integration account certificates.
+        :paramtype value: list[~azure.mgmt.logic.models.IntegrationAccountCertificate]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(IntegrationAccountCertificateListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -3622,10 +4600,10 @@ class IntegrationAccountCertificateListResult(msrest.serialization.Model):
 class IntegrationAccountListResult(msrest.serialization.Model):
     """The list of integration accounts.
 
-    :param value: The list of integration accounts.
-    :type value: list[~azure.mgmt.logic.models.IntegrationAccount]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: The list of integration accounts.
+    :vartype value: list[~azure.mgmt.logic.models.IntegrationAccount]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -3640,6 +4618,12 @@ class IntegrationAccountListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of integration accounts.
+        :paramtype value: list[~azure.mgmt.logic.models.IntegrationAccount]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(IntegrationAccountListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -3658,28 +4642,28 @@ class IntegrationAccountMap(Resource):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param map_type: Required. The map type. Possible values include: "NotSpecified", "Xslt",
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar map_type: Required. The map type. Possible values include: "NotSpecified", "Xslt",
      "Xslt20", "Xslt30", "Liquid".
-    :type map_type: str or ~azure.mgmt.logic.models.MapType
-    :param parameters_schema: The parameters schema of integration account map.
-    :type parameters_schema:
+    :vartype map_type: str or ~azure.mgmt.logic.models.MapType
+    :ivar parameters_schema: The parameters schema of integration account map.
+    :vartype parameters_schema:
      ~azure.mgmt.logic.models.IntegrationAccountMapPropertiesParametersSchema
     :ivar created_time: The created time.
     :vartype created_time: ~datetime.datetime
     :ivar changed_time: The changed time.
     :vartype changed_time: ~datetime.datetime
-    :param content: The content.
-    :type content: str
-    :param content_type: The content type.
-    :type content_type: str
+    :ivar content: The content.
+    :vartype content: str
+    :ivar content_type: The content type.
+    :vartype content_type: str
     :ivar content_link: The content link.
     :vartype content_link: ~azure.mgmt.logic.models.ContentLink
-    :param metadata: The metadata.
-    :type metadata: object
+    :ivar metadata: The metadata.
+    :vartype metadata: any
     """
 
     _validation = {
@@ -3717,9 +4701,27 @@ class IntegrationAccountMap(Resource):
         parameters_schema: Optional["IntegrationAccountMapPropertiesParametersSchema"] = None,
         content: Optional[str] = None,
         content_type: Optional[str] = None,
-        metadata: Optional[object] = None,
+        metadata: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword map_type: Required. The map type. Possible values include: "NotSpecified", "Xslt",
+         "Xslt20", "Xslt30", "Liquid".
+        :paramtype map_type: str or ~azure.mgmt.logic.models.MapType
+        :keyword parameters_schema: The parameters schema of integration account map.
+        :paramtype parameters_schema:
+         ~azure.mgmt.logic.models.IntegrationAccountMapPropertiesParametersSchema
+        :keyword content: The content.
+        :paramtype content: str
+        :keyword content_type: The content type.
+        :paramtype content_type: str
+        :keyword metadata: The metadata.
+        :paramtype metadata: any
+        """
         super(IntegrationAccountMap, self).__init__(location=location, tags=tags, **kwargs)
         self.map_type = map_type
         self.parameters_schema = parameters_schema
@@ -3736,9 +4738,9 @@ class IntegrationAccountMapFilter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param map_type: Required. The map type of integration account map. Possible values include:
+    :ivar map_type: Required. The map type of integration account map. Possible values include:
      "NotSpecified", "Xslt", "Xslt20", "Xslt30", "Liquid".
-    :type map_type: str or ~azure.mgmt.logic.models.MapType
+    :vartype map_type: str or ~azure.mgmt.logic.models.MapType
     """
 
     _validation = {
@@ -3755,6 +4757,11 @@ class IntegrationAccountMapFilter(msrest.serialization.Model):
         map_type: Union[str, "MapType"],
         **kwargs
     ):
+        """
+        :keyword map_type: Required. The map type of integration account map. Possible values include:
+         "NotSpecified", "Xslt", "Xslt20", "Xslt30", "Liquid".
+        :paramtype map_type: str or ~azure.mgmt.logic.models.MapType
+        """
         super(IntegrationAccountMapFilter, self).__init__(**kwargs)
         self.map_type = map_type
 
@@ -3762,10 +4769,10 @@ class IntegrationAccountMapFilter(msrest.serialization.Model):
 class IntegrationAccountMapListResult(msrest.serialization.Model):
     """The list of integration account maps.
 
-    :param value: The list of integration account maps.
-    :type value: list[~azure.mgmt.logic.models.IntegrationAccountMap]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: The list of integration account maps.
+    :vartype value: list[~azure.mgmt.logic.models.IntegrationAccountMap]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -3780,6 +4787,12 @@ class IntegrationAccountMapListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of integration account maps.
+        :paramtype value: list[~azure.mgmt.logic.models.IntegrationAccountMap]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(IntegrationAccountMapListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -3788,8 +4801,8 @@ class IntegrationAccountMapListResult(msrest.serialization.Model):
 class IntegrationAccountMapPropertiesParametersSchema(msrest.serialization.Model):
     """The parameters schema of integration account map.
 
-    :param ref: The reference name.
-    :type ref: str
+    :ivar ref: The reference name.
+    :vartype ref: str
     """
 
     _attribute_map = {
@@ -3802,6 +4815,10 @@ class IntegrationAccountMapPropertiesParametersSchema(msrest.serialization.Model
         ref: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword ref: The reference name.
+        :paramtype ref: str
+        """
         super(IntegrationAccountMapPropertiesParametersSchema, self).__init__(**kwargs)
         self.ref = ref
 
@@ -3819,21 +4836,20 @@ class IntegrationAccountPartner(Resource):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param partner_type: Required. The partner type. Possible values include: "NotSpecified",
-     "B2B".
-    :type partner_type: str or ~azure.mgmt.logic.models.PartnerType
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar partner_type: Required. The partner type. Possible values include: "NotSpecified", "B2B".
+    :vartype partner_type: str or ~azure.mgmt.logic.models.PartnerType
     :ivar created_time: The created time.
     :vartype created_time: ~datetime.datetime
     :ivar changed_time: The changed time.
     :vartype changed_time: ~datetime.datetime
-    :param metadata: The metadata.
-    :type metadata: object
-    :param content: Required. The partner content.
-    :type content: ~azure.mgmt.logic.models.PartnerContent
+    :ivar metadata: The metadata.
+    :vartype metadata: any
+    :ivar content: Required. The partner content.
+    :vartype content: ~azure.mgmt.logic.models.PartnerContent
     """
 
     _validation = {
@@ -3866,9 +4882,22 @@ class IntegrationAccountPartner(Resource):
         content: "PartnerContent",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        metadata: Optional[object] = None,
+        metadata: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword partner_type: Required. The partner type. Possible values include: "NotSpecified",
+         "B2B".
+        :paramtype partner_type: str or ~azure.mgmt.logic.models.PartnerType
+        :keyword metadata: The metadata.
+        :paramtype metadata: any
+        :keyword content: Required. The partner content.
+        :paramtype content: ~azure.mgmt.logic.models.PartnerContent
+        """
         super(IntegrationAccountPartner, self).__init__(location=location, tags=tags, **kwargs)
         self.partner_type = partner_type
         self.created_time = None
@@ -3882,9 +4911,9 @@ class IntegrationAccountPartnerFilter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param partner_type: Required. The partner type of integration account partner. Possible values
+    :ivar partner_type: Required. The partner type of integration account partner. Possible values
      include: "NotSpecified", "B2B".
-    :type partner_type: str or ~azure.mgmt.logic.models.PartnerType
+    :vartype partner_type: str or ~azure.mgmt.logic.models.PartnerType
     """
 
     _validation = {
@@ -3901,6 +4930,11 @@ class IntegrationAccountPartnerFilter(msrest.serialization.Model):
         partner_type: Union[str, "PartnerType"],
         **kwargs
     ):
+        """
+        :keyword partner_type: Required. The partner type of integration account partner. Possible
+         values include: "NotSpecified", "B2B".
+        :paramtype partner_type: str or ~azure.mgmt.logic.models.PartnerType
+        """
         super(IntegrationAccountPartnerFilter, self).__init__(**kwargs)
         self.partner_type = partner_type
 
@@ -3908,10 +4942,10 @@ class IntegrationAccountPartnerFilter(msrest.serialization.Model):
 class IntegrationAccountPartnerListResult(msrest.serialization.Model):
     """The list of integration account partners.
 
-    :param value: The list of integration account partners.
-    :type value: list[~azure.mgmt.logic.models.IntegrationAccountPartner]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: The list of integration account partners.
+    :vartype value: list[~azure.mgmt.logic.models.IntegrationAccountPartner]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -3926,6 +4960,12 @@ class IntegrationAccountPartnerListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of integration account partners.
+        :paramtype value: list[~azure.mgmt.logic.models.IntegrationAccountPartner]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(IntegrationAccountPartnerListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -3944,28 +4984,28 @@ class IntegrationAccountSchema(Resource):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param schema_type: Required. The schema type. Possible values include: "NotSpecified", "Xml".
-    :type schema_type: str or ~azure.mgmt.logic.models.SchemaType
-    :param target_namespace: The target namespace of the schema.
-    :type target_namespace: str
-    :param document_name: The document name.
-    :type document_name: str
-    :param file_name: The file name.
-    :type file_name: str
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar schema_type: Required. The schema type. Possible values include: "NotSpecified", "Xml".
+    :vartype schema_type: str or ~azure.mgmt.logic.models.SchemaType
+    :ivar target_namespace: The target namespace of the schema.
+    :vartype target_namespace: str
+    :ivar document_name: The document name.
+    :vartype document_name: str
+    :ivar file_name: The file name.
+    :vartype file_name: str
     :ivar created_time: The created time.
     :vartype created_time: ~datetime.datetime
     :ivar changed_time: The changed time.
     :vartype changed_time: ~datetime.datetime
-    :param metadata: The metadata.
-    :type metadata: object
-    :param content: The content.
-    :type content: str
-    :param content_type: The content type.
-    :type content_type: str
+    :ivar metadata: The metadata.
+    :vartype metadata: any
+    :ivar content: The content.
+    :vartype content: str
+    :ivar content_type: The content type.
+    :vartype content_type: str
     :ivar content_link: The content link.
     :vartype content_link: ~azure.mgmt.logic.models.ContentLink
     """
@@ -4007,11 +5047,32 @@ class IntegrationAccountSchema(Resource):
         target_namespace: Optional[str] = None,
         document_name: Optional[str] = None,
         file_name: Optional[str] = None,
-        metadata: Optional[object] = None,
+        metadata: Optional[Any] = None,
         content: Optional[str] = None,
         content_type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword schema_type: Required. The schema type. Possible values include: "NotSpecified",
+         "Xml".
+        :paramtype schema_type: str or ~azure.mgmt.logic.models.SchemaType
+        :keyword target_namespace: The target namespace of the schema.
+        :paramtype target_namespace: str
+        :keyword document_name: The document name.
+        :paramtype document_name: str
+        :keyword file_name: The file name.
+        :paramtype file_name: str
+        :keyword metadata: The metadata.
+        :paramtype metadata: any
+        :keyword content: The content.
+        :paramtype content: str
+        :keyword content_type: The content type.
+        :paramtype content_type: str
+        """
         super(IntegrationAccountSchema, self).__init__(location=location, tags=tags, **kwargs)
         self.schema_type = schema_type
         self.target_namespace = target_namespace
@@ -4030,9 +5091,9 @@ class IntegrationAccountSchemaFilter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param schema_type: Required. The schema type of integration account schema. Possible values
+    :ivar schema_type: Required. The schema type of integration account schema. Possible values
      include: "NotSpecified", "Xml".
-    :type schema_type: str or ~azure.mgmt.logic.models.SchemaType
+    :vartype schema_type: str or ~azure.mgmt.logic.models.SchemaType
     """
 
     _validation = {
@@ -4049,6 +5110,11 @@ class IntegrationAccountSchemaFilter(msrest.serialization.Model):
         schema_type: Union[str, "SchemaType"],
         **kwargs
     ):
+        """
+        :keyword schema_type: Required. The schema type of integration account schema. Possible values
+         include: "NotSpecified", "Xml".
+        :paramtype schema_type: str or ~azure.mgmt.logic.models.SchemaType
+        """
         super(IntegrationAccountSchemaFilter, self).__init__(**kwargs)
         self.schema_type = schema_type
 
@@ -4056,10 +5122,10 @@ class IntegrationAccountSchemaFilter(msrest.serialization.Model):
 class IntegrationAccountSchemaListResult(msrest.serialization.Model):
     """The list of integration account schemas.
 
-    :param value: The list of integration account schemas.
-    :type value: list[~azure.mgmt.logic.models.IntegrationAccountSchema]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: The list of integration account schemas.
+    :vartype value: list[~azure.mgmt.logic.models.IntegrationAccountSchema]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -4074,6 +5140,12 @@ class IntegrationAccountSchemaListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of integration account schemas.
+        :paramtype value: list[~azure.mgmt.logic.models.IntegrationAccountSchema]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(IntegrationAccountSchemaListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -4090,16 +5162,16 @@ class IntegrationAccountSession(Resource):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
     :ivar created_time: The created time.
     :vartype created_time: ~datetime.datetime
     :ivar changed_time: The changed time.
     :vartype changed_time: ~datetime.datetime
-    :param content: The session content.
-    :type content: object
+    :ivar content: The session content.
+    :vartype content: any
     """
 
     _validation = {
@@ -4126,9 +5198,17 @@ class IntegrationAccountSession(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        content: Optional[object] = None,
+        content: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword content: The session content.
+        :paramtype content: any
+        """
         super(IntegrationAccountSession, self).__init__(location=location, tags=tags, **kwargs)
         self.created_time = None
         self.changed_time = None
@@ -4140,8 +5220,8 @@ class IntegrationAccountSessionFilter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param changed_time: Required. The changed time of integration account sessions.
-    :type changed_time: ~datetime.datetime
+    :ivar changed_time: Required. The changed time of integration account sessions.
+    :vartype changed_time: ~datetime.datetime
     """
 
     _validation = {
@@ -4158,6 +5238,10 @@ class IntegrationAccountSessionFilter(msrest.serialization.Model):
         changed_time: datetime.datetime,
         **kwargs
     ):
+        """
+        :keyword changed_time: Required. The changed time of integration account sessions.
+        :paramtype changed_time: ~datetime.datetime
+        """
         super(IntegrationAccountSessionFilter, self).__init__(**kwargs)
         self.changed_time = changed_time
 
@@ -4165,10 +5249,10 @@ class IntegrationAccountSessionFilter(msrest.serialization.Model):
 class IntegrationAccountSessionListResult(msrest.serialization.Model):
     """The list of integration account sessions.
 
-    :param value: The list of integration account sessions.
-    :type value: list[~azure.mgmt.logic.models.IntegrationAccountSession]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: The list of integration account sessions.
+    :vartype value: list[~azure.mgmt.logic.models.IntegrationAccountSession]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -4183,6 +5267,12 @@ class IntegrationAccountSessionListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of integration account sessions.
+        :paramtype value: list[~azure.mgmt.logic.models.IntegrationAccountSession]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(IntegrationAccountSessionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -4193,9 +5283,9 @@ class IntegrationAccountSku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The sku name. Possible values include: "NotSpecified", "Free", "Basic",
+    :ivar name: Required. The sku name. Possible values include: "NotSpecified", "Free", "Basic",
      "Standard".
-    :type name: str or ~azure.mgmt.logic.models.IntegrationAccountSkuName
+    :vartype name: str or ~azure.mgmt.logic.models.IntegrationAccountSkuName
     """
 
     _validation = {
@@ -4212,6 +5302,11 @@ class IntegrationAccountSku(msrest.serialization.Model):
         name: Union[str, "IntegrationAccountSkuName"],
         **kwargs
     ):
+        """
+        :keyword name: Required. The sku name. Possible values include: "NotSpecified", "Free",
+         "Basic", "Standard".
+        :paramtype name: str or ~azure.mgmt.logic.models.IntegrationAccountSkuName
+        """
         super(IntegrationAccountSku, self).__init__(**kwargs)
         self.name = name
 
@@ -4219,8 +5314,8 @@ class IntegrationAccountSku(msrest.serialization.Model):
 class IntegrationServiceEnvironmenEncryptionConfiguration(msrest.serialization.Model):
     """The encryption configuration for the integration service environment.
 
-    :param encryption_key_reference: The encryption key reference.
-    :type encryption_key_reference:
+    :ivar encryption_key_reference: The encryption key reference.
+    :vartype encryption_key_reference:
      ~azure.mgmt.logic.models.IntegrationServiceEnvironmenEncryptionKeyReference
     """
 
@@ -4234,6 +5329,11 @@ class IntegrationServiceEnvironmenEncryptionConfiguration(msrest.serialization.M
         encryption_key_reference: Optional["IntegrationServiceEnvironmenEncryptionKeyReference"] = None,
         **kwargs
     ):
+        """
+        :keyword encryption_key_reference: The encryption key reference.
+        :paramtype encryption_key_reference:
+         ~azure.mgmt.logic.models.IntegrationServiceEnvironmenEncryptionKeyReference
+        """
         super(IntegrationServiceEnvironmenEncryptionConfiguration, self).__init__(**kwargs)
         self.encryption_key_reference = encryption_key_reference
 
@@ -4241,12 +5341,12 @@ class IntegrationServiceEnvironmenEncryptionConfiguration(msrest.serialization.M
 class IntegrationServiceEnvironmenEncryptionKeyReference(msrest.serialization.Model):
     """The encryption key details for the integration service environment.
 
-    :param key_vault: The key vault reference.
-    :type key_vault: ~azure.mgmt.logic.models.ResourceReference
-    :param key_name: Gets the key name in the Key Vault.
-    :type key_name: str
-    :param key_version: Gets the version of the key specified in the keyName property.
-    :type key_version: str
+    :ivar key_vault: The key vault reference.
+    :vartype key_vault: ~azure.mgmt.logic.models.ResourceReference
+    :ivar key_name: Gets the key name in the Key Vault.
+    :vartype key_name: str
+    :ivar key_version: Gets the version of the key specified in the keyName property.
+    :vartype key_version: str
     """
 
     _attribute_map = {
@@ -4263,6 +5363,14 @@ class IntegrationServiceEnvironmenEncryptionKeyReference(msrest.serialization.Mo
         key_version: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword key_vault: The key vault reference.
+        :paramtype key_vault: ~azure.mgmt.logic.models.ResourceReference
+        :keyword key_name: Gets the key name in the Key Vault.
+        :paramtype key_name: str
+        :keyword key_version: Gets the version of the key specified in the keyName property.
+        :paramtype key_version: str
+        """
         super(IntegrationServiceEnvironmenEncryptionKeyReference, self).__init__(**kwargs)
         self.key_vault = key_vault
         self.key_name = key_name
@@ -4280,14 +5388,16 @@ class IntegrationServiceEnvironment(Resource):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param properties: The integration service environment properties.
-    :type properties: ~azure.mgmt.logic.models.IntegrationServiceEnvironmentProperties
-    :param sku: The sku.
-    :type sku: ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSku
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The integration service environment properties.
+    :vartype properties: ~azure.mgmt.logic.models.IntegrationServiceEnvironmentProperties
+    :ivar sku: The sku.
+    :vartype sku: ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSku
+    :ivar identity: Managed service identity properties.
+    :vartype identity: ~azure.mgmt.logic.models.ManagedServiceIdentity
     """
 
     _validation = {
@@ -4304,6 +5414,7 @@ class IntegrationServiceEnvironment(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'properties': {'key': 'properties', 'type': 'IntegrationServiceEnvironmentProperties'},
         'sku': {'key': 'sku', 'type': 'IntegrationServiceEnvironmentSku'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
     def __init__(
@@ -4313,19 +5424,33 @@ class IntegrationServiceEnvironment(Resource):
         tags: Optional[Dict[str, str]] = None,
         properties: Optional["IntegrationServiceEnvironmentProperties"] = None,
         sku: Optional["IntegrationServiceEnvironmentSku"] = None,
+        identity: Optional["ManagedServiceIdentity"] = None,
         **kwargs
     ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: The integration service environment properties.
+        :paramtype properties: ~azure.mgmt.logic.models.IntegrationServiceEnvironmentProperties
+        :keyword sku: The sku.
+        :paramtype sku: ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSku
+        :keyword identity: Managed service identity properties.
+        :paramtype identity: ~azure.mgmt.logic.models.ManagedServiceIdentity
+        """
         super(IntegrationServiceEnvironment, self).__init__(location=location, tags=tags, **kwargs)
         self.properties = properties
         self.sku = sku
+        self.identity = identity
 
 
 class IntegrationServiceEnvironmentAccessEndpoint(msrest.serialization.Model):
     """The integration service environment access endpoint.
 
-    :param type: The access endpoint type. Possible values include: "NotSpecified", "External",
+    :ivar type: The access endpoint type. Possible values include: "NotSpecified", "External",
      "Internal".
-    :type type: str or ~azure.mgmt.logic.models.IntegrationServiceEnvironmentAccessEndpointType
+    :vartype type: str or ~azure.mgmt.logic.models.IntegrationServiceEnvironmentAccessEndpointType
     """
 
     _attribute_map = {
@@ -4338,6 +5463,12 @@ class IntegrationServiceEnvironmentAccessEndpoint(msrest.serialization.Model):
         type: Optional[Union[str, "IntegrationServiceEnvironmentAccessEndpointType"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: The access endpoint type. Possible values include: "NotSpecified", "External",
+         "Internal".
+        :paramtype type: str or
+         ~azure.mgmt.logic.models.IntegrationServiceEnvironmentAccessEndpointType
+        """
         super(IntegrationServiceEnvironmentAccessEndpoint, self).__init__(**kwargs)
         self.type = type
 
@@ -4345,10 +5476,10 @@ class IntegrationServiceEnvironmentAccessEndpoint(msrest.serialization.Model):
 class IntegrationServiceEnvironmentListResult(msrest.serialization.Model):
     """The list of integration service environments.
 
-    :param value:
-    :type value: list[~azure.mgmt.logic.models.IntegrationServiceEnvironment]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value:
+    :vartype value: list[~azure.mgmt.logic.models.IntegrationServiceEnvironment]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -4363,24 +5494,310 @@ class IntegrationServiceEnvironmentListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.logic.models.IntegrationServiceEnvironment]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(IntegrationServiceEnvironmentListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
+class IntegrationServiceEnvironmentManagedApi(Resource):
+    """The integration service environment managed api.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The resource id.
+    :vartype id: str
+    :ivar name: Gets the resource name.
+    :vartype name: str
+    :ivar type: Gets the resource type.
+    :vartype type: str
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar name_properties_name: The name.
+    :vartype name_properties_name: str
+    :ivar connection_parameters: The connection parameters.
+    :vartype connection_parameters: dict[str, any]
+    :ivar metadata: The metadata.
+    :vartype metadata: ~azure.mgmt.logic.models.ApiResourceMetadata
+    :ivar runtime_urls: The runtime urls.
+    :vartype runtime_urls: list[str]
+    :ivar general_information: The api general information.
+    :vartype general_information: ~azure.mgmt.logic.models.ApiResourceGeneralInformation
+    :ivar capabilities: The capabilities.
+    :vartype capabilities: list[str]
+    :ivar backend_service: The backend service.
+    :vartype backend_service: ~azure.mgmt.logic.models.ApiResourceBackendService
+    :ivar policies: The policies for the API.
+    :vartype policies: ~azure.mgmt.logic.models.ApiResourcePolicies
+    :ivar api_definition_url: The API definition.
+    :vartype api_definition_url: str
+    :ivar api_definitions: The api definitions.
+    :vartype api_definitions: ~azure.mgmt.logic.models.ApiResourceDefinitions
+    :ivar integration_service_environment: The integration service environment reference.
+    :vartype integration_service_environment: ~azure.mgmt.logic.models.ResourceReference
+    :ivar provisioning_state: The provisioning state. Possible values include: "NotSpecified",
+     "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
+     "Failed", "Succeeded", "Moving", "Updating", "Registering", "Registered", "Unregistering",
+     "Unregistered", "Completed", "Renewing", "Pending", "Waiting", "InProgress".
+    :vartype provisioning_state: str or ~azure.mgmt.logic.models.WorkflowProvisioningState
+    :ivar category: The category. Possible values include: "NotSpecified", "Enterprise",
+     "Standard", "Premium".
+    :vartype category: str or ~azure.mgmt.logic.models.ApiTier
+    :ivar deployment_parameters: The integration service environment managed api deployment
+     parameters.
+    :vartype deployment_parameters:
+     ~azure.mgmt.logic.models.IntegrationServiceEnvironmentManagedApiDeploymentParameters
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'name_properties_name': {'readonly': True},
+        'connection_parameters': {'readonly': True},
+        'metadata': {'readonly': True},
+        'runtime_urls': {'readonly': True},
+        'general_information': {'readonly': True},
+        'capabilities': {'readonly': True},
+        'backend_service': {'readonly': True},
+        'policies': {'readonly': True},
+        'api_definition_url': {'readonly': True},
+        'api_definitions': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'category': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
+        'connection_parameters': {'key': 'properties.connectionParameters', 'type': '{object}'},
+        'metadata': {'key': 'properties.metadata', 'type': 'ApiResourceMetadata'},
+        'runtime_urls': {'key': 'properties.runtimeUrls', 'type': '[str]'},
+        'general_information': {'key': 'properties.generalInformation', 'type': 'ApiResourceGeneralInformation'},
+        'capabilities': {'key': 'properties.capabilities', 'type': '[str]'},
+        'backend_service': {'key': 'properties.backendService', 'type': 'ApiResourceBackendService'},
+        'policies': {'key': 'properties.policies', 'type': 'ApiResourcePolicies'},
+        'api_definition_url': {'key': 'properties.apiDefinitionUrl', 'type': 'str'},
+        'api_definitions': {'key': 'properties.apiDefinitions', 'type': 'ApiResourceDefinitions'},
+        'integration_service_environment': {'key': 'properties.integrationServiceEnvironment', 'type': 'ResourceReference'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'category': {'key': 'properties.category', 'type': 'str'},
+        'deployment_parameters': {'key': 'properties.deploymentParameters', 'type': 'IntegrationServiceEnvironmentManagedApiDeploymentParameters'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        integration_service_environment: Optional["ResourceReference"] = None,
+        deployment_parameters: Optional["IntegrationServiceEnvironmentManagedApiDeploymentParameters"] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword integration_service_environment: The integration service environment reference.
+        :paramtype integration_service_environment: ~azure.mgmt.logic.models.ResourceReference
+        :keyword deployment_parameters: The integration service environment managed api deployment
+         parameters.
+        :paramtype deployment_parameters:
+         ~azure.mgmt.logic.models.IntegrationServiceEnvironmentManagedApiDeploymentParameters
+        """
+        super(IntegrationServiceEnvironmentManagedApi, self).__init__(location=location, tags=tags, **kwargs)
+        self.name_properties_name = None
+        self.connection_parameters = None
+        self.metadata = None
+        self.runtime_urls = None
+        self.general_information = None
+        self.capabilities = None
+        self.backend_service = None
+        self.policies = None
+        self.api_definition_url = None
+        self.api_definitions = None
+        self.integration_service_environment = integration_service_environment
+        self.provisioning_state = None
+        self.category = None
+        self.deployment_parameters = deployment_parameters
+
+
+class IntegrationServiceEnvironmentManagedApiDeploymentParameters(msrest.serialization.Model):
+    """The integration service environment managed api deployment parameters.
+
+    :ivar content_link_definition: The integration service environment managed api content link for
+     deployment.
+    :vartype content_link_definition: ~azure.mgmt.logic.models.ContentLink
+    """
+
+    _attribute_map = {
+        'content_link_definition': {'key': 'contentLinkDefinition', 'type': 'ContentLink'},
+    }
+
+    def __init__(
+        self,
+        *,
+        content_link_definition: Optional["ContentLink"] = None,
+        **kwargs
+    ):
+        """
+        :keyword content_link_definition: The integration service environment managed api content link
+         for deployment.
+        :paramtype content_link_definition: ~azure.mgmt.logic.models.ContentLink
+        """
+        super(IntegrationServiceEnvironmentManagedApiDeploymentParameters, self).__init__(**kwargs)
+        self.content_link_definition = content_link_definition
+
+
+class IntegrationServiceEnvironmentManagedApiListResult(msrest.serialization.Model):
+    """The list of integration service environment managed APIs.
+
+    :ivar value: The integration service environment managed APIs.
+    :vartype value: list[~azure.mgmt.logic.models.IntegrationServiceEnvironmentManagedApi]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[IntegrationServiceEnvironmentManagedApi]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["IntegrationServiceEnvironmentManagedApi"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: The integration service environment managed APIs.
+        :paramtype value: list[~azure.mgmt.logic.models.IntegrationServiceEnvironmentManagedApi]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
+        super(IntegrationServiceEnvironmentManagedApiListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class IntegrationServiceEnvironmentManagedApiProperties(ApiResourceProperties):
+    """The integration service environment managed api properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name.
+    :vartype name: str
+    :ivar connection_parameters: The connection parameters.
+    :vartype connection_parameters: dict[str, any]
+    :ivar metadata: The metadata.
+    :vartype metadata: ~azure.mgmt.logic.models.ApiResourceMetadata
+    :ivar runtime_urls: The runtime urls.
+    :vartype runtime_urls: list[str]
+    :ivar general_information: The api general information.
+    :vartype general_information: ~azure.mgmt.logic.models.ApiResourceGeneralInformation
+    :ivar capabilities: The capabilities.
+    :vartype capabilities: list[str]
+    :ivar backend_service: The backend service.
+    :vartype backend_service: ~azure.mgmt.logic.models.ApiResourceBackendService
+    :ivar policies: The policies for the API.
+    :vartype policies: ~azure.mgmt.logic.models.ApiResourcePolicies
+    :ivar api_definition_url: The API definition.
+    :vartype api_definition_url: str
+    :ivar api_definitions: The api definitions.
+    :vartype api_definitions: ~azure.mgmt.logic.models.ApiResourceDefinitions
+    :ivar integration_service_environment: The integration service environment reference.
+    :vartype integration_service_environment: ~azure.mgmt.logic.models.ResourceReference
+    :ivar provisioning_state: The provisioning state. Possible values include: "NotSpecified",
+     "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
+     "Failed", "Succeeded", "Moving", "Updating", "Registering", "Registered", "Unregistering",
+     "Unregistered", "Completed", "Renewing", "Pending", "Waiting", "InProgress".
+    :vartype provisioning_state: str or ~azure.mgmt.logic.models.WorkflowProvisioningState
+    :ivar category: The category. Possible values include: "NotSpecified", "Enterprise",
+     "Standard", "Premium".
+    :vartype category: str or ~azure.mgmt.logic.models.ApiTier
+    :ivar deployment_parameters: The integration service environment managed api deployment
+     parameters.
+    :vartype deployment_parameters:
+     ~azure.mgmt.logic.models.IntegrationServiceEnvironmentManagedApiDeploymentParameters
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'connection_parameters': {'readonly': True},
+        'metadata': {'readonly': True},
+        'runtime_urls': {'readonly': True},
+        'general_information': {'readonly': True},
+        'capabilities': {'readonly': True},
+        'backend_service': {'readonly': True},
+        'policies': {'readonly': True},
+        'api_definition_url': {'readonly': True},
+        'api_definitions': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'category': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'connection_parameters': {'key': 'connectionParameters', 'type': '{object}'},
+        'metadata': {'key': 'metadata', 'type': 'ApiResourceMetadata'},
+        'runtime_urls': {'key': 'runtimeUrls', 'type': '[str]'},
+        'general_information': {'key': 'generalInformation', 'type': 'ApiResourceGeneralInformation'},
+        'capabilities': {'key': 'capabilities', 'type': '[str]'},
+        'backend_service': {'key': 'backendService', 'type': 'ApiResourceBackendService'},
+        'policies': {'key': 'policies', 'type': 'ApiResourcePolicies'},
+        'api_definition_url': {'key': 'apiDefinitionUrl', 'type': 'str'},
+        'api_definitions': {'key': 'apiDefinitions', 'type': 'ApiResourceDefinitions'},
+        'integration_service_environment': {'key': 'integrationServiceEnvironment', 'type': 'ResourceReference'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'deployment_parameters': {'key': 'deploymentParameters', 'type': 'IntegrationServiceEnvironmentManagedApiDeploymentParameters'},
+    }
+
+    def __init__(
+        self,
+        *,
+        integration_service_environment: Optional["ResourceReference"] = None,
+        deployment_parameters: Optional["IntegrationServiceEnvironmentManagedApiDeploymentParameters"] = None,
+        **kwargs
+    ):
+        """
+        :keyword integration_service_environment: The integration service environment reference.
+        :paramtype integration_service_environment: ~azure.mgmt.logic.models.ResourceReference
+        :keyword deployment_parameters: The integration service environment managed api deployment
+         parameters.
+        :paramtype deployment_parameters:
+         ~azure.mgmt.logic.models.IntegrationServiceEnvironmentManagedApiDeploymentParameters
+        """
+        super(IntegrationServiceEnvironmentManagedApiProperties, self).__init__(integration_service_environment=integration_service_environment, **kwargs)
+        self.deployment_parameters = deployment_parameters
+
+
 class IntegrationServiceEnvironmentNetworkDependency(msrest.serialization.Model):
     """The azure async operation resource.
 
-    :param category: The network dependency category type. Possible values include: "NotSpecified",
+    :ivar category: The network dependency category type. Possible values include: "NotSpecified",
      "AzureStorage", "AzureManagement", "AzureActiveDirectory", "SSLCertificateVerification",
      "DiagnosticLogsAndMetrics", "IntegrationServiceEnvironmentConnectors", "RedisCache",
      "AccessEndpoints", "RecoveryService", "SQL", "RegionalService".
-    :type category: str or
+    :vartype category: str or
      ~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkDependencyCategoryType
-    :param display_name: The display name.
-    :type display_name: str
-    :param endpoints: The endpoints.
-    :type endpoints: list[~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkEndpoint]
+    :ivar display_name: The display name.
+    :vartype display_name: str
+    :ivar endpoints: The endpoints.
+    :vartype endpoints: list[~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkEndpoint]
     """
 
     _attribute_map = {
@@ -4397,6 +5814,20 @@ class IntegrationServiceEnvironmentNetworkDependency(msrest.serialization.Model)
         endpoints: Optional[List["IntegrationServiceEnvironmentNetworkEndpoint"]] = None,
         **kwargs
     ):
+        """
+        :keyword category: The network dependency category type. Possible values include:
+         "NotSpecified", "AzureStorage", "AzureManagement", "AzureActiveDirectory",
+         "SSLCertificateVerification", "DiagnosticLogsAndMetrics",
+         "IntegrationServiceEnvironmentConnectors", "RedisCache", "AccessEndpoints", "RecoveryService",
+         "SQL", "RegionalService".
+        :paramtype category: str or
+         ~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkDependencyCategoryType
+        :keyword display_name: The display name.
+        :paramtype display_name: str
+        :keyword endpoints: The endpoints.
+        :paramtype endpoints:
+         list[~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkEndpoint]
+        """
         super(IntegrationServiceEnvironmentNetworkDependency, self).__init__(**kwargs)
         self.category = category
         self.display_name = display_name
@@ -4406,11 +5837,11 @@ class IntegrationServiceEnvironmentNetworkDependency(msrest.serialization.Model)
 class IntegrationServiceEnvironmentNetworkDependencyHealth(msrest.serialization.Model):
     """The integration service environment subnet network health.
 
-    :param error: The error if any occurred during the operation.
-    :type error: ~azure.mgmt.logic.models.ExtendedErrorInfo
-    :param state: The network dependency health state. Possible values include: "NotSpecified",
+    :ivar error: The error if any occurred during the operation.
+    :vartype error: ~azure.mgmt.logic.models.ExtendedErrorInfo
+    :ivar state: The network dependency health state. Possible values include: "NotSpecified",
      "Healthy", "Unhealthy", "Unknown".
-    :type state: str or
+    :vartype state: str or
      ~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkDependencyHealthState
     """
 
@@ -4426,6 +5857,14 @@ class IntegrationServiceEnvironmentNetworkDependencyHealth(msrest.serialization.
         state: Optional[Union[str, "IntegrationServiceEnvironmentNetworkDependencyHealthState"]] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error if any occurred during the operation.
+        :paramtype error: ~azure.mgmt.logic.models.ExtendedErrorInfo
+        :keyword state: The network dependency health state. Possible values include: "NotSpecified",
+         "Healthy", "Unhealthy", "Unknown".
+        :paramtype state: str or
+         ~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkDependencyHealthState
+        """
         super(IntegrationServiceEnvironmentNetworkDependencyHealth, self).__init__(**kwargs)
         self.error = error
         self.state = state
@@ -4434,14 +5873,14 @@ class IntegrationServiceEnvironmentNetworkDependencyHealth(msrest.serialization.
 class IntegrationServiceEnvironmentNetworkEndpoint(msrest.serialization.Model):
     """The network endpoint.
 
-    :param accessibility: The accessibility state. Possible values include: "NotSpecified",
+    :ivar accessibility: The accessibility state. Possible values include: "NotSpecified",
      "Unknown", "Available", "NotAvailable".
-    :type accessibility: str or
+    :vartype accessibility: str or
      ~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkEndPointAccessibilityState
-    :param domain_name: The domain name.
-    :type domain_name: str
-    :param ports: The ports.
-    :type ports: list[str]
+    :ivar domain_name: The domain name.
+    :vartype domain_name: str
+    :ivar ports: The ports.
+    :vartype ports: list[str]
     """
 
     _attribute_map = {
@@ -4458,6 +5897,16 @@ class IntegrationServiceEnvironmentNetworkEndpoint(msrest.serialization.Model):
         ports: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword accessibility: The accessibility state. Possible values include: "NotSpecified",
+         "Unknown", "Available", "NotAvailable".
+        :paramtype accessibility: str or
+         ~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkEndPointAccessibilityState
+        :keyword domain_name: The domain name.
+        :paramtype domain_name: str
+        :keyword ports: The ports.
+        :paramtype ports: list[str]
+        """
         super(IntegrationServiceEnvironmentNetworkEndpoint, self).__init__(**kwargs)
         self.accessibility = accessibility
         self.domain_name = domain_name
@@ -4467,22 +5916,22 @@ class IntegrationServiceEnvironmentNetworkEndpoint(msrest.serialization.Model):
 class IntegrationServiceEnvironmentProperties(msrest.serialization.Model):
     """The integration service environment properties.
 
-    :param provisioning_state: The provisioning state. Possible values include: "NotSpecified",
+    :ivar provisioning_state: The provisioning state. Possible values include: "NotSpecified",
      "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
      "Failed", "Succeeded", "Moving", "Updating", "Registering", "Registered", "Unregistering",
      "Unregistered", "Completed", "Renewing", "Pending", "Waiting", "InProgress".
-    :type provisioning_state: str or ~azure.mgmt.logic.models.WorkflowProvisioningState
-    :param state: The integration service environment state. Possible values include:
+    :vartype provisioning_state: str or ~azure.mgmt.logic.models.WorkflowProvisioningState
+    :ivar state: The integration service environment state. Possible values include:
      "NotSpecified", "Completed", "Enabled", "Disabled", "Deleted", "Suspended".
-    :type state: str or ~azure.mgmt.logic.models.WorkflowState
-    :param integration_service_environment_id: Gets the tracking id.
-    :type integration_service_environment_id: str
-    :param endpoints_configuration: The endpoints configuration.
-    :type endpoints_configuration: ~azure.mgmt.logic.models.FlowEndpointsConfiguration
-    :param network_configuration: The network configuration.
-    :type network_configuration: ~azure.mgmt.logic.models.NetworkConfiguration
-    :param encryption_configuration: The encryption configuration.
-    :type encryption_configuration:
+    :vartype state: str or ~azure.mgmt.logic.models.WorkflowState
+    :ivar integration_service_environment_id: Gets the tracking id.
+    :vartype integration_service_environment_id: str
+    :ivar endpoints_configuration: The endpoints configuration.
+    :vartype endpoints_configuration: ~azure.mgmt.logic.models.FlowEndpointsConfiguration
+    :ivar network_configuration: The network configuration.
+    :vartype network_configuration: ~azure.mgmt.logic.models.NetworkConfiguration
+    :ivar encryption_configuration: The encryption configuration.
+    :vartype encryption_configuration:
      ~azure.mgmt.logic.models.IntegrationServiceEnvironmenEncryptionConfiguration
     """
 
@@ -4506,6 +5955,25 @@ class IntegrationServiceEnvironmentProperties(msrest.serialization.Model):
         encryption_configuration: Optional["IntegrationServiceEnvironmenEncryptionConfiguration"] = None,
         **kwargs
     ):
+        """
+        :keyword provisioning_state: The provisioning state. Possible values include: "NotSpecified",
+         "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
+         "Failed", "Succeeded", "Moving", "Updating", "Registering", "Registered", "Unregistering",
+         "Unregistered", "Completed", "Renewing", "Pending", "Waiting", "InProgress".
+        :paramtype provisioning_state: str or ~azure.mgmt.logic.models.WorkflowProvisioningState
+        :keyword state: The integration service environment state. Possible values include:
+         "NotSpecified", "Completed", "Enabled", "Disabled", "Deleted", "Suspended".
+        :paramtype state: str or ~azure.mgmt.logic.models.WorkflowState
+        :keyword integration_service_environment_id: Gets the tracking id.
+        :paramtype integration_service_environment_id: str
+        :keyword endpoints_configuration: The endpoints configuration.
+        :paramtype endpoints_configuration: ~azure.mgmt.logic.models.FlowEndpointsConfiguration
+        :keyword network_configuration: The network configuration.
+        :paramtype network_configuration: ~azure.mgmt.logic.models.NetworkConfiguration
+        :keyword encryption_configuration: The encryption configuration.
+        :paramtype encryption_configuration:
+         ~azure.mgmt.logic.models.IntegrationServiceEnvironmenEncryptionConfiguration
+        """
         super(IntegrationServiceEnvironmentProperties, self).__init__(**kwargs)
         self.provisioning_state = provisioning_state
         self.state = state
@@ -4518,10 +5986,10 @@ class IntegrationServiceEnvironmentProperties(msrest.serialization.Model):
 class IntegrationServiceEnvironmentSku(msrest.serialization.Model):
     """The integration service environment sku.
 
-    :param name: The sku name. Possible values include: "NotSpecified", "Premium", "Developer".
-    :type name: str or ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuName
-    :param capacity: The sku capacity.
-    :type capacity: int
+    :ivar name: The sku name. Possible values include: "NotSpecified", "Premium", "Developer".
+    :vartype name: str or ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuName
+    :ivar capacity: The sku capacity.
+    :vartype capacity: int
     """
 
     _attribute_map = {
@@ -4536,6 +6004,12 @@ class IntegrationServiceEnvironmentSku(msrest.serialization.Model):
         capacity: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword name: The sku name. Possible values include: "NotSpecified", "Premium", "Developer".
+        :paramtype name: str or ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuName
+        :keyword capacity: The sku capacity.
+        :paramtype capacity: int
+        """
         super(IntegrationServiceEnvironmentSku, self).__init__(**kwargs)
         self.name = name
         self.capacity = capacity
@@ -4544,14 +6018,14 @@ class IntegrationServiceEnvironmentSku(msrest.serialization.Model):
 class IntegrationServiceEnvironmentSkuCapacity(msrest.serialization.Model):
     """The integration service environment sku capacity.
 
-    :param minimum: The minimum capacity.
-    :type minimum: int
-    :param maximum: The maximum capacity.
-    :type maximum: int
-    :param default: The default capacity.
-    :type default: int
-    :param scale_type: The sku scale type. Possible values include: "Manual", "Automatic", "None".
-    :type scale_type: str or ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuScaleType
+    :ivar minimum: The minimum capacity.
+    :vartype minimum: int
+    :ivar maximum: The maximum capacity.
+    :vartype maximum: int
+    :ivar default: The default capacity.
+    :vartype default: int
+    :ivar scale_type: The sku scale type. Possible values include: "Manual", "Automatic", "None".
+    :vartype scale_type: str or ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuScaleType
     """
 
     _attribute_map = {
@@ -4570,6 +6044,18 @@ class IntegrationServiceEnvironmentSkuCapacity(msrest.serialization.Model):
         scale_type: Optional[Union[str, "IntegrationServiceEnvironmentSkuScaleType"]] = None,
         **kwargs
     ):
+        """
+        :keyword minimum: The minimum capacity.
+        :paramtype minimum: int
+        :keyword maximum: The maximum capacity.
+        :paramtype maximum: int
+        :keyword default: The default capacity.
+        :paramtype default: int
+        :keyword scale_type: The sku scale type. Possible values include: "Manual", "Automatic",
+         "None".
+        :paramtype scale_type: str or
+         ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuScaleType
+        """
         super(IntegrationServiceEnvironmentSkuCapacity, self).__init__(**kwargs)
         self.minimum = minimum
         self.maximum = maximum
@@ -4580,12 +6066,12 @@ class IntegrationServiceEnvironmentSkuCapacity(msrest.serialization.Model):
 class IntegrationServiceEnvironmentSkuDefinition(msrest.serialization.Model):
     """The integration service environment sku definition.
 
-    :param resource_type: The resource type.
-    :type resource_type: str
-    :param sku: The sku.
-    :type sku: ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuDefinitionSku
-    :param capacity: The sku capacity.
-    :type capacity: ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuCapacity
+    :ivar resource_type: The resource type.
+    :vartype resource_type: str
+    :ivar sku: The sku.
+    :vartype sku: ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuDefinitionSku
+    :ivar capacity: The sku capacity.
+    :vartype capacity: ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuCapacity
     """
 
     _attribute_map = {
@@ -4602,6 +6088,14 @@ class IntegrationServiceEnvironmentSkuDefinition(msrest.serialization.Model):
         capacity: Optional["IntegrationServiceEnvironmentSkuCapacity"] = None,
         **kwargs
     ):
+        """
+        :keyword resource_type: The resource type.
+        :paramtype resource_type: str
+        :keyword sku: The sku.
+        :paramtype sku: ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuDefinitionSku
+        :keyword capacity: The sku capacity.
+        :paramtype capacity: ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuCapacity
+        """
         super(IntegrationServiceEnvironmentSkuDefinition, self).__init__(**kwargs)
         self.resource_type = resource_type
         self.sku = sku
@@ -4611,10 +6105,10 @@ class IntegrationServiceEnvironmentSkuDefinition(msrest.serialization.Model):
 class IntegrationServiceEnvironmentSkuDefinitionSku(msrest.serialization.Model):
     """The sku.
 
-    :param name: The sku name. Possible values include: "NotSpecified", "Premium", "Developer".
-    :type name: str or ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuName
-    :param tier: The sku tier.
-    :type tier: str
+    :ivar name: The sku name. Possible values include: "NotSpecified", "Premium", "Developer".
+    :vartype name: str or ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuName
+    :ivar tier: The sku tier.
+    :vartype tier: str
     """
 
     _attribute_map = {
@@ -4629,6 +6123,12 @@ class IntegrationServiceEnvironmentSkuDefinitionSku(msrest.serialization.Model):
         tier: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: The sku name. Possible values include: "NotSpecified", "Premium", "Developer".
+        :paramtype name: str or ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuName
+        :keyword tier: The sku tier.
+        :paramtype tier: str
+        """
         super(IntegrationServiceEnvironmentSkuDefinitionSku, self).__init__(**kwargs)
         self.name = name
         self.tier = tier
@@ -4637,10 +6137,10 @@ class IntegrationServiceEnvironmentSkuDefinitionSku(msrest.serialization.Model):
 class IntegrationServiceEnvironmentSkuList(msrest.serialization.Model):
     """The list of integration service environment skus.
 
-    :param value: The list of integration service environment skus.
-    :type value: list[~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuDefinition]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: The list of integration service environment skus.
+    :vartype value: list[~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuDefinition]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -4655,6 +6155,12 @@ class IntegrationServiceEnvironmentSkuList(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of integration service environment skus.
+        :paramtype value: list[~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuDefinition]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(IntegrationServiceEnvironmentSkuList, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -4665,15 +6171,15 @@ class IntegrationServiceEnvironmentSubnetNetworkHealth(msrest.serialization.Mode
 
     All required parameters must be populated in order to send to Azure.
 
-    :param outbound_network_dependencies: The outbound network dependencies.
-    :type outbound_network_dependencies:
+    :ivar outbound_network_dependencies: The outbound network dependencies.
+    :vartype outbound_network_dependencies:
      list[~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkDependency]
-    :param outbound_network_health: The integration service environment network health.
-    :type outbound_network_health:
+    :ivar outbound_network_health: The integration service environment network health.
+    :vartype outbound_network_health:
      ~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkDependencyHealth
-    :param network_dependency_health_state: Required. The integration service environment network
+    :ivar network_dependency_health_state: Required. The integration service environment network
      health state. Possible values include: "NotSpecified", "Unknown", "Available", "NotAvailable".
-    :type network_dependency_health_state: str or
+    :vartype network_dependency_health_state: str or
      ~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkEndPointAccessibilityState
     """
 
@@ -4695,6 +6201,18 @@ class IntegrationServiceEnvironmentSubnetNetworkHealth(msrest.serialization.Mode
         outbound_network_health: Optional["IntegrationServiceEnvironmentNetworkDependencyHealth"] = None,
         **kwargs
     ):
+        """
+        :keyword outbound_network_dependencies: The outbound network dependencies.
+        :paramtype outbound_network_dependencies:
+         list[~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkDependency]
+        :keyword outbound_network_health: The integration service environment network health.
+        :paramtype outbound_network_health:
+         ~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkDependencyHealth
+        :keyword network_dependency_health_state: Required. The integration service environment network
+         health state. Possible values include: "NotSpecified", "Unknown", "Available", "NotAvailable".
+        :paramtype network_dependency_health_state: str or
+         ~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkEndPointAccessibilityState
+        """
         super(IntegrationServiceEnvironmentSubnetNetworkHealth, self).__init__(**kwargs)
         self.outbound_network_dependencies = outbound_network_dependencies
         self.outbound_network_health = outbound_network_health
@@ -4704,8 +6222,8 @@ class IntegrationServiceEnvironmentSubnetNetworkHealth(msrest.serialization.Mode
 class IpAddress(msrest.serialization.Model):
     """The ip address.
 
-    :param address: The address.
-    :type address: str
+    :ivar address: The address.
+    :vartype address: str
     """
 
     _attribute_map = {
@@ -4718,6 +6236,10 @@ class IpAddress(msrest.serialization.Model):
         address: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword address: The address.
+        :paramtype address: str
+        """
         super(IpAddress, self).__init__(**kwargs)
         self.address = address
 
@@ -4725,8 +6247,8 @@ class IpAddress(msrest.serialization.Model):
 class IpAddressRange(msrest.serialization.Model):
     """The ip address range.
 
-    :param address_range: The IP address range.
-    :type address_range: str
+    :ivar address_range: The IP address range.
+    :vartype address_range: str
     """
 
     _attribute_map = {
@@ -4739,6 +6261,10 @@ class IpAddressRange(msrest.serialization.Model):
         address_range: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword address_range: The IP address range.
+        :paramtype address_range: str
+        """
         super(IpAddressRange, self).__init__(**kwargs)
         self.address_range = address_range
 
@@ -4746,10 +6272,10 @@ class IpAddressRange(msrest.serialization.Model):
 class JsonSchema(msrest.serialization.Model):
     """The JSON schema.
 
-    :param title: The JSON title.
-    :type title: str
-    :param content: The JSON content.
-    :type content: str
+    :ivar title: The JSON title.
+    :vartype title: str
+    :ivar content: The JSON content.
+    :vartype content: str
     """
 
     _attribute_map = {
@@ -4764,6 +6290,12 @@ class JsonSchema(msrest.serialization.Model):
         content: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword title: The JSON title.
+        :paramtype title: str
+        :keyword content: The JSON content.
+        :paramtype content: str
+        """
         super(JsonSchema, self).__init__(**kwargs)
         self.title = title
         self.content = content
@@ -4772,10 +6304,10 @@ class JsonSchema(msrest.serialization.Model):
 class KeyVaultKey(msrest.serialization.Model):
     """The key vault key.
 
-    :param kid: The key id.
-    :type kid: str
-    :param attributes: The key attributes.
-    :type attributes: ~azure.mgmt.logic.models.KeyVaultKeyAttributes
+    :ivar kid: The key id.
+    :vartype kid: str
+    :ivar attributes: The key attributes.
+    :vartype attributes: ~azure.mgmt.logic.models.KeyVaultKeyAttributes
     """
 
     _attribute_map = {
@@ -4790,6 +6322,12 @@ class KeyVaultKey(msrest.serialization.Model):
         attributes: Optional["KeyVaultKeyAttributes"] = None,
         **kwargs
     ):
+        """
+        :keyword kid: The key id.
+        :paramtype kid: str
+        :keyword attributes: The key attributes.
+        :paramtype attributes: ~azure.mgmt.logic.models.KeyVaultKeyAttributes
+        """
         super(KeyVaultKey, self).__init__(**kwargs)
         self.kid = kid
         self.attributes = attributes
@@ -4798,12 +6336,12 @@ class KeyVaultKey(msrest.serialization.Model):
 class KeyVaultKeyAttributes(msrest.serialization.Model):
     """The key attributes.
 
-    :param enabled: Whether the key is enabled or not.
-    :type enabled: bool
-    :param created: When the key was created.
-    :type created: long
-    :param updated: When the key was updated.
-    :type updated: long
+    :ivar enabled: Whether the key is enabled or not.
+    :vartype enabled: bool
+    :ivar created: When the key was created.
+    :vartype created: long
+    :ivar updated: When the key was updated.
+    :vartype updated: long
     """
 
     _attribute_map = {
@@ -4820,6 +6358,14 @@ class KeyVaultKeyAttributes(msrest.serialization.Model):
         updated: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: Whether the key is enabled or not.
+        :paramtype enabled: bool
+        :keyword created: When the key was created.
+        :paramtype created: long
+        :keyword updated: When the key was updated.
+        :paramtype updated: long
+        """
         super(KeyVaultKeyAttributes, self).__init__(**kwargs)
         self.enabled = enabled
         self.created = created
@@ -4829,10 +6375,10 @@ class KeyVaultKeyAttributes(msrest.serialization.Model):
 class KeyVaultKeyCollection(msrest.serialization.Model):
     """Collection of key vault keys.
 
-    :param value: The key vault keys.
-    :type value: list[~azure.mgmt.logic.models.KeyVaultKey]
-    :param skip_token: The skip token.
-    :type skip_token: str
+    :ivar value: The key vault keys.
+    :vartype value: list[~azure.mgmt.logic.models.KeyVaultKey]
+    :ivar skip_token: The skip token.
+    :vartype skip_token: str
     """
 
     _attribute_map = {
@@ -4847,6 +6393,12 @@ class KeyVaultKeyCollection(msrest.serialization.Model):
         skip_token: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The key vault keys.
+        :paramtype value: list[~azure.mgmt.logic.models.KeyVaultKey]
+        :keyword skip_token: The skip token.
+        :paramtype skip_token: str
+        """
         super(KeyVaultKeyCollection, self).__init__(**kwargs)
         self.value = value
         self.skip_token = skip_token
@@ -4857,12 +6409,12 @@ class KeyVaultKeyReference(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_vault: Required. The key vault reference.
-    :type key_vault: ~azure.mgmt.logic.models.KeyVaultKeyReferenceKeyVault
-    :param key_name: Required. The private key name in key vault.
-    :type key_name: str
-    :param key_version: The private key version in key vault.
-    :type key_version: str
+    :ivar key_vault: Required. The key vault reference.
+    :vartype key_vault: ~azure.mgmt.logic.models.KeyVaultKeyReferenceKeyVault
+    :ivar key_name: Required. The private key name in key vault.
+    :vartype key_name: str
+    :ivar key_version: The private key version in key vault.
+    :vartype key_version: str
     """
 
     _validation = {
@@ -4884,6 +6436,14 @@ class KeyVaultKeyReference(msrest.serialization.Model):
         key_version: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword key_vault: Required. The key vault reference.
+        :paramtype key_vault: ~azure.mgmt.logic.models.KeyVaultKeyReferenceKeyVault
+        :keyword key_name: Required. The private key name in key vault.
+        :paramtype key_name: str
+        :keyword key_version: The private key version in key vault.
+        :paramtype key_version: str
+        """
         super(KeyVaultKeyReference, self).__init__(**kwargs)
         self.key_vault = key_vault
         self.key_name = key_name
@@ -4895,8 +6455,8 @@ class KeyVaultKeyReferenceKeyVault(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: The resource id.
-    :type id: str
+    :ivar id: The resource id.
+    :vartype id: str
     :ivar name: The resource name.
     :vartype name: str
     :ivar type: The resource type.
@@ -4920,6 +6480,10 @@ class KeyVaultKeyReferenceKeyVault(msrest.serialization.Model):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The resource id.
+        :paramtype id: str
+        """
         super(KeyVaultKeyReferenceKeyVault, self).__init__(**kwargs)
         self.id = id
         self.name = None
@@ -4931,8 +6495,8 @@ class KeyVaultReference(ResourceReference):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: The resource id.
-    :type id: str
+    :ivar id: The resource id.
+    :vartype id: str
     :ivar name: Gets the resource name.
     :vartype name: str
     :ivar type: Gets the resource type.
@@ -4956,6 +6520,10 @@ class KeyVaultReference(ResourceReference):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The resource id.
+        :paramtype id: str
+        """
         super(KeyVaultReference, self).__init__(id=id, **kwargs)
 
 
@@ -4964,10 +6532,10 @@ class ListKeyVaultKeysDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_vault: Required. The key vault reference.
-    :type key_vault: ~azure.mgmt.logic.models.KeyVaultReference
-    :param skip_token: The skip token.
-    :type skip_token: str
+    :ivar key_vault: Required. The key vault reference.
+    :vartype key_vault: ~azure.mgmt.logic.models.KeyVaultReference
+    :ivar skip_token: The skip token.
+    :vartype skip_token: str
     """
 
     _validation = {
@@ -4986,6 +6554,12 @@ class ListKeyVaultKeysDefinition(msrest.serialization.Model):
         skip_token: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword key_vault: Required. The key vault reference.
+        :paramtype key_vault: ~azure.mgmt.logic.models.KeyVaultReference
+        :keyword skip_token: The skip token.
+        :paramtype skip_token: str
+        """
         super(ListKeyVaultKeysDefinition, self).__init__(**kwargs)
         self.key_vault = key_vault
         self.skip_token = skip_token
@@ -5002,12 +6576,12 @@ class ManagedApi(Resource):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param properties: The api resource properties.
-    :type properties: ~azure.mgmt.logic.models.ApiResourceProperties
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The api resource properties.
+    :vartype properties: ~azure.mgmt.logic.models.ApiResourceProperties
     """
 
     _validation = {
@@ -5033,6 +6607,14 @@ class ManagedApi(Resource):
         properties: Optional["ApiResourceProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: The api resource properties.
+        :paramtype properties: ~azure.mgmt.logic.models.ApiResourceProperties
+        """
         super(ManagedApi, self).__init__(location=location, tags=tags, **kwargs)
         self.properties = properties
 
@@ -5040,10 +6622,10 @@ class ManagedApi(Resource):
 class ManagedApiListResult(msrest.serialization.Model):
     """The list of managed APIs.
 
-    :param value: The managed APIs.
-    :type value: list[~azure.mgmt.logic.models.ManagedApi]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: The managed APIs.
+    :vartype value: list[~azure.mgmt.logic.models.ManagedApi]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -5058,20 +6640,84 @@ class ManagedApiListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The managed APIs.
+        :paramtype value: list[~azure.mgmt.logic.models.ManagedApi]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(ManagedApiListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
+class ManagedServiceIdentity(msrest.serialization.Model):
+    """Managed service identity properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Type of managed service identity. The type 'SystemAssigned' includes an
+     implicitly created identity. The type 'None' will remove any identities from the resource.
+     Possible values include: "SystemAssigned", "UserAssigned", "None".
+    :vartype type: str or ~azure.mgmt.logic.models.ManagedServiceIdentityType
+    :ivar tenant_id: Tenant of managed service identity.
+    :vartype tenant_id: str
+    :ivar principal_id: Principal Id of managed service identity.
+    :vartype principal_id: str
+    :ivar user_assigned_identities: The list of user assigned identities associated with the
+     resource. The user identity dictionary key references will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+    :vartype user_assigned_identities: dict[str, ~azure.mgmt.logic.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'tenant_id': {'readonly': True},
+        'principal_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[Dict[str, "UserAssignedIdentity"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword type: Required. Type of managed service identity. The type 'SystemAssigned' includes
+         an implicitly created identity. The type 'None' will remove any identities from the resource.
+         Possible values include: "SystemAssigned", "UserAssigned", "None".
+        :paramtype type: str or ~azure.mgmt.logic.models.ManagedServiceIdentityType
+        :keyword user_assigned_identities: The list of user assigned identities associated with the
+         resource. The user identity dictionary key references will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+        :paramtype user_assigned_identities: dict[str, ~azure.mgmt.logic.models.UserAssignedIdentity]
+        """
+        super(ManagedServiceIdentity, self).__init__(**kwargs)
+        self.type = type
+        self.tenant_id = None
+        self.principal_id = None
+        self.user_assigned_identities = user_assigned_identities
+
+
 class NetworkConfiguration(msrest.serialization.Model):
     """The network configuration.
 
-    :param virtual_network_address_space: Gets the virtual network address space.
-    :type virtual_network_address_space: str
-    :param access_endpoint: The access endpoint.
-    :type access_endpoint: ~azure.mgmt.logic.models.IntegrationServiceEnvironmentAccessEndpoint
-    :param subnets: The subnets.
-    :type subnets: list[~azure.mgmt.logic.models.ResourceReference]
+    :ivar virtual_network_address_space: Gets the virtual network address space.
+    :vartype virtual_network_address_space: str
+    :ivar access_endpoint: The access endpoint.
+    :vartype access_endpoint: ~azure.mgmt.logic.models.IntegrationServiceEnvironmentAccessEndpoint
+    :ivar subnets: The subnets.
+    :vartype subnets: list[~azure.mgmt.logic.models.ResourceReference]
     """
 
     _attribute_map = {
@@ -5088,6 +6734,15 @@ class NetworkConfiguration(msrest.serialization.Model):
         subnets: Optional[List["ResourceReference"]] = None,
         **kwargs
     ):
+        """
+        :keyword virtual_network_address_space: Gets the virtual network address space.
+        :paramtype virtual_network_address_space: str
+        :keyword access_endpoint: The access endpoint.
+        :paramtype access_endpoint:
+         ~azure.mgmt.logic.models.IntegrationServiceEnvironmentAccessEndpoint
+        :keyword subnets: The subnets.
+        :paramtype subnets: list[~azure.mgmt.logic.models.ResourceReference]
+        """
         super(NetworkConfiguration, self).__init__(**kwargs)
         self.virtual_network_address_space = virtual_network_address_space
         self.access_endpoint = access_endpoint
@@ -5097,8 +6752,8 @@ class NetworkConfiguration(msrest.serialization.Model):
 class OpenAuthenticationAccessPolicies(msrest.serialization.Model):
     """AuthenticationPolicy of type Open.
 
-    :param policies: Open authentication policies.
-    :type policies: dict[str, ~azure.mgmt.logic.models.OpenAuthenticationAccessPolicy]
+    :ivar policies: Open authentication policies.
+    :vartype policies: dict[str, ~azure.mgmt.logic.models.OpenAuthenticationAccessPolicy]
     """
 
     _attribute_map = {
@@ -5111,6 +6766,10 @@ class OpenAuthenticationAccessPolicies(msrest.serialization.Model):
         policies: Optional[Dict[str, "OpenAuthenticationAccessPolicy"]] = None,
         **kwargs
     ):
+        """
+        :keyword policies: Open authentication policies.
+        :paramtype policies: dict[str, ~azure.mgmt.logic.models.OpenAuthenticationAccessPolicy]
+        """
         super(OpenAuthenticationAccessPolicies, self).__init__(**kwargs)
         self.policies = policies
 
@@ -5118,17 +6777,11 @@ class OpenAuthenticationAccessPolicies(msrest.serialization.Model):
 class OpenAuthenticationAccessPolicy(msrest.serialization.Model):
     """Open authentication access policy defined by user.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar type: Type of provider for OAuth. Possible values include: "AAD".
     :vartype type: str or ~azure.mgmt.logic.models.OpenAuthenticationProviderType
-    :param claims: The access policy claims.
-    :type claims: list[~azure.mgmt.logic.models.OpenAuthenticationPolicyClaim]
+    :ivar claims: The access policy claims.
+    :vartype claims: list[~azure.mgmt.logic.models.OpenAuthenticationPolicyClaim]
     """
-
-    _validation = {
-        'type': {'readonly': True},
-    }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
@@ -5138,21 +6791,28 @@ class OpenAuthenticationAccessPolicy(msrest.serialization.Model):
     def __init__(
         self,
         *,
+        type: Optional[Union[str, "OpenAuthenticationProviderType"]] = None,
         claims: Optional[List["OpenAuthenticationPolicyClaim"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: Type of provider for OAuth. Possible values include: "AAD".
+        :paramtype type: str or ~azure.mgmt.logic.models.OpenAuthenticationProviderType
+        :keyword claims: The access policy claims.
+        :paramtype claims: list[~azure.mgmt.logic.models.OpenAuthenticationPolicyClaim]
+        """
         super(OpenAuthenticationAccessPolicy, self).__init__(**kwargs)
-        self.type = None
+        self.type = type
         self.claims = claims
 
 
 class OpenAuthenticationPolicyClaim(msrest.serialization.Model):
     """Open authentication policy claim.
 
-    :param name: The name of the claim.
-    :type name: str
-    :param value: The value of the claim.
-    :type value: str
+    :ivar name: The name of the claim.
+    :vartype name: str
+    :ivar value: The value of the claim.
+    :vartype value: str
     """
 
     _attribute_map = {
@@ -5167,6 +6827,12 @@ class OpenAuthenticationPolicyClaim(msrest.serialization.Model):
         value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: The name of the claim.
+        :paramtype name: str
+        :keyword value: The value of the claim.
+        :paramtype value: str
+        """
         super(OpenAuthenticationPolicyClaim, self).__init__(**kwargs)
         self.name = name
         self.value = value
@@ -5175,14 +6841,14 @@ class OpenAuthenticationPolicyClaim(msrest.serialization.Model):
 class Operation(msrest.serialization.Model):
     """Logic REST API operation.
 
-    :param origin: Operation: origin.
-    :type origin: str
-    :param name: Operation name: {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.logic.models.OperationDisplay
-    :param properties: The properties.
-    :type properties: object
+    :ivar origin: Operation: origin.
+    :vartype origin: str
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.logic.models.OperationDisplay
+    :ivar properties: The properties.
+    :vartype properties: any
     """
 
     _attribute_map = {
@@ -5198,9 +6864,19 @@ class Operation(msrest.serialization.Model):
         origin: Optional[str] = None,
         name: Optional[str] = None,
         display: Optional["OperationDisplay"] = None,
-        properties: Optional[object] = None,
+        properties: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword origin: Operation: origin.
+        :paramtype origin: str
+        :keyword name: Operation name: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.logic.models.OperationDisplay
+        :keyword properties: The properties.
+        :paramtype properties: any
+        """
         super(Operation, self).__init__(**kwargs)
         self.origin = origin
         self.name = name
@@ -5211,14 +6887,14 @@ class Operation(msrest.serialization.Model):
 class OperationDisplay(msrest.serialization.Model):
     """The object that represents the operation.
 
-    :param provider: Service provider: Microsoft.Logic.
-    :type provider: str
-    :param resource: Resource on which the operation is performed: Profile, endpoint, etc.
-    :type resource: str
-    :param operation: Operation type: Read, write, delete, etc.
-    :type operation: str
-    :param description: Operation: description.
-    :type description: str
+    :ivar provider: Service provider: Microsoft.Logic.
+    :vartype provider: str
+    :ivar resource: Resource on which the operation is performed: Profile, endpoint, etc.
+    :vartype resource: str
+    :ivar operation: Operation type: Read, write, delete, etc.
+    :vartype operation: str
+    :ivar description: Operation: description.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -5237,6 +6913,16 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Service provider: Microsoft.Logic.
+        :paramtype provider: str
+        :keyword resource: Resource on which the operation is performed: Profile, endpoint, etc.
+        :paramtype resource: str
+        :keyword operation: Operation type: Read, write, delete, etc.
+        :paramtype operation: str
+        :keyword description: Operation: description.
+        :paramtype description: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -5247,10 +6933,10 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """Result of the request to list Logic operations. It contains a list of operations and a URL link to get the next set of results.
 
-    :param value: List of Logic operations supported by the Logic resource provider.
-    :type value: list[~azure.mgmt.logic.models.Operation]
-    :param next_link: URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: List of Logic operations supported by the Logic resource provider.
+    :vartype value: list[~azure.mgmt.logic.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -5265,6 +6951,12 @@ class OperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of Logic operations supported by the Logic resource provider.
+        :paramtype value: list[~azure.mgmt.logic.models.Operation]
+        :keyword next_link: URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -5273,20 +6965,20 @@ class OperationListResult(msrest.serialization.Model):
 class OperationResultProperties(msrest.serialization.Model):
     """The run operation result properties.
 
-    :param start_time: The start time of the workflow scope repetition.
-    :type start_time: ~datetime.datetime
-    :param end_time: The end time of the workflow scope repetition.
-    :type end_time: ~datetime.datetime
-    :param correlation: The correlation properties.
-    :type correlation: ~azure.mgmt.logic.models.RunActionCorrelation
-    :param status: The status of the workflow scope repetition. Possible values include:
+    :ivar start_time: The start time of the workflow scope repetition.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the workflow scope repetition.
+    :vartype end_time: ~datetime.datetime
+    :ivar correlation: The correlation properties.
+    :vartype correlation: ~azure.mgmt.logic.models.RunActionCorrelation
+    :ivar status: The status of the workflow scope repetition. Possible values include:
      "NotSpecified", "Paused", "Running", "Waiting", "Succeeded", "Skipped", "Suspended",
      "Cancelled", "Failed", "Faulted", "TimedOut", "Aborted", "Ignored".
-    :type status: str or ~azure.mgmt.logic.models.WorkflowStatus
-    :param code: The workflow scope repetition code.
-    :type code: str
-    :param error: Any object.
-    :type error: object
+    :vartype status: str or ~azure.mgmt.logic.models.WorkflowStatus
+    :ivar code: The workflow scope repetition code.
+    :vartype code: str
+    :ivar error: Anything.
+    :vartype error: any
     """
 
     _attribute_map = {
@@ -5306,9 +6998,25 @@ class OperationResultProperties(msrest.serialization.Model):
         correlation: Optional["RunActionCorrelation"] = None,
         status: Optional[Union[str, "WorkflowStatus"]] = None,
         code: Optional[str] = None,
-        error: Optional[object] = None,
+        error: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword start_time: The start time of the workflow scope repetition.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: The end time of the workflow scope repetition.
+        :paramtype end_time: ~datetime.datetime
+        :keyword correlation: The correlation properties.
+        :paramtype correlation: ~azure.mgmt.logic.models.RunActionCorrelation
+        :keyword status: The status of the workflow scope repetition. Possible values include:
+         "NotSpecified", "Paused", "Running", "Waiting", "Succeeded", "Skipped", "Suspended",
+         "Cancelled", "Failed", "Faulted", "TimedOut", "Aborted", "Ignored".
+        :paramtype status: str or ~azure.mgmt.logic.models.WorkflowStatus
+        :keyword code: The workflow scope repetition code.
+        :paramtype code: str
+        :keyword error: Anything.
+        :paramtype error: any
+        """
         super(OperationResultProperties, self).__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
@@ -5323,36 +7031,36 @@ class OperationResult(OperationResultProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param start_time: The start time of the workflow scope repetition.
-    :type start_time: ~datetime.datetime
-    :param end_time: The end time of the workflow scope repetition.
-    :type end_time: ~datetime.datetime
-    :param correlation: The correlation properties.
-    :type correlation: ~azure.mgmt.logic.models.RunActionCorrelation
-    :param status: The status of the workflow scope repetition. Possible values include:
+    :ivar start_time: The start time of the workflow scope repetition.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the workflow scope repetition.
+    :vartype end_time: ~datetime.datetime
+    :ivar correlation: The correlation properties.
+    :vartype correlation: ~azure.mgmt.logic.models.RunActionCorrelation
+    :ivar status: The status of the workflow scope repetition. Possible values include:
      "NotSpecified", "Paused", "Running", "Waiting", "Succeeded", "Skipped", "Suspended",
      "Cancelled", "Failed", "Faulted", "TimedOut", "Aborted", "Ignored".
-    :type status: str or ~azure.mgmt.logic.models.WorkflowStatus
-    :param code: The workflow scope repetition code.
-    :type code: str
-    :param error: Any object.
-    :type error: object
+    :vartype status: str or ~azure.mgmt.logic.models.WorkflowStatus
+    :ivar code: The workflow scope repetition code.
+    :vartype code: str
+    :ivar error: Anything.
+    :vartype error: any
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
     :ivar inputs: Gets the inputs.
-    :vartype inputs: object
+    :vartype inputs: any
     :ivar inputs_link: Gets the link to inputs.
     :vartype inputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar outputs: Gets the outputs.
-    :vartype outputs: object
+    :vartype outputs: any
     :ivar outputs_link: Gets the link to outputs.
     :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar tracked_properties: Gets the tracked properties.
-    :vartype tracked_properties: object
-    :param retry_history: Gets the retry histories.
-    :type retry_history: list[~azure.mgmt.logic.models.RetryHistory]
-    :param iteration_count:
-    :type iteration_count: int
+    :vartype tracked_properties: any
+    :ivar retry_history: Gets the retry histories.
+    :vartype retry_history: list[~azure.mgmt.logic.models.RetryHistory]
+    :ivar iteration_count:
+    :vartype iteration_count: int
     """
 
     _validation = {
@@ -5389,11 +7097,31 @@ class OperationResult(OperationResultProperties):
         correlation: Optional["RunActionCorrelation"] = None,
         status: Optional[Union[str, "WorkflowStatus"]] = None,
         code: Optional[str] = None,
-        error: Optional[object] = None,
+        error: Optional[Any] = None,
         retry_history: Optional[List["RetryHistory"]] = None,
         iteration_count: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword start_time: The start time of the workflow scope repetition.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: The end time of the workflow scope repetition.
+        :paramtype end_time: ~datetime.datetime
+        :keyword correlation: The correlation properties.
+        :paramtype correlation: ~azure.mgmt.logic.models.RunActionCorrelation
+        :keyword status: The status of the workflow scope repetition. Possible values include:
+         "NotSpecified", "Paused", "Running", "Waiting", "Succeeded", "Skipped", "Suspended",
+         "Cancelled", "Failed", "Faulted", "TimedOut", "Aborted", "Ignored".
+        :paramtype status: str or ~azure.mgmt.logic.models.WorkflowStatus
+        :keyword code: The workflow scope repetition code.
+        :paramtype code: str
+        :keyword error: Anything.
+        :paramtype error: any
+        :keyword retry_history: Gets the retry histories.
+        :paramtype retry_history: list[~azure.mgmt.logic.models.RetryHistory]
+        :keyword iteration_count:
+        :paramtype iteration_count: int
+        """
         super(OperationResult, self).__init__(start_time=start_time, end_time=end_time, correlation=correlation, status=status, code=code, error=error, **kwargs)
         self.tracking_id = None
         self.inputs = None
@@ -5408,8 +7136,8 @@ class OperationResult(OperationResultProperties):
 class PartnerContent(msrest.serialization.Model):
     """The integration account partner content.
 
-    :param b2_b: The B2B partner content.
-    :type b2_b: ~azure.mgmt.logic.models.B2BPartnerContent
+    :ivar b2_b: The B2B partner content.
+    :vartype b2_b: ~azure.mgmt.logic.models.B2BPartnerContent
     """
 
     _attribute_map = {
@@ -5422,6 +7150,10 @@ class PartnerContent(msrest.serialization.Model):
         b2_b: Optional["B2BPartnerContent"] = None,
         **kwargs
     ):
+        """
+        :keyword b2_b: The B2B partner content.
+        :paramtype b2_b: ~azure.mgmt.logic.models.B2BPartnerContent
+        """
         super(PartnerContent, self).__init__(**kwargs)
         self.b2_b = b2_b
 
@@ -5429,16 +7161,16 @@ class PartnerContent(msrest.serialization.Model):
 class RecurrenceSchedule(msrest.serialization.Model):
     """The recurrence schedule.
 
-    :param minutes: The minutes.
-    :type minutes: list[int]
-    :param hours: The hours.
-    :type hours: list[int]
-    :param week_days: The days of the week.
-    :type week_days: list[str or ~azure.mgmt.logic.models.DaysOfWeek]
-    :param month_days: The month days.
-    :type month_days: list[int]
-    :param monthly_occurrences: The monthly occurrences.
-    :type monthly_occurrences: list[~azure.mgmt.logic.models.RecurrenceScheduleOccurrence]
+    :ivar minutes: The minutes.
+    :vartype minutes: list[int]
+    :ivar hours: The hours.
+    :vartype hours: list[int]
+    :ivar week_days: The days of the week.
+    :vartype week_days: list[str or ~azure.mgmt.logic.models.DaysOfWeek]
+    :ivar month_days: The month days.
+    :vartype month_days: list[int]
+    :ivar monthly_occurrences: The monthly occurrences.
+    :vartype monthly_occurrences: list[~azure.mgmt.logic.models.RecurrenceScheduleOccurrence]
     """
 
     _attribute_map = {
@@ -5459,6 +7191,18 @@ class RecurrenceSchedule(msrest.serialization.Model):
         monthly_occurrences: Optional[List["RecurrenceScheduleOccurrence"]] = None,
         **kwargs
     ):
+        """
+        :keyword minutes: The minutes.
+        :paramtype minutes: list[int]
+        :keyword hours: The hours.
+        :paramtype hours: list[int]
+        :keyword week_days: The days of the week.
+        :paramtype week_days: list[str or ~azure.mgmt.logic.models.DaysOfWeek]
+        :keyword month_days: The month days.
+        :paramtype month_days: list[int]
+        :keyword monthly_occurrences: The monthly occurrences.
+        :paramtype monthly_occurrences: list[~azure.mgmt.logic.models.RecurrenceScheduleOccurrence]
+        """
         super(RecurrenceSchedule, self).__init__(**kwargs)
         self.minutes = minutes
         self.hours = hours
@@ -5470,11 +7214,11 @@ class RecurrenceSchedule(msrest.serialization.Model):
 class RecurrenceScheduleOccurrence(msrest.serialization.Model):
     """The recurrence schedule occurrence.
 
-    :param day: The day of the week. Possible values include: "Sunday", "Monday", "Tuesday",
+    :ivar day: The day of the week. Possible values include: "Sunday", "Monday", "Tuesday",
      "Wednesday", "Thursday", "Friday", "Saturday".
-    :type day: str or ~azure.mgmt.logic.models.DayOfWeek
-    :param occurrence: The occurrence.
-    :type occurrence: int
+    :vartype day: str or ~azure.mgmt.logic.models.DayOfWeek
+    :ivar occurrence: The occurrence.
+    :vartype occurrence: int
     """
 
     _attribute_map = {
@@ -5489,6 +7233,13 @@ class RecurrenceScheduleOccurrence(msrest.serialization.Model):
         occurrence: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword day: The day of the week. Possible values include: "Sunday", "Monday", "Tuesday",
+         "Wednesday", "Thursday", "Friday", "Saturday".
+        :paramtype day: str or ~azure.mgmt.logic.models.DayOfWeek
+        :keyword occurrence: The occurrence.
+        :paramtype occurrence: int
+        """
         super(RecurrenceScheduleOccurrence, self).__init__(**kwargs)
         self.day = day
         self.occurrence = occurrence
@@ -5497,8 +7248,8 @@ class RecurrenceScheduleOccurrence(msrest.serialization.Model):
 class RegenerateActionParameter(msrest.serialization.Model):
     """The access key regenerate action content.
 
-    :param key_type: The key type. Possible values include: "NotSpecified", "Primary", "Secondary".
-    :type key_type: str or ~azure.mgmt.logic.models.KeyType
+    :ivar key_type: The key type. Possible values include: "NotSpecified", "Primary", "Secondary".
+    :vartype key_type: str or ~azure.mgmt.logic.models.KeyType
     """
 
     _attribute_map = {
@@ -5511,6 +7262,11 @@ class RegenerateActionParameter(msrest.serialization.Model):
         key_type: Optional[Union[str, "KeyType"]] = None,
         **kwargs
     ):
+        """
+        :keyword key_type: The key type. Possible values include: "NotSpecified", "Primary",
+         "Secondary".
+        :paramtype key_type: str or ~azure.mgmt.logic.models.KeyType
+        """
         super(RegenerateActionParameter, self).__init__(**kwargs)
         self.key_type = key_type
 
@@ -5520,10 +7276,10 @@ class RepetitionIndex(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param scope_name: The scope.
-    :type scope_name: str
-    :param item_index: Required. The index.
-    :type item_index: int
+    :ivar scope_name: The scope.
+    :vartype scope_name: str
+    :ivar item_index: Required. The index.
+    :vartype item_index: int
     """
 
     _validation = {
@@ -5542,6 +7298,12 @@ class RepetitionIndex(msrest.serialization.Model):
         scope_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword scope_name: The scope.
+        :paramtype scope_name: str
+        :keyword item_index: Required. The index.
+        :paramtype item_index: int
+        """
         super(RepetitionIndex, self).__init__(**kwargs)
         self.scope_name = scope_name
         self.item_index = item_index
@@ -5550,12 +7312,12 @@ class RepetitionIndex(msrest.serialization.Model):
 class Request(msrest.serialization.Model):
     """A request.
 
-    :param headers: A list of all the headers attached to the request.
-    :type headers: object
-    :param uri: The destination for the request.
-    :type uri: str
-    :param method: The HTTP method used for the request.
-    :type method: str
+    :ivar headers: A list of all the headers attached to the request.
+    :vartype headers: any
+    :ivar uri: The destination for the request.
+    :vartype uri: str
+    :ivar method: The HTTP method used for the request.
+    :vartype method: str
     """
 
     _attribute_map = {
@@ -5567,11 +7329,19 @@ class Request(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        headers: Optional[object] = None,
+        headers: Optional[Any] = None,
         uri: Optional[str] = None,
         method: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword headers: A list of all the headers attached to the request.
+        :paramtype headers: any
+        :keyword uri: The destination for the request.
+        :paramtype uri: str
+        :keyword method: The HTTP method used for the request.
+        :paramtype method: str
+        """
         super(Request, self).__init__(**kwargs)
         self.headers = headers
         self.uri = uri
@@ -5589,12 +7359,12 @@ class RequestHistory(Resource):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param properties: The request history properties.
-    :type properties: ~azure.mgmt.logic.models.RequestHistoryProperties
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The request history properties.
+    :vartype properties: ~azure.mgmt.logic.models.RequestHistoryProperties
     """
 
     _validation = {
@@ -5620,6 +7390,14 @@ class RequestHistory(Resource):
         properties: Optional["RequestHistoryProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: The request history properties.
+        :paramtype properties: ~azure.mgmt.logic.models.RequestHistoryProperties
+        """
         super(RequestHistory, self).__init__(location=location, tags=tags, **kwargs)
         self.properties = properties
 
@@ -5627,10 +7405,10 @@ class RequestHistory(Resource):
 class RequestHistoryListResult(msrest.serialization.Model):
     """The list of workflow request histories.
 
-    :param value: A list of workflow request histories.
-    :type value: list[~azure.mgmt.logic.models.RequestHistory]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: A list of workflow request histories.
+    :vartype value: list[~azure.mgmt.logic.models.RequestHistory]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -5645,6 +7423,12 @@ class RequestHistoryListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: A list of workflow request histories.
+        :paramtype value: list[~azure.mgmt.logic.models.RequestHistory]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(RequestHistoryListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -5653,14 +7437,14 @@ class RequestHistoryListResult(msrest.serialization.Model):
 class RequestHistoryProperties(msrest.serialization.Model):
     """The request history.
 
-    :param start_time: The time the request started.
-    :type start_time: ~datetime.datetime
-    :param end_time: The time the request ended.
-    :type end_time: ~datetime.datetime
-    :param request: The request.
-    :type request: ~azure.mgmt.logic.models.Request
-    :param response: The response.
-    :type response: ~azure.mgmt.logic.models.Response
+    :ivar start_time: The time the request started.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The time the request ended.
+    :vartype end_time: ~datetime.datetime
+    :ivar request: The request.
+    :vartype request: ~azure.mgmt.logic.models.Request
+    :ivar response: The response.
+    :vartype response: ~azure.mgmt.logic.models.Response
     """
 
     _attribute_map = {
@@ -5679,6 +7463,16 @@ class RequestHistoryProperties(msrest.serialization.Model):
         response: Optional["Response"] = None,
         **kwargs
     ):
+        """
+        :keyword start_time: The time the request started.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: The time the request ended.
+        :paramtype end_time: ~datetime.datetime
+        :keyword request: The request.
+        :paramtype request: ~azure.mgmt.logic.models.Request
+        :keyword response: The response.
+        :paramtype response: ~azure.mgmt.logic.models.Response
+        """
         super(RequestHistoryProperties, self).__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
@@ -5689,12 +7483,12 @@ class RequestHistoryProperties(msrest.serialization.Model):
 class Response(msrest.serialization.Model):
     """A response.
 
-    :param headers: A list of all the headers attached to the response.
-    :type headers: object
-    :param status_code: The status code of the response.
-    :type status_code: int
-    :param body_link: Details on the location of the body content.
-    :type body_link: ~azure.mgmt.logic.models.ContentLink
+    :ivar headers: A list of all the headers attached to the response.
+    :vartype headers: any
+    :ivar status_code: The status code of the response.
+    :vartype status_code: int
+    :ivar body_link: Details on the location of the body content.
+    :vartype body_link: ~azure.mgmt.logic.models.ContentLink
     """
 
     _attribute_map = {
@@ -5706,11 +7500,19 @@ class Response(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        headers: Optional[object] = None,
+        headers: Optional[Any] = None,
         status_code: Optional[int] = None,
         body_link: Optional["ContentLink"] = None,
         **kwargs
     ):
+        """
+        :keyword headers: A list of all the headers attached to the response.
+        :paramtype headers: any
+        :keyword status_code: The status code of the response.
+        :paramtype status_code: int
+        :keyword body_link: Details on the location of the body content.
+        :paramtype body_link: ~azure.mgmt.logic.models.ContentLink
+        """
         super(Response, self).__init__(**kwargs)
         self.headers = headers
         self.status_code = status_code
@@ -5720,18 +7522,18 @@ class Response(msrest.serialization.Model):
 class RetryHistory(msrest.serialization.Model):
     """The retry history.
 
-    :param start_time: Gets the start time.
-    :type start_time: ~datetime.datetime
-    :param end_time: Gets the end time.
-    :type end_time: ~datetime.datetime
-    :param code: Gets the status code.
-    :type code: str
-    :param client_request_id: Gets the client request Id.
-    :type client_request_id: str
-    :param service_request_id: Gets the service request Id.
-    :type service_request_id: str
-    :param error: Gets the error response.
-    :type error: ~azure.mgmt.logic.models.ErrorResponse
+    :ivar start_time: Gets the start time.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Gets the end time.
+    :vartype end_time: ~datetime.datetime
+    :ivar code: Gets the status code.
+    :vartype code: str
+    :ivar client_request_id: Gets the client request Id.
+    :vartype client_request_id: str
+    :ivar service_request_id: Gets the service request Id.
+    :vartype service_request_id: str
+    :ivar error: Gets the error response.
+    :vartype error: ~azure.mgmt.logic.models.ErrorResponse
     """
 
     _attribute_map = {
@@ -5754,6 +7556,20 @@ class RetryHistory(msrest.serialization.Model):
         error: Optional["ErrorResponse"] = None,
         **kwargs
     ):
+        """
+        :keyword start_time: Gets the start time.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: Gets the end time.
+        :paramtype end_time: ~datetime.datetime
+        :keyword code: Gets the status code.
+        :paramtype code: str
+        :keyword client_request_id: Gets the client request Id.
+        :paramtype client_request_id: str
+        :keyword service_request_id: Gets the service request Id.
+        :paramtype service_request_id: str
+        :keyword error: Gets the error response.
+        :paramtype error: ~azure.mgmt.logic.models.ErrorResponse
+        """
         super(RetryHistory, self).__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
@@ -5766,10 +7582,10 @@ class RetryHistory(msrest.serialization.Model):
 class RunCorrelation(msrest.serialization.Model):
     """The correlation properties.
 
-    :param client_tracking_id: The client tracking identifier.
-    :type client_tracking_id: str
-    :param client_keywords: The client keywords.
-    :type client_keywords: list[str]
+    :ivar client_tracking_id: The client tracking identifier.
+    :vartype client_tracking_id: str
+    :ivar client_keywords: The client keywords.
+    :vartype client_keywords: list[str]
     """
 
     _attribute_map = {
@@ -5784,6 +7600,12 @@ class RunCorrelation(msrest.serialization.Model):
         client_keywords: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword client_tracking_id: The client tracking identifier.
+        :paramtype client_tracking_id: str
+        :keyword client_keywords: The client keywords.
+        :paramtype client_keywords: list[str]
+        """
         super(RunCorrelation, self).__init__(**kwargs)
         self.client_tracking_id = client_tracking_id
         self.client_keywords = client_keywords
@@ -5792,12 +7614,12 @@ class RunCorrelation(msrest.serialization.Model):
 class RunActionCorrelation(RunCorrelation):
     """The workflow run action correlation properties.
 
-    :param client_tracking_id: The client tracking identifier.
-    :type client_tracking_id: str
-    :param client_keywords: The client keywords.
-    :type client_keywords: list[str]
-    :param action_tracking_id: The action tracking identifier.
-    :type action_tracking_id: str
+    :ivar client_tracking_id: The client tracking identifier.
+    :vartype client_tracking_id: str
+    :ivar client_keywords: The client keywords.
+    :vartype client_keywords: list[str]
+    :ivar action_tracking_id: The action tracking identifier.
+    :vartype action_tracking_id: str
     """
 
     _attribute_map = {
@@ -5814,6 +7636,14 @@ class RunActionCorrelation(RunCorrelation):
         action_tracking_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword client_tracking_id: The client tracking identifier.
+        :paramtype client_tracking_id: str
+        :keyword client_keywords: The client keywords.
+        :paramtype client_keywords: list[str]
+        :keyword action_tracking_id: The action tracking identifier.
+        :paramtype action_tracking_id: str
+        """
         super(RunActionCorrelation, self).__init__(client_tracking_id=client_tracking_id, client_keywords=client_keywords, **kwargs)
         self.action_tracking_id = action_tracking_id
 
@@ -5823,8 +7653,8 @@ class SetTriggerStateActionDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source: Required. The source.
-    :type source: ~azure.mgmt.logic.models.WorkflowTriggerReference
+    :ivar source: Required. The source.
+    :vartype source: ~azure.mgmt.logic.models.WorkflowTriggerReference
     """
 
     _validation = {
@@ -5841,6 +7671,10 @@ class SetTriggerStateActionDefinition(msrest.serialization.Model):
         source: "WorkflowTriggerReference",
         **kwargs
     ):
+        """
+        :keyword source: Required. The source.
+        :paramtype source: ~azure.mgmt.logic.models.WorkflowTriggerReference
+        """
         super(SetTriggerStateActionDefinition, self).__init__(**kwargs)
         self.source = source
 
@@ -5850,11 +7684,11 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name. Possible values include: "NotSpecified", "Free", "Shared",
+    :ivar name: Required. The name. Possible values include: "NotSpecified", "Free", "Shared",
      "Basic", "Standard", "Premium".
-    :type name: str or ~azure.mgmt.logic.models.SkuName
-    :param plan: The reference to plan.
-    :type plan: ~azure.mgmt.logic.models.ResourceReference
+    :vartype name: str or ~azure.mgmt.logic.models.SkuName
+    :ivar plan: The reference to plan.
+    :vartype plan: ~azure.mgmt.logic.models.ResourceReference
     """
 
     _validation = {
@@ -5873,6 +7707,13 @@ class Sku(msrest.serialization.Model):
         plan: Optional["ResourceReference"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name. Possible values include: "NotSpecified", "Free", "Shared",
+         "Basic", "Standard", "Premium".
+        :paramtype name: str or ~azure.mgmt.logic.models.SkuName
+        :keyword plan: The reference to plan.
+        :paramtype plan: ~azure.mgmt.logic.models.ResourceReference
+        """
         super(Sku, self).__init__(**kwargs)
         self.name = name
         self.plan = plan
@@ -5899,6 +7740,8 @@ class SubResource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SubResource, self).__init__(**kwargs)
         self.id = None
 
@@ -5906,20 +7749,19 @@ class SubResource(msrest.serialization.Model):
 class SwaggerCustomDynamicList(msrest.serialization.Model):
     """The swagger custom dynamic list.
 
-    :param operation_id: The operation id to fetch dynamic schema.
-    :type operation_id: str
-    :param built_in_operation: The built in operation.
-    :type built_in_operation: str
-    :param items_path: The path to a response property (relative to the response object, not the
+    :ivar operation_id: The operation id to fetch dynamic schema.
+    :vartype operation_id: str
+    :ivar built_in_operation: The built in operation.
+    :vartype built_in_operation: str
+    :ivar items_path: The path to a response property (relative to the response object, not the
      response body) which contains an array of dynamic value items.
-    :type items_path: str
-    :param item_value_path: The path to a property which defines the value which should be used.
-    :type item_value_path: str
-    :param item_title_path: The path to an item property which defines the display name of the
-     item.
-    :type item_title_path: str
-    :param parameters: The parameters.
-    :type parameters: dict[str, ~azure.mgmt.logic.models.SwaggerCustomDynamicProperties]
+    :vartype items_path: str
+    :ivar item_value_path: The path to a property which defines the value which should be used.
+    :vartype item_value_path: str
+    :ivar item_title_path: The path to an item property which defines the display name of the item.
+    :vartype item_title_path: str
+    :ivar parameters: The parameters.
+    :vartype parameters: dict[str, ~azure.mgmt.logic.models.SwaggerCustomDynamicProperties]
     """
 
     _attribute_map = {
@@ -5942,6 +7784,22 @@ class SwaggerCustomDynamicList(msrest.serialization.Model):
         parameters: Optional[Dict[str, "SwaggerCustomDynamicProperties"]] = None,
         **kwargs
     ):
+        """
+        :keyword operation_id: The operation id to fetch dynamic schema.
+        :paramtype operation_id: str
+        :keyword built_in_operation: The built in operation.
+        :paramtype built_in_operation: str
+        :keyword items_path: The path to a response property (relative to the response object, not the
+         response body) which contains an array of dynamic value items.
+        :paramtype items_path: str
+        :keyword item_value_path: The path to a property which defines the value which should be used.
+        :paramtype item_value_path: str
+        :keyword item_title_path: The path to an item property which defines the display name of the
+         item.
+        :paramtype item_title_path: str
+        :keyword parameters: The parameters.
+        :paramtype parameters: dict[str, ~azure.mgmt.logic.models.SwaggerCustomDynamicProperties]
+        """
         super(SwaggerCustomDynamicList, self).__init__(**kwargs)
         self.operation_id = operation_id
         self.built_in_operation = built_in_operation
@@ -5954,12 +7812,12 @@ class SwaggerCustomDynamicList(msrest.serialization.Model):
 class SwaggerCustomDynamicProperties(msrest.serialization.Model):
     """The swagger custom dynamic properties.
 
-    :param operation_id: The operation id to fetch dynamic schema.
-    :type operation_id: str
-    :param value_path: Json pointer to the dynamic schema on the response body.
-    :type value_path: str
-    :param parameters: The operation parameters.
-    :type parameters: dict[str, ~azure.mgmt.logic.models.SwaggerCustomDynamicProperties]
+    :ivar operation_id: The operation id to fetch dynamic schema.
+    :vartype operation_id: str
+    :ivar value_path: Json pointer to the dynamic schema on the response body.
+    :vartype value_path: str
+    :ivar parameters: The operation parameters.
+    :vartype parameters: dict[str, ~azure.mgmt.logic.models.SwaggerCustomDynamicProperties]
     """
 
     _attribute_map = {
@@ -5976,6 +7834,14 @@ class SwaggerCustomDynamicProperties(msrest.serialization.Model):
         parameters: Optional[Dict[str, "SwaggerCustomDynamicProperties"]] = None,
         **kwargs
     ):
+        """
+        :keyword operation_id: The operation id to fetch dynamic schema.
+        :paramtype operation_id: str
+        :keyword value_path: Json pointer to the dynamic schema on the response body.
+        :paramtype value_path: str
+        :keyword parameters: The operation parameters.
+        :paramtype parameters: dict[str, ~azure.mgmt.logic.models.SwaggerCustomDynamicProperties]
+        """
         super(SwaggerCustomDynamicProperties, self).__init__(**kwargs)
         self.operation_id = operation_id
         self.value_path = value_path
@@ -5985,12 +7851,12 @@ class SwaggerCustomDynamicProperties(msrest.serialization.Model):
 class SwaggerCustomDynamicSchema(msrest.serialization.Model):
     """The swagger custom dynamic schema.
 
-    :param operation_id: The operation id to fetch dynamic schema.
-    :type operation_id: str
-    :param value_path: Json pointer to the dynamic schema on the response body.
-    :type value_path: str
-    :param parameters: The operation parameters.
-    :type parameters: dict[str, object]
+    :ivar operation_id: The operation id to fetch dynamic schema.
+    :vartype operation_id: str
+    :ivar value_path: Json pointer to the dynamic schema on the response body.
+    :vartype value_path: str
+    :ivar parameters: The operation parameters.
+    :vartype parameters: dict[str, any]
     """
 
     _attribute_map = {
@@ -6004,9 +7870,17 @@ class SwaggerCustomDynamicSchema(msrest.serialization.Model):
         *,
         operation_id: Optional[str] = None,
         value_path: Optional[str] = None,
-        parameters: Optional[Dict[str, object]] = None,
+        parameters: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
+        """
+        :keyword operation_id: The operation id to fetch dynamic schema.
+        :paramtype operation_id: str
+        :keyword value_path: Json pointer to the dynamic schema on the response body.
+        :paramtype value_path: str
+        :keyword parameters: The operation parameters.
+        :paramtype parameters: dict[str, any]
+        """
         super(SwaggerCustomDynamicSchema, self).__init__(**kwargs)
         self.operation_id = operation_id
         self.value_path = value_path
@@ -6016,12 +7890,12 @@ class SwaggerCustomDynamicSchema(msrest.serialization.Model):
 class SwaggerCustomDynamicTree(msrest.serialization.Model):
     """The swagger custom dynamic tree.
 
-    :param settings: The tree settings.
-    :type settings: ~azure.mgmt.logic.models.SwaggerCustomDynamicTreeSettings
-    :param open: The tree on-open configuration.
-    :type open: ~azure.mgmt.logic.models.SwaggerCustomDynamicTreeCommand
-    :param browse: The tree on-browse configuration.
-    :type browse: ~azure.mgmt.logic.models.SwaggerCustomDynamicTreeCommand
+    :ivar settings: The tree settings.
+    :vartype settings: ~azure.mgmt.logic.models.SwaggerCustomDynamicTreeSettings
+    :ivar open: The tree on-open configuration.
+    :vartype open: ~azure.mgmt.logic.models.SwaggerCustomDynamicTreeCommand
+    :ivar browse: The tree on-browse configuration.
+    :vartype browse: ~azure.mgmt.logic.models.SwaggerCustomDynamicTreeCommand
     """
 
     _attribute_map = {
@@ -6038,6 +7912,14 @@ class SwaggerCustomDynamicTree(msrest.serialization.Model):
         browse: Optional["SwaggerCustomDynamicTreeCommand"] = None,
         **kwargs
     ):
+        """
+        :keyword settings: The tree settings.
+        :paramtype settings: ~azure.mgmt.logic.models.SwaggerCustomDynamicTreeSettings
+        :keyword open: The tree on-open configuration.
+        :paramtype open: ~azure.mgmt.logic.models.SwaggerCustomDynamicTreeCommand
+        :keyword browse: The tree on-browse configuration.
+        :paramtype browse: ~azure.mgmt.logic.models.SwaggerCustomDynamicTreeCommand
+        """
         super(SwaggerCustomDynamicTree, self).__init__(**kwargs)
         self.settings = settings
         self.open = open
@@ -6047,26 +7929,24 @@ class SwaggerCustomDynamicTree(msrest.serialization.Model):
 class SwaggerCustomDynamicTreeCommand(msrest.serialization.Model):
     """The swagger tree command.
 
-    :param operation_id: The path to an item property which defines the display name of the item.
-    :type operation_id: str
-    :param items_path: The path to an item property which defines the display name of the item.
-    :type items_path: str
-    :param item_value_path: The path to an item property which defines the display name of the
+    :ivar operation_id: The path to an item property which defines the display name of the item.
+    :vartype operation_id: str
+    :ivar items_path: The path to an item property which defines the display name of the item.
+    :vartype items_path: str
+    :ivar item_value_path: The path to an item property which defines the display name of the item.
+    :vartype item_value_path: str
+    :ivar item_title_path: The path to an item property which defines the display name of the item.
+    :vartype item_title_path: str
+    :ivar item_full_title_path: The path to an item property which defines the display name of the
      item.
-    :type item_value_path: str
-    :param item_title_path: The path to an item property which defines the display name of the
+    :vartype item_full_title_path: str
+    :ivar item_is_parent: The path to an item property which defines the display name of the item.
+    :vartype item_is_parent: str
+    :ivar selectable_filter: The path to an item property which defines the display name of the
      item.
-    :type item_title_path: str
-    :param item_full_title_path: The path to an item property which defines the display name of the
-     item.
-    :type item_full_title_path: str
-    :param item_is_parent: The path to an item property which defines the display name of the item.
-    :type item_is_parent: str
-    :param selectable_filter: The path to an item property which defines the display name of the
-     item.
-    :type selectable_filter: str
-    :param parameters: Dictionary of :code:`<SwaggerCustomDynamicTreeParameter>`.
-    :type parameters: dict[str, ~azure.mgmt.logic.models.SwaggerCustomDynamicTreeParameter]
+    :vartype selectable_filter: str
+    :ivar parameters: Dictionary of :code:`<SwaggerCustomDynamicTreeParameter>`.
+    :vartype parameters: dict[str, ~azure.mgmt.logic.models.SwaggerCustomDynamicTreeParameter]
     """
 
     _attribute_map = {
@@ -6093,6 +7973,29 @@ class SwaggerCustomDynamicTreeCommand(msrest.serialization.Model):
         parameters: Optional[Dict[str, "SwaggerCustomDynamicTreeParameter"]] = None,
         **kwargs
     ):
+        """
+        :keyword operation_id: The path to an item property which defines the display name of the item.
+        :paramtype operation_id: str
+        :keyword items_path: The path to an item property which defines the display name of the item.
+        :paramtype items_path: str
+        :keyword item_value_path: The path to an item property which defines the display name of the
+         item.
+        :paramtype item_value_path: str
+        :keyword item_title_path: The path to an item property which defines the display name of the
+         item.
+        :paramtype item_title_path: str
+        :keyword item_full_title_path: The path to an item property which defines the display name of
+         the item.
+        :paramtype item_full_title_path: str
+        :keyword item_is_parent: The path to an item property which defines the display name of the
+         item.
+        :paramtype item_is_parent: str
+        :keyword selectable_filter: The path to an item property which defines the display name of the
+         item.
+        :paramtype selectable_filter: str
+        :keyword parameters: Dictionary of :code:`<SwaggerCustomDynamicTreeParameter>`.
+        :paramtype parameters: dict[str, ~azure.mgmt.logic.models.SwaggerCustomDynamicTreeParameter]
+        """
         super(SwaggerCustomDynamicTreeCommand, self).__init__(**kwargs)
         self.operation_id = operation_id
         self.items_path = items_path
@@ -6107,15 +8010,15 @@ class SwaggerCustomDynamicTreeCommand(msrest.serialization.Model):
 class SwaggerCustomDynamicTreeParameter(msrest.serialization.Model):
     """The swagger custom dynamic tree parameter.
 
-    :param selected_item_value_path: Gets or sets a path to a property in the currently selected
+    :ivar selected_item_value_path: Gets or sets a path to a property in the currently selected
      item to pass as a value to a parameter for the given operation.
-    :type selected_item_value_path: str
-    :param value: The parameter value.
-    :type value: object
-    :param parameter_reference: The parameter reference.
-    :type parameter_reference: str
-    :param required: Indicates whether the parameter is required.
-    :type required: bool
+    :vartype selected_item_value_path: str
+    :ivar value: The parameter value.
+    :vartype value: any
+    :ivar parameter_reference: The parameter reference.
+    :vartype parameter_reference: str
+    :ivar required: Indicates whether the parameter is required.
+    :vartype required: bool
     """
 
     _attribute_map = {
@@ -6129,11 +8032,22 @@ class SwaggerCustomDynamicTreeParameter(msrest.serialization.Model):
         self,
         *,
         selected_item_value_path: Optional[str] = None,
-        value: Optional[object] = None,
+        value: Optional[Any] = None,
         parameter_reference: Optional[str] = None,
         required: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword selected_item_value_path: Gets or sets a path to a property in the currently selected
+         item to pass as a value to a parameter for the given operation.
+        :paramtype selected_item_value_path: str
+        :keyword value: The parameter value.
+        :paramtype value: any
+        :keyword parameter_reference: The parameter reference.
+        :paramtype parameter_reference: str
+        :keyword required: Indicates whether the parameter is required.
+        :paramtype required: bool
+        """
         super(SwaggerCustomDynamicTreeParameter, self).__init__(**kwargs)
         self.selected_item_value_path = selected_item_value_path
         self.value = value
@@ -6144,10 +8058,10 @@ class SwaggerCustomDynamicTreeParameter(msrest.serialization.Model):
 class SwaggerCustomDynamicTreeSettings(msrest.serialization.Model):
     """The swagger custom dynamic tree settings.
 
-    :param can_select_parent_nodes: Indicates whether parent nodes can be selected.
-    :type can_select_parent_nodes: bool
-    :param can_select_leaf_nodes: Indicates whether leaf nodes can be selected.
-    :type can_select_leaf_nodes: bool
+    :ivar can_select_parent_nodes: Indicates whether parent nodes can be selected.
+    :vartype can_select_parent_nodes: bool
+    :ivar can_select_leaf_nodes: Indicates whether leaf nodes can be selected.
+    :vartype can_select_leaf_nodes: bool
     """
 
     _attribute_map = {
@@ -6162,6 +8076,12 @@ class SwaggerCustomDynamicTreeSettings(msrest.serialization.Model):
         can_select_leaf_nodes: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword can_select_parent_nodes: Indicates whether parent nodes can be selected.
+        :paramtype can_select_parent_nodes: bool
+        :keyword can_select_leaf_nodes: Indicates whether leaf nodes can be selected.
+        :paramtype can_select_leaf_nodes: bool
+        """
         super(SwaggerCustomDynamicTreeSettings, self).__init__(**kwargs)
         self.can_select_parent_nodes = can_select_parent_nodes
         self.can_select_leaf_nodes = can_select_leaf_nodes
@@ -6170,12 +8090,12 @@ class SwaggerCustomDynamicTreeSettings(msrest.serialization.Model):
 class SwaggerExternalDocumentation(msrest.serialization.Model):
     """The swagger external documentation.
 
-    :param description: The document description.
-    :type description: str
-    :param uri: The documentation Uri.
-    :type uri: str
-    :param extensions: The vendor extensions.
-    :type extensions: dict[str, object]
+    :ivar description: The document description.
+    :vartype description: str
+    :ivar uri: The documentation Uri.
+    :vartype uri: str
+    :ivar extensions: The vendor extensions.
+    :vartype extensions: dict[str, any]
     """
 
     _attribute_map = {
@@ -6189,9 +8109,17 @@ class SwaggerExternalDocumentation(msrest.serialization.Model):
         *,
         description: Optional[str] = None,
         uri: Optional[str] = None,
-        extensions: Optional[Dict[str, object]] = None,
+        extensions: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
+        """
+        :keyword description: The document description.
+        :paramtype description: str
+        :keyword uri: The documentation Uri.
+        :paramtype uri: str
+        :keyword extensions: The vendor extensions.
+        :paramtype extensions: dict[str, any]
+        """
         super(SwaggerExternalDocumentation, self).__init__(**kwargs)
         self.description = description
         self.uri = uri
@@ -6201,48 +8129,48 @@ class SwaggerExternalDocumentation(msrest.serialization.Model):
 class SwaggerSchema(msrest.serialization.Model):
     """The swagger schema.
 
-    :param ref: The reference.
-    :type ref: str
-    :param type: The type. Possible values include: "String", "Number", "Integer", "Boolean",
+    :ivar ref: The reference.
+    :vartype ref: str
+    :ivar type: The type. Possible values include: "String", "Number", "Integer", "Boolean",
      "Array", "File", "Object", "Null".
-    :type type: str or ~azure.mgmt.logic.models.SwaggerSchemaType
-    :param title: The title.
-    :type title: str
-    :param items: The items schema.
-    :type items: ~azure.mgmt.logic.models.SwaggerSchema
-    :param properties: The object properties.
-    :type properties: dict[str, ~azure.mgmt.logic.models.SwaggerSchema]
-    :param additional_properties: The additional properties.
-    :type additional_properties: object
-    :param required: The object required properties.
-    :type required: list[str]
-    :param max_properties: The maximum number of allowed properties.
-    :type max_properties: int
-    :param min_properties: The minimum number of allowed properties.
-    :type min_properties: int
-    :param all_of: The schemas which must pass validation when this schema is used.
-    :type all_of: list[~azure.mgmt.logic.models.SwaggerSchema]
-    :param discriminator: The discriminator.
-    :type discriminator: str
-    :param read_only: Indicates whether this property must be present in the a request.
-    :type read_only: bool
-    :param xml: The xml representation format for a property.
-    :type xml: ~azure.mgmt.logic.models.SwaggerXml
-    :param external_docs: The external documentation.
-    :type external_docs: ~azure.mgmt.logic.models.SwaggerExternalDocumentation
-    :param example: The example value.
-    :type example: object
-    :param notification_url_extension: Indicates the notification url extension. If this is set,
-     the property's value should be a callback url for a webhook.
-    :type notification_url_extension: bool
-    :param dynamic_schema_old: The dynamic schema configuration.
-    :type dynamic_schema_old: ~azure.mgmt.logic.models.SwaggerCustomDynamicSchema
-    :param dynamic_schema_new: The dynamic schema configuration.
-    :type dynamic_schema_new: ~azure.mgmt.logic.models.SwaggerCustomDynamicProperties
-    :param dynamic_list_new: The dynamic list.
-    :type dynamic_list_new: ~azure.mgmt.logic.models.SwaggerCustomDynamicList
-    :param dynamic_tree: The dynamic values tree configuration.
-    :type dynamic_tree: ~azure.mgmt.logic.models.SwaggerCustomDynamicTree
+    :vartype type: str or ~azure.mgmt.logic.models.SwaggerSchemaType
+    :ivar title: The title.
+    :vartype title: str
+    :ivar items: The items schema.
+    :vartype items: ~azure.mgmt.logic.models.SwaggerSchema
+    :ivar properties: The object properties.
+    :vartype properties: dict[str, ~azure.mgmt.logic.models.SwaggerSchema]
+    :ivar additional_properties: The additional properties.
+    :vartype additional_properties: any
+    :ivar required: The object required properties.
+    :vartype required: list[str]
+    :ivar max_properties: The maximum number of allowed properties.
+    :vartype max_properties: int
+    :ivar min_properties: The minimum number of allowed properties.
+    :vartype min_properties: int
+    :ivar all_of: The schemas which must pass validation when this schema is used.
+    :vartype all_of: list[~azure.mgmt.logic.models.SwaggerSchema]
+    :ivar discriminator: The discriminator.
+    :vartype discriminator: str
+    :ivar read_only: Indicates whether this property must be present in the a request.
+    :vartype read_only: bool
+    :ivar xml: The xml representation format for a property.
+    :vartype xml: ~azure.mgmt.logic.models.SwaggerXml
+    :ivar external_docs: The external documentation.
+    :vartype external_docs: ~azure.mgmt.logic.models.SwaggerExternalDocumentation
+    :ivar example: The example value.
+    :vartype example: any
+    :ivar notification_url_extension: Indicates the notification url extension. If this is set, the
+     property's value should be a callback url for a webhook.
+    :vartype notification_url_extension: bool
+    :ivar dynamic_schema_old: The dynamic schema configuration.
+    :vartype dynamic_schema_old: ~azure.mgmt.logic.models.SwaggerCustomDynamicSchema
+    :ivar dynamic_schema_new: The dynamic schema configuration.
+    :vartype dynamic_schema_new: ~azure.mgmt.logic.models.SwaggerCustomDynamicProperties
+    :ivar dynamic_list_new: The dynamic list.
+    :vartype dynamic_list_new: ~azure.mgmt.logic.models.SwaggerCustomDynamicList
+    :ivar dynamic_tree: The dynamic values tree configuration.
+    :vartype dynamic_tree: ~azure.mgmt.logic.models.SwaggerCustomDynamicTree
     """
 
     _attribute_map = {
@@ -6276,7 +8204,7 @@ class SwaggerSchema(msrest.serialization.Model):
         title: Optional[str] = None,
         items: Optional["SwaggerSchema"] = None,
         properties: Optional[Dict[str, "SwaggerSchema"]] = None,
-        additional_properties: Optional[object] = None,
+        additional_properties: Optional[Any] = None,
         required: Optional[List[str]] = None,
         max_properties: Optional[int] = None,
         min_properties: Optional[int] = None,
@@ -6285,7 +8213,7 @@ class SwaggerSchema(msrest.serialization.Model):
         read_only: Optional[bool] = None,
         xml: Optional["SwaggerXml"] = None,
         external_docs: Optional["SwaggerExternalDocumentation"] = None,
-        example: Optional[object] = None,
+        example: Optional[Any] = None,
         notification_url_extension: Optional[bool] = None,
         dynamic_schema_old: Optional["SwaggerCustomDynamicSchema"] = None,
         dynamic_schema_new: Optional["SwaggerCustomDynamicProperties"] = None,
@@ -6293,6 +8221,50 @@ class SwaggerSchema(msrest.serialization.Model):
         dynamic_tree: Optional["SwaggerCustomDynamicTree"] = None,
         **kwargs
     ):
+        """
+        :keyword ref: The reference.
+        :paramtype ref: str
+        :keyword type: The type. Possible values include: "String", "Number", "Integer", "Boolean",
+         "Array", "File", "Object", "Null".
+        :paramtype type: str or ~azure.mgmt.logic.models.SwaggerSchemaType
+        :keyword title: The title.
+        :paramtype title: str
+        :keyword items: The items schema.
+        :paramtype items: ~azure.mgmt.logic.models.SwaggerSchema
+        :keyword properties: The object properties.
+        :paramtype properties: dict[str, ~azure.mgmt.logic.models.SwaggerSchema]
+        :keyword additional_properties: The additional properties.
+        :paramtype additional_properties: any
+        :keyword required: The object required properties.
+        :paramtype required: list[str]
+        :keyword max_properties: The maximum number of allowed properties.
+        :paramtype max_properties: int
+        :keyword min_properties: The minimum number of allowed properties.
+        :paramtype min_properties: int
+        :keyword all_of: The schemas which must pass validation when this schema is used.
+        :paramtype all_of: list[~azure.mgmt.logic.models.SwaggerSchema]
+        :keyword discriminator: The discriminator.
+        :paramtype discriminator: str
+        :keyword read_only: Indicates whether this property must be present in the a request.
+        :paramtype read_only: bool
+        :keyword xml: The xml representation format for a property.
+        :paramtype xml: ~azure.mgmt.logic.models.SwaggerXml
+        :keyword external_docs: The external documentation.
+        :paramtype external_docs: ~azure.mgmt.logic.models.SwaggerExternalDocumentation
+        :keyword example: The example value.
+        :paramtype example: any
+        :keyword notification_url_extension: Indicates the notification url extension. If this is set,
+         the property's value should be a callback url for a webhook.
+        :paramtype notification_url_extension: bool
+        :keyword dynamic_schema_old: The dynamic schema configuration.
+        :paramtype dynamic_schema_old: ~azure.mgmt.logic.models.SwaggerCustomDynamicSchema
+        :keyword dynamic_schema_new: The dynamic schema configuration.
+        :paramtype dynamic_schema_new: ~azure.mgmt.logic.models.SwaggerCustomDynamicProperties
+        :keyword dynamic_list_new: The dynamic list.
+        :paramtype dynamic_list_new: ~azure.mgmt.logic.models.SwaggerCustomDynamicList
+        :keyword dynamic_tree: The dynamic values tree configuration.
+        :paramtype dynamic_tree: ~azure.mgmt.logic.models.SwaggerCustomDynamicTree
+        """
         super(SwaggerSchema, self).__init__(**kwargs)
         self.ref = ref
         self.type = type
@@ -6319,18 +8291,18 @@ class SwaggerSchema(msrest.serialization.Model):
 class SwaggerXml(msrest.serialization.Model):
     """The Swagger XML.
 
-    :param name: The xml element or attribute name.
-    :type name: str
-    :param namespace: The xml namespace.
-    :type namespace: str
-    :param prefix: The name prefix.
-    :type prefix: str
-    :param attribute: Indicates whether the property should be an attribute instead of an element.
-    :type attribute: bool
-    :param wrapped: Indicates whether the array elements are wrapped in a container element.
-    :type wrapped: bool
-    :param extensions: The vendor extensions.
-    :type extensions: dict[str, object]
+    :ivar name: The xml element or attribute name.
+    :vartype name: str
+    :ivar namespace: The xml namespace.
+    :vartype namespace: str
+    :ivar prefix: The name prefix.
+    :vartype prefix: str
+    :ivar attribute: Indicates whether the property should be an attribute instead of an element.
+    :vartype attribute: bool
+    :ivar wrapped: Indicates whether the array elements are wrapped in a container element.
+    :vartype wrapped: bool
+    :ivar extensions: The vendor extensions.
+    :vartype extensions: dict[str, any]
     """
 
     _attribute_map = {
@@ -6350,9 +8322,24 @@ class SwaggerXml(msrest.serialization.Model):
         prefix: Optional[str] = None,
         attribute: Optional[bool] = None,
         wrapped: Optional[bool] = None,
-        extensions: Optional[Dict[str, object]] = None,
+        extensions: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
+        """
+        :keyword name: The xml element or attribute name.
+        :paramtype name: str
+        :keyword namespace: The xml namespace.
+        :paramtype namespace: str
+        :keyword prefix: The name prefix.
+        :paramtype prefix: str
+        :keyword attribute: Indicates whether the property should be an attribute instead of an
+         element.
+        :paramtype attribute: bool
+        :keyword wrapped: Indicates whether the array elements are wrapped in a container element.
+        :paramtype wrapped: bool
+        :keyword extensions: The vendor extensions.
+        :paramtype extensions: dict[str, any]
+        """
         super(SwaggerXml, self).__init__(**kwargs)
         self.name = name
         self.namespace = namespace
@@ -6367,22 +8354,22 @@ class TrackingEvent(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param event_level: Required. The event level. Possible values include: "LogAlways",
-     "Critical", "Error", "Warning", "Informational", "Verbose".
-    :type event_level: str or ~azure.mgmt.logic.models.EventLevel
-    :param event_time: Required. The event time.
-    :type event_time: ~datetime.datetime
-    :param record_type: Required. The record type. Possible values include: "NotSpecified",
+    :ivar event_level: Required. The event level. Possible values include: "LogAlways", "Critical",
+     "Error", "Warning", "Informational", "Verbose".
+    :vartype event_level: str or ~azure.mgmt.logic.models.EventLevel
+    :ivar event_time: Required. The event time.
+    :vartype event_time: ~datetime.datetime
+    :ivar record_type: Required. The record type. Possible values include: "NotSpecified",
      "Custom", "AS2Message", "AS2MDN", "X12Interchange", "X12FunctionalGroup", "X12TransactionSet",
      "X12InterchangeAcknowledgment", "X12FunctionalGroupAcknowledgment",
      "X12TransactionSetAcknowledgment", "EdifactInterchange", "EdifactFunctionalGroup",
      "EdifactTransactionSet", "EdifactInterchangeAcknowledgment",
      "EdifactFunctionalGroupAcknowledgment", "EdifactTransactionSetAcknowledgment".
-    :type record_type: str or ~azure.mgmt.logic.models.TrackingRecordType
-    :param record: The record.
-    :type record: object
-    :param error: The error.
-    :type error: ~azure.mgmt.logic.models.TrackingEventErrorInfo
+    :vartype record_type: str or ~azure.mgmt.logic.models.TrackingRecordType
+    :ivar record: The record.
+    :vartype record: any
+    :ivar error: The error.
+    :vartype error: ~azure.mgmt.logic.models.TrackingEventErrorInfo
     """
 
     _validation = {
@@ -6405,10 +8392,28 @@ class TrackingEvent(msrest.serialization.Model):
         event_level: Union[str, "EventLevel"],
         event_time: datetime.datetime,
         record_type: Union[str, "TrackingRecordType"],
-        record: Optional[object] = None,
+        record: Optional[Any] = None,
         error: Optional["TrackingEventErrorInfo"] = None,
         **kwargs
     ):
+        """
+        :keyword event_level: Required. The event level. Possible values include: "LogAlways",
+         "Critical", "Error", "Warning", "Informational", "Verbose".
+        :paramtype event_level: str or ~azure.mgmt.logic.models.EventLevel
+        :keyword event_time: Required. The event time.
+        :paramtype event_time: ~datetime.datetime
+        :keyword record_type: Required. The record type. Possible values include: "NotSpecified",
+         "Custom", "AS2Message", "AS2MDN", "X12Interchange", "X12FunctionalGroup", "X12TransactionSet",
+         "X12InterchangeAcknowledgment", "X12FunctionalGroupAcknowledgment",
+         "X12TransactionSetAcknowledgment", "EdifactInterchange", "EdifactFunctionalGroup",
+         "EdifactTransactionSet", "EdifactInterchangeAcknowledgment",
+         "EdifactFunctionalGroupAcknowledgment", "EdifactTransactionSetAcknowledgment".
+        :paramtype record_type: str or ~azure.mgmt.logic.models.TrackingRecordType
+        :keyword record: The record.
+        :paramtype record: any
+        :keyword error: The error.
+        :paramtype error: ~azure.mgmt.logic.models.TrackingEventErrorInfo
+        """
         super(TrackingEvent, self).__init__(**kwargs)
         self.event_level = event_level
         self.event_time = event_time
@@ -6420,10 +8425,10 @@ class TrackingEvent(msrest.serialization.Model):
 class TrackingEventErrorInfo(msrest.serialization.Model):
     """The tracking event error info.
 
-    :param message: The message.
-    :type message: str
-    :param code: The code.
-    :type code: str
+    :ivar message: The message.
+    :vartype message: str
+    :ivar code: The code.
+    :vartype code: str
     """
 
     _attribute_map = {
@@ -6438,6 +8443,12 @@ class TrackingEventErrorInfo(msrest.serialization.Model):
         code: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword message: The message.
+        :paramtype message: str
+        :keyword code: The code.
+        :paramtype code: str
+        """
         super(TrackingEventErrorInfo, self).__init__(**kwargs)
         self.message = message
         self.code = code
@@ -6448,13 +8459,13 @@ class TrackingEventsDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source_type: Required. The source type.
-    :type source_type: str
-    :param track_events_options: The track events options. Possible values include: "None",
+    :ivar source_type: Required. The source type.
+    :vartype source_type: str
+    :ivar track_events_options: The track events options. Possible values include: "None",
      "DisableSourceInfoEnrich".
-    :type track_events_options: str or ~azure.mgmt.logic.models.TrackEventsOperationOptions
-    :param events: Required. The events.
-    :type events: list[~azure.mgmt.logic.models.TrackingEvent]
+    :vartype track_events_options: str or ~azure.mgmt.logic.models.TrackEventsOperationOptions
+    :ivar events: Required. The events.
+    :vartype events: list[~azure.mgmt.logic.models.TrackingEvent]
     """
 
     _validation = {
@@ -6476,10 +8487,51 @@ class TrackingEventsDefinition(msrest.serialization.Model):
         track_events_options: Optional[Union[str, "TrackEventsOperationOptions"]] = None,
         **kwargs
     ):
+        """
+        :keyword source_type: Required. The source type.
+        :paramtype source_type: str
+        :keyword track_events_options: The track events options. Possible values include: "None",
+         "DisableSourceInfoEnrich".
+        :paramtype track_events_options: str or ~azure.mgmt.logic.models.TrackEventsOperationOptions
+        :keyword events: Required. The events.
+        :paramtype events: list[~azure.mgmt.logic.models.TrackingEvent]
+        """
         super(TrackingEventsDefinition, self).__init__(**kwargs)
         self.source_type = source_type
         self.track_events_options = track_events_options
         self.events = events
+
+
+class UserAssignedIdentity(msrest.serialization.Model):
+    """User Assigned identity properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: Principal Id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: Client Id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(UserAssignedIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
 
 
 class Workflow(Resource):
@@ -6493,10 +8545,12 @@ class Workflow(Resource):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: Managed service identity properties.
+    :vartype identity: ~azure.mgmt.logic.models.ManagedServiceIdentity
     :ivar provisioning_state: Gets the provisioning state. Possible values include: "NotSpecified",
      "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
      "Failed", "Succeeded", "Moving", "Updating", "Registering", "Registered", "Unregistering",
@@ -6506,27 +8560,27 @@ class Workflow(Resource):
     :vartype created_time: ~datetime.datetime
     :ivar changed_time: Gets the changed time.
     :vartype changed_time: ~datetime.datetime
-    :param state: The state. Possible values include: "NotSpecified", "Completed", "Enabled",
+    :ivar state: The state. Possible values include: "NotSpecified", "Completed", "Enabled",
      "Disabled", "Deleted", "Suspended".
-    :type state: str or ~azure.mgmt.logic.models.WorkflowState
+    :vartype state: str or ~azure.mgmt.logic.models.WorkflowState
     :ivar version: Gets the version.
     :vartype version: str
     :ivar access_endpoint: Gets the access endpoint.
     :vartype access_endpoint: str
-    :param endpoints_configuration: The endpoints configuration.
-    :type endpoints_configuration: ~azure.mgmt.logic.models.FlowEndpointsConfiguration
-    :param access_control: The access control configuration.
-    :type access_control: ~azure.mgmt.logic.models.FlowAccessControlConfiguration
+    :ivar endpoints_configuration: The endpoints configuration.
+    :vartype endpoints_configuration: ~azure.mgmt.logic.models.FlowEndpointsConfiguration
+    :ivar access_control: The access control configuration.
+    :vartype access_control: ~azure.mgmt.logic.models.FlowAccessControlConfiguration
     :ivar sku: The sku.
     :vartype sku: ~azure.mgmt.logic.models.Sku
-    :param integration_account: The integration account.
-    :type integration_account: ~azure.mgmt.logic.models.ResourceReference
-    :param integration_service_environment: The integration service environment.
-    :type integration_service_environment: ~azure.mgmt.logic.models.ResourceReference
-    :param definition: The definition.
-    :type definition: object
-    :param parameters: The parameters.
-    :type parameters: dict[str, ~azure.mgmt.logic.models.WorkflowParameter]
+    :ivar integration_account: The integration account.
+    :vartype integration_account: ~azure.mgmt.logic.models.ResourceReference
+    :ivar integration_service_environment: The integration service environment.
+    :vartype integration_service_environment: ~azure.mgmt.logic.models.ResourceReference
+    :ivar definition: The definition.
+    :vartype definition: any
+    :ivar parameters: The parameters.
+    :vartype parameters: dict[str, ~azure.mgmt.logic.models.WorkflowParameter]
     """
 
     _validation = {
@@ -6547,6 +8601,7 @@ class Workflow(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
         'changed_time': {'key': 'properties.changedTime', 'type': 'iso-8601'},
@@ -6567,16 +8622,41 @@ class Workflow(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        identity: Optional["ManagedServiceIdentity"] = None,
         state: Optional[Union[str, "WorkflowState"]] = None,
         endpoints_configuration: Optional["FlowEndpointsConfiguration"] = None,
         access_control: Optional["FlowAccessControlConfiguration"] = None,
         integration_account: Optional["ResourceReference"] = None,
         integration_service_environment: Optional["ResourceReference"] = None,
-        definition: Optional[object] = None,
+        definition: Optional[Any] = None,
         parameters: Optional[Dict[str, "WorkflowParameter"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword identity: Managed service identity properties.
+        :paramtype identity: ~azure.mgmt.logic.models.ManagedServiceIdentity
+        :keyword state: The state. Possible values include: "NotSpecified", "Completed", "Enabled",
+         "Disabled", "Deleted", "Suspended".
+        :paramtype state: str or ~azure.mgmt.logic.models.WorkflowState
+        :keyword endpoints_configuration: The endpoints configuration.
+        :paramtype endpoints_configuration: ~azure.mgmt.logic.models.FlowEndpointsConfiguration
+        :keyword access_control: The access control configuration.
+        :paramtype access_control: ~azure.mgmt.logic.models.FlowAccessControlConfiguration
+        :keyword integration_account: The integration account.
+        :paramtype integration_account: ~azure.mgmt.logic.models.ResourceReference
+        :keyword integration_service_environment: The integration service environment.
+        :paramtype integration_service_environment: ~azure.mgmt.logic.models.ResourceReference
+        :keyword definition: The definition.
+        :paramtype definition: any
+        :keyword parameters: The parameters.
+        :paramtype parameters: dict[str, ~azure.mgmt.logic.models.WorkflowParameter]
+        """
         super(Workflow, self).__init__(location=location, tags=tags, **kwargs)
+        self.identity = identity
         self.provisioning_state = None
         self.created_time = None
         self.changed_time = None
@@ -6595,9 +8675,9 @@ class Workflow(Resource):
 class WorkflowFilter(msrest.serialization.Model):
     """The workflow filter.
 
-    :param state: The state of workflows. Possible values include: "NotSpecified", "Completed",
+    :ivar state: The state of workflows. Possible values include: "NotSpecified", "Completed",
      "Enabled", "Disabled", "Deleted", "Suspended".
-    :type state: str or ~azure.mgmt.logic.models.WorkflowState
+    :vartype state: str or ~azure.mgmt.logic.models.WorkflowState
     """
 
     _attribute_map = {
@@ -6610,6 +8690,11 @@ class WorkflowFilter(msrest.serialization.Model):
         state: Optional[Union[str, "WorkflowState"]] = None,
         **kwargs
     ):
+        """
+        :keyword state: The state of workflows. Possible values include: "NotSpecified", "Completed",
+         "Enabled", "Disabled", "Deleted", "Suspended".
+        :paramtype state: str or ~azure.mgmt.logic.models.WorkflowState
+        """
         super(WorkflowFilter, self).__init__(**kwargs)
         self.state = state
 
@@ -6617,10 +8702,10 @@ class WorkflowFilter(msrest.serialization.Model):
 class WorkflowListResult(msrest.serialization.Model):
     """The list of workflows.
 
-    :param value: The list of workflows.
-    :type value: list[~azure.mgmt.logic.models.Workflow]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: The list of workflows.
+    :vartype value: list[~azure.mgmt.logic.models.Workflow]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -6635,6 +8720,12 @@ class WorkflowListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of workflows.
+        :paramtype value: list[~azure.mgmt.logic.models.Workflow]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(WorkflowListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -6643,15 +8734,15 @@ class WorkflowListResult(msrest.serialization.Model):
 class WorkflowParameter(msrest.serialization.Model):
     """The workflow parameters.
 
-    :param type: The type. Possible values include: "NotSpecified", "String", "SecureString",
-     "Int", "Float", "Bool", "Array", "Object", "SecureObject".
-    :type type: str or ~azure.mgmt.logic.models.ParameterType
-    :param value: The value.
-    :type value: object
-    :param metadata: The metadata.
-    :type metadata: object
-    :param description: The description.
-    :type description: str
+    :ivar type: The type. Possible values include: "NotSpecified", "String", "SecureString", "Int",
+     "Float", "Bool", "Array", "Object", "SecureObject".
+    :vartype type: str or ~azure.mgmt.logic.models.ParameterType
+    :ivar value: The value.
+    :vartype value: any
+    :ivar metadata: The metadata.
+    :vartype metadata: any
+    :ivar description: The description.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -6665,11 +8756,22 @@ class WorkflowParameter(msrest.serialization.Model):
         self,
         *,
         type: Optional[Union[str, "ParameterType"]] = None,
-        value: Optional[object] = None,
-        metadata: Optional[object] = None,
+        value: Optional[Any] = None,
+        metadata: Optional[Any] = None,
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword type: The type. Possible values include: "NotSpecified", "String", "SecureString",
+         "Int", "Float", "Bool", "Array", "Object", "SecureObject".
+        :paramtype type: str or ~azure.mgmt.logic.models.ParameterType
+        :keyword value: The value.
+        :paramtype value: any
+        :keyword metadata: The metadata.
+        :paramtype metadata: any
+        :keyword description: The description.
+        :paramtype description: str
+        """
         super(WorkflowParameter, self).__init__(**kwargs)
         self.type = type
         self.value = value
@@ -6682,17 +8784,17 @@ class WorkflowOutputParameter(WorkflowParameter):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param type: The type. Possible values include: "NotSpecified", "String", "SecureString",
-     "Int", "Float", "Bool", "Array", "Object", "SecureObject".
-    :type type: str or ~azure.mgmt.logic.models.ParameterType
-    :param value: The value.
-    :type value: object
-    :param metadata: The metadata.
-    :type metadata: object
-    :param description: The description.
-    :type description: str
+    :ivar type: The type. Possible values include: "NotSpecified", "String", "SecureString", "Int",
+     "Float", "Bool", "Array", "Object", "SecureObject".
+    :vartype type: str or ~azure.mgmt.logic.models.ParameterType
+    :ivar value: The value.
+    :vartype value: any
+    :ivar metadata: The metadata.
+    :vartype metadata: any
+    :ivar description: The description.
+    :vartype description: str
     :ivar error: Gets the error.
-    :vartype error: object
+    :vartype error: any
     """
 
     _validation = {
@@ -6711,11 +8813,22 @@ class WorkflowOutputParameter(WorkflowParameter):
         self,
         *,
         type: Optional[Union[str, "ParameterType"]] = None,
-        value: Optional[object] = None,
-        metadata: Optional[object] = None,
+        value: Optional[Any] = None,
+        metadata: Optional[Any] = None,
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword type: The type. Possible values include: "NotSpecified", "String", "SecureString",
+         "Int", "Float", "Bool", "Array", "Object", "SecureObject".
+        :paramtype type: str or ~azure.mgmt.logic.models.ParameterType
+        :keyword value: The value.
+        :paramtype value: any
+        :keyword metadata: The metadata.
+        :paramtype metadata: any
+        :keyword description: The description.
+        :paramtype description: str
+        """
         super(WorkflowOutputParameter, self).__init__(type=type, value=value, metadata=metadata, description=description, **kwargs)
         self.error = None
 
@@ -6725,8 +8838,8 @@ class WorkflowReference(ResourceReference):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: The resource id.
-    :type id: str
+    :ivar id: The resource id.
+    :vartype id: str
     :ivar name: Gets the resource name.
     :vartype name: str
     :ivar type: Gets the resource type.
@@ -6750,6 +8863,10 @@ class WorkflowReference(ResourceReference):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The resource id.
+        :paramtype id: str
+        """
         super(WorkflowReference, self).__init__(id=id, **kwargs)
 
 
@@ -6777,11 +8894,11 @@ class WorkflowRun(SubResource):
     :ivar code: Gets the code.
     :vartype code: str
     :ivar error: Gets the error.
-    :vartype error: object
+    :vartype error: any
     :ivar correlation_id: Gets the correlation id.
     :vartype correlation_id: str
-    :param correlation: The run correlation.
-    :type correlation: ~azure.mgmt.logic.models.Correlation
+    :ivar correlation: The run correlation.
+    :vartype correlation: ~azure.mgmt.logic.models.Correlation
     :ivar workflow: Gets the reference to workflow version.
     :vartype workflow: ~azure.mgmt.logic.models.ResourceReference
     :ivar trigger: Gets the fired trigger.
@@ -6833,6 +8950,10 @@ class WorkflowRun(SubResource):
         correlation: Optional["Correlation"] = None,
         **kwargs
     ):
+        """
+        :keyword correlation: The run correlation.
+        :paramtype correlation: ~azure.mgmt.logic.models.Correlation
+        """
         super(WorkflowRun, self).__init__(**kwargs)
         self.name = None
         self.type = None
@@ -6872,19 +8993,19 @@ class WorkflowRunAction(SubResource):
     :ivar code: Gets the code.
     :vartype code: str
     :ivar error: Gets the error.
-    :vartype error: object
+    :vartype error: any
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
-    :param correlation: The correlation properties.
-    :type correlation: ~azure.mgmt.logic.models.RunActionCorrelation
+    :ivar correlation: The correlation properties.
+    :vartype correlation: ~azure.mgmt.logic.models.RunActionCorrelation
     :ivar inputs_link: Gets the link to inputs.
     :vartype inputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar outputs_link: Gets the link to outputs.
     :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar tracked_properties: Gets the tracked properties.
-    :vartype tracked_properties: object
-    :param retry_history: Gets the retry histories.
-    :type retry_history: list[~azure.mgmt.logic.models.RetryHistory]
+    :vartype tracked_properties: any
+    :ivar retry_history: Gets the retry histories.
+    :vartype retry_history: list[~azure.mgmt.logic.models.RetryHistory]
     """
 
     _validation = {
@@ -6926,6 +9047,12 @@ class WorkflowRunAction(SubResource):
         retry_history: Optional[List["RetryHistory"]] = None,
         **kwargs
     ):
+        """
+        :keyword correlation: The correlation properties.
+        :paramtype correlation: ~azure.mgmt.logic.models.RunActionCorrelation
+        :keyword retry_history: Gets the retry histories.
+        :paramtype retry_history: list[~azure.mgmt.logic.models.RetryHistory]
+        """
         super(WorkflowRunAction, self).__init__(**kwargs)
         self.name = None
         self.type = None
@@ -6945,10 +9072,10 @@ class WorkflowRunAction(SubResource):
 class WorkflowRunActionFilter(msrest.serialization.Model):
     """The workflow run action filter.
 
-    :param status: The status of workflow run action. Possible values include: "NotSpecified",
+    :ivar status: The status of workflow run action. Possible values include: "NotSpecified",
      "Paused", "Running", "Waiting", "Succeeded", "Skipped", "Suspended", "Cancelled", "Failed",
      "Faulted", "TimedOut", "Aborted", "Ignored".
-    :type status: str or ~azure.mgmt.logic.models.WorkflowStatus
+    :vartype status: str or ~azure.mgmt.logic.models.WorkflowStatus
     """
 
     _attribute_map = {
@@ -6961,6 +9088,12 @@ class WorkflowRunActionFilter(msrest.serialization.Model):
         status: Optional[Union[str, "WorkflowStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword status: The status of workflow run action. Possible values include: "NotSpecified",
+         "Paused", "Running", "Waiting", "Succeeded", "Skipped", "Suspended", "Cancelled", "Failed",
+         "Faulted", "TimedOut", "Aborted", "Ignored".
+        :paramtype status: str or ~azure.mgmt.logic.models.WorkflowStatus
+        """
         super(WorkflowRunActionFilter, self).__init__(**kwargs)
         self.status = status
 
@@ -6968,10 +9101,10 @@ class WorkflowRunActionFilter(msrest.serialization.Model):
 class WorkflowRunActionListResult(msrest.serialization.Model):
     """The list of workflow run actions.
 
-    :param value: A list of workflow run actions.
-    :type value: list[~azure.mgmt.logic.models.WorkflowRunAction]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: A list of workflow run actions.
+    :vartype value: list[~azure.mgmt.logic.models.WorkflowRunAction]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -6986,6 +9119,12 @@ class WorkflowRunActionListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: A list of workflow run actions.
+        :paramtype value: list[~azure.mgmt.logic.models.WorkflowRunAction]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(WorkflowRunActionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -7002,42 +9141,42 @@ class WorkflowRunActionRepetitionDefinition(Resource):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param start_time: The start time of the workflow scope repetition.
-    :type start_time: ~datetime.datetime
-    :param end_time: The end time of the workflow scope repetition.
-    :type end_time: ~datetime.datetime
-    :param correlation: The correlation properties.
-    :type correlation: ~azure.mgmt.logic.models.RunActionCorrelation
-    :param status: The status of the workflow scope repetition. Possible values include:
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar start_time: The start time of the workflow scope repetition.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the workflow scope repetition.
+    :vartype end_time: ~datetime.datetime
+    :ivar correlation: The correlation properties.
+    :vartype correlation: ~azure.mgmt.logic.models.RunActionCorrelation
+    :ivar status: The status of the workflow scope repetition. Possible values include:
      "NotSpecified", "Paused", "Running", "Waiting", "Succeeded", "Skipped", "Suspended",
      "Cancelled", "Failed", "Faulted", "TimedOut", "Aborted", "Ignored".
-    :type status: str or ~azure.mgmt.logic.models.WorkflowStatus
-    :param code: The workflow scope repetition code.
-    :type code: str
-    :param error: Any object.
-    :type error: object
+    :vartype status: str or ~azure.mgmt.logic.models.WorkflowStatus
+    :ivar code: The workflow scope repetition code.
+    :vartype code: str
+    :ivar error: Anything.
+    :vartype error: any
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
     :ivar inputs: Gets the inputs.
-    :vartype inputs: object
+    :vartype inputs: any
     :ivar inputs_link: Gets the link to inputs.
     :vartype inputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar outputs: Gets the outputs.
-    :vartype outputs: object
+    :vartype outputs: any
     :ivar outputs_link: Gets the link to outputs.
     :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar tracked_properties: Gets the tracked properties.
-    :vartype tracked_properties: object
-    :param retry_history: Gets the retry histories.
-    :type retry_history: list[~azure.mgmt.logic.models.RetryHistory]
-    :param iteration_count:
-    :type iteration_count: int
-    :param repetition_indexes: The repetition indexes.
-    :type repetition_indexes: list[~azure.mgmt.logic.models.RepetitionIndex]
+    :vartype tracked_properties: any
+    :ivar retry_history: Gets the retry histories.
+    :vartype retry_history: list[~azure.mgmt.logic.models.RetryHistory]
+    :ivar iteration_count:
+    :vartype iteration_count: int
+    :ivar repetition_indexes: The repetition indexes.
+    :vartype repetition_indexes: list[~azure.mgmt.logic.models.RepetitionIndex]
     """
 
     _validation = {
@@ -7085,12 +9224,38 @@ class WorkflowRunActionRepetitionDefinition(Resource):
         correlation: Optional["RunActionCorrelation"] = None,
         status: Optional[Union[str, "WorkflowStatus"]] = None,
         code: Optional[str] = None,
-        error: Optional[object] = None,
+        error: Optional[Any] = None,
         retry_history: Optional[List["RetryHistory"]] = None,
         iteration_count: Optional[int] = None,
         repetition_indexes: Optional[List["RepetitionIndex"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword start_time: The start time of the workflow scope repetition.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: The end time of the workflow scope repetition.
+        :paramtype end_time: ~datetime.datetime
+        :keyword correlation: The correlation properties.
+        :paramtype correlation: ~azure.mgmt.logic.models.RunActionCorrelation
+        :keyword status: The status of the workflow scope repetition. Possible values include:
+         "NotSpecified", "Paused", "Running", "Waiting", "Succeeded", "Skipped", "Suspended",
+         "Cancelled", "Failed", "Faulted", "TimedOut", "Aborted", "Ignored".
+        :paramtype status: str or ~azure.mgmt.logic.models.WorkflowStatus
+        :keyword code: The workflow scope repetition code.
+        :paramtype code: str
+        :keyword error: Anything.
+        :paramtype error: any
+        :keyword retry_history: Gets the retry histories.
+        :paramtype retry_history: list[~azure.mgmt.logic.models.RetryHistory]
+        :keyword iteration_count:
+        :paramtype iteration_count: int
+        :keyword repetition_indexes: The repetition indexes.
+        :paramtype repetition_indexes: list[~azure.mgmt.logic.models.RepetitionIndex]
+        """
         super(WorkflowRunActionRepetitionDefinition, self).__init__(location=location, tags=tags, **kwargs)
         self.start_time = start_time
         self.end_time = end_time
@@ -7112,10 +9277,10 @@ class WorkflowRunActionRepetitionDefinition(Resource):
 class WorkflowRunActionRepetitionDefinitionCollection(msrest.serialization.Model):
     """A collection of workflow run action repetitions.
 
-    :param next_link: The link used to get the next page of recommendations.
-    :type next_link: str
-    :param value:
-    :type value: list[~azure.mgmt.logic.models.WorkflowRunActionRepetitionDefinition]
+    :ivar next_link: The link used to get the next page of recommendations.
+    :vartype next_link: str
+    :ivar value:
+    :vartype value: list[~azure.mgmt.logic.models.WorkflowRunActionRepetitionDefinition]
     """
 
     _attribute_map = {
@@ -7130,6 +9295,12 @@ class WorkflowRunActionRepetitionDefinitionCollection(msrest.serialization.Model
         value: Optional[List["WorkflowRunActionRepetitionDefinition"]] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: The link used to get the next page of recommendations.
+        :paramtype next_link: str
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.logic.models.WorkflowRunActionRepetitionDefinition]
+        """
         super(WorkflowRunActionRepetitionDefinitionCollection, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = value
@@ -7140,38 +9311,38 @@ class WorkflowRunActionRepetitionProperties(OperationResult):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param start_time: The start time of the workflow scope repetition.
-    :type start_time: ~datetime.datetime
-    :param end_time: The end time of the workflow scope repetition.
-    :type end_time: ~datetime.datetime
-    :param correlation: The correlation properties.
-    :type correlation: ~azure.mgmt.logic.models.RunActionCorrelation
-    :param status: The status of the workflow scope repetition. Possible values include:
+    :ivar start_time: The start time of the workflow scope repetition.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the workflow scope repetition.
+    :vartype end_time: ~datetime.datetime
+    :ivar correlation: The correlation properties.
+    :vartype correlation: ~azure.mgmt.logic.models.RunActionCorrelation
+    :ivar status: The status of the workflow scope repetition. Possible values include:
      "NotSpecified", "Paused", "Running", "Waiting", "Succeeded", "Skipped", "Suspended",
      "Cancelled", "Failed", "Faulted", "TimedOut", "Aborted", "Ignored".
-    :type status: str or ~azure.mgmt.logic.models.WorkflowStatus
-    :param code: The workflow scope repetition code.
-    :type code: str
-    :param error: Any object.
-    :type error: object
+    :vartype status: str or ~azure.mgmt.logic.models.WorkflowStatus
+    :ivar code: The workflow scope repetition code.
+    :vartype code: str
+    :ivar error: Anything.
+    :vartype error: any
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
     :ivar inputs: Gets the inputs.
-    :vartype inputs: object
+    :vartype inputs: any
     :ivar inputs_link: Gets the link to inputs.
     :vartype inputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar outputs: Gets the outputs.
-    :vartype outputs: object
+    :vartype outputs: any
     :ivar outputs_link: Gets the link to outputs.
     :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar tracked_properties: Gets the tracked properties.
-    :vartype tracked_properties: object
-    :param retry_history: Gets the retry histories.
-    :type retry_history: list[~azure.mgmt.logic.models.RetryHistory]
-    :param iteration_count:
-    :type iteration_count: int
-    :param repetition_indexes: The repetition indexes.
-    :type repetition_indexes: list[~azure.mgmt.logic.models.RepetitionIndex]
+    :vartype tracked_properties: any
+    :ivar retry_history: Gets the retry histories.
+    :vartype retry_history: list[~azure.mgmt.logic.models.RetryHistory]
+    :ivar iteration_count:
+    :vartype iteration_count: int
+    :ivar repetition_indexes: The repetition indexes.
+    :vartype repetition_indexes: list[~azure.mgmt.logic.models.RepetitionIndex]
     """
 
     _validation = {
@@ -7209,12 +9380,34 @@ class WorkflowRunActionRepetitionProperties(OperationResult):
         correlation: Optional["RunActionCorrelation"] = None,
         status: Optional[Union[str, "WorkflowStatus"]] = None,
         code: Optional[str] = None,
-        error: Optional[object] = None,
+        error: Optional[Any] = None,
         retry_history: Optional[List["RetryHistory"]] = None,
         iteration_count: Optional[int] = None,
         repetition_indexes: Optional[List["RepetitionIndex"]] = None,
         **kwargs
     ):
+        """
+        :keyword start_time: The start time of the workflow scope repetition.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: The end time of the workflow scope repetition.
+        :paramtype end_time: ~datetime.datetime
+        :keyword correlation: The correlation properties.
+        :paramtype correlation: ~azure.mgmt.logic.models.RunActionCorrelation
+        :keyword status: The status of the workflow scope repetition. Possible values include:
+         "NotSpecified", "Paused", "Running", "Waiting", "Succeeded", "Skipped", "Suspended",
+         "Cancelled", "Failed", "Faulted", "TimedOut", "Aborted", "Ignored".
+        :paramtype status: str or ~azure.mgmt.logic.models.WorkflowStatus
+        :keyword code: The workflow scope repetition code.
+        :paramtype code: str
+        :keyword error: Anything.
+        :paramtype error: any
+        :keyword retry_history: Gets the retry histories.
+        :paramtype retry_history: list[~azure.mgmt.logic.models.RetryHistory]
+        :keyword iteration_count:
+        :paramtype iteration_count: int
+        :keyword repetition_indexes: The repetition indexes.
+        :paramtype repetition_indexes: list[~azure.mgmt.logic.models.RepetitionIndex]
+        """
         super(WorkflowRunActionRepetitionProperties, self).__init__(start_time=start_time, end_time=end_time, correlation=correlation, status=status, code=code, error=error, retry_history=retry_history, iteration_count=iteration_count, **kwargs)
         self.repetition_indexes = repetition_indexes
 
@@ -7222,10 +9415,10 @@ class WorkflowRunActionRepetitionProperties(OperationResult):
 class WorkflowRunFilter(msrest.serialization.Model):
     """The workflow run filter.
 
-    :param status: The status of workflow run. Possible values include: "NotSpecified", "Paused",
+    :ivar status: The status of workflow run. Possible values include: "NotSpecified", "Paused",
      "Running", "Waiting", "Succeeded", "Skipped", "Suspended", "Cancelled", "Failed", "Faulted",
      "TimedOut", "Aborted", "Ignored".
-    :type status: str or ~azure.mgmt.logic.models.WorkflowStatus
+    :vartype status: str or ~azure.mgmt.logic.models.WorkflowStatus
     """
 
     _attribute_map = {
@@ -7238,6 +9431,12 @@ class WorkflowRunFilter(msrest.serialization.Model):
         status: Optional[Union[str, "WorkflowStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword status: The status of workflow run. Possible values include: "NotSpecified", "Paused",
+         "Running", "Waiting", "Succeeded", "Skipped", "Suspended", "Cancelled", "Failed", "Faulted",
+         "TimedOut", "Aborted", "Ignored".
+        :paramtype status: str or ~azure.mgmt.logic.models.WorkflowStatus
+        """
         super(WorkflowRunFilter, self).__init__(**kwargs)
         self.status = status
 
@@ -7245,10 +9444,10 @@ class WorkflowRunFilter(msrest.serialization.Model):
 class WorkflowRunListResult(msrest.serialization.Model):
     """The list of workflow runs.
 
-    :param value: A list of workflow runs.
-    :type value: list[~azure.mgmt.logic.models.WorkflowRun]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: A list of workflow runs.
+    :vartype value: list[~azure.mgmt.logic.models.WorkflowRun]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -7263,6 +9462,12 @@ class WorkflowRunListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: A list of workflow runs.
+        :paramtype value: list[~azure.mgmt.logic.models.WorkflowRun]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(WorkflowRunListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -7276,11 +9481,11 @@ class WorkflowRunTrigger(msrest.serialization.Model):
     :ivar name: Gets the name.
     :vartype name: str
     :ivar inputs: Gets the inputs.
-    :vartype inputs: object
+    :vartype inputs: any
     :ivar inputs_link: Gets the link to inputs.
     :vartype inputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar outputs: Gets the outputs.
-    :vartype outputs: object
+    :vartype outputs: any
     :ivar outputs_link: Gets the link to outputs.
     :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar scheduled_time: Gets the scheduled time.
@@ -7291,8 +9496,8 @@ class WorkflowRunTrigger(msrest.serialization.Model):
     :vartype end_time: ~datetime.datetime
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
-    :param correlation: The run correlation.
-    :type correlation: ~azure.mgmt.logic.models.Correlation
+    :ivar correlation: The run correlation.
+    :vartype correlation: ~azure.mgmt.logic.models.Correlation
     :ivar code: Gets the code.
     :vartype code: str
     :ivar status: Gets the status. Possible values include: "NotSpecified", "Paused", "Running",
@@ -7300,9 +9505,9 @@ class WorkflowRunTrigger(msrest.serialization.Model):
      "Aborted", "Ignored".
     :vartype status: str or ~azure.mgmt.logic.models.WorkflowStatus
     :ivar error: Gets the error.
-    :vartype error: object
+    :vartype error: any
     :ivar tracked_properties: Gets the tracked properties.
-    :vartype tracked_properties: object
+    :vartype tracked_properties: any
     """
 
     _validation = {
@@ -7344,6 +9549,10 @@ class WorkflowRunTrigger(msrest.serialization.Model):
         correlation: Optional["Correlation"] = None,
         **kwargs
     ):
+        """
+        :keyword correlation: The run correlation.
+        :paramtype correlation: ~azure.mgmt.logic.models.Correlation
+        """
         super(WorkflowRunTrigger, self).__init__(**kwargs)
         self.name = None
         self.inputs = None
@@ -7432,6 +9641,8 @@ class WorkflowTrigger(SubResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(WorkflowTrigger, self).__init__(**kwargs)
         self.name = None
         self.type = None
@@ -7459,11 +9670,11 @@ class WorkflowTriggerCallbackUrl(msrest.serialization.Model):
     :vartype base_path: str
     :ivar relative_path: Gets the workflow trigger callback URL relative path.
     :vartype relative_path: str
-    :param relative_path_parameters: Gets the workflow trigger callback URL relative path
+    :ivar relative_path_parameters: Gets the workflow trigger callback URL relative path
      parameters.
-    :type relative_path_parameters: list[str]
-    :param queries: Gets the workflow trigger callback URL query parameters.
-    :type queries: ~azure.mgmt.logic.models.WorkflowTriggerListCallbackUrlQueries
+    :vartype relative_path_parameters: list[str]
+    :ivar queries: Gets the workflow trigger callback URL query parameters.
+    :vartype queries: ~azure.mgmt.logic.models.WorkflowTriggerListCallbackUrlQueries
     """
 
     _validation = {
@@ -7489,6 +9700,13 @@ class WorkflowTriggerCallbackUrl(msrest.serialization.Model):
         queries: Optional["WorkflowTriggerListCallbackUrlQueries"] = None,
         **kwargs
     ):
+        """
+        :keyword relative_path_parameters: Gets the workflow trigger callback URL relative path
+         parameters.
+        :paramtype relative_path_parameters: list[str]
+        :keyword queries: Gets the workflow trigger callback URL query parameters.
+        :paramtype queries: ~azure.mgmt.logic.models.WorkflowTriggerListCallbackUrlQueries
+        """
         super(WorkflowTriggerCallbackUrl, self).__init__(**kwargs)
         self.value = None
         self.method = None
@@ -7501,9 +9719,9 @@ class WorkflowTriggerCallbackUrl(msrest.serialization.Model):
 class WorkflowTriggerFilter(msrest.serialization.Model):
     """The workflow trigger filter.
 
-    :param state: The state of workflow trigger. Possible values include: "NotSpecified",
+    :ivar state: The state of workflow trigger. Possible values include: "NotSpecified",
      "Completed", "Enabled", "Disabled", "Deleted", "Suspended".
-    :type state: str or ~azure.mgmt.logic.models.WorkflowState
+    :vartype state: str or ~azure.mgmt.logic.models.WorkflowState
     """
 
     _attribute_map = {
@@ -7516,6 +9734,11 @@ class WorkflowTriggerFilter(msrest.serialization.Model):
         state: Optional[Union[str, "WorkflowState"]] = None,
         **kwargs
     ):
+        """
+        :keyword state: The state of workflow trigger. Possible values include: "NotSpecified",
+         "Completed", "Enabled", "Disabled", "Deleted", "Suspended".
+        :paramtype state: str or ~azure.mgmt.logic.models.WorkflowState
+        """
         super(WorkflowTriggerFilter, self).__init__(**kwargs)
         self.state = state
 
@@ -7544,11 +9767,11 @@ class WorkflowTriggerHistory(SubResource):
     :ivar code: Gets the code.
     :vartype code: str
     :ivar error: Gets the error.
-    :vartype error: object
+    :vartype error: any
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
-    :param correlation: The run correlation.
-    :type correlation: ~azure.mgmt.logic.models.Correlation
+    :ivar correlation: The run correlation.
+    :vartype correlation: ~azure.mgmt.logic.models.Correlation
     :ivar inputs_link: Gets the link to input parameters.
     :vartype inputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar outputs_link: Gets the link to output parameters.
@@ -7600,6 +9823,10 @@ class WorkflowTriggerHistory(SubResource):
         correlation: Optional["Correlation"] = None,
         **kwargs
     ):
+        """
+        :keyword correlation: The run correlation.
+        :paramtype correlation: ~azure.mgmt.logic.models.Correlation
+        """
         super(WorkflowTriggerHistory, self).__init__(**kwargs)
         self.name = None
         self.type = None
@@ -7620,10 +9847,10 @@ class WorkflowTriggerHistory(SubResource):
 class WorkflowTriggerHistoryFilter(msrest.serialization.Model):
     """The workflow trigger history filter.
 
-    :param status: The status of workflow trigger history. Possible values include: "NotSpecified",
+    :ivar status: The status of workflow trigger history. Possible values include: "NotSpecified",
      "Paused", "Running", "Waiting", "Succeeded", "Skipped", "Suspended", "Cancelled", "Failed",
      "Faulted", "TimedOut", "Aborted", "Ignored".
-    :type status: str or ~azure.mgmt.logic.models.WorkflowStatus
+    :vartype status: str or ~azure.mgmt.logic.models.WorkflowStatus
     """
 
     _attribute_map = {
@@ -7636,6 +9863,12 @@ class WorkflowTriggerHistoryFilter(msrest.serialization.Model):
         status: Optional[Union[str, "WorkflowStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword status: The status of workflow trigger history. Possible values include:
+         "NotSpecified", "Paused", "Running", "Waiting", "Succeeded", "Skipped", "Suspended",
+         "Cancelled", "Failed", "Faulted", "TimedOut", "Aborted", "Ignored".
+        :paramtype status: str or ~azure.mgmt.logic.models.WorkflowStatus
+        """
         super(WorkflowTriggerHistoryFilter, self).__init__(**kwargs)
         self.status = status
 
@@ -7643,10 +9876,10 @@ class WorkflowTriggerHistoryFilter(msrest.serialization.Model):
 class WorkflowTriggerHistoryListResult(msrest.serialization.Model):
     """The list of workflow trigger histories.
 
-    :param value: A list of workflow trigger histories.
-    :type value: list[~azure.mgmt.logic.models.WorkflowTriggerHistory]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: A list of workflow trigger histories.
+    :vartype value: list[~azure.mgmt.logic.models.WorkflowTriggerHistory]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -7661,6 +9894,12 @@ class WorkflowTriggerHistoryListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: A list of workflow trigger histories.
+        :paramtype value: list[~azure.mgmt.logic.models.WorkflowTriggerHistory]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(WorkflowTriggerHistoryListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -7669,16 +9908,16 @@ class WorkflowTriggerHistoryListResult(msrest.serialization.Model):
 class WorkflowTriggerListCallbackUrlQueries(msrest.serialization.Model):
     """Gets the workflow trigger callback URL query parameters.
 
-    :param api_version: The api version.
-    :type api_version: str
-    :param sp: The SAS permissions.
-    :type sp: str
-    :param sv: The SAS version.
-    :type sv: str
-    :param sig: The SAS signature.
-    :type sig: str
-    :param se: The SAS timestamp.
-    :type se: str
+    :ivar api_version: The api version.
+    :vartype api_version: str
+    :ivar sp: The SAS permissions.
+    :vartype sp: str
+    :ivar sv: The SAS version.
+    :vartype sv: str
+    :ivar sig: The SAS signature.
+    :vartype sig: str
+    :ivar se: The SAS timestamp.
+    :vartype se: str
     """
 
     _attribute_map = {
@@ -7699,6 +9938,18 @@ class WorkflowTriggerListCallbackUrlQueries(msrest.serialization.Model):
         se: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword api_version: The api version.
+        :paramtype api_version: str
+        :keyword sp: The SAS permissions.
+        :paramtype sp: str
+        :keyword sv: The SAS version.
+        :paramtype sv: str
+        :keyword sig: The SAS signature.
+        :paramtype sig: str
+        :keyword se: The SAS timestamp.
+        :paramtype se: str
+        """
         super(WorkflowTriggerListCallbackUrlQueries, self).__init__(**kwargs)
         self.api_version = api_version
         self.sp = sp
@@ -7710,10 +9961,10 @@ class WorkflowTriggerListCallbackUrlQueries(msrest.serialization.Model):
 class WorkflowTriggerListResult(msrest.serialization.Model):
     """The list of workflow triggers.
 
-    :param value: A list of workflow triggers.
-    :type value: list[~azure.mgmt.logic.models.WorkflowTrigger]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: A list of workflow triggers.
+    :vartype value: list[~azure.mgmt.logic.models.WorkflowTrigger]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -7728,6 +9979,12 @@ class WorkflowTriggerListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: A list of workflow triggers.
+        :paramtype value: list[~azure.mgmt.logic.models.WorkflowTrigger]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(WorkflowTriggerListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -7736,19 +9993,19 @@ class WorkflowTriggerListResult(msrest.serialization.Model):
 class WorkflowTriggerRecurrence(msrest.serialization.Model):
     """The workflow trigger recurrence.
 
-    :param frequency: The frequency. Possible values include: "NotSpecified", "Second", "Minute",
+    :ivar frequency: The frequency. Possible values include: "NotSpecified", "Second", "Minute",
      "Hour", "Day", "Week", "Month", "Year".
-    :type frequency: str or ~azure.mgmt.logic.models.RecurrenceFrequency
-    :param interval: The interval.
-    :type interval: int
-    :param start_time: The start time.
-    :type start_time: str
-    :param end_time: The end time.
-    :type end_time: str
-    :param time_zone: The time zone.
-    :type time_zone: str
-    :param schedule: The recurrence schedule.
-    :type schedule: ~azure.mgmt.logic.models.RecurrenceSchedule
+    :vartype frequency: str or ~azure.mgmt.logic.models.RecurrenceFrequency
+    :ivar interval: The interval.
+    :vartype interval: int
+    :ivar start_time: The start time.
+    :vartype start_time: str
+    :ivar end_time: The end time.
+    :vartype end_time: str
+    :ivar time_zone: The time zone.
+    :vartype time_zone: str
+    :ivar schedule: The recurrence schedule.
+    :vartype schedule: ~azure.mgmt.logic.models.RecurrenceSchedule
     """
 
     _attribute_map = {
@@ -7771,6 +10028,21 @@ class WorkflowTriggerRecurrence(msrest.serialization.Model):
         schedule: Optional["RecurrenceSchedule"] = None,
         **kwargs
     ):
+        """
+        :keyword frequency: The frequency. Possible values include: "NotSpecified", "Second", "Minute",
+         "Hour", "Day", "Week", "Month", "Year".
+        :paramtype frequency: str or ~azure.mgmt.logic.models.RecurrenceFrequency
+        :keyword interval: The interval.
+        :paramtype interval: int
+        :keyword start_time: The start time.
+        :paramtype start_time: str
+        :keyword end_time: The end time.
+        :paramtype end_time: str
+        :keyword time_zone: The time zone.
+        :paramtype time_zone: str
+        :keyword schedule: The recurrence schedule.
+        :paramtype schedule: ~azure.mgmt.logic.models.RecurrenceSchedule
+        """
         super(WorkflowTriggerRecurrence, self).__init__(**kwargs)
         self.frequency = frequency
         self.interval = interval
@@ -7785,16 +10057,16 @@ class WorkflowTriggerReference(ResourceReference):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: The resource id.
-    :type id: str
+    :ivar id: The resource id.
+    :vartype id: str
     :ivar name: Gets the resource name.
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param flow_name: The workflow name.
-    :type flow_name: str
-    :param trigger_name: The workflow trigger name.
-    :type trigger_name: str
+    :ivar flow_name: The workflow name.
+    :vartype flow_name: str
+    :ivar trigger_name: The workflow trigger name.
+    :vartype trigger_name: str
     """
 
     _validation = {
@@ -7818,6 +10090,14 @@ class WorkflowTriggerReference(ResourceReference):
         trigger_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The resource id.
+        :paramtype id: str
+        :keyword flow_name: The workflow name.
+        :paramtype flow_name: str
+        :keyword trigger_name: The workflow trigger name.
+        :paramtype trigger_name: str
+        """
         super(WorkflowTriggerReference, self).__init__(id=id, **kwargs)
         self.flow_name = flow_name
         self.trigger_name = trigger_name
@@ -7834,10 +10114,10 @@ class WorkflowVersion(Resource):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
     :ivar provisioning_state: The provisioning state. Possible values include: "NotSpecified",
      "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
      "Failed", "Succeeded", "Moving", "Updating", "Registering", "Registered", "Unregistering",
@@ -7847,25 +10127,25 @@ class WorkflowVersion(Resource):
     :vartype created_time: ~datetime.datetime
     :ivar changed_time: Gets the changed time.
     :vartype changed_time: ~datetime.datetime
-    :param state: The state. Possible values include: "NotSpecified", "Completed", "Enabled",
+    :ivar state: The state. Possible values include: "NotSpecified", "Completed", "Enabled",
      "Disabled", "Deleted", "Suspended".
-    :type state: str or ~azure.mgmt.logic.models.WorkflowState
+    :vartype state: str or ~azure.mgmt.logic.models.WorkflowState
     :ivar version: Gets the version.
     :vartype version: str
     :ivar access_endpoint: Gets the access endpoint.
     :vartype access_endpoint: str
-    :param endpoints_configuration: The endpoints configuration.
-    :type endpoints_configuration: ~azure.mgmt.logic.models.FlowEndpointsConfiguration
-    :param access_control: The access control configuration.
-    :type access_control: ~azure.mgmt.logic.models.FlowAccessControlConfiguration
+    :ivar endpoints_configuration: The endpoints configuration.
+    :vartype endpoints_configuration: ~azure.mgmt.logic.models.FlowEndpointsConfiguration
+    :ivar access_control: The access control configuration.
+    :vartype access_control: ~azure.mgmt.logic.models.FlowAccessControlConfiguration
     :ivar sku: The sku.
     :vartype sku: ~azure.mgmt.logic.models.Sku
-    :param integration_account: The integration account.
-    :type integration_account: ~azure.mgmt.logic.models.ResourceReference
-    :param definition: The definition.
-    :type definition: object
-    :param parameters: The parameters.
-    :type parameters: dict[str, ~azure.mgmt.logic.models.WorkflowParameter]
+    :ivar integration_account: The integration account.
+    :vartype integration_account: ~azure.mgmt.logic.models.ResourceReference
+    :ivar definition: The definition.
+    :vartype definition: any
+    :ivar parameters: The parameters.
+    :vartype parameters: dict[str, ~azure.mgmt.logic.models.WorkflowParameter]
     """
 
     _validation = {
@@ -7909,10 +10189,29 @@ class WorkflowVersion(Resource):
         endpoints_configuration: Optional["FlowEndpointsConfiguration"] = None,
         access_control: Optional["FlowAccessControlConfiguration"] = None,
         integration_account: Optional["ResourceReference"] = None,
-        definition: Optional[object] = None,
+        definition: Optional[Any] = None,
         parameters: Optional[Dict[str, "WorkflowParameter"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword state: The state. Possible values include: "NotSpecified", "Completed", "Enabled",
+         "Disabled", "Deleted", "Suspended".
+        :paramtype state: str or ~azure.mgmt.logic.models.WorkflowState
+        :keyword endpoints_configuration: The endpoints configuration.
+        :paramtype endpoints_configuration: ~azure.mgmt.logic.models.FlowEndpointsConfiguration
+        :keyword access_control: The access control configuration.
+        :paramtype access_control: ~azure.mgmt.logic.models.FlowAccessControlConfiguration
+        :keyword integration_account: The integration account.
+        :paramtype integration_account: ~azure.mgmt.logic.models.ResourceReference
+        :keyword definition: The definition.
+        :paramtype definition: any
+        :keyword parameters: The parameters.
+        :paramtype parameters: dict[str, ~azure.mgmt.logic.models.WorkflowParameter]
+        """
         super(WorkflowVersion, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.created_time = None
@@ -7931,10 +10230,10 @@ class WorkflowVersion(Resource):
 class WorkflowVersionListResult(msrest.serialization.Model):
     """The list of workflow versions.
 
-    :param value: A list of workflow versions.
-    :type value: list[~azure.mgmt.logic.models.WorkflowVersion]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: A list of workflow versions.
+    :vartype value: list[~azure.mgmt.logic.models.WorkflowVersion]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -7949,6 +10248,12 @@ class WorkflowVersionListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: A list of workflow versions.
+        :paramtype value: list[~azure.mgmt.logic.models.WorkflowVersion]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(WorkflowVersionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -7957,10 +10262,10 @@ class WorkflowVersionListResult(msrest.serialization.Model):
 class WsdlService(msrest.serialization.Model):
     """The WSDL service.
 
-    :param qualified_name: The qualified name.
-    :type qualified_name: str
-    :param endpoint_qualified_names: The list of endpoints' qualified names.
-    :type endpoint_qualified_names: list[str]
+    :ivar qualified_name: The qualified name.
+    :vartype qualified_name: str
+    :ivar endpoint_qualified_names: The list of endpoints' qualified names.
+    :vartype endpoint_qualified_names: list[str]
     """
 
     _attribute_map = {
@@ -7975,6 +10280,12 @@ class WsdlService(msrest.serialization.Model):
         endpoint_qualified_names: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword qualified_name: The qualified name.
+        :paramtype qualified_name: str
+        :keyword endpoint_qualified_names: The list of endpoints' qualified names.
+        :paramtype endpoint_qualified_names: list[str]
+        """
         super(WsdlService, self).__init__(**kwargs)
         self.qualified_name = qualified_name
         self.endpoint_qualified_names = endpoint_qualified_names
@@ -7985,47 +10296,47 @@ class X12AcknowledgementSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param need_technical_acknowledgement: Required. The value indicating whether technical
+    :ivar need_technical_acknowledgement: Required. The value indicating whether technical
      acknowledgement is needed.
-    :type need_technical_acknowledgement: bool
-    :param batch_technical_acknowledgements: Required. The value indicating whether to batch the
+    :vartype need_technical_acknowledgement: bool
+    :ivar batch_technical_acknowledgements: Required. The value indicating whether to batch the
      technical acknowledgements.
-    :type batch_technical_acknowledgements: bool
-    :param need_functional_acknowledgement: Required. The value indicating whether functional
+    :vartype batch_technical_acknowledgements: bool
+    :ivar need_functional_acknowledgement: Required. The value indicating whether functional
      acknowledgement is needed.
-    :type need_functional_acknowledgement: bool
-    :param functional_acknowledgement_version: The functional acknowledgement version.
-    :type functional_acknowledgement_version: str
-    :param batch_functional_acknowledgements: Required. The value indicating whether to batch
+    :vartype need_functional_acknowledgement: bool
+    :ivar functional_acknowledgement_version: The functional acknowledgement version.
+    :vartype functional_acknowledgement_version: str
+    :ivar batch_functional_acknowledgements: Required. The value indicating whether to batch
      functional acknowledgements.
-    :type batch_functional_acknowledgements: bool
-    :param need_implementation_acknowledgement: Required. The value indicating whether
+    :vartype batch_functional_acknowledgements: bool
+    :ivar need_implementation_acknowledgement: Required. The value indicating whether
      implementation acknowledgement is needed.
-    :type need_implementation_acknowledgement: bool
-    :param implementation_acknowledgement_version: The implementation acknowledgement version.
-    :type implementation_acknowledgement_version: str
-    :param batch_implementation_acknowledgements: Required. The value indicating whether to batch
+    :vartype need_implementation_acknowledgement: bool
+    :ivar implementation_acknowledgement_version: The implementation acknowledgement version.
+    :vartype implementation_acknowledgement_version: str
+    :ivar batch_implementation_acknowledgements: Required. The value indicating whether to batch
      implementation acknowledgements.
-    :type batch_implementation_acknowledgements: bool
-    :param need_loop_for_valid_messages: Required. The value indicating whether a loop is needed
-     for valid messages.
-    :type need_loop_for_valid_messages: bool
-    :param send_synchronous_acknowledgement: Required. The value indicating whether to send
+    :vartype batch_implementation_acknowledgements: bool
+    :ivar need_loop_for_valid_messages: Required. The value indicating whether a loop is needed for
+     valid messages.
+    :vartype need_loop_for_valid_messages: bool
+    :ivar send_synchronous_acknowledgement: Required. The value indicating whether to send
      synchronous acknowledgement.
-    :type send_synchronous_acknowledgement: bool
-    :param acknowledgement_control_number_prefix: The acknowledgement control number prefix.
-    :type acknowledgement_control_number_prefix: str
-    :param acknowledgement_control_number_suffix: The acknowledgement control number suffix.
-    :type acknowledgement_control_number_suffix: str
-    :param acknowledgement_control_number_lower_bound: Required. The acknowledgement control number
+    :vartype send_synchronous_acknowledgement: bool
+    :ivar acknowledgement_control_number_prefix: The acknowledgement control number prefix.
+    :vartype acknowledgement_control_number_prefix: str
+    :ivar acknowledgement_control_number_suffix: The acknowledgement control number suffix.
+    :vartype acknowledgement_control_number_suffix: str
+    :ivar acknowledgement_control_number_lower_bound: Required. The acknowledgement control number
      lower bound.
-    :type acknowledgement_control_number_lower_bound: int
-    :param acknowledgement_control_number_upper_bound: Required. The acknowledgement control number
+    :vartype acknowledgement_control_number_lower_bound: int
+    :ivar acknowledgement_control_number_upper_bound: Required. The acknowledgement control number
      upper bound.
-    :type acknowledgement_control_number_upper_bound: int
-    :param rollover_acknowledgement_control_number: Required. The value indicating whether to
+    :vartype acknowledgement_control_number_upper_bound: int
+    :ivar rollover_acknowledgement_control_number: Required. The value indicating whether to
      rollover acknowledgement control number.
-    :type rollover_acknowledgement_control_number: bool
+    :vartype rollover_acknowledgement_control_number: bool
     """
 
     _validation = {
@@ -8080,6 +10391,49 @@ class X12AcknowledgementSettings(msrest.serialization.Model):
         acknowledgement_control_number_suffix: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword need_technical_acknowledgement: Required. The value indicating whether technical
+         acknowledgement is needed.
+        :paramtype need_technical_acknowledgement: bool
+        :keyword batch_technical_acknowledgements: Required. The value indicating whether to batch the
+         technical acknowledgements.
+        :paramtype batch_technical_acknowledgements: bool
+        :keyword need_functional_acknowledgement: Required. The value indicating whether functional
+         acknowledgement is needed.
+        :paramtype need_functional_acknowledgement: bool
+        :keyword functional_acknowledgement_version: The functional acknowledgement version.
+        :paramtype functional_acknowledgement_version: str
+        :keyword batch_functional_acknowledgements: Required. The value indicating whether to batch
+         functional acknowledgements.
+        :paramtype batch_functional_acknowledgements: bool
+        :keyword need_implementation_acknowledgement: Required. The value indicating whether
+         implementation acknowledgement is needed.
+        :paramtype need_implementation_acknowledgement: bool
+        :keyword implementation_acknowledgement_version: The implementation acknowledgement version.
+        :paramtype implementation_acknowledgement_version: str
+        :keyword batch_implementation_acknowledgements: Required. The value indicating whether to batch
+         implementation acknowledgements.
+        :paramtype batch_implementation_acknowledgements: bool
+        :keyword need_loop_for_valid_messages: Required. The value indicating whether a loop is needed
+         for valid messages.
+        :paramtype need_loop_for_valid_messages: bool
+        :keyword send_synchronous_acknowledgement: Required. The value indicating whether to send
+         synchronous acknowledgement.
+        :paramtype send_synchronous_acknowledgement: bool
+        :keyword acknowledgement_control_number_prefix: The acknowledgement control number prefix.
+        :paramtype acknowledgement_control_number_prefix: str
+        :keyword acknowledgement_control_number_suffix: The acknowledgement control number suffix.
+        :paramtype acknowledgement_control_number_suffix: str
+        :keyword acknowledgement_control_number_lower_bound: Required. The acknowledgement control
+         number lower bound.
+        :paramtype acknowledgement_control_number_lower_bound: int
+        :keyword acknowledgement_control_number_upper_bound: Required. The acknowledgement control
+         number upper bound.
+        :paramtype acknowledgement_control_number_upper_bound: int
+        :keyword rollover_acknowledgement_control_number: Required. The value indicating whether to
+         rollover acknowledgement control number.
+        :paramtype rollover_acknowledgement_control_number: bool
+        """
         super(X12AcknowledgementSettings, self).__init__(**kwargs)
         self.need_technical_acknowledgement = need_technical_acknowledgement
         self.batch_technical_acknowledgements = batch_technical_acknowledgements
@@ -8103,10 +10457,10 @@ class X12AgreementContent(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param receive_agreement: Required. The X12 one-way receive agreement.
-    :type receive_agreement: ~azure.mgmt.logic.models.X12OneWayAgreement
-    :param send_agreement: Required. The X12 one-way send agreement.
-    :type send_agreement: ~azure.mgmt.logic.models.X12OneWayAgreement
+    :ivar receive_agreement: Required. The X12 one-way receive agreement.
+    :vartype receive_agreement: ~azure.mgmt.logic.models.X12OneWayAgreement
+    :ivar send_agreement: Required. The X12 one-way send agreement.
+    :vartype send_agreement: ~azure.mgmt.logic.models.X12OneWayAgreement
     """
 
     _validation = {
@@ -8126,6 +10480,12 @@ class X12AgreementContent(msrest.serialization.Model):
         send_agreement: "X12OneWayAgreement",
         **kwargs
     ):
+        """
+        :keyword receive_agreement: Required. The X12 one-way receive agreement.
+        :paramtype receive_agreement: ~azure.mgmt.logic.models.X12OneWayAgreement
+        :keyword send_agreement: Required. The X12 one-way send agreement.
+        :paramtype send_agreement: ~azure.mgmt.logic.models.X12OneWayAgreement
+        """
         super(X12AgreementContent, self).__init__(**kwargs)
         self.receive_agreement = receive_agreement
         self.send_agreement = send_agreement
@@ -8136,27 +10496,27 @@ class X12DelimiterOverrides(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param protocol_version: The protocol version.
-    :type protocol_version: str
-    :param message_id: The message id.
-    :type message_id: str
-    :param data_element_separator: Required. The data element separator.
-    :type data_element_separator: int
-    :param component_separator: Required. The component separator.
-    :type component_separator: int
-    :param segment_terminator: Required. The segment terminator.
-    :type segment_terminator: int
-    :param segment_terminator_suffix: Required. The segment terminator suffix. Possible values
+    :ivar protocol_version: The protocol version.
+    :vartype protocol_version: str
+    :ivar message_id: The message id.
+    :vartype message_id: str
+    :ivar data_element_separator: Required. The data element separator.
+    :vartype data_element_separator: int
+    :ivar component_separator: Required. The component separator.
+    :vartype component_separator: int
+    :ivar segment_terminator: Required. The segment terminator.
+    :vartype segment_terminator: int
+    :ivar segment_terminator_suffix: Required. The segment terminator suffix. Possible values
      include: "NotSpecified", "None", "CR", "LF", "CRLF".
-    :type segment_terminator_suffix: str or ~azure.mgmt.logic.models.SegmentTerminatorSuffix
-    :param replace_character: Required. The replacement character.
-    :type replace_character: int
-    :param replace_separators_in_payload: Required. The value indicating whether to replace
+    :vartype segment_terminator_suffix: str or ~azure.mgmt.logic.models.SegmentTerminatorSuffix
+    :ivar replace_character: Required. The replacement character.
+    :vartype replace_character: int
+    :ivar replace_separators_in_payload: Required. The value indicating whether to replace
      separators in payload.
-    :type replace_separators_in_payload: bool
-    :param target_namespace: The target namespace on which this delimiter settings has to be
+    :vartype replace_separators_in_payload: bool
+    :ivar target_namespace: The target namespace on which this delimiter settings has to be
      applied.
-    :type target_namespace: str
+    :vartype target_namespace: str
     """
 
     _validation = {
@@ -8194,6 +10554,29 @@ class X12DelimiterOverrides(msrest.serialization.Model):
         target_namespace: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword protocol_version: The protocol version.
+        :paramtype protocol_version: str
+        :keyword message_id: The message id.
+        :paramtype message_id: str
+        :keyword data_element_separator: Required. The data element separator.
+        :paramtype data_element_separator: int
+        :keyword component_separator: Required. The component separator.
+        :paramtype component_separator: int
+        :keyword segment_terminator: Required. The segment terminator.
+        :paramtype segment_terminator: int
+        :keyword segment_terminator_suffix: Required. The segment terminator suffix. Possible values
+         include: "NotSpecified", "None", "CR", "LF", "CRLF".
+        :paramtype segment_terminator_suffix: str or ~azure.mgmt.logic.models.SegmentTerminatorSuffix
+        :keyword replace_character: Required. The replacement character.
+        :paramtype replace_character: int
+        :keyword replace_separators_in_payload: Required. The value indicating whether to replace
+         separators in payload.
+        :paramtype replace_separators_in_payload: bool
+        :keyword target_namespace: The target namespace on which this delimiter settings has to be
+         applied.
+        :paramtype target_namespace: str
+        """
         super(X12DelimiterOverrides, self).__init__(**kwargs)
         self.protocol_version = protocol_version
         self.message_id = message_id
@@ -8211,30 +10594,30 @@ class X12EnvelopeOverride(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_namespace: Required. The target namespace on which this envelope settings has to
+    :ivar target_namespace: Required. The target namespace on which this envelope settings has to
      be applied.
-    :type target_namespace: str
-    :param protocol_version: Required. The protocol version on which this envelope settings has to
+    :vartype target_namespace: str
+    :ivar protocol_version: Required. The protocol version on which this envelope settings has to
      be applied.
-    :type protocol_version: str
-    :param message_id: Required. The message id on which this envelope settings has to be applied.
-    :type message_id: str
-    :param responsible_agency_code: Required. The responsible agency code.
-    :type responsible_agency_code: str
-    :param header_version: Required. The header version.
-    :type header_version: str
-    :param sender_application_id: Required. The sender application id.
-    :type sender_application_id: str
-    :param receiver_application_id: Required. The receiver application id.
-    :type receiver_application_id: str
-    :param functional_identifier_code: The functional identifier code.
-    :type functional_identifier_code: str
-    :param date_format: Required. The date format. Possible values include: "NotSpecified",
+    :vartype protocol_version: str
+    :ivar message_id: Required. The message id on which this envelope settings has to be applied.
+    :vartype message_id: str
+    :ivar responsible_agency_code: Required. The responsible agency code.
+    :vartype responsible_agency_code: str
+    :ivar header_version: Required. The header version.
+    :vartype header_version: str
+    :ivar sender_application_id: Required. The sender application id.
+    :vartype sender_application_id: str
+    :ivar receiver_application_id: Required. The receiver application id.
+    :vartype receiver_application_id: str
+    :ivar functional_identifier_code: The functional identifier code.
+    :vartype functional_identifier_code: str
+    :ivar date_format: Required. The date format. Possible values include: "NotSpecified",
      "CCYYMMDD", "YYMMDD".
-    :type date_format: str or ~azure.mgmt.logic.models.X12DateFormat
-    :param time_format: Required. The time format. Possible values include: "NotSpecified", "HHMM",
+    :vartype date_format: str or ~azure.mgmt.logic.models.X12DateFormat
+    :ivar time_format: Required. The time format. Possible values include: "NotSpecified", "HHMM",
      "HHMMSS", "HHMMSSdd", "HHMMSSd".
-    :type time_format: str or ~azure.mgmt.logic.models.X12TimeFormat
+    :vartype time_format: str or ~azure.mgmt.logic.models.X12TimeFormat
     """
 
     _validation = {
@@ -8277,6 +10660,33 @@ class X12EnvelopeOverride(msrest.serialization.Model):
         functional_identifier_code: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword target_namespace: Required. The target namespace on which this envelope settings has
+         to be applied.
+        :paramtype target_namespace: str
+        :keyword protocol_version: Required. The protocol version on which this envelope settings has
+         to be applied.
+        :paramtype protocol_version: str
+        :keyword message_id: Required. The message id on which this envelope settings has to be
+         applied.
+        :paramtype message_id: str
+        :keyword responsible_agency_code: Required. The responsible agency code.
+        :paramtype responsible_agency_code: str
+        :keyword header_version: Required. The header version.
+        :paramtype header_version: str
+        :keyword sender_application_id: Required. The sender application id.
+        :paramtype sender_application_id: str
+        :keyword receiver_application_id: Required. The receiver application id.
+        :paramtype receiver_application_id: str
+        :keyword functional_identifier_code: The functional identifier code.
+        :paramtype functional_identifier_code: str
+        :keyword date_format: Required. The date format. Possible values include: "NotSpecified",
+         "CCYYMMDD", "YYMMDD".
+        :paramtype date_format: str or ~azure.mgmt.logic.models.X12DateFormat
+        :keyword time_format: Required. The time format. Possible values include: "NotSpecified",
+         "HHMM", "HHMMSS", "HHMMSSdd", "HHMMSSd".
+        :paramtype time_format: str or ~azure.mgmt.logic.models.X12TimeFormat
+        """
         super(X12EnvelopeOverride, self).__init__(**kwargs)
         self.target_namespace = target_namespace
         self.protocol_version = protocol_version
@@ -8295,67 +10705,67 @@ class X12EnvelopeSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param control_standards_id: Required. The controls standards id.
-    :type control_standards_id: int
-    :param use_control_standards_id_as_repetition_character: Required. The value indicating whether
+    :ivar control_standards_id: Required. The controls standards id.
+    :vartype control_standards_id: int
+    :ivar use_control_standards_id_as_repetition_character: Required. The value indicating whether
      to use control standards id as repetition character.
-    :type use_control_standards_id_as_repetition_character: bool
-    :param sender_application_id: Required. The sender application id.
-    :type sender_application_id: str
-    :param receiver_application_id: Required. The receiver application id.
-    :type receiver_application_id: str
-    :param control_version_number: Required. The control version number.
-    :type control_version_number: str
-    :param interchange_control_number_lower_bound: Required. The interchange  control number lower
+    :vartype use_control_standards_id_as_repetition_character: bool
+    :ivar sender_application_id: Required. The sender application id.
+    :vartype sender_application_id: str
+    :ivar receiver_application_id: Required. The receiver application id.
+    :vartype receiver_application_id: str
+    :ivar control_version_number: Required. The control version number.
+    :vartype control_version_number: str
+    :ivar interchange_control_number_lower_bound: Required. The interchange  control number lower
      bound.
-    :type interchange_control_number_lower_bound: int
-    :param interchange_control_number_upper_bound: Required. The interchange  control number upper
+    :vartype interchange_control_number_lower_bound: int
+    :ivar interchange_control_number_upper_bound: Required. The interchange  control number upper
      bound.
-    :type interchange_control_number_upper_bound: int
-    :param rollover_interchange_control_number: Required. The value indicating whether to rollover
+    :vartype interchange_control_number_upper_bound: int
+    :ivar rollover_interchange_control_number: Required. The value indicating whether to rollover
      interchange control number.
-    :type rollover_interchange_control_number: bool
-    :param enable_default_group_headers: Required. The value indicating whether to enable default
+    :vartype rollover_interchange_control_number: bool
+    :ivar enable_default_group_headers: Required. The value indicating whether to enable default
      group headers.
-    :type enable_default_group_headers: bool
-    :param functional_group_id: The functional group id.
-    :type functional_group_id: str
-    :param group_control_number_lower_bound: Required. The group control number lower bound.
-    :type group_control_number_lower_bound: int
-    :param group_control_number_upper_bound: Required. The group control number upper bound.
-    :type group_control_number_upper_bound: int
-    :param rollover_group_control_number: Required. The value indicating whether to rollover group
+    :vartype enable_default_group_headers: bool
+    :ivar functional_group_id: The functional group id.
+    :vartype functional_group_id: str
+    :ivar group_control_number_lower_bound: Required. The group control number lower bound.
+    :vartype group_control_number_lower_bound: int
+    :ivar group_control_number_upper_bound: Required. The group control number upper bound.
+    :vartype group_control_number_upper_bound: int
+    :ivar rollover_group_control_number: Required. The value indicating whether to rollover group
      control number.
-    :type rollover_group_control_number: bool
-    :param group_header_agency_code: Required. The group header agency code.
-    :type group_header_agency_code: str
-    :param group_header_version: Required. The group header version.
-    :type group_header_version: str
-    :param transaction_set_control_number_lower_bound: Required. The transaction set control number
+    :vartype rollover_group_control_number: bool
+    :ivar group_header_agency_code: Required. The group header agency code.
+    :vartype group_header_agency_code: str
+    :ivar group_header_version: Required. The group header version.
+    :vartype group_header_version: str
+    :ivar transaction_set_control_number_lower_bound: Required. The transaction set control number
      lower bound.
-    :type transaction_set_control_number_lower_bound: int
-    :param transaction_set_control_number_upper_bound: Required. The transaction set control number
+    :vartype transaction_set_control_number_lower_bound: int
+    :ivar transaction_set_control_number_upper_bound: Required. The transaction set control number
      upper bound.
-    :type transaction_set_control_number_upper_bound: int
-    :param rollover_transaction_set_control_number: Required. The value indicating whether to
+    :vartype transaction_set_control_number_upper_bound: int
+    :ivar rollover_transaction_set_control_number: Required. The value indicating whether to
      rollover transaction set control number.
-    :type rollover_transaction_set_control_number: bool
-    :param transaction_set_control_number_prefix: The transaction set control number prefix.
-    :type transaction_set_control_number_prefix: str
-    :param transaction_set_control_number_suffix: The transaction set control number suffix.
-    :type transaction_set_control_number_suffix: str
-    :param overwrite_existing_transaction_set_control_number: Required. The value indicating
-     whether to overwrite existing transaction set control number.
-    :type overwrite_existing_transaction_set_control_number: bool
-    :param group_header_date_format: Required. The group header date format. Possible values
+    :vartype rollover_transaction_set_control_number: bool
+    :ivar transaction_set_control_number_prefix: The transaction set control number prefix.
+    :vartype transaction_set_control_number_prefix: str
+    :ivar transaction_set_control_number_suffix: The transaction set control number suffix.
+    :vartype transaction_set_control_number_suffix: str
+    :ivar overwrite_existing_transaction_set_control_number: Required. The value indicating whether
+     to overwrite existing transaction set control number.
+    :vartype overwrite_existing_transaction_set_control_number: bool
+    :ivar group_header_date_format: Required. The group header date format. Possible values
      include: "NotSpecified", "CCYYMMDD", "YYMMDD".
-    :type group_header_date_format: str or ~azure.mgmt.logic.models.X12DateFormat
-    :param group_header_time_format: Required. The group header time format. Possible values
+    :vartype group_header_date_format: str or ~azure.mgmt.logic.models.X12DateFormat
+    :ivar group_header_time_format: Required. The group header time format. Possible values
      include: "NotSpecified", "HHMM", "HHMMSS", "HHMMSSdd", "HHMMSSd".
-    :type group_header_time_format: str or ~azure.mgmt.logic.models.X12TimeFormat
-    :param usage_indicator: Required. The usage indicator. Possible values include: "NotSpecified",
+    :vartype group_header_time_format: str or ~azure.mgmt.logic.models.X12TimeFormat
+    :ivar usage_indicator: Required. The usage indicator. Possible values include: "NotSpecified",
      "Test", "Information", "Production".
-    :type usage_indicator: str or ~azure.mgmt.logic.models.UsageIndicator
+    :vartype usage_indicator: str or ~azure.mgmt.logic.models.UsageIndicator
     """
 
     _validation = {
@@ -8438,6 +10848,69 @@ class X12EnvelopeSettings(msrest.serialization.Model):
         transaction_set_control_number_suffix: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword control_standards_id: Required. The controls standards id.
+        :paramtype control_standards_id: int
+        :keyword use_control_standards_id_as_repetition_character: Required. The value indicating
+         whether to use control standards id as repetition character.
+        :paramtype use_control_standards_id_as_repetition_character: bool
+        :keyword sender_application_id: Required. The sender application id.
+        :paramtype sender_application_id: str
+        :keyword receiver_application_id: Required. The receiver application id.
+        :paramtype receiver_application_id: str
+        :keyword control_version_number: Required. The control version number.
+        :paramtype control_version_number: str
+        :keyword interchange_control_number_lower_bound: Required. The interchange  control number
+         lower bound.
+        :paramtype interchange_control_number_lower_bound: int
+        :keyword interchange_control_number_upper_bound: Required. The interchange  control number
+         upper bound.
+        :paramtype interchange_control_number_upper_bound: int
+        :keyword rollover_interchange_control_number: Required. The value indicating whether to
+         rollover interchange control number.
+        :paramtype rollover_interchange_control_number: bool
+        :keyword enable_default_group_headers: Required. The value indicating whether to enable default
+         group headers.
+        :paramtype enable_default_group_headers: bool
+        :keyword functional_group_id: The functional group id.
+        :paramtype functional_group_id: str
+        :keyword group_control_number_lower_bound: Required. The group control number lower bound.
+        :paramtype group_control_number_lower_bound: int
+        :keyword group_control_number_upper_bound: Required. The group control number upper bound.
+        :paramtype group_control_number_upper_bound: int
+        :keyword rollover_group_control_number: Required. The value indicating whether to rollover
+         group control number.
+        :paramtype rollover_group_control_number: bool
+        :keyword group_header_agency_code: Required. The group header agency code.
+        :paramtype group_header_agency_code: str
+        :keyword group_header_version: Required. The group header version.
+        :paramtype group_header_version: str
+        :keyword transaction_set_control_number_lower_bound: Required. The transaction set control
+         number lower bound.
+        :paramtype transaction_set_control_number_lower_bound: int
+        :keyword transaction_set_control_number_upper_bound: Required. The transaction set control
+         number upper bound.
+        :paramtype transaction_set_control_number_upper_bound: int
+        :keyword rollover_transaction_set_control_number: Required. The value indicating whether to
+         rollover transaction set control number.
+        :paramtype rollover_transaction_set_control_number: bool
+        :keyword transaction_set_control_number_prefix: The transaction set control number prefix.
+        :paramtype transaction_set_control_number_prefix: str
+        :keyword transaction_set_control_number_suffix: The transaction set control number suffix.
+        :paramtype transaction_set_control_number_suffix: str
+        :keyword overwrite_existing_transaction_set_control_number: Required. The value indicating
+         whether to overwrite existing transaction set control number.
+        :paramtype overwrite_existing_transaction_set_control_number: bool
+        :keyword group_header_date_format: Required. The group header date format. Possible values
+         include: "NotSpecified", "CCYYMMDD", "YYMMDD".
+        :paramtype group_header_date_format: str or ~azure.mgmt.logic.models.X12DateFormat
+        :keyword group_header_time_format: Required. The group header time format. Possible values
+         include: "NotSpecified", "HHMM", "HHMMSS", "HHMMSSdd", "HHMMSSd".
+        :paramtype group_header_time_format: str or ~azure.mgmt.logic.models.X12TimeFormat
+        :keyword usage_indicator: Required. The usage indicator. Possible values include:
+         "NotSpecified", "Test", "Information", "Production".
+        :paramtype usage_indicator: str or ~azure.mgmt.logic.models.UsageIndicator
+        """
         super(X12EnvelopeSettings, self).__init__(**kwargs)
         self.control_standards_id = control_standards_id
         self.use_control_standards_id_as_repetition_character = use_control_standards_id_as_repetition_character
@@ -8470,23 +10943,23 @@ class X12FramingSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param data_element_separator: Required. The data element separator.
-    :type data_element_separator: int
-    :param component_separator: Required. The component separator.
-    :type component_separator: int
-    :param replace_separators_in_payload: Required. The value indicating whether to replace
+    :ivar data_element_separator: Required. The data element separator.
+    :vartype data_element_separator: int
+    :ivar component_separator: Required. The component separator.
+    :vartype component_separator: int
+    :ivar replace_separators_in_payload: Required. The value indicating whether to replace
      separators in payload.
-    :type replace_separators_in_payload: bool
-    :param replace_character: Required. The replacement character.
-    :type replace_character: int
-    :param segment_terminator: Required. The segment terminator.
-    :type segment_terminator: int
-    :param character_set: Required. The X12 character set. Possible values include: "NotSpecified",
+    :vartype replace_separators_in_payload: bool
+    :ivar replace_character: Required. The replacement character.
+    :vartype replace_character: int
+    :ivar segment_terminator: Required. The segment terminator.
+    :vartype segment_terminator: int
+    :ivar character_set: Required. The X12 character set. Possible values include: "NotSpecified",
      "Basic", "Extended", "UTF8".
-    :type character_set: str or ~azure.mgmt.logic.models.X12CharacterSet
-    :param segment_terminator_suffix: Required. The segment terminator suffix. Possible values
+    :vartype character_set: str or ~azure.mgmt.logic.models.X12CharacterSet
+    :ivar segment_terminator_suffix: Required. The segment terminator suffix. Possible values
      include: "NotSpecified", "None", "CR", "LF", "CRLF".
-    :type segment_terminator_suffix: str or ~azure.mgmt.logic.models.SegmentTerminatorSuffix
+    :vartype segment_terminator_suffix: str or ~azure.mgmt.logic.models.SegmentTerminatorSuffix
     """
 
     _validation = {
@@ -8521,6 +10994,25 @@ class X12FramingSettings(msrest.serialization.Model):
         segment_terminator_suffix: Union[str, "SegmentTerminatorSuffix"],
         **kwargs
     ):
+        """
+        :keyword data_element_separator: Required. The data element separator.
+        :paramtype data_element_separator: int
+        :keyword component_separator: Required. The component separator.
+        :paramtype component_separator: int
+        :keyword replace_separators_in_payload: Required. The value indicating whether to replace
+         separators in payload.
+        :paramtype replace_separators_in_payload: bool
+        :keyword replace_character: Required. The replacement character.
+        :paramtype replace_character: int
+        :keyword segment_terminator: Required. The segment terminator.
+        :paramtype segment_terminator: int
+        :keyword character_set: Required. The X12 character set. Possible values include:
+         "NotSpecified", "Basic", "Extended", "UTF8".
+        :paramtype character_set: str or ~azure.mgmt.logic.models.X12CharacterSet
+        :keyword segment_terminator_suffix: Required. The segment terminator suffix. Possible values
+         include: "NotSpecified", "None", "CR", "LF", "CRLF".
+        :paramtype segment_terminator_suffix: str or ~azure.mgmt.logic.models.SegmentTerminatorSuffix
+        """
         super(X12FramingSettings, self).__init__(**kwargs)
         self.data_element_separator = data_element_separator
         self.component_separator = component_separator
@@ -8536,9 +11028,9 @@ class X12MessageFilter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param message_filter_type: Required. The message filter type. Possible values include:
+    :ivar message_filter_type: Required. The message filter type. Possible values include:
      "NotSpecified", "Include", "Exclude".
-    :type message_filter_type: str or ~azure.mgmt.logic.models.MessageFilterType
+    :vartype message_filter_type: str or ~azure.mgmt.logic.models.MessageFilterType
     """
 
     _validation = {
@@ -8555,6 +11047,11 @@ class X12MessageFilter(msrest.serialization.Model):
         message_filter_type: Union[str, "MessageFilterType"],
         **kwargs
     ):
+        """
+        :keyword message_filter_type: Required. The message filter type. Possible values include:
+         "NotSpecified", "Include", "Exclude".
+        :paramtype message_filter_type: str or ~azure.mgmt.logic.models.MessageFilterType
+        """
         super(X12MessageFilter, self).__init__(**kwargs)
         self.message_filter_type = message_filter_type
 
@@ -8564,8 +11061,8 @@ class X12MessageIdentifier(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param message_id: Required. The message id.
-    :type message_id: str
+    :ivar message_id: Required. The message id.
+    :vartype message_id: str
     """
 
     _validation = {
@@ -8582,6 +11079,10 @@ class X12MessageIdentifier(msrest.serialization.Model):
         message_id: str,
         **kwargs
     ):
+        """
+        :keyword message_id: Required. The message id.
+        :paramtype message_id: str
+        """
         super(X12MessageIdentifier, self).__init__(**kwargs)
         self.message_id = message_id
 
@@ -8591,12 +11092,12 @@ class X12OneWayAgreement(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sender_business_identity: Required. The sender business identity.
-    :type sender_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
-    :param receiver_business_identity: Required. The receiver business identity.
-    :type receiver_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
-    :param protocol_settings: Required. The X12 protocol settings.
-    :type protocol_settings: ~azure.mgmt.logic.models.X12ProtocolSettings
+    :ivar sender_business_identity: Required. The sender business identity.
+    :vartype sender_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
+    :ivar receiver_business_identity: Required. The receiver business identity.
+    :vartype receiver_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
+    :ivar protocol_settings: Required. The X12 protocol settings.
+    :vartype protocol_settings: ~azure.mgmt.logic.models.X12ProtocolSettings
     """
 
     _validation = {
@@ -8619,6 +11120,14 @@ class X12OneWayAgreement(msrest.serialization.Model):
         protocol_settings: "X12ProtocolSettings",
         **kwargs
     ):
+        """
+        :keyword sender_business_identity: Required. The sender business identity.
+        :paramtype sender_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
+        :keyword receiver_business_identity: Required. The receiver business identity.
+        :paramtype receiver_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
+        :keyword protocol_settings: Required. The X12 protocol settings.
+        :paramtype protocol_settings: ~azure.mgmt.logic.models.X12ProtocolSettings
+        """
         super(X12OneWayAgreement, self).__init__(**kwargs)
         self.sender_business_identity = sender_business_identity
         self.receiver_business_identity = receiver_business_identity
@@ -8630,22 +11139,22 @@ class X12ProcessingSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param mask_security_info: Required. The value indicating whether to mask security information.
-    :type mask_security_info: bool
-    :param convert_implied_decimal: Required. The value indicating whether to convert numerical
-     type to implied decimal.
-    :type convert_implied_decimal: bool
-    :param preserve_interchange: Required. The value indicating whether to preserve interchange.
-    :type preserve_interchange: bool
-    :param suspend_interchange_on_error: Required. The value indicating whether to suspend
+    :ivar mask_security_info: Required. The value indicating whether to mask security information.
+    :vartype mask_security_info: bool
+    :ivar convert_implied_decimal: Required. The value indicating whether to convert numerical type
+     to implied decimal.
+    :vartype convert_implied_decimal: bool
+    :ivar preserve_interchange: Required. The value indicating whether to preserve interchange.
+    :vartype preserve_interchange: bool
+    :ivar suspend_interchange_on_error: Required. The value indicating whether to suspend
      interchange on error.
-    :type suspend_interchange_on_error: bool
-    :param create_empty_xml_tags_for_trailing_separators: Required. The value indicating whether to
+    :vartype suspend_interchange_on_error: bool
+    :ivar create_empty_xml_tags_for_trailing_separators: Required. The value indicating whether to
      create empty xml tags for trailing separators.
-    :type create_empty_xml_tags_for_trailing_separators: bool
-    :param use_dot_as_decimal_separator: Required. The value indicating whether to use dot as
+    :vartype create_empty_xml_tags_for_trailing_separators: bool
+    :ivar use_dot_as_decimal_separator: Required. The value indicating whether to use dot as
      decimal separator.
-    :type use_dot_as_decimal_separator: bool
+    :vartype use_dot_as_decimal_separator: bool
     """
 
     _validation = {
@@ -8677,6 +11186,25 @@ class X12ProcessingSettings(msrest.serialization.Model):
         use_dot_as_decimal_separator: bool,
         **kwargs
     ):
+        """
+        :keyword mask_security_info: Required. The value indicating whether to mask security
+         information.
+        :paramtype mask_security_info: bool
+        :keyword convert_implied_decimal: Required. The value indicating whether to convert numerical
+         type to implied decimal.
+        :paramtype convert_implied_decimal: bool
+        :keyword preserve_interchange: Required. The value indicating whether to preserve interchange.
+        :paramtype preserve_interchange: bool
+        :keyword suspend_interchange_on_error: Required. The value indicating whether to suspend
+         interchange on error.
+        :paramtype suspend_interchange_on_error: bool
+        :keyword create_empty_xml_tags_for_trailing_separators: Required. The value indicating whether
+         to create empty xml tags for trailing separators.
+        :paramtype create_empty_xml_tags_for_trailing_separators: bool
+        :keyword use_dot_as_decimal_separator: Required. The value indicating whether to use dot as
+         decimal separator.
+        :paramtype use_dot_as_decimal_separator: bool
+        """
         super(X12ProcessingSettings, self).__init__(**kwargs)
         self.mask_security_info = mask_security_info
         self.convert_implied_decimal = convert_implied_decimal
@@ -8691,30 +11219,30 @@ class X12ProtocolSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param validation_settings: Required. The X12 validation settings.
-    :type validation_settings: ~azure.mgmt.logic.models.X12ValidationSettings
-    :param framing_settings: Required. The X12 framing settings.
-    :type framing_settings: ~azure.mgmt.logic.models.X12FramingSettings
-    :param envelope_settings: Required. The X12 envelope settings.
-    :type envelope_settings: ~azure.mgmt.logic.models.X12EnvelopeSettings
-    :param acknowledgement_settings: Required. The X12 acknowledgment settings.
-    :type acknowledgement_settings: ~azure.mgmt.logic.models.X12AcknowledgementSettings
-    :param message_filter: Required. The X12 message filter.
-    :type message_filter: ~azure.mgmt.logic.models.X12MessageFilter
-    :param security_settings: Required. The X12 security settings.
-    :type security_settings: ~azure.mgmt.logic.models.X12SecuritySettings
-    :param processing_settings: Required. The X12 processing settings.
-    :type processing_settings: ~azure.mgmt.logic.models.X12ProcessingSettings
-    :param envelope_overrides: The X12 envelope override settings.
-    :type envelope_overrides: list[~azure.mgmt.logic.models.X12EnvelopeOverride]
-    :param validation_overrides: The X12 validation override settings.
-    :type validation_overrides: list[~azure.mgmt.logic.models.X12ValidationOverride]
-    :param message_filter_list: The X12 message filter list.
-    :type message_filter_list: list[~azure.mgmt.logic.models.X12MessageIdentifier]
-    :param schema_references: Required. The X12 schema references.
-    :type schema_references: list[~azure.mgmt.logic.models.X12SchemaReference]
-    :param x12_delimiter_overrides: The X12 delimiter override settings.
-    :type x12_delimiter_overrides: list[~azure.mgmt.logic.models.X12DelimiterOverrides]
+    :ivar validation_settings: Required. The X12 validation settings.
+    :vartype validation_settings: ~azure.mgmt.logic.models.X12ValidationSettings
+    :ivar framing_settings: Required. The X12 framing settings.
+    :vartype framing_settings: ~azure.mgmt.logic.models.X12FramingSettings
+    :ivar envelope_settings: Required. The X12 envelope settings.
+    :vartype envelope_settings: ~azure.mgmt.logic.models.X12EnvelopeSettings
+    :ivar acknowledgement_settings: Required. The X12 acknowledgment settings.
+    :vartype acknowledgement_settings: ~azure.mgmt.logic.models.X12AcknowledgementSettings
+    :ivar message_filter: Required. The X12 message filter.
+    :vartype message_filter: ~azure.mgmt.logic.models.X12MessageFilter
+    :ivar security_settings: Required. The X12 security settings.
+    :vartype security_settings: ~azure.mgmt.logic.models.X12SecuritySettings
+    :ivar processing_settings: Required. The X12 processing settings.
+    :vartype processing_settings: ~azure.mgmt.logic.models.X12ProcessingSettings
+    :ivar envelope_overrides: The X12 envelope override settings.
+    :vartype envelope_overrides: list[~azure.mgmt.logic.models.X12EnvelopeOverride]
+    :ivar validation_overrides: The X12 validation override settings.
+    :vartype validation_overrides: list[~azure.mgmt.logic.models.X12ValidationOverride]
+    :ivar message_filter_list: The X12 message filter list.
+    :vartype message_filter_list: list[~azure.mgmt.logic.models.X12MessageIdentifier]
+    :ivar schema_references: Required. The X12 schema references.
+    :vartype schema_references: list[~azure.mgmt.logic.models.X12SchemaReference]
+    :ivar x12_delimiter_overrides: The X12 delimiter override settings.
+    :vartype x12_delimiter_overrides: list[~azure.mgmt.logic.models.X12DelimiterOverrides]
     """
 
     _validation = {
@@ -8760,6 +11288,32 @@ class X12ProtocolSettings(msrest.serialization.Model):
         x12_delimiter_overrides: Optional[List["X12DelimiterOverrides"]] = None,
         **kwargs
     ):
+        """
+        :keyword validation_settings: Required. The X12 validation settings.
+        :paramtype validation_settings: ~azure.mgmt.logic.models.X12ValidationSettings
+        :keyword framing_settings: Required. The X12 framing settings.
+        :paramtype framing_settings: ~azure.mgmt.logic.models.X12FramingSettings
+        :keyword envelope_settings: Required. The X12 envelope settings.
+        :paramtype envelope_settings: ~azure.mgmt.logic.models.X12EnvelopeSettings
+        :keyword acknowledgement_settings: Required. The X12 acknowledgment settings.
+        :paramtype acknowledgement_settings: ~azure.mgmt.logic.models.X12AcknowledgementSettings
+        :keyword message_filter: Required. The X12 message filter.
+        :paramtype message_filter: ~azure.mgmt.logic.models.X12MessageFilter
+        :keyword security_settings: Required. The X12 security settings.
+        :paramtype security_settings: ~azure.mgmt.logic.models.X12SecuritySettings
+        :keyword processing_settings: Required. The X12 processing settings.
+        :paramtype processing_settings: ~azure.mgmt.logic.models.X12ProcessingSettings
+        :keyword envelope_overrides: The X12 envelope override settings.
+        :paramtype envelope_overrides: list[~azure.mgmt.logic.models.X12EnvelopeOverride]
+        :keyword validation_overrides: The X12 validation override settings.
+        :paramtype validation_overrides: list[~azure.mgmt.logic.models.X12ValidationOverride]
+        :keyword message_filter_list: The X12 message filter list.
+        :paramtype message_filter_list: list[~azure.mgmt.logic.models.X12MessageIdentifier]
+        :keyword schema_references: Required. The X12 schema references.
+        :paramtype schema_references: list[~azure.mgmt.logic.models.X12SchemaReference]
+        :keyword x12_delimiter_overrides: The X12 delimiter override settings.
+        :paramtype x12_delimiter_overrides: list[~azure.mgmt.logic.models.X12DelimiterOverrides]
+        """
         super(X12ProtocolSettings, self).__init__(**kwargs)
         self.validation_settings = validation_settings
         self.framing_settings = framing_settings
@@ -8780,14 +11334,14 @@ class X12SchemaReference(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param message_id: Required. The message id.
-    :type message_id: str
-    :param sender_application_id: The sender application id.
-    :type sender_application_id: str
-    :param schema_version: Required. The schema version.
-    :type schema_version: str
-    :param schema_name: Required. The schema name.
-    :type schema_name: str
+    :ivar message_id: Required. The message id.
+    :vartype message_id: str
+    :ivar sender_application_id: The sender application id.
+    :vartype sender_application_id: str
+    :ivar schema_version: Required. The schema version.
+    :vartype schema_version: str
+    :ivar schema_name: Required. The schema name.
+    :vartype schema_name: str
     """
 
     _validation = {
@@ -8812,6 +11366,16 @@ class X12SchemaReference(msrest.serialization.Model):
         sender_application_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword message_id: Required. The message id.
+        :paramtype message_id: str
+        :keyword sender_application_id: The sender application id.
+        :paramtype sender_application_id: str
+        :keyword schema_version: Required. The schema version.
+        :paramtype schema_version: str
+        :keyword schema_name: Required. The schema name.
+        :paramtype schema_name: str
+        """
         super(X12SchemaReference, self).__init__(**kwargs)
         self.message_id = message_id
         self.sender_application_id = sender_application_id
@@ -8824,14 +11388,14 @@ class X12SecuritySettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param authorization_qualifier: Required. The authorization qualifier.
-    :type authorization_qualifier: str
-    :param authorization_value: The authorization value.
-    :type authorization_value: str
-    :param security_qualifier: Required. The security qualifier.
-    :type security_qualifier: str
-    :param password_value: The password value.
-    :type password_value: str
+    :ivar authorization_qualifier: Required. The authorization qualifier.
+    :vartype authorization_qualifier: str
+    :ivar authorization_value: The authorization value.
+    :vartype authorization_value: str
+    :ivar security_qualifier: Required. The security qualifier.
+    :vartype security_qualifier: str
+    :ivar password_value: The password value.
+    :vartype password_value: str
     """
 
     _validation = {
@@ -8855,6 +11419,16 @@ class X12SecuritySettings(msrest.serialization.Model):
         password_value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword authorization_qualifier: Required. The authorization qualifier.
+        :paramtype authorization_qualifier: str
+        :keyword authorization_value: The authorization value.
+        :paramtype authorization_value: str
+        :keyword security_qualifier: Required. The security qualifier.
+        :paramtype security_qualifier: str
+        :keyword password_value: The password value.
+        :paramtype password_value: str
+        """
         super(X12SecuritySettings, self).__init__(**kwargs)
         self.authorization_qualifier = authorization_qualifier
         self.authorization_value = authorization_value
@@ -8867,24 +11441,23 @@ class X12ValidationOverride(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param message_id: Required. The message id on which the validation settings has to be applied.
-    :type message_id: str
-    :param validate_edi_types: Required. The value indicating whether to validate EDI types.
-    :type validate_edi_types: bool
-    :param validate_xsd_types: Required. The value indicating whether to validate XSD types.
-    :type validate_xsd_types: bool
-    :param allow_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
+    :ivar message_id: Required. The message id on which the validation settings has to be applied.
+    :vartype message_id: str
+    :ivar validate_edi_types: Required. The value indicating whether to validate EDI types.
+    :vartype validate_edi_types: bool
+    :ivar validate_xsd_types: Required. The value indicating whether to validate XSD types.
+    :vartype validate_xsd_types: bool
+    :ivar allow_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
      allow leading and trailing spaces and zeroes.
-    :type allow_leading_and_trailing_spaces_and_zeroes: bool
-    :param validate_character_set: Required. The value indicating whether to validate character
-     Set.
-    :type validate_character_set: bool
-    :param trim_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
+    :vartype allow_leading_and_trailing_spaces_and_zeroes: bool
+    :ivar validate_character_set: Required. The value indicating whether to validate character Set.
+    :vartype validate_character_set: bool
+    :ivar trim_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
      trim leading and trailing spaces and zeroes.
-    :type trim_leading_and_trailing_spaces_and_zeroes: bool
-    :param trailing_separator_policy: Required. The trailing separator policy. Possible values
+    :vartype trim_leading_and_trailing_spaces_and_zeroes: bool
+    :ivar trailing_separator_policy: Required. The trailing separator policy. Possible values
      include: "NotSpecified", "NotAllowed", "Optional", "Mandatory".
-    :type trailing_separator_policy: str or ~azure.mgmt.logic.models.TrailingSeparatorPolicy
+    :vartype trailing_separator_policy: str or ~azure.mgmt.logic.models.TrailingSeparatorPolicy
     """
 
     _validation = {
@@ -8919,6 +11492,27 @@ class X12ValidationOverride(msrest.serialization.Model):
         trailing_separator_policy: Union[str, "TrailingSeparatorPolicy"],
         **kwargs
     ):
+        """
+        :keyword message_id: Required. The message id on which the validation settings has to be
+         applied.
+        :paramtype message_id: str
+        :keyword validate_edi_types: Required. The value indicating whether to validate EDI types.
+        :paramtype validate_edi_types: bool
+        :keyword validate_xsd_types: Required. The value indicating whether to validate XSD types.
+        :paramtype validate_xsd_types: bool
+        :keyword allow_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether
+         to allow leading and trailing spaces and zeroes.
+        :paramtype allow_leading_and_trailing_spaces_and_zeroes: bool
+        :keyword validate_character_set: Required. The value indicating whether to validate character
+         Set.
+        :paramtype validate_character_set: bool
+        :keyword trim_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
+         trim leading and trailing spaces and zeroes.
+        :paramtype trim_leading_and_trailing_spaces_and_zeroes: bool
+        :keyword trailing_separator_policy: Required. The trailing separator policy. Possible values
+         include: "NotSpecified", "NotAllowed", "Optional", "Mandatory".
+        :paramtype trailing_separator_policy: str or ~azure.mgmt.logic.models.TrailingSeparatorPolicy
+        """
         super(X12ValidationOverride, self).__init__(**kwargs)
         self.message_id = message_id
         self.validate_edi_types = validate_edi_types
@@ -8934,36 +11528,36 @@ class X12ValidationSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param validate_character_set: Required. The value indicating whether to validate character set
+    :ivar validate_character_set: Required. The value indicating whether to validate character set
      in the message.
-    :type validate_character_set: bool
-    :param check_duplicate_interchange_control_number: Required. The value indicating whether to
+    :vartype validate_character_set: bool
+    :ivar check_duplicate_interchange_control_number: Required. The value indicating whether to
      check for duplicate interchange control number.
-    :type check_duplicate_interchange_control_number: bool
-    :param interchange_control_number_validity_days: Required. The validity period of interchange
+    :vartype check_duplicate_interchange_control_number: bool
+    :ivar interchange_control_number_validity_days: Required. The validity period of interchange
      control number.
-    :type interchange_control_number_validity_days: int
-    :param check_duplicate_group_control_number: Required. The value indicating whether to check
-     for duplicate group control number.
-    :type check_duplicate_group_control_number: bool
-    :param check_duplicate_transaction_set_control_number: Required. The value indicating whether
-     to check for duplicate transaction set control number.
-    :type check_duplicate_transaction_set_control_number: bool
-    :param validate_edi_types: Required. The value indicating whether to Whether to validate EDI
+    :vartype interchange_control_number_validity_days: int
+    :ivar check_duplicate_group_control_number: Required. The value indicating whether to check for
+     duplicate group control number.
+    :vartype check_duplicate_group_control_number: bool
+    :ivar check_duplicate_transaction_set_control_number: Required. The value indicating whether to
+     check for duplicate transaction set control number.
+    :vartype check_duplicate_transaction_set_control_number: bool
+    :ivar validate_edi_types: Required. The value indicating whether to Whether to validate EDI
      types.
-    :type validate_edi_types: bool
-    :param validate_xsd_types: Required. The value indicating whether to Whether to validate XSD
+    :vartype validate_edi_types: bool
+    :ivar validate_xsd_types: Required. The value indicating whether to Whether to validate XSD
      types.
-    :type validate_xsd_types: bool
-    :param allow_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
+    :vartype validate_xsd_types: bool
+    :ivar allow_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
      allow leading and trailing spaces and zeroes.
-    :type allow_leading_and_trailing_spaces_and_zeroes: bool
-    :param trim_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
+    :vartype allow_leading_and_trailing_spaces_and_zeroes: bool
+    :ivar trim_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
      trim leading and trailing spaces and zeroes.
-    :type trim_leading_and_trailing_spaces_and_zeroes: bool
-    :param trailing_separator_policy: Required. The trailing separator policy. Possible values
+    :vartype trim_leading_and_trailing_spaces_and_zeroes: bool
+    :ivar trailing_separator_policy: Required. The trailing separator policy. Possible values
      include: "NotSpecified", "NotAllowed", "Optional", "Mandatory".
-    :type trailing_separator_policy: str or ~azure.mgmt.logic.models.TrailingSeparatorPolicy
+    :vartype trailing_separator_policy: str or ~azure.mgmt.logic.models.TrailingSeparatorPolicy
     """
 
     _validation = {
@@ -9007,6 +11601,38 @@ class X12ValidationSettings(msrest.serialization.Model):
         trailing_separator_policy: Union[str, "TrailingSeparatorPolicy"],
         **kwargs
     ):
+        """
+        :keyword validate_character_set: Required. The value indicating whether to validate character
+         set in the message.
+        :paramtype validate_character_set: bool
+        :keyword check_duplicate_interchange_control_number: Required. The value indicating whether to
+         check for duplicate interchange control number.
+        :paramtype check_duplicate_interchange_control_number: bool
+        :keyword interchange_control_number_validity_days: Required. The validity period of interchange
+         control number.
+        :paramtype interchange_control_number_validity_days: int
+        :keyword check_duplicate_group_control_number: Required. The value indicating whether to check
+         for duplicate group control number.
+        :paramtype check_duplicate_group_control_number: bool
+        :keyword check_duplicate_transaction_set_control_number: Required. The value indicating whether
+         to check for duplicate transaction set control number.
+        :paramtype check_duplicate_transaction_set_control_number: bool
+        :keyword validate_edi_types: Required. The value indicating whether to Whether to validate EDI
+         types.
+        :paramtype validate_edi_types: bool
+        :keyword validate_xsd_types: Required. The value indicating whether to Whether to validate XSD
+         types.
+        :paramtype validate_xsd_types: bool
+        :keyword allow_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether
+         to allow leading and trailing spaces and zeroes.
+        :paramtype allow_leading_and_trailing_spaces_and_zeroes: bool
+        :keyword trim_leading_and_trailing_spaces_and_zeroes: Required. The value indicating whether to
+         trim leading and trailing spaces and zeroes.
+        :paramtype trim_leading_and_trailing_spaces_and_zeroes: bool
+        :keyword trailing_separator_policy: Required. The trailing separator policy. Possible values
+         include: "NotSpecified", "NotAllowed", "Optional", "Mandatory".
+        :paramtype trailing_separator_policy: str or ~azure.mgmt.logic.models.TrailingSeparatorPolicy
+        """
         super(X12ValidationSettings, self).__init__(**kwargs)
         self.validate_character_set = validate_character_set
         self.check_duplicate_interchange_control_number = check_duplicate_interchange_control_number

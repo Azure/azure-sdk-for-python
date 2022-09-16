@@ -1,0 +1,7 @@
+azure-identity
+python-dotenv==0.15.0
+ghapi==0.1.19
+packaging==21.3
+pytest==6.2.5
+azure-storage-blob==12.9.0
+fastcore==1.3.25

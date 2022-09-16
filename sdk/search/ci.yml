@@ -27,6 +27,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: search
+    TestProxy: true
     Artifacts:
     - name: azure-search-documents
       safeName: azuresearchdocuments

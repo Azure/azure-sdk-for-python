@@ -1,0 +1,11 @@
+channels:
+  - defaults
+  - anaconda
+  - conda-forge
+dependencies:
+  - python=3.6
+  - scikit-learn
+  - pip
+  - pip:
+    - mlflow
+    - azureml-mlflow

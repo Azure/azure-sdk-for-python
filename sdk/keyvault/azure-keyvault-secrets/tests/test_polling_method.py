@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import pytest
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.keyvault.secrets._shared._polling import DeleteRecoverPollingMethod
-import pytest
 
 from _shared.helpers import mock, mock_response
 

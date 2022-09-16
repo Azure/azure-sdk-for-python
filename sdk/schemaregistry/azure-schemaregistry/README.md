@@ -8,7 +8,7 @@ schema identifiers rather than full schemas.
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended on 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
@@ -23,8 +23,8 @@ pip install azure-schemaregistry
 ### Prerequisites:
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
-* [Azure Schema Registry][schemaregistry_service]
-* Python 2.7, 3.6 or later - [Install Python][python]
+* [Azure Schema Registry][schemaregistry_service] - [Here is the quickstart guide][quickstart_guide] to create a Schema Registry group using the Azure portal.
+* Python 3.7 or later - [Install Python][python]
 
 ### Authenticate the client
 
@@ -39,7 +39,7 @@ Interaction with Schema Registry starts with an instance of SchemaRegistryClient
 pip install azure-identity
 ```
 
-* Additionally, to use the async API supported on Python 3.6+, you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/):
+* Additionally, to use the async API,  you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/):
 
 ```Bash
 pip install aiohttp
@@ -71,6 +71,7 @@ The following sections provide several code snippets covering some of the most c
 
 - [Register a schema](#register-a-schema)
 - [Get the schema by id](#get-the-schema-by-id)
+- [Get the schema by version](#get-the-schema-by-version)
 - [Get the id of a schema](#get-the-id-of-a-schema)
 
 ### Register a schema
@@ -123,6 +124,29 @@ schema_id = 'your-schema-id'
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=fully_qualified_namespace, credential=token_credential)
 with schema_registry_client:
     schema = schema_registry_client.get_schema(schema_id)
+    definition = schema.definition
+    properties = schema.properties
+```
+
+### Get the schema by version
+
+Get the schema definition and its properties by schema version.
+
+```python
+import os
+
+from azure.identity import DefaultAzureCredential
+from azure.schemaregistry import SchemaRegistryClient
+
+token_credential = DefaultAzureCredential()
+fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
+group_name = os.environ["SCHEMAREGISTRY_GROUP"]
+name = "your-schema-name"
+version = int("<your schema version>")
+
+schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=fully_qualified_namespace, credential=token_credential)
+with schema_registry_client:
+    schema = schema_registry_client.get_schema_by_version(group_name, name, version)
     definition = schema.definition
     properties = schema.properties
 ```
@@ -236,3 +260,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [schemaregistry_avroserializer_pypi]: https://pypi.org/project/azure-schemaregistry-avroserializer/
 [token_credential_interface]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core/azure/core/credentials.py
 [pypi_azure_identity]: https://pypi.org/project/azure-identity/
+[quickstart_guide]: https://docs.microsoft.com/azure/event-hubs/create-schema-registry

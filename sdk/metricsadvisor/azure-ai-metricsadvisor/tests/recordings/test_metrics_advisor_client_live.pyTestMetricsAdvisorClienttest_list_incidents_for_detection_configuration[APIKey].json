@@ -1,0 +1,1904 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/metrics_advisor_anomaly_detection_configuration_id/incidents/query",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "80",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "ba8d4352-5e0c-11ec-b8e9-6245b51668de"
+      },
+      "RequestBody": "{\u0022startTime\u0022: \u00222021-01-01T00:00:00.000Z\u0022, \u0022endTime\u0022: \u00222021-09-09T00:00:00.000Z\u0022}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "4279e941-8c3f-4736-b559-5d2c52f097c8",
+        "Content-Length": "37020",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:08:50 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "303",
+        "X-Request-ID": "4279e941-8c3f-4736-b559-5d2c52f097c8"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "incidentId": "985f299d2e86f16ac43fb8b742b23ca3-17bc2b44800",
+            "startTime": "2021-09-06T00:00:00Z",
+            "lastTime": "2021-09-08T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Karachi",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "High",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 36057885.8,
+              "expectedValueOfRootNode": 33702160.160400994
+            }
+          },
+          {
+            "incidentId": "aa9caa4df53ef3f10504cea6ed8f801b-17bc2b44800",
+            "startTime": "2021-09-07T00:00:00Z",
+            "lastTime": "2021-09-08T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "__SUM__",
+                "category": "Office Products"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 2143836.1999999993,
+              "expectedValueOfRootNode": 2113684.8813570985
+            }
+          },
+          {
+            "incidentId": "377fa66163e201c8b1e2f2c2cdd32f07-17bc2b44800",
+            "startTime": "2021-09-06T00:00:00Z",
+            "lastTime": "2021-09-08T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "__SUM__",
+                "category": "Handmade"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 5868974.6,
+              "expectedValueOfRootNode": 5762104.088142085
+            }
+          },
+          {
+            "incidentId": "58c4e3059c1a0c50d45c8a3850158181-17bc2b44800",
+            "startTime": "2021-09-06T00:00:00Z",
+            "lastTime": "2021-09-08T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "New York",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 2084351.0,
+              "expectedValueOfRootNode": 1924520.700525785
+            }
+          },
+          {
+            "incidentId": "7b7337a62b553fba3a4626251513b375-17bc2b44800",
+            "startTime": "2021-09-06T00:00:00Z",
+            "lastTime": "2021-09-08T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Seoul",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 3969258.0,
+              "expectedValueOfRootNode": 3888388.6792332586
+            }
+          },
+          {
+            "incidentId": "2fb31955e9f3971289bece5b50832131-17bc2b44800",
+            "startTime": "2021-09-04T00:00:00Z",
+            "lastTime": "2021-09-08T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Seoul",
+                "category": "Shoes Handbags \u0026 Sunglasses"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 3679755.4,
+              "expectedValueOfRootNode": 3594199.9173268327
+            }
+          },
+          {
+            "incidentId": "0684b64dd3baf2773a87b1b84ba9b699-17bc2b44800",
+            "startTime": "2021-09-04T00:00:00Z",
+            "lastTime": "2021-09-08T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Seoul",
+                "category": "Office Products"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 15420.0,
+              "expectedValueOfRootNode": 14904.236708889845
+            }
+          },
+          {
+            "incidentId": "9eacfa65b7c794522d388fcf5bf0a463-17bc2b44800",
+            "startTime": "2021-09-08T00:00:00Z",
+            "lastTime": "2021-09-08T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "__SUM__",
+                "category": "Electronics (Consumer)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 128.0,
+              "expectedValueOfRootNode": 53.45463352726066
+            }
+          },
+          {
+            "incidentId": "30612c95b4c216ef418956c5c6162691-17bc2b44800",
+            "startTime": "2021-09-07T00:00:00Z",
+            "lastTime": "2021-09-08T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Tianjin",
+                "category": "Home \u0026 Garden"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 18646.0,
+              "expectedValueOfRootNode": 18461.933031277986
+            }
+          },
+          {
+            "incidentId": "b4bc0813b4340c06548ee57f52a9d067-17bc2b44800",
+            "startTime": "2021-09-08T00:00:00Z",
+            "lastTime": "2021-09-08T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Mumbai",
+                "category": "Grocery \u0026 Gourmet Food"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 2.4,
+              "expectedValueOfRootNode": 1.5730411205132784
+            }
+          },
+          {
+            "incidentId": "dbfc2e14b224a82b5e8661d01d1d5d18-17bc2b44800",
+            "startTime": "2021-09-08T00:00:00Z",
+            "lastTime": "2021-09-08T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Delhi",
+                "category": "Grocery \u0026 Gourmet Food"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 1.2,
+              "expectedValueOfRootNode": 0.7066551751756711
+            }
+          },
+          {
+            "incidentId": "4ec127166abf8387b2874bae49734ab1-metrics_advisor_alert_id",
+            "startTime": "2021-09-06T00:00:00Z",
+            "lastTime": "2021-09-07T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "__SUM__",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "High",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 65120708.60000002,
+              "expectedValueOfRootNode": 60928226.58873364
+            }
+          },
+          {
+            "incidentId": "f29948e6e5d53d0876775e107f8df0fb-metrics_advisor_alert_id",
+            "startTime": "2021-09-04T00:00:00Z",
+            "lastTime": "2021-09-07T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Karachi",
+                "category": "Home \u0026 Garden"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 915052.0,
+              "expectedValueOfRootNode": 860381.6543449762
+            }
+          },
+          {
+            "incidentId": "8342ef5a1e9eeead55bc5be63b947352-metrics_advisor_alert_id",
+            "startTime": "2021-09-05T00:00:00Z",
+            "lastTime": "2021-09-07T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "New York",
+                "category": "Home \u0026 Garden"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 50246.6,
+              "expectedValueOfRootNode": 47199.46740307129
+            }
+          },
+          {
+            "incidentId": "73a5c169c7923b67bcdf86a515382b55-metrics_advisor_alert_id",
+            "startTime": "2021-09-05T00:00:00Z",
+            "lastTime": "2021-09-07T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Seoul",
+                "category": "Home \u0026 Garden"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 15958.6,
+              "expectedValueOfRootNode": 14801.412700077344
+            }
+          },
+          {
+            "incidentId": "efe6bdf61f01a37d8ddbb133afde0756-metrics_advisor_alert_id",
+            "startTime": "2021-09-07T00:00:00Z",
+            "lastTime": "2021-09-07T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Istanbul",
+                "category": "Home \u0026 Garden"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 10715.2,
+              "expectedValueOfRootNode": 9806.569582296583
+            }
+          },
+          {
+            "incidentId": "metrics_advisor_incident_id",
+            "startTime": "2021-09-04T00:00:00Z",
+            "lastTime": "2021-09-06T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Beijing",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 3772430.6,
+              "expectedValueOfRootNode": 3660658.4496160294
+            }
+          },
+          {
+            "incidentId": "4870d7d23fff4463f1e55f48cbcedc37-17bb8679000",
+            "startTime": "2021-08-31T00:00:00Z",
+            "lastTime": "2021-09-06T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Tianjin",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 1514682.7999999998,
+              "expectedValueOfRootNode": 1466595.985419273
+            }
+          },
+          {
+            "incidentId": "ea5d7ff836d2de3f776fa6ce60e26241-17bb8679000",
+            "startTime": "2021-08-31T00:00:00Z",
+            "lastTime": "2021-09-06T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Beijing",
+                "category": "Handmade"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 286810.2,
+              "expectedValueOfRootNode": 266428.50153999095
+            }
+          },
+          {
+            "incidentId": "0701219234e0357d270798d1d573d305-17bb3413400",
+            "startTime": "2021-09-04T00:00:00Z",
+            "lastTime": "2021-09-05T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Miami",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 1021213.2,
+              "expectedValueOfRootNode": 1268518.416997127
+            }
+          },
+          {
+            "incidentId": "51fe3ce1759d3a53dfa8d851233573ea-17bb3413400",
+            "startTime": "2021-09-04T00:00:00Z",
+            "lastTime": "2021-09-05T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Istanbul",
+                "category": "Shoes Handbags \u0026 Sunglasses"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 555486.2,
+              "expectedValueOfRootNode": 600511.9460640918
+            }
+          },
+          {
+            "incidentId": "68bf9f9d1b29b61832ee0925a38a24d0-17bb3413400",
+            "startTime": "2021-09-05T00:00:00Z",
+            "lastTime": "2021-09-05T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Mumbai",
+                "category": "Office Products"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 99953.0,
+              "expectedValueOfRootNode": 91291.61516647617
+            }
+          },
+          {
+            "incidentId": "76b5393b7175fbfd0754864b8aa3b761-17bb3413400",
+            "startTime": "2021-09-04T00:00:00Z",
+            "lastTime": "2021-09-05T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Istanbul",
+                "category": "Handmade"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 57432.4,
+              "expectedValueOfRootNode": 74639.80632230906
+            }
+          },
+          {
+            "incidentId": "c48032b91ed223d84086da0871a634fc-17bae1ad800",
+            "startTime": "2021-09-04T00:00:00Z",
+            "lastTime": "2021-09-04T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Istanbul",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 525745.2,
+              "expectedValueOfRootNode": 609516.4172555495
+            }
+          },
+          {
+            "incidentId": "c3f057e3dee02b66bdf7b5e8a4c4d952-17bae1ad800",
+            "startTime": "2021-08-28T00:00:00Z",
+            "lastTime": "2021-09-04T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Tianjin",
+                "category": "Handmade"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 65962.8,
+              "expectedValueOfRootNode": 70293.10788225455
+            }
+          },
+          {
+            "incidentId": "b35f1661ab3b2835bb1ce7d9a0fdfb32-17bae1ad800",
+            "startTime": "2021-09-04T00:00:00Z",
+            "lastTime": "2021-09-04T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Karachi",
+                "category": "Office Products"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 1288664.2,
+              "expectedValueOfRootNode": 1318940.8256573013
+            }
+          },
+          {
+            "incidentId": "3f14f7d294aeea81522c0b5db632c09e-17bae1ad800",
+            "startTime": "2021-09-04T00:00:00Z",
+            "lastTime": "2021-09-04T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Seoul",
+                "category": "Handmade"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 233914.0,
+              "expectedValueOfRootNode": 222107.3827913444
+            }
+          },
+          {
+            "incidentId": "e55219dbd9308a90f11906e9d8668c27-17bae1ad800",
+            "startTime": "2021-09-04T00:00:00Z",
+            "lastTime": "2021-09-04T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Mumbai",
+                "category": "Home \u0026 Garden"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 76440.0,
+              "expectedValueOfRootNode": 79391.2231861852
+            }
+          },
+          {
+            "incidentId": "3ce482ff01eed03e0126cfe091abac26-17bae1ad800",
+            "startTime": "2021-09-04T00:00:00Z",
+            "lastTime": "2021-09-04T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Cairo",
+                "category": "Grocery \u0026 Gourmet Food"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 2.8,
+              "expectedValueOfRootNode": 4.084072118604822
+            }
+          },
+          {
+            "incidentId": "9af6eb2c0e9c92d8b1a707cd406fb711-17bae1ad800",
+            "startTime": "2021-09-04T00:00:00Z",
+            "lastTime": "2021-09-04T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Seoul",
+                "category": "Electronics (Accessories)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 0.2,
+              "expectedValueOfRootNode": 0.0
+            }
+          },
+          {
+            "incidentId": "985f299d2e86f16ac43fb8b742b23ca3-17ba8f47c00",
+            "startTime": "2021-08-27T00:00:00Z",
+            "lastTime": "2021-09-03T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Karachi",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "High",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 31544272.2,
+              "expectedValueOfRootNode": 31781187.61271761
+            }
+          },
+          {
+            "incidentId": "5d0e9925fd56609ed85f95fe1d2ebf87-17ba8f47c00",
+            "startTime": "2021-08-28T00:00:00Z",
+            "lastTime": "2021-09-03T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Cairo",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 2800629.6,
+              "expectedValueOfRootNode": 2704913.3962151622
+            }
+          },
+          {
+            "incidentId": "7b7337a62b553fba3a4626251513b375-17ba8f47c00",
+            "startTime": "2021-09-03T00:00:00Z",
+            "lastTime": "2021-09-03T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Seoul",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 3224109.1999999997,
+              "expectedValueOfRootNode": 3178474.442274154
+            }
+          },
+          {
+            "incidentId": "16b8d8582997fcaa64c66f782db02af7-17ba8f47c00",
+            "startTime": "2021-08-29T00:00:00Z",
+            "lastTime": "2021-09-03T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Miami",
+                "category": "Handmade"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 113954.6,
+              "expectedValueOfRootNode": 106860.75165018426
+            }
+          },
+          {
+            "incidentId": "2badf4cb97e13d6142e2af489e2b8e20-17ba8f47c00",
+            "startTime": "2021-09-03T00:00:00Z",
+            "lastTime": "2021-09-03T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Istanbul",
+                "category": "Electronics (Accessories)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 0.2,
+              "expectedValueOfRootNode": 0.02631046265811555
+            }
+          },
+          {
+            "incidentId": "4ec127166abf8387b2874bae49734ab1-17ba3ce2000",
+            "startTime": "2021-09-01T00:00:00Z",
+            "lastTime": "2021-09-02T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "__SUM__",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "High",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 63024122.20000002,
+              "expectedValueOfRootNode": 58900349.339255504
+            }
+          },
+          {
+            "incidentId": "0100436ffc1318780ffaff7008d0b5df-17ba3ce2000",
+            "startTime": "2021-08-31T00:00:00Z",
+            "lastTime": "2021-09-02T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "__SUM__",
+                "category": "Shoes Handbags \u0026 Sunglasses"
+              }
+            },
+            "property": {
+              "maxSeverity": "High",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 54085206.4,
+              "expectedValueOfRootNode": 50202452.52693161
+            }
+          },
+          {
+            "incidentId": "aee0225fd93cfe42ec4acd365613c857-17ba3ce2000",
+            "startTime": "2021-08-31T00:00:00Z",
+            "lastTime": "2021-09-02T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Beijing",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 3519115.8,
+              "expectedValueOfRootNode": 3462448.346018242
+            }
+          },
+          {
+            "incidentId": "cf950714f4ec64047ab37a7eba35352c-17ba3ce2000",
+            "startTime": "2021-09-02T00:00:00Z",
+            "lastTime": "2021-09-02T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Miami",
+                "category": "Grocery \u0026 Gourmet Food"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 3.4,
+              "expectedValueOfRootNode": 0.7763852979455852
+            }
+          },
+          {
+            "incidentId": "c535445f9311a566fbf3b22097f3a9b3-17ba3ce2000",
+            "startTime": "2021-09-02T00:00:00Z",
+            "lastTime": "2021-09-02T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Delhi",
+                "category": "Electronics (Accessories)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 1.4,
+              "expectedValueOfRootNode": 0.37761464392903077
+            }
+          },
+          {
+            "incidentId": "4da9d81fee29af64bcfd9a0e869abeba-17ba3ce2000",
+            "startTime": "2021-09-02T00:00:00Z",
+            "lastTime": "2021-09-02T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Delhi",
+                "category": "Electronics (Consumer)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 0.2,
+              "expectedValueOfRootNode": 0.0
+            }
+          },
+          {
+            "incidentId": "0684b64dd3baf2773a87b1b84ba9b699-17b9ea7c400",
+            "startTime": "2021-09-01T00:00:00Z",
+            "lastTime": "2021-09-01T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Seoul",
+                "category": "Office Products"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 13366.6,
+              "expectedValueOfRootNode": 14577.095304342409
+            }
+          },
+          {
+            "incidentId": "3f14f7d294aeea81522c0b5db632c09e-17b99816800",
+            "startTime": "2021-08-31T00:00:00Z",
+            "lastTime": "2021-08-31T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Seoul",
+                "category": "Handmade"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 239206.4,
+              "expectedValueOfRootNode": 253230.51804628258
+            }
+          },
+          {
+            "incidentId": "b4bc0813b4340c06548ee57f52a9d067-17b99816800",
+            "startTime": "2021-08-30T00:00:00Z",
+            "lastTime": "2021-08-31T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Mumbai",
+                "category": "Grocery \u0026 Gourmet Food"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 2.8,
+              "expectedValueOfRootNode": 0.8680323748025722
+            }
+          },
+          {
+            "incidentId": "4da9d81fee29af64bcfd9a0e869abeba-17b99816800",
+            "startTime": "2021-08-31T00:00:00Z",
+            "lastTime": "2021-08-31T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Delhi",
+                "category": "Electronics (Consumer)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 0.2,
+              "expectedValueOfRootNode": 0.0
+            }
+          },
+          {
+            "incidentId": "d191fca2a541f15aec6a3c00d30b3665-17b945b0c00",
+            "startTime": "2021-08-30T00:00:00Z",
+            "lastTime": "2021-08-30T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Delhi",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 4500355.4,
+              "expectedValueOfRootNode": 5901957.672928559
+            }
+          },
+          {
+            "incidentId": "0701219234e0357d270798d1d573d305-17b945b0c00",
+            "startTime": "2021-08-30T00:00:00Z",
+            "lastTime": "2021-08-30T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Miami",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 1778079.2,
+              "expectedValueOfRootNode": 1647930.7476587896
+            }
+          },
+          {
+            "incidentId": "a862c88e7464df5b25c8400dde5f9961-17b945b0c00",
+            "startTime": "2021-08-30T00:00:00Z",
+            "lastTime": "2021-08-30T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "__SUM__",
+                "category": "Home \u0026 Garden"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 1429030.0,
+              "expectedValueOfRootNode": 1489713.0839464657
+            }
+          },
+          {
+            "incidentId": "4870d7d23fff4463f1e55f48cbcedc37-17b8f34b000",
+            "startTime": "2021-08-29T00:00:00Z",
+            "lastTime": "2021-08-29T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Tianjin",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 914488.0,
+              "expectedValueOfRootNode": 951341.9038283993
+            }
+          },
+          {
+            "incidentId": "32f65c805fe9447d0964d0b479035356-17b8f34b000",
+            "startTime": "2021-08-23T00:00:00Z",
+            "lastTime": "2021-08-29T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Cairo",
+                "category": "Handmade"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 230216.4,
+              "expectedValueOfRootNode": 224691.99060479912
+            }
+          },
+          {
+            "incidentId": "ea5d7ff836d2de3f776fa6ce60e26241-17b8f34b000",
+            "startTime": "2021-08-29T00:00:00Z",
+            "lastTime": "2021-08-29T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Beijing",
+                "category": "Handmade"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 213018.6,
+              "expectedValueOfRootNode": 209509.5565277068
+            }
+          },
+          {
+            "incidentId": "76b5393b7175fbfd0754864b8aa3b761-17b8f34b000",
+            "startTime": "2021-08-24T00:00:00Z",
+            "lastTime": "2021-08-29T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Istanbul",
+                "category": "Handmade"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 53255.4,
+              "expectedValueOfRootNode": 52551.814578713536
+            }
+          },
+          {
+            "incidentId": "dbfc2e14b224a82b5e8661d01d1d5d18-17b8f34b000",
+            "startTime": "2021-08-29T00:00:00Z",
+            "lastTime": "2021-08-29T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Delhi",
+                "category": "Grocery \u0026 Gourmet Food"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 2.0,
+              "expectedValueOfRootNode": 0.6813866569345242
+            }
+          },
+          {
+            "incidentId": "898c3a990020bd958664f080c8786ee1-17b8f34b000",
+            "startTime": "2021-08-28T00:00:00Z",
+            "lastTime": "2021-08-29T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Mumbai",
+                "category": "Electronics (Accessories)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 1.6,
+              "expectedValueOfRootNode": 0.8254581281729148
+            }
+          },
+          {
+            "incidentId": "2badf4cb97e13d6142e2af489e2b8e20-17b8f34b000",
+            "startTime": "2021-08-29T00:00:00Z",
+            "lastTime": "2021-08-29T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Istanbul",
+                "category": "Electronics (Accessories)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 0.4,
+              "expectedValueOfRootNode": 0.023143287585071518
+            }
+          },
+          {
+            "incidentId": "58c4e3059c1a0c50d45c8a3850158181-17b8a0e5400",
+            "startTime": "2021-08-28T00:00:00Z",
+            "lastTime": "2021-08-28T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "New York",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 1410373.5999999999,
+              "expectedValueOfRootNode": 1340465.3992085145
+            }
+          },
+          {
+            "incidentId": "c48032b91ed223d84086da0871a634fc-17b8a0e5400",
+            "startTime": "2021-08-28T00:00:00Z",
+            "lastTime": "2021-08-28T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Istanbul",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 538012.2,
+              "expectedValueOfRootNode": 625484.7306194816
+            }
+          },
+          {
+            "incidentId": "47d0a4df8ac4f2e9ed3099dca6b49700-17b8a0e5400",
+            "startTime": "2021-08-28T00:00:00Z",
+            "lastTime": "2021-08-28T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Miami",
+                "category": "Shoes Handbags \u0026 Sunglasses"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 856691.8,
+              "expectedValueOfRootNode": 809845.2152300065
+            }
+          },
+          {
+            "incidentId": "18044bf3e7152862074c3d177f9114fe-17b8a0e5400",
+            "startTime": "2021-08-28T00:00:00Z",
+            "lastTime": "2021-08-28T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Miami",
+                "category": "Office Products"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 42160.2,
+              "expectedValueOfRootNode": 36733.92255847708
+            }
+          },
+          {
+            "incidentId": "c56c9a30784114726363b37436de16b6-17b8a0e5400",
+            "startTime": "2021-08-28T00:00:00Z",
+            "lastTime": "2021-08-28T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Tianjin",
+                "category": "Office Products"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 40939.2,
+              "expectedValueOfRootNode": 38193.24715128368
+            }
+          },
+          {
+            "incidentId": "aaa0ff1cfe41d89ed481f9ac19dbcd8e-17b8a0e5400",
+            "startTime": "2021-08-28T00:00:00Z",
+            "lastTime": "2021-08-28T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "__SUM__",
+                "category": "Grocery \u0026 Gourmet Food"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 28.6,
+              "expectedValueOfRootNode": 12.584955773014197
+            }
+          },
+          {
+            "incidentId": "7b7337a62b553fba3a4626251513b375-17b84e7f800",
+            "startTime": "2021-08-27T00:00:00Z",
+            "lastTime": "2021-08-27T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Seoul",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 3189768.0,
+              "expectedValueOfRootNode": 3060220.67927524
+            }
+          },
+          {
+            "incidentId": "ea5d7ff836d2de3f776fa6ce60e26241-17b84e7f800",
+            "startTime": "2021-08-27T00:00:00Z",
+            "lastTime": "2021-08-27T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Beijing",
+                "category": "Handmade"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 229280.0,
+              "expectedValueOfRootNode": 223735.0793487389
+            }
+          },
+          {
+            "incidentId": "9eacfa65b7c794522d388fcf5bf0a463-17b84e7f800",
+            "startTime": "2021-08-23T00:00:00Z",
+            "lastTime": "2021-08-27T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "__SUM__",
+                "category": "Electronics (Consumer)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 144.0,
+              "expectedValueOfRootNode": 63.72113722460451
+            }
+          },
+          {
+            "incidentId": "bb67e64cd3da616f1cf245a6183c1cc7-17b84e7f800",
+            "startTime": "2021-08-26T00:00:00Z",
+            "lastTime": "2021-08-27T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Cairo",
+                "category": "Home \u0026 Garden"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 4518.2,
+              "expectedValueOfRootNode": 3990.279980946186
+            }
+          },
+          {
+            "incidentId": "5d0e9925fd56609ed85f95fe1d2ebf87-17b7fc19c00",
+            "startTime": "2021-08-26T00:00:00Z",
+            "lastTime": "2021-08-26T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Cairo",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 3067805.8,
+              "expectedValueOfRootNode": 3067324.184041086
+            }
+          },
+          {
+            "incidentId": "898c3a990020bd958664f080c8786ee1-17b7fc19c00",
+            "startTime": "2021-08-26T00:00:00Z",
+            "lastTime": "2021-08-26T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Mumbai",
+                "category": "Electronics (Accessories)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 2.2,
+              "expectedValueOfRootNode": 0.6822232959585527
+            }
+          },
+          {
+            "incidentId": "985f299d2e86f16ac43fb8b742b23ca3-17b7a9b4000",
+            "startTime": "2021-08-24T00:00:00Z",
+            "lastTime": "2021-08-25T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Karachi",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "High",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 34365703.8,
+              "expectedValueOfRootNode": 34287439.864768654
+            }
+          },
+          {
+            "incidentId": "3e507744ebc69a481d908c8543721790-17b7a9b4000",
+            "startTime": "2021-08-23T00:00:00Z",
+            "lastTime": "2021-08-25T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Karachi",
+                "category": "Shoes Handbags \u0026 Sunglasses"
+              }
+            },
+            "property": {
+              "maxSeverity": "High",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 28790026.2,
+              "expectedValueOfRootNode": 27785672.80774203
+            }
+          },
+          {
+            "incidentId": "c48032b91ed223d84086da0871a634fc-17b7a9b4000",
+            "startTime": "2021-08-25T00:00:00Z",
+            "lastTime": "2021-08-25T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Istanbul",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 894168.2,
+              "expectedValueOfRootNode": 817038.6964669436
+            }
+          },
+          {
+            "incidentId": "f696df9353d9f0c9c49f9971f72c064b-17b7a9b4000",
+            "startTime": "2021-08-25T00:00:00Z",
+            "lastTime": "2021-08-25T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Mumbai",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 4772106.199999999,
+              "expectedValueOfRootNode": 4526599.531010914
+            }
+          },
+          {
+            "incidentId": "377fa66163e201c8b1e2f2c2cdd32f07-17b7574e400",
+            "startTime": "2021-08-24T00:00:00Z",
+            "lastTime": "2021-08-24T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "__SUM__",
+                "category": "Handmade"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 5450704.200000001,
+              "expectedValueOfRootNode": 5328316.484723231
+            }
+          },
+          {
+            "incidentId": "7b7337a62b553fba3a4626251513b375-17b7574e400",
+            "startTime": "2021-08-24T00:00:00Z",
+            "lastTime": "2021-08-24T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Seoul",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 3234972.4,
+              "expectedValueOfRootNode": 3388188.709652606
+            }
+          },
+          {
+            "incidentId": "c56c9a30784114726363b37436de16b6-17b7574e400",
+            "startTime": "2021-08-24T00:00:00Z",
+            "lastTime": "2021-08-24T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Tianjin",
+                "category": "Office Products"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 39687.6,
+              "expectedValueOfRootNode": 41989.74203972904
+            }
+          },
+          {
+            "incidentId": "f10bd8153e145cd24ba89baa7133e1bf-17b7574e400",
+            "startTime": "2021-08-24T00:00:00Z",
+            "lastTime": "2021-08-24T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Tianjin",
+                "category": "Electronics (Accessories)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 0.8,
+              "expectedValueOfRootNode": 0.11794708682789304
+            }
+          },
+          {
+            "incidentId": "c535445f9311a566fbf3b22097f3a9b3-17b7574e400",
+            "startTime": "2021-08-24T00:00:00Z",
+            "lastTime": "2021-08-24T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Delhi",
+                "category": "Electronics (Accessories)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 0.6,
+              "expectedValueOfRootNode": 0.10820453540771693
+            }
+          },
+          {
+            "incidentId": "3f14f7d294aeea81522c0b5db632c09e-17b704e8800",
+            "startTime": "2021-08-23T00:00:00Z",
+            "lastTime": "2021-08-23T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Seoul",
+                "category": "Handmade"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 268305.2,
+              "expectedValueOfRootNode": 256678.50950533443
+            }
+          },
+          {
+            "incidentId": "898c3a990020bd958664f080c8786ee1-17b704e8800",
+            "startTime": "2021-08-22T00:00:00Z",
+            "lastTime": "2021-08-23T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Mumbai",
+                "category": "Electronics (Accessories)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 1.4,
+              "expectedValueOfRootNode": 0.5408853966017415
+            }
+          },
+          {
+            "incidentId": "36536d07873a17badf11ee986edcb63a-17b704e8800",
+            "startTime": "2021-08-23T00:00:00Z",
+            "lastTime": "2021-08-23T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Cairo",
+                "category": "Electronics (Accessories)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 0.2,
+              "expectedValueOfRootNode": 0.0
+            }
+          },
+          {
+            "incidentId": "985f299d2e86f16ac43fb8b742b23ca3-17b6b282c00",
+            "startTime": "2021-08-21T00:00:00Z",
+            "lastTime": "2021-08-22T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Karachi",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "High",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 24141036.4,
+              "expectedValueOfRootNode": 25264131.593112707
+            }
+          },
+          {
+            "incidentId": "58c4e3059c1a0c50d45c8a3850158181-17b6b282c00",
+            "startTime": "2021-08-22T00:00:00Z",
+            "lastTime": "2021-08-22T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "New York",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 1367578.0000000002,
+              "expectedValueOfRootNode": 1404382.8867704156
+            }
+          },
+          {
+            "incidentId": "47d0a4df8ac4f2e9ed3099dca6b49700-17b6b282c00",
+            "startTime": "2021-08-21T00:00:00Z",
+            "lastTime": "2021-08-22T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Miami",
+                "category": "Shoes Handbags \u0026 Sunglasses"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 764449.0,
+              "expectedValueOfRootNode": 605754.4795700322
+            }
+          },
+          {
+            "incidentId": "bd16c3b142c360eb3d24a1652799b3c2-17b6b282c00",
+            "startTime": "2021-08-21T00:00:00Z",
+            "lastTime": "2021-08-22T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Miami",
+                "category": "Electronics (Accessories)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 0.4,
+              "expectedValueOfRootNode": 0.008770575730321714
+            }
+          },
+          {
+            "incidentId": "18044bf3e7152862074c3d177f9114fe-17b6601d000",
+            "startTime": "2021-08-21T00:00:00Z",
+            "lastTime": "2021-08-21T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Miami",
+                "category": "Office Products"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 36640.0,
+              "expectedValueOfRootNode": 32845.285344611075
+            }
+          },
+          {
+            "incidentId": "9eacfa65b7c794522d388fcf5bf0a463-17b6601d000",
+            "startTime": "2021-08-20T00:00:00Z",
+            "lastTime": "2021-08-21T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "__SUM__",
+                "category": "Electronics (Consumer)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 85.8,
+              "expectedValueOfRootNode": 63.18851672897739
+            }
+          },
+          {
+            "incidentId": "dbfc2e14b224a82b5e8661d01d1d5d18-17b6601d000",
+            "startTime": "2021-08-21T00:00:00Z",
+            "lastTime": "2021-08-21T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Delhi",
+                "category": "Grocery \u0026 Gourmet Food"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 1.8,
+              "expectedValueOfRootNode": 0.9450090156841819
+            }
+          },
+          {
+            "incidentId": "8342ef5a1e9eeead55bc5be63b947352-17b60db7400",
+            "startTime": "2021-08-20T00:00:00Z",
+            "lastTime": "2021-08-20T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "New York",
+                "category": "Home \u0026 Garden"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 44287.6,
+              "expectedValueOfRootNode": 42590.78124486485
+            }
+          },
+          {
+            "incidentId": "898c3a990020bd958664f080c8786ee1-17b60db7400",
+            "startTime": "2021-08-20T00:00:00Z",
+            "lastTime": "2021-08-20T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Mumbai",
+                "category": "Electronics (Accessories)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 1.8,
+              "expectedValueOfRootNode": 0.42394886590274466
+            }
+          },
+          {
+            "incidentId": "b4bc0813b4340c06548ee57f52a9d067-17b60db7400",
+            "startTime": "2021-08-20T00:00:00Z",
+            "lastTime": "2021-08-20T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Mumbai",
+                "category": "Grocery \u0026 Gourmet Food"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 1.8,
+              "expectedValueOfRootNode": 0.686640569051943
+            }
+          },
+          {
+            "incidentId": "7b7337a62b553fba3a4626251513b375-17b5bb51800",
+            "startTime": "2021-08-19T00:00:00Z",
+            "lastTime": "2021-08-19T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Seoul",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 3249698.4000000004,
+              "expectedValueOfRootNode": 3381044.244105893
+            }
+          },
+          {
+            "incidentId": "cf950714f4ec64047ab37a7eba35352c-17b5bb51800",
+            "startTime": "2021-08-19T00:00:00Z",
+            "lastTime": "2021-08-19T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Miami",
+                "category": "Grocery \u0026 Gourmet Food"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 1.8,
+              "expectedValueOfRootNode": 0.7375742064188365
+            }
+          },
+          {
+            "incidentId": "36536d07873a17badf11ee986edcb63a-17b5bb51800",
+            "startTime": "2021-08-19T00:00:00Z",
+            "lastTime": "2021-08-19T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Cairo",
+                "category": "Electronics (Accessories)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 0.2,
+              "expectedValueOfRootNode": 0.0
+            }
+          },
+          {
+            "incidentId": "47d0a4df8ac4f2e9ed3099dca6b49700-17b568ebc00",
+            "startTime": "2021-08-11T00:00:00Z",
+            "lastTime": "2021-08-18T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Miami",
+                "category": "Shoes Handbags \u0026 Sunglasses"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 1036488.2,
+              "expectedValueOfRootNode": 1095825.6582992822
+            }
+          },
+          {
+            "incidentId": "bb67e64cd3da616f1cf245a6183c1cc7-17b568ebc00",
+            "startTime": "2021-08-18T00:00:00Z",
+            "lastTime": "2021-08-18T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Cairo",
+                "category": "Home \u0026 Garden"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 5108.0,
+              "expectedValueOfRootNode": 4846.033885065109
+            }
+          },
+          {
+            "incidentId": "5e4054add6af77783f3ec175db85aafd-17b568ebc00",
+            "startTime": "2021-08-18T00:00:00Z",
+            "lastTime": "2021-08-18T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Seoul",
+                "category": "Electronics (Consumer)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 0.2,
+              "expectedValueOfRootNode": 0.0
+            }
+          },
+          {
+            "incidentId": "16b8d8582997fcaa64c66f782db02af7-17b51686000",
+            "startTime": "2021-08-11T00:00:00Z",
+            "lastTime": "2021-08-17T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Miami",
+                "category": "Handmade"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 90400.8,
+              "expectedValueOfRootNode": 91882.17218818293
+            }
+          },
+          {
+            "incidentId": "c56c9a30784114726363b37436de16b6-17b51686000",
+            "startTime": "2021-08-17T00:00:00Z",
+            "lastTime": "2021-08-17T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Tianjin",
+                "category": "Office Products"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 37438.4,
+              "expectedValueOfRootNode": 39980.85077012258
+            }
+          },
+          {
+            "incidentId": "4870d7d23fff4463f1e55f48cbcedc37-17b4c420400",
+            "startTime": "2021-08-16T00:00:00Z",
+            "lastTime": "2021-08-16T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Tianjin",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 1158413.2000000002,
+              "expectedValueOfRootNode": 1209315.2403067811
+            }
+          },
+          {
+            "incidentId": "b4bc0813b4340c06548ee57f52a9d067-17b4c420400",
+            "startTime": "2021-08-16T00:00:00Z",
+            "lastTime": "2021-08-16T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Mumbai",
+                "category": "Grocery \u0026 Gourmet Food"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 3.2,
+              "expectedValueOfRootNode": 0.6334711905359063
+            }
+          },
+          {
+            "incidentId": "55ce8bc630ab08f7c6b313a82bbc8590-17b4c420400",
+            "startTime": "2021-08-16T00:00:00Z",
+            "lastTime": "2021-08-16T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Beijing",
+                "category": "Electronics (Accessories)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 0.8,
+              "expectedValueOfRootNode": 0.08826131082299894
+            }
+          },
+          {
+            "incidentId": "0701219234e0357d270798d1d573d305-17b471ba800",
+            "startTime": "2021-08-15T00:00:00Z",
+            "lastTime": "2021-08-15T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Miami",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 799246.8,
+              "expectedValueOfRootNode": 598260.3643567222
+            }
+          },
+          {
+            "incidentId": "f696df9353d9f0c9c49f9971f72c064b-17b471ba800",
+            "startTime": "2021-08-15T00:00:00Z",
+            "lastTime": "2021-08-15T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Mumbai",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "Medium",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 3168020.0,
+              "expectedValueOfRootNode": 3469558.172498144
+            }
+          },
+          {
+            "incidentId": "aaa0ff1cfe41d89ed481f9ac19dbcd8e-17b471ba800",
+            "startTime": "2021-08-15T00:00:00Z",
+            "lastTime": "2021-08-15T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "__SUM__",
+                "category": "Grocery \u0026 Gourmet Food"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 24.799999999999997,
+              "expectedValueOfRootNode": 13.929011436529034
+            }
+          },
+          {
+            "incidentId": "36536d07873a17badf11ee986edcb63a-17b471ba800",
+            "startTime": "2021-08-15T00:00:00Z",
+            "lastTime": "2021-08-15T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Cairo",
+                "category": "Electronics (Accessories)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 0.2,
+              "expectedValueOfRootNode": 0.0
+            }
+          },
+          {
+            "incidentId": "4e578d9b55bd7f78f30dffaac7ac6327-17b471ba800",
+            "startTime": "2021-08-15T00:00:00Z",
+            "lastTime": "2021-08-15T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Tianjin",
+                "category": "Electronics (Consumer)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 0.2,
+              "expectedValueOfRootNode": 0.0
+            }
+          },
+          {
+            "incidentId": "b4bc0813b4340c06548ee57f52a9d067-17b41f54c00",
+            "startTime": "2021-08-14T00:00:00Z",
+            "lastTime": "2021-08-14T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Mumbai",
+                "category": "Grocery \u0026 Gourmet Food"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 1.8,
+              "expectedValueOfRootNode": 0.6212604262360049
+            }
+          },
+          {
+            "incidentId": "8a4f65377745830594024e6ad1558d75-17b41f54c00",
+            "startTime": "2021-08-14T00:00:00Z",
+            "lastTime": "2021-08-14T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Istanbul",
+                "category": "Electronics (Consumer)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 0.2,
+              "expectedValueOfRootNode": 0.0
+            }
+          },
+          {
+            "incidentId": "bd16c3b142c360eb3d24a1652799b3c2-17b3ccef000",
+            "startTime": "2021-08-13T00:00:00Z",
+            "lastTime": "2021-08-13T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Miami",
+                "category": "Electronics (Accessories)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 0.4,
+              "expectedValueOfRootNode": 0.0025544338052809652
+            }
+          },
+          {
+            "incidentId": "4e578d9b55bd7f78f30dffaac7ac6327-17b37a89400",
+            "startTime": "2021-08-12T00:00:00Z",
+            "lastTime": "2021-08-12T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Tianjin",
+                "category": "Electronics (Consumer)"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 0.2,
+              "expectedValueOfRootNode": 0.0
+            }
+          },
+          {
+            "incidentId": "ba8eb954fdc4cc554e14b002e0d1f5ea-17b32823800",
+            "startTime": "2021-08-11T00:00:00Z",
+            "lastTime": "2021-08-11T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Istanbul",
+                "category": "Grocery \u0026 Gourmet Food"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 0.8,
+              "expectedValueOfRootNode": 0.09228344812115082
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -25,13 +25,12 @@
 from typing import Any, List, Dict, Union, cast, Iterable, Optional
 
 import warnings
-import six
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
-from ._base import build_options
+from ._base import build_options, _set_throughput_options, _deserialize_throughput
 from .container import ContainerProxy
-from .offer import Offer
+from .offer import ThroughputProperties
 from .http_constants import StatusCodes
 from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
@@ -87,7 +86,7 @@ class DatabaseProxy(object):
     @staticmethod
     def _get_container_id(container_or_id):
         # type: (Union[str, ContainerProxy, Dict[str, Any]]) -> str
-        if isinstance(container_or_id, six.string_types):
+        if isinstance(container_or_id, str):
             return container_or_id
         try:
             return cast("ContainerProxy", container_or_id).id
@@ -101,7 +100,7 @@ class DatabaseProxy(object):
 
     def _get_user_link(self, user_or_id):
         # type: (Union[UserProxy, str, Dict[str, Any]]) -> str
-        if isinstance(user_or_id, six.string_types):
+        if isinstance(user_or_id, str):
             return u"{}/users/{}".format(self.database_link, user_or_id)
         try:
             return cast("UserProxy", user_or_id).user_link
@@ -120,7 +119,6 @@ class DatabaseProxy(object):
         # type: (Optional[bool], Any) -> Dict[str, Any]
         """Read the database properties.
 
-        :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -134,6 +132,10 @@ class DatabaseProxy(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         self._properties = self.client_connection.ReadDatabase(
@@ -153,7 +155,7 @@ class DatabaseProxy(object):
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
         populate_query_metrics=None,  # type: Optional[bool]
-        offer_throughput=None,  # type: Optional[int]
+        offer_throughput=None,  # type: Optional[Union[int, ThroughputProperties]]
         unique_key_policy=None,  # type: Optional[Dict[str, Any]]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
         **kwargs  # type: Any
@@ -167,8 +169,8 @@ class DatabaseProxy(object):
         :param partition_key: The partition key to use for the container.
         :param indexing_policy: The indexing policy to apply to the container.
         :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :param offer_throughput: The provisioned throughput for this offer.
+        :type offer_throughput: int or ~azure.cosmos.ThroughputProperties.
         :param unique_key_policy: The unique key policy to apply to the container.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
@@ -177,7 +179,7 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+        :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :returns: A `ContainerProxy` instance representing the new container.
@@ -226,10 +228,12 @@ class DatabaseProxy(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if offer_throughput is not None:
-            request_options["offerThroughput"] = offer_throughput
-
+        _set_throughput_options(offer=offer_throughput, request_options=request_options)
         data = self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
@@ -247,7 +251,7 @@ class DatabaseProxy(object):
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
         populate_query_metrics=None,  # type: Optional[bool]
-        offer_throughput=None,  # type: Optional[int]
+        offer_throughput=None,  # type: Optional[Union[int, ThroughputProperties]]
         unique_key_policy=None,  # type: Optional[Dict[str, Any]]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
         **kwargs  # type: Any
@@ -265,6 +269,7 @@ class DatabaseProxy(object):
         :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param offer_throughput: The provisioned throughput for this offer.
+        :paramtype offer_throughput: int or ~azure.cosmos.ThroughputProperties.
         :param unique_key_policy: The unique key policy to apply to the container.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
@@ -273,7 +278,7 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+        :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :returns: A `ContainerProxy` instance representing the container.
@@ -299,7 +304,7 @@ class DatabaseProxy(object):
                 offer_throughput=offer_throughput,
                 unique_key_policy=unique_key_policy,
                 conflict_resolution_policy=conflict_resolution_policy,
-                analytical_storage_ttl=analytical_storage_ttl
+                analytical_storage_ttl=analytical_storage_ttl,
             )
 
     @distributed_trace
@@ -315,7 +320,6 @@ class DatabaseProxy(object):
         :param container: The ID (name) of the container to delete. You can either
             pass in the ID of the container to delete, a :class:`ContainerProxy` instance or
             a dict representing the properties of the container.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -328,6 +332,10 @@ class DatabaseProxy(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         collection_link = self._get_container_link(container)
@@ -370,7 +378,6 @@ class DatabaseProxy(object):
         """List the containers in the database.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -392,6 +399,10 @@ class DatabaseProxy(object):
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
         result = self.client_connection.ReadContainers(
@@ -416,7 +427,6 @@ class DatabaseProxy(object):
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -428,6 +438,10 @@ class DatabaseProxy(object):
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
         result = self.client_connection.QueryContainers(
@@ -473,6 +487,9 @@ class DatabaseProxy(object):
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
+        :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
+            note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :returns: A `ContainerProxy` instance representing the container after replace completed.
         :rtype: ~azure.cosmos.ContainerProxy
 
@@ -488,7 +505,12 @@ class DatabaseProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         container_id = self._get_container_id(container)
@@ -501,6 +523,7 @@ class DatabaseProxy(object):
                 "indexingPolicy": indexing_policy,
                 "defaultTtl": default_ttl,
                 "conflictResolutionPolicy": conflict_resolution_policy,
+                "analyticalStorageTtl": analytical_storage_ttl,
             }.items()
             if value is not None
         }
@@ -709,14 +732,31 @@ class DatabaseProxy(object):
 
     @distributed_trace
     def read_offer(self, **kwargs):
-        # type: (Any) -> Offer
-        """Read the Offer object for this database.
-
+        # type: (Any) -> ThroughputProperties
+        """Get the ThroughputProperties object for this database.
+        If no ThroughputProperties already exist for the database, an exception is raised.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: Offer for the database.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
-            If no offer exists for the database or if the offer could not be retrieved.
-        :rtype: ~azure.cosmos.Offer
+        :returns: ThroughputProperties for the database.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
+            the throughput properties could not be retrieved.
+        :rtype: ~azure.cosmos.ThroughputProperties
+        """
+        warnings.warn(
+            "read_offer is a deprecated method name, use read_throughput instead",
+            DeprecationWarning
+        )
+        return self.get_throughput(**kwargs)
+
+    @distributed_trace
+    def get_throughput(self, **kwargs):
+        # type: (Any) -> ThroughputProperties
+        """Get the ThroughputProperties object for this database.
+        If no ThroughputProperties already exist for the database, an exception is raised.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: ThroughputProperties for the database.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
+            the throughput properties could not be retrieved.
+        :rtype: ~azure.cosmos.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
@@ -725,28 +765,31 @@ class DatabaseProxy(object):
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        offers = list(self.client_connection.QueryOffers(query_spec, **kwargs))
-        if not offers:
+        throughput_properties = list(self.client_connection.QueryOffers(query_spec, **kwargs))
+        if not throughput_properties:
             raise CosmosResourceNotFoundError(
                 status_code=StatusCodes.NOT_FOUND,
-                message="Could not find Offer for database " + self.database_link)
+                message="Could not find ThroughputProperties for database " + self.database_link)
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, offers)
+            response_hook(self.client_connection.last_response_headers, throughput_properties)
 
-        return Offer(offer_throughput=offers[0]["content"]["offerThroughput"], properties=offers[0])
+        return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace
     def replace_throughput(self, throughput, **kwargs):
-        # type: (Optional[int], Any) -> Offer
+        # type: (Optional[int], Any) -> ThroughputProperties
         """Replace the database-level throughput.
 
         :param throughput: The throughput to be set (an integer).
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: Offer for the database, updated with new throughput.
+        :returns: ThroughputProperties for the database, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
             If no offer exists for the database or if the offer could not be updated.
         :rtype: ~azure.cosmos.Offer
+            If no throughput properties exists for the database or if the throughput properties could not be updated.
+        :rtype: ~azure.cosmos.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
@@ -755,14 +798,15 @@ class DatabaseProxy(object):
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        offers = list(self.client_connection.QueryOffers(query_spec))
-        if not offers:
+        throughput_properties = list(self.client_connection.QueryOffers(query_spec))
+        if not throughput_properties:
             raise CosmosResourceNotFoundError(
                 status_code=StatusCodes.NOT_FOUND,
-                message="Could not find Offer for collection " + self.database_link)
-        new_offer = offers[0].copy()
+                message="Could not find ThroughputProperties for database " + self.database_link)
+        new_offer = throughput_properties[0].copy()
         new_offer["content"]["offerThroughput"] = throughput
-        data = self.client_connection.ReplaceOffer(offer_link=offers[0]["_self"], offer=offers[0], **kwargs)
+        data = self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
+                                                   offer=throughput_properties[0], **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
-        return Offer(offer_throughput=data["content"]["offerThroughput"], properties=data)
+        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)

@@ -45,11 +45,15 @@ param (
     [ValidatePattern('^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$')]
     [string] $ProvisionerApplicationId,
 
+    [Parameter(ParameterSetName = 'Provisioner', Mandatory = $false)]
+    [ValidatePattern('^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$')]
+    [string] $ProvisionerApplicationOid,
+
     [Parameter(ParameterSetName = 'Provisioner', Mandatory = $true)]
     [string] $ProvisionerApplicationSecret,
 
     [Parameter()]
-    [ValidateRange(1, [int]::MaxValue)]
+    [ValidateRange(1, 7*24)]
     [int] $DeleteAfterHours = 120,
 
     [Parameter()]
@@ -58,6 +62,10 @@ param (
     [Parameter()]
     [ValidateSet('AzureCloud', 'AzureUSGovernment', 'AzureChinaCloud', 'Dogfood')]
     [string] $Environment = 'AzureCloud',
+
+    [Parameter()]
+    [ValidateSet('test', 'perf')]
+    [string] $ResourceType = 'test',
 
     [Parameter()]
     [hashtable] $ArmTemplateParameters,
@@ -79,7 +87,14 @@ param (
     [switch] $OutFile,
 
     [Parameter()]
-    [switch] $SuppressVsoCommands = ($null -eq $env:SYSTEM_TEAMPROJECTID)
+    [switch] $SuppressVsoCommands = ($null -eq $env:SYSTEM_TEAMPROJECTID),
+
+    # Captures any arguments not declared here (no parameter errors)
+    # This enables backwards compatibility with old script versions in
+    # hotfix branches if and when the dynamic subscription configuration
+    # secrets get updated to add new parameters.
+    [Parameter(ValueFromRemainingArguments = $true)]
+    $NewTestResourcesRemainingArguments
 )
 
 . $PSScriptRoot/SubConfig-Helpers.ps1
@@ -127,6 +142,60 @@ function Retry([scriptblock] $Action, [int] $Attempts = 5)
     }
 }
 
+# NewServicePrincipalWrapper creates an object from an AAD graph or Microsoft Graph service principal object type.
+# This is necessary to work around breaking changes introduced in Az version 7.0.0:
+# https://azure.microsoft.com/en-us/updates/update-your-apps-to-use-microsoft-graph-before-30-june-2022/
+function NewServicePrincipalWrapper([string]$subscription, [string]$resourceGroup, [string]$displayName)
+{
+    if ((Get-Module Az.Resources).Version -eq "5.3.0") {
+        # https://github.com/Azure/azure-powershell/issues/17040
+        # New-AzAdServicePrincipal calls will fail with:
+        # "You cannot call a method on a null-valued expression."
+        Write-Warning "Az.Resources version 5.3.0 is not supported. Please update to >= 5.3.1"
+        Write-Warning "Update-Module Az.Resources -RequiredVersion 5.3.1"
+        exit 1
+    }
+    $servicePrincipal = Retry {
+        New-AzADServicePrincipal -Role "Owner" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName" -DisplayName $displayName
+    }
+    $spPassword = ""
+    $appId = ""
+    if (Get-Member -Name "Secret" -InputObject $servicePrincipal -MemberType property) {
+        Write-Verbose "Using legacy PSADServicePrincipal object type from AAD graph API"
+        # Secret property exists on PSADServicePrincipal type from AAD graph in Az # module versions < 7.0.0
+        $spPassword = $servicePrincipal.Secret
+        $appId = $servicePrincipal.ApplicationId
+    } else {
+        if ((Get-Module Az.Resources).Version -eq "5.1.0") {
+            Write-Verbose "Creating password and credential for service principal via MS Graph API"
+            Write-Warning "Please update Az.Resources to >= 5.2.0 by running 'Update-Module Az'"
+            # Microsoft graph objects (Az.Resources version == 5.1.0) do not provision a secret on creation so it must be added separately.
+            # Submitting a password credential object without specifying a password will result in one being generated on the server side.
+            $password = New-Object -TypeName "Microsoft.Azure.PowerShell.Cmdlets.Resources.MSGraph.Models.ApiV10.MicrosoftGraphPasswordCredential"
+            $password.DisplayName = "Password for $displayName"
+            $credential = Retry { New-AzADSpCredential -PasswordCredentials $password -ServicePrincipalObject $servicePrincipal }
+            $spPassword = ConvertTo-SecureString $credential.SecretText -AsPlainText -Force
+            $appId = $servicePrincipal.AppId
+        } else {
+            Write-Verbose "Creating service principal credential via MS Graph API"
+            # In 5.2.0 the password credential issue was fixed (see https://github.com/Azure/azure-powershell/pull/16690) but the
+            # parameter set was changed making the above call fail due to a missing ServicePrincipalId parameter.
+            $credential = Retry { $servicePrincipal | New-AzADSpCredential }
+            $spPassword = ConvertTo-SecureString $credential.SecretText -AsPlainText -Force
+            $appId = $servicePrincipal.AppId
+        }
+    }
+
+    return @{
+        AppId = $appId
+        ApplicationId = $appId
+        # This is the ObjectId/OID but most return objects use .Id so keep it consistent to prevent confusion
+        Id = $servicePrincipal.Id
+        DisplayName = $servicePrincipal.DisplayName
+        Secret = $spPassword
+    }
+}
+
 function LoadCloudConfig([string] $env)
 {
     $configPath = "$PSScriptRoot/clouds/$env.json"
@@ -158,7 +227,7 @@ function BuildBicepFile([System.IO.FileSystemInfo] $file)
     }
 
     $tmp = $env:TEMP ? $env:TEMP : [System.IO.Path]::GetTempPath()
-    $templateFilePath = Join-Path $tmp "test-resources.$(New-Guid).compiled.json"
+    $templateFilePath = Join-Path $tmp "$ResourceType-resources.$(New-Guid).compiled.json"
 
     # Az can deploy bicep files natively, but by compiling here it becomes easier to parse the
     # outputted json for mismatched parameter declarations.
@@ -171,7 +240,8 @@ function BuildBicepFile([System.IO.FileSystemInfo] $file)
     return $templateFilePath
 }
 
-function BuildDeploymentOutputs([string]$serviceDirectoryPrefix, [object]$azContext, [object]$deployment) {
+function BuildDeploymentOutputs([string]$serviceName, [object]$azContext, [object]$deployment) {
+    $serviceDirectoryPrefix = BuildServiceDirectoryPrefix $serviceName
     # Add default values
     $deploymentOutputs = [Ordered]@{
         "${serviceDirectoryPrefix}CLIENT_ID" = $TestApplicationId;
@@ -184,6 +254,7 @@ function BuildDeploymentOutputs([string]$serviceDirectoryPrefix, [object]$azCont
         "${serviceDirectoryPrefix}AZURE_AUTHORITY_HOST" = $azContext.Environment.ActiveDirectoryAuthority;
         "${serviceDirectoryPrefix}RESOURCE_MANAGER_URL" = $azContext.Environment.ResourceManagerUrl;
         "${serviceDirectoryPrefix}SERVICE_MANAGEMENT_URL" = $azContext.Environment.ServiceManagementUrl;
+        "AZURE_SERVICE_DIRECTORY" = $serviceName.ToUpperInvariant();
     }
 
     MergeHashes $EnvironmentVariables $(Get-Variable deploymentOutputs)
@@ -203,8 +274,7 @@ function BuildDeploymentOutputs([string]$serviceDirectoryPrefix, [object]$azCont
 }
 
 function SetDeploymentOutputs([string]$serviceName, [object]$azContext, [object]$deployment, [object]$templateFile) {
-    $serviceDirectoryPrefix = $serviceName.ToUpperInvariant() + "_"
-    $deploymentOutputs = BuildDeploymentOutputs $serviceDirectoryPrefix $azContext $deployment
+    $deploymentOutputs = BuildDeploymentOutputs $serviceName $azContext $deployment
 
     if ($OutFile) {
         if (!$IsWindows) {
@@ -235,7 +305,7 @@ function SetDeploymentOutputs([string]$serviceName, [object]$azContext, [object]
             $EnvironmentVariables[$key] = $value
 
             if ($CI) {
-                if (ShouldMarkValueAsSecret $serviceDirectoryPrefix $key $value $notSecretValues) {
+                if (ShouldMarkValueAsSecret $serviceName $key $value $notSecretValues) {
                     # Treat all ARM template output variables as secrets since "SecureString" variables do not set values.
                     # In order to mask secrets but set environment variables for any given ARM template, we set variables twice as shown below.
                     LogVsoCommand "##vso[task.setvariable variable=_$key;issecret=true;]$value"
@@ -283,7 +353,7 @@ try {
     $root = [System.IO.Path]::Combine($repositoryRoot, "sdk", $ServiceDirectory) | Resolve-Path
     $templateFiles = @()
 
-    'test-resources.json', 'test-resources.bicep' | ForEach-Object {
+    "$ResourceType-resources.json", "$ResourceType-resources.bicep" | ForEach-Object {
         Write-Verbose "Checking for '$_' files under '$root'"
         Get-ChildItem -Path $root -Filter "$_" -Recurse | ForEach-Object {
             Write-Verbose "Found template '$($_.FullName)'"
@@ -302,17 +372,16 @@ try {
         exit
     }
 
-    $UserName =  if ($env:USER) { $env:USER } else { "${env:USERNAME}" }
-    # Remove spaces, etc. that may be in $UserName
-    $UserName = $UserName -replace '\W'
+    $UserName = GetUserName
 
-    # Make sure $BaseName is set.
-    if ($CI) {
-        $BaseName = 't' + (New-Guid).ToString('n').Substring(0, 16)
-        Log "Generated base name '$BaseName' for CI build"
-    } elseif (!$BaseName) {
-        $BaseName = "$UserName$ServiceDirectory"
-        Log "BaseName was not set. Using default base name '$BaseName'"
+    if (!$BaseName) {
+        if ($CI) {
+            $BaseName = 't' + (New-Guid).ToString('n').Substring(0, 16)
+            Log "Generated base name '$BaseName' for CI build"
+        } else {
+            $BaseName = GetBaseName $UserName (GetServiceLeafDirectoryName $ServiceDirectory)
+            Log "BaseName was not set. Using default base name '$BaseName'"
+        }
     }
 
     # Make sure pre- and post-scripts are passed formerly required arguments.
@@ -332,7 +401,7 @@ try {
     # string.
     if (!$Location) {
         $Location = @{
-            'AzureCloud' = 'westus2';
+            'AzureCloud' = 'westus';
             'AzureUSGovernment' = 'usgovvirginia';
             'AzureChinaCloud' = 'chinaeast2';
             'Dogfood' = 'westus'
@@ -341,8 +410,7 @@ try {
         Write-Verbose "Location was not set. Using default location for environment: '$Location'"
     }
 
-    if (!$CI) {
-
+    if (!$CI -and $PSCmdlet.ParameterSetName -ne "Provisioner") {
         # Make sure the user is logged in to create a service principal.
         $context = Get-AzContext;
         if (!$context) {
@@ -435,40 +503,34 @@ try {
     $context = Get-AzContext;
 
     # Make sure the provisioner OID is set so we can pass it through to the deployment.
-    $provisionerApplicationOid = if (!$ProvisionerApplicationId) {
+    if (!$ProvisionerApplicationId -and !$ProvisionerApplicationOid) {
         if ($context.Account.Type -eq 'User') {
             $user = Get-AzADUser -UserPrincipalName $context.Account.Id
-            $user.Id
+            $ProvisionerApplicationOid = $user.Id
         } elseif ($context.Account.Type -eq 'ServicePrincipal') {
             $sp = Get-AzADServicePrincipal -ApplicationId $context.Account.Id
-            $sp.Id
+            $ProvisionerApplicationOid = $sp.Id
         } else {
             Write-Warning "Getting the OID for provisioner type '$($context.Account.Type)' is not supported and will not be passed to deployments (seldom required)."
         }
-    } else {
+    } elseif (!$ProvisionerApplicationOid) {
         $sp = Get-AzADServicePrincipal -ApplicationId $ProvisionerApplicationId
-        $sp.Id
+        $ProvisionerApplicationOid = $sp.Id
     }
 
-    # If the ServiceDirectory has multiple segments use the last directory name
-    # e.g. D:\foo\bar -> bar or foo/bar -> bar
-    $serviceName = if (Split-Path $ServiceDirectory) {
-        Split-Path -Leaf $ServiceDirectory
-    } else {
-        $ServiceDirectory.Trim('/')
-    }
+    $serviceName = GetServiceLeafDirectoryName $ServiceDirectory
 
     $ResourceGroupName = if ($ResourceGroupName) {
         $ResourceGroupName
     } elseif ($CI) {
         # Format the resource group name based on resource group naming recommendations and limitations.
-        "rg-{0}-$BaseName" -f ($serviceName -replace '[\\\/:]', '-').Substring(0, [Math]::Min($serviceName.Length, 90 - $BaseName.Length - 4)).Trim('-')
+        "rg-{0}-$BaseName" -f ($serviceName -replace '[\.\\\/:]', '-').ToLowerInvariant().Substring(0, [Math]::Min($serviceName.Length, 90 - $BaseName.Length - 4)).Trim('-')
     } else {
         "rg-$BaseName"
     }
 
     $tags = @{
-        Creator = $UserName
+        Owners = $UserName
         ServiceDirectory = $ServiceDirectory
     }
 
@@ -486,16 +548,12 @@ try {
             BuildReason = "${env:BUILD_REASON}"
         }
 
-        # Set the resource group name variable.
-        Write-Host "Setting variable 'AZURE_RESOURCEGROUP_NAME': $ResourceGroupName"
-        LogVsoCommand "##vso[task.setvariable variable=AZURE_RESOURCEGROUP_NAME;]$ResourceGroupName"
-        if ($EnvironmentVariables.ContainsKey('AZURE_RESOURCEGROUP_NAME') -and `
-            $EnvironmentVariables['AZURE_RESOURCEGROUP_NAME'] -ne $ResourceGroupName)
-        {
-            Write-Warning ("Overwriting 'EnvironmentVariables.AZURE_RESOURCEGROUP_NAME' with value " +
-                "'$($EnvironmentVariables['AZURE_RESOURCEGROUP_NAME'])' " + "to new value '$($ResourceGroupName)'")
-        }
-        $EnvironmentVariables['AZURE_RESOURCEGROUP_NAME'] = $ResourceGroupName
+        # Set an environment variable marking that resources have been deployed
+        # This variable can be consumed as a yaml condition in later stages of the pipeline
+        # to determine whether resources should be removed.
+        Write-Host "Setting variable 'CI_HAS_DEPLOYED_RESOURCES': 'true'"
+        LogVsoCommand "##vso[task.setvariable variable=CI_HAS_DEPLOYED_RESOURCES;]true"
+        $EnvironmentVariables['CI_HAS_DEPLOYED_RESOURCES'] = $true
     }
 
     Log "Creating resource group '$ResourceGroupName' in location '$Location'"
@@ -522,8 +580,8 @@ try {
     # If no test application ID was specified during an interactive session, create a new service principal.
     if (!$CI -and !$TestApplicationId) {
         # Cache the created service principal in this session for frequent reuse.
-        $servicePrincipal = if ($AzureTestPrincipal -and (Get-AzADServicePrincipal -ApplicationId $AzureTestPrincipal.ApplicationId) -and $AzureTestSubscription -eq $SubscriptionId) {
-            Log "TestApplicationId was not specified; loading cached service principal '$($AzureTestPrincipal.ApplicationId)'"
+        $servicePrincipal = if ($AzureTestPrincipal -and (Get-AzADServicePrincipal -ApplicationId $AzureTestPrincipal.AppId) -and $AzureTestSubscription -eq $SubscriptionId) {
+            Log "TestApplicationId was not specified; loading cached service principal '$($AzureTestPrincipal.AppId)'"
             $AzureTestPrincipal
         } else {
             Log "TestApplicationId was not specified; creating a new service principal in subscription '$SubscriptionId'"
@@ -532,24 +590,22 @@ try {
             # Service principals in the Microsoft AAD tenant must end with an @microsoft.com domain; those in other tenants
             # are not permitted to do so. Format the non-MS name so there's an assocation with the Azure SDK.
             if ($TenantId -eq '72f988bf-86f1-41af-91ab-2d7cd011db47') {
-                $displayName = "test-resources-$($baseName)$suffix.microsoft.com"
+                $displayName = "$ResourceType-resources-$($baseName)$suffix.microsoft.com"
             } else {
-                $displayName = "$($baseName)$suffix.test-resources.azure.sdk"
+                $displayName = "$($baseName)$suffix.$ResourceType-resources.azure.sdk"
             }
 
-            $servicePrincipal = Retry {
-                New-AzADServicePrincipal -Role "Owner" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName" -DisplayName $displayName
-            }
+            $servicePrincipalWrapper = NewServicePrincipalWrapper -subscription $SubscriptionId -resourceGroup $ResourceGroupName -displayName $DisplayName
 
-            $global:AzureTestPrincipal = $servicePrincipal
+            $global:AzureTestPrincipal = $servicePrincipalWrapper
             $global:AzureTestSubscription = $SubscriptionId
 
-            Log "Created service principal '$($AzureTestPrincipal.ApplicationId)'"
-            $AzureTestPrincipal
+            Log "Created service principal. AppId: '$($AzureTestPrincipal.AppId)' ObjectId: '$($AzureTestPrincipal.Id)'"
+            $servicePrincipalWrapper
             $resourceGroupRoleAssigned = $true
         }
 
-        $TestApplicationId = $servicePrincipal.ApplicationId
+        $TestApplicationId = $servicePrincipal.AppId
         $TestApplicationOid = $servicePrincipal.Id
         $TestApplicationSecret = (ConvertFrom-SecureString $servicePrincipal.Secret -AsPlainText)
     }
@@ -607,7 +663,9 @@ try {
         baseName = $BaseName
         testApplicationId = $TestApplicationId
         testApplicationOid = "$TestApplicationOid"
-        provisionerApplicationOid = "$provisionerApplicationOid"
+    }
+    if ($ProvisionerApplicationOid) {
+        $templateParameters["provisionerApplicationOid"] = "$ProvisionerApplicationOid"
     }
 
     if ($TenantId) {
@@ -651,7 +709,7 @@ try {
             }
         }
 
-        $preDeploymentScript = $templateFile.originalFilePath | Split-Path | Join-Path -ChildPath 'test-resources-pre.ps1'
+        $preDeploymentScript = $templateFile.originalFilePath | Split-Path | Join-Path -ChildPath "$ResourceType-resources-pre.ps1"
         if (Test-Path $preDeploymentScript) {
             Log "Invoking pre-deployment script '$preDeploymentScript'"
             &$preDeploymentScript -ResourceGroupName $ResourceGroupName @PSBoundParameters
@@ -691,7 +749,7 @@ try {
 
         $deploymentOutputs = SetDeploymentOutputs $serviceName $context $deployment $templateFile
 
-        $postDeploymentScript = $templateFile.originalFilePath | Split-Path | Join-Path -ChildPath 'test-resources-post.ps1'
+        $postDeploymentScript = $templateFile.originalFilePath | Split-Path | Join-Path -ChildPath "$ResourceType-resources-post.ps1"
         if (Test-Path $postDeploymentScript) {
             Log "Invoking post-deployment script '$postDeploymentScript'"
             &$postDeploymentScript -ResourceGroupName $ResourceGroupName -DeploymentOutputs $deploymentOutputs @PSBoundParameters
@@ -849,7 +907,7 @@ This is used for CI automation.
 Optional location where resources should be created. If left empty, the default
 is based on the cloud to which the template is being deployed:
 
-* AzureCloud -> 'westus2'
+* AzureCloud -> 'westus'
 * AzureUSGovernment -> 'usgovvirginia'
 * AzureChinaCloud -> 'chinaeast2'
 * Dogfood -> 'westus'
@@ -886,7 +944,7 @@ Bicep templates, test-resources.bicep.env.
 
 .PARAMETER SuppressVsoCommands
 By default, the -CI parameter will print out secrets to logs with Azure Pipelines log
-commands that cause them to be redacted. For CI environments that don't support this (like 
+commands that cause them to be redacted. For CI environments that don't support this (like
 stress test clusters), this flag can be set to $false to avoid printing out these secrets to the logs.
 
 .EXAMPLE
@@ -964,7 +1022,6 @@ the SecureString to plaintext by another means.
 
 .EXAMPLE
 New-TestResources.ps1 `
-    -BaseName 'Generated' `
     -ServiceDirectory '$(ServiceDirectory)' `
     -TenantId '$(TenantId)' `
     -ProvisionerApplicationId '$(ProvisionerId)' `

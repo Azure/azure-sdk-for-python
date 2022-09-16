@@ -1,5 +1,18 @@
 # Release History
 
+## 1.1.0 (2022-05-10)
+
+**Features**
+
+  - Added operation OpenShiftClustersOperations.list_admin_credentials
+  - Model ClusterProfile has a new parameter fips_validated_modules
+  - Model MasterProfile has a new parameter disk_encryption_set_id
+  - Model MasterProfile has a new parameter encryption_at_host
+  - Model OpenShiftCluster has a new parameter system_data
+  - Model OpenShiftClusterUpdate has a new parameter system_data
+  - Model WorkerProfile has a new parameter disk_encryption_set_id
+  - Model WorkerProfile has a new parameter encryption_at_host
+
 ## 1.0.0 (2021-05-20)
 
 - GA release

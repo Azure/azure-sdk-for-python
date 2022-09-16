@@ -20,7 +20,7 @@ from azure.communication.chat import (
 )
 from azure.communication.identity._shared.utils import parse_connection_str
 from azure_devtools.scenario_tests import RecordingProcessor
-from helper import URIIdentityReplacer
+from _shared.helper import URIIdentityReplacer
 from chat_e2e_helper import ChatURIReplacer
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor, ResponseReplacerProcessor

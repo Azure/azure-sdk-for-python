@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from ._generated.models import PhoneNumberSearchResult, PurchasedPhoneNumber, PhoneNumberCapabilities
 
 
-class PhoneNumbersClient(object):
+class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Phone Numbers gateway.
 
     This client provides operations to interact with the phone numbers service

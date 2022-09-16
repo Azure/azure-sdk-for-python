@@ -1,0 +1,10 @@
+[packaging]
+package_name = "azure-iot-modelsrepository"
+package_nspkg = "azure-iot-nspkg"
+package_pprint_name = "MyService Management"
+package_doc_id = ""
+is_stable = false
+is_arm = false
+need_msrestazure = false
+need_azuremgmtcore = false
+auto_update = false

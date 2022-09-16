@@ -28,7 +28,12 @@ from ._constants import SchemaFormat
 
 
 def _parse_schema_properties_dict(response):
-    return {"id": response.headers.get("schema-id")}
+    return {
+        "id": response.headers.get("schema-id"),
+        "group_name": response.headers.get("schema-group-name"),
+        "name": response.headers.get("schema-name"),
+        "version": int(response.headers.get("schema-version"))
+    }
 
 
 def _parse_response_schema_properties(response, format):

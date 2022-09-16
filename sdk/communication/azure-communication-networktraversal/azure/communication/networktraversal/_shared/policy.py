@@ -8,6 +8,7 @@ import hashlib
 import urllib
 import base64
 import hmac
+from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from .utils import get_current_utc_time
 
@@ -17,10 +18,9 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
 
     def __init__(self,
             host, # type: str
-            access_key, # type: str
+            access_key, # type: Union[str, AzureKeyCredential]
             decode_url=False # type: bool
         ):
-        # pylint: disable=bad-option-value,useless-object-inheritance,disable=super-with-arguments
         # type: (...) -> None
         super(HMACCredentialsPolicy, self).__init__()
 
@@ -36,7 +36,11 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
     def _compute_hmac(self,
             value # type: str
         ):
-        decoded_secret = base64.b64decode(self._access_key)
+        if isinstance(self._access_key, AzureKeyCredential):
+            decoded_secret = base64.b64decode(self._access_key.key)
+        else:
+            decoded_secret = base64.b64decode(self._access_key)
+
         digest = hmac.new(
             decoded_secret, value.encode("utf-8"), hashlib.sha256
         ).digest()

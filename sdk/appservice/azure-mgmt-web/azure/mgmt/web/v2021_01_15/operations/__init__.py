@@ -17,7 +17,7 @@ from ._app_service_plans_operations import AppServicePlansOperations
 from ._certificates_operations import CertificatesOperations
 from ._deleted_web_apps_operations import DeletedWebAppsOperations
 from ._diagnostics_operations import DiagnosticsOperations
-from ._global_model_operations import GlobalOperations
+from ._global_operations_operations import GlobalOperations
 from ._kube_environments_operations import KubeEnvironmentsOperations
 from ._provider_operations import ProviderOperations
 from ._recommendations_operations import RecommendationsOperations
@@ -26,6 +26,9 @@ from ._web_site_management_client_operations import WebSiteManagementClientOpera
 from ._static_sites_operations import StaticSitesOperations
 from ._web_apps_operations import WebAppsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AppServiceCertificateOrdersOperations',
     'CertificateOrdersDiagnosticsOperations',
@@ -47,3 +50,5 @@ __all__ = [
     'StaticSitesOperations',
     'WebAppsOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -1,6 +1,5 @@
 ../../core/azure-core
-aiohttp>=3.0; python_version >= '3.5'
-mock;python_version<"3.3"
+aiohttp>=3.0
 typing_extensions>=3.7.2
 -e ../../../tools/azure-sdk-tools
 -e ../../../tools/azure-devtools

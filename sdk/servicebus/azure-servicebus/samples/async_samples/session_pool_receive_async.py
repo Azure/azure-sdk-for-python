@@ -62,5 +62,4 @@ async def sample_session_send_receive_with_pool_async(connection_string, queue_n
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(sample_session_send_receive_with_pool_async(CONNECTION_STR, SESSION_QUEUE_NAME))
+    asyncio.run(sample_session_send_receive_with_pool_async(CONNECTION_STR, SESSION_QUEUE_NAME))

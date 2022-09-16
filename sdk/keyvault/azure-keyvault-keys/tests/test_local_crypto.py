@@ -5,10 +5,12 @@
 import hashlib
 import os
 
-from azure.keyvault.keys import KeyCurveName, KeyVaultKey
-from azure.keyvault.keys.crypto import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
-from azure.keyvault.keys.crypto._providers import get_local_cryptography_provider
 import pytest
+from azure.keyvault.keys import KeyCurveName, KeyVaultKey
+from azure.keyvault.keys.crypto import (EncryptionAlgorithm, KeyWrapAlgorithm,
+                                        SignatureAlgorithm)
+from azure.keyvault.keys.crypto._providers import \
+    get_local_cryptography_provider
 
 from keys import EC_KEYS, RSA_KEYS
 
@@ -62,6 +64,15 @@ def test_symmetric_encrypt_decrypt(algorithm, key_size):
 
     encrypt_result = provider.encrypt(algorithm, plaintext, iv=iv)
     assert encrypt_result.key_id == key.id
+    assert encrypt_result.iv == iv
+
+    decrypt_result = provider.decrypt(encrypt_result.algorithm, encrypt_result.ciphertext, iv=encrypt_result.iv)
+    assert decrypt_result.plaintext == plaintext
+
+    # Try with no IV to verify that we generate one for local crypto
+    encrypt_result = provider.encrypt(algorithm, plaintext, iv=None)
+    assert encrypt_result.key_id == key.id
+    assert len(encrypt_result.iv) == 16
 
     decrypt_result = provider.decrypt(encrypt_result.algorithm, encrypt_result.ciphertext, iv=encrypt_result.iv)
     assert decrypt_result.plaintext == plaintext

@@ -17,7 +17,7 @@ USAGE:
     python sample_manage_custom_models.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
+    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) CONTAINER_SAS_URL_V2 - The shared access signature (SAS) Url of your Azure Blob Storage container
 """

@@ -17,6 +17,7 @@ from ._credentials import (
     OnBehalfOfCredential,
     SharedTokenCacheCredential,
     VisualStudioCodeCredential,
+    ClientAssertionCredential,
 )
 
 
@@ -33,4 +34,5 @@ __all__ = [
     "ChainedTokenCredential",
     "SharedTokenCacheCredential",
     "VisualStudioCodeCredential",
+    "ClientAssertionCredential",
 ]

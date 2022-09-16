@@ -1,0 +1,77 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "394",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "EntityLinking",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "One",
+              "language": "en"
+            },
+            {
+              "id": "1",
+              "text": "Two",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "Three",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "Four",
+              "language": "en"
+            },
+            {
+              "id": "4",
+              "text": "Five",
+              "language": "en"
+            },
+            {
+              "id": "5",
+              "text": "Six",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "apim-request-id": "b496e508-85b5-4983-a1b8-f4f80a08bb3c",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 08 Jun 2022 01:44:10 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "5"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidRequest",
+          "message": "Invalid Document in request.",
+          "innererror": {
+            "code": "InvalidDocumentBatch",
+            "message": "Batch request contains too many records. Max 5 records are permitted."
+          }
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

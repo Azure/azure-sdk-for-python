@@ -9,14 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 from msrest import Serializer, Deserializer
-from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVar
-import warnings
+from typing import Any, AsyncIterable
 
-from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.core.async_paging import AsyncItemPaged
 
 
 class FeatureClientOperationsMixin(object):
@@ -24,12 +19,13 @@ class FeatureClientOperationsMixin(object):
     def list_operations(
         self,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.OperationListResult"]:
+    ) -> AsyncIterable["_models.OperationListResult"]:
         """Lists all of the available Microsoft.Features REST API operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either OperationListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.features.v2021_07_01.models.OperationListResult]
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.features.v2021_07_01.models.OperationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('list_operations')

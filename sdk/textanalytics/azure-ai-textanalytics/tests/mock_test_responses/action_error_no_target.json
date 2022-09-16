@@ -1,40 +1,96 @@
 {
-    "jobId": "59678d1c-109e-4d93-a42f-05eb5e063525",
-    "lastUpdateDateTime": "2021-10-21T23:02:34Z",
-    "createdDateTime": "2021-10-21T23:02:27Z",
-    "expirationDateTime": "2021-10-22T23:02:27Z",
-    "status": "partiallyCompleted",
-    "errors": [
-        {
-            "code": "InternalServerError",
-            "message": "1 out of 3 job tasks failed. Failed job tasks : v3.2-preview.2/custom/entities/general."
-        }
-    ],
-    "tasks": {
-        "completed": 2,
-        "failed": 1,
-        "inProgress": 0,
-        "total": 3,
-        "customEntityRecognitionTasks": [
-            {
-                "lastUpdateDateTime": "2021-10-21T23:02:34.3218701Z",
-                "taskName": "2",
-                "state": "failed"
-            }
-        ],
-        "customSingleClassificationTasks": [
-            {
-                "lastUpdateDateTime": "2021-10-21T23:02:29.3641823Z",
-                "taskName": "0",
-                "state": "succeeded"
-            }
-        ],
-        "customMultiClassificationTasks": [
-            {
-                "lastUpdateDateTime": "2021-10-21T23:02:28.7184297Z",
-                "taskName": "1",
-                "state": "succeeded"
-            }
-        ]
+  "jobId": "59678d1c-109e-4d93-a42f-05eb5e063525",
+  "lastUpdateDateTime": "2021-10-21T23:02:34Z",
+  "createdDateTime": "2021-10-21T23:02:27Z",
+  "expirationDateTime": "2021-10-22T23:02:27Z",
+  "status": "partiallyCompleted",
+  "errors": [
+    {
+      "code": "InternalServerError",
+      "message": "1 out of 3 job tasks failed. Failed job tasks : v3.1/entities/general."
     }
+  ],
+  "tasks": {
+    "completed": 2,
+    "failed": 1,
+    "inProgress": 0,
+    "total": 3,
+    "entityRecognitionTasks": [
+      {
+        "lastUpdateDateTime": "2021-03-03T22:39:37.1716697Z",
+        "taskName": "0",
+        "state": "failed"
+      }
+    ],
+    "entityLinkingTasks": [
+      {
+        "lastUpdateDateTime": "2022-02-10T22:55:40.7352591Z",
+        "taskName": "3",
+        "state": "succeeded",
+        "results": {
+          "documents": [
+            {
+              "id": "56",
+              "entities": [],
+              "warnings": []
+            },
+            {
+              "id": "0",
+              "entities": [],
+              "warnings": []
+            },
+            {
+              "id": "19",
+              "entities": [],
+              "warnings": []
+            },
+            {
+              "id": "1",
+              "entities": [],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-06-01"
+        }
+      }
+    ],
+    "entityRecognitionPiiTasks": [
+      {
+        "lastUpdateDateTime": "2022-02-10T22:55:42.4490584Z",
+        "taskName": "2",
+        "state": "succeeded",
+        "results": {
+          "documents": [
+            {
+              "redactedText": ":)",
+              "id": "56",
+              "entities": [],
+              "warnings": []
+            },
+            {
+              "redactedText": ":(",
+              "id": "0",
+              "entities": [],
+              "warnings": []
+            },
+            {
+              "redactedText": ":P",
+              "id": "19",
+              "entities": [],
+              "warnings": []
+            },
+            {
+              "redactedText": ":D",
+              "id": "1",
+              "entities": [],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-01-15"
+        }
+      }
+    ]
+  }
 }

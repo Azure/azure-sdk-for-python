@@ -15,8 +15,8 @@ except ImportError:
     import mock
 
 import logging
-from devtools_testutils import (
-    PowerShellPreparer, ACCOUNT_FAKE_KEY)
+from devtools_testutils import PowerShellPreparer
+from devtools_testutils.fake_credentials import STORAGE_ACCOUNT_FAKE_KEY
 
 try:
     from cStringIO import StringIO      # Python 2
@@ -51,7 +51,7 @@ os.environ['STORAGE_CLIENT_SECRET'] = os.environ.get('STORAGE_CLIENT_SECRET', No
 ChangeFeedPreparer = functools.partial(
     PowerShellPreparer, "storage",
     storage_account_name="storagename",
-    storage_account_key=ACCOUNT_FAKE_KEY,
+    storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
 )
 
 def not_for_emulator(test):

@@ -11,17 +11,18 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from msrest import Deserializer, Serializer
+
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from msrest import Deserializer, Serializer
 
 from ._configuration import FeatureClientConfiguration
 from ._operations_mixin import FeatureClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):
@@ -68,12 +69,10 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
         credential: "AsyncTokenCredential",
         subscription_id: str,
         api_version: Optional[str] = None,
-        base_url: Optional[str] = None,
+        base_url: str = "https://management.azure.com",
         profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:
-        if not base_url:
-            base_url = 'https://management.azure.com'
         self._config = FeatureClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(FeatureClient, self).__init__(

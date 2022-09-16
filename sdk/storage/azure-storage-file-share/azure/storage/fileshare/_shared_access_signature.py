@@ -56,13 +56,14 @@ class FileSharedAccessSignature(SharedAccessSignature):
             this parameter should only be present if file_name is provided.
         :param str file_name:
             Name of file.
-        :param ~azure.storage.fileshare.FileSasPermissions permission:
+        :param permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
-            Permissions must be ordered read, create, write, delete, list.
+            Permissions must be ordered rcwd.
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
+        :type permission: str or FileSasPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -134,13 +135,14 @@ class FileSharedAccessSignature(SharedAccessSignature):
 
         :param str share_name:
             Name of share.
-        :param ShareSasPermissions permission:
+        :param permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
-            Permissions must be ordered read, create, write, delete, list.
+            Permissions must be ordered rcwdl.
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
+        :type permission: str or ShareSasPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -331,13 +333,14 @@ def generate_share_sas(
         The name of the share.
     :param str account_key:
         The account key, also called shared key or access key, to generate the shared access signature.
-    :param ~azure.storage.fileshare.ShareSasPermissions permission:
+    :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-        Permissions must be ordered read, create, write, delete, list.
+        Permissions must be ordered rcwdl.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
+    :type permission: str or ShareSasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -422,13 +425,14 @@ def generate_file_sas(
     :type file_path: List[str]
     :param str account_key:
         The account key, also called shared key or access key, to generate the shared access signature.
-    :param ~azure.storage.fileshare.FileSasPermissions permission:
+    :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-        Permissions must be ordered read, write, delete, list.
+        Permissions must be ordered rcwd.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
+    :type permission: str or FileSasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy

@@ -6,51 +6,33 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ActionGroupList
-    from ._models_py3 import ActionGroupPatchBody
-    from ._models_py3 import ActionGroupResource
-    from ._models_py3 import ActivityLogAlertActionGroup
-    from ._models_py3 import ActivityLogAlertActionList
-    from ._models_py3 import ActivityLogAlertAllOfCondition
-    from ._models_py3 import ActivityLogAlertLeafCondition
-    from ._models_py3 import ActivityLogAlertList
-    from ._models_py3 import ActivityLogAlertPatchBody
-    from ._models_py3 import ActivityLogAlertResource
-    from ._models_py3 import AutomationRunbookReceiver
-    from ._models_py3 import AzureAppPushReceiver
-    from ._models_py3 import EmailReceiver
-    from ._models_py3 import EnableRequest
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import ItsmReceiver
-    from ._models_py3 import Resource
-    from ._models_py3 import SmsReceiver
-    from ._models_py3 import WebhookReceiver
-except (SyntaxError, ImportError):
-    from ._models import ActionGroupList  # type: ignore
-    from ._models import ActionGroupPatchBody  # type: ignore
-    from ._models import ActionGroupResource  # type: ignore
-    from ._models import ActivityLogAlertActionGroup  # type: ignore
-    from ._models import ActivityLogAlertActionList  # type: ignore
-    from ._models import ActivityLogAlertAllOfCondition  # type: ignore
-    from ._models import ActivityLogAlertLeafCondition  # type: ignore
-    from ._models import ActivityLogAlertList  # type: ignore
-    from ._models import ActivityLogAlertPatchBody  # type: ignore
-    from ._models import ActivityLogAlertResource  # type: ignore
-    from ._models import AutomationRunbookReceiver  # type: ignore
-    from ._models import AzureAppPushReceiver  # type: ignore
-    from ._models import EmailReceiver  # type: ignore
-    from ._models import EnableRequest  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import ItsmReceiver  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SmsReceiver  # type: ignore
-    from ._models import WebhookReceiver  # type: ignore
+from ._models_py3 import ActionGroupList
+from ._models_py3 import ActionGroupPatchBody
+from ._models_py3 import ActionGroupResource
+from ._models_py3 import ActivityLogAlertActionGroup
+from ._models_py3 import ActivityLogAlertActionList
+from ._models_py3 import ActivityLogAlertAllOfCondition
+from ._models_py3 import ActivityLogAlertLeafCondition
+from ._models_py3 import ActivityLogAlertList
+from ._models_py3 import ActivityLogAlertPatchBody
+from ._models_py3 import ActivityLogAlertResource
+from ._models_py3 import AutomationRunbookReceiver
+from ._models_py3 import AzureAppPushReceiver
+from ._models_py3 import EmailReceiver
+from ._models_py3 import EnableRequest
+from ._models_py3 import ErrorResponse
+from ._models_py3 import ItsmReceiver
+from ._models_py3 import Resource
+from ._models_py3 import SmsReceiver
+from ._models_py3 import WebhookReceiver
+
 
 from ._monitor_management_client_enums import (
     ReceiverStatus,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'ActionGroupList',
     'ActionGroupPatchBody',
@@ -73,3 +55,5 @@ __all__ = [
     'WebhookReceiver',
     'ReceiverStatus',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

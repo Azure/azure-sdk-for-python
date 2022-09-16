@@ -8,6 +8,10 @@ Use the client library for App Configuration to create and manage application co
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration) | [Package (Pypi)][package] | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration) | [Product documentation][appconfig_docs]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 
 ### Install the package
@@ -20,7 +24,7 @@ pip install azure-appconfiguration
 
 ### Prerequisites
 
-* Python 2.7, or 3.5 or later is required to use this package.
+* Python 3.7 or later is required to use this package.
 * You need an [Azure subscription][azure_sub], and a [Configuration Store][configuration_store] to use this package.
 
 To create a Configuration Store, you can use the Azure Portal or [Azure CLI][azure_cli].
@@ -217,7 +221,7 @@ for item in filtered_listed:
 
 ### Async APIs
 
-Async client is supported for python 3.5+.
+Async client is supported.
 To use the async client library, import the AzureAppConfigurationClient from package azure.appconfiguration.aio instead of azure.appconfiguration
 
 ```python

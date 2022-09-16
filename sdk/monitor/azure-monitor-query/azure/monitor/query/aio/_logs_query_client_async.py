@@ -15,14 +15,14 @@ from .._generated.aio._monitor_query_client import MonitorQueryClient
 from .._generated.models import BatchRequest, QueryBody as LogsQueryBody
 from .._helpers import construct_iso8601, order_results, process_error, process_prefer
 from .._models import LogsQueryResult, LogsBatchQuery, LogsQueryPartialResult
-from ._helpers_asyc import get_authentication_policy
+from ._helpers_async import get_authentication_policy
 from .._exceptions import LogsQueryError
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class LogsQueryClient(object):
+class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyword
     """LogsQueryClient. Use this client to collect and organize log and performance data from
     monitored resources. Data from different sources such as platform logs from Azure services,
     log and performance data from virtual machines agents, and usage and performance data from

@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from .._generated.models import CommunicationTokenScope
 
 
-class CommunicationIdentityClient:
+class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-keyword
     """Azure Communication Services Identity client.
 
     :param str endpoint:
@@ -183,20 +183,30 @@ class CommunicationIdentityClient:
     @distributed_trace_async
     async def get_token_for_teams_user(
             self,
-            add_token,  # type: str
+            aad_token,  # type: str
+            client_id, # type: str
+            user_object_id, # type: str
             **kwargs
         ) -> AccessToken:
         # type: (...) -> AccessToken
-        """Exchanges an AAD access token of a Teams User for a new Communication Identity access token.
+        """Exchanges an Azure AD access token of a Teams User for a new Communication Identity access token.
 
-        :param add_token: an AAD access token of a Teams User
-        :type add_token: str
+        :param aad_token: an Azure AD access token of a Teams User
+        :type aad_token: str
+        :param client_id: a Client ID of an Azure AD application to be verified against
+            the appId claim in the Azure AD access token.
+        :type client_id: str
+        :param user_object_id: an Object ID of an Azure AD user (Teams User) to be verified against
+            the OID claim in the Azure AD access token.
+        :type user_object_id: str
         :return: AccessToken
         :rtype: ~azure.core.credentials.AccessToken
         """
         api_version = kwargs.pop("api_version", self._api_version)
         return await self._identity_service_client.communication_identity.exchange_teams_user_access_token(
-            token=add_token,
+            token=aad_token,
+            app_id=client_id,
+            user_id=user_object_id,
             api_version=api_version,
             cls=lambda pr, u, e: AccessToken(u.token, u.expires_on),
             **kwargs)

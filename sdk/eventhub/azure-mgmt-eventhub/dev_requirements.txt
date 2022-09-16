@@ -1,5 +1,5 @@
 -e ../../../tools/azure-sdk-tools
 ../../core/azure-core
 ../azure-eventhub
-../../tables/azure-data-tables
+azure-data-tables==12.2.0
 -e ../../../tools/azure-devtools

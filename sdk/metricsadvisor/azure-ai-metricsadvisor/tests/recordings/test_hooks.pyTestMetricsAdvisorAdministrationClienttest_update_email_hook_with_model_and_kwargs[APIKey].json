@@ -1,0 +1,149 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/6dc15168-d335-4162-b451-9c123691ef95",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "3564334b-5e20-11ec-bccd-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "0d39d5de-5ad1-4abd-a787-cf5bd0966c4b",
+        "Content-Length": "261",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 03:28:17 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "278",
+        "X-Request-ID": "0d39d5de-5ad1-4abd-a787-cf5bd0966c4b"
+      },
+      "ResponseBody": {
+        "hookId": "6dc15168-d335-4162-b451-9c123691ef95",
+        "hookName": "emailhookt6wrvazdoa5b7cp",
+        "hookType": "Email",
+        "externalLink": "external link",
+        "description": "my email hook",
+        "admins": [
+          "krpratic@microsoft.com"
+        ],
+        "hookParameter": {
+          "toList": [
+            "yournamehere@microsoft.com"
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/6dc15168-d335-4162-b451-9c123691ef95",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "216",
+        "Content-Type": "application/merge-patch\u002Bjson",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "35986cde-5e20-11ec-acd8-6245b51668de"
+      },
+      "RequestBody": "{\u0022hookType\u0022: \u0022Email\u0022, \u0022hookName\u0022: \u0022update8cf76ff9-9bb5-4997-beec-d5a1e8341833\u0022, \u0022description\u0022: \u0022update\u0022, \u0022externalLink\u0022: \u0022update\u0022, \u0022admins\u0022: [\u0022krpratic@microsoft.com\u0022], \u0022hookParameter\u0022: {\u0022toList\u0022: [\u0022myemail@m.com\u0022]}}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "c0166d3a-8ed6-4998-b2bd-ef586ae5e863",
+        "Content-Length": "252",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 03:28:17 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "546",
+        "X-Request-ID": "c0166d3a-8ed6-4998-b2bd-ef586ae5e863"
+      },
+      "ResponseBody": {
+        "hookId": "6dc15168-d335-4162-b451-9c123691ef95",
+        "hookName": "update8cf76ff9-9bb5-4997-beec-d5a1e8341833",
+        "hookType": "Email",
+        "externalLink": "update",
+        "description": "update",
+        "admins": [
+          "krpratic@microsoft.com"
+        ],
+        "hookParameter": {
+          "toList": [
+            "myemail@m.com"
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/6dc15168-d335-4162-b451-9c123691ef95",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "35f18c10-5e20-11ec-adac-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "53159ef2-ee41-4487-9121-2c174e882b70",
+        "Content-Length": "252",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 03:28:17 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "217",
+        "X-Request-ID": "53159ef2-ee41-4487-9121-2c174e882b70"
+      },
+      "ResponseBody": {
+        "hookId": "6dc15168-d335-4162-b451-9c123691ef95",
+        "hookName": "update8cf76ff9-9bb5-4997-beec-d5a1e8341833",
+        "hookType": "Email",
+        "externalLink": "update",
+        "description": "update",
+        "admins": [
+          "krpratic@microsoft.com"
+        ],
+        "hookParameter": {
+          "toList": [
+            "myemail@m.com"
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/6dc15168-d335-4162-b451-9c123691ef95",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "361f13dd-5e20-11ec-818c-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "apim-request-id": "fcf6b689-f34f-40cd-9bfc-38b67a1fb34a",
+        "Content-Length": "0",
+        "Date": "Thu, 16 Dec 2021 03:28:18 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "236",
+        "X-Request-ID": "fcf6b689-f34f-40cd-9bfc-38b67a1fb34a"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {
+    "email_hook_id": "6dc15168-d335-4162-b451-9c123691ef95",
+    "email_hook_name": "emailhookt6wrvazdoa5b7cp",
+    "hook_updated_name": "update8cf76ff9-9bb5-4997-beec-d5a1e8341833"
+  }
+}

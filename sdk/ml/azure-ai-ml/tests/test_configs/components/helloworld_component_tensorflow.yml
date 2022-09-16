@@ -1,0 +1,39 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+name: microsoftsamples_command_component_tensor_flow
+display_name: CommandComponentTensorFlow
+description: This is the TensorFlow command component
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+inputs:
+  component_in_number:
+    description: A number
+    type: number
+    default: 10.99
+  component_in_path:
+    description: A path
+    type: uri_folder
+
+outputs:
+  component_out_path:
+    type: uri_folder
+
+command: >-
+  echo Hello World &
+  echo ${{inputs.component_in_number}} &
+  echo ${{inputs.component_in_path}} &
+  echo ${{outputs.component_out_path}}
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+
+distribution:
+  type: "TensorFlow"
+  parameter_server_count: 1
+  worker_count: 2
+  added_property: 7
+
+resources:
+  instance_count: 2

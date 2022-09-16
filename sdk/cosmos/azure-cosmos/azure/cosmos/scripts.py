@@ -24,8 +24,6 @@
 
 from typing import Any, List, Dict, Union, Iterable, Optional
 
-import six
-
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
 from .partition_key import NonePartitionKeyValue
@@ -55,7 +53,7 @@ class ScriptsProxy(object):
 
     def _get_resource_link(self, script_or_id, typ):
         # type: (Union[Dict[str, Any], str], str) -> str
-        if isinstance(script_or_id, six.string_types):
+        if isinstance(script_or_id, str):
             return u"{}/{}/{}".format(self.container_link, typ, script_or_id)
         return script_or_id["_self"]
 
@@ -278,7 +276,7 @@ class ScriptsProxy(object):
 
     def replace_trigger(self, trigger, body, **kwargs):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
-        """Replace a specified tigger in the container.
+        """Replace a specified trigger in the container.
 
         If the trigger does not already exist in the container, an exception is raised.
 

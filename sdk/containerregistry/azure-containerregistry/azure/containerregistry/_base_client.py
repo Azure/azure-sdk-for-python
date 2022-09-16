@@ -16,18 +16,19 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ContainerRegistryApiVersion(str, Enum):
+
+class ContainerRegistryApiVersion(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
     """Container Registry API version supported by this package"""
 
     V0_PREVIEW = ""
 
 
-class ContainerRegistryBaseClient(object):
-    """Base class for ContainerRegistryClient, ContainerRepository, and RegistryArtifact
+class ContainerRegistryBaseClient(object): # pylint: disable=client-accepts-api-version-keyword
+    """Base class for ContainerRegistryClient
 
     :param str endpoint: Azure Container Registry endpoint
     :param credential: AAD Token for authenticating requests with Azure
-    :type credential: :class:`azure.identity.DefaultTokenCredential`
+    :type credential: ~azure.identity.DefaultTokenCredential
     :keyword credential_scopes: URL for credential authentication if different from the default
     :paramtype credential_scopes: List[str]
     """

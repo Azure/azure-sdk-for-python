@@ -1,0 +1,130 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "356",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "SentimentAnalysis",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "I should take my cat to the veterinarian.",
+              "language": "es"
+            },
+            {
+              "id": "2",
+              "text": "Este es un document escrito en Espa\u00F1ol.",
+              "language": "es"
+            },
+            {
+              "id": "3",
+              "text": "\u732B\u306F\u5E78\u305B",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "271eb6cc-7564-45df-a81c-f99d51692f7e",
+        "Content-Length": "955",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Wed, 08 Jun 2022 01:29:35 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "19"
+      },
+      "ResponseBody": {
+        "kind": "SentimentAnalysisResults",
+        "results": {
+          "documents": [
+            {
+              "id": "1",
+              "sentiment": "neutral",
+              "confidenceScores": {
+                "positive": 0.03,
+                "neutral": 0.94,
+                "negative": 0.03
+              },
+              "sentences": [
+                {
+                  "sentiment": "neutral",
+                  "confidenceScores": {
+                    "positive": 0.03,
+                    "neutral": 0.94,
+                    "negative": 0.03
+                  },
+                  "offset": 0,
+                  "length": 41,
+                  "text": "I should take my cat to the veterinarian."
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "2",
+              "sentiment": "neutral",
+              "confidenceScores": {
+                "positive": 0.04,
+                "neutral": 0.91,
+                "negative": 0.05
+              },
+              "sentences": [
+                {
+                  "sentiment": "neutral",
+                  "confidenceScores": {
+                    "positive": 0.04,
+                    "neutral": 0.91,
+                    "negative": 0.05
+                  },
+                  "offset": 0,
+                  "length": 39,
+                  "text": "Este es un document escrito en Espa\u00F1ol."
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "3",
+              "sentiment": "neutral",
+              "confidenceScores": {
+                "positive": 0.07,
+                "neutral": 0.85,
+                "negative": 0.08
+              },
+              "sentences": [
+                {
+                  "sentiment": "neutral",
+                  "confidenceScores": {
+                    "positive": 0.07,
+                    "neutral": 0.85,
+                    "negative": 0.08
+                  },
+                  "offset": 0,
+                  "length": 4,
+                  "text": "\u732B\u306F\u5E78\u305B"
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-10-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -9,8 +9,6 @@
 Examples to show how to create EventHubProducerClient and EventHubConsumerClient that connect to custom endpoint.
 """
 
-# pylint: disable=C0111
-
 import os
 from azure.eventhub import EventHubProducerClient, EventHubConsumerClient, EventData
 

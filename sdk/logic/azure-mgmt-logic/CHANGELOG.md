@@ -1,5 +1,16 @@
 # Release History
 
+## 10.0.0 (2022-06-06)
+
+**Features**
+
+  - Model IntegrationServiceEnvironment has a new parameter identity
+  - Model Workflow has a new parameter identity
+
+**Breaking changes**
+
+  - Operation IntegrationServiceEnvironmentManagedApisOperations.begin_put has a new parameter integration_service_environment_managed_api
+
 ## 9.0.0 (2020-12-18)
 
 **Features**

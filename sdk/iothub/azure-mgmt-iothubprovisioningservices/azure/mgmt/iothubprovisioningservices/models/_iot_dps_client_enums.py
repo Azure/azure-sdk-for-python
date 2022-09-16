@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessRightsDescription(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccessRightsDescription(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Rights that this key has.
     """
 
@@ -37,7 +22,7 @@ class AccessRightsDescription(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     REGISTRATION_STATUS_READ = "RegistrationStatusRead"
     REGISTRATION_STATUS_WRITE = "RegistrationStatusWrite"
 
-class AllocationPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AllocationPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Allocation policy to be used by this provisioning service.
     """
 
@@ -45,25 +30,34 @@ class AllocationPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     GEO_LATENCY = "GeoLatency"
     STATIC = "Static"
 
-class CertificatePurpose(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CertificatePurpose(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     CLIENT_AUTHENTICATION = "clientAuthentication"
     SERVER_AUTHENTICATION = "serverAuthentication"
 
-class IotDpsSku(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+class IotDpsSku(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Sku name.
     """
 
     S1 = "S1"
 
-class IpFilterActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IpFilterActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The desired action for requests captured by this rule.
     """
 
     ACCEPT = "Accept"
     REJECT = "Reject"
 
-class IpFilterTargetType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IpFilterTargetType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Target for requests captured by this rule.
     """
 
@@ -71,14 +65,14 @@ class IpFilterTargetType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SERVICE_API = "serviceApi"
     DEVICE_API = "deviceApi"
 
-class NameUnavailabilityReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NameUnavailabilityReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """specifies the reason a name is unavailable
     """
 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class PrivateLinkServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateLinkServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The status of a private endpoint connection
     """
 
@@ -87,14 +81,14 @@ class PrivateLinkServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
-class PublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Whether requests from Public Network are allowed
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class State(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Current state of the provisioning service.
     """
 

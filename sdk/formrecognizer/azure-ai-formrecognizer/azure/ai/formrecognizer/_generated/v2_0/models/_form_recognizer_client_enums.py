@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ContentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Content type for upload
     """
 
@@ -38,8 +22,10 @@ class ContentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     IMAGE_PNG = "image/png"
     #: Content Type 'image/tiff'.
     IMAGE_TIFF = "image/tiff"
+    #: Content Type 'application/json'.
+    APPLICATION_JSON = "application/json"
 
-class FieldValueType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FieldValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Semantic data type of the field value.
     """
 
@@ -52,14 +38,14 @@ class FieldValueType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ARRAY = "array"
     OBJECT = "object"
 
-class Language(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Language(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Language code
     """
 
     EN = "en"
     ES = "es"
 
-class LengthUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit used by the width, height and boundingBox properties. For images, the unit is "pixel".
     For PDF, the unit is "inch".
     """
@@ -67,7 +53,7 @@ class LengthUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PIXEL = "pixel"
     INCH = "inch"
 
-class ModelStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ModelStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the model.
     """
 
@@ -75,7 +61,7 @@ class ModelStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     READY = "ready"
     INVALID = "invalid"
 
-class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the queued operation.
     """
 
@@ -84,7 +70,7 @@ class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "succeeded"
     FAILED = "failed"
 
-class TrainStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TrainStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the training operation.
     """
 

@@ -1,0 +1,62 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "233",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "EntityLinking",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "This should fail because we\u0027re passing in an invalid language hint",
+              "language": "notalanguage"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "2a8bad69-d6b8-4d7a-920d-28747ed8f185",
+        "Content-Length": "393",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 08 Jun 2022 01:44:15 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "4"
+      },
+      "ResponseBody": {
+        "kind": "EntityLinkingResults",
+        "results": {
+          "documents": [],
+          "errors": [
+            {
+              "id": "1",
+              "error": {
+                "code": "InvalidArgument",
+                "message": "Invalid Language Code.",
+                "innererror": {
+                  "code": "UnsupportedLanguageCode",
+                  "message": "Invalid language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"
+                }
+              }
+            }
+          ],
+          "modelVersion": "2021-06-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
