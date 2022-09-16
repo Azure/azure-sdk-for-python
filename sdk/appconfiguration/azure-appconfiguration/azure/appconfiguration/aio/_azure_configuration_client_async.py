@@ -71,7 +71,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
         credential_scopes = base_url.strip("/") + "/.default"
 
         user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
-        
+
         self._sync_token_policy = AsyncSyncTokenPolicy()
 
         aad_mode = not isinstance(credential, AppConfigConnectionStringCredential)
