@@ -124,6 +124,7 @@ def _populate_part_a_fields(resource):
         tags["ai.internal.nodeName"] = tags["ai.cloud.roleInstance"]
     return tags
 
+# pylint: disable=W0622
 def _truncate_custom_properties(properties, filter=None):
     truncated_properties = {}
     for key, val in properties.items():
