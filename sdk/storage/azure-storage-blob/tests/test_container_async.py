@@ -2098,6 +2098,35 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
+    async def test_walk_blobs_with_prefix_delimiter_versions(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        container = await self._create_container(bsc)
+        data = b'hello world'
+
+        c0 = container.get_blob_client('a/blob1')
+        await c0.upload_blob(data)
+        c1 = container.get_blob_client('a/blob2')
+        await c1.upload_blob(data)
+        c2 = container.get_blob_client('b/blob3')
+        await c2.upload_blob(data)
+
+        # Act
+        prefix_list = await self._to_list(container.walk_blobs(name_starts_with='a', delimiter='/', include=['versions']))
+
+        # Assert
+        assert len(prefix_list) == 1
+        a = await self._to_list(prefix_list[0])
+        assert len(a) == 2
+        assert a[0].name == 'a/blob1'
+        assert a[0].version_id
+        assert a[1].name == 'a/blob2'
+        assert a[1].version_id
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_list_blobs_with_include_multiple(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
