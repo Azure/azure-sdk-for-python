@@ -16,7 +16,7 @@ from .._internal.client_credential_base import ClientCredentialBase
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
-    from typing import Any, Optional, Union
+    from typing import Any, Optional, Union, List
 
 
 class CertificateCredential(ClientCredentialBase):
@@ -28,23 +28,26 @@ class CertificateCredential(ClientCredentialBase):
     for more information on configuring certificate authentication.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.
-    :param str client_id: the service principal's client ID
+    :param str client_id: The service principal's client ID
     :param str certificate_path: Optional path to a certificate file in PEM or PKCS12 format, including the private
         key. If not provided, **certificate_data** is required.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword bytes certificate_data: the bytes of a certificate in PEM or PKCS12 format, including the private key
+    :keyword bytes certificate_data: The bytes of a certificate in PEM or PKCS12 format, including the private key
     :keyword password: The certificate's password. If a unicode string, it will be encoded as UTF-8. If the certificate
         requires a different encoding, pass appropriately encoded bytes instead.
     :paramtype password: str or bytes
-    :keyword bool send_certificate_chain: if True, the credential will send the public certificate chain in the x5c
+    :keyword bool send_certificate_chain: If True, the credential will send the public certificate chain in the x5c
         header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication. Defaults to
         False.
-    :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
+    :keyword cache_persistence_options: Configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
+    :keyword List[str] additionally_allowed_tenants: Optional additional tenant ids for which the credential
+        may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
+        any tenant the application is installed.
     """
 
     def __init__(self, tenant_id, client_id, certificate_path=None, **kwargs):
