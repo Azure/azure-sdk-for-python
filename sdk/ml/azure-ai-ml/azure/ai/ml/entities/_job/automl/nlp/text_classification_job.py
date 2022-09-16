@@ -22,6 +22,7 @@ from azure.ai.ml.entities._job.automl.nlp.automl_nlp_job import AutoMLNLPJob
 from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import NlpFeaturizationSettings
 from azure.ai.ml.entities._job.automl.nlp.nlp_limit_settings import NlpLimitSettings
 from azure.ai.ml.entities._job.identity import Identity
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -129,7 +130,9 @@ class TextClassificationJob(AutoMLNLPJob):
             experiment_name=properties.experiment_name,
             services=properties.services,
             status=properties.status,
-            creation_context=job_rest_object.system_data,
+            creation_context=SystemData._from_rest_object(job_rest_object.system_data)
+            if job_rest_object.system_data
+            else None,
             display_name=properties.display_name,
             compute=properties.compute_id,
             outputs=from_rest_data_outputs(properties.outputs),

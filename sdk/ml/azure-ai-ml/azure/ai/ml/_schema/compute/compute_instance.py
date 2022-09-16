@@ -48,4 +48,5 @@ class ComputeInstanceSchema(ComputeSchema):
     last_operation = fields.Dict(keys=fields.Str(), values=fields.Str(), dump_only=True)
     services = fields.List(fields.Dict(keys=fields.Str(), values=fields.Str()), dump_only=True)
     schedules = ExperimentalField(NestedField(ComputeSchedulesSchema))
-    identity = NestedField(IdentitySchema)
+    identity = ExperimentalField(NestedField(IdentitySchema))
+    idle_time_before_shutdown = ExperimentalField(fields.Str())

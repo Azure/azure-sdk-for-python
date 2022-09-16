@@ -37,6 +37,7 @@ from azure.ai.ml.constants._common import (
     EXPERIMENTAL_FIELD_MESSAGE,
     EXPERIMENTAL_LINK_MESSAGE,
     FILE_PREFIX,
+    INTERNAL_REGISTRY_URI_FORMAT,
     LOCAL_COMPUTE_TARGET,
     REGISTRY_URI_FORMAT,
     RESOURCE_ID_FORMAT,
@@ -76,6 +77,13 @@ class StringTransformedEnum(Field):
         if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
             return self.casing_transform(value)
         raise ValidationError(f"Value {value} passed is not in set {self.allowed_values}")
+
+
+class DumpableEnumField(StringTransformedEnum):
+    def __init__(self, **kwargs):
+        """Enum field that will raise exception when dumping."""
+        kwargs.pop("casing_transform", None)
+        super(DumpableEnumField, self).__init__(casing_transform=lambda x: x, **kwargs)
 
 
 class LocalPathField(fields.Str):
@@ -594,6 +602,7 @@ def CodeField(**kwargs):
             SerializeValidatedUrl(),
             GitStr(),
             RegistryStr(azureml_type=AzureMLResourceType.CODE),
+            InternalRegistryStr(azureml_type=AzureMLResourceType.CODE),
             # put arm versioned string at last order as it can deserialize any string into "azureml:<origin>"
             ArmVersionedStr(azureml_type=AzureMLResourceType.CODE),
         ],
@@ -713,6 +722,18 @@ class RegistryStr(Field):
             f"In order to specify an existing {self.azureml_type}, "
             "please provide the correct registry path prefixed with 'azureml://':\n"
         )
+
+
+class InternalRegistryStr(RegistryStr):
+    def _jsonschema_type_mapping(self):
+        schema = super()._jsonschema_type_mapping()
+        schema["pattern"] = "^azureml://feeds/.*"
+        return schema
+
+    def _deserialize(self, value, attr, data, **kwargs):
+        if isinstance(value, str) and value.startswith(INTERNAL_REGISTRY_URI_FORMAT):
+            value = value.replace(INTERNAL_REGISTRY_URI_FORMAT, REGISTRY_URI_FORMAT, 1)
+        return super()._deserialize(value, attr, data, **kwargs)
 
 
 class PythonFuncNameStr(fields.Str):

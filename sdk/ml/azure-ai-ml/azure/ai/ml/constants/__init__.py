@@ -8,6 +8,7 @@ from ._common import AssetTypes, GitProperties, InputOutputModes, ModelType, Tim
 from ._component import ParallelTaskType
 from ._deployment import BatchDeploymentOutputAction
 from ._job import AutoMLConstants, AutoMLTransformerParameterKeys, DistributionType, ImportSourceType, JobType
+from ._workspace import ManagedServiceIdentityType
 
 __all__ = [
     "ImportSourceType",
@@ -22,4 +23,5 @@ __all__ = [
     "TimeZone",
     "BatchDeploymentOutputAction",
     "ModelType",
+    "ManagedServiceIdentityType",
 ]

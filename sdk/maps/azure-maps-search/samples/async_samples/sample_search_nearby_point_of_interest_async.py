@@ -38,5 +38,4 @@ async def search_nearby_point_of_interest_async():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(search_nearby_point_of_interest_async())
+    asyncio.run(search_nearby_point_of_interest_async())

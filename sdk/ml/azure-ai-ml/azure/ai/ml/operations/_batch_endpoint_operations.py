@@ -14,9 +14,6 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, Union
 from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
 from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
 from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
-)
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointTrackedResourceArmPaginatedResult
@@ -68,7 +65,6 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         service_client_05_2022: ServiceClient052022,
-        service_client_09_2020_dataplanepreview: ServiceClient092020DataplanePreview,
         all_operations: OperationsContainer,
         credentials: TokenCredential = None,
         **kwargs: Dict,
@@ -78,7 +74,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         ops_logger.update_info(kwargs)
         self._batch_operation = service_client_05_2022.batch_endpoints
         self._batch_deployment_operation = service_client_05_2022.batch_deployments
-        self._batch_job_endpoint = service_client_09_2020_dataplanepreview.batch_job_endpoint
+        self._batch_job_endpoint = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_endpoint
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs

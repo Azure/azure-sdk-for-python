@@ -20,6 +20,9 @@ class NodeType(object):
     PIPELINE = "pipeline"
     IMPORT = "import"
     SPARK = "spark"
+    # Note: container is not a real component type,
+    # only used to mark component from container data.
+    _CONTAINER = "_container"
 
 
 class ComponentSource:

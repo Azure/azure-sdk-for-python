@@ -24,7 +24,10 @@ from azure.ai.ml.entities._builders import BaseNode, Command
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
+from azure.ai.ml.entities._job.pipeline._attr_dict import (
+    has_attr_safe,
+    try_get_non_arbitrary_attr_for_potential_attr_dict,
+)
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._validation import ValidationResult
 
@@ -79,6 +82,8 @@ class PipelineComponent(Component):
         self._jobs = self._process_jobs(jobs) if jobs else {}
         # for telemetry
         self._job_types, self._job_sources = self._get_job_type_and_source()
+        # Private support: create pipeline component from pipeline job
+        self._source_job_id = kwargs.pop("source_job_id", None)
         # TODO: set anonymous hash for reuse
 
     def _process_jobs(self, jobs):
@@ -137,32 +142,26 @@ class PipelineComponent(Component):
         when both of the pipeline_job.compute and pipeline_job.settings.default_compute is None.
         Rules:
         - For pipeline node: will call node._component._validate_compute_is_set to validate node compute in sub graph.
-        - For general node without compute:
-            - If _skip_required_compute_missing_validation is True, error will not be added.
-            - If is Spark node and node.resources is not None, error will not be added.
-            - All the rest of cases will add compute not set error to validation result.
+        - For general node:
+            - If _skip_required_compute_missing_validation is True, validation will be skipped.
+            - All the rest of cases without compute will add compute not set error to validation result.
         """
-        from azure.ai.ml.entities._builders import Spark
 
         # Note: do not put this into customized validate, as we would like call
         # this from pipeline_job._validate_compute_is_set
         validation_result = self._create_empty_validation_result()
         no_compute_nodes = []
+        parent_node_name = parent_node_name if parent_node_name else ""
         for node_name, node in self.jobs.items():
+            full_node_name = f"{parent_node_name}{node_name}.jobs."
             if node.type == NodeType.PIPELINE:
-                validation_result.merge_with(node._component._validate_compute_is_set(parent_node_name=node_name))
+                validation_result.merge_with(node._component._validate_compute_is_set(parent_node_name=full_node_name))
                 continue
-            if hasattr(node, "compute") and node.compute is None:
-                if (
-                    hasattr(node, "_skip_required_compute_missing_validation")
-                    and node._skip_required_compute_missing_validation
-                ):
-                    continue
-                elif isinstance(node, Spark) and hasattr(node, "resources") and node.resources:
-                    continue
+            if isinstance(node, BaseNode) and node._skip_required_compute_missing_validation:
+                continue
+            elif has_attr_safe(node, "compute") and node.compute is None:
                 no_compute_nodes.append(node_name)
 
-        parent_node_name = f"{parent_node_name}.jobs." if parent_node_name else ""
         for node_name in no_compute_nodes:
             validation_result.append_error(
                 yaml_path=f"jobs.{parent_node_name}{node_name}.compute",
@@ -269,8 +268,8 @@ class PipelineComponent(Component):
         return self._jobs
 
     @classmethod
-    def build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
-        component_io = super().build_io(io_dict, is_input)
+    def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
+        component_io = super()._build_io(io_dict, is_input)
         if is_input:
             # Restore flattened parameters to group
             component_io = GroupInput.restore_flattened_inputs(component_io)
@@ -371,6 +370,7 @@ class PipelineComponent(Component):
         # add source type to component rest object
         component["_source"] = self._source
         component["jobs"] = self._build_rest_component_jobs()
+        component["sourceJobId"] = self._source_job_id
         properties = ComponentVersionDetails(
             component_spec=component,
             description=self.description,

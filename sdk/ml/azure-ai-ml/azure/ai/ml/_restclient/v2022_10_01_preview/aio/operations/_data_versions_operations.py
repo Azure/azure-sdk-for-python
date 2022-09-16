@@ -83,6 +83,9 @@ class DataVersionsOperations:
         :param list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly,
          ListViewType.All]View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DataVersionBaseResourceArmPaginatedResult or the
          result of cls(response)
@@ -90,6 +93,8 @@ class DataVersionsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.DataVersionBaseResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataVersionBaseResourceArmPaginatedResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -103,6 +108,7 @@ class DataVersionsOperations:
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
                     name=name,
+                    api_version=api_version,
                     order_by=order_by,
                     top=top,
                     skip=skip,
@@ -120,6 +126,7 @@ class DataVersionsOperations:
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
                     name=name,
+                    api_version=api_version,
                     order_by=order_by,
                     top=top,
                     skip=skip,
@@ -179,6 +186,9 @@ class DataVersionsOperations:
         :type name: str
         :param version: Version identifier.
         :type version: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -190,6 +200,8 @@ class DataVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_delete_request(
             subscription_id=self._config.subscription_id,
@@ -197,6 +209,7 @@ class DataVersionsOperations:
             workspace_name=workspace_name,
             name=name,
             version=version,
+            api_version=api_version,
             template_url=self.delete.metadata['url'],
         )
         request = _convert_request(request)
@@ -237,6 +250,9 @@ class DataVersionsOperations:
         :type name: str
         :param version: Version identifier.
         :type version: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DataVersionBase, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.DataVersionBase
@@ -248,6 +264,8 @@ class DataVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_get_request(
             subscription_id=self._config.subscription_id,
@@ -255,6 +273,7 @@ class DataVersionsOperations:
             workspace_name=workspace_name,
             name=name,
             version=version,
+            api_version=api_version,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -302,6 +321,9 @@ class DataVersionsOperations:
         :type version: str
         :param body: Version entity to create or update.
         :type body: ~azure.mgmt.machinelearningservices.models.DataVersionBase
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DataVersionBase, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.DataVersionBase
@@ -313,6 +335,7 @@ class DataVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'DataVersionBase')
@@ -323,6 +346,7 @@ class DataVersionsOperations:
             workspace_name=workspace_name,
             name=name,
             version=version,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self.create_or_update.metadata['url'],

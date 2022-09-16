@@ -4,31 +4,24 @@
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
 from contextlib import contextmanager
-from pathlib import Path
 from typing import Dict, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails, SystemData
+from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails
 from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities import Component
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 from azure.ai.ml.entities._validation import ValidationResult
 
 from ... import Input, Output
 from .._schema.component import InternalBaseComponentSchema
 from ._additional_includes import _AdditionalIncludes
+from .environment import InternalEnvironment
 from .node import InternalBaseNode
-
-YAML_CODE_FIELD_NAME = "code"
-YAML_ENVIRONMENT_CONDA_FIELD_NAME = "conda"
-YAML_CONDA_DEPENDENCIES_FIELD_NAME = "conda_dependencies"
-YAML_CONDA_DEPENDENCIES_FILE = "conda_dependencies_file"
-YAML_PIP_REQUIREMENTS_FILE = "pip_requirements_file"
-DEFAULT_PYTHON_VERSION = "3.8.5"
 
 
 class InternalComponent(Component):
@@ -63,7 +56,7 @@ class InternalComponent(Component):
     :param _schema: Schema of the component.
     :type _schema: str
     :param creation_context: Creation metadata of the component.
-    :type creation_context: SystemData
+    :type creation_context: ~azure.ai.ml.entities.SystemData
     """
 
     def __init__(
@@ -120,7 +113,7 @@ class InternalComponent(Component):
 
         self.successful_return_code = successful_return_code
         self.code = code
-        self.environment = environment
+        self.environment = InternalEnvironment(**environment) if isinstance(environment, dict) else environment
         self.environment_variables = environment_variables
         # TODO: remove this to keep it a general component class
         self.command = command
@@ -174,7 +167,8 @@ class InternalComponent(Component):
 
     def _customized_validate(self) -> ValidationResult:
         validation_result = super(InternalComponent, self)._customized_validate()
-        validation_result.merge_with(self._validate_environment())
+        if isinstance(self.environment, InternalEnvironment):
+            validation_result.merge_with(self.environment.validate(self._source_path))
         if self._additional_includes is not None:
             validation_result.merge_with(self._additional_includes.validate())
         return validation_result
@@ -191,7 +185,8 @@ class InternalComponent(Component):
         )
 
     def _to_rest_object(self) -> ComponentVersionData:
-        self._resolve_local_environment()
+        if isinstance(self.environment, InternalEnvironment):
+            self.environment.resolve(self._source_path)
         component = convert_ordered_dict_to_dict(self._to_dict())
 
         properties = ComponentVersionDetails(
@@ -230,70 +225,3 @@ class InternalComponent(Component):
         # TODO: move this logic into base class
         result._warnings = list(filter(lambda x: x.message != "Unknown field.", result._warnings))
         return result
-
-    def _validate_environment(self) -> ValidationResult:
-        validation_result = self._create_empty_validation_result()
-        if not isinstance(self.environment, dict) or not self.environment.get(YAML_ENVIRONMENT_CONDA_FIELD_NAME):
-            return validation_result
-        environment_conda_dict = self.environment[YAML_ENVIRONMENT_CONDA_FIELD_NAME]
-        # only one of "conda_dependencies", "conda_dependencies_file" and "pip_requirements_file" should exist
-        dependencies_field_names = {
-            YAML_CONDA_DEPENDENCIES_FIELD_NAME,
-            YAML_CONDA_DEPENDENCIES_FILE,
-            YAML_PIP_REQUIREMENTS_FILE,
-        }
-        if len(set(environment_conda_dict.keys()) & dependencies_field_names) > 1:
-            validation_result.append_warning(
-                yaml_path="environment.conda",
-                message="Duplicated declaration of dependencies, will honor in the order "
-                "conda_dependencies, conda_dependencies_file, pip_requirements_file.",
-            )
-        # if dependencies file is specified, check its existence
-        if environment_conda_dict.get(YAML_CONDA_DEPENDENCIES_FILE):
-            conda_dependencies_file = environment_conda_dict[YAML_CONDA_DEPENDENCIES_FILE]
-            if not (Path(self._source_path).parent / conda_dependencies_file).is_file():
-                validation_result.append_error(
-                    yaml_path=f"environment.conda.{YAML_CONDA_DEPENDENCIES_FILE}",
-                    message=f"Conda dependencies file not exists: {conda_dependencies_file}",
-                )
-        if environment_conda_dict.get(YAML_PIP_REQUIREMENTS_FILE):
-            pip_requirements_file = environment_conda_dict[YAML_PIP_REQUIREMENTS_FILE]
-            if not (Path(self._source_path).parent / pip_requirements_file).is_file():
-                validation_result.append_error(
-                    yaml_path=f"environment.conda.{YAML_PIP_REQUIREMENTS_FILE}",
-                    message=f"Conda dependencies file not exists: {pip_requirements_file}",
-                )
-        return validation_result
-
-    def _resolve_local_environment(self) -> None:
-        """Resolve environment dependencies when refer to local file."""
-        if not self.environment or not self.environment.get(YAML_ENVIRONMENT_CONDA_FIELD_NAME, {}):
-            return
-        environment_conda_dict = self.environment[YAML_ENVIRONMENT_CONDA_FIELD_NAME]
-        if environment_conda_dict.get(YAML_CONDA_DEPENDENCIES_FILE):
-            conda_dependencies_file = environment_conda_dict[YAML_CONDA_DEPENDENCIES_FILE]
-            conda_dependencies_file_path = Path(self._source_path).parent / conda_dependencies_file
-            conda_dependencies_dict = load_yaml(conda_dependencies_file_path)
-            self.environment[YAML_ENVIRONMENT_CONDA_FIELD_NAME].pop(YAML_CONDA_DEPENDENCIES_FILE)
-            self.environment[YAML_ENVIRONMENT_CONDA_FIELD_NAME] = {
-                YAML_CONDA_DEPENDENCIES_FIELD_NAME: conda_dependencies_dict
-            }
-            return
-        if environment_conda_dict.get(YAML_PIP_REQUIREMENTS_FILE):
-            pip_requirements_file = environment_conda_dict[YAML_PIP_REQUIREMENTS_FILE]
-            pip_requirements_file_path = Path(self._source_path).parent / pip_requirements_file
-            self.environment[YAML_ENVIRONMENT_CONDA_FIELD_NAME].pop(YAML_PIP_REQUIREMENTS_FILE)
-            with open(pip_requirements_file_path, "r") as fin:
-                pip_requirements = fin.read().splitlines()
-                self.environment[YAML_ENVIRONMENT_CONDA_FIELD_NAME] = {
-                    YAML_CONDA_DEPENDENCIES_FIELD_NAME: {
-                        "name": "project_environment",
-                        "dependencies": [
-                            f"python={DEFAULT_PYTHON_VERSION}",
-                            {
-                                "pip": pip_requirements,
-                            },
-                        ],
-                    }
-                }
-            return

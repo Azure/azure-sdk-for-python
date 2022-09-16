@@ -606,8 +606,10 @@ class TestPipelineJobSchema:
         test_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline.yml"
         job = load_job(test_path)
         # make sure inline component is parsed into component entity
-        spark_component = job.jobs["spark_job"]
-        component_dict = load_yaml("./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/component.yml")
+        spark_component = job.jobs["add_greeting_column"]
+        component_dict = load_yaml(
+            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
+        )
         self.assert_inline_component(spark_component, component_dict)
 
     def test_pipeline_job_inline_component_file_with_complex_path(self):
@@ -1435,3 +1437,40 @@ class TestPipelineJobSchema:
             "component_in_path": {"path": "${{parent.jobs.node1.outputs.output_path}}"},
         }
         assert nodes["node3"]["inputs"] == expected_node3_input_dict
+
+    def test_pipeline_component_job(self):
+        test_path = "./tests/test_configs/pipeline_jobs/remote_pipeline_component_job.yml"
+        job: PipelineJob = load_job(source=test_path)
+        assert job._validate().passed
+        expected_job_dict = {
+            "component": "azureml://subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/jobs/test_617704734544",
+            "description": "The hello world pipeline job",
+            "inputs": {
+                "data_input": {
+                    "path": "azureml:https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
+                    "type": "uri_file",
+                },
+                "int_param": 10,
+            },
+            "jobs": {},
+            "outputs": {},
+            "properties": {},
+            "settings": {"default_compute": "azureml:cpu-cluster"},
+            "tags": {"owner": "sdkteam", "tag": "tagvalue"},
+            "type": "pipeline",
+        }
+        assert job._to_dict() == expected_job_dict
+
+        test_path = "./tests/test_configs/pipeline_jobs/pipeline_component_job.yml"
+        job: PipelineJob = load_job(source=test_path)
+        assert job._validate().passed
+        job_dict = job._to_dict()
+        assert "component" not in job_dict
+        assert "jobs" in job_dict
+        assert "component_a_job" in job_dict["jobs"]
+
+    def test_invalid_pipeline_component_job(self):
+        test_path = "./tests/test_configs/pipeline_jobs/invalid/invalid_pipeline_component_job.yml"
+        with pytest.raises(Exception) as e:
+            load_job(source=test_path)
+        assert "'jobs' and 'component' are mutually exclusive fields in pipeline job" in str(e.value)

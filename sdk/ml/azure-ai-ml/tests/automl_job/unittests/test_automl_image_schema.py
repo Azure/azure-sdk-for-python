@@ -4,6 +4,7 @@ from typing import List
 from unittest.mock import patch
 
 import pytest
+from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_job
 from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
@@ -159,12 +160,30 @@ def expected_image_search_space_settings() -> List[RestImageClassificationSearch
 def expected_image_object_detection_search_space_settings() -> List[RestImageObjectDetectionSearchSpace]:
     return [
         RestImageObjectDetectionSearchSpace(
-            model_name="choice('maskrcnn_resnet50_fpn')",
+            model_name="choice('yolov5')",
+            learning_rate="uniform(0.0001,0.01)",
+            model_size="choice('small','medium')",
+        ),
+        RestImageObjectDetectionSearchSpace(
+            model_name="choice('fasterrcnn_resnet50_fpn')",
             learning_rate="uniform(0.005,0.05)",
             warmup_cosine_lr_warmup_epochs="choice(0,3)",
             optimizer="choice('sgd','adam','adamw')",
             min_size="choice(600,800)",
         ),
+    ]
+
+
+@pytest.fixture
+def expected_image_instance_segmentation_search_space_settings() -> List[RestImageObjectDetectionSearchSpace]:
+    return [
+        RestImageObjectDetectionSearchSpace(
+            model_name="choice('maskrcnn_resnet50_fpn')",
+            learning_rate="uniform(0.005,0.05)",
+            warmup_cosine_lr_warmup_epochs="choice(0,3)",
+            optimizer="choice('sgd','adam','adamw')",
+            min_size="choice(600,800)",
+        )
     ]
 
 
@@ -268,7 +287,7 @@ def expected_image_instance_segmentation_job(
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
     expected_image_model_settings_object_detection: ImageModelSettingsObjectDetection,
-    expected_image_object_detection_search_space_settings: List[RestImageObjectDetectionSearchSpace],
+    expected_image_instance_segmentation_search_space_settings: List[RestImageObjectDetectionSearchSpace],
     compute_binding_expected: str,
 ) -> JobBase:
     return _get_rest_automl_job(
@@ -279,7 +298,7 @@ def expected_image_instance_segmentation_job(
             limit_settings=expected_image_limits,
             sweep_settings=expected_image_sweep_settings if run_type == "sweep" else None,
             model_settings=expected_image_model_settings_object_detection,
-            search_space=expected_image_object_detection_search_space_settings if run_type == "sweep" else None,
+            search_space=expected_image_instance_segmentation_search_space_settings if run_type == "sweep" else None,
             primary_metric=InstanceSegmentationPrimaryMetrics.MEAN_AVERAGE_PRECISION,
             log_verbosity=LogVerbosity.DEBUG,
         ),
@@ -496,3 +515,52 @@ class TestAutoMLImageSchema:
         # test expected job when deserialized is same as loaded one.
         from_rest_job = AutoMLJob._from_rest_object(expected_image_classification_job)
         assert from_rest_job == loaded_image_classification_job
+
+    def test_model_name_validation_image_classification(
+        self,
+        tmp_path: Path,
+    ):
+        test_schema_path = Path("./tests/test_configs/automl_job/automl_image_classification_job_mock.yaml")
+
+        test_config = load_yaml(test_schema_path)
+
+        # Add model name which is not supported for classification
+        test_config["training_parameters"]["model_name"] = "yolov5"
+
+        test_yaml_path = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_path, test_config)
+
+        with pytest.raises(ValidationError):
+            load_job(test_yaml_path)
+
+    def test_model_name_validation_image_object_detection(
+        self,
+        tmp_path: Path,
+    ):
+        test_schema_path = Path("./tests/test_configs/automl_job/automl_image_object_detection_job_mock.yaml")
+
+        test_config = load_yaml(test_schema_path)
+        # Add model name which is not supported for image object detection
+        test_config["training_parameters"]["model_name"] = "maskrcnn_resnet101_fpn"
+
+        test_yaml_path = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_path, test_config)
+
+        with pytest.raises(ValidationError):
+            load_job(test_yaml_path)
+
+    def test_model_name_validation_image_instance_segmentation(
+        self,
+        tmp_path: Path,
+    ):
+        test_schema_path = Path("./tests/test_configs/automl_job/automl_image_instance_segmentation_job_mock.yaml")
+
+        test_config = load_yaml(test_schema_path)
+        # Add model name which is not supported for image instance segmentation
+        test_config["training_parameters"]["model_name"] = "vitb16r224"
+
+        test_yaml_path = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_path, test_config)
+
+        with pytest.raises(ValidationError):
+            load_job(test_yaml_path)

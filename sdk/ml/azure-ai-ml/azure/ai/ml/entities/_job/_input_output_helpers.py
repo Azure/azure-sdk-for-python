@@ -36,6 +36,7 @@ from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes, InputOutputModes, JobType
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.input_output_entry import InputOutputEntry
+from azure.ai.ml.entities._util import normalize_job_input_output_type
 
 INPUT_MOUNT_MAPPING_FROM_REST = {
     InputDeliveryMode.READ_WRITE_MOUNT: InputOutputModes.RW_MOUNT,
@@ -168,8 +169,10 @@ def build_input_output(
 
 def _validate_inputs_for(input_consumer_name: str, input_consumer: str, inputs: Dict[str, Any]) -> None:
     implicit_inputs = re.findall(r"\${{inputs\.([\w\.-]+)}}", input_consumer)
+    # optional inputs no need to validate whether they're in inputs
+    optional_inputs = re.findall(r"\[[\w\.\s-]*\${{inputs\.([\w\.-]+)}}]", input_consumer)
     for key in implicit_inputs:
-        if inputs.get(key, None) is None:
+        if inputs.get(key, None) is None and key not in optional_inputs:
             msg = "Inputs to job does not contain '{}' referenced in " + input_consumer_name
             raise ValidationException(
                 message=msg.format(key),
@@ -303,6 +306,9 @@ def from_rest_inputs_to_dataset_literal(
             continue
 
         type_transfer_dict = get_output_type_mapping_from_rest()
+        # deal with invalid input type submitted by feb api
+        # todo: backend help convert node level input/output type
+        normalize_job_input_output_type(input_value)
 
         if input_value.job_input_type in type_transfer_dict:
             if input_value.uri:
@@ -382,6 +388,10 @@ def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Outpu
     for output_name, output_value in outputs.items():
         if output_value is None:
             continue
+        # deal with invalid output type submitted by feb api
+        # todo: backend help convert node level input/output type
+        normalize_job_input_output_type(output_value)
+
         if output_value.job_output_type in output_type_mapping:
             from_rest_outputs[output_name] = Output(
                 type=output_type_mapping[output_value.job_output_type],

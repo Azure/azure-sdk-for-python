@@ -1,6 +1,7 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
 
-description: 'submit a spark job using component sdk'
+description: 'submit a pipeline with spark job'
 
 inputs:
   iris_data:
@@ -14,12 +15,38 @@ outputs:
     mode: direct
 
 jobs:
-  spark_job:
+  add_greeting_column:
     type: spark
 
     inputs:
-      file_input1: ${{parent.inputs.iris_data}}
-      file_input2: ${{parent.inputs.iris_data}}
+      file_input: ${{parent.inputs.iris_data}}
+
+    code: ./src
+    entry:
+      file: add_greeting_column.py # file path of the entry file relative to the code root folder
+
+    py_files:
+      - utils.zip
+
+    files:
+      - my_files.txt
+
+    args: >-
+      --file_input ${{inputs.file_input}}
+
+    compute: azureml:spark31
+    conf:
+      spark.driver.cores: 2
+      spark.driver.memory: "1g"
+      spark.executor.cores: 1
+      spark.executor.memory: "1g"
+      spark.executor.instances: 1
+
+  count_by_row:
+    type: spark
+
+    inputs:
+      file_input: ${{parent.inputs.iris_data}}
 
     outputs:
       output: ${{parent.outputs.output}}
@@ -27,21 +54,16 @@ jobs:
     code: ./src
 
     entry:
-      file: entry.py # file path of the entry file relative to the code root folder
+      file: count_by_row.py # file path of the entry file relative to the code root folder
 
-    py_files:
-      - utils.zip
     jars:
       - scalaproj.jar
 
     files:
       - my_files.txt
-    #archives:
-    #  - my_archive.tar
 
     args: >-
-      --file_input1 ${{inputs.file_input1}}
-      --file_input2 ${{inputs.file_input2}}
+      --file_input ${{inputs.file_input}}
       --output ${{outputs.output}}
 
     compute: azureml:spark31

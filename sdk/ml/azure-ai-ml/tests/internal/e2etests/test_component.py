@@ -6,9 +6,10 @@ from typing import Callable, Dict, List
 
 import pydash
 import pytest
-from tests.internal._utils import PARAMETERS_TO_TEST
 
 from azure.ai.ml import MLClient, load_component
+
+from .._utils import PARAMETERS_TO_TEST
 
 
 def create_component(

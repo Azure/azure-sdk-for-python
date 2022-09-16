@@ -7,13 +7,6 @@ from pathlib import Path
 import pydash
 import pytest
 import yaml
-from tests.internal._utils import (
-    DATA_VERSION,
-    PARAMETERS_TO_TEST,
-    assert_strong_type_intellisense_enabled,
-    extract_non_primitive,
-    set_run_settings,
-)
 
 from azure.ai.ml import Input, load_component
 from azure.ai.ml._internal.entities.component import InternalComponent
@@ -22,6 +15,14 @@ from azure.ai.ml._internal.entities.scope import Scope
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import CommandComponent, Data, PipelineJob
+
+from .._utils import (
+    DATA_VERSION,
+    PARAMETERS_TO_TEST,
+    assert_strong_type_intellisense_enabled,
+    extract_non_primitive,
+    set_run_settings,
+)
 
 
 @pytest.mark.usefixtures("enable_internal_components")
@@ -73,7 +74,7 @@ class TestPipelineJob:
         "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
         PARAMETERS_TO_TEST,
     )
-    def test_data_as_pipeline_inputs(self, yaml_path, inputs, runsettings_dict, pipeline_runsettings_dict):
+    def test_data_as_node_inputs(self, yaml_path, inputs, runsettings_dict, pipeline_runsettings_dict):
         node_func: InternalComponent = load_component(yaml_path)
 
         input_data_names = {}
@@ -103,6 +104,54 @@ class TestPipelineJob:
                 "uri": dataset_name + ":" + DATA_VERSION,
             }
             assert node_rest_dict["inputs"][input_name] == expected_rest_obj
+
+    @pytest.mark.parametrize(
+        "input_path",
+        [
+            "test:" + DATA_VERSION,
+            "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/"
+            "Microsoft.MachineLearningServices/workspaces/ws/datasets/test/versions/" + DATA_VERSION,
+        ],
+    )
+    def test_data_as_pipeline_inputs(self, input_path):
+        yaml_path = "./tests/test_configs/internal/distribution-component/component_spec.yaml"
+        node_func: InternalComponent = load_component(yaml_path)
+
+        @pipeline()
+        def pipeline_func(pipeline_input):
+            node = node_func(input_path=pipeline_input)
+            node.compute = "cpu-cluster"
+
+        dsl_pipeline: PipelineJob = pipeline_func(pipeline_input=Input(path=input_path, type=AssetTypes.MLTABLE))
+        if input_path.startswith("test:"):
+            dsl_pipeline_with_data_input: PipelineJob = pipeline_func(
+                pipeline_input=Data(name="test", version=DATA_VERSION, type=AssetTypes.MLTABLE)
+            )
+        else:
+            dsl_pipeline_with_data_input: PipelineJob = pipeline_func(
+                pipeline_input=Data(name="test", id=input_path, type=AssetTypes.MLTABLE)
+            )
+        result = dsl_pipeline_with_data_input._validate()
+        assert result._to_dict() == {"result": "Succeeded"}
+
+        assert (
+            dsl_pipeline_with_data_input._to_rest_object().properties.as_dict()
+            == dsl_pipeline._to_rest_object().properties.as_dict()
+        )
+
+        pipeline_rest_dict = dsl_pipeline_with_data_input._to_rest_object().properties
+
+        expected_rest_obj = {
+            "job_input_type": AssetTypes.MLTABLE,
+            "uri": input_path,
+        }
+        assert pipeline_rest_dict.inputs["pipeline_input"].as_dict() == expected_rest_obj
+
+        expected_rest_obj = {
+            "job_input_type": "literal",
+            "value": "${{parent.inputs.pipeline_input}}",
+        }
+        assert pipeline_rest_dict.jobs["node"]["inputs"]["input_path"] == expected_rest_obj
 
     def test_ipp_internal_component_in_pipeline(self):
         yaml_path = "./tests/test_configs/internal/ipp-component/spec.yaml"
@@ -222,3 +271,21 @@ class TestPipelineJob:
             "node": dsl_pipeline.jobs["node"]._to_rest_object(),
             "node_internal": scope_node._to_rest_object(),
         }
+
+    def test_components_in_registry(self):
+        command_func = load_component("./tests/test_configs/components/helloworld_component.yml")
+        registry_code_id = "azureml://feeds/testFeed/codes/hello_component/versions/0.0.1"
+
+        @pipeline()
+        def pipeline_func():
+            node = command_func(component_in_path=Input(path="./tests/test_configs/data"))
+
+            # can't create a component from azureml-components in ci workspace
+            # so just use a local test
+            node._component.code = registry_code_id
+            node.compute = "cpu-cluster"
+
+        dsl_pipeline: PipelineJob = pipeline_func()
+        assert dsl_pipeline._validate().passed
+        regenerated_pipeline_job = PipelineJob._from_rest_object(dsl_pipeline._to_rest_object())
+        assert dsl_pipeline._to_dict() == regenerated_pipeline_job._to_dict()

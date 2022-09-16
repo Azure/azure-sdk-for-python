@@ -28,6 +28,7 @@ from .entities._load_functions import (
     load_model,
     load_online_deployment,
     load_online_endpoint,
+    load_registry,
     load_workspace,
     load_workspace_connection,
 )
@@ -60,6 +61,7 @@ __all__ = [
     "load_online_deployment",
     "load_online_endpoint",
     "load_workspace",
+    "load_registry",
     "load_workspace_connection",
 ]
 

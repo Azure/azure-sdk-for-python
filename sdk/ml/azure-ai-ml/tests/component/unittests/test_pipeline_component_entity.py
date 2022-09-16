@@ -3,9 +3,8 @@ from pathlib import Path
 
 import pytest
 
-from azure.ai.ml import Input, MLClient, load_component, load_job
-from azure.ai.ml.entities import PipelineJob
-from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
+from azure.ai.ml import Input, load_component, load_job
+from azure.ai.ml.entities import PipelineComponent, PipelineJob
 from azure.ai.ml.entities._inputs_outputs import GroupInput
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
 
@@ -37,6 +36,7 @@ class TestPipelineComponentEntity:
                     "description": "A number",
                 },
                 "component_in_path": {"type": "uri_folder", "description": "A path"},
+                "node_compute": {"type": "string", "default": "azureml:cpu-cluster"},
             },
             "outputs": {},
             "type": "pipeline",
@@ -55,7 +55,7 @@ class TestPipelineComponentEntity:
                         "type": "command",
                         "version": "1",
                     },
-                    "compute": "azureml:cpu-cluster",
+                    "compute": "${{parent.inputs.node_compute}}",
                     "environment_variables": {},
                     "inputs": {},
                     "outputs": {},
@@ -88,7 +88,7 @@ class TestPipelineComponentEntity:
                 "component_a_job": {
                     "$schema": "{}",
                     "command": "echo Hello World & echo "
-                    "[${{inputs.component_in_number}}] & "
+                    "$[[${{inputs.component_in_number}}]] & "
                     "echo ${{inputs.component_in_path}} & "
                     "echo ${{outputs.component_out_path}} "
                     "> "
@@ -97,7 +97,7 @@ class TestPipelineComponentEntity:
                         "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json",
                         "command": "echo Hello World & "
                         "echo "
-                        "[${{inputs.component_in_number}}] "
+                        "$[[${{inputs.component_in_number}}]] "
                         "& echo "
                         "${{inputs.component_in_path}} "
                         "& echo "
@@ -186,7 +186,7 @@ class TestPipelineComponentEntity:
                                 "World "
                                 "& "
                                 "echo "
-                                "[${{inputs.component_in_number}}] "
+                                "$[[${{inputs.component_in_number}}]] "
                                 "& "
                                 "echo "
                                 "${{inputs.component_in_path}} "
@@ -202,7 +202,7 @@ class TestPipelineComponentEntity:
                                     "World "
                                     "& "
                                     "echo "
-                                    "[${{inputs.component_in_number}}] "
+                                    "$[[${{inputs.component_in_number}}]] "
                                     "& "
                                     "echo "
                                     "${{inputs.component_in_path}} "
@@ -415,6 +415,21 @@ class TestPipelineComponentEntity:
             "component_in_path": {"path": "${{parent.inputs.group.component_in_path}}"},
             "group.component_in_number": {"path": "${{parent.inputs.top_group.component_in_number}}"},
             "group.sub.component_in_number2": {"path": "${{parent.inputs.top_group.sub2.component_in_number2}}"},
+        }
+        assert component_dict["jobs"]["component_a_job"]["component"]["inputs"] == {
+            "component_in_path": {"description": "A path", "type": "uri_folder"},
+            "group.component_in_number": {
+                "default": "10.99",
+                "description": "A number",
+                "optional": True,
+                "type": "number",
+            },
+            "group.sub.component_in_number2": {
+                "default": "10.99",
+                "description": "A number",
+                "optional": True,
+                "type": "number",
+            },
         }
 
     def test_invalid_nested_pipeline_component_with_group(self) -> None:

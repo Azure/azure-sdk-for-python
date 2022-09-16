@@ -25,7 +25,8 @@ class Command(InternalBaseNode):
     """
 
     def __init__(self, **kwargs):
-        super(Command, self).__init__(**kwargs)
+        node_type = kwargs.pop("type", None) or NodeType.COMMAND
+        super(Command, self).__init__(type=node_type, **kwargs)
         self._init = True
         self._resources = kwargs.pop("resources", JobResourceConfiguration())
         self._compute = kwargs.pop("compute", None)
@@ -66,7 +67,7 @@ class Command(InternalBaseNode):
         self._limits = value
 
     @property
-    def resources(self):
+    def resources(self) -> JobResourceConfiguration:
         """Compute Resource configuration for the component."""
         return self._resources
 

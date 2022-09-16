@@ -87,13 +87,13 @@ class TestManagement(FormRecognizerTest):
         assert model.description is not None
         assert model.created_on
         assert model.api_version
-        assert model.tags is None
+        assert model.tags == {}
         for name, doc_type in model.doc_types.items():
             assert name
             for key, field in doc_type.field_schema.items():
                 assert key
                 assert field["type"]
-            assert doc_type.field_confidence is None
+            assert doc_type.field_confidence == {}
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
