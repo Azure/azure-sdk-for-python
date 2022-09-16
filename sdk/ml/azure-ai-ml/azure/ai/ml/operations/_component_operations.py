@@ -463,6 +463,7 @@ class ComponentOperations(_ScopeDependentOperations):
     def _resolve_arm_id_for_pipeline_component_jobs(self, jobs, resolver: Callable):
 
         from azure.ai.ml.entities._builders import BaseNode, Sweep
+        from azure.ai.ml.entities._builders.control_flow_node import LoopNode
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
         from azure.ai.ml.entities._job.pipeline._io import PipelineInput
@@ -504,6 +505,8 @@ class ComponentOperations(_ScopeDependentOperations):
 
         for key, job_instance in jobs.items():
             preprocess_job(job_instance)
+            if isinstance(job_instance, LoopNode):
+                job_instance = job_instance.body
             if isinstance(job_instance, AutoMLJob):
                 self._job_operations._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)
             elif isinstance(job_instance, BaseNode):

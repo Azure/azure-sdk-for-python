@@ -51,7 +51,7 @@ class BatchDeployment(Deployment):
     :type compute: str
     :param output_action: Indicates how the output will be organized. Possible values include:
      "summary_only", "append_row". Defaults to "append_row"
-    :type output_action: str or ~azure.mgmt.machinelearningservices.models.BatchOutputAction
+    :type output_action: str or ~azure.ai.ml.constants._deployment.BatchDeploymentOutputAction
     :param output_file_name: Customized output file name for append_row output action, defaults to "predictions.csv"
     :type output_file_name: str
     :param max_concurrency_per_instance: Indicates maximum number of parallelism per instance, defaults to 1
@@ -95,7 +95,7 @@ class BatchDeployment(Deployment):
         compute: str = None,
         resources: ResourceConfiguration = None,
         output_file_name: str = None,
-        output_action: BatchOutputAction = None,
+        output_action: BatchDeploymentOutputAction = None,
         error_threshold: int = None,
         retry_settings: BatchRetrySettings = None,
         logging_level: str = None,

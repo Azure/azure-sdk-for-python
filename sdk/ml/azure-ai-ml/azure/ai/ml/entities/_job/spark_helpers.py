@@ -133,7 +133,11 @@ def _validate_input_output_mode(inputs, outputs):
                 error_category=ErrorCategory.USER_ERROR,
             )
     for output_name, output_value in outputs.items():
-        if isinstance(output_value, Output) and output_value.mode != InputOutputModes.DIRECT:
+        if (
+            isinstance(output_value, Output)
+            and output_name != "default"
+            and output_value.mode != InputOutputModes.DIRECT
+        ):
             msg = "Output '{}' is using '{}' mode, only '{}' is supported for Spark job".format(
                 output_name, output_value.mode, InputOutputModes.DIRECT
             )

@@ -10,6 +10,7 @@ from collections import OrderedDict
 from typing import Any, Dict, List, Optional, Union
 from unittest import mock
 
+import msrest
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationErrorType, ValidationException
@@ -52,6 +53,7 @@ from azure.ai.ml.constants._common import (
     YAMLRefDocSchemaNames,
 )
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 # Maps schema class name to formatted error message pointing to Microsoft docs reference page for a schema's YAML
 REF_DOC_ERROR_MESSAGE_MAP = {
@@ -300,9 +302,15 @@ def _general_copy(src, dst):
 
 def get_rest_dict(target_obj, clear_empty_value=False):
     """Convert object to dict and convert OrderedDict to dict."""
+    if isinstance(target_obj, RestTranslatableMixin):
+        target_obj = target_obj._to_rest_object()
     if target_obj is None:
         return None
-    result = convert_ordered_dict_to_dict(copy.deepcopy(target_obj.__dict__))
+    if isinstance(target_obj, msrest.serialization.Model):
+        result = target_obj.as_dict()
+    else:
+        result = copy.deepcopy(target_obj.__dict__)
+    result = convert_ordered_dict_to_dict(result)
     to_del = ["additional_properties"]
     if clear_empty_value:
         to_del.extend(filter(lambda x: result.get(x) is None, result.keys()))
@@ -349,7 +357,10 @@ def resolve_pipeline_parameter(data):
     from azure.ai.ml.entities._builders.base_node import BaseNode
     from azure.ai.ml.entities._builders.pipeline import Pipeline
     from azure.ai.ml.entities._job.pipeline._io import OutputsAttrDict
+    from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 
+    if isinstance(data, PipelineExpression):
+        data = data.resolve()
     if isinstance(data, (BaseNode, Pipeline)):
         # For the case use a node/pipeline node as the input, we use its only one output as the real input.
         # Here we set node = node.outputs, then the following logic will get the output object.

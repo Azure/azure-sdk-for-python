@@ -67,6 +67,13 @@ class BaseNodeSchema(PathAwareSchema):
             data.update(user_setting_attr_dict)
         return data
 
+    # an alternative would be set schema property to be load_only, but sub-schemas like CommandSchema usually also
+    # inherit from other schema classes which also have schema property. Set post dump here would be more efficient.
+    @post_dump()
+    def remove_meaningless_key_for_node(self, data, **kwargs):
+        data.pop("$schema", None)
+        return data
+
 
 def _delete_type_for_binding(io):
     for key in io:
@@ -117,7 +124,8 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
         metadata={
             "description": "The command run and the parameters passed. \
             This string may contain place holders of inputs in {}. "
-        }
+        },
+        load_only=True,
     )
     environment = UnionField(
         [

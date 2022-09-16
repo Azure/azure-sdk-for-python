@@ -176,6 +176,7 @@ def spark(
     job_inputs = {k: v for k, v in job_inputs.items() if v is not None}
     component_outputs, job_outputs = _parse_inputs_outputs(outputs, parse_func=_parse_output)
     component = kwargs.pop("component", None)
+
     if component is None:
         component = SparkComponent(
             name=name,

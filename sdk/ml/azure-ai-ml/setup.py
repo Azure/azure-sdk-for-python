@@ -62,7 +62,7 @@ setup(
             "azure.ai",
         ]
     ),
-    python_requires="<4.0,>=3.6",
+    python_requires="<4.0,>=3.7",
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "pyyaml<7.0.0,>=5.1.0",

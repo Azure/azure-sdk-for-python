@@ -119,6 +119,7 @@ class Component(
             creation_context=creation_context,
             is_anonymous=kwargs.pop("is_anonymous", False),
             base_path=kwargs.pop("base_path", None),
+            source_path=kwargs.pop("source_path", None),
         )
         # store kwargs to self._other_parameter instead of pop to super class to allow component have extra
         # fields not defined in current schema.

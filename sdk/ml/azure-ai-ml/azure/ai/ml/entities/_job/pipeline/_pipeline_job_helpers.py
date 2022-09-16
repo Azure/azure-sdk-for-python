@@ -96,7 +96,8 @@ def from_dict_to_rest_io(
             # todo: backend help convert node level input/output type
             normalize_job_input_output_type(val)
 
-            io_value = val.get("value", "")
+            # Add casting as sometimes we got value like 1(int)
+            io_value = str(val.get("value", ""))
             io_mode = val.get("mode", None)
             if any([re.match(item, io_value) for item in io_binding_regex_list]):
                 if io_mode:

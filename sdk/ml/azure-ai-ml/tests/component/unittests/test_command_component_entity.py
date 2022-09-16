@@ -110,7 +110,7 @@ class TestCommandComponentEntity:
         source = component_dict["properties"]["component_spec"]["_source"]
 
         assert inputs == {
-            "data_0": {"type": "uri_folder"},
+            "data_0": {"mode": "ro_mount", "type": "uri_folder"},
             "data_1": {"type": "uri_file", "optional": True},
             "param_float0": {"type": "number", "default": "1.1", "max": "5.0", "min": "0.0"},
             "param_float1": {"type": "number"},
@@ -324,7 +324,7 @@ class TestCommandComponentEntity:
             print(test_command)
             outstr = std_out.getvalue()
             assert (
-                "outputs:\n  my_model:\n    mode: rw_mount\n    type: mlflow_model\ncommand: python train.py --input-data ${{inputs.input_data}} --lr ${{inputs.learning_rate}}\n"
+                "outputs:\n  my_model:\n    mode: rw_mount\n    type: mlflow_model\nenvironment: azureml:my-env:1\ncode: azureml:./src\nresources:\n  instance_count: 2"
                 in outstr
             )
 

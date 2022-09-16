@@ -46,8 +46,6 @@ from azure.ai.ml.entities._system_data import SystemData
 from ..._schema import PathAwareSchema
 from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
 from .._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
-from .._job.pipeline._io import PipelineInput, PipelineOutputBase
-from .._job.pipeline._pipeline_expression import PipelineExpression
 from .._util import convert_ordered_dict_to_dict, get_rest_dict, load_from_dict, validate_attribute_type
 from .base_node import BaseNode
 from .sweep import Sweep
@@ -166,18 +164,10 @@ class Command(BaseNode):
 
     @classmethod
     def _get_supported_inputs_types(cls):
-        # when command node is constructed inside dsl.pipeline, inputs can be PipelineInput or Output of another node
+        supported_types = super()._get_supported_inputs_types() or ()
         return (
-            PipelineInput,
-            PipelineOutputBase,
-            Input,
             SweepDistribution,
-            str,
-            bool,
-            int,
-            float,
-            Enum,
-            PipelineExpression,
+            *supported_types,
         )
 
     @classmethod
@@ -562,9 +552,10 @@ class Command(BaseNode):
 
     def _resolve_job_services(self, services: dict) -> dict:
         """Resolve normal dict to dict[str, JobService]"""
+        # pylint disable=no-self-use
         if services is None:
             return None
-        elif not isinstance(services, dict):
+        if not isinstance(services, dict):
             msg = f"Services must be a dict, got {type(services)} instead."
             raise ValidationException(
                 message=msg,

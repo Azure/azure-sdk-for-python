@@ -242,6 +242,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             tags=self.tags,
             display_name=self.display_name,
             limits=self.limits,
+            services=self.services,
         )
 
     def _validate(self) -> None:

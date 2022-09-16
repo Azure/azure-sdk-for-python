@@ -13,11 +13,12 @@ from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.entities import Component, Job
 from azure.ai.ml.entities._builders import BaseNode
-from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineInputBase, PipelineOutputBase
+from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 
 from ...entities._validation import ValidationResult
 from .._schema.component import NodeType
+from ._input_outputs import InternalInput
 
 
 class InternalBaseNode(BaseNode):
@@ -47,7 +48,7 @@ class InternalBaseNode(BaseNode):
             str,
             Union[
                 PipelineInput,
-                PipelineOutputBase,
+                NodeOutput,
                 Input,
                 str,
                 bool,
@@ -73,6 +74,9 @@ class InternalBaseNode(BaseNode):
             properties=properties,
             **kwargs,
         )
+
+    def _build_input(self, name, meta: Input, data) -> PipelineInputBase:
+        return super(InternalBaseNode, self)._build_input(name, InternalInput._cast_from_input_or_dict(meta), data)
 
     @property
     def _skip_required_compute_missing_validation(self) -> bool:
@@ -118,7 +122,7 @@ class InternalBaseNode(BaseNode):
             # hack: remove unfilled input from rest object instead a default input of {"job_input_type": "literal"}
             # note that this hack is not always effective as _data will be set to Input() when visiting input_value.type
             if (
-                isinstance(input_value, PipelineInputBase)
+                isinstance(input_value, NodeInput)
                 and input_value._data is None
                 and input_name in rest_dataset_literal_inputs
             ):

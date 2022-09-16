@@ -76,7 +76,7 @@ from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities import Component, Compute, Job, PipelineJob
 from azure.ai.ml.entities._assets._artifacts.code import Code
-from azure.ai.ml.entities._builders import BaseNode, Command, Spark
+from azure.ai.ml.entities._builders import BaseNode, Command, DoWhile, Spark
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -378,7 +378,8 @@ class JobOperations(_ScopeDependentOperations):
 
             for node_name, node in job.jobs.items():
                 try:
-                    node.compute = self.try_get_compute_arm_id(node.compute)
+                    if not isinstance(node, DoWhile):
+                        node.compute = self.try_get_compute_arm_id(node.compute)
                 except Exception as e:
                     validation_result.append_error(yaml_path=f"jobs.{node_name}.compute", message=str(e))
 
@@ -557,14 +558,14 @@ class JobOperations(_ScopeDependentOperations):
         self,
         name: str,
         *,
-        download_path: Union[PathLike, str],
+        download_path: Union[PathLike, str] = ".",
         output_name: str = None,
         all: bool = False,
     ) -> None:
         """Download logs and output of a job.
 
         :param str name: Name of a job.
-        :param Union[PathLike, str] download_path: Local path as download destination.
+        :param Union[PathLike, str] download_path: Local path as download destination, defaults to '.'.
         :param str output_name: Named output to download, defaults to None.
         :param bool all: Whether to download logs and all named outputs, defaults to False.
         """

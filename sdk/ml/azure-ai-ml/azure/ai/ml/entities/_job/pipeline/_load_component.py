@@ -13,11 +13,12 @@ from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationExc
 from azure.ai.ml._schema import NestedField
 from azure.ai.ml._schema.pipeline.component_job import SweepSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, CommonYamlFields
-from azure.ai.ml.constants._component import NodeType
+from azure.ai.ml.constants._component import ControlFlowType, NodeType
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.dsl._component_func import to_component_func
 from azure.ai.ml.dsl._overrides_definition import OverrideDefinition
 from azure.ai.ml.entities._builders import BaseNode, Command, Import, Parallel, Spark, Sweep
+from azure.ai.ml.entities._builders.do_while import DoWhile
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -72,6 +73,12 @@ class _PipelineNodeFactory:
             _type=NodeType.SPARK,
             create_instance_func=lambda: Spark.__new__(Spark),
             load_from_rest_object_func=Spark._from_rest_object,
+            nested_schema=None,
+        )
+        self.register_type(
+            _type=ControlFlowType.DO_WHILE,
+            create_instance_func=None,
+            load_from_rest_object_func=DoWhile._from_rest_object,
             nested_schema=None,
         )
 

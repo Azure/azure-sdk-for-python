@@ -27,7 +27,9 @@ from azure.ai.ml._utils.utils import (
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import ComponentSource
+from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
 from azure.ai.ml.entities._builders import BaseNode
+from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.entities._builders.import_node import Import
 from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.pipeline import Pipeline
@@ -149,7 +151,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
 
         self._remove_pipeline_input()
         self.compute = compute
-        self._settings = settings if settings else PipelineJobSettings()
+        self._settings = None
+        self.settings = settings
         self.identity = identity
         # TODO: remove default code & environment?
         self._default_code = None
@@ -189,10 +192,14 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         :return: Settings of the pipeline job.
         :rtype: ~azure.ai.ml.entities.PipelineJobSettings
         """
+        if self._settings is None:
+            self._settings = PipelineJobSettings()
         return self._settings
 
     @settings.setter
     def settings(self, value):
+        if value is not None and not isinstance(value, PipelineJobSettings):
+            raise TypeError("settings must be PipelineJobSettings but got {}".format(type(value)))
         self._settings = value
 
     @classmethod
@@ -230,7 +237,12 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
 
         if isinstance(self.component, PipelineComponent):
             # Merge with pipeline component validate result for structure validation.
-            validation_result.merge_with(self.component._customized_validate())
+            # Skip top level parameter missing type error
+            validation_result.merge_with(
+                self.component._customized_validate(),
+                condition_skip=lambda x: x.error_code == ValidationErrorCode.PARAMETER_TYPE_UNKNOWN
+                and x.yaml_path.startswith("inputs"),
+            )
             # Validate compute
             validation_result.merge_with(self._validate_compute_is_set())
         # Validate Input
@@ -243,7 +255,12 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
     def _validate_input(self):
         validation_result = self._create_empty_validation_result()
         used_pipeline_inputs = set(
-            itertools.chain(*[self.component._get_input_binding_dict(node)[0] for node in self.jobs.values()])
+            itertools.chain(
+                *[
+                    self.component._get_input_binding_dict(node if not isinstance(node, LoopNode) else node.body)[0]
+                    for node in self.jobs.values()
+                ]
+            )
         )
         # validate inputs
         if not isinstance(self.component, Component):
@@ -400,8 +417,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         # example: {"eval_output": "${{jobs.eval.outputs.eval_output}}"}
         built_outputs = self._build_outputs()
 
-        settings_dict = vars(self.settings) if self.settings else {}
-        settings_dict = {key: val for key, val in settings_dict.items() if val is not None}
+        settings_dict = self.settings._to_dict()
 
         if isinstance(self.component, PipelineComponent):
             source = self.component._source
@@ -452,7 +468,10 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         sub_nodes = {}
         if properties.jobs:
             for node_name, node in properties.jobs.items():
-                sub_nodes[node_name] = BaseNode._from_rest_object(node)
+                if LoopNode._is_loop_node_dict(node):
+                    sub_nodes[node_name] = LoopNode._from_rest_object(node, reference_node_list=sub_nodes)
+                else:
+                    sub_nodes[node_name] = BaseNode._from_rest_object(node)
         # backend may still store Camel settings, eg: DefaultDatastore, translate them to snake when load back
         settings_dict = transform_dict_keys(properties.settings, camel_to_snake) if properties.settings else None
         settings_sdk = PipelineJobSettings(**settings_dict) if settings_dict else PipelineJobSettings()

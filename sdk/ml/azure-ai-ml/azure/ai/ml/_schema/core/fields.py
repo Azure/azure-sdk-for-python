@@ -71,12 +71,12 @@ class StringTransformedEnum(Field):
             return
         if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
             return self.casing_transform(value)
-        raise ValidationError(f"Value {value} passed is not in set {self.allowed_values}")
+        raise ValidationError(f"Value {value!r} passed is not in set {self.allowed_values}")
 
     def _deserialize(self, value, attr, data, **kwargs):
         if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
             return self.casing_transform(value)
-        raise ValidationError(f"Value {value} passed is not in set {self.allowed_values}")
+        raise ValidationError(f"Value {value!r} passed is not in set {self.allowed_values}")
 
 
 class DumpableEnumField(StringTransformedEnum):
@@ -148,6 +148,9 @@ class SerializeValidatedUrl(fields.Url):
 
 
 class DataBindingStr(fields.Str):
+    """A string represents a binding to some data in pipeline job, e.g.: parent.jobs.inputs.input1,
+    parent.jobs.node1.outputs.output1."""
+
     def _jsonschema_type_mapping(self):
         schema = {"type": "string", "pattern": r"\$\{\{\s*(\S*)\s*\}\}"}
         if self.name is not None:
@@ -173,6 +176,28 @@ class DataBindingStr(fields.Str):
         if is_data_binding_expression(value, is_singular=False):
             return super(DataBindingStr, self)._validate(value)
         raise ValidationError(f"Value passed is not a data binding string: {value}")
+
+
+class NodeBindingStr(DataBindingStr):
+    """A string represents a binding to some node in pipeline job, e.g.: parent.jobs.node1."""
+
+    def _serialize(self, value, attr, obj, **kwargs):
+        # None value handling logic is inside _serialize but outside _validate/_deserialize
+        if value is None:
+            return None
+
+        from azure.ai.ml.entities._builders import BaseNode
+
+        if isinstance(value, BaseNode):
+            value = f"${{{{parent.jobs.{value.name}}}}}"
+
+        self._validate(value)
+        return super(NodeBindingStr, self)._serialize(value, attr, obj, **kwargs)
+
+    def _validate(self, value):
+        if is_data_binding_expression(value, is_singular=True):
+            return super(NodeBindingStr, self)._validate(value)
+        raise ValidationError(f"Value passed is not a node binding string: {value}")
 
 
 class DateTimeStr(fields.Str):
@@ -514,7 +539,7 @@ class TypeSensitiveUnionField(UnionField):
         if value_type not in self.allowed_types:
             # if value has type field but its value doesn't match any allowed value, raise ValidationError directly
             raise ValidationError(
-                message={self.type_field_name: f"Value {value_type} passed is not in set {self.allowed_types}"},
+                message={self.type_field_name: f"Value {value_type!r} passed is not in set {self.allowed_types}"},
                 field_name=attr,
             )
         # if value has type field and its value match at least 1 allowed value, raise first matched
@@ -651,6 +676,13 @@ class DumpableIntegerField(fields.Integer):
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, _T]]:
         if self.strict and not isinstance(value, int):
             raise ValidationError("Given value is not an integer")
+        return super()._serialize(value, attr, obj, **kwargs)
+
+
+class DumpableFloatField(fields.Float):
+    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, _T]]:
+        if not isinstance(value, float):
+            raise ValidationError("Given value is not a float")
         return super()._serialize(value, attr, obj, **kwargs)
 
 

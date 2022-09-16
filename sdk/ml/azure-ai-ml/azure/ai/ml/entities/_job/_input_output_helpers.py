@@ -108,48 +108,6 @@ def get_output_rest_init_func_dict():
     }
 
 
-class BindingJobInput(LiteralJobInput):
-    """Literal input type.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar description: Description for the input.
-    :vartype description: str
-    :ivar job_input_type: Required. [Required] Specifies the type of job.Constant filled by server.
-     Possible values include: "Literal".
-    :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
-    :ivar value: Required. [Required] Literal value for the input.
-    :vartype value: str
-    :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
-    "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
-    :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
-    """
-
-    _validation = {
-        "job_input_type": {"required": True},
-        "value": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
-    }
-
-    _attribute_map = {
-        "description": {"key": "description", "type": "str"},
-        "job_input_type": {"key": "jobInputType", "type": "str"},
-        "value": {"key": "value", "type": "str"},
-        "mode": {"key": "mode", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        """
-        :keyword description: Description for the input.
-        :paramtype description: str
-        :keyword value: Required. [Required] Literal value for the input.
-        :paramtype value: str
-        """
-        super(LiteralJobInput, self).__init__(**kwargs)
-        self.job_input_type = "literal"  # type: str
-        self.value = kwargs["value"]
-        self.mode = kwargs.get("mode", None)
-
-
 def build_input_output(
     item: Union[InputOutputEntry, Input, Output, str, bool, int, float],
     inputs: bool = True,
@@ -243,12 +201,10 @@ def to_rest_dataset_literal_inputs(
             validate_key_contains_allowed_characters(input_name)
         if isinstance(input_value, Input):
             if input_value.path and isinstance(input_value.path, str) and is_data_binding_expression(input_value.path):
+                input_data = LiteralJobInput(value=input_value.path)
+                # set mode attribute manually for binding job input
                 if input_value.mode:
-                    input_data = BindingJobInput(
-                        value=input_value.path, mode=INPUT_MOUNT_MAPPING_TO_REST[input_value.mode]
-                    )
-                else:
-                    input_data = LiteralJobInput(value=input_value.path)
+                    input_data.mode = INPUT_MOUNT_MAPPING_TO_REST[input_value.mode]
                 input_data.job_input_type = JobInputType.LITERAL
             else:
                 target_init_func_dict = get_input_rest_init_func_dict()
@@ -274,10 +230,10 @@ def to_rest_dataset_literal_inputs(
         else:
             # otherwise, the input is a literal input
             if isinstance(input_value, dict):
+                input_data = LiteralJobInput(value=str(input_value["value"]))
+                # set mode attribute manually for binding job input
                 if "mode" in input_value:
-                    input_data = BindingJobInput(value=str(input_value["value"]), mode=input_value["mode"])
-                else:
-                    input_data = LiteralJobInput(value=str(input_value["value"]))
+                    input_data.mode = input_value["mode"]
             else:
                 input_data = LiteralJobInput(value=str(input_value))
             input_data.job_input_type = JobInputType.LITERAL

@@ -90,7 +90,7 @@ class TestPipelineJobEntity:
         # same regression node won't load as AutoMLRegressionSchema since there's data binding
         with pytest.raises(ValidationError) as e:
             AutoMLRegressionSchema(context={"base_path": "./"}).load(expected_dict)
-        assert "Value ${{parent.inputs.primary_metric}} passed is not in set" in str(e.value)
+        assert "Value '${{parent.inputs.primary_metric}}' passed is not in set" in str(e.value)
 
     def test_automl_node_in_pipeline_classification(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_classification.yml"
@@ -203,7 +203,6 @@ class TestPipelineJobEntity:
         pipeline_dict = pipeline._to_dict()
         assert pipeline_dict["jobs"] == {
             "hello_python_world_job": {
-                "$schema": "{}",
                 "environment_variables": {},
                 "inputs": {
                     "sample_input_data": {
@@ -784,7 +783,7 @@ class TestPipelineJobEntity:
             "display_name": None,
             "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
             "files": ["my_files.txt"],
-            "identity": None,
+            "identity": {"identity_type": "Managed"},
             "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
             "jars": None,
             "name": "add_greeting_column",
@@ -814,7 +813,7 @@ class TestPipelineJobEntity:
             "display_name": None,
             "entry": {"file": "count_by_row.py", "spark_job_entry_type": "SparkJobPythonEntry"},
             "files": ["my_files.txt"],
-            "identity": None,
+            "identity": {"identity_type": "Managed"},
             "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
             "jars": ["scalaproj.jar"],
             "name": "count_by_row",
@@ -825,6 +824,91 @@ class TestPipelineJobEntity:
             "type": "spark",
         }
         assert actual_dict == expected_dict
+
+    def test_default_user_identity_if_empty_identity_input(self):
+        test_path = "./tests/test_configs/pipeline_jobs/shakespear-sample-and-word-count-using-spark/pipeline.yml"
+        job = load_job(path=test_path)
+        omit_fields = [
+            "jobs.sample_word.componentId",
+            "jobs.count_word.componentId",
+        ]
+        actual_job = pydash.omit(job._to_rest_object().properties.as_dict(), *omit_fields)
+        assert actual_job == {
+            "description": "submit a shakespear sample and word spark job in pipeline",
+            "inputs": {
+                "input1": {"job_input_type": "uri_file", "mode": "Direct", "uri": "./dataset/shakespeare.txt"},
+                "sample_rate": {"job_input_type": "literal", "value": "0.01"},
+            },
+            "is_archived": False,
+            "job_type": "Pipeline",
+            "jobs": {
+                "count_word": {
+                    "_source": "YAML.JOB",
+                    "archives": None,
+                    "args": "--input1 ${{inputs.input1}}",
+                    "computeId": "spark31",
+                    "conf": {
+                        "spark.driver.cores": 1,
+                        "spark.driver.memory": "2g",
+                        "spark.executor.cores": 2,
+                        "spark.executor.instances": 4,
+                        "spark.executor.memory": "2g",
+                        "spark.yarn.dist.jars": "https://foobaradrama2.azurefd.net/latest/hadoop-azureml-fs.jar",
+                    },
+                    "display_name": None,
+                    "entry": {"file": "wordcount.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                    "files": None,
+                    "identity": {"identity_type": "Managed"},
+                    "inputs": {
+                        "input1": {"job_input_type": "literal", "value": "${{parent.jobs.sample_word.outputs.output1}}"}
+                    },
+                    "jars": None,
+                    "name": "count_word",
+                    "outputs": {},
+                    "py_files": None,
+                    "resources": None,
+                    "tags": {},
+                    "type": "spark",
+                },
+                "sample_word": {
+                    "_source": "YAML.JOB",
+                    "archives": None,
+                    "args": "--input1 ${{inputs.input1}} --output2 "
+                    "${{outputs.output1}} --my_sample_rate "
+                    "${{inputs.sample_rate}}",
+                    "computeId": None,
+                    "conf": {
+                        "spark.driver.cores": 1,
+                        "spark.driver.memory": "2g",
+                        "spark.dynamicAllocation.enabled": True,
+                        "spark.dynamicAllocation.maxExecutors": 4,
+                        "spark.dynamicAllocation.minExecutors": 1,
+                        "spark.executor.cores": 2,
+                        "spark.executor.instances": 1,
+                        "spark.executor.memory": "2g",
+                    },
+                    "display_name": None,
+                    "entry": {"file": "sampleword.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                    "files": None,
+                    "identity": {"identity_type": "UserIdentity"},
+                    "inputs": {
+                        "input1": {"job_input_type": "literal", "value": "${{parent.inputs.input1}}"},
+                        "sample_rate": {"job_input_type": "literal", "value": "${{parent.inputs.sample_rate}}"},
+                    },
+                    "jars": None,
+                    "name": "sample_word",
+                    "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.output1}}"}},
+                    "py_files": None,
+                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+                    "tags": {},
+                    "type": "spark",
+                },
+            },
+            "outputs": {"output1": {"job_output_type": "uri_file", "mode": "Direct"}},
+            "properties": {},
+            "settings": {"_source": "YAML.JOB"},
+            "tags": {},
+        }
 
     def test_spark_node_in_pipeline_with_dynamic_allocation_disabled(
         self,
@@ -863,19 +947,58 @@ class TestPipelineJobEntity:
         )
 
     @pytest.mark.parametrize(
-        "pipeline_job_path, expected_type",
+        "pipeline_job_path, expected_type, expected_components",
         [
             (
                 "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_literal_output_binding_to_inline_job_input.yml",
                 "uri_folder",
+                {
+                    "score_job": {
+                        "_source": "YAML.JOB",
+                        "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
+                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                        "inputs": {"model_input": {"type": "uri_folder"}, "test_data": {"type": "uri_folder"}},
+                        "is_deterministic": True,
+                        "outputs": {"score_output": {"type": "uri_folder"}},
+                        "tags": {},
+                        "type": "command",
+                        "version": "1",
+                    },
+                },
             ),
             (
                 "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_literal_output_binding_to_inline_job_input2.yml",
                 "mltable",
+                {
+                    "score_job": {
+                        "_source": "YAML.JOB",
+                        "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
+                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                        "inputs": {"model_input": {"type": "mltable"}, "test_data": {"type": "uri_folder"}},
+                        "is_deterministic": True,
+                        "outputs": {"score_output": {"type": "uri_folder"}},
+                        "tags": {},
+                        "type": "command",
+                        "version": "1",
+                    },
+                },
             ),
             (
                 "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_output_binding_to_inline_job_input.yml",
                 "uri_folder",
+                {
+                    "score_job": {
+                        "_source": "YAML.JOB",
+                        "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
+                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                        "inputs": {"model_input": {"type": "uri_folder"}, "test_data": {"type": "uri_folder"}},
+                        "is_deterministic": True,
+                        "outputs": {"score_output": {"type": "uri_folder"}},
+                        "tags": {},
+                        "type": "command",
+                        "version": "1",
+                    },
+                },
             ),
         ],
     )
@@ -884,6 +1007,7 @@ class TestPipelineJobEntity:
         client: MLClient,
         pipeline_job_path: str,
         expected_type,
+        expected_components,
     ) -> None:
         pipeline_job = load_job(
             source=pipeline_job_path,
@@ -892,6 +1016,16 @@ class TestPipelineJobEntity:
         assert actual_type == expected_type
         actual_type = pipeline_job.jobs["score_job"].component.inputs["model_input"].type
         assert actual_type == expected_type
+
+        # check component of pipeline job is expected
+        for name, expected_dict in expected_components.items():
+            actual_dict = pipeline_job.jobs[name].component._to_rest_object().as_dict()
+            omit_fields = [
+                "name",
+            ]
+
+            actual_dict = pydash.omit(actual_dict["properties"]["component_spec"], omit_fields)
+            assert actual_dict == expected_dict
 
     def test_pipeline_without_setting_binding_node(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
         test_path = "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_without_setting_binding_node.yml"
@@ -946,7 +1080,7 @@ class TestPipelineJobEntity:
                 }
             },
             "outputs": {"trained_model": {"job_output_type": "uri_folder"}},
-            "settings": {"default_compute": "xxx", "default_datastore": "xxx", "_source": "YAML.JOB"},
+            "settings": {"_source": "YAML.JOB"},
         }
 
     def test_pipeline_with_only_setting_pipeline_level(
@@ -1005,8 +1139,6 @@ class TestPipelineJobEntity:
             },
             "outputs": {"trained_model": {"job_output_type": "uri_folder", "mode": "Upload"}},
             "settings": {
-                "default_compute": "xxx",
-                "default_datastore": "xxx",
                 "_source": "YAML.JOB",
             },
         }
@@ -1078,7 +1210,7 @@ class TestPipelineJobEntity:
                 }
             },
             "outputs": {"trained_model": {"job_output_type": "uri_folder"}},
-            "settings": {"default_compute": "xxx", "default_datastore": "xxx", "_source": "YAML.JOB"},
+            "settings": {"_source": "YAML.JOB"},
         }
 
     def test_pipeline_with_setting_binding_node_and_pipeline_level(
@@ -1147,7 +1279,7 @@ class TestPipelineJobEntity:
                 }
             },
             "outputs": {"trained_model": {"job_output_type": "uri_folder", "mode": "ReadWriteMount"}},
-            "settings": {"default_compute": "xxx", "default_datastore": "xxx", "_source": "YAML.JOB"},
+            "settings": {"_source": "YAML.JOB"},
         }
 
     def test_pipeline_with_inline_job_setting_binding_node_and_pipeline_level(
@@ -1216,7 +1348,7 @@ class TestPipelineJobEntity:
                 }
             },
             "outputs": {"trained_model": {"job_output_type": "uri_folder", "mode": "ReadWriteMount"}},
-            "settings": {"default_compute": "xxx", "default_datastore": "xxx", "_source": "YAML.JOB"},
+            "settings": {"_source": "YAML.JOB"},
         }
 
     def test_pipeline_job_with_parameter_group(self):
@@ -1272,3 +1404,35 @@ class TestPipelineJobEntity:
         pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
         assert pipeline_job_dict["properties"]["settings"]["on_init"] == "a"
         assert pipeline_job_dict["properties"]["settings"]["on_finalize"] == "c"
+
+    def test_non_string_pipeline_node_input(self):
+        test_path = "./tests/test_configs/pipeline_jobs/rest_non_string_input_pipeline.json"
+        with open(test_path, "r") as f:
+            job_dict = yaml.safe_load(f)
+        pipeline = load_pipeline_entity_from_rest_json(job_dict)
+        pipeline_dict = pipeline._to_dict()
+        node_input_dict = pipeline_dict["jobs"]["error_analysis_job"]["inputs"]
+        # Assert integer value became str
+        assert node_input_dict == {
+            "max_depth": "3",
+            "min_child_samples": "20",
+            "num_leaves": "31",
+            "rai_insights_dashboard": {"path": "${{parent.jobs.create_rai_job.outputs.rai_insights_dashboard}}"},
+        }
+        rest_pipeline_dict = pipeline._to_rest_object().as_dict()
+        rest_node_dict = pydash.omit_by(rest_pipeline_dict["properties"]["jobs"]["error_analysis_job"], lambda x: not x)
+        # Assert integer value became str
+        assert rest_node_dict == {
+            "_source": "REMOTE.REGISTRY",
+            "componentId": "azureml://registries/rai-test/components/microsoft_azureml_rai_tabular_erroranalysis/versions/dev.0.0.1.1662509117.preview",
+            "inputs": {
+                "max_depth": {"job_input_type": "literal", "value": "3"},
+                "min_child_samples": {"job_input_type": "literal", "value": "20"},
+                "num_leaves": {"job_input_type": "literal", "value": "31"},
+                "rai_insights_dashboard": {
+                    "job_input_type": "literal",
+                    "value": "${{parent.jobs.create_rai_job.outputs.rai_insights_dashboard}}",
+                },
+            },
+            "type": "command",
+        }

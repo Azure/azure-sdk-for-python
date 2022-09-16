@@ -13,7 +13,7 @@ from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationExc
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInput as RestJobInput
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml._utils.utils import is_data_binding_expression
-from azure.ai.ml.constants import AssetTypes, InputOutputModes
+from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import ComponentJobConstants, IOConstants
 from azure.ai.ml.entities._assets._artifacts.data import Data
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
@@ -69,8 +69,7 @@ def _data_to_input(data):
     """Convert a Data object to an Input object."""
     if data.id:
         return Input(type=data.type, path=data.id)
-    else:
-        return Input(type=data.type, path=f"{data.name}:{data.version}")
+    return Input(type=data.type, path=f"{data.name}:{data.version}")
 
 
 class InputOutputBase(ABC):
@@ -180,7 +179,7 @@ class InputOutputBase(ABC):
             return super(InputOutputBase, self).__str__()
 
 
-class PipelineInputBase(InputOutputBase):
+class NodeInput(InputOutputBase):
     """Define one input of a Component."""
 
     def __init__(
@@ -228,7 +227,7 @@ class PipelineInputBase(InputOutputBase):
         data = resolve_pipeline_parameter(data)
         if data is None:
             return data
-        if type(data) is PipelineInputBase:  # pylint: disable=unidiomatic-typecheck
+        if type(data) is NodeInput:  # pylint: disable=unidiomatic-typecheck
             msg = "Can not bind input to another component's input."
             raise ValidationException(
                 message=msg,
@@ -236,10 +235,10 @@ class PipelineInputBase(InputOutputBase):
                 target=ErrorTarget.PIPELINE,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        if isinstance(data, (PipelineInput, PipelineOutputBase)):
+        if isinstance(data, (PipelineInput, NodeOutput)):
             # If value is input or output, it's a data binding, we require it have a owner so we can convert it to
             # a data binding, eg: ${{inputs.xxx}}
-            if isinstance(data, PipelineOutputBase) and data._owner is None:
+            if isinstance(data, NodeOutput) and data._owner is None:
                 msg = "Setting input binding {} to output without owner is not allowed."
                 raise ValidationException(
                     message=msg.format(data),
@@ -251,11 +250,12 @@ class PipelineInputBase(InputOutputBase):
         # for data binding case, set is_singular=False for case like "${{parent.inputs.job_in_folder}}/sample1.csv"
         if isinstance(data, Input) or is_data_binding_expression(data, is_singular=False):
             return data
-        if isinstance(self._meta, Input) and not self._meta._is_primitive_type:
+        if isinstance(data, Data):
+            return _data_to_input(data)
+        # self._meta.type could be None when sub pipeline has no annotation
+        if isinstance(self._meta, Input) and self._meta.type and not self._meta._is_primitive_type:
             if isinstance(data, str):
                 return Input(type=self._meta.type, path=data)
-            elif isinstance(data, Data):
-                return _data_to_input(data)
             msg = "only path input is supported now but get {}: {}."
             raise UserErrorException(
                 message=msg.format(type(data), data),
@@ -269,7 +269,7 @@ class PipelineInputBase(InputOutputBase):
         if self._data is None:
             # None data means this input is not configured.
             result = None
-        elif isinstance(self._data, (PipelineInput, PipelineOutputBase)):
+        elif isinstance(self._data, (PipelineInput, NodeOutput)):
             # Build data binding when data is PipelineInput, Output
             result = Input(path=self._data._data_binding(), mode=self.mode)
         elif is_data_binding_expression(self._data):
@@ -295,7 +295,7 @@ class PipelineInputBase(InputOutputBase):
         )
 
     def _copy(self, owner):
-        return PipelineInputBase(
+        return NodeInput(
             name=self._name,
             data=self._data,
             owner=owner,
@@ -303,7 +303,7 @@ class PipelineInputBase(InputOutputBase):
         )
 
     def _deepcopy(self):
-        return PipelineInputBase(
+        return NodeInput(
             name=self._name,
             data=copy.copy(self._data),
             owner=self._owner,
@@ -311,7 +311,7 @@ class PipelineInputBase(InputOutputBase):
         )
 
 
-class PipelineOutputBase(InputOutputBase):
+class NodeOutput(InputOutputBase, PipelineExpressionMixin):
     """Define one output of a Component."""
 
     def __init__(
@@ -348,6 +348,11 @@ class PipelineOutputBase(InputOutputBase):
         super().__init__(meta=meta, data=data, **kwargs)
         self._name = name
         self._owner = owner
+        self._is_control = meta.is_control if meta else None
+
+    @property
+    def is_control(self) -> str:
+        return self._is_control
 
     def _build_default_data(self):
         """Build default data when output not configured."""
@@ -379,7 +384,8 @@ class PipelineOutputBase(InputOutputBase):
         elif isinstance(self._data, Output):
             result = self._data
         elif isinstance(self._data, PipelineOutput):
-            result = Output(path=self._data._data_binding(), mode=self.mode)
+            is_control = self._meta.is_control if self._meta else None
+            result = Output(path=self._data._data_binding(), mode=self.mode, is_control=is_control)
         else:
             msg = "Got unexpected type for output: {}."
             raise ValidationException(
@@ -393,7 +399,7 @@ class PipelineOutputBase(InputOutputBase):
         return f"${{{{parent.jobs.{self._owner.name}.outputs.{self._name}}}}}"
 
     def _copy(self, owner):
-        return PipelineOutputBase(
+        return NodeOutput(
             name=self._name,
             data=self._data,
             owner=owner,
@@ -401,7 +407,7 @@ class PipelineOutputBase(InputOutputBase):
         )
 
     def _deepcopy(self):
-        return PipelineOutputBase(
+        return NodeOutput(
             name=self._name,
             data=copy.copy(self._data),
             owner=self._owner,
@@ -409,7 +415,7 @@ class PipelineOutputBase(InputOutputBase):
         )
 
 
-class PipelineInput(PipelineInputBase, PipelineExpressionMixin):
+class PipelineInput(NodeInput, PipelineExpressionMixin):
     """Define one input of a Pipeline."""
 
     def __init__(self, name: str, meta: Input, group_names: List[str] = None, **kwargs):
@@ -434,13 +440,13 @@ class PipelineInput(PipelineInputBase, PipelineExpressionMixin):
         """Build data according to input type."""
         if data is None:
             return data
-        if type(data) is PipelineInputBase:  # pylint: disable=unidiomatic-typecheck
+        if type(data) is NodeInput:  # pylint: disable=unidiomatic-typecheck
             msg = "Can not bind input to another component's input."
             raise ValidationException(message=msg, no_personal_data_message=msg, target=ErrorTarget.PIPELINE)
-        if isinstance(data, (PipelineInput, PipelineOutputBase)):
+        if isinstance(data, (PipelineInput, NodeOutput)):
             # If value is input or output, it's a data binding, we require it have a owner so we can convert it to
             # a data binding, eg: ${{parent.inputs.xxx}}
-            if isinstance(data, PipelineOutputBase) and data._owner is None:
+            if isinstance(data, NodeOutput) and data._owner is None:
                 msg = "Setting input binding {} to output without owner is not allowed."
                 raise ValidationException(
                     message=msg.format(data),
@@ -483,7 +489,7 @@ class PipelineInput(PipelineInputBase, PipelineExpressionMixin):
         return result
 
 
-class PipelineOutput(PipelineOutputBase):
+class PipelineOutput(NodeOutput):
     """Define one output of a Pipeline."""
 
     def _to_job_output(self):
@@ -517,7 +523,7 @@ class InputsAttrDict(dict):
         msg = "Pipeline/component input should be a \
         azure.ai.ml.entities._job.pipeline._io.PipelineInputBase with owner, got {}."
         for val in inputs.values():
-            if isinstance(val, PipelineInputBase) and val._owner is not None:
+            if isinstance(val, NodeInput) and val._owner is not None:
                 continue
             if isinstance(val, _GroupAttrDict):
                 continue
@@ -531,7 +537,7 @@ class InputsAttrDict(dict):
     def __setattr__(
         self,
         key: str,
-        value: Union[int, bool, float, str, PipelineOutputBase, PipelineInput, Input],
+        value: Union[int, bool, float, str, NodeOutput, PipelineInput, Input],
     ):
         # Extract enum value.
         value = value.value if isinstance(value, Enum) else value
@@ -553,7 +559,7 @@ class InputsAttrDict(dict):
             )
         self.__setitem__(key, GroupInput.custom_class_value_to_attr_dict(value))
 
-    def __getattr__(self, item) -> PipelineInputBase:
+    def __getattr__(self, item) -> NodeInput:
         return self.__getitem__(item)
 
 
@@ -564,7 +570,7 @@ class _GroupAttrDict(InputsAttrDict):
     def _validate_inputs(cls, inputs):
         msg = "Pipeline/component input should be a azure.ai.ml.entities._job.pipeline._io.PipelineInputBase, got {}."
         for val in inputs.values():
-            if isinstance(val, PipelineInputBase) and val._owner is not None:
+            if isinstance(val, NodeInput) and val._owner is not None:
                 continue
             if isinstance(val, _GroupAttrDict):
                 continue
@@ -605,7 +611,7 @@ class _GroupAttrDict(InputsAttrDict):
             flattened_name = ".".join([group_parameter_name, k])
             if isinstance(v, _GroupAttrDict):
                 flattened_parameters.update(v.flatten(flattened_name))
-            elif isinstance(v, PipelineInputBase):
+            elif isinstance(v, NodeInput):
                 flattened_parameters[flattened_name] = v._to_job_input()
             else:
                 raise ValidationException(
@@ -619,7 +625,7 @@ class _GroupAttrDict(InputsAttrDict):
 class OutputsAttrDict(dict):
     def __init__(self, outputs: dict, **kwargs):
         for val in outputs.values():
-            if not isinstance(val, PipelineOutputBase) or val._owner is None:
+            if not isinstance(val, NodeOutput) or val._owner is None:
                 msg = "Pipeline/component output should be a azure.ai.ml.dsl.Output with owner, got {}."
                 raise ValidationException(
                     message=msg.format(val),
@@ -629,7 +635,7 @@ class OutputsAttrDict(dict):
                 )
         super(OutputsAttrDict, self).__init__(**outputs, **kwargs)
 
-    def __getattr__(self, item) -> PipelineOutputBase:
+    def __getattr__(self, item) -> NodeOutput:
         return self.__getitem__(item)
 
     def __setattr__(self, key: str, value: Union[Data, Output]):
@@ -647,12 +653,12 @@ class NodeIOMixin:
     """Provides ability to wrap node inputs/outputs and build data bindings
     dynamically."""
 
-    def _build_input(self, name, meta: Input, data) -> PipelineInputBase:
-        return PipelineInputBase(name=name, meta=meta, data=data, owner=self)
+    def _build_input(self, name, meta: Input, data) -> NodeInput:
+        return NodeInput(name=name, meta=meta, data=data, owner=self)
 
-    def _build_output(self, name, meta: Output, data) -> PipelineOutputBase:
+    def _build_output(self, name, meta: Output, data) -> NodeOutput:
         # For un-configured outputs, settings it to None so we won't passing extra fields(eg: default mode)
-        return PipelineOutputBase(name=name, meta=meta, data=data, owner=self)
+        return NodeOutput(name=name, meta=meta, data=data, owner=self)
 
     def _get_default_input_val(self, val):  # pylint: disable=unused-argument, no-self-use
         # use None value as data placeholder for unfilled inputs.
@@ -742,7 +748,7 @@ class NodeIOMixin:
         """
         outputs = {}
         for name, output in self.outputs.items():
-            if isinstance(output, PipelineOutputBase):
+            if isinstance(output, NodeOutput):
                 output = output._to_job_output()
             outputs[name] = output
         # Remove non-configured output
@@ -773,7 +779,11 @@ class NodeIOMixin:
         rest_inputs = to_rest_dataset_literal_inputs(rest_inputs, job_type=None)
 
         # convert rest io to dict
-        rest_dataset_literal_inputs = {name: val.as_dict() for name, val in rest_inputs.items()}
+        rest_dataset_literal_inputs = {}
+        for name, val in rest_inputs.items():
+            rest_dataset_literal_inputs[name] = val.as_dict()
+            if hasattr(val, "mode") and val.mode:
+                rest_dataset_literal_inputs[name].update({"mode": val.mode.value})
         return rest_dataset_literal_inputs
 
     def _to_rest_outputs(self) -> Dict[str, Dict]:
@@ -921,7 +931,7 @@ class PipelineIOMixin(PipelineNodeIOMixin):
         """
         outputs = {}
         for name, output in self.outputs.items():
-            if isinstance(output, PipelineOutputBase):
+            if isinstance(output, NodeOutput):
                 output = output._to_job_output()
             outputs[name] = output
         return outputs

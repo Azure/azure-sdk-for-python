@@ -31,7 +31,7 @@ class InternalEnvironment:
     ):
         self.docker = docker
         self.conda = conda
-        self.os = os
+        self.os = os if os else "Linux"
         self.name = name
         self.version = version
         self.python = python

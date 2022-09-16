@@ -60,6 +60,7 @@ PARAMETERS_TO_TEST = [
             "resources.instance_count": 1,  # runsettings.parallel.node_count
             "max_concurrency_per_instance": 2,  # runsettings.parallel.max_concurrency_per_instance
             "error_threshold": 5,  # runsettings.parallel.error_threshold
+            "mini_batch_size": 2,  # runsettings.parallel.mini_batch_size
             "logging_level": "DEBUG",  # runsettings.parallel.logging_level
             "retry_settings.timeout": 300,  # runsettings.parallel.run_invocation_timeout
             "retry_settings.max_retries": 2,  # runsettings.parallel.run_max_try

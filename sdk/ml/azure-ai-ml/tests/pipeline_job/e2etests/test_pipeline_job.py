@@ -1,3 +1,5 @@
+import json
+import re
 import time
 from datetime import datetime
 from pathlib import Path
@@ -5,6 +7,7 @@ from typing import Any, Callable, Dict, Optional
 
 import pydash
 import pytest
+from marshmallow import ValidationError
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
 
 from azure.ai.ml import MLClient, load_component, load_data, load_job
@@ -15,6 +18,7 @@ from azure.ai.ml.constants import InputOutputModes
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities import Component, Job, PipelineJob
 from azure.ai.ml.entities._builders import Command, Pipeline
+from azure.ai.ml.entities._builders.do_while import DoWhile
 from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.spark import Spark
 from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
@@ -25,12 +29,7 @@ from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 
 
 def assert_job_input_output_types(job: PipelineJob):
-    from azure.ai.ml.entities._job.pipeline._io import (
-        PipelineInput,
-        PipelineInputBase,
-        PipelineOutput,
-        PipelineOutputBase,
-    )
+    from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput, PipelineOutput
 
     for _, input in job.inputs.items():
         assert isinstance(input, PipelineInput)
@@ -38,9 +37,9 @@ def assert_job_input_output_types(job: PipelineJob):
         assert isinstance(output, PipelineOutput)
     for _, component in job.jobs.items():
         for _, input in component.inputs.items():
-            assert isinstance(input, PipelineInputBase)
+            assert isinstance(input, NodeInput)
         for _, output in component.outputs.items():
-            assert isinstance(output, PipelineOutputBase)
+            assert isinstance(output, NodeOutput)
 
 
 def assert_job_cancel(pipeline, client: MLClient):
@@ -1428,6 +1427,48 @@ class TestPipelineJob:
             "force_rerun": True,
             "_source": "YAML.JOB",
         }
+
+    @pytest.mark.skip(reason="Currently do_while only enable in master region.")
+    def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        params_override = [{"name": randstr()}]
+        pipeline_job = load_job(
+            path="./tests/test_configs/dsl_pipeline/pipeline_with_do_while/pipeline.yml",
+            params_override=params_override,
+        )
+        created_pipeline = assert_job_cancel(pipeline_job, client)
+        assert len(created_pipeline.jobs) == 5
+        assert isinstance(created_pipeline.jobs["pipeline_body_node"], Pipeline)
+        assert isinstance(created_pipeline.jobs["do_while_job_with_pipeline_job"], DoWhile)
+        assert isinstance(created_pipeline.jobs["do_while_job_with_command_component"], DoWhile)
+        assert isinstance(created_pipeline.jobs["command_component_body_node"], Command)
+        assert isinstance(created_pipeline.jobs["get_do_while_result"], Command)
+
+    @pytest.mark.skip(reason="Currently do_while only enable in master region.")
+    def test_pipeline_with_invalid_do_while_node(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        params_override = [{"name": randstr()}]
+        with pytest.raises(ValidationError) as exception:
+            load_job(
+                path="./tests/test_configs/dsl_pipeline/pipeline_with_do_while/invalid_pipeline.yml",
+                params_override=params_override,
+            )
+        error_message_str = re.findall(r"(\{.*\})", exception.value.args[0].replace("\n", ""))[0]
+        error_messages = json.loads(error_message_str.replace("\\", "\\\\"))
+
+        def assert_error_message(path, except_message, error_messages):
+            msgs = next(filter(lambda item: item["path"] == path, error_messages))
+            assert except_message == msgs["message"]
+
+        assert_error_message("jobs.empty_mapping.mapping", "Missing data for required field.", error_messages["errors"])
+        assert_error_message(
+            "jobs.out_of_range_max_iteration_count.limits.max_iteration_count",
+            "Must be greater than or equal to 1 and less than or equal to 1000.",
+            error_messages["errors"],
+        )
+        assert_error_message(
+            "jobs.invalid_max_iteration_count.limits.max_iteration_count",
+            "Not a valid integer.",
+            error_messages["errors"],
+        )
 
     @pytest.mark.skip("Skip for Bug https://msdata.visualstudio.com/Vienna/_workitems/edit/1963914/")
     def test_pipeline_component_job(self, client: MLClient, randstr: Callable[[], str]):

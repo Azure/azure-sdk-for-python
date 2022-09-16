@@ -162,6 +162,20 @@ class MlException(AzureError):
 
 
 class DeploymentException(MlException):
+    """
+    Class for all exceptions related to Deployments.
+
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param target: The name of the element that caused the exception to be thrown.
+    :type target: ErrorTarget
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
+
     def __init__(
         self,
         message: str,
@@ -182,6 +196,20 @@ class DeploymentException(MlException):
 
 
 class ComponentException(MlException):
+    """
+    Class for all exceptions related to Components.
+
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param target: The name of the element that caused the exception to be thrown.
+    :type target: ErrorTarget
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
+
     def __init__(
         self,
         message: str,
@@ -202,6 +230,20 @@ class ComponentException(MlException):
 
 
 class JobException(MlException):
+    """
+    Class for all exceptions related to Jobs.
+
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param target: The name of the element that caused the exception to be thrown.
+    :type target: ErrorTarget
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
+
     def __init__(
         self,
         message: str,
@@ -222,6 +264,20 @@ class JobException(MlException):
 
 
 class ModelException(MlException):
+    """
+    Class for all exceptions related to Models.
+
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param target: The name of the element that caused the exception to be thrown.
+    :type target: ErrorTarget
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
+
     def __init__(
         self,
         message: str,
@@ -242,6 +298,20 @@ class ModelException(MlException):
 
 
 class AssetException(MlException):
+    """
+    Class for all exceptions related to Assets.
+
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param target: The name of the element that caused the exception to be thrown.
+    :type target: ErrorTarget
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
+
     def __init__(
         self,
         message: str,
@@ -262,6 +332,20 @@ class AssetException(MlException):
 
 
 class ScheduleException(MlException):
+    """
+    Class for all exceptions related to Job Schedules.
+
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param target: The name of the element that caused the exception to be thrown.
+    :type target: ErrorTarget
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
+
     def __init__(
         self,
         message: str,
@@ -338,6 +422,20 @@ class ValidationException(MlException):
 
 
 class AssetPathException(MlException):
+    """
+    Class for the exception raised when an attempt is made to update the path of an existing asset. Asset paths are immutable.
+
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param target: The name of the element that caused the exception to be thrown.
+    :type target: ErrorTarget
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
+
     def __init__(
         self,
         message: str,
@@ -348,26 +446,6 @@ class AssetPathException(MlException):
         **kwargs,
     ):
         super(AssetPathException, self).__init__(
-            message=message,
-            target=target,
-            error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
-            *args,
-            **kwargs,
-        )
-
-
-class ImportException(MlException):
-    def __init__(
-        self,
-        message: str,
-        no_personal_data_message: str,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
-        **kwargs,
-    ):
-        super(ImportException, self).__init__(
             message=message,
             target=target,
             error_category=error_category,

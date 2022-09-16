@@ -26,7 +26,7 @@ from azure.ai.ml.entities._component.import_component import ImportComponent
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._component.spark_component import SparkComponent
-from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.distribution import DistributionConfiguration
 from azure.ai.ml.entities._util import extract_label
 
@@ -168,16 +168,16 @@ class _ComponentFactory:
             if CommonYamlFields.SCHEMA in obj.properties.component_spec
             else None,
         )
+
         origin_name = rest_component_version.component_spec[CommonYamlFields.NAME]
         rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
 
-        # inputs must be set after get_create_funcs to try enable internal components before handling inputs/outputs
-        inputs = {
-            k: Input._from_rest_object(v) for k, v in rest_component_version.component_spec.pop("inputs", {}).items()
-        }
-        outputs = {
-            k: Output._from_rest_object(v) for k, v in rest_component_version.component_spec.pop("outputs", {}).items()
-        }
+        # inputs/outputs will be parsed by instance._build_io in instance's __init__
+        inputs = rest_component_version.component_spec.pop("inputs", {})
+        # parse String -> string, Integer -> integer, etc
+        for _input in inputs.values():
+            _input["type"] = Input._map_from_rest_type(_input["type"])
+        outputs = rest_component_version.component_spec.pop("outputs", {})
 
         distribution = rest_component_version.component_spec.pop("distribution", None)
         if distribution:
