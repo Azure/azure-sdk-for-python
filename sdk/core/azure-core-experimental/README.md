@@ -8,7 +8,7 @@ Azure Core Experimental client library provides experimental features that are n
 Install the azure core experimental package with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-core-experimental --pre
+pip install azure-core-experimental
 ```
 
 ## Features list
