@@ -12,13 +12,14 @@ from typing import Dict, List, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ResourceConfiguration as RestResourceConfiguration
-from azure.ai.ml.constants import ARM_ID_PREFIX, NodeType
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml.constants._common import ARM_ID_PREFIX
+from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
-from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
-from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
+from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
 from azure.ai.ml.entities._job.parallel.parallel_task import ParallelTask
 from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
 
@@ -35,6 +36,9 @@ module_logger = logging.getLogger(__name__)
 class Parallel(BaseNode):
     """Base class for parallel node, used for parallel component version
     consumption.
+
+    You should not instantiate this class directly. Instead, you should
+    create from builder function: parallel.
 
     :param component: Id or instance of the parallel component/job to be run for the step
     :type component: parallelComponent
@@ -74,6 +78,7 @@ class Parallel(BaseNode):
     :type outputs: dict
     """
 
+    # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
@@ -102,7 +107,7 @@ class Parallel(BaseNode):
         input_data: str = None,
         task: Dict[str, Union[ParallelTask, str]] = None,
         mini_batch_size: int = None,
-        resources: ResourceConfiguration = None,
+        resources: JobResourceConfiguration = None,
         environment_variables: Dict = None,
         **kwargs,
     ):
@@ -125,7 +130,7 @@ class Parallel(BaseNode):
         self._task = task
 
         if mini_batch_size is not None and not isinstance(mini_batch_size, int):
-            """Convert str to int."""
+            """Convert str to int."""  # pylint: disable=pointless-string-statement
             pattern = re.compile(r"^\d+([kKmMgG][bB])*$")
             if not pattern.match(mini_batch_size):
                 raise ValueError(r"Parameter mini_batch_size must follow regex rule ^\d+([kKmMgG][bB])*$")
@@ -163,7 +168,10 @@ class Parallel(BaseNode):
                 self.mini_batch_error_threshold or self.component.mini_batch_error_threshold
             )
             self.mini_batch_size = self.mini_batch_size or self.component.mini_batch_size
-            self._task = self._task or self.component.task
+            if not self.task:
+                self.task = self.component.task
+                # task.code is based on self.component.base_path
+                self._base_path = self.component.base_path
 
         self._init = False
 
@@ -197,13 +205,13 @@ class Parallel(BaseNode):
         self._retry_settings = value
 
     @property
-    def resources(self) -> ResourceConfiguration:
+    def resources(self) -> JobResourceConfiguration:
         return self._resources
 
     @resources.setter
     def resources(self, value):
         if isinstance(value, dict):
-            value = ResourceConfiguration(**value)
+            value = JobResourceConfiguration(**value)
         self._resources = value
 
     @property
@@ -216,9 +224,16 @@ class Parallel(BaseNode):
 
     @task.setter
     def task(self, value):
+        # base path should be reset if task is set via sdk
+        self._base_path = None
         if isinstance(value, dict):
             value = ParallelTask(**value)
         self._task = value
+
+    def _set_base_path(self, base_path):
+        if self._base_path:
+            return
+        super(Parallel, self)._set_base_path(base_path)
 
     def set_resources(
         self,
@@ -226,11 +241,13 @@ class Parallel(BaseNode):
         instance_type: Union[str, List[str]] = None,
         instance_count: int = None,
         properties: Dict = None,
-        **kwargs,
+        docker_args: str = None,
+        shm_size: str = None,
+        **kwargs,  # pylint: disable=unused-argument
     ):
         """Set resources for Parallel."""
         if self.resources is None:
-            self.resources = ResourceConfiguration()
+            self.resources = JobResourceConfiguration()
 
         if instance_type is not None:
             self.resources.instance_type = instance_type
@@ -238,6 +255,10 @@ class Parallel(BaseNode):
             self.resources.instance_count = instance_count
         if properties is not None:
             self.resources.properties = properties
+        if docker_args is not None:
+            self.resources.docker_args = docker_args
+        if shm_size is not None:
+            self.resources.shm_size = shm_size
 
         # Save the resources to internal component as well, otherwise calling sweep() will loose the settings
         if isinstance(self.component, Component):
@@ -248,7 +269,7 @@ class Parallel(BaseNode):
         return {
             "component": (str, ParallelComponent),
             "retry_settings": (dict, RetrySettings),
-            "resources": (dict, ResourceConfiguration),
+            "resources": (dict, JobResourceConfiguration),
             "task": (dict, ParallelTask),
             "logging_level": str,
             "max_concurrency_per_instance": int,
@@ -325,10 +346,10 @@ class Parallel(BaseNode):
         obj = BaseNode._rest_object_to_init_params(obj)
         # retry_settings
         if "retry_settings" in obj and obj["retry_settings"]:
-            obj["retry_settings"] = RetrySettings.from_dict(obj["retry_settings"])
+            obj["retry_settings"] = RetrySettings._from_dict(obj["retry_settings"])
 
         if "task" in obj and obj["task"]:
-            obj["task"] = ParallelTask.from_dict(obj["task"])
+            obj["task"] = ParallelTask._from_dict(obj["task"])
             task_code = obj["task"].code
             task_env = obj["task"].environment
             # remove azureml: prefix in code and environment which is added in _to_rest_object
@@ -339,8 +360,8 @@ class Parallel(BaseNode):
 
         # resources, sweep won't have resources
         if "resources" in obj and obj["resources"]:
-            resources = RestResourceConfiguration.from_dict(obj["resources"])
-            obj["resources"] = ResourceConfiguration._from_rest_object(resources)
+            resources = RestJobResourceConfiguration.from_dict(obj["resources"])
+            obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
 
         # Change componentId -> component
         component_id = obj.pop("componentId", None)
@@ -395,11 +416,11 @@ class Parallel(BaseNode):
             node.retry_settings = copy.deepcopy(self.retry_settings)
             node.input_data = self.input_data
             node.task = copy.deepcopy(self.task)
+            node._base_path = self.base_path
             node.resources = copy.deepcopy(self.resources)
             node.environment_variables = copy.deepcopy(self.environment_variables)
             return node
-        else:
-            raise Exception(
-                f"Parallel can be called as a function only when referenced component is {type(Component)}, "
-                f"currently got {self._component}."
-            )
+        raise Exception(
+            f"Parallel can be called as a function only when referenced component is {type(Component)}, "
+            f"currently got {self._component}."
+        )

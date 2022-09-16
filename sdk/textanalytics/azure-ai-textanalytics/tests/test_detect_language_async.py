@@ -666,4 +666,4 @@ class TestDetectLanguage(TextAnalyticsTest):
 
         with pytest.raises(ValueError) as e:
             res = await client.detect_language(["I'm tired"], disable_service_logs=True)
-        assert str(e.value) == "'disable_service_logs' is only available for API version v3.1 and up.\n"
+        assert str(e.value) == "'disable_service_logs' is not available in API version v3.0. Use service API version v3.1 or newer.\n"

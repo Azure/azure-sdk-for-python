@@ -6,7 +6,7 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     ImageModelSettingsClassification,
     ImageModelSettingsObjectDetection,
     LearningRateScheduler,
@@ -14,9 +14,15 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     StochasticOptimizer,
     ValidationMetricType,
 )
-from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
+from azure.ai.ml._schema.job.input_output_fields_provider import InputsField
 from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.constants._job.automl import (
+    ImageClassificationModelNames,
+    ImageInstanceSegmentationModelNames,
+    ImageObjectDetectionModelNames,
+)
 
 
 class ImageModelSettingsSchema(metaclass=PatchedSchemaMeta):
@@ -26,9 +32,8 @@ class ImageModelSettingsSchema(metaclass=PatchedSchemaMeta):
     beta1 = fields.Float()
     beta2 = fields.Float()
     checkpoint_frequency = fields.Int()
-    checkpoint_dataset_id = fields.Str()
-    checkpoint_filename = fields.Str()
     checkpoint_run_id = fields.Str()
+    checkpoint_model = InputsField()
     distributed = fields.Bool()
     early_stopping = fields.Bool()
     early_stopping_delay = fields.Int()
@@ -42,7 +47,6 @@ class ImageModelSettingsSchema(metaclass=PatchedSchemaMeta):
         allowed_values=[o.value for o in LearningRateScheduler],
         casing_transform=camel_to_snake,
     )
-    model_name = fields.Str()
     momentum = fields.Float()
     nesterov = fields.Bool()
     number_of_epochs = fields.Int()
@@ -62,6 +66,9 @@ class ImageModelSettingsSchema(metaclass=PatchedSchemaMeta):
 
 
 class ImageModelSettingsClassificationSchema(ImageModelSettingsSchema):
+    model_name = StringTransformedEnum(
+        allowed_values=[o.value for o in ImageClassificationModelNames],
+    )
     training_crop_size = fields.Int()
     validation_crop_size = fields.Int()
     validation_resize_size = fields.Int()
@@ -72,7 +79,7 @@ class ImageModelSettingsClassificationSchema(ImageModelSettingsSchema):
         return ImageModelSettingsClassification(**data)
 
 
-class ImageModelSettingsObjectDetectionSchema(ImageModelSettingsSchema):
+class ImageDetectionSegmentationCommonSchema(ImageModelSettingsSchema):
     box_detections_per_image = fields.Int()
     box_score_threshold = fields.Float()
     image_size = fields.Int()
@@ -88,6 +95,22 @@ class ImageModelSettingsObjectDetectionSchema(ImageModelSettingsSchema):
     validation_metric_type = StringTransformedEnum(
         allowed_values=[o.value for o in ValidationMetricType],
         casing_transform=camel_to_snake,
+    )
+
+
+class ImageModelSettingsObjectDetectionSchema(ImageDetectionSegmentationCommonSchema):
+    model_name = StringTransformedEnum(
+        allowed_values=[o.value for o in ImageObjectDetectionModelNames],
+    )
+
+    @post_load
+    def make(self, data, **kwargs) -> ImageModelSettingsObjectDetection:
+        return ImageModelSettingsObjectDetection(**data)
+
+
+class ImageModelSettingsInstanceSegmentationSchema(ImageDetectionSegmentationCommonSchema):
+    model_name = StringTransformedEnum(
+        allowed_values=[o.value for o in ImageInstanceSegmentationModelNames],
     )
 
     @post_load

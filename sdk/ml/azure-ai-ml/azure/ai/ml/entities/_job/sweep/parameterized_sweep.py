@@ -3,8 +3,7 @@
 # ---------------------------------------------------------
 from typing import Callable, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._schema.job.loadable_mixin import LoadableMixin
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..job_limits import SweepJobLimits
 from .early_termination_policy import (
@@ -41,7 +40,7 @@ SAMPLING_ALGORITHM_CONSTRUCTOR: Dict[SamplingAlgorithmType, Callable[[], Samplin
 }
 
 
-class ParameterizedSweep(LoadableMixin):
+class ParameterizedSweep:
     """Shared logic for standalone and pipeline sweep job."""
 
     def __init__(
@@ -75,6 +74,7 @@ class ParameterizedSweep(LoadableMixin):
                 no_personal_data_message=msg,
                 target=ErrorTarget.SWEEP_JOB,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
         self._limits = value
 
@@ -152,20 +152,24 @@ class ParameterizedSweep(LoadableMixin):
                 no_personal_data_message=msg,
                 target=ErrorTarget.SWEEP_JOB,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
     def _get_rest_sampling_algorithm(self) -> RestSamplingAlgorithm:
         # TODO: self.sampling_algorithm will always return SamplingAlgorithm
         if isinstance(self.sampling_algorithm, SamplingAlgorithm):
-            return self.sampling_algorithm
+            return self.sampling_algorithm._to_rest_object()
         elif isinstance(self.sampling_algorithm, str):
-            return SAMPLING_ALGORITHM_CONSTRUCTOR[SamplingAlgorithmType(self.sampling_algorithm.lower().capitalize())]()
+            return SAMPLING_ALGORITHM_CONSTRUCTOR[
+                SamplingAlgorithmType(self.sampling_algorithm.lower().capitalize())
+            ]()._to_rest_object()
         msg = f"Received unsupported value {self._sampling_algorithm} as the sampling algorithm"
         raise ValidationException(
             message=msg,
             no_personal_data_message=msg,
             target=ErrorTarget.SWEEP_JOB,
             error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.INVALID_VALUE,
         )
 
     @property
@@ -193,6 +197,7 @@ class ParameterizedSweep(LoadableMixin):
                     no_personal_data_message=msg,
                     target=ErrorTarget.SWEEP_JOB,
                     error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )
         else:
             msg = f"Received unsupported value of type {type(value)} as the early termination policy"
@@ -201,6 +206,7 @@ class ParameterizedSweep(LoadableMixin):
                 no_personal_data_message=msg,
                 target=ErrorTarget.SWEEP_JOB,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
     def _override_missing_properties_from_trial(self):

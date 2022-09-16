@@ -39,10 +39,10 @@ outputs:
 # Write some output to work around a bug when pipeline node failed to run with empty dataset as input
 command: >-
   echo Hello World &
-  [& echo ${{inputs.sanitiza_version}}]
-  [& echo ${{inputs.CamelCase}}]
-  [& echo ${{inputs.have_number1}}]
-  [& echo ${{inputs._start_with_underscore}}]
+  $[[& echo ${{inputs.sanitiza_version}}]]
+  $[[& echo ${{inputs.CamelCase}}]]
+  $[[& echo ${{inputs.have_number1}}]]
+  $[[& echo ${{inputs._start_with_underscore}}]]
   echo ${{outputs.have_*@special_characters}} > ${{outputs.have_*@special_characters}}/component_in_number
 
 environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

@@ -567,7 +567,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :keyword source_lease: A lease ID for the source path. If specified,
-            the source path must have an active lease and the leaase ID must
+            the source path must have an active lease and the lease ID must
             match.
         :paramtype source_lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword lease:
@@ -714,7 +714,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         # type: (...) -> Dict[str, Any]
         """Sets system properties on the file or directory.
 
-        If one property is set for the content_settings, all properties will be overriden.
+        If one property is set for the content_settings, all properties will be overridden.
 
         :param ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set file/directory properties.

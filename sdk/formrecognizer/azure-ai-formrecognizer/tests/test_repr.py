@@ -170,12 +170,6 @@ def address_value():
     assert repr(model) == model_repr
     return model, model_repr
 
-@pytest.fixture
-def document_element(bounding_box):
-    model = _models.DocumentContentElement(content="content", kind="word", polygon=bounding_box[0])
-    model_repr = "DocumentContentElement(content=content, polygon={}, kind=word)".format(bounding_box[1])
-    assert repr(model) == model_repr
-    return model, model_repr
 
 @pytest.fixture
 def address_document_field(bounding_region, document_span, address_value):
@@ -234,12 +228,11 @@ def document_key_value_pair(document_key_value_element):
 @pytest.fixture
 def document_word(bounding_box, document_span):
     model = _models.DocumentWord(content="word", polygon=bounding_box[0], span=document_span[0], confidence=0.92)
-    model_repr = "DocumentWord(content={}, polygon={}, span={}, confidence={}, kind={})".format(
+    model_repr = "DocumentWord(content={}, polygon={}, span={}, confidence={})".format(
             "word",
             bounding_box[1],
             document_span[1],
             0.92,
-            "word",
         )
     assert repr(model) == model_repr
     return model, model_repr
@@ -280,14 +273,12 @@ def document_language(document_span):
 
 @pytest.fixture
 def document_selection_mark(bounding_box, document_span):
-    model = _models.DocumentSelectionMark(state="selected", content="", polygon=bounding_box[0], span=document_span[0], confidence=0.89)
-    model_repr = "DocumentSelectionMark(state={}, content={}, span={}, confidence={}, polygon={}, kind={})".format(
+    model = _models.DocumentSelectionMark(state="selected", polygon=bounding_box[0], span=document_span[0], confidence=0.89)
+    model_repr = "DocumentSelectionMark(state={}, span={}, confidence={}, polygon={})".format(
             "selected",
-            "",
             document_span[1],
             0.89,
             bounding_box[1],
-            "selectionMark",
         )
     assert repr(model) == model_repr
     return model, model_repr
@@ -509,7 +500,7 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_model_operation(self, document_analysis_error, document_model):
-        model = _models.DocumentModelOperationDetails(
+        model = _models.OperationDetails(
                 api_version="2022-08-31",
                 tags={"awesome": "tag"},
                 operation_id="id",
@@ -522,7 +513,7 @@ class TestRepr():
                 error=document_analysis_error[0],
                 result=document_model[0],
             )
-        model_repr = "DocumentModelOperationDetails(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, result={}, error={}, api_version={}, tags={})".format(
+        model_repr = "OperationDetails(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, result={}, error={}, api_version={}, tags={})".format(
                     "id",
                     "succeeded",
                     99,
@@ -538,7 +529,7 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_model_operation_info(self):
-        model = _models.DocumentModelOperationSummary(
+        model = _models.OperationSummary(
                 operation_id="id",
                 status="succeeded",
                 percent_completed=100,
@@ -549,7 +540,7 @@ class TestRepr():
                 api_version="2022-08-31",
                 tags={"test": "value"},
             )
-        model_repr = "DocumentModelOperationSummary(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, api_version={}, tags={})".format(
+        model_repr = "OperationSummary(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, api_version={}, tags={})".format(
                     "id",
                     "succeeded",
                     100,
@@ -600,12 +591,14 @@ class TestRepr():
         )
         assert repr(model) == model_repr
 
-    def test_account_info(self):
+    def test_resource_details(self):
         model = _models.ResourceDetails(
-            document_model_limit=5000, document_model_count=10
+            custom_document_models=_models.CustomDocumentModelsDetails(
+                limit=5000, count=10
+            )
         )
-        model_repr = "ResourceDetails(document_model_count={}, document_model_limit={})".format(
-            10, 5000
+        model_repr = "ResourceDetails(custom_document_models={})".format(
+            "CustomDocumentModelsDetails(count=10, limit=5000)"
         )
         assert repr(model) == model_repr
 

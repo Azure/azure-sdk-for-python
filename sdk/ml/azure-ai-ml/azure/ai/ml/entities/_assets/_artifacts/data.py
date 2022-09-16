@@ -10,7 +10,13 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Type, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._ml_exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+    log_and_raise_error,
+)
 from azure.ai.ml._restclient.v2022_05_01.models import (
     DataContainerData,
     DataContainerDetails,
@@ -24,8 +30,9 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
 from azure.ai.ml._schema import DataSchema
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
 from azure.ai.ml._utils.utils import is_url
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, SHORT_URI_FORMAT, AssetTypes
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, SHORT_URI_FORMAT, AssetTypes
 from azure.ai.ml.entities._assets import Artifact
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 
 from .artifact import ArtifactStorageInfo
@@ -41,12 +48,14 @@ def getModelForDataAssetType(data_asset_type: str) -> Type[DataVersionBaseDetail
     model = DataAssetTypeModelMap.get(data_asset_type)
     if model is None:
         msg = "Unknown DataType {}".format(data_asset_type)
-        raise ValidationException(
+        err = ValidationException(
             message=msg,
             no_personal_data_message=msg,
-            target=ErrorTarget.ARTIFACT,
+            error_type=ValidationErrorType.INVALID_VALUE,
+            target=ErrorTarget.DATA,
             error_category=ErrorCategory.USER_ERROR,
         )
+        log_and_raise_error(err)
     return model
 
 
@@ -175,7 +184,7 @@ class Data(Artifact):
         data_rest_object_details: DataContainerDetails = data_container_rest_object.properties
         data = Data(
             name=data_container_rest_object.name,
-            creation_context=data_container_rest_object.system_data,
+            creation_context=SystemData._from_rest_object(data_container_rest_object.system_data),
             tags=data_rest_object_details.tags,
             properties=data_rest_object_details.properties,
             type=getDataAssetType(data_rest_object_details.data_type),
@@ -197,7 +206,7 @@ class Data(Artifact):
             description=data_rest_object_details.description,
             tags=data_rest_object_details.tags,
             properties=data_rest_object_details.properties,
-            creation_context=data_rest_object.system_data,
+            creation_context=SystemData._from_rest_object(data_rest_object.system_data),
             is_anonymous=data_rest_object_details.is_anonymous,
             referenced_uris=getattr(data_rest_object_details, "referenced_uris", None),
         )

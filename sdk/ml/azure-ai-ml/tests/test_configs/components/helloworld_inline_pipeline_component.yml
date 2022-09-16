@@ -19,12 +19,15 @@ inputs:
   component_in_path:
     description: A path
     type: uri_folder
+  node_compute:
+    type: string
+    default: azureml:cpu-cluster
 
 
 jobs:
   component_a_job:
     command: echo "hello" && echo "world" > ${{outputs.world_output}}/world.txt
     environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest
-    compute: azureml:cpu-cluster
+    compute: ${{parent.inputs.node_compute}}
     outputs:
       world_output:

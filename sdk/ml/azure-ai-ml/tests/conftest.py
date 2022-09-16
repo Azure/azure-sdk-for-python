@@ -1,29 +1,28 @@
-from os import getenv
-import time
-import random
-from typing import Callable, Tuple
-import uuid
 import os
+import random
+import time
+import uuid
+from datetime import datetime
+from os import getenv
 from pathlib import Path
+from typing import Callable, Tuple
+from unittest.mock import Mock
 
-from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
-from azure.ai.ml._scope_dependent_operations import OperationScope
 import pytest
 from pytest_mock import MockFixture
-from unittest.mock import Mock
-from azure.identity import DefaultAzureCredential, ClientSecretCredential
-from azure.ai.ml import MLClient
-from test_utilities.constants import Test_Subscription, Test_Resource_Group, Test_Workspace_Name
-from datetime import datetime
-from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
-from azure.mgmt.storage import StorageManagementClient
-from azure.core.exceptions import ResourceNotFoundError
-from azure.ai.ml.entities import Job, Component, AzureBlobDatastore, CommandComponent
-from azure.ai.ml.entities._component.parallel_component import ParallelComponent
+from test_utilities.constants import Test_Resource_Group, Test_Subscription, Test_Workspace_Name
 
-from azure.ai.ml.entities._assets import Model, Data
+from azure.ai.ml import MLClient, load_component, load_job
+from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
+from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml.entities import AzureBlobDatastore, Component
+from azure.ai.ml.entities._assets import Data, Model
+from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._datastore.credentials import NoneCredentials
-from azure.ai.ml import load_job, load_component
+from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
+from azure.core.exceptions import ResourceNotFoundError
+from azure.identity import ClientSecretCredential, DefaultAzureCredential
+from azure.mgmt.storage import StorageManagementClient
 
 E2E_TEST_LOGGING_ENABLED = "E2E_TEST_LOGGING_ENABLED"
 test_folder = Path(os.path.abspath(__file__)).parent.absolute()
@@ -162,14 +161,8 @@ def only_registry_client(e2e_ws_scope: OperationScope) -> MLClient:
 
 
 @pytest.fixture
-def client_fixture(request, client) -> MLClient:
-    """return a machine learning client using default e2e testing workspace"""
-    request.cls.client = client
-
-
-@pytest.fixture
 def resource_group_name(location: str) -> str:
-    return f"test-rg-{location}-v2-t-{_get_week_format()}"
+    return f"test-rg-{location}-v2-{_get_week_format()}"
 
 
 @pytest.fixture
@@ -216,7 +209,7 @@ def light_gbm_model(client: MLClient) -> Model:
     try:
         client.models.get(name=model_name, version="1")
     except ResourceNotFoundError:
-        job = load_job(path="./tests/test_configs/batch_setup/lgb.yml")
+        job = load_job(source="./tests/test_configs/batch_setup/lgb.yml")
         job.name = job_name
         print(f"Starting new job with name {job_name}")
         job = client.jobs.create_or_update(job)
@@ -351,13 +344,14 @@ def credentialless_datastore(client: MLClient, storage_account_name: str) -> Azu
 @pytest.fixture()
 def enable_pipeline_private_preview_features(mocker: MockFixture):
     mocker.patch("azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled", return_value=True)
+    mocker.patch("azure.ai.ml.dsl._pipeline_component_builder.is_private_preview_enabled", return_value=True)
 
 
 @pytest.fixture()
 def enable_internal_components():
-    from azure.ai.ml.dsl._utils import environment_variable_overwrite
     from azure.ai.ml._utils.utils import try_enable_internal_components
-    from azure.ai.ml.constants import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
+    from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
+    from azure.ai.ml.dsl._utils import environment_variable_overwrite
 
     with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "True"):
         # need to call _try_init_internal_components manually as environment variable is set after _internal is imported
