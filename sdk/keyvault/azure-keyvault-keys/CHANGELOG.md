@@ -1,6 +1,6 @@
 # Release History
 
-## 4.7.0 (2022-09-13)
+## 4.7.0 (2022-09-19)
 
 ### Breaking Changes
 - Clients verify the challenge resource matches the vault domain. This should affect few customers,
