@@ -3,7 +3,7 @@
 This document contains some general typing tips and guidance as it relates to common types/patterns we use in the Python SDK.
 It also walks through the setup necessary to run mypy and pyright, static type checkers, on client library code.
 
-For the TL;DR version, please see the [Static Type Checking Cheat Sheet](TODO).
+For the TL;DR version, please see the [Static Type Checking Cheat Sheet](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md).
 
 ## Table of contents
   - [Intro to typing in Python](#intro-to-typing-in-python)
@@ -15,7 +15,6 @@ For the TL;DR version, please see the [Static Type Checking Cheat Sheet](TODO).
     - [How to ignore type checking errors](#how-to-ignore-type-checking-errors)
     - [How to opt out of type checking](#how-to-opt-out-of-type-checking)
   - [Typing tips and guidance for the Python SDK](#typing-tips-and-guidance-for-the-python-sdk)
-    - [Debug type checking with reveal_type and reveal_locals](#debug-type-checking-with-reveal_type-and-reveal_locals)
     - [Use typing.Any sparingly](#use-typingany-sparingly)
     - [Use typing.Union when accepting more than one type](#use-typingunion-when-accepting-more-than-one-type)
     - [Use typing.Optional when a parameter can explicitly be None](#use-typingoptional-when-a-parameter-can-explicitly-be-none)
@@ -23,6 +22,7 @@ For the TL;DR version, please see the [Static Type Checking Cheat Sheet](TODO).
       - [Mapping types](#mapping-types)
       - [List](#list)
       - [Tuples](#tuples)
+    - [Parameters not needing type annotations](#parameters-not-needing-type-annotations)
     - [Typing variadic arguments - *args and **kwargs](#typing-variadic-arguments---args-and-kwargs)
     - [Use TYPE_CHECKING to avoid circular imports](#use-type_checking-to-avoid-circular-imports)
     - [Passing a function or a class as a parameter or return type](#passing-a-function-or-a-class-as-a-parameter-or-return-type)
@@ -37,6 +37,7 @@ For the TL;DR version, please see the [Static Type Checking Cheat Sheet](TODO).
     - [Use typing.Literal to restrict based on exact values](#use-typingliteral-to-restrict-based-on-exact-values)
     - [Use typing.NewType to restrict a type to a specific context](#use-typingnewtype-to-restrict-a-type-to-a-specific-context)
     - [Use typing.Final to restrict a type from changing its value](#use-typingfinal-to-restrict-a-type-from-changing-its-value)
+    - [Debug type checking with reveal_type and reveal_locals](#debug-type-checking-with-reveal_type-and-reveal_locals)
   - [Additional Resources](#additional-resources)
 
 ## Intro to typing in Python
@@ -63,18 +64,18 @@ Since Python 3, type annotations were introduced and are the **preferred** metho
 Annotations provide a cleaner syntax and let you keep the type information closer, or inline with the code.
 
 ```python
-from typing import Any, Optional
+from typing import Any, Union
 
 def download_blob_from_url(
         blob_url: str,
         output: str,
-        credential: Optional[Any] = None,
+        credential: Union[AzureNamedKeyCredential, TokenCredential],
         **kwargs: Any
 ) -> None:
     ...
 ```
 
-> Note: Do not use comment style type hints (`# type: Any`). Some of our libraries use type comments due to legacy code supporting Python 2/3, but these will be updated to annotation style.
+> Note: Do not use comment style type hints (`# type: str`). Some of our libraries use type comments due to legacy code supporting Python 2, but these will be updated to annotation style.
 
 A fully annotated signature includes type annotations for all parameters and the return type. The type of a parameter
 should follow the `:` syntax and a default argument can be supplied like in the `credential` parameter above. A return
@@ -149,12 +150,14 @@ else:
 from typing_extensions import Protocol
 ```
 
+If using `typing-extensions`, you must add it to the install dependencies for your library (do not rely on install by `azure-core`). 
 When importing a backported type into code, `typing-extensions` does a try/except on your behalf (either importing
 from `typing` if supported, or `typing-extensions` if the Python version is too old) so there is no need to do this
 check yourself.
 
 See the [typing-extensions](https://github.com/python/typing_extensions) docs to check what has been
-backported.
+backported. This document calls out which types are needed through `typing-extensions` based on support of Python 3.7+.
+Some commonly used types imported from `typing-extensions` are Literal, TypedDict, Protocol, runtime_checkable, and Final.
 
 ## Install and run type checkers on your client library code
 
@@ -274,49 +277,13 @@ from running checks.
 1) Place the package name on this block list: TODO
 2) Open an issue tracking that "library-name" should be opted in to running type checking
 
+> Note: Blocking your library from type checking is a *temporary* state. It is expected that checks are re-enabled as soon as possible.
 
 ## Typing tips and guidance for the Python SDK
 
 This is not intended to be a complete guide to typing in Python. This section covers some common typing scenarios
 encountered when working on the SDK and provides some tips for you to get started. Typing is relatively new to Python,
 with over 20 PEPs and counting. Please check the [typing](https://docs.python.org/3/library/typing.html) documentation for the most up-to-date information.
-
-### Debug type checking with reveal_type and reveal_locals
-
-Sometimes the type checker might raise an error that is difficult to understand -- luckily it is possible to "debug" the type checker and
-see what it is thinking / what types it is inferring.
-`reveal_type(expr)` and `reveal_locals()` are debugging functions recognized by type checkers. `reveal_type(expr)` can be
-placed in code and will tell you the inferred static type of an expression.
-`reveal_locals()` can also be placed on any line and will tell you the inferred types of all local variables.
-
-```python
-a = [1]  #  `int` type is inferred
-reveal_type(a)
-
-c = [1, 'a']  # `int` and `str` are not "duck type" compatible, so type is narrowed to `object`
-reveal_type(c)
-
-
-def hello_world(message: str) -> None:
-    print(f'Hello world! {message}')
-    reveal_locals()
-
-
-reveal_type(hello_world)
-```
-
-Running mypy on the above reveals the types that mypy sees:
-
-```cmd
-main.py:2: note: Revealed type is "builtins.list[builtins.int*]"
-main.py:5: note: Revealed type is "builtins.list[builtins.object*]"
-main.py:9: note: Revealed local types are:
-main.py:9: note:     message: builtins.str
-main.py:11: note: Revealed type is "def (message: builtins.str)"
-```
-
-These debugging functions don't need to be imported from anywhere and are only recognized by the type checkers - therefore you will
-need to remove them from code before runtime.
 
 ### Use typing.Any sparingly
 
@@ -359,11 +326,14 @@ def begin_build_model(
     ...
 ```
 
-A `Union` requires at least two types and should be used with type that are not consistent with each other. For
+A `Union` requires at least two types and should be used with types that are not consistent with each other. For
 example, usage of `Union[int, float]` is not necessary since `int` is consistent with `float` (implements all the supported operations of `float`) -- you can just use `float`. It's
 also recommended avoiding having functions return `Union` types as it causes the user to need to understand or perform `isinstance` checks
 on the return value before acting on it to write type-safe code. Sometimes this can be resolved by using an [overload](#use-typingoverload-to-overload-a-function).
 
+Note that adding support for a `Union` on input is generally non-breaking. However, adding a `Union`
+(or additional options to an existing `Union`) for a return type could be considered breaking and such a change should
+be brought to the attention of the Python architects.
 
 ### Use typing.Optional when a parameter can explicitly be None
 
@@ -395,12 +365,11 @@ Per PEP 484, type checkers have moved towards requiring the Optional type to be 
 
 A few things to think about when typing collections in Python.
 
-1) "Be conservative in what you send, be liberal in what you accept." - The Robustness Principle
-
-   In other words, we should aim to be lenient in the types we accept as a parameter because this allows for more
+1) We should aim to be lenient in the types we accept as a parameter because this allows for more
    flexibility for the caller, e.g. accepting an `Iterable` (where appropriate) allows for more possible types to be
-   passed (list, tuple, dict, etc.) than just specifying a `List`. On the other hand, we should aim to be specific in
-   what we say we return - it's more helpful to specify concrete types which a user can reason about than abstract types.
+   passed (list, tuple, dict, etc.) than just specifying a `List`. For return types, since we support APIs which are
+   expected to evolve over time, it is also helpful to return more flexible types. So long as our return type
+   adheres to a given protocol, we are more likely to not break our user's code.
 
 2) It can be more useful to consider the set of supported operations as the defining characteristic of a type.
    [Structural subtyping](https://en.wikipedia.org/wiki/Structural_type_system) is what supports duck typing in
@@ -467,9 +436,10 @@ At runtime, `employee` is perfectly valid even though it does not conform to a t
 <class 'dict'>
 ```
 
-Note that this creates a plain `dict` at runtime. Usage of `TypedDict` is a great way to inform the type checkers and
-Intellisense how a specific dict should be constructed and help the type checkers warn users if they try to access
-keys which don't exist.
+Note that this creates a plain `dict` at runtime. Due to this, `TypedDict` cannot be used in `isinstance` checks,
+e.g. `isinstance(employee, Employee)` will throw a `TypeError`. Usage of `TypedDict` is a great way to inform the
+type checkers and Intellisense how a specific dict should be constructed and help the type checkers warn users if
+they try to access keys which don't exist.
 
 Use of generic TypedDict is also supported via typing_extensions (>=4.3.0). For example,
 
@@ -487,8 +457,11 @@ class Employee(TypedDict, Generic[T]):
     id: int
     current: bool
     additional_info: List[T]
+
+employee = Employee[str](name="krista", title="swe", id=123, current=True, additional_info=["Redmond"])
 ```
 
+See the [TypedDict](https://docs.python.org/3/library/typing.html#typing.TypedDict) docs for more options.
 
 > Note that TypedDict is backported to older versions of Python by using typing_extensions.
 
@@ -538,6 +511,22 @@ Note that `Point` is consistent with `Tuple[float, float]`, but not vice versa. 
 vanilla `Tuple[float, float]` into the `bounding_box` function above, but if it were annotated
 as `points: Tuple[float, float]`, a `Point` would be permissible. This is because NamedTuple is a class builder
 and may have extra methods or user-defined methods that `Tuple` does not.
+
+### Parameters not needing type annotations
+
+There are some parameters that we do not need to type annotate in the SDK.
+
+The `self` parameter in a class method does not need to be typed. Nor does the `cls` parameter in a `@classmethod`.
+However, it is customary to return `None` on a `__init__` like below since this will indicate that it should be
+type checked (since there are no other typed parameters found in signature).
+
+```python
+class KeyCredential:
+    
+    def __init__(self) -> None:
+        ...
+```
+
 
 ### Typing variadic arguments - *args and **kwargs
 
@@ -831,8 +820,10 @@ reveal_type(result)
 
 `main.py:28: note: Revealed type is "__main__.LanguageDetectionResult"`
 
-`typing.overload` can also be used when there are a different number of typed arguments. We can take the above example and
-imagine that `analyze_text` has an additional overload which does not take an `analysis_kind` (note that we switched to accepting `*args` and `**kwargs` in the actual implementation for this case):
+`typing.overload` can also be used when there are a different number of typed arguments or when wanting to present
+optional parameters as required, or vice versa. We can take the above example and imagine that `analyze_text` has an
+additional overload which does not take an `analysis_kind` (note that we switched to accepting `*args` and `**kwargs`
+in the actual implementation for this case):
 
 ```python
 from typing import overload, Union, Any
@@ -1385,6 +1376,43 @@ If `MAX_BLOB_SIZE` gets reassigned somewhere else in the code, the type checker 
 main.py:6: error: Cannot assign to final name "MAX_BLOB_SIZE"
 Found 1 error in 1 file (checked 1 source file)
 ```
+
+### Debug type checking with reveal_type and reveal_locals
+
+Sometimes the type checker might raise an error that is difficult to understand -- luckily it is possible to "debug" the type checker and
+see what it is thinking / what types it is inferring.
+`reveal_type(expr)` and `reveal_locals()` are debugging functions recognized by type checkers. `reveal_type(expr)` can be
+placed in code and will tell you the inferred static type of an expression.
+`reveal_locals()` can also be placed on any line and will tell you the inferred types of all local variables.
+
+```python
+a = [1]  #  `int` type is inferred
+reveal_type(a)
+
+c = [1, 'a']  # `int` and `str` are not "duck type" compatible, so type is narrowed to `object`
+reveal_type(c)
+
+
+def hello_world(message: str) -> None:
+    print(f'Hello world! {message}')
+    reveal_locals()
+
+
+reveal_type(hello_world)
+```
+
+Running mypy on the above reveals the types that mypy sees:
+
+```cmd
+main.py:2: note: Revealed type is "builtins.list[builtins.int*]"
+main.py:5: note: Revealed type is "builtins.list[builtins.object*]"
+main.py:9: note: Revealed local types are:
+main.py:9: note:     message: builtins.str
+main.py:11: note: Revealed type is "def (message: builtins.str)"
+```
+
+These debugging functions don't need to be imported from anywhere and are only recognized by the type checkers - therefore you will
+need to remove them from code before runtime.
 
 ## Additional Resources
 

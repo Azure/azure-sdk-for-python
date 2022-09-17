@@ -33,6 +33,23 @@ table_map: dict[str, Table] = {}  # clarifies what the dictionary expects
 table_map[table_name] = create_table(table_name)
 ```
 
+- You do not need to type annotate `self` or `cls`.
+- Do return `None` from a constructor.
+  
+```python
+# No:
+class KeyCredential:
+
+    def __init__(self):
+        ...  # I do not get type checked
+
+# Yes:
+class KeyCredential:
+
+    def __init__(self) -> None:
+        ...
+```
+
 - Do use [mypy](https://mypy.readthedocs.io/en/stable/) and [pyright](https://github.com/microsoft/pyright) type checkers to statically type check your client library code.
 - Do use [black](https://pypi.org/project/black/) to format type annotations.
 - Do add type hints directly to the source code. If you think you need to use stub files, check with the architects. Note that with stub files, type checking will only work for _users_ of the stub, but won't type check the library code itself.
