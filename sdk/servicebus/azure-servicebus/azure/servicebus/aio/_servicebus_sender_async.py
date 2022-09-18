@@ -35,7 +35,6 @@ from .._common.utils import (
 )
 from ..exceptions import (
     OperationTimeoutError,
-    _ServiceBusErrorPolicy,
     _create_servicebus_exception
 )
 from ._async_utils import create_authentication
@@ -216,7 +215,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             await self._close_handler()
             raise
 
-    async def _send(self, message, timeout=None, last_exception=None):
+    async def _send(self, message, timeout=None):
         await self._open()
         try:
             # TODO This is not batch message sending?
@@ -224,7 +223,10 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 for batch_message in message._messages: # pylint:disable=protected-access
                     await self._handler.send_message_async(batch_message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout) # pylint:disable=line-too-long, protected-access
             else:
-                await self._handler.send_message_async(message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout) # pylint:disable=protected-access
+                await self._handler.send_message_async(
+                    message.raw_amqp_message._to_outgoing_amqp_message(),  # pylint:disable=protected-access
+                    timeout=timeout
+                )
         except TimeoutError:
             raise OperationTimeoutError(message="Send operation timed out")
         except MessageException as e:

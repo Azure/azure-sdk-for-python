@@ -15,8 +15,9 @@ from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, ca
 #from uamqp.authentication.common import AMQPAuth
 from ._pyamqp.message import Message
 from ._pyamqp.constants import SenderSettleMode
-from ._pyamqp.client import ReceiveClient
+from ._pyamqp.client import ReceiveClientSync
 from ._pyamqp import utils
+from ._pyamqp.error import AMQPError
 
 from .exceptions import ServiceBusError
 from ._base_handler import BaseHandler
@@ -50,11 +51,17 @@ from ._common.constants import (
     MGMT_REQUEST_DEAD_LETTER_REASON,
     MGMT_REQUEST_DEAD_LETTER_ERROR_DESCRIPTION,
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
+    RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
+    RECEIVER_LINK_DEAD_LETTER_REASON,
+    DEADLETTERNAME,
+    DATETIMEOFFSET_EPOCH,
+    SESSION_LOCKED_UNTIL,
+    SESSION_FILTER,
     ServiceBusToAMQPReceiveModeMap
 )
 from ._common import mgmt_handlers
 from ._common.receiver_mixins import ReceiverMixin
-from ._common.utils import utc_from_timestamp
+from ._common.utils import utc_from_timestamp, utc_now
 from ._servicebus_session import ServiceBusSession
 
 if TYPE_CHECKING:
@@ -149,6 +156,7 @@ class ServiceBusReceiver(
         prefetch_count: int = 0,
         **kwargs: Any,
     ) -> None:
+        self._session_id = None
         self._message_iter = None  # type: Optional[Iterator[ServiceBusReceivedMessage]]
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
@@ -351,7 +359,7 @@ class ServiceBusReceiver(
             hostname += '/$servicebus/websocket/'
             if custom_endpoint_address:
                 custom_endpoint_address += '/$servicebus/websocket/'
-        self._handler = ReceiveClient(
+        self._handler = ReceiveClientSync(
             hostname,
             self._get_source(),
             auth=auth,
@@ -570,6 +578,62 @@ class ServiceBusReceiver(
         # We don't do retry here, retry is done in the ServiceBusReceivedMessage._settle_message
         return self._mgmt_request_response(
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION, message, mgmt_handlers.default
+        )
+
+    def _on_attach(self, attach_frame):
+        # pylint: disable=protected-access, unused-argument
+        if self._session and attach_frame.source.address.decode(self._config.encoding) == self._entity_uri:
+            # This has to live on the session object so that autorenew has access to it.
+            self._session._session_start = utc_now()
+            expiry_in_seconds = attach_frame.properties.get(SESSION_LOCKED_UNTIL)
+            if expiry_in_seconds:
+                expiry_in_seconds = (
+                    expiry_in_seconds - DATETIMEOFFSET_EPOCH
+                ) / 10000000
+                self._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
+            session_filter = attach_frame.source.filters[SESSION_FILTER]
+            self._session_id = session_filter.decode(self._config.encoding)
+            self._session._session_id = self._session_id
+
+    def _settle_message_via_receiver_link(
+        self,
+        message,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None,
+    ):
+        # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> None
+        if settle_operation == MESSAGE_COMPLETE:
+            return self._handler.settle_messages(message.delivery_id, 'accepted')
+        if settle_operation == MESSAGE_ABANDON:
+            return self._handler.settle_messages(
+                message.delivery_id,
+                'modified',
+                delivery_failed=True,
+                undeliverable_here=False
+            )
+        if settle_operation == MESSAGE_DEAD_LETTER:
+            return self._handler.settle_messages(
+                message.delivery_id,
+                'rejected',
+                error=AMQPError(
+                    condition=DEADLETTERNAME,
+                    description=dead_letter_error_description,
+                    info={
+                        RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
+                        RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
+                    }
+                )
+            )
+        if settle_operation == MESSAGE_DEFER:
+            return self._handler.settle_messages(
+                message.delivery_id,
+                'modified',
+                delivery_failed=True,
+                undeliverable_here=True
+            )
+        raise ValueError(
+            "Unsupported settle operation type: {}".format(settle_operation)
         )
 
     def _renew_locks(self, *lock_tokens, **kwargs):

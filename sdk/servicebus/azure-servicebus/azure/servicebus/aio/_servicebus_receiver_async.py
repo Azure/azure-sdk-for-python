@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+#pylint: disable=too-many-lines
+
 import asyncio
 import collections
 import datetime
@@ -11,10 +13,7 @@ import time
 import warnings
 from typing import Any, List, Optional, AsyncIterator, Union, Callable, TYPE_CHECKING, cast
 
-import six
-
-from azure.servicebus._pyamqp.error import AMQPError
-
+from .._pyamqp.error import AMQPError
 from .._pyamqp.message import Message
 from .._pyamqp.constants import SenderSettleMode
 from .._pyamqp.aio import ReceiveClientAsync
@@ -151,6 +150,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         prefetch_count: int = 0,
         **kwargs: Any
     ) -> None:
+        self._session_id = None
         self._message_iter = (
             None
         )  # type: Optional[AsyncIterator[ServiceBusReceivedMessage]]

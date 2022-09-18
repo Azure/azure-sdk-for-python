@@ -8,9 +8,9 @@ from weakref import WeakSet
 from typing_extensions import Literal
 import certifi
 
-from .._pyamqp.aio import Connection
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
+from .._pyamqp.aio import Connection
 from .._base_handler import _parse_conn_str
 from ._base_handler_async import (
     ServiceBusSharedKeyCredential,
@@ -145,7 +145,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             sasl_credential=auth.sasl,
             network_trace=self._config.logging_enable,
             custom_endpoint_address=self._custom_endpoint_address,
-            ssl={'ca_certs':self._connection_verify or certifi.where()},
+            ssl_opts={'ca_certs':self._connection_verify or certifi.where()},
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
         )

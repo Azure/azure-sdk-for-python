@@ -4,19 +4,10 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import struct
-from enum import Enum
-
 from ._transport_async import AsyncTransport, WebSocketTransportAsync
-from ..types import AMQPTypes, TYPE, VALUE
-from ..constants import FIELD, SASLCode, SASL_HEADER_FRAME, TransportType, WEBSOCKET_PORT
+from ..constants import SASLCode, SASL_HEADER_FRAME, WEBSOCKET_PORT
 from .._transport import AMQPS_PORT
-from ..performatives import (
-    SASLOutcome,
-    SASLResponse,
-    SASLChallenge,
-    SASLInit
-)
+from ..performatives import SASLInit
 
 
 _SASL_FRAME_TYPE = b'\x01'
@@ -55,7 +46,7 @@ class SASLAnonymousCredential(object):
 
     mechanism = b'ANONYMOUS'
 
-    def start(self):
+    def start(self):  # pylint: disable=no-self-use
         return b''
 
 
@@ -69,11 +60,11 @@ class SASLExternalCredential(object):
 
     mechanism = b'EXTERNAL'
 
-    def start(self):
+    def start(self):  # pylint: disable=no-self-use
         return b''
 
 
-class SASLTransportMixinAsync():
+class SASLTransportMixinAsync():  # pylint: disable=no-member
     async def _negotiate(self):
         await self.write(SASL_HEADER_FRAME)
         _, returned_header = await self.receive_frame()
@@ -81,8 +72,8 @@ class SASLTransportMixinAsync():
             raise ValueError("Mismatching AMQP header protocol. Expected: {}, received: {}".format(
                 SASL_HEADER_FRAME, returned_header[1]))
 
-        _, supported_mechansisms = await self.receive_frame(verify_frame_type=1)
-        if self.credential.mechanism not in supported_mechansisms[1][0]:  # sasl_server_mechanisms
+        _, supported_mechanisms = await self.receive_frame(verify_frame_type=1)
+        if self.credential.mechanism not in supported_mechanisms[1][0]:  # sasl_server_mechanisms
             raise ValueError("Unsupported SASL credential type: {}".format(self.credential.mechanism))
         sasl_init = SASLInit(
             mechanism=self.credential.mechanism,
@@ -96,16 +87,21 @@ class SASLTransportMixinAsync():
             raise NotImplementedError("Unsupported SASL challenge")
         if fields[0] == SASLCode.Ok:  # code
             return
-        else:
-            raise ValueError("SASL negotiation failed.\nOutcome: {}\nDetails: {}".format(*fields))
+        raise ValueError("SASL negotiation failed.\nOutcome: {}\nDetails: {}".format(*fields))
 
 
 class SASLTransport(AsyncTransport, SASLTransportMixinAsync):
 
-    def __init__(self, host, credential, port=AMQPS_PORT, connect_timeout=None, ssl=None, **kwargs):
+    def __init__(self, host, credential, *, port=AMQPS_PORT, connect_timeout=None, ssl_opts=None, **kwargs):
         self.credential = credential
-        ssl = ssl or True
-        super(SASLTransport, self).__init__(host, port=port, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
+        ssl_opts = ssl_opts or True
+        super(SASLTransport, self).__init__(
+            host,
+            port=port,
+            connect_timeout=connect_timeout,
+            ssl_opts=ssl_opts,
+            **kwargs
+        )
 
     async def negotiate(self):
         await self._negotiate()
@@ -113,19 +109,16 @@ class SASLTransport(AsyncTransport, SASLTransportMixinAsync):
 
 class SASLWithWebSocket(WebSocketTransportAsync, SASLTransportMixinAsync):
 
-    def __init__(self, host, credential, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
+    def __init__(self, host, credential, *, port=WEBSOCKET_PORT, connect_timeout=None, ssl_opts=None, **kwargs):
         self.credential = credential
-        ssl = ssl or True
-        http_proxy = kwargs.pop('http_proxy', None)
-        self._transport = WebSocketTransportAsync(
+        ssl_opts = ssl_opts or True
+        super().__init__(
             host,
             port=port,
             connect_timeout=connect_timeout,
-            ssl=ssl,
-            http_proxy=http_proxy,
+            ssl_opts=ssl_opts,
             **kwargs
         )
-        super().__init__(host, port, connect_timeout, ssl, **kwargs)
 
     async def negotiate(self):
         await self._negotiate()

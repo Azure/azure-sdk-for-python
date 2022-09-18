@@ -1,52 +1,32 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
-import threading
-import struct
 from typing import Optional
 import uuid
 import logging
-import time
-from enum import Enum
-from io import BytesIO
-from urllib.parse import urlparse
+
 import asyncio
 
 from ..endpoints import Source, Target
-from ..constants import (
-    DEFAULT_LINK_CREDIT,
-    SessionState,
-    SessionTransferState,
-    LinkDeliverySettleReason,
-    LinkState,
-    Role,
-    SenderSettleMode,
-    ReceiverSettleMode
-)
+from ..constants import DEFAULT_LINK_CREDIT, SessionState, LinkState, Role, SenderSettleMode, ReceiverSettleMode
 from ..performatives import (
     AttachFrame,
     DetachFrame,
-    TransferFrame,
-    DispositionFrame,
-    FlowFrame,
 )
 
-from ..error import (
-    ErrorCondition,
-    AMQPLinkError,
-    AMQPLinkRedirect,
-    AMQPConnectionError
-)
+from ..error import ErrorCondition, AMQPLinkError, AMQPLinkRedirect, AMQPConnectionError
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class Link(object):
-    """
+class Link(object):  # pylint: disable=too-many-instance-attributes
+    """An AMQP Link.
 
+    This object should not be used directly - instead use one of directional
+    derivatives: Sender or Receiver.
     """
 
     def __init__(self, session, handle, name, role, **kwargs):
@@ -55,53 +35,61 @@ class Link(object):
         self.handle = handle
         self.remote_handle = None
         self.role = role
-        source_address = kwargs['source_address']
+        source_address = kwargs["source_address"]
         target_address = kwargs["target_address"]
-        self.source = source_address if isinstance(source_address, Source) else Source(
-            address=kwargs['source_address'],
-            durable=kwargs.get('source_durable'),
-            expiry_policy=kwargs.get('source_expiry_policy'),
-            timeout=kwargs.get('source_timeout'),
-            dynamic=kwargs.get('source_dynamic'),
-            dynamic_node_properties=kwargs.get('source_dynamic_node_properties'),
-            distribution_mode=kwargs.get('source_distribution_mode'),
-            filters=kwargs.get('source_filters'),
-            default_outcome=kwargs.get('source_default_outcome'),
-            outcomes=kwargs.get('source_outcomes'),
-            capabilities=kwargs.get('source_capabilities')
+        self.source = (
+            source_address
+            if isinstance(source_address, Source)
+            else Source(
+                address=kwargs["source_address"],
+                durable=kwargs.get("source_durable"),
+                expiry_policy=kwargs.get("source_expiry_policy"),
+                timeout=kwargs.get("source_timeout"),
+                dynamic=kwargs.get("source_dynamic"),
+                dynamic_node_properties=kwargs.get("source_dynamic_node_properties"),
+                distribution_mode=kwargs.get("source_distribution_mode"),
+                filters=kwargs.get("source_filters"),
+                default_outcome=kwargs.get("source_default_outcome"),
+                outcomes=kwargs.get("source_outcomes"),
+                capabilities=kwargs.get("source_capabilities"),
+            )
         )
-        self.target = target_address if isinstance(target_address,Target) else Target(
-            address=kwargs['target_address'],
-            durable=kwargs.get('target_durable'),
-            expiry_policy=kwargs.get('target_expiry_policy'),
-            timeout=kwargs.get('target_timeout'),
-            dynamic=kwargs.get('target_dynamic'),
-            dynamic_node_properties=kwargs.get('target_dynamic_node_properties'),
-            capabilities=kwargs.get('target_capabilities')
+        self.target = (
+            target_address
+            if isinstance(target_address, Target)
+            else Target(
+                address=kwargs["target_address"],
+                durable=kwargs.get("target_durable"),
+                expiry_policy=kwargs.get("target_expiry_policy"),
+                timeout=kwargs.get("target_timeout"),
+                dynamic=kwargs.get("target_dynamic"),
+                dynamic_node_properties=kwargs.get("target_dynamic_node_properties"),
+                capabilities=kwargs.get("target_capabilities"),
+            )
         )
-        self.link_credit = kwargs.pop('link_credit', None) or DEFAULT_LINK_CREDIT
+        self.link_credit = kwargs.pop("link_credit", None) or DEFAULT_LINK_CREDIT
         self.current_link_credit = self.link_credit
-        self.send_settle_mode = kwargs.pop('send_settle_mode', SenderSettleMode.Mixed)
-        self.rcv_settle_mode = kwargs.pop('rcv_settle_mode', ReceiverSettleMode.First)
-        self.unsettled = kwargs.pop('unsettled', None)
-        self.incomplete_unsettled = kwargs.pop('incomplete_unsettled', None)
-        self.initial_delivery_count = kwargs.pop('initial_delivery_count', 0)
+        self.send_settle_mode = kwargs.pop("send_settle_mode", SenderSettleMode.Mixed)
+        self.rcv_settle_mode = kwargs.pop("rcv_settle_mode", ReceiverSettleMode.First)
+        self.unsettled = kwargs.pop("unsettled", None)
+        self.incomplete_unsettled = kwargs.pop("incomplete_unsettled", None)
+        self.initial_delivery_count = kwargs.pop("initial_delivery_count", 0)
         self.delivery_count = self.initial_delivery_count
         self.received_delivery_id = None
-        self.max_message_size = kwargs.pop('max_message_size', None)
+        self.max_message_size = kwargs.pop("max_message_size", None)
         self.remote_max_message_size = None
-        self.available = kwargs.pop('available', None)
-        self.properties = kwargs.pop('properties', None)
+        self.available = kwargs.pop("available", None)
+        self.properties = kwargs.pop("properties", None)
         self.offered_capabilities = None
-        self.desired_capabilities = kwargs.pop('desired_capabilities', None)
+        self.desired_capabilities = kwargs.pop("desired_capabilities", None)
 
-        self.network_trace = kwargs['network_trace']
-        self.network_trace_params = kwargs['network_trace_params']
-        self.network_trace_params['link'] = self.name
+        self.network_trace = kwargs["network_trace"]
+        self.network_trace_params = kwargs["network_trace_params"]
+        self.network_trace_params["link"] = self.name
         self._session = session
         self._is_closed = False
-        self._on_link_state_change = kwargs.get('on_link_state_change')
-        self._on_attach = kwargs.get('on_attach')
+        self._on_link_state_change = kwargs.get("on_link_state_change")
+        self._on_attach = kwargs.get("on_attach")
         self._error = None
 
     async def __aenter__(self):
@@ -114,7 +102,7 @@ class Link(object):
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
         # check link_create_from_endpoint in C lib
-        raise NotImplementedError('Pending')  # TODO: Assuming we establish all links for now...
+        raise NotImplementedError("Pending")  # TODO: Assuming we establish all links for now...
 
     def get_state(self):
         try:
@@ -128,10 +116,7 @@ class Link(object):
             try:
                 raise self._error
             except TypeError:
-                raise AMQPConnectionError(
-                    condition=ErrorCondition.InternalError,
-                    description="Link already closed."
-                )
+                raise AMQPConnectionError(condition=ErrorCondition.InternalError, description="Link already closed.")
 
     async def _set_state(self, new_state):
         # type: (LinkState) -> None
@@ -147,7 +132,7 @@ class Link(object):
             pass
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.error("Link state change callback failed: '%r'", e, extra=self.network_trace_params)
-    
+
     async def _on_session_state_change(self):
         if self._session.state == SessionState.MAPPED:
             if not self._is_closed and self.state == LinkState.DETACHED:
@@ -172,20 +157,20 @@ class Link(object):
             max_message_size=self.max_message_size,
             offered_capabilities=self.offered_capabilities if self.state == LinkState.ATTACH_RCVD else None,
             desired_capabilities=self.desired_capabilities if self.state == LinkState.DETACHED else None,
-            properties=self.properties
+            properties=self.properties,
         )
         if self.network_trace:
             _LOGGER.info("-> %r", attach_frame, extra=self.network_trace_params)
-        await self._session._outgoing_attach(attach_frame)
+        await self._session._outgoing_attach(attach_frame) # pylint: disable=protected-access
 
     async def _incoming_attach(self, frame):
         if self.network_trace:
             _LOGGER.info("<- %r", AttachFrame(*frame), extra=self.network_trace_params)
         if self._is_closed:
             raise ValueError("Invalid link")
-        elif not frame[5] or not frame[6]:  # TODO: not sure if we should source + target check here
+        if not frame[5] or not frame[6]:
             _LOGGER.info("Cannot get source or target. Detaching link")
-            await self._set_state(LinkState.DETACHED)  # TODO: Send detach now?
+            await self._set_state(LinkState.DETACHED)
             raise ValueError("Invalid link")
         self.remote_handle = frame[1]  # handle
         self.remote_max_message_size = frame[10]  # max_message_size
@@ -205,24 +190,24 @@ class Link(object):
                 if frame[6]:
                     frame[6] = Target(*frame[6])
                 await self._on_attach(AttachFrame(*frame))
-            except Exception as e:
-                _LOGGER.warning("Callback for link attach raised error: {}".format(e))
+            except Exception as e:  # pylint: disable=broad-except
+                _LOGGER.warning("Callback for link attach raised error: %s", e)
 
     async def _outgoing_flow(self, **kwargs):
         flow_frame = {
-            'handle': self.handle,
-            'delivery_count':  self.delivery_count,
-            'link_credit': self.current_link_credit,
-            'available': kwargs.get('available'),
-            'drain': kwargs.get('drain'),
-            'echo': kwargs.get('echo'),
-            'properties': kwargs.get('properties')
+            "handle": self.handle,
+            "delivery_count": self.delivery_count,
+            "link_credit": self.current_link_credit,
+            "available": kwargs.get("available"),
+            "drain": kwargs.get("drain"),
+            "echo": kwargs.get("echo"),
+            "properties": kwargs.get("properties"),
         }
-        await self._session._outgoing_flow(flow_frame)
+        await self._session._outgoing_flow(flow_frame) # pylint: disable=protected-access
 
     async def _incoming_flow(self, frame):
         pass
-    
+
     async def _incoming_disposition(self, frame):
         pass
 
@@ -230,7 +215,7 @@ class Link(object):
         detach_frame = DetachFrame(handle=self.handle, closed=close, error=error)
         if self.network_trace:
             _LOGGER.info("-> %r", detach_frame, extra=self.network_trace_params)
-        await self._session._outgoing_detach(detach_frame)
+        await self._session._outgoing_detach(detach_frame) # pylint: disable=protected-access
         if close:
             self._is_closed = True
 
@@ -270,15 +255,10 @@ class Link(object):
             elif self.state == LinkState.ATTACHED:
                 await self._outgoing_detach(close=close, error=error)
                 await self._set_state(LinkState.DETACH_SENT)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-except
             _LOGGER.info("An error occurred when detaching the link: %r", exc)
             await self._set_state(LinkState.DETACHED)
 
-    async def flow(
-            self,
-            *,
-            link_credit: Optional[int] = None,
-            **kwargs
-        ) -> None:
+    async def flow(self, *, link_credit: Optional[int] = None, **kwargs) -> None:
         self.current_link_credit = link_credit if link_credit is not None else self.link_credit
         await self._outgoing_flow(**kwargs)

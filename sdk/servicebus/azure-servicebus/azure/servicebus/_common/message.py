@@ -8,7 +8,7 @@
 import time
 import datetime
 import uuid
-from typing import Optional, Dict, List, Tuple, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
+from typing import Optional, Dict, List, Union, Iterable, Any, Mapping, cast
 from azure.core.tracing import AbstractSpan
 
 from .._pyamqp.message import Message, BatchMessage
@@ -232,7 +232,7 @@ class ServiceBusMessage(
 
     def _encode_message(self):
         output = bytearray()
-        encode_payload(output, self.raw_amqp_message._to_outgoing_amqp_message())
+        encode_payload(output, self.raw_amqp_message._to_outgoing_amqp_message())  # pylint: disable=protected-access
         return output
 
     @property
@@ -688,7 +688,6 @@ class ServiceBusMessageBatch(object):
     @property
     def message(self) -> LegacyBatchMessage:
         if not self._uamqp_message:
-            raise Exception("Attempting to use legacy batch")
             message = AmqpAnnotatedMessage(message=Message(*self._message))
             self._uamqp_message = LegacyBatchMessage(message)
         return self._uamqp_message

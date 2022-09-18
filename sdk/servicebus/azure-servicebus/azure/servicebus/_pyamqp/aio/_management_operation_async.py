@@ -9,10 +9,7 @@ import time
 from functools import partial
 
 from ._management_link_async import ManagementLink
-from ..message import Message
 from ..error import (
-    AMQPException,
-    AMQPConnectionError,
     AMQPLinkError,
     ErrorCondition
 )
@@ -107,7 +104,7 @@ class ManagementOperation(object):
 
         if self._mgmt_error:
             self._responses.pop(operation_id)
-            raise self._mgmt_error
+            raise self._mgmt_error  # pylint: disable=raising-bad-type
 
         response = self._responses.pop(operation_id)
         return response
@@ -118,7 +115,7 @@ class ManagementOperation(object):
 
     async def ready(self):
         try:
-            raise self._mgmt_error
+            raise self._mgmt_error  # pylint: disable=raising-bad-type
         except TypeError:
             pass
 

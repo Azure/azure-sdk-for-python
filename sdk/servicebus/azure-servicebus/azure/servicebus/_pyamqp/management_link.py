@@ -18,12 +18,12 @@ from .constants import (
     ReceiverSettleMode,
     ManagementExecuteOperationResult,
     ManagementOpenResult,
-    SEND_DISPOSITION_ACCEPT,
     SEND_DISPOSITION_REJECT,
-    MessageDeliveryState
+    MessageDeliveryState,
+    LinkDeliverySettleReason
 )
-from .error import ErrorResponse, AMQPException, ErrorCondition
-from .message import Message, Properties, _MessageDelivery
+from .error import AMQPException, ErrorCondition
+from .message import Properties, _MessageDelivery
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -146,7 +146,7 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
             self._pending_operations.remove(to_remove_operation)
 
     def _on_send_complete(self, message_delivery, reason, state):  # todo: reason is never used, should check spec
-        if SEND_DISPOSITION_REJECT in state:
+        if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED and SEND_DISPOSITION_REJECT in state:
             # sample reject state: {'rejected': [[b'amqp:not-allowed', b"Invalid command 'RE1AD'.", None]]}
             to_remove_operation = None
             for operation in self._pending_operations:

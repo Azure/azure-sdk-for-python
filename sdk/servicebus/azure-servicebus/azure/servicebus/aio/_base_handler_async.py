@@ -8,11 +8,10 @@ import uuid
 import time
 from typing import TYPE_CHECKING, Any, Callable, Optional, Dict, Union
 
-from .._pyamqp.utils import generate_sas_token, amqp_string_value
-from .._pyamqp.message import Message, Properties
-
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 
+from .._pyamqp.utils import amqp_string_value
+from .._pyamqp.message import Message, Properties
 from .._base_handler import _generate_sas_token, BaseHandler as BaseHandlerSync, _get_backoff_time
 from .._common._configuration import Configuration
 from .._common.utils import create_properties, strip_protocol_from_uri, parse_sas_credential

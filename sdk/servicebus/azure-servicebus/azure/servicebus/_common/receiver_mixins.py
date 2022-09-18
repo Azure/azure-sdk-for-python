@@ -4,29 +4,16 @@
 # license information.
 # -------------------------------------------------------------------------
 import uuid
-from typing import Optional, Callable
 
 from .._pyamqp.endpoints import Source
-from .._pyamqp.error import AMQPError
-
 from .message import ServiceBusReceivedMessage
 from ..exceptions import _ServiceBusErrorPolicy, MessageAlreadySettled
 from .constants import (
     NEXT_AVAILABLE_SESSION,
     SESSION_FILTER,
-    SESSION_LOCKED_UNTIL,
-    DATETIMEOFFSET_EPOCH,
     MGMT_REQUEST_SESSION_ID,
     ServiceBusReceiveMode,
-    DEADLETTERNAME,
-    RECEIVER_LINK_DEAD_LETTER_REASON,
-    RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
-    MESSAGE_COMPLETE,
-    MESSAGE_DEAD_LETTER,
-    MESSAGE_ABANDON,
-    MESSAGE_DEFER,
 )
-from .utils import utc_from_timestamp, utc_now
 
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
@@ -135,62 +122,6 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
                 "Failed to {} the message as the handler has already been shutdown."
                 "Please use ServiceBusClient to create a new instance.".format(action)
             )
-
-    def _settle_message_via_receiver_link(
-        self,
-        message,
-        settle_operation,
-        dead_letter_reason=None,
-        dead_letter_error_description=None,
-    ):
-        # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> None
-        if settle_operation == MESSAGE_COMPLETE:
-            return self._handler.settle_messages(message.delivery_id, 'accepted')
-        if settle_operation == MESSAGE_ABANDON:
-            return self._handler.settle_messages(
-                message.delivery_id,
-                'modified',
-                delivery_failed=True,
-                undeliverable_here=False
-            )
-        if settle_operation == MESSAGE_DEAD_LETTER:
-            return self._handler.settle_messages(
-                message.delivery_id,
-                'rejected',
-                error=AMQPError(
-                    condition=DEADLETTERNAME,
-                    description=dead_letter_error_description,
-                    info={
-                        RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
-                        RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
-                    }
-                )
-            )
-        if settle_operation == MESSAGE_DEFER:
-            return self._handler.settle_messages(
-                message.delivery_id,
-                'modified',
-                delivery_failed=True,
-                undeliverable_here=True
-            )
-        raise ValueError(
-            "Unsupported settle operation type: {}".format(settle_operation)
-        )
-
-    def _on_attach(self, attach_frame):
-        # pylint: disable=protected-access, unused-argument
-        if self._session and attach_frame.source.address.decode(self._config.encoding) == self._entity_uri:
-            # This has to live on the session object so that autorenew has access to it.
-            self._session._session_start = utc_now()
-            expiry_in_seconds = attach_frame.properties.get(SESSION_LOCKED_UNTIL)
-            if expiry_in_seconds:
-                expiry_in_seconds = (
-                    expiry_in_seconds - DATETIMEOFFSET_EPOCH
-                ) / 10000000
-                self._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
-            session_filter = attach_frame.source.filters[SESSION_FILTER]
-            self._session_id = session_filter.decode(self._config.encoding)
-            self._session._session_id = self._session_id
 
     def _populate_message_properties(self, message):
         if self._session:

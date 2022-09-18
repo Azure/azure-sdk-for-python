@@ -10,7 +10,7 @@ import warnings
 from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
 
 #from uamqp.authentication.common import AMQPAuth
-from ._pyamqp.client import SendClient
+from ._pyamqp.client import SendClientSync
 from ._pyamqp.utils import amqp_long_value, amqp_array_value
 from ._pyamqp.error import MessageException
 
@@ -108,7 +108,7 @@ class SenderMixin(object):
             if message.partition_key:
                 message_data[MGMT_REQUEST_PARTITION_KEY] = message.partition_key
             message_data[MGMT_REQUEST_MESSAGE] = bytearray(
-                message._encode_message()
+                message._encode_message()  # pylint: disable=protected-access
             )
             request_body[MGMT_REQUEST_MESSAGES].append(message_data)
         return request_body
@@ -237,7 +237,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             if custom_endpoint_address:
                 custom_endpoint_address += '/$servicebus/websocket/'
 
-        self._handler = SendClient(
+        self._handler = SendClientSync(
             hostname,
             self._entity_uri,
             auth=auth,
