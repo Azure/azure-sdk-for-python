@@ -17,7 +17,6 @@ USAGE:
 def sample_deploy_project():
     from azure.ai.textanalytics.authoring import TextAuthoringClient
     from azure.core.credentials import AzureKeyCredential
-    from samples.authoring.dummy_project import dummy_project
     import os
 
     endpoint = os.environ["AZURE_TEXT_AUTHORING_ENDPOINT"]

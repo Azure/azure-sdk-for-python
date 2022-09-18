@@ -32,7 +32,7 @@ from typing import List, Union, Any
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._client import TextAuthoringClient as GeneratedTextAuthoringClient
-
+from .._user_agent import USER_AGENT
 
 def _authentication_policy(credential):
     authentication_policy = None
@@ -55,9 +55,6 @@ class TextAuthoringClient(GeneratedTextAuthoringClient):  # pylint: disable=clie
     detection and question answering. Further documentation can be found in :code:`<a
     href="https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview</a>`.
 
-    :ivar text_analysis_authoring: TextAnalysisAuthoringOperations operations
-    :vartype text_analysis_authoring:
-     azure.ai.language.text.authoring.operations.TextAnalysisAuthoringOperations
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
@@ -75,6 +72,7 @@ class TextAuthoringClient(GeneratedTextAuthoringClient):  # pylint: disable=clie
             endpoint=endpoint,
             credential=credential,  # type: ignore
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
+            sdk_moniker=USER_AGENT,
             **kwargs
         )
 

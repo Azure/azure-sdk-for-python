@@ -17,6 +17,7 @@ USAGE:
 def sample_delete_project():
     from azure.ai.textanalytics.authoring import TextAuthoringClient
     from azure.core.credentials import AzureKeyCredential
+    from azure.core.exceptions import HttpResponseError
     import os
 
     endpoint = os.environ["AZURE_TEXT_AUTHORING_ENDPOINT"]
@@ -34,7 +35,7 @@ def sample_delete_project():
             print("The project is deleted successfully")
         else:
             print("An error has occured")
-    except Exception as ex:
+    except HttpResponseError as ex:
         print(ex)
 
 if __name__ == "__main__":

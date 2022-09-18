@@ -18,6 +18,7 @@ USAGE:
 def sample_create_project():
     from azure.ai.textanalytics.authoring import TextAuthoringClient
     from azure.core.credentials import AzureKeyCredential
+    from azure.core.exceptions import HttpResponseError
     import os
 
     endpoint = os.environ["AZURE_TEXT_AUTHORING_ENDPOINT"]
@@ -39,7 +40,7 @@ def sample_create_project():
     try:
         client.create_project(project_name, project_body)
         print("The project is created successfully")
-    except Exception as ex:
+    except HttpResponseError as ex:
         print(ex)
 
 

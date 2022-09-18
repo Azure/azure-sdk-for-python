@@ -18,15 +18,16 @@ USAGE:
 def sample_train_project():
     from azure.ai.textanalytics.authoring import TextAuthoringClient
     from azure.core.credentials import AzureKeyCredential
-    from samples.authoring.dummy_project import dummy_project
     import os
+    import json
 
     endpoint = os.environ["AZURE_TEXT_AUTHORING_ENDPOINT"]
     key = os.environ["AZURE_TEXT_AUTHORING_KEY"]
 
     client = TextAuthoringClient(endpoint, AzureKeyCredential(key))
 
-    project_name = dummy_project["metadata"]["projectName"]
+    sample_project = json.load(open("sample_project.json"))
+    project_name = sample_project["metadata"]["projectName"]
     training_parameters = {
         "modelLabel": "model1",
         "trainingConfigVersion": "latest",
@@ -36,6 +37,7 @@ def sample_train_project():
             "trainingSplitPercentage": 80
         }
     }
+    
     poller = client.begin_train(project_name, training_parameters)
     result = poller.result()
     
