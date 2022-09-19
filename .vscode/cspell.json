@@ -393,6 +393,7 @@
         "myasynctable",
         "mytableasync",
         "mytable",
+        "mycontainer",
         "edmtypes"
       ]
     },

@@ -60,7 +60,7 @@ class CopyTableSamples(object):
             "last_updated": datetime.today(),
             "product_id": uuid4(),
             "inventory_count": 42,
-            "barcode": b"135aefg8oj0ld58"
+            "barcode": b"135aefg8oj0ld58" # cspell: ignore
         }
 
     async def copy_table_from_table_to_blob(self):
