@@ -78,7 +78,8 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
         if aad_mode:
             if hasattr(credential, "get_token"):
                 credential_policy = AsyncBearerTokenCredentialPolicy(
-                    credential, credential_scopes
+                    credential, # type: ignore
+                    credential_scopes,
                 )
             else:
                 raise TypeError(
@@ -86,16 +87,16 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
                     "or a class that implement the 'get_token protocol"
                 )
         else:
-            credential_policy = AppConfigRequestsCredentialsPolicy(credential)
+            credential_policy = AppConfigRequestsCredentialsPolicy(credential) # type: ignore
 
         self._impl = AzureAppConfiguration(
-            credential,
+            credential, # type: ignore
             base_url,
             credential_scopes=credential_scopes,
             authentication_policy=credential_policy,
             user_agent_policy=user_agent_policy,
             per_call_policies=self._sync_token_policy,
-            **kwargs  # type: ignore
+            **kwargs
         )
 
     @classmethod
