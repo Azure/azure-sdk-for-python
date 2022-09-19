@@ -148,14 +148,13 @@ def _convert_point_to_envelope(
         value = point.value
     elif isinstance(point, HistogramDataPoint):
         value = point.sum
-        count = point.count
+        count = int(point.count)
         min_ = point.min
         max_ = point.max
 
     data_point = MetricDataPoint(
         name=str(name)[:1024],
         value=value,
-        data_point_type="Aggregation",
         count=count,
         min=min_,
         max=max_,
