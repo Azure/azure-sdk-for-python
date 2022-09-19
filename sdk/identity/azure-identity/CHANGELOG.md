@@ -19,6 +19,9 @@
 ### Breaking Changes
 
 - Credential types supporting multi-tenant authentication will now throw `ClientAuthenticationError` if the requested tenant ID doesn't match the credential's tenant ID, and is not included in `additionally_allowed_tenants`. Applications must now explicitly add additional tenants to the `additionally_allowed_tenants` list, or add '*' to list, to enable acquiring tokens from tenants other than the originally specified tenant ID.
+
+More information on this change and the consideration behind it can be found [here](https://aka.ms/azsdk/blog/multi-tenant-guidance).
+
 - These beta features in 1.11.0b3 have been removed from this release and will be added back in 1.12.0b1
   - `tenant_id` for `AzureCliCredential`
   - removed `VisualStudioCodeCredential` from `DefaultAzureCredential` token chain
