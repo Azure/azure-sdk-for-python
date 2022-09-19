@@ -6,64 +6,86 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ChangeDetectionMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Change Detection Mode. Applies to a directory specified in directoryPath parameter.
-    """
+class ChangeDetectionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Change Detection Mode. Applies to a directory specified in directoryPath parameter."""
 
     DEFAULT = "Default"
     RECURSIVE = "Recursive"
 
-class FeatureStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the Feature Status
-    """
+
+class CloudEndpointChangeEnumerationActivityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of change enumeration activity."""
+
+    INITIAL_ENUMERATION_IN_PROGRESS = "InitialEnumerationInProgress"
+    ENUMERATION_IN_PROGRESS = "EnumerationInProgress"
+
+
+class CloudEndpointChangeEnumerationTotalCountsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of the total counts of change enumeration activity."""
+
+    CALCULATING = "Calculating"
+    FINAL = "Final"
+
+
+class CloudTieringLowDiskModeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the cloud tiering low disk mode state."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+
+class FeatureStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the Feature Status."""
 
     ON = "on"
     OFF = "off"
 
-class IncomingTrafficPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the Incoming Traffic Policy
-    """
+
+class IncomingTrafficPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the Incoming Traffic Policy."""
 
     ALLOW_ALL_TRAFFIC = "AllowAllTraffic"
     ALLOW_VIRTUAL_NETWORKS_ONLY = "AllowVirtualNetworksOnly"
 
-class InitialDownloadPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Policy for how namespace and files are recalled during FastDr
-    """
+
+class InitialDownloadPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Policy for how namespace and files are recalled during FastDr."""
 
     NAMESPACE_ONLY = "NamespaceOnly"
     NAMESPACE_THEN_MODIFIED_FILES = "NamespaceThenModifiedFiles"
     AVOID_TIERED_FILES = "AvoidTieredFiles"
 
-class LocalCacheMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Policy for enabling follow-the-sun business models: link local cache to cloud behavior to pre-
-    populate before local access.
+
+class InitialUploadPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Policy for how the initial upload sync session is performed."""
+
+    SERVER_AUTHORITATIVE = "ServerAuthoritative"
+    MERGE = "Merge"
+
+
+class LocalCacheMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Policy for enabling follow-the-sun business models: link local cache to cloud behavior to
+    pre-populate before local access.
     """
 
     DOWNLOAD_NEW_AND_MODIFIED_FILES = "DownloadNewAndModifiedFiles"
     UPDATE_LOCALLY_CACHED_FILES = "UpdateLocallyCachedFiles"
 
-class NameAvailabilityReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class NameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the reason that a Storage Sync Service name could not be used. The Reason element is only
     returned if NameAvailable is false.
     """
@@ -71,34 +93,34 @@ class NameAvailabilityReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class OperationDirection(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the Operation Direction
-    """
+
+class OperationDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the Operation Direction."""
 
     DO = "do"
     UNDO = "undo"
     CANCEL = "cancel"
 
-class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current provisioning state.
-    """
+
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
     DELETING = "Deleting"
     FAILED = "Failed"
 
-class PrivateEndpointServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The private endpoint connection status.
-    """
+
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private endpoint connection status."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
 
-class ProgressType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the ProgressType
-    """
+
+class ProgressType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the ProgressType."""
 
     NONE = "none"
     INITIALIZE = "initialize"
@@ -106,9 +128,9 @@ class ProgressType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UPLOAD = "upload"
     RECALL = "recall"
 
-class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """State of Azure Subscription
-    """
+
+class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of Azure Subscription."""
 
     REGISTERED = "Registered"
     UNREGISTERED = "Unregistered"
@@ -116,43 +138,43 @@ class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUSPENDED = "Suspended"
     DELETED = "Deleted"
 
-class RegisteredServerAgentVersionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the registered server agent version status
-    """
+
+class RegisteredServerAgentVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the registered server agent version status."""
 
     OK = "Ok"
     NEAR_EXPIRY = "NearExpiry"
     EXPIRED = "Expired"
     BLOCKED = "Blocked"
 
-class ServerEndpointHealthState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the server endpoint health state
-    """
+
+class ServerEndpointHealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the server endpoint health state."""
 
     UNAVAILABLE = "Unavailable"
     HEALTHY = "Healthy"
     ERROR = "Error"
 
-class ServerEndpointOfflineDataTransferState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the Health state
-    """
+
+class ServerEndpointOfflineDataTransferState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the Health state."""
 
     IN_PROGRESS = "InProgress"
     STOPPING = "Stopping"
     NOT_RUNNING = "NotRunning"
     COMPLETE = "Complete"
 
-class ServerEndpointSyncActivityState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the sync activity state
-    """
+
+class ServerEndpointSyncActivityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the sync activity state."""
 
     UPLOAD = "Upload"
     DOWNLOAD = "Download"
     UPLOAD_AND_DOWNLOAD = "UploadAndDownload"
 
-class ServerEndpointSyncMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Sync mode for the server endpoint.
-    """
+
+class ServerEndpointSyncMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sync mode for the server endpoint."""
 
     REGULAR = "Regular"
     NAMESPACE_DOWNLOAD = "NamespaceDownload"
@@ -160,9 +182,9 @@ class ServerEndpointSyncMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     SNAPSHOT_UPLOAD = "SnapshotUpload"
     INITIAL_FULL_DOWNLOAD = "InitialFullDownload"
 
-class WorkflowStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the Workflow Status
-    """
+
+class WorkflowStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the Workflow Status."""
 
     ACTIVE = "active"
     EXPIRED = "expired"

@@ -25,47 +25,27 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._private_link_resources_operations import build_list_by_storage_sync_service_request
+from ...operations._microsoft_storage_sync_operations import build_location_operation_status_request
 from .._vendor import MixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class PrivateLinkResourcesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.storagesync.aio.MicrosoftStorageSync`'s
-        :attr:`private_link_resources` attribute.
-    """
-
-    models = _models
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
+class MicrosoftStorageSyncOperationsMixin(MixinABC):
     @distributed_trace_async
-    async def list_by_storage_sync_service(
-        self, resource_group_name: str, storage_sync_service_name: str, **kwargs: Any
-    ) -> _models.PrivateLinkResourceListResult:
-        """Gets the private link resources that need to be created for a storage sync service.
+    async def location_operation_status(
+        self, location_name: str, operation_id: str, **kwargs: Any
+    ) -> _models.LocationOperationStatus:
+        """Get Operation status.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param storage_sync_service_name: The name of the storage sync service name within the
-         specified resource group. Required.
-        :type storage_sync_service_name: str
+        :param location_name: The desired region to obtain information from. Required.
+        :type location_name: str
+        :param operation_id: operation Id. Required.
+        :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateLinkResourceListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.storagesync.models.PrivateLinkResourceListResult
+        :return: LocationOperationStatus or the result of cls(response)
+        :rtype: ~azure.mgmt.storagesync.models.LocationOperationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -80,14 +60,14 @@ class PrivateLinkResourcesOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PrivateLinkResourceListResult]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.LocationOperationStatus]
 
-        request = build_list_by_storage_sync_service_request(
-            resource_group_name=resource_group_name,
-            storage_sync_service_name=storage_sync_service_name,
+        request = build_location_operation_status_request(
+            location_name=location_name,
+            operation_id=operation_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_by_storage_sync_service.metadata["url"],
+            template_url=self.location_operation_status.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -102,13 +82,20 @@ class PrivateLinkResourcesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.StorageSyncError, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PrivateLinkResourceListResult", pipeline_response)
+        response_headers = {}
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-correlation-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-correlation-request-id")
+        )
+
+        deserialized = self._deserialize("LocationOperationStatus", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    list_by_storage_sync_service.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}/privateLinkResources"}  # type: ignore
+    location_operation_status.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.StorageSync/locations/{locationName}/operations/{operationId}"}  # type: ignore
