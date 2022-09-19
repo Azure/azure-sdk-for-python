@@ -1,14 +1,14 @@
 # Release History
 
-## 0.13.1 (Unreleased)
+## 0.14.0 (2022-09-19)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+  - Upgraded api-version for some operation group
 
 ### Other Changes
+  
+  - Drop support for python3.6
 
 ## 0.13.0 (2022-04-21)
 
