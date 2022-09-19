@@ -7,7 +7,6 @@
 import logging
 from abc import abstractmethod
 
-from azure.ai.ml._ml_exceptions import DeploymentException, ErrorCategory, ErrorTarget
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DefaultScaleSettings as RestDefaultScaleSettings
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineScaleSettings as RestOnlineScaleSettings
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ScaleType
@@ -16,6 +15,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
 )
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format, to_iso_duration_format
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.exceptions import DeploymentException, ErrorCategory, ErrorTarget
 
 module_logger = logging.getLogger(__name__)
 

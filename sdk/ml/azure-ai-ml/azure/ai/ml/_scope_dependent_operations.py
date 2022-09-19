@@ -8,7 +8,7 @@ import functools
 import logging
 from typing import Any, Callable, Dict, Optional, TypeVar, cast
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 T = TypeVar("T")
 module_logger = logging.getLogger(__name__)

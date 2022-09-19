@@ -19,8 +19,8 @@ from azure.ai.ml.constants._common import (
     AzureMLResourceType,
 )
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
-from azure.ai.ml.entities import CommandComponent, Component
-from azure.ai.ml.entities._load_functions import load_code
+from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
+from azure.ai.ml.entities._load_functions import load_code, load_job
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
@@ -116,7 +116,7 @@ class TestComponent:
     def test_command_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
         expected_dict = {
             "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json",
-            "command": "echo Hello World & echo [${{inputs.component_in_number}}] & echo "
+            "command": "echo Hello World & echo $[[${{inputs.component_in_number}}]] & echo "
             "${{inputs.component_in_path}} & echo "
             "${{outputs.component_out_path}} > "
             "${{outputs.component_out_path}}/component_in_number",
@@ -133,7 +133,7 @@ class TestComponent:
             },
             "is_deterministic": True,
             "outputs": {"component_out_path": {"type": "uri_folder"}},
-            "resources": {"instance_count": 1, "properties": {}},
+            "resources": {"instance_count": 1},
             "tags": {"owner": "sdkteam", "tag": "tagvalue"},
             "type": "command",
             "version": "0.0.1",
@@ -161,6 +161,7 @@ class TestComponent:
             "is_deterministic": True,
             "max_concurrency_per_instance": 12,
             "mini_batch_error_threshold": 5,
+            "logging_level": "INFO",
             "mini_batch_size": "10240",
             "outputs": {"scored_result": {"type": "mltable"}, "scoring_summary": {"type": "uri_file"}},
             "retry_settings": {"max_retries": 10, "timeout": 3},
@@ -268,7 +269,7 @@ class TestComponent:
         component_entity._creation_context = None
         assert target_entity.id
         # server side will remove \n from the code now. Skip them given it's not targeted to check in this test
-        omit_fields = ["id", "command"]
+        omit_fields = ["id", "command", "environment"]
         assert pydash.omit(component_entity._to_dict(), *omit_fields) == pydash.omit(
             target_entity._to_dict(), *omit_fields
         )
@@ -286,6 +287,7 @@ class TestComponent:
         assert component_resource.code
         assert is_ARM_id_for_resource(component_resource.code)
 
+    @pytest.mark.skip(reason="TODO: 1976724, will randomly break and need service-side further investigation.")
     def test_component_list(self, client: MLClient, randstr: Callable[[], str]) -> None:
         component_name = randstr()
 
@@ -749,7 +751,8 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
                     "default": "10.99",
                     "description": "A number",
                 },
-                "node_compute": {"type": "string", "default": "azureml:cpu-cluster"},
+                # The azureml: prefix has been resolve and removed by service
+                "node_compute": {"type": "string", "default": "cpu-cluster"},
             },
             "outputs": {},
             "type": "pipeline",
@@ -792,3 +795,19 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
             "type": "pipeline",
         }
         assert component_dict == expected_dict
+
+    @pytest.mark.skip("Skip for Bug https://msdata.visualstudio.com/Vienna/_workitems/edit/1969753")
+    def test_create_pipeline_component_from_job(self, client: MLClient, randstr: Callable[[], str]):
+        params_override = [{"name": randstr()}]
+        pipeline_job = load_job(
+            path="./tests/test_configs/dsl_pipeline/pipeline_with_pipeline_component/pipeline.yml",
+            params_override=params_override,
+        )
+        job = client.jobs.create_or_update(pipeline_job)
+        try:
+            client.jobs.cancel(job.name)
+        except Exception:
+            pass
+        component = PipelineComponent(name=randstr(), source_job_id=job.id)
+        rest_component = client.components.create_or_update(component)
+        assert rest_component

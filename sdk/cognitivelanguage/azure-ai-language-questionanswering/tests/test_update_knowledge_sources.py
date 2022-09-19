@@ -3,24 +3,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import pytest
-
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
+from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
 from azure.core.credentials import AzureKeyCredential
 
-from testcase import (
-    QuestionAnsweringTest,
-    GlobalQuestionAnsweringAccountPreparer,
-    QnaAuthoringHelper
-)
+from helpers import QnaAuthoringHelper
+from testcase import QuestionAnsweringTestCase
 
-from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
 
-class SourcesQnasSynonymsTests(QuestionAnsweringTest):
+class TestSourcesQnasSynonyms(QuestionAnsweringTestCase):
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    def test_add_source(self, qna_account, qna_key):
-        client = QuestionAnsweringAuthoringClient(qna_account, AzureKeyCredential(qna_key))
+    def test_add_source(self, recorded_test, qna_creds):
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
@@ -55,9 +48,8 @@ class SourcesQnasSynonymsTests(QuestionAnsweringTest):
                 source_added = True
         assert source_added
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    def test_add_qna(self, qna_account, qna_key):
-        client = QuestionAnsweringAuthoringClient(qna_account, AzureKeyCredential(qna_key))
+    def test_add_qna(self, recorded_test, qna_creds):
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
@@ -91,9 +83,8 @@ class SourcesQnasSynonymsTests(QuestionAnsweringTest):
                 qna_added = True
         assert qna_added
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    def test_add_synonym(self, qna_account, qna_key):
-        client = QuestionAnsweringAuthoringClient(qna_account, AzureKeyCredential(qna_key))
+    def test_add_synonym(self, recorded_test, qna_creds):
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"

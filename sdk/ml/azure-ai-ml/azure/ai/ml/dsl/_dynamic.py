@@ -6,9 +6,9 @@ import types
 from inspect import Parameter, Signature
 from typing import Callable, Sequence
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._job.pipeline._exceptions import UnexpectedKeywordError
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -72,8 +72,9 @@ def _replace_function_name(func: types.FunctionType, new_name):
 
 def _assert_arg_valid(kwargs: dict, keys: list, func_name: str):
     """Assert the arg keys are all in keys."""
+    # pylint: disable=protected-access
     # validate component input names
-    Component.validate_io_names(io_dict=kwargs)
+    Component._validate_io_names(io_dict=kwargs)
 
     lower2original_parameter_names = {x.lower(): x for x in keys}
     kwargs_need_to_update = []

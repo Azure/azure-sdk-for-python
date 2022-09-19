@@ -6,10 +6,10 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
 from azure.ai.ml import Input, MLClient, dsl, load_component, load_job
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
 from azure.ai.ml.entities import Choice, CommandComponent, PipelineJob
 from azure.ai.ml.entities._validate_funcs import validate_job
+from azure.ai.ml.exceptions import ValidationException
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 
@@ -40,7 +40,7 @@ class TestPipelineJobValidate:
             (
                 "./tests/test_configs/pipeline_jobs/invalid/type_sensitive_component_error.yml",
                 # not allowed type
-                "Value unsupported passed is not in set",
+                "Value 'unsupported' passed is not in set",
             ),
             (
                 "./tests/test_configs/pipeline_jobs/job_with_incorrect_component_content/pipeline.yml",
@@ -58,80 +58,61 @@ class TestPipelineJobValidate:
             (
                 "./tests/test_configs/pipeline_jobs/invalid/with_invalid_value_in_component.yml",
                 # only type matched error message in "component
-                [
-                    {
-                        "location": f"{Path('./tests/test_configs/components/invalid/combo.yml').absolute()}#line 35",
-                        "message": "azureml:name-only is not a valid path; Not a valid "
-                        "URL.; In order to specify a git path, please provide "
-                        "the correct path prefixed with 'git+\n"
-                        "; In order to specify an existing codes, please "
-                        "provide the correct registry path prefixed with "
-                        "'azureml://':\n"
-                        "; Either version or label is not provided for code or "
-                        "the id is not valid.",
-                        "path": "jobs.hello_world_component.component.code",
-                        "value": "azureml:name-only",
-                    }
-                ],
+                {
+                    "location": f"{Path('./tests/test_configs/components/invalid/combo.yml').absolute()}#line 35",
+                    "message": "azureml:name-only is not a valid path; Not a valid "
+                    "URL.; In order to specify a git path, please provide "
+                    "the correct path prefixed with 'git+\n"
+                    "; In order to specify an existing codes, please "
+                    "provide the correct registry path prefixed with "
+                    "'azureml://':\n",
+                    "path": "jobs.hello_world_component.component.code",
+                    "value": "azureml:name-only",
+                },
             ),
             (
                 "./tests/test_configs/pipeline_jobs/invalid/with_invalid_component.yml",
                 # only type matched error message in "component
-                [
-                    {
-                        "location": f"{Path('./tests/test_configs/components/invalid/no_environment.yml').absolute()}#line 1",
-                        "message": "Missing data for required field.",
-                        "path": "jobs.hello_world_component.component.environment",
-                        "value": None,
-                    }
-                ],
+                {
+                    "location": f"{Path('./tests/test_configs/components/invalid/no_environment.yml').absolute()}#line 1",
+                    "message": "Missing data for required field.",
+                    "path": "jobs.hello_world_component.component.environment",
+                    "value": None,
+                },
             ),
             (
                 "./tests/test_configs/pipeline_jobs/invalid/type_sensitive_component_error.yml",
                 # not allowed type
-                [
-                    {
-                        "location": f"{Path('./tests/test_configs/pipeline_jobs/invalid/type_sensitive_component_error.yml').absolute()}#line 24",
-                        "message": "Value unsupported passed is not in set "
-                        "['command', 'import', 'sweep', 'parallel', 'pipeline', 'automl', 'spark']",
-                        "path": "jobs.hello_world_unsupported_type.type",
-                        "value": "unsupported",
-                    }
-                ],
+                {
+                    "location": f"{Path('./tests/test_configs/pipeline_jobs/invalid/type_sensitive_component_error.yml').absolute()}#line 24",
+                    "message": "Value 'unsupported' passed is not in set "
+                    "['command', 'import', 'sweep', 'parallel', 'pipeline', 'automl', 'spark']",
+                    "path": "jobs.hello_world_unsupported_type.type",
+                    "value": "unsupported",
+                },
             ),
             (
                 "./tests/test_configs/pipeline_jobs/job_with_incorrect_component_content/pipeline.yml",
-                [
-                    {
-                        "location": f"{Path('./tests/test_configs/pipeline_jobs/job_with_incorrect_component_content/pipeline.yml').absolute()}#line 8",
-                        "message": "Not a valid string.; Not a valid string.; Not a valid URL.; "
-                        "In order to specify a git path, please provide "
-                        "the correct path prefixed with 'git+\n"
-                        "; In order to specify an existing codes, please "
-                        "provide the correct registry path prefixed with "
-                        "'azureml://':\n; "
-                        "In order to specify an existing codes, please "
-                        "provide either of the following prefixed with "
-                        "'azureml:':\n"
-                        "1. The full ARM ID for the resource, "
-                        "e.g.azureml:/subscriptions/<subscription_id>/resourceGroups/<resource_group>/"
-                        "providers/Microsoft.MachineLearningServices/workspaces/<workspace_name>/codes\n"
-                        "2. The short-hand name of the resource registered in "
-                        "the workspace, eg: "
-                        "azureml:<short-hand-name>:<version-if applicable>. "
-                        "For example, version 1 of the environment registered "
-                        "as 'my-env' in the workspace can be referenced as "
-                        "'azureml:my-env:1'",
-                        "path": "jobs.hello_python_world_job.component.code",
-                        "value": None,
-                    }
-                ],
+                {
+                    "location": f"{Path('./tests/test_configs/pipeline_jobs/job_with_incorrect_component_content/pipeline.yml').absolute()}#line 8",
+                    "message": "Not a valid string.; Not a valid string.; Not a valid URL.; "
+                    "In order to specify a git path, please provide "
+                    "the correct path prefixed with 'git+\n"
+                    "; In order to specify an existing codes, please "
+                    "provide the correct registry path prefixed with "
+                    "'azureml://':\n",
+                    "path": "jobs.hello_python_world_job.component.code",
+                    "value": None,
+                },
             ),
         ],
     )
     def test_pipeline_job_schema_error(self, pipeline_job_path: str, expected_validation_result: dict) -> None:
         result = validate_job(path=pipeline_job_path)
-        assert result._to_dict() == {"errors": expected_validation_result, "result": "Failed"}
+        result_dict = result._to_dict()["errors"]
+        assert len(result_dict) == 1
+        assert expected_validation_result.pop("message") in result_dict[0].pop("message")
+        assert result_dict[0] == expected_validation_result
 
     def test_pipeline_job_type_sensitive_error_message(self):
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_comps.yml"
@@ -146,7 +127,7 @@ class TestPipelineJobValidate:
             "jobs": {
                 "hello_world_component_inline": {
                     "value": {
-                        "type": f"Value {unsupported_node_type} passed is "
+                        "type": f"Value {unsupported_node_type!r} passed is "
                         f"not in set {type_sensitive_union_field.allowed_types}",
                     }
                 },
@@ -419,14 +400,14 @@ class TestDSLPipelineJobValidate:
         )
 
         @dsl.pipeline()
-        def sub_pipeline0(component_in_number, component_in_path, node_compute_name="cpu-cluster"):
+        def sub_pipeline0(component_in_number: int, component_in_path: Input, node_compute_name="cpu-cluster"):
             node1 = component_func1(component_in_number=component_in_number, component_in_path=component_in_path)
             node2 = component_func1(component_in_number=component_in_number, component_in_path=component_in_path)
             node2.compute = node_compute_name
             return node1.outputs
 
         @dsl.pipeline()
-        def sub_pipeline1(component_in_number, component_in_path):
+        def sub_pipeline1(component_in_number: int, component_in_path: Input):
             node1 = component_func1(component_in_number=component_in_number, component_in_path=component_in_path)
             sub_pipeline0(component_in_number=component_in_number, component_in_path=component_in_path)
             return node1.outputs
@@ -447,6 +428,34 @@ class TestDSLPipelineJobValidate:
         pipeline_job.settings.default_compute = "cpu-cluster"
         validate_result = pipeline_job._validate()
         assert validate_result.passed is True
+
+    @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
+    def test_pipeline_job_error_when_nested_component_has_no_concrete_type(self):
+        path = "./tests/test_configs/components/helloworld_component.yml"
+        component_func1 = load_component(path=path)
+
+        @dsl.pipeline
+        def sub_pipeline(component_in_number, component_in_path):
+            component_func1(component_in_number=component_in_number, component_in_path=component_in_path)
+
+        @dsl.pipeline
+        def root_pipeline(component_in_number, component_in_path):
+            sub_pipeline(component_in_number=component_in_number, component_in_path=component_in_path)
+
+        job_input = Input(
+            type=AssetTypes.URI_FILE,
+            path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
+        )
+        pipeline_job: PipelineJob = root_pipeline(10, job_input)
+        validate_result = pipeline_job._validate()
+        # Note: top level input will not raise type unknown error here
+        assert validate_result.messages == {
+            "jobs.sub_pipeline.inputs.component_in_number": "Parameter type unknown, "
+            "please add type annotation or specify input default value.",
+            "jobs.sub_pipeline.inputs.component_in_path": "Parameter type unknown, "
+            "please add type annotation or specify input default value.",
+            "jobs.sub_pipeline.jobs.microsoftsamples_command_component_basic.compute": "Compute not set",
+        }
 
     def test_pipeline_optional_link_to_required(self):
         default_optional_func = load_component(path=str(components_dir / "default_optional_component.yml"))

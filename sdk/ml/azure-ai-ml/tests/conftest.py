@@ -10,12 +10,12 @@ from unittest.mock import Mock
 
 import pytest
 from pytest_mock import MockFixture
-from test_utilities.constants import Test_Resource_Group, Test_Subscription, Test_Workspace_Name
+from test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Test_Subscription, Test_Workspace_Name
 
 from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.entities import AzureBlobDatastore, CommandComponent, Component, Job
+from azure.ai.ml.entities import AzureBlobDatastore, Component
 from azure.ai.ml.entities._assets import Data, Model
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._datastore.credentials import NoneCredentials
@@ -46,6 +46,16 @@ def mock_credential():
 def mock_workspace_scope() -> OperationScope:
     yield OperationScope(
         subscription_id=Test_Subscription, resource_group_name=Test_Resource_Group, workspace_name=Test_Workspace_Name
+    )
+
+
+@pytest.fixture
+def mock_registry_scope() -> OperationScope:
+    yield OperationScope(
+        subscription_id=Test_Subscription,
+        resource_group_name=Test_Resource_Group,
+        workspace_name=Test_Workspace_Name,
+        registry_name=Test_Registry_Name,
     )
 
 
@@ -157,6 +167,18 @@ def only_registry_client(e2e_ws_scope: OperationScope) -> MLClient:
         resource_group_name=e2e_ws_scope.resource_group_name,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
         registry_name="testFeed",
+    )
+
+
+@pytest.fixture
+def crud_registry_client(e2e_ws_scope: OperationScope) -> MLClient:
+    """return a machine learning client using default e2e testing workspace"""
+    return MLClient(
+        credential=get_auth(),
+        subscription_id=e2e_ws_scope.subscription_id,
+        resource_group_name=e2e_ws_scope.resource_group_name,
+        logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
+        registry_name=None,  # This must be set to None for CRUD operations
     )
 
 

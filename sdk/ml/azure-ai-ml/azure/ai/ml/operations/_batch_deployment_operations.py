@@ -7,12 +7,9 @@
 import time
 from typing import Any, Dict, Union
 
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
-)
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait, upload_dependencies
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -42,7 +39,6 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         service_client_05_2022: ServiceClient052022,
-        service_client_09_2020_dataplanepreview: ServiceClient092020DataplanePreview,
         all_operations: OperationsContainer,
         credentials: TokenCredential = None,
         **kwargs: Dict,
@@ -50,7 +46,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         super(BatchDeploymentOperations, self).__init__(operation_scope)
         ops_logger.update_info(kwargs)
         self._batch_deployment = service_client_05_2022.batch_deployments
-        self._batch_job_deployment = service_client_09_2020_dataplanepreview.batch_job_deployment
+        self._batch_job_deployment = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_deployment
         self._batch_endpoint_operations = service_client_05_2022.batch_endpoints
         self._all_operations = all_operations
         self._credentials = credentials
@@ -182,8 +178,8 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         :param endpoint_name: The name of the endpoint
         :type endpoint_name: str
-        :return: an iterator of deployment entities
-        :rtype: Iterable[BatchDeployment]
+        :return: An iterator of deployment entities
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.BatchDeployment]
         """
         return self._batch_deployment.list(
             endpoint_name=endpoint_name,
@@ -194,16 +190,17 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(logger, "BatchDeployment.ListJobs", ActivityType.PUBLICAPI)
-    def list_jobs(self, endpoint_name: str, name: str = None):
+    def list_jobs(self, endpoint_name: str, name: str = None) -> list:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.
 
-        :param endpoint_name: Name of endpoint.
+        :param endpoint_name: Name of the endpoint.
         :type endpoint_name: str
-        :param name: Name of deployment.
+        :param name: Name of the deployment.
         :type name: str
         :raise: Exception if endpoint_type is not BATCH_ENDPOINT_TYPE
-        :return: Iterable[BatchJobResourceArmPaginatedResult]
+        :return: List of jobs
+        :rtype: list
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]

@@ -9,13 +9,13 @@ from abc import abstractmethod
 from os import PathLike
 from typing import IO, Any, AnyStr, Dict, Union
 
-from azure.ai.ml._ml_exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2021_10_01.models import OnlineDeploymentData
 from azure.ai.ml._restclient.v2022_02_01_preview.models import BatchDeploymentData
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
 
 from .code_configuration import CodeConfiguration
 
