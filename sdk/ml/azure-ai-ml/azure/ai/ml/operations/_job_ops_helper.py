@@ -226,46 +226,46 @@ def stream_logs_until_completion(
         processed_logs = {}
 
         poll_start_time = time.time()
-        with create_requests_pipeline_with_retry(requests_pipeline=requests_pipeline) as session:
-            while (
-                _current_details.status in RunHistoryConstants.IN_PROGRESS_STATUSES
-                or _current_details.status == JobStatus.FINALIZING
-            ):
-                file_handle.flush()
-                time.sleep(_wait_before_polling(time.time() - poll_start_time))
-                _current_details: RunDetails = run_operations.get_run_details(job_name)  # TODO use FileWatcher
-                if job_type.lower() in JobType.PIPELINE:
-                    legacy_folder_name = "/logs/azureml/"
-                else:
-                    legacy_folder_name = "/azureml-logs/"
-                _current_logs_dict = (
-                    list_logs_in_datastore(
-                        ds_properties,
-                        prefix=prefix,
-                        legacy_log_folder_name=legacy_folder_name,
-                    )
-                    if ds_properties is not None
-                    else _current_details.log_files
+        pipeline_with_retries = create_requests_pipeline_with_retry(requests_pipeline=requests_pipeline)
+        while (
+            _current_details.status in RunHistoryConstants.IN_PROGRESS_STATUSES
+            or _current_details.status == JobStatus.FINALIZING
+        ):
+            file_handle.flush()
+            time.sleep(_wait_before_polling(time.time() - poll_start_time))
+            _current_details: RunDetails = run_operations.get_run_details(job_name)  # TODO use FileWatcher
+            if job_type.lower() in JobType.PIPELINE:
+                legacy_folder_name = "/logs/azureml/"
+            else:
+                legacy_folder_name = "/azureml-logs/"
+            _current_logs_dict = (
+                list_logs_in_datastore(
+                    ds_properties,
+                    prefix=prefix,
+                    legacy_log_folder_name=legacy_folder_name,
                 )
-                # Get the list of new logs available after filtering out the processed ones
-                available_logs = _get_sorted_filtered_logs(_current_logs_dict, job_type, processed_logs)
-                content = ""
-                for current_log in available_logs:
-                    content = download_text_from_url(
-                        _current_logs_dict[current_log],
-                        session,
-                        timeout=RunHistoryConstants._DEFAULT_GET_CONTENT_TIMEOUT,
-                    )
+                if ds_properties is not None
+                else _current_details.log_files
+            )
+            # Get the list of new logs available after filtering out the processed ones
+            available_logs = _get_sorted_filtered_logs(_current_logs_dict, job_type, processed_logs)
+            content = ""
+            for current_log in available_logs:
+                content = download_text_from_url(
+                    _current_logs_dict[current_log],
+                    pipeline_with_retries,
+                    timeout=RunHistoryConstants._DEFAULT_GET_CONTENT_TIMEOUT,
+                )
 
-                    _incremental_print(content, processed_logs, current_log, file_handle)
+                _incremental_print(content, processed_logs, current_log, file_handle)
 
-                # TODO: Temporary solution to wait for all the logs to be printed in the finalizing state.
-                if (
-                    _current_details.status not in RunHistoryConstants.IN_PROGRESS_STATUSES
-                    and _current_details.status == JobStatus.FINALIZING
-                    and "The activity completed successfully. Finalizing run..." in content
-                ):
-                    break
+            # TODO: Temporary solution to wait for all the logs to be printed in the finalizing state.
+            if (
+                _current_details.status not in RunHistoryConstants.IN_PROGRESS_STATUSES
+                and _current_details.status == JobStatus.FINALIZING
+                and "The activity completed successfully. Finalizing run..." in content
+            ):
+                break
 
         file_handle.write("\n")
         file_handle.write("Execution Summary\n")

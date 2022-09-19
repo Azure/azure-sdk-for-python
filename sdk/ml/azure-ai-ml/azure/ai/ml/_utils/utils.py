@@ -105,8 +105,9 @@ def camel_case_transformer(key, value):
 
 
 def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retries: int = 3) -> HttpPipeline:
-    """Creates an HttpPipeline identical to the provided one, except
-       with a new override
+    """Creates an HttpPipeline that reuses the same configuration as the
+    supplied pipeline (including the transport), but overwrites the
+    retry policy
 
     Args:
         requests_pipeline (HttpPipeline): Pipeline to base new one off of.

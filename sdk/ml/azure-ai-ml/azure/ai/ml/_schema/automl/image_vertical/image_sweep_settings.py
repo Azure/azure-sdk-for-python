@@ -27,6 +27,9 @@ class ImageSweepSettingsSchema(metaclass=PatchedSchemaMeta):
     def make(self, data, **kwargs):
         from azure.ai.ml.automl import ImageSweepSettings
 
+        if "limits" not in data:
+            return ImageSweepSettings(**data)
+
         limits = data.pop("limits")
         max_concurrent_trials = limits.max_concurrent_trials
         max_trials = limits.max_trials
