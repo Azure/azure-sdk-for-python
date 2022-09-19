@@ -48,3 +48,5 @@ extends:
       safeName: azurecommunicationnetworktraversal
     - name: azure-communication-rooms
       safeName: azurecommunicationrooms
+    - name: azure-communication-jobrouter
+      safeName: azurecommunicationjobrouter
