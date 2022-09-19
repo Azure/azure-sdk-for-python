@@ -15,14 +15,14 @@ or use the Azure CLI snippet below to populate an environment variable with the 
 RES_GROUP=<resource-group-name>
 NAMESPACE_NAME=<servicebus-namespace-name>
 
-export SERVICEBUS_CONN_STR=$(az servicebus namespace authorization-rule keys list --resource-group $RES_GROUP --namespace-name $NAMESPACE_NAME --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)
+export SERVICE_BUS_CONN_STR=$(az servicebus namespace authorization-rule keys list --resource-group $RES_GROUP --namespace-name $NAMESPACE_NAME --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)
 ```
 """
 
 from azure.servicebus import ServiceBusClient
 
 import os
-connstr = os.environ['SERVICEBUS_CONNECTION_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     pass # Client is now initialized and can be used.

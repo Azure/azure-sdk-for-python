@@ -17,8 +17,8 @@ import os
 from azure.servicebus import ServiceBusMessage, ServiceBusSubQueue, ServiceBusClient
 
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
-QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
+CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
+QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 def send_messages(servicebus_client, num_messages):
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)

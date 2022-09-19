@@ -19,8 +19,8 @@ import asyncio
 import uuid
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
-TOPIC_NAME = os.environ['SERVICEBUS_TOPIC_NAME']
+CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
+TOPIC_NAME = os.environ['SERVICE_BUS_TOPIC_NAME']
 SUBSCRIPTION_NAME = "sb_mgmt_sub" + str(uuid.uuid4())
 
 

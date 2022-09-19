@@ -39,8 +39,8 @@ from azure.servicebus.aio import ServiceBusClient
 from azure.identity.aio import EnvironmentCredential
 
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
-QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
+QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 
 async def run():

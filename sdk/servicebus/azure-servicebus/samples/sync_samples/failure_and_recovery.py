@@ -27,8 +27,8 @@ from azure.servicebus.exceptions import (
     MessageNotFoundError
 )
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
-QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
+CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
+QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 def send_batch_messages(sender):
     batch_message = sender.create_message_batch()

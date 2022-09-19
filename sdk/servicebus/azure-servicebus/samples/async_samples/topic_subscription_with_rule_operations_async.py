@@ -23,8 +23,8 @@ from azure.servicebus.management import (
 from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus import ServiceBusMessage
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
-TOPIC_NAME = os.environ['SERVICEBUS_TOPIC_NAME']
+CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
+TOPIC_NAME = os.environ['SERVICE_BUS_TOPIC_NAME']
 ALL_MSGS_SUBSCRIPTION_NAME = 'sb-allmsgs-sub'
 SQL_FILTER_ONLY_SUBSCRIPTION_NAME = 'sb-sqlfilteronly-sub'
 SQL_FILTER_WITH_ACTION_SUBSCRIPTION_NAME = 'sb-sqlfilteraction-sub'
