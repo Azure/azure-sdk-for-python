@@ -68,6 +68,56 @@ title: QuestionAnsweringAuthoringClient
 
 ## Customizations
 
+### General customizations
+
+```yaml
+# Define HTTP 200 responses for LROs to document result model.
+directive:
+- where-operation: QuestionAnsweringProjects_DeleteProject
+  transform: |
+    $.responses["200"] = {
+      description: "Project delete job status.",
+      schema: {
+        "$ref": "#/definitions/JobState"
+      }
+    };
+- where-operation: QuestionAnsweringProjects_DeployProject
+  transform: |
+    $.responses["200"] = {
+      description: "Deploy job state.",
+      schema: {
+        "$ref": "#/definitions/ProjectDeployment"
+      }
+    };
+- where-operation: QuestionAnsweringProjects_Import
+  transform: |
+    $.responses["200"] = {
+      description: "Gets the status of an Import job.",
+      schema: {
+        "$ref": "#/definitions/JobState"
+      }
+    };
+- where-operation: QuestionAnsweringProjects_UpdateQnas
+  transform: |
+    $.responses["200"] = {
+      description: "Update QnAs job state.",
+      schema: {
+        "$ref": "#/definitions/JobState"
+      }
+    };
+- where-operation: QuestionAnsweringProjects_UpdateSources
+  transform: |
+    $.responses["200"] = {
+      description: "Update sources job state.",
+      schema: {
+        "$ref": "#/definitions/JobState"
+      }
+    };
+```
+
+
+### Python Customizations
+
 ### Runtime
 
 
