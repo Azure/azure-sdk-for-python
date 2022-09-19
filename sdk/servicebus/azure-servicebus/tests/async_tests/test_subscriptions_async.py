@@ -57,7 +57,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_subscription_receiver(
                     topic_name=servicebus_topic.name,
                     subscription_name=servicebus_subscription.name,
-                    max_wait_time=5
+                    max_wait_time=10
             ) as receiver:
 
                 with pytest.raises(ValueError):
