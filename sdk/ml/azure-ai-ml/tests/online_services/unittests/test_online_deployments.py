@@ -1,4 +1,4 @@
-from lib2to3.pgen2.literals import simple_escapes
+import platform
 from pathlib import Path
 from typing import Callable
 from unittest.mock import Mock, patch
@@ -134,6 +134,10 @@ def mock_online_deployment_operations(
 
 @pytest.mark.unittest
 class TestOnlineDeploymentOperations:
+    @pytest.mark.skipif(
+        condition=platform.python_implementation == "PyPy",
+        reason="writing dumped entity back to file does not work on PyPy"
+    )
     def test_online_deployment_k8s_create(
         self,
         mock_online_deployment_operations: OnlineDeploymentOperations,
