@@ -40,7 +40,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", None)
         super().__init__(logger, **kwargs)
         if self._enable_diagnostics_logging:
-            self.logger = logger or logging.getLogger(__name__)
+            self.logger = logger
 
     def on_request(self, request): # pylint: disable=too-many-return-statements, too-many-statements
         # type: (PipelineRequest) -> None
