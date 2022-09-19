@@ -17,6 +17,7 @@ class TestMgmt{{package}}(AzureMgmtRecordedTestCase):
         self.mgmt_client = self.create_mgmt_client(
             {{package_name_dot}}.{{client}})
 
+    @recorded_by_proxy
     def test_{{package}}_{{operation}}_list(self):
         result = self.mgmt_client.{{operation}}.{{function}}()
         assert list(result) is not None
