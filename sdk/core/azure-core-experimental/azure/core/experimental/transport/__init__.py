@@ -24,6 +24,8 @@
 #
 # --------------------------------------------------------------------------
 
+# pylint: disable=undefined-all-variable
+
 __all__ = [
     'PyodideTransport',
     'PyodideTransportResponse',
