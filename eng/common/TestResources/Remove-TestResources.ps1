@@ -53,6 +53,10 @@ param (
     [switch] $CI,
 
     [Parameter()]
+    [ValidateSet('test', 'perf')]
+    [string] $ResourceType = 'test',
+
+    [Parameter()]
     [switch] $Force,
 
     # Captures any arguments not declared here (no parameter errors)
@@ -132,11 +136,15 @@ $context = Get-AzContext
 
 if (!$ResourceGroupName) {
     if ($CI) {
+        if (!$ServiceDirectory) {
+            Write-Warning "ServiceDirectory parameter is empty, nothing to remove"
+            exit 0
+        }
         $envVarName = (BuildServiceDirectoryPrefix (GetServiceLeafDirectoryName $ServiceDirectory)) + "RESOURCE_GROUP"
         $ResourceGroupName = [Environment]::GetEnvironmentVariable($envVarName)
         if (!$ResourceGroupName) {
-            Write-Error "Could not find resource group name environment variable '$envVarName'"
-            exit 1
+            Write-Error "Could not find resource group name environment variable '$envVarName'. This is likely due to an earlier failure in the 'Deploy Test Resources' step above."
+            exit 0
         }
     } else {
         if (!$BaseName) {
@@ -194,7 +202,7 @@ Log "Selected subscription '$subscriptionName'"
 
 if ($ServiceDirectory) {
     $root = [System.IO.Path]::Combine("$PSScriptRoot/../../../sdk", $ServiceDirectory) | Resolve-Path
-    $preRemovalScript = Join-Path -Path $root -ChildPath 'remove-test-resources-pre.ps1'
+    $preRemovalScript = Join-Path -Path $root -ChildPath "remove-$ResourceType-resources-pre.ps1"
     if (Test-Path $preRemovalScript) {
         Log "Invoking pre resource removal script '$preRemovalScript'"
 
@@ -206,7 +214,7 @@ if ($ServiceDirectory) {
     }
 
     # Make sure environment files from New-TestResources -OutFile are removed.
-    Get-ChildItem -Path $root -Filter test-resources.json.env -Recurse | Remove-Item -Force:$Force
+    Get-ChildItem -Path $root -Filter "$ResourceType-resources.json.env" -Recurse | Remove-Item -Force:$Force
 }
 
 $verifyDeleteScript = {

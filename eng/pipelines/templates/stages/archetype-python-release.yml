@@ -74,17 +74,27 @@ stages:
                 runOnce:
                   deploy:
                     steps:
-                      - checkout: none
+                      - checkout: self
                       - download: current
                         artifact: ${{parameters.ArtifactName}}
                         timeoutInMinutes: 5
 
                       - task: UsePythonVersion@0
+                        inputs:
+                          versionSpec: '3.9'
 
                       - script: |
                           set -e
-                          pip install twine readme-renderer[md]
-                        displayName: Install Twine
+                          pip install -r eng/release_requirements.txt
+                          pip install tools/azure-sdk-tools
+                        displayName: Install Release Dependencies
+
+                      - task: PythonScript@0
+                        displayName: Verify Dependency Presence
+                        condition: and(succeeded(), ne(variables['Skip.VerifyDependencies'], 'true'))
+                        inputs:
+                          scriptPath: 'scripts/devops_tasks/verify_dependencies_present.py'
+                          arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
 
                       - task: TwineAuthenticate@1
                         displayName: 'Authenticate to registry: pypi.org'
@@ -161,7 +171,6 @@ stages:
                         steps:
                           - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
                             parameters:
-                              SkipDefaultCheckout: true
                               Paths:
                                 - sdk/**/*.md
                                 - .github/CODEOWNERS
@@ -197,13 +206,11 @@ stages:
                       - checkout: self
                       - task: UsePythonVersion@0
                       - script: |
-                          pip install -r ./eng/versioning/requirements.txt
+                          pip install "./tools/azure-sdk-tools[build]"
                         displayName: Install versioning tool dependencies
-                      - task: PythonScript@0
+                      - pwsh: |
+                          sdk_increment_version --package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}
                         displayName: Increment package version
-                        inputs:
-                          scriptPath: 'eng/versioning/version_increment.py'
-                          arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
                           RepoName: azure-sdk-for-python
@@ -271,7 +278,6 @@ stages:
       steps:
         - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
           parameters:
-            SkipDefaultCheckout: true 
             Paths:
               - sdk/**/*.md
               - .github/CODEOWNERS

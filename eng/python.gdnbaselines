@@ -104,22 +104,6 @@
       "expirationDate": null,
       "type": null
     },
-    "00d872e78fbb07cec1f77bcd1786d28bed988fbab4782611efb04d50207b50ba": {
-      "signature": "00d872e78fbb07cec1f77bcd1786d28bed988fbab4782611efb04d50207b50ba",
-      "alternativeSignatures": [
-        "6ffa4ddd18d57ae7e5333b748cffe147fd9e591bf3d1ee3eb744d273f81f5d50"
-      ],
-      "target": "sdk/hdinsight/azure-mgmt-hdinsight/test/test_mgmt_hdinsight.py",
-      "memberOf": [
-        "baseline"
-      ],
-      "tool": "credscan",
-      "ruleId": "CSCAN-AZURE0070",
-      "justification": null,
-      "createdDate": "2022-02-18 01:42:17Z",
-      "expirationDate": null,
-      "type": null
-    },
     "2834bc64d14f9a3370e5ca5b25ef77f0a21a437425602a9be9cf8b84bf408c3d": {
       "signature": "2834bc64d14f9a3370e5ca5b25ef77f0a21a437425602a9be9cf8b84bf408c3d",
       "alternativeSignatures": [
