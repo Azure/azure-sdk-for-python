@@ -6,8 +6,6 @@ This version and all future versions will require Python 3.7+, Python 3.6 is no 
 
 ### Bugs Fixed
 
-- Updated `avro` minimum dependency to 1.11.1, which fixed a bug that previously restricted complex types from being used as names.
-
 ## 1.0.0 (2022-05-10)
 
 **Note:** This is the first stable release of our efforts to create a user-friendly Pythonic Avro Encoder library that integrates with the Python client library for Azure Schema Registry.

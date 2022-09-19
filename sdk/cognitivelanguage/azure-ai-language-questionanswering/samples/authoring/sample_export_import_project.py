@@ -18,8 +18,6 @@ USAGE:
     2) AZURE_QUESTIONANSWERING_KEY - your QuestionAnswering API key.
 """
 
-from azure.ai.language.questionanswering import projects
-
 
 def sample_export_import_project():
     # [START export_import_project]
