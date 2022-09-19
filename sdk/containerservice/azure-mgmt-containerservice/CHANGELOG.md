@@ -1,5 +1,16 @@
 # Release History
 
+## 20.4.0 (2022-09-19)
+
+### Features Added
+
+  - Model AgentPool has a new parameter windows_profile
+  - Model ContainerServiceNetworkProfile has a new parameter kube_proxy_config
+  - Model ManagedCluster has a new parameter guardrails_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter windows_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter windows_profile
+  - Model ManagedClusterLoadBalancerProfile has a new parameter backend_pool_type
+
 ## 20.3.0 (2022-08-26)
 
 ### Features Added
