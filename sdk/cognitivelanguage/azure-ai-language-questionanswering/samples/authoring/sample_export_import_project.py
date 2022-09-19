@@ -25,14 +25,14 @@ def sample_export_import_project():
     # [START export_import_project]
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.language.questionanswering.projects import QuestionAnsweringProjectsClient
+    from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
 
     # get service secrets
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
     key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
 
     # create client
-    client = QuestionAnsweringProjectsClient(endpoint, AzureKeyCredential(key))
+    client = QuestionAnsweringAuthoringClient(endpoint, AzureKeyCredential(key))
     with client:
 
         # create project

@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.ai.language.questionanswering.projects import QuestionAnsweringProjectsClient
+from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
 from azure.core.credentials import AzureKeyCredential
 
 from helpers import QnaAuthoringHelper
@@ -13,7 +13,7 @@ from testcase import QuestionAnsweringTestCase
 class TestExportAndImport(QuestionAnsweringTestCase):
 
     def test_export_project(self, recorded_test, qna_creds):
-        client = QuestionAnsweringProjectsClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
@@ -30,7 +30,7 @@ class TestExportAndImport(QuestionAnsweringTestCase):
         assert result["resultUrl"] is not None
 
     def test_import_project(self, recorded_test, qna_creds):
-        client = QuestionAnsweringProjectsClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"

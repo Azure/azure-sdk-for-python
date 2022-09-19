@@ -5,7 +5,7 @@
 # ------------------------------------
 import pytest
 
-from azure.ai.language.questionanswering.projects.aio import QuestionAnsweringProjectsClient
+from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
 from azure.core.credentials import AzureKeyCredential
 
 from helpers import QnaAuthoringAsyncHelper
@@ -16,7 +16,7 @@ class TestExportAndImportAsync(QuestionAnsweringTestCase):
 
     @pytest.mark.asyncio
     async def test_export_project(self, recorded_test, qna_creds):
-        client = QuestionAnsweringProjectsClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
@@ -34,7 +34,7 @@ class TestExportAndImportAsync(QuestionAnsweringTestCase):
 
     @pytest.mark.asyncio
     async def test_import_project(self, recorded_test, qna_creds):
-        client = QuestionAnsweringProjectsClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
