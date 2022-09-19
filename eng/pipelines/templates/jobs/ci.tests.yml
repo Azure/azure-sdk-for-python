@@ -22,7 +22,7 @@ parameters:
     default: 60
   - name: ToxEnvParallel
     type: string
-    default: '--tenvparallel'
+    default: ''
   - name: UnsupportedToxEnvironments
     type: string
     default: ''
@@ -123,7 +123,7 @@ jobs:
           - template: ../steps/set-dev-build.yml
             parameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          
+
           - ${{ each step in parameters.BeforeTestSteps }}:
             -  ${{ step }}
         AfterTestSteps: ${{ parameters.AfterTestSteps }}
