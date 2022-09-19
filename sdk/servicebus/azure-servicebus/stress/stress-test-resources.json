@@ -1,0 +1,122 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.8.9.13224",
+      "templateHash": "9921674389783065690"
+    }
+  },
+  "parameters": {
+    "baseName": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "The base resource name."
+      }
+    },
+    "testApplicationOid": {
+      "type": "string",
+      "metadata": {
+        "description": "The client OID to grant access to test resources."
+      }
+    }
+  },
+  "variables": {
+    "apiVersion": "2017-04-01",
+    "location": "[resourceGroup().location]",
+    "authorizationRuleName_var": "[format('{0}/RootManageSharedAccessKey', parameters('baseName'))]",
+    "authorizationRuleNameNoManage_var": "[format('{0}/NoManage', parameters('baseName'))]",
+    "serviceBusDataOwnerRoleId": "[format('/subscriptions/{0}/providers/Microsoft.Authorization/roleDefinitions/090c5cfd-751d-490a-894a-3ce6f1109419', subscription().subscriptionId)]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ServiceBus/namespaces",
+      "apiVersion": "2018-01-01-preview",
+      "name": "[parameters('baseName')]",
+      "location": "[variables('location')]",
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard"
+      },
+      "properties": {
+        "zoneRedundant": false
+      }
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
+      "apiVersion": "2015-08-01",
+      "name": "[variables('authorizationRuleName_var')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "rights": [
+          "Listen",
+          "Manage",
+          "Send"
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('baseName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
+      "apiVersion": "2015-08-01",
+      "name": "[variables('authorizationRuleNameNoManage_var')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "rights": [
+          "Listen",
+          "Send"
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('baseName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2018-01-01-preview",
+      "name": "[guid(format('dataOwnerRoleId{0}', parameters('baseName')))]",
+      "properties": {
+        "roleDefinitionId": "[variables('serviceBusDataOwnerRoleId')]",
+        "principalId": "[parameters('testApplicationOid')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('baseName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces/queues",
+      "apiVersion": "2017-04-01",
+      "name": "[format('{0}/{1}', parameters('baseName'), 'testQueue')]",
+      "properties": {
+        "lockDuration": "PT5M",
+        "maxSizeInMegabytes": 1024,
+        "requiresDuplicateDetection": false,
+        "requiresSession": false,
+        "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+        "deadLetteringOnMessageExpiration": false,
+        "duplicateDetectionHistoryTimeWindow": "PT10M",
+        "maxDeliveryCount": 10,
+        "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+        "enablePartitioning": false,
+        "enableExpress": false
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('baseName'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "SERVICE_BUS_CONNECTION_STR": {
+      "type": "string",
+      "value": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('baseName'), 'RootManageSharedAccessKey'), variables('apiVersion')).primaryConnectionString]"
+    },
+    "SERVICE_BUS_QUEUE_NAME": {
+      "type": "string",
+      "value": "testQueue"
+    }
+  }
+}

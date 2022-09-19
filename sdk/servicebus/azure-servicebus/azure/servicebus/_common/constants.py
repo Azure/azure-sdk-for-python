@@ -6,7 +6,6 @@
 from enum import Enum
 
 from uamqp import constants, types
-from azure.core import CaseInsensitiveEnumMeta
 
 VENDOR = b"com.microsoft"
 DATETIMEOFFSET_EPOCH = 621355968000000000
@@ -60,7 +59,6 @@ REQUEST_RESPONSE_GET_RULES_OPERATION = VENDOR + b":enumerate-rules"
 CONTAINER_PREFIX = "servicebus.pysdk-"
 JWT_TOKEN_SCOPE = "https://servicebus.azure.net//.default"
 USER_AGENT_PREFIX = "azsdk-python-servicebus"
-CONSUMER_IDENTIFIER = VENDOR + b":receiver-name"
 
 MANAGEMENT_PATH_SUFFIX = "/$management"
 
@@ -169,7 +167,7 @@ MAX_DURATION_VALUE = 922337203685477
 MAX_ABSOLUTE_EXPIRY_TIME = 253402243199000
 MESSAGE_STATE_NAME = b"x-opt-message-state"
 
-class ServiceBusReceiveMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ServiceBusReceiveMode(str, Enum):
     PEEK_LOCK = "peeklock"
     RECEIVE_AND_DELETE = "receiveanddelete"
 
@@ -189,7 +187,7 @@ class ServiceBusSessionFilter(Enum):
     NEXT_AVAILABLE = 0
 
 
-class ServiceBusSubQueue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ServiceBusSubQueue(str, Enum):
     DEAD_LETTER = "deadletter"
     TRANSFER_DEAD_LETTER = "transferdeadletter"
 

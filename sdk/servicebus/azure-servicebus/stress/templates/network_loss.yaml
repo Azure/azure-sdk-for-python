@@ -1,7 +1,14 @@
-{{- include "stress-test-addons.chaos-wrapper.tpl" (list . "stress.python-sb-network") -}}
-{{- define "stress.python-sb-network" -}}
 apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
+metadata:
+  name: '{{ .Release.Name }}-{{ .Release.Revision }}'
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    experiment.chaos-mesh.org/pause: 'true'
+  labels:
+    scenario: 'stress'
+    release: '{{ .Release.Name }}'
+    revision: '{{ .Release.Revision }}'
 spec:
   scheduler:
     cron: '@every 30s'
@@ -9,7 +16,7 @@ spec:
   action: loss
   direction: to
   externalTargets:
-    - '{{ .Stress.ResourceGroupName }}.servicebus.windows.net'
+    - 'servicebus.windows.net'
   mode: one
   selector:
     labelSelectors:
@@ -22,4 +29,3 @@ spec:
   loss:
     loss: '100'
     correlation: '100'
-{{- end -}}
