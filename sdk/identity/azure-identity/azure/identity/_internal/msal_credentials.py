@@ -29,7 +29,7 @@ class MsalCredential(object):
             **kwargs
     ) -> None:
         authority = kwargs.pop("authority", None)
-        # self._validate_authority = kwargs.pop("validate_authority", True)
+        self._validate_authority = kwargs.pop("validate_authority", True)
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         self._regional_authority = os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME)
         self._tenant_id = kwargs.pop("tenant_id", None) or "organizations"
@@ -80,7 +80,7 @@ class MsalCredential(object):
                 azure_region=self._regional_authority,
                 token_cache=self._cache,
                 http_client=self._client,
-                # validate_authority=self._validate_authority
+                validate_authority=self._validate_authority
             )
 
         return self._client_applications[tenant_id]
