@@ -62,15 +62,15 @@ class AzureAppConfigurationProvider:
             for config in configurations:
                 if config.content_type is None:
                     # Deals with possible null value via Rest API
-                    provider._dict[provider.trim(config.key)] = config.value
+                    provider._dict[provider.__trim(config.key)] = config.value
                 elif config.content_type == "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8":
                     provider.__resolve_keyvault_references(
                         config, key_vault_options, secret_clients)
                 elif "application/json" in config.content_type:
                     j_object = json.loads(config.value)
-                    provider._dict[provider.trim(config.key)] = j_object
+                    provider._dict[provider.__trim(config.key)] = j_object
                 else:
-                    provider._dict[provider.trim(config.key)] = config.value
+                    provider._dict[provider.__trim(config.key)] = config.value
         return provider
 
     def __buildprovider(self, connection_string, endpoint, credential, key_vault_options):
@@ -94,9 +94,8 @@ class AzureAppConfigurationProvider:
 
     def __resolve_keyvault_references(self, config, key_vault_options, secret_clients):
         if key_vault_options is None:
-            warnings.warn(
-                "Key Vault Reference found, but no Key Vault Options were provided")
-            return
+            raise AttributeError(
+                "Key Vault options must be set to resolve Key Vault references.")
         j_object = json.loads(config.value)
         uri_value = j_object['uri']
 
@@ -118,10 +117,12 @@ class AzureAppConfigurationProvider:
                 secret_client = SecretClient(
                     vault_url=key_vault_uri, credential=key_vault_options.credential)
                 secret_clients[key_vault_uri] = secret_client
-            secret = secret_client.get_secret(
-                key_vault_secret_name)
-            self._dict[self.__trim(config.key)] = secret.value
-            return
+                secret = secret_client.get_secret(
+                    key_vault_secret_name)
+                self._dict[self.__trim(config.key)] = secret.value
+                return
+            raise AttributeError(
+                "No Secret Client found for Key Vault reference %s%s" % (key_vault_uri, uri.path))
         if key_vault_options.secret_clients is not None:
             for secret_client in key_vault_options.secret_clients:
                 if secret_client._vault_url == key_vault_uri:
@@ -129,11 +130,13 @@ class AzureAppConfigurationProvider:
                         key_vault_secret_name)
                     self._dict[self.__trim(
                         config.key)] = secret.value
-                break
-            return
+                    return
         if key_vault_options.secret_resolver is not None:
             self._dict[self.__trim(
                 config.key)] = key_vault_options.secret_resolver(uri)
+            return
+        raise AttributeError(
+            "No Secret Client found for Key Vault reference %s%s" % (key_vault_uri, uri.path))
 
     def __trim(self, key):
         for trim in self._trim_prefixes:
@@ -152,7 +155,7 @@ class AzureAppConfigurationProvider:
 
     def copy(self):
         """
-        Returns a copy of the configuration settings 
+        Returns a copy of the configuration settings
         type: () -> dict
         """
         return self._dict.copy()
