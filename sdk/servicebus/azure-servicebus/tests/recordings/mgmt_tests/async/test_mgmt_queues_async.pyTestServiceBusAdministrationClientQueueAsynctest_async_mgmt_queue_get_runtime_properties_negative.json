@@ -12,12 +12,12 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/atom\u002Bxml; type=feed; charset=utf-8",
-        "Date": "Mon, 19 Sep 2022 19:45:57 GMT",
+        "Date": "Mon, 19 Sep 2022 22:04:12 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked"
       },
-      "ResponseBody": "\u003Cfeed xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Ctitle type=\u0022text\u0022\u003EPublicly Listed Services\u003C/title\u003E\u003Csubtitle type=\u0022text\u0022\u003EThis is the list of publicly-listed services currently available.\u003C/subtitle\u003E\u003Cid\u003Euuid:c29ac36a-11fc-4130-a435-700d19b61685;id=295362\u003C/id\u003E\u003Cupdated\u003E2022-09-19T19:45:58Z\u003C/updated\u003E\u003Cgenerator\u003EService Bus 1.1\u003C/generator\u003E\u003C/feed\u003E"
+      "ResponseBody": "\u003Cfeed xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Ctitle type=\u0022text\u0022\u003EPublicly Listed Services\u003C/title\u003E\u003Csubtitle type=\u0022text\u0022\u003EThis is the list of publicly-listed services currently available.\u003C/subtitle\u003E\u003Cid\u003Euuid:d031860a-7216-45ed-b6b8-888ccb4b6682;id=71903\u003C/id\u003E\u003Cupdated\u003E2022-09-19T22:04:12Z\u003C/updated\u003E\u003Cgenerator\u003EService Bus 1.1\u003C/generator\u003E\u003C/feed\u003E"
     }
   ],
   "Variables": {}
