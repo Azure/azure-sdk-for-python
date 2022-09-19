@@ -5,6 +5,7 @@
 ### Breaking Changes
 - Clients verify the challenge resource matches the vault domain. This should affect few customers,
   who can provide `verify_challenge_resource=False` to client constructors to disable.
+  See https://aka.ms/azsdk/blog/vault-uri for more information.
 
 ### Other Changes
 - Changes from version 4.7.0b1 have been reverted and will be included in version 4.8.0b1

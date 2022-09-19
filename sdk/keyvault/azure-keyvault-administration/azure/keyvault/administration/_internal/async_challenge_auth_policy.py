@@ -78,7 +78,11 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
 
             request_domain = urlparse(request.http_request.url).netloc
             if not request_domain.lower().endswith(f".{resource_domain.lower()}"):
-                raise ValueError(f"The challenge resource '{resource_domain}' does not match the requested domain.")
+                raise ValueError(
+                    f"The challenge resource '{resource_domain}' does not match the requested domain. Pass "
+                    "`verify_challenge_resource=False` to your client's constructor to disable this verification. "
+                    "See https://aka.ms/azsdk/blog/vault-uri for more information."
+                )
 
         body = request.context.pop("key_vault_request_data", None)
         request.http_request.set_text_body(body)  # no-op when text is None
