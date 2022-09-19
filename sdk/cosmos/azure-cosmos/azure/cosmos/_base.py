@@ -713,26 +713,21 @@ def _set_throughput_options(offer: Union[int, ThroughputProperties], request_opt
 
 def _deserialize_throughput(throughput: list) -> Any:
     throughput_properties = throughput
-    try:
-        max_throughput = throughput_properties[0]['content']['offerAutopilotSettings']['maxThroughput']
-    except (KeyError, TypeError):  # Adding TypeError just in case one of these dicts is None
-        max_throughput = None
-    try:
-        increment_percent = \
-            throughput_properties[0]['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
-                'incrementPercent']
-    except (KeyError, TypeError):
-        increment_percent = None
-    try:
-        throughput = throughput_properties[0]["content"]["offerThroughput"]
-    except (KeyError, TypeError):
-        throughput = None
-    return ThroughputProperties(
-        auto_scale_max_throughput=max_throughput,
-        auto_scale_increment_percent=increment_percent,
-        offer_throughput=throughput,
-        properties=throughput_properties[0]
-    )
+    if 'offerAutopilotSettings' in throughput_properties[0]['content'] and 'autoUpgradePolicy' in \
+            throughput_properties[0]['content']['offerAutopilotSettings']:
+        return ThroughputProperties(properties=throughput_properties[0], auto_scale_max_throughput= \
+            throughput_properties[0]['content']['offerAutopilotSettings']['maxThroughput'],
+                                    auto_scale_increment_percent=throughput_properties[0]['content']
+                                    ['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
+                                        'incrementPercent'])
+
+    if 'offerAutopilotSettings' in throughput_properties[0]['content']:
+        return ThroughputProperties(properties=throughput_properties[0],
+                                    auto_scale_max_throughput=throughput_properties[0]['content'][
+                                        'offerAutopilotSettings']['maxThroughput'])
+
+    return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
+                                properties=throughput_properties[0])
 
 
 def _replace_throughput(throughput: Union[int, ThroughputProperties], new_throughput_properties: list):
