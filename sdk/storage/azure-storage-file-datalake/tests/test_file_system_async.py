@@ -4,11 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 import asyncio
-
-import pytest
 import unittest
 import uuid
 from datetime import datetime, timedelta
+from time import sleep
+
+import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.storage.filedatalake import (
@@ -486,7 +487,6 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         props = await new_filesystem.get_file_system_properties()
         assert new_name == props.name
 
-    @pytest.mark.playback_test_only
     @DataLakePreparer()
     @recorded_by_proxy_async
     async def test_undelete_file_system(self, **kwargs):
@@ -498,6 +498,8 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         filesystem_client = await self.dsc.create_file_system(name)
 
         await filesystem_client.delete_file_system()
+        if self.is_live:
+            sleep(30)
         # to make sure the filesystem deleted
         with pytest.raises(ResourceNotFoundError):
             await filesystem_client.get_file_system_properties()
@@ -516,7 +518,6 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
                 props = await restored_fs_client.get_file_system_properties()
                 assert props is not None
 
-    @pytest.mark.playback_test_only
     @DataLakePreparer()
     @recorded_by_proxy_async
     async def test_restore_file_system_with_sas(self, **kwargs):
@@ -536,6 +537,8 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         name = self._get_file_system_reference(prefix="filesystem2")
         filesystem_client = await dsc.create_file_system(name)
         await filesystem_client.delete_file_system()
+        if self.is_live:
+            sleep(30)
         # to make sure the filesystem is deleted
         with pytest.raises(ResourceNotFoundError):
             await filesystem_client.get_file_system_properties()
@@ -932,7 +935,6 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         assert len(paths1) == 6
         assert len(paths2) == 6
 
-    @pytest.mark.playback_test_only
     @DataLakePreparer()
     @recorded_by_proxy_async
     async def test_get_deleted_paths(self, **kwargs):
@@ -1165,7 +1167,6 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
             async with fs_client.get_directory_client("file2") as f_client:
                 await f_client.create_directory()
 
-    @pytest.mark.playback_test_only
     @DataLakePreparer()
     @recorded_by_proxy_async
     async def test_undelete_dir_with_version_id(self, **kwargs):
@@ -1173,7 +1174,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         datalake_storage_account_key = kwargs.pop("storage_data_lake_soft_delete_account_key")
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        file_system_client = await self._create_file_system("fs")
+        file_system_client = await self._create_file_system("fs2")
         dir_path = 'dir10'
         dir_client = await file_system_client.create_directory(dir_path)
         resp = await dir_client.delete_directory()
@@ -1183,7 +1184,6 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         resp = await restored_dir_client.get_directory_properties()
         assert resp is not None
 
-    @pytest.mark.playback_test_only
     @DataLakePreparer()
     @recorded_by_proxy_async
     async def test_undelete_file_with_version_id(self, **kwargs):
@@ -1191,7 +1191,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         datalake_storage_account_key = kwargs.pop("storage_data_lake_soft_delete_account_key")
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        file_system_client = await self._create_file_system("fs")
+        file_system_client = await self._create_file_system("fs2")
         file_path = 'dir10/fileŇ'
         dir_client = await file_system_client.create_file(file_path)
         resp = await dir_client.delete_file()

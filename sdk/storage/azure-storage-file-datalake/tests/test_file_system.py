@@ -3,10 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import unittest
 from datetime import datetime, timedelta
+from time import sleep
 
 import pytest
-import unittest
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.storage.filedatalake import (
@@ -510,7 +511,6 @@ class TestFileSystem(StorageRecordedTestCase):
         new_filesystem = self.dsc._rename_file_system(name=old_name, new_name=new_name, lease=filesystem_lease_id)
         assert new_name == new_filesystem.get_file_system_properties().name
 
-    @pytest.mark.playback_test_only
     @DataLakePreparer()
     @recorded_by_proxy
     def test_undelete_file_system(self, **kwargs):
@@ -518,11 +518,13 @@ class TestFileSystem(StorageRecordedTestCase):
         datalake_storage_account_key = kwargs.pop("storage_data_lake_soft_delete_account_key")
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        name = self._get_file_system_reference("testfs2")
+        name = self._get_file_system_reference("testfs5")
         filesystem_client = self.dsc.create_file_system(name)
 
         # Act
         filesystem_client.delete_file_system()
+        if self.is_live:
+            sleep(30)
         # to make sure the filesystem deleted
         with pytest.raises(ResourceNotFoundError):
             filesystem_client.get_file_system_properties()
@@ -539,7 +541,6 @@ class TestFileSystem(StorageRecordedTestCase):
                 props = restored_fs_client.get_file_system_properties()
                 assert props is not None
 
-    @pytest.mark.playback_test_only
     @DataLakePreparer()
     @recorded_by_proxy
     def test_restore_file_system_with_sas(self, **kwargs):
@@ -556,9 +557,11 @@ class TestFileSystem(StorageRecordedTestCase):
             datetime.utcnow() + timedelta(hours=1),
         )
         dsc = DataLakeServiceClient(self.dsc.url, token)
-        name = self._get_file_system_reference(prefix="filesystem")
+        name = self._get_file_system_reference(prefix="filesystem9")
         filesystem_client = dsc.create_file_system(name)
         filesystem_client.delete_file_system()
+        if self.is_live:
+            sleep(30)
         # to make sure the filesystem is deleted
         with pytest.raises(ResourceNotFoundError):
             filesystem_client.get_file_system_properties()
@@ -775,7 +778,6 @@ class TestFileSystem(StorageRecordedTestCase):
         assert 1 == len(paths)
         assert paths[0].expiry_time is None
 
-    @pytest.mark.playback_test_only
     @DataLakePreparer()
     @recorded_by_proxy
     def test_get_deleted_paths(self, **kwargs):
@@ -1031,7 +1033,6 @@ class TestFileSystem(StorageRecordedTestCase):
             with fs_client.get_directory_client("file2") as f_client:
                 f_client.create_directory()
 
-    @pytest.mark.playback_test_only
     @DataLakePreparer()
     @recorded_by_proxy
     def test_undelete_dir_with_version_id(self, **kwargs):
@@ -1039,7 +1040,7 @@ class TestFileSystem(StorageRecordedTestCase):
         datalake_storage_account_key = kwargs.pop("storage_data_lake_soft_delete_account_key")
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        file_system_client = self._create_file_system("fs")
+        file_system_client = self._create_file_system("fs2")
         dir_path = 'dir10'
         dir_client = file_system_client.create_directory(dir_path)
         resp = dir_client.delete_directory()
@@ -1049,7 +1050,6 @@ class TestFileSystem(StorageRecordedTestCase):
         resp = restored_dir_client.get_directory_properties()
         assert resp is not None
 
-    @pytest.mark.playback_test_only
     @DataLakePreparer()
     @recorded_by_proxy
     def test_undelete_file_with_version_id(self, **kwargs):
@@ -1057,7 +1057,7 @@ class TestFileSystem(StorageRecordedTestCase):
         datalake_storage_account_key = kwargs.pop("storage_data_lake_soft_delete_account_key")
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        file_system_client = self._create_file_system("fs1")
+        file_system_client = self._create_file_system("fs3")
         file_path = 'dir10/fileŇ'
         dir_client = file_system_client.create_file(file_path)
         resp = dir_client.delete_file()

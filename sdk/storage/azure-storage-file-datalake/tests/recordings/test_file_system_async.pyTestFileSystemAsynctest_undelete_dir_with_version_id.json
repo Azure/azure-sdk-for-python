@@ -1,23 +1,23 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://storagesoftdelname.blob.core.windows.net/fsd3c7344f?restype=container",
+      "RequestUri": "https://storagesoftdelname.blob.core.windows.net/fs2d3c7344f?restype=container",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:57:00 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:31:13 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 03 Sep 2022 00:56:58 GMT",
-        "ETag": "\u00220x8DA8D4734C3601B\u0022",
-        "Last-Modified": "Sat, 03 Sep 2022 00:56:59 GMT",
+        "Date": "Mon, 19 Sep 2022 23:31:12 GMT",
+        "ETag": "\u00220x8DA9A970AAADE6C\u0022",
+        "Last-Modified": "Mon, 19 Sep 2022 23:31:13 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -27,23 +27,23 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagesoftdelname.dfs.core.windows.net/fsd3c7344f/dir10?resource=directory",
+      "RequestUri": "https://storagesoftdelname.dfs.core.windows.net/fs2d3c7344f/dir10?resource=directory",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:57:00 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:31:13 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 03 Sep 2022 00:56:58 GMT",
-        "ETag": "\u00220x8DA8D4734D490DF\u0022",
-        "Last-Modified": "Sat, 03 Sep 2022 00:56:59 GMT",
+        "Date": "Mon, 19 Sep 2022 23:31:13 GMT",
+        "ETag": "\u00220x8DA9A970AEB97D2\u0022",
+        "Last-Modified": "Mon, 19 Sep 2022 23:31:14 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -54,45 +54,45 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagesoftdelname.dfs.core.windows.net/fsd3c7344f/dir10?recursive=true",
+      "RequestUri": "https://storagesoftdelname.dfs.core.windows.net/fs2d3c7344f/dir10?recursive=true",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:57:00 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:31:13 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 03 Sep 2022 00:56:58 GMT",
+        "Date": "Mon, 19 Sep 2022 23:31:13 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "x-ms-delete-type-permanent": "false",
-        "x-ms-deletion-id": "133066402195836819",
+        "x-ms-deletion-id": "133081038741428057",
         "x-ms-version": "2021-08-06"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagesoftdelname.blob.core.windows.net/fsd3c7344f/dir10",
+      "RequestUri": "https://storagesoftdelname.blob.core.windows.net/fs2d3c7344f/dir10",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:57:16 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:31:14 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
-        "Date": "Sat, 03 Sep 2022 00:57:14 GMT",
+        "Date": "Mon, 19 Sep 2022 23:31:13 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -104,40 +104,40 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagesoftdelname.blob.core.windows.net/fsd3c7344f/dir10?comp=undelete",
+      "RequestUri": "https://storagesoftdelname.blob.core.windows.net/fs2d3c7344f/dir10?comp=undelete",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:57:16 GMT",
-        "x-ms-undelete-source": "dir10?deletionid=133066402195836819",
+        "x-ms-date": "Mon, 19 Sep 2022 23:31:14 GMT",
+        "x-ms-undelete-source": "dir10?deletionid=133081038741428057",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 03 Sep 2022 00:57:14 GMT",
+        "Date": "Mon, 19 Sep 2022 23:31:13 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-creation-time": "Sat, 03 Sep 2022 00:56:59 GMT",
+        "x-ms-creation-time": "Mon, 19 Sep 2022 23:31:14 GMT",
         "x-ms-resource-type": "directory",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagesoftdelname.blob.core.windows.net/fsd3c7344f/dir10",
+      "RequestUri": "https://storagesoftdelname.blob.core.windows.net/fs2d3c7344f/dir10",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:57:16 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:31:14 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
@@ -146,9 +146,9 @@
         "Accept-Ranges": "bytes",
         "Content-Length": "0",
         "Content-Type": "application/octet-stream",
-        "Date": "Sat, 03 Sep 2022 00:57:14 GMT",
-        "ETag": "\u00220x8DA8D4734D490DF\u0022",
-        "Last-Modified": "Sat, 03 Sep 2022 00:56:59 GMT",
+        "Date": "Mon, 19 Sep 2022 23:31:13 GMT",
+        "ETag": "\u00220x8DA9A970AEB97D2\u0022",
+        "Last-Modified": "Mon, 19 Sep 2022 23:31:14 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -156,7 +156,7 @@
         "x-ms-access-tier": "Hot",
         "x-ms-access-tier-inferred": "true",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-creation-time": "Sat, 03 Sep 2022 00:56:59 GMT",
+        "x-ms-creation-time": "Mon, 19 Sep 2022 23:31:14 GMT",
         "x-ms-group": "$superuser",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",

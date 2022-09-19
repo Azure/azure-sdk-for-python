@@ -8,16 +8,16 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:56:49 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:26:53 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 03 Sep 2022 00:56:47 GMT",
-        "ETag": "\u00220x8DA8D472DBFD42A\u0022",
-        "Last-Modified": "Sat, 03 Sep 2022 00:56:47 GMT",
+        "Date": "Mon, 19 Sep 2022 23:26:53 GMT",
+        "ETag": "\u00220x8DA9A966FC8AD7E\u0022",
+        "Last-Modified": "Mon, 19 Sep 2022 23:26:53 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -34,16 +34,16 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:56:49 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:26:53 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 03 Sep 2022 00:56:47 GMT",
-        "ETag": "\u00220x8DA8D472E1497F8\u0022",
-        "Last-Modified": "Sat, 03 Sep 2022 00:56:48 GMT",
+        "Date": "Mon, 19 Sep 2022 23:26:54 GMT",
+        "ETag": "\u00220x8DA9A9670232322\u0022",
+        "Last-Modified": "Mon, 19 Sep 2022 23:26:54 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -61,16 +61,16 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:56:49 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:26:54 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 03 Sep 2022 00:56:47 GMT",
-        "ETag": "\u00220x8DA8D472E2375F5\u0022",
-        "Last-Modified": "Sat, 03 Sep 2022 00:56:48 GMT",
+        "Date": "Mon, 19 Sep 2022 23:26:54 GMT",
+        "ETag": "\u00220x8DA9A967034AB36\u0022",
+        "Last-Modified": "Mon, 19 Sep 2022 23:26:54 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -88,16 +88,16 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:56:49 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:26:54 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 03 Sep 2022 00:56:47 GMT",
-        "ETag": "\u00220x8DA8D472E3321BA\u0022",
-        "Last-Modified": "Sat, 03 Sep 2022 00:56:48 GMT",
+        "Date": "Mon, 19 Sep 2022 23:26:54 GMT",
+        "ETag": "\u00220x8DA9A967043BAE4\u0022",
+        "Last-Modified": "Mon, 19 Sep 2022 23:26:54 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -115,16 +115,16 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:56:49 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:26:54 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 03 Sep 2022 00:56:47 GMT",
-        "ETag": "\u00220x8DA8D472E4068D2\u0022",
-        "Last-Modified": "Sat, 03 Sep 2022 00:56:48 GMT",
+        "Date": "Mon, 19 Sep 2022 23:26:54 GMT",
+        "ETag": "\u00220x8DA9A9670535FAB\u0022",
+        "Last-Modified": "Mon, 19 Sep 2022 23:26:54 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -142,16 +142,16 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:56:49 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:26:54 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 03 Sep 2022 00:56:47 GMT",
-        "ETag": "\u00220x8DA8D472E4F9EEA\u0022",
-        "Last-Modified": "Sat, 03 Sep 2022 00:56:48 GMT",
+        "Date": "Mon, 19 Sep 2022 23:26:54 GMT",
+        "ETag": "\u00220x8DA9A9670628E87\u0022",
+        "Last-Modified": "Mon, 19 Sep 2022 23:26:54 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -169,16 +169,16 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:56:50 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:26:54 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 03 Sep 2022 00:56:47 GMT",
-        "ETag": "\u00220x8DA8D472E601FE6\u0022",
-        "Last-Modified": "Sat, 03 Sep 2022 00:56:48 GMT",
+        "Date": "Mon, 19 Sep 2022 23:26:54 GMT",
+        "ETag": "\u00220x8DA9A967073AB85\u0022",
+        "Last-Modified": "Mon, 19 Sep 2022 23:26:54 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -196,16 +196,16 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:56:50 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:26:54 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 03 Sep 2022 00:56:47 GMT",
-        "ETag": "\u00220x8DA8D472E727B4D\u0022",
-        "Last-Modified": "Sat, 03 Sep 2022 00:56:48 GMT",
+        "Date": "Mon, 19 Sep 2022 23:26:54 GMT",
+        "ETag": "\u00220x8DA9A967088D52D\u0022",
+        "Last-Modified": "Mon, 19 Sep 2022 23:26:55 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -223,20 +223,20 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:56:50 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:26:54 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 03 Sep 2022 00:56:48 GMT",
+        "Date": "Mon, 19 Sep 2022 23:26:54 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "x-ms-delete-type-permanent": "false",
-        "x-ms-deletion-id": "133066402088807931",
+        "x-ms-deletion-id": "133081036151333507",
         "x-ms-version": "2021-08-06"
       },
       "ResponseBody": null
@@ -249,20 +249,20 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:56:50 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:26:55 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 03 Sep 2022 00:56:48 GMT",
+        "Date": "Mon, 19 Sep 2022 23:26:55 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "x-ms-delete-type-permanent": "false",
-        "x-ms-deletion-id": "133066402090079164",
+        "x-ms-deletion-id": "133081036153002099",
         "x-ms-version": "2021-08-06"
       },
       "ResponseBody": null
@@ -275,20 +275,20 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:56:50 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:26:55 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 03 Sep 2022 00:56:48 GMT",
+        "Date": "Mon, 19 Sep 2022 23:26:55 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "x-ms-delete-type-permanent": "false",
-        "x-ms-deletion-id": "133066402091228382",
+        "x-ms-deletion-id": "133081036154761020",
         "x-ms-version": "2021-08-06"
       },
       "ResponseBody": null
@@ -301,20 +301,20 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:56:50 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:26:55 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 03 Sep 2022 00:56:48 GMT",
+        "Date": "Mon, 19 Sep 2022 23:26:55 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "x-ms-delete-type-permanent": "false",
-        "x-ms-deletion-id": "133066402092499075",
+        "x-ms-deletion-id": "133081036156286730",
         "x-ms-version": "2021-08-06"
       },
       "ResponseBody": null
@@ -327,20 +327,20 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:56:50 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:26:55 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 03 Sep 2022 00:56:48 GMT",
+        "Date": "Mon, 19 Sep 2022 23:26:55 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "x-ms-delete-type-permanent": "false",
-        "x-ms-deletion-id": "133066402093930687",
+        "x-ms-deletion-id": "133081036158276672",
         "x-ms-version": "2021-08-06"
       },
       "ResponseBody": null
@@ -353,20 +353,20 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:56:50 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:26:55 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 03 Sep 2022 00:56:48 GMT",
+        "Date": "Mon, 19 Sep 2022 23:26:55 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "x-ms-delete-type-permanent": "false",
-        "x-ms-deletion-id": "133066402095484976",
+        "x-ms-deletion-id": "133081036160140417",
         "x-ms-version": "2021-08-06"
       },
       "ResponseBody": null
@@ -378,14 +378,14 @@
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:56:51 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:26:56 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/xml",
-        "Date": "Sat, 03 Sep 2022 00:56:49 GMT",
+        "Date": "Mon, 19 Sep 2022 23:26:55 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -393,7 +393,7 @@
         "Transfer-Encoding": "chunked",
         "x-ms-version": "2021-08-06"
       },
-      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagesoftdelname.blob.core.windows.net/\u0022 ContainerName=\u0022filesystem9f612fa4\u0022\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Edir1\u003C/Name\u003E\u003CDeletionId\u003E133066402091228382\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ESat, 10 Sep 2022 00:56:49 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA8D472E3321BA\u003C/Etag\u003E\u003CResourceType\u003Edirectory\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003ESat, 03 Sep 2022 00:56:49 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E6\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Edir2\u003C/Name\u003E\u003CDeletionId\u003E133066402092499075\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ESat, 10 Sep 2022 00:56:49 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA8D472E4068D2\u003C/Etag\u003E\u003CResourceType\u003Edirectory\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003ESat, 03 Sep 2022 00:56:49 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E6\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Edir3/file_in_dir3\u003C/Name\u003E\u003CDeletionId\u003E133066402093930687\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ESat, 10 Sep 2022 00:56:49 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA8D472E601FE6\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003ESat, 03 Sep 2022 00:56:49 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E6\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Edir3/subdir/file_in_subdir\u003C/Name\u003E\u003CDeletionId\u003E133066402095484976\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ESat, 10 Sep 2022 00:56:49 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA8D472E727B4D\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003ESat, 03 Sep 2022 00:56:49 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E6\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Efile0\u003C/Name\u003E\u003CDeletionId\u003E133066402088807931\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ESat, 10 Sep 2022 00:56:48 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA8D472E1497F8\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E6\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Efile1\u003C/Name\u003E\u003CDeletionId\u003E133066402090079164\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ESat, 10 Sep 2022 00:56:49 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA8D472E2375F5\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003ESat, 03 Sep 2022 00:56:49 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E6\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagesoftdelname.blob.core.windows.net/\u0022 ContainerName=\u0022filesystem9f612fa4\u0022\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Edir1\u003C/Name\u003E\u003CDeletionId\u003E133081036154761020\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ETue, 20 Sep 2022 23:26:55 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA9A967043BAE4\u003C/Etag\u003E\u003CResourceType\u003Edirectory\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003EMon, 19 Sep 2022 23:26:55 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E0\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Edir2\u003C/Name\u003E\u003CDeletionId\u003E133081036156286730\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ETue, 20 Sep 2022 23:26:55 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA9A9670535FAB\u003C/Etag\u003E\u003CResourceType\u003Edirectory\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003EMon, 19 Sep 2022 23:26:55 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E0\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Edir3/file_in_dir3\u003C/Name\u003E\u003CDeletionId\u003E133081036158276672\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ETue, 20 Sep 2022 23:26:55 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA9A967073AB85\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003EMon, 19 Sep 2022 23:26:55 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E0\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Edir3/subdir/file_in_subdir\u003C/Name\u003E\u003CDeletionId\u003E133081036160140417\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 19 Sep 2022 23:26:55 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 19 Sep 2022 23:26:55 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ETue, 20 Sep 2022 23:26:55 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA9A967088D52D\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003EMon, 19 Sep 2022 23:26:56 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E0\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Efile0\u003C/Name\u003E\u003CDeletionId\u003E133081036151333507\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ETue, 20 Sep 2022 23:26:55 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA9A9670232322\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003EMon, 19 Sep 2022 23:26:55 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E0\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Efile1\u003C/Name\u003E\u003CDeletionId\u003E133081036153002099\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ETue, 20 Sep 2022 23:26:55 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA9A967034AB36\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003EMon, 19 Sep 2022 23:26:55 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E0\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
     },
     {
       "RequestUri": "https://storagesoftdelname.blob.core.windows.net/filesystem9f612fa4?restype=container\u0026comp=list\u0026prefix=dir3/\u0026showonly=deleted",
@@ -402,14 +402,14 @@
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:56:51 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:26:56 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/xml",
-        "Date": "Sat, 03 Sep 2022 00:56:49 GMT",
+        "Date": "Mon, 19 Sep 2022 23:26:55 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -417,7 +417,7 @@
         "Transfer-Encoding": "chunked",
         "x-ms-version": "2021-08-06"
       },
-      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagesoftdelname.blob.core.windows.net/\u0022 ContainerName=\u0022filesystem9f612fa4\u0022\u003E\u003CPrefix\u003Edir3/\u003C/Prefix\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Edir3/file_in_dir3\u003C/Name\u003E\u003CDeletionId\u003E133066402093930687\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ESat, 10 Sep 2022 00:56:49 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA8D472E601FE6\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003ESat, 03 Sep 2022 00:56:49 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E6\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Edir3/subdir/file_in_subdir\u003C/Name\u003E\u003CDeletionId\u003E133066402095484976\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ESat, 10 Sep 2022 00:56:49 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA8D472E727B4D\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003ESat, 03 Sep 2022 00:56:49 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E6\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagesoftdelname.blob.core.windows.net/\u0022 ContainerName=\u0022filesystem9f612fa4\u0022\u003E\u003CPrefix\u003Edir3/\u003C/Prefix\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Edir3/file_in_dir3\u003C/Name\u003E\u003CDeletionId\u003E133081036158276672\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ETue, 20 Sep 2022 23:26:55 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA9A967073AB85\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003EMon, 19 Sep 2022 23:26:55 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E0\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Edir3/subdir/file_in_subdir\u003C/Name\u003E\u003CDeletionId\u003E133081036160140417\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 19 Sep 2022 23:26:55 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 19 Sep 2022 23:26:55 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ETue, 20 Sep 2022 23:26:55 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA9A967088D52D\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003EMon, 19 Sep 2022 23:26:56 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E0\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
     },
     {
       "RequestUri": "https://storagesoftdelname.blob.core.windows.net/filesystem9f612fa4?restype=container\u0026comp=list\u0026maxResults=2\u0026showonly=deleted",
@@ -426,14 +426,14 @@
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:56:51 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:26:56 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/xml",
-        "Date": "Sat, 03 Sep 2022 00:56:49 GMT",
+        "Date": "Mon, 19 Sep 2022 23:26:55 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -441,23 +441,23 @@
         "Transfer-Encoding": "chunked",
         "x-ms-version": "2021-08-06"
       },
-      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagesoftdelname.blob.core.windows.net/\u0022 ContainerName=\u0022filesystem9f612fa4\u0022\u003E\u003CMaxResults\u003E2\u003C/MaxResults\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Edir1\u003C/Name\u003E\u003CDeletionId\u003E133066402091228382\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ESat, 10 Sep 2022 00:56:49 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA8D472E3321BA\u003C/Etag\u003E\u003CResourceType\u003Edirectory\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003ESat, 03 Sep 2022 00:56:49 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E6\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Edir2\u003C/Name\u003E\u003CDeletionId\u003E133066402092499075\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ESat, 10 Sep 2022 00:56:49 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA8D472E4068D2\u003C/Etag\u003E\u003CResourceType\u003Edirectory\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003ESat, 03 Sep 2022 00:56:49 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E6\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker\u003E2!256!MDAwMTQ4IVZCYkZzdC9XbWRIUC9wNEJHRjRZV1M5MmFXNWpaVzUwZEhKaGJuTnZablJrWld4b2JuTUJNREZFT0VKRU9VVXlSalUzTmtVMk5pOGtkSEpoYzJndlptbHNaWE41YzNSbGJUbG1OakV5Wm1FMEFUQXhSRGhDUmpNd01FSTBPVGc0TWpZQ0wyUnBjak1DRmdBQUFBPT0hMDAwMDI4ITIwMjItMDktMDNUMDA6NTY6NDkuOTc5MzgyOFoh\u003C/NextMarker\u003E\u003C/EnumerationResults\u003E"
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagesoftdelname.blob.core.windows.net/\u0022 ContainerName=\u0022filesystem9f612fa4\u0022\u003E\u003CMaxResults\u003E2\u003C/MaxResults\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Edir1\u003C/Name\u003E\u003CDeletionId\u003E133081036154761020\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ETue, 20 Sep 2022 23:26:55 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA9A967043BAE4\u003C/Etag\u003E\u003CResourceType\u003Edirectory\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003EMon, 19 Sep 2022 23:26:55 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E0\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Edir2\u003C/Name\u003E\u003CDeletionId\u003E133081036156286730\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ETue, 20 Sep 2022 23:26:55 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA9A9670535FAB\u003C/Etag\u003E\u003CResourceType\u003Edirectory\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003EMon, 19 Sep 2022 23:26:55 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E0\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker\u003E2!256!MDAwMTQ4IVZCYnorTUhsclorczVORUJHRjhZV2k5MmFXNWpaVzUwZEhKaGJuTnZablJrWld4b2JuTXpBVEF4UkRoQ1JqTTBPVGczTmtFM01qTXZKSFJ5WVhOb0wyWnBiR1Z6ZVhOMFpXMDVaall4TW1aaE5BRXdNVVE0UTBNM1JqUkVOVEkwTkRnMEFpOWthWEl6QWhZQUFBQT0hMDAwMDI4ITIwMjItMDktMTlUMjM6MjY6NTYuNDg1NTUyMloh\u003C/NextMarker\u003E\u003C/EnumerationResults\u003E"
     },
     {
-      "RequestUri": "https://storagesoftdelname.blob.core.windows.net/filesystem9f612fa4?restype=container\u0026comp=list\u0026marker=2!256!MDAwMTQ4IVZCYkZzdC9XbWRIUC9wNEJHRjRZV1M5MmFXNWpaVzUwZEhKaGJuTnZablJrWld4b2JuTUJNREZFT0VKRU9VVXlSalUzTmtVMk5pOGtkSEpoYzJndlptbHNaWE41YzNSbGJUbG1OakV5Wm1FMEFUQXhSRGhDUmpNd01FSTBPVGc0TWpZQ0wyUnBjak1DRmdBQUFBPT0hMDAwMDI4ITIwMjItMDktMDNUMDA6NTY6NDkuOTc5MzgyOFoh\u0026maxResults=4\u0026showonly=deleted",
+      "RequestUri": "https://storagesoftdelname.blob.core.windows.net/filesystem9f612fa4?restype=container\u0026comp=list\u0026marker=2!256!MDAwMTQ4IVZCYnorTUhsclorczVORUJHRjhZV2k5MmFXNWpaVzUwZEhKaGJuTnZablJrWld4b2JuTXpBVEF4UkRoQ1JqTTBPVGczTmtFM01qTXZKSFJ5WVhOb0wyWnBiR1Z6ZVhOMFpXMDVaall4TW1aaE5BRXdNVVE0UTBNM1JqUkVOVEkwTkRnMEFpOWthWEl6QWhZQUFBQT0hMDAwMDI4ITIwMjItMDktMTlUMjM6MjY6NTYuNDg1NTUyMloh\u0026maxResults=4\u0026showonly=deleted",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 03 Sep 2022 00:56:51 GMT",
+        "x-ms-date": "Mon, 19 Sep 2022 23:26:56 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/xml",
-        "Date": "Sat, 03 Sep 2022 00:56:49 GMT",
+        "Date": "Mon, 19 Sep 2022 23:26:55 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -465,7 +465,7 @@
         "Transfer-Encoding": "chunked",
         "x-ms-version": "2021-08-06"
       },
-      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagesoftdelname.blob.core.windows.net/\u0022 ContainerName=\u0022filesystem9f612fa4\u0022\u003E\u003CMarker\u003E2!256!MDAwMTQ4IVZCYkZzdC9XbWRIUC9wNEJHRjRZV1M5MmFXNWpaVzUwZEhKaGJuTnZablJrWld4b2JuTUJNREZFT0VKRU9VVXlSalUzTmtVMk5pOGtkSEpoYzJndlptbHNaWE41YzNSbGJUbG1OakV5Wm1FMEFUQXhSRGhDUmpNd01FSTBPVGc0TWpZQ0wyUnBjak1DRmdBQUFBPT0hMDAwMDI4ITIwMjItMDktMDNUMDA6NTY6NDkuOTc5MzgyOFoh\u003C/Marker\u003E\u003CMaxResults\u003E4\u003C/MaxResults\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Edir3/file_in_dir3\u003C/Name\u003E\u003CDeletionId\u003E133066402093930687\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ESat, 10 Sep 2022 00:56:49 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA8D472E601FE6\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003ESat, 03 Sep 2022 00:56:49 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E6\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Edir3/subdir/file_in_subdir\u003C/Name\u003E\u003CDeletionId\u003E133066402095484976\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ESat, 10 Sep 2022 00:56:49 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA8D472E727B4D\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003ESat, 03 Sep 2022 00:56:49 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E6\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Efile0\u003C/Name\u003E\u003CDeletionId\u003E133066402088807931\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ESat, 10 Sep 2022 00:56:48 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA8D472E1497F8\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E6\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Efile1\u003C/Name\u003E\u003CDeletionId\u003E133066402090079164\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003ESat, 03 Sep 2022 00:56:48 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ESat, 10 Sep 2022 00:56:49 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA8D472E2375F5\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003ESat, 03 Sep 2022 00:56:49 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E6\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagesoftdelname.blob.core.windows.net/\u0022 ContainerName=\u0022filesystem9f612fa4\u0022\u003E\u003CMarker\u003E2!256!MDAwMTQ4IVZCYnorTUhsclorczVORUJHRjhZV2k5MmFXNWpaVzUwZEhKaGJuTnZablJrWld4b2JuTXpBVEF4UkRoQ1JqTTBPVGczTmtFM01qTXZKSFJ5WVhOb0wyWnBiR1Z6ZVhOMFpXMDVaall4TW1aaE5BRXdNVVE0UTBNM1JqUkVOVEkwTkRnMEFpOWthWEl6QWhZQUFBQT0hMDAwMDI4ITIwMjItMDktMTlUMjM6MjY6NTYuNDg1NTUyMloh\u003C/Marker\u003E\u003CMaxResults\u003E4\u003C/MaxResults\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Edir3/file_in_dir3\u003C/Name\u003E\u003CDeletionId\u003E133081036158276672\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ETue, 20 Sep 2022 23:26:55 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA9A967073AB85\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003EMon, 19 Sep 2022 23:26:55 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E0\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Edir3/subdir/file_in_subdir\u003C/Name\u003E\u003CDeletionId\u003E133081036160140417\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 19 Sep 2022 23:26:55 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 19 Sep 2022 23:26:55 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ETue, 20 Sep 2022 23:26:55 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA9A967088D52D\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003EMon, 19 Sep 2022 23:26:56 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E0\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Efile0\u003C/Name\u003E\u003CDeletionId\u003E133081036151333507\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ETue, 20 Sep 2022 23:26:55 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA9A9670232322\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003EMon, 19 Sep 2022 23:26:55 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E0\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Efile1\u003C/Name\u003E\u003CDeletionId\u003E133081036153002099\u003C/DeletionId\u003E\u003CDeleted\u003Etrue\u003C/Deleted\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 19 Sep 2022 23:26:54 GMT\u003C/Last-Modified\u003E\u003CExpiry-Time\u003ETue, 20 Sep 2022 23:26:55 GMT\u003C/Expiry-Time\u003E\u003CEtag\u003E0x8DA9A967034AB36\u003C/Etag\u003E\u003CResourceType\u003Efile\u003C/ResourceType\u003E\u003CContent-Length\u003E0\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/octet-stream\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64\u003EAAAAAAAAAAA=\u003C/Content-CRC64\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003CDeletedTime\u003EMon, 19 Sep 2022 23:26:55 GMT\u003C/DeletedTime\u003E\u003CRemainingRetentionDays\u003E0\u003C/RemainingRetentionDays\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
     }
   ],
   "Variables": {}
