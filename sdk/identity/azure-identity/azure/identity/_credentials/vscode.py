@@ -121,10 +121,9 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
     :keyword str tenant_id: ID of the tenant the credential should authenticate in. Defaults to the "Azure: Tenant"
         setting in VS Code's user settings or, when that setting has no value, the "organizations" tenant, which
         supports only Azure Active Directory work or school accounts.
-    :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified for which the
-        credential may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
-        any tenant the logged in account can access. If no value is specified for tenant_id" this option will have
-        no effect, and the credential will acquire tokens for any requested tenant.
+    :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
+        for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
+        acquire tokens for any tenant the application can access.
     """
 
     def __enter__(self):

@@ -37,10 +37,9 @@ class UsernamePasswordCredential(InteractiveCredential):
     :keyword cache_persistence_options: Configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified for which the
-        credential may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
-        any tenant the logged in account can access. If no value is specified for tenant_id" this option will have
-        no effect, and the credential will acquire tokens for any requested tenant.
+    :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
+        for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
+        acquire tokens for any tenant the application can access.
     """
 
     def __init__(self, client_id, username, password, **kwargs):

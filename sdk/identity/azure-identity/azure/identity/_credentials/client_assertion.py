@@ -29,10 +29,9 @@ class ClientAssertionCredential(GetTokenMixin):
         :keyword str authority: Authority of an Azure Active Directory endpoint, for example
             "login.microsoftonline.com", the authority for Azure Public Cloud (which is the default).
             :class:`~azure.identity.AzureAuthorityHosts` defines authorities for other clouds.
-        :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified for which the
-            credential may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
-            any tenant the logged in account can access. If no value is specified for tenant_id" this option will have
-            no effect, and the credential will acquire tokens for any requested tenant.
+        :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
+            for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
+            acquire tokens for any tenant the application can access.
         """
         self._func = func
         self._client = AadClient(tenant_id, client_id, **kwargs)
