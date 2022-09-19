@@ -125,7 +125,7 @@ class AzureAppConfigurationProvider:
                 "No Secret Client found for Key Vault reference %s%s" % (key_vault_uri, uri.path))
         if key_vault_options.secret_clients is not None:
             for secret_client in key_vault_options.secret_clients:
-                if secret_client._vault_url == key_vault_uri:
+                if secret_client.vault_url == key_vault_uri:
                     secret = secret_client.get_secret(
                         key_vault_secret_name)
                     self._dict[self.__trim(
