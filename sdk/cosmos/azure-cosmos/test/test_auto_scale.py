@@ -86,13 +86,11 @@ class AutoScaleTest(unittest.TestCase):
         self.assertEqual(
             created_container_properties.auto_scale_increment_percent, 3)
 
-        self.client.delete_database(test_config._test_config.TEST_DATABASE_ID)
-
     def test_create_database(self):
         # Testing auto_scale_settings for the create_database method
         created_database = self.client.create_database("db1", offer_throughput=ThroughputProperties(
-                                                                    auto_scale_max_throughput=5000,
-                                                                    auto_scale_increment_percent=0))
+            auto_scale_max_throughput=5000,
+            auto_scale_increment_percent=0))
         created_db_properties = created_database.get_throughput()
         # Testing the input value of the max_throughput
         self.assertEqual(
@@ -106,8 +104,8 @@ class AutoScaleTest(unittest.TestCase):
     def test_create_database_if_not_exists(self):
         # Testing auto_scale_settings for the create_database_if_not_exists method
         created_database = self.client.create_database_if_not_exists("db2", offer_throughput=ThroughputProperties(
-                                                                    auto_scale_max_throughput=9000,
-                                                                    auto_scale_increment_percent=11))
+            auto_scale_max_throughput=9000,
+            auto_scale_increment_percent=11))
         created_db_properties = created_database.get_throughput()
         # Testing the input value of the max_throughput
         self.assertNotEqual(
@@ -117,3 +115,21 @@ class AutoScaleTest(unittest.TestCase):
             created_db_properties.auto_scale_increment_percent, 11)
 
         self.client.delete_database("db2")
+
+    def test_replace_throughput(self):
+        created_container = self.created_database.create_container(
+            id='container_with_replace_functionality',
+            partition_key=PartitionKey(path="/id"),
+            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
+
+        )
+        new_throughput = created_container.replace_throughput(
+            throughput=ThroughputProperties(auto_scale_max_throughput=7000, auto_scale_increment_percent=20))
+        created_container_properties = created_container.get_throughput()
+        # Testing the input value of the replaced auto_scale settings
+        self.assertEqual(
+            created_container_properties.auto_scale_max_throughput, 7000)
+        self.assertEqual(
+            created_container_properties.auto_scale_increment_percent, 20)
+
+        self.client.delete_database(test_config._test_config.TEST_DATABASE_ID)
