@@ -20,7 +20,7 @@ import uuid
 import datetime
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
-CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
+CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
 TOPIC_NAME = "sb_mgmt_topic" + str(uuid.uuid4())
 
 
