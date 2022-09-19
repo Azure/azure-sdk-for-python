@@ -48,8 +48,12 @@ from ._constants import (
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from uamqp import Message as uamqp_Message
-    from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+    try:
+        from uamqp import Message as uamqp_Message
+        from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+    except ImportError:
+        uamqp_Message = None
+        uamqp_JWTTokenAuth = None
     from ._pyamqp.message import Message
     from ._pyamqp.authentication import JWTTokenAuth
 
@@ -269,6 +273,7 @@ class EventhubAzureSasTokenCredential(object):
         return AccessToken(signature, expiry)
 
 
+# separate TYPE_CHECKING block here for EventHubSharedKeyCredential, o/w mypy raised error even with forward referencing
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
