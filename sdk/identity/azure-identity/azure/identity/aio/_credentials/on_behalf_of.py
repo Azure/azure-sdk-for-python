@@ -45,9 +45,10 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass
         appropriately encoded bytes instead.
     :paramtype password: str or bytes
-    :keyword List[str] additionally_allowed_tenants: Optional additional tenant ids for which the credential
-        may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
-        any tenant the application is installed.
+    :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified for which the
+        credential may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
+        any tenant the logged in account can access. If no value is specified for tenant_id" this option will have
+        no effect, and the credential will acquire tokens for any requested tenant.
     """
 
     def __init__(
