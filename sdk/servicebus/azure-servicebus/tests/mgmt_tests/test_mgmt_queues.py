@@ -628,14 +628,14 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_list_runtime_properties_with_negative_parameters(self, servicebus_connection_str):
+    def test_mgmt_queue_list_runtime_prop_w_neg_params(self, servicebus_connection_str):
         pytest.skip("start_idx and max_count are currently removed, they might come back in the future.")
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         run_test_mgmt_list_with_negative_parameters(MgmtQueueListRuntimeInfoTestHelper(mgmt_service))
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_list_runtime_properties_with_parameters(self, servicebus_connection_str):
+    def test_mgmt_queue_list_runtime_prop_w_param(self, servicebus_connection_str):
         pytest.skip("start_idx and max_count are currently removed, they might come back in the future.")
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         run_test_mgmt_list_with_parameters(MgmtQueueListRuntimeInfoTestHelper(mgmt_service))

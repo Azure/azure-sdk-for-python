@@ -44,7 +44,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_subscription_create_with_subscription_description(self, servicebus_connection_str, **kwargs):
+    def test_mgmt_sub_create_w_sub_desc(self, servicebus_connection_str, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = "iweidk"
@@ -100,7 +100,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_subscription_create_with_forward_to(self, servicebus_connection_str, **kwargs):
+    def test_mgmt_sub_create_w_fwd_to(self, servicebus_connection_str, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = "iweidkforward"
@@ -343,7 +343,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_subscription_list_runtime_properties(self, servicebus_connection_str, **kwargs):
+    def test_mgmt_sub_list_runtime_props(self, servicebus_connection_str, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = 'dkoamv'
@@ -382,7 +382,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_subscription_get_runtime_properties_basic(self, servicebus_connection_str):
+    def test_mgmt_sub_get_runtime_props_basic(self, servicebus_connection_str):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = 'dcvxqa'
@@ -412,7 +412,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_subscription_update_dict_success(self, **kwargs):
+    def test_mgmt_sub_update_dict_success(self, **kwargs):
         servicebus_connection_str = kwargs.pop('servicebus_connection_str')
         servicebus_fully_qualified_namespace = kwargs.pop('servicebus_fully_qualified_namespace')
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)

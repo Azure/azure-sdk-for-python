@@ -46,7 +46,7 @@ class TestServiceBusAdministrationClientSubscriptionAsync(AzureMgmtRecordedTestC
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_subscription_create_with_subscription_description(self, servicebus_connection_str, **kwargs):
+    async def test_async_mgmt_sub_create_w_sub_desc(self, servicebus_connection_str, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "iweidk"
@@ -102,7 +102,7 @@ class TestServiceBusAdministrationClientSubscriptionAsync(AzureMgmtRecordedTestC
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_subscription_create_with_forward_to(self, servicebus_connection_str, **kwargs):
+    async def test_async_mgmt_sub_create_w_fwd_to(self, servicebus_connection_str, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "iweidkforward"
@@ -127,7 +127,7 @@ class TestServiceBusAdministrationClientSubscriptionAsync(AzureMgmtRecordedTestC
             await mgmt_service.delete_subscription(topic_name, subscription_name)
             await mgmt_service.delete_topic(topic_name)
             await mgmt_service.delete_queue(queue_name)
-            mgmt_service.close()
+            await mgmt_service.close()
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
@@ -346,7 +346,7 @@ class TestServiceBusAdministrationClientSubscriptionAsync(AzureMgmtRecordedTestC
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_subscription_list_runtime_properties(self, servicebus_connection_str, **kwargs):
+    async def test_async_mgmt_sub_list_runtime_props(self, servicebus_connection_str, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = 'dkoamv'
@@ -386,7 +386,7 @@ class TestServiceBusAdministrationClientSubscriptionAsync(AzureMgmtRecordedTestC
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_subscription_get_runtime_properties_basic(self, servicebus_connection_str):
+    async def test_async_mgmt_sub_get_runtime_props_basic(self, servicebus_connection_str):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = 'dcvxqa'
@@ -412,7 +412,7 @@ class TestServiceBusAdministrationClientSubscriptionAsync(AzureMgmtRecordedTestC
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_mgmt_subscription_async_update_dict_success(self, servicebus_connection_str, servicebus_fully_qualified_namespace, **kwargs):
+    async def test_mgmt_sub_async_update_dict_success(self, servicebus_connection_str, servicebus_fully_qualified_namespace, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "fjrui"
