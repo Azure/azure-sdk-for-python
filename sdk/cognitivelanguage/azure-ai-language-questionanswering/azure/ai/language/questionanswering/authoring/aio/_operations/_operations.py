@@ -1950,7 +1950,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     @overload
     async def begin_update_sources(
         self, project_name: str, sources: List[JSON], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[JSON]:
+    ) -> AsyncLROPoller[AsyncIterable[JSON]]:
         """Updates the sources of a project.
 
         Updates the sources of a project.
@@ -1969,8 +1969,8 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns JSON object
-        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
+        :return: An instance of LROPoller that returns an iterator like instance of JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[JSON]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1999,53 +1999,25 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
                     }
                 ]
 
-                # response body for status code(s): 200
+                # response body for status code(s): 200, 202
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Required.
-                    "jobId": "str",  # Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
-                    "status": "str",  # Job Status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
-                    "errors": [
-                        {
-                            "code": "str",  # One of a server-defined set of error codes.
-                              Required. Known values are: "InvalidRequest", "InvalidArgument",
-                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
-                              "OperationNotFound", "AzureCognitiveSearchNotFound",
-                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
-                              "AzureCognitiveSearchThrottling",
-                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError", and
-                              "ServiceUnavailable".
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
-                            "details": [
-                                ...
-                            ],
-                            "innererror": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required. Known values are: "InvalidRequest",
-                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
-                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", and
-                                  "ExtractionFailure".
-                                "message": "str",  # Error message. Required.
-                                "details": {
-                                    "str": "str"  # Optional. Error details.
-                                },
-                                "innererror": ...,
-                                "target": "str"  # Optional. Error target.
-                            },
-                            "target": "str"  # Optional. The target of the error.
-                        }
-                    ],
-                    "expirationDateTime": "2020-02-20 00:00:00"  # Optional.
+                    "sourceKind": "str",  # Supported source types. Required. Known values are:
+                      "file" and "url".
+                    "sourceUri": "str",  # URI location for the file or url. Required.
+                    "contentStructureKind": "str",  # Optional. Content structure type for
+                      sources. "unstructured"
+                    "displayName": "str",  # Optional. Friendly name of the Source.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Optional. Date-time when the
+                      QnA was last updated.
+                    "source": "str"  # Optional. Unique source identifier. Name of the file if
+                      it's a 'file' source; otherwise, the complete URL if it's a 'url' source.
                 }
         """
 
     @overload
     async def begin_update_sources(
         self, project_name: str, sources: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[JSON]:
+    ) -> AsyncLROPoller[AsyncIterable[JSON]]:
         """Updates the sources of a project.
 
         Updates the sources of a project.
@@ -2064,60 +2036,32 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns JSON object
-        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
+        :return: An instance of LROPoller that returns an iterator like instance of JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[JSON]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
-                # response body for status code(s): 200
+                # response body for status code(s): 200, 202
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Required.
-                    "jobId": "str",  # Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
-                    "status": "str",  # Job Status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
-                    "errors": [
-                        {
-                            "code": "str",  # One of a server-defined set of error codes.
-                              Required. Known values are: "InvalidRequest", "InvalidArgument",
-                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
-                              "OperationNotFound", "AzureCognitiveSearchNotFound",
-                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
-                              "AzureCognitiveSearchThrottling",
-                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError", and
-                              "ServiceUnavailable".
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
-                            "details": [
-                                ...
-                            ],
-                            "innererror": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required. Known values are: "InvalidRequest",
-                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
-                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", and
-                                  "ExtractionFailure".
-                                "message": "str",  # Error message. Required.
-                                "details": {
-                                    "str": "str"  # Optional. Error details.
-                                },
-                                "innererror": ...,
-                                "target": "str"  # Optional. Error target.
-                            },
-                            "target": "str"  # Optional. The target of the error.
-                        }
-                    ],
-                    "expirationDateTime": "2020-02-20 00:00:00"  # Optional.
+                    "sourceKind": "str",  # Supported source types. Required. Known values are:
+                      "file" and "url".
+                    "sourceUri": "str",  # URI location for the file or url. Required.
+                    "contentStructureKind": "str",  # Optional. Content structure type for
+                      sources. "unstructured"
+                    "displayName": "str",  # Optional. Friendly name of the Source.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Optional. Date-time when the
+                      QnA was last updated.
+                    "source": "str"  # Optional. Unique source identifier. Name of the file if
+                      it's a 'file' source; otherwise, the complete URL if it's a 'url' source.
                 }
         """
 
     @distributed_trace_async
     async def begin_update_sources(
         self, project_name: str, sources: Union[List[JSON], IO], **kwargs: Any
-    ) -> AsyncLROPoller[JSON]:
+    ) -> AsyncLROPoller[AsyncIterable[JSON]]:
         """Updates the sources of a project.
 
         Updates the sources of a project.
@@ -2137,60 +2081,104 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns JSON object
-        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
+        :return: An instance of LROPoller that returns an iterator like instance of JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[JSON]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
-                # response body for status code(s): 200
+                # response body for status code(s): 200, 202
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Required.
-                    "jobId": "str",  # Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
-                    "status": "str",  # Job Status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
-                    "errors": [
-                        {
-                            "code": "str",  # One of a server-defined set of error codes.
-                              Required. Known values are: "InvalidRequest", "InvalidArgument",
-                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
-                              "OperationNotFound", "AzureCognitiveSearchNotFound",
-                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
-                              "AzureCognitiveSearchThrottling",
-                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError", and
-                              "ServiceUnavailable".
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
-                            "details": [
-                                ...
-                            ],
-                            "innererror": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required. Known values are: "InvalidRequest",
-                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
-                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", and
-                                  "ExtractionFailure".
-                                "message": "str",  # Error message. Required.
-                                "details": {
-                                    "str": "str"  # Optional. Error details.
-                                },
-                                "innererror": ...,
-                                "target": "str"  # Optional. Error target.
-                            },
-                            "target": "str"  # Optional. The target of the error.
-                        }
-                    ],
-                    "expirationDateTime": "2020-02-20 00:00:00"  # Optional.
+                    "sourceKind": "str",  # Supported source types. Required. Known values are:
+                      "file" and "url".
+                    "sourceUri": "str",  # URI location for the file or url. Required.
+                    "contentStructureKind": "str",  # Optional. Content structure type for
+                      sources. "unstructured"
+                    "displayName": "str",  # Optional. Friendly name of the Source.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Optional. Date-time when the
+                      QnA was last updated.
+                    "source": "str"  # Optional. Unique source identifier. Name of the file if
+                      it's a 'file' source; otherwise, the complete URL if it's a 'url' source.
                 }
         """
+
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(sources, (IO, bytes)):
+            _content = sources
+        else:
+            _json = sources
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_update_sources_request(
+                    project_name=project_name,
+                    content_type=content_type,
+                    api_version=self._config.api_version,
+                    json=_json,
+                    content=_content,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
@@ -2207,14 +2195,12 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
+            async def internal_get_next(next_link=None):
+                if next_link is None:
+                    return pipeline_response
+                return await get_next(next_link)
+
+            return AsyncItemPaged(internal_get_next, extract_data)
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -2500,7 +2486,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     @overload
     async def begin_update_qnas(
         self, project_name: str, qnas: List[JSON], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[JSON]:
+    ) -> AsyncLROPoller[AsyncIterable[JSON]]:
         """Updates the QnAs of a project.
 
         Updates the QnAs of a project.
@@ -2519,8 +2505,8 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns JSON object
-        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
+        :return: An instance of LROPoller that returns an iterator like instance of JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[JSON]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2586,53 +2572,102 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
                     }
                 ]
 
-                # response body for status code(s): 200
+                # response body for status code(s): 200, 202
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Required.
-                    "jobId": "str",  # Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
-                    "status": "str",  # Job Status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
-                    "errors": [
+                    "activeLearningSuggestions": [
                         {
-                            "code": "str",  # One of a server-defined set of error codes.
-                              Required. Known values are: "InvalidRequest", "InvalidArgument",
-                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
-                              "OperationNotFound", "AzureCognitiveSearchNotFound",
-                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
-                              "AzureCognitiveSearchThrottling",
-                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError", and
-                              "ServiceUnavailable".
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
-                            "details": [
-                                ...
-                            ],
-                            "innererror": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required. Known values are: "InvalidRequest",
-                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
-                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", and
-                                  "ExtractionFailure".
-                                "message": "str",  # Error message. Required.
-                                "details": {
-                                    "str": "str"  # Optional. Error details.
-                                },
-                                "innererror": ...,
-                                "target": "str"  # Optional. Error target.
-                            },
-                            "target": "str"  # Optional. The target of the error.
+                            "clusterHead": "str",  # Optional. Question chosen as the
+                              head of suggested questions cluster by Active Learning clustering
+                              algorithm.
+                            "suggestedQuestions": [
+                                {
+                                    "autoSuggestedCount": 0,  # Optional. The
+                                      number of times the question was suggested automatically by the
+                                      Active Learning algorithm.
+                                    "question": "str",  # Optional. Question
+                                      suggested by the Active Learning feature.
+                                    "userSuggestedCount": 0  # Optional. The
+                                      number of times the question was suggested explicitly by the
+                                      user.
+                                }
+                            ]
                         }
                     ],
-                    "expirationDateTime": "2020-02-20 00:00:00"  # Optional.
+                    "answer": "str",  # Optional. Answer text.
+                    "dialog": {
+                        "isContextOnly": bool,  # Optional. To mark if a prompt is relevant
+                          only with a previous question or not. If true, do not include this QnA as
+                          answer for queries without context; otherwise, ignores context and includes
+                          this QnA in answers.
+                        "prompts": [
+                            {
+                                "displayOrder": 0,  # Optional. Index of the prompt.
+                                  It is used for ordering of the prompts.
+                                "displayText": "str",  # Optional. Text displayed to
+                                  represent a follow up question prompt.
+                                "qna": {
+                                    "activeLearningSuggestions": [
+                                        {
+                                            "clusterHead": "str",  #
+                                              Optional. Question chosen as the head of suggested
+                                              questions cluster by Active Learning clustering
+                                              algorithm.
+                                            "suggestedQuestions": [
+                                                {
+                "autoSuggestedCount": 0,  # Optional. The number
+                                                      of times the question was suggested automatically
+                                                      by the Active Learning algorithm.
+                                                    "question":
+                                                      "str",  # Optional. Question suggested by the
+                                                      Active Learning feature.
+                "userSuggestedCount": 0  # Optional. The number
+                                                      of times the question was suggested explicitly by
+                                                      the user.
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "answer": "str",  # Optional. Answer text.
+                                    "dialog": ...,
+                                    "id": 0,  # Optional. Unique ID for the QnA.
+                                    "metadata": {
+                                        "str": "str"  # Optional. Metadata
+                                          associated with the answer, useful to categorize or filter
+                                          question answers.
+                                    },
+                                    "questions": [
+                                        "str"  # Optional. List of questions
+                                          associated with the answer.
+                                    ],
+                                    "source": "str"  # Optional. Source from
+                                      which QnA was indexed e.g.
+                                      https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs
+                                      .
+                                },
+                                "qnaId": 0  # Optional. ID of the QnA corresponding
+                                  to the prompt.
+                            }
+                        ]
+                    },
+                    "id": 0,  # Optional. Unique ID for the QnA.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Optional. Date-time when the
+                      QnA was last updated.
+                    "metadata": {
+                        "str": "str"  # Optional. Metadata associated with the answer, useful
+                          to categorize or filter question answers.
+                    },
+                    "questions": [
+                        "str"  # Optional. List of questions associated with the answer.
+                    ],
+                    "source": "str"  # Optional. Source from which QnA was indexed e.g.
+                      https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs .
                 }
         """
 
     @overload
     async def begin_update_qnas(
         self, project_name: str, qnas: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[JSON]:
+    ) -> AsyncLROPoller[AsyncIterable[JSON]]:
         """Updates the QnAs of a project.
 
         Updates the QnAs of a project.
@@ -2651,60 +2686,109 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns JSON object
-        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
+        :return: An instance of LROPoller that returns an iterator like instance of JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[JSON]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
-                # response body for status code(s): 200
+                # response body for status code(s): 200, 202
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Required.
-                    "jobId": "str",  # Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
-                    "status": "str",  # Job Status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
-                    "errors": [
+                    "activeLearningSuggestions": [
                         {
-                            "code": "str",  # One of a server-defined set of error codes.
-                              Required. Known values are: "InvalidRequest", "InvalidArgument",
-                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
-                              "OperationNotFound", "AzureCognitiveSearchNotFound",
-                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
-                              "AzureCognitiveSearchThrottling",
-                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError", and
-                              "ServiceUnavailable".
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
-                            "details": [
-                                ...
-                            ],
-                            "innererror": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required. Known values are: "InvalidRequest",
-                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
-                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", and
-                                  "ExtractionFailure".
-                                "message": "str",  # Error message. Required.
-                                "details": {
-                                    "str": "str"  # Optional. Error details.
-                                },
-                                "innererror": ...,
-                                "target": "str"  # Optional. Error target.
-                            },
-                            "target": "str"  # Optional. The target of the error.
+                            "clusterHead": "str",  # Optional. Question chosen as the
+                              head of suggested questions cluster by Active Learning clustering
+                              algorithm.
+                            "suggestedQuestions": [
+                                {
+                                    "autoSuggestedCount": 0,  # Optional. The
+                                      number of times the question was suggested automatically by the
+                                      Active Learning algorithm.
+                                    "question": "str",  # Optional. Question
+                                      suggested by the Active Learning feature.
+                                    "userSuggestedCount": 0  # Optional. The
+                                      number of times the question was suggested explicitly by the
+                                      user.
+                                }
+                            ]
                         }
                     ],
-                    "expirationDateTime": "2020-02-20 00:00:00"  # Optional.
+                    "answer": "str",  # Optional. Answer text.
+                    "dialog": {
+                        "isContextOnly": bool,  # Optional. To mark if a prompt is relevant
+                          only with a previous question or not. If true, do not include this QnA as
+                          answer for queries without context; otherwise, ignores context and includes
+                          this QnA in answers.
+                        "prompts": [
+                            {
+                                "displayOrder": 0,  # Optional. Index of the prompt.
+                                  It is used for ordering of the prompts.
+                                "displayText": "str",  # Optional. Text displayed to
+                                  represent a follow up question prompt.
+                                "qna": {
+                                    "activeLearningSuggestions": [
+                                        {
+                                            "clusterHead": "str",  #
+                                              Optional. Question chosen as the head of suggested
+                                              questions cluster by Active Learning clustering
+                                              algorithm.
+                                            "suggestedQuestions": [
+                                                {
+                "autoSuggestedCount": 0,  # Optional. The number
+                                                      of times the question was suggested automatically
+                                                      by the Active Learning algorithm.
+                                                    "question":
+                                                      "str",  # Optional. Question suggested by the
+                                                      Active Learning feature.
+                "userSuggestedCount": 0  # Optional. The number
+                                                      of times the question was suggested explicitly by
+                                                      the user.
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "answer": "str",  # Optional. Answer text.
+                                    "dialog": ...,
+                                    "id": 0,  # Optional. Unique ID for the QnA.
+                                    "metadata": {
+                                        "str": "str"  # Optional. Metadata
+                                          associated with the answer, useful to categorize or filter
+                                          question answers.
+                                    },
+                                    "questions": [
+                                        "str"  # Optional. List of questions
+                                          associated with the answer.
+                                    ],
+                                    "source": "str"  # Optional. Source from
+                                      which QnA was indexed e.g.
+                                      https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs
+                                      .
+                                },
+                                "qnaId": 0  # Optional. ID of the QnA corresponding
+                                  to the prompt.
+                            }
+                        ]
+                    },
+                    "id": 0,  # Optional. Unique ID for the QnA.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Optional. Date-time when the
+                      QnA was last updated.
+                    "metadata": {
+                        "str": "str"  # Optional. Metadata associated with the answer, useful
+                          to categorize or filter question answers.
+                    },
+                    "questions": [
+                        "str"  # Optional. List of questions associated with the answer.
+                    ],
+                    "source": "str"  # Optional. Source from which QnA was indexed e.g.
+                      https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs .
                 }
         """
 
     @distributed_trace_async
     async def begin_update_qnas(
         self, project_name: str, qnas: Union[List[JSON], IO], **kwargs: Any
-    ) -> AsyncLROPoller[JSON]:
+    ) -> AsyncLROPoller[AsyncIterable[JSON]]:
         """Updates the QnAs of a project.
 
         Updates the QnAs of a project.
@@ -2723,60 +2807,181 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns JSON object
-        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
+        :return: An instance of LROPoller that returns an iterator like instance of JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[JSON]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
-                # response body for status code(s): 200
+                # response body for status code(s): 200, 202
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Required.
-                    "jobId": "str",  # Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
-                    "status": "str",  # Job Status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
-                    "errors": [
+                    "activeLearningSuggestions": [
                         {
-                            "code": "str",  # One of a server-defined set of error codes.
-                              Required. Known values are: "InvalidRequest", "InvalidArgument",
-                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
-                              "OperationNotFound", "AzureCognitiveSearchNotFound",
-                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
-                              "AzureCognitiveSearchThrottling",
-                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError", and
-                              "ServiceUnavailable".
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
-                            "details": [
-                                ...
-                            ],
-                            "innererror": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required. Known values are: "InvalidRequest",
-                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
-                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", and
-                                  "ExtractionFailure".
-                                "message": "str",  # Error message. Required.
-                                "details": {
-                                    "str": "str"  # Optional. Error details.
-                                },
-                                "innererror": ...,
-                                "target": "str"  # Optional. Error target.
-                            },
-                            "target": "str"  # Optional. The target of the error.
+                            "clusterHead": "str",  # Optional. Question chosen as the
+                              head of suggested questions cluster by Active Learning clustering
+                              algorithm.
+                            "suggestedQuestions": [
+                                {
+                                    "autoSuggestedCount": 0,  # Optional. The
+                                      number of times the question was suggested automatically by the
+                                      Active Learning algorithm.
+                                    "question": "str",  # Optional. Question
+                                      suggested by the Active Learning feature.
+                                    "userSuggestedCount": 0  # Optional. The
+                                      number of times the question was suggested explicitly by the
+                                      user.
+                                }
+                            ]
                         }
                     ],
-                    "expirationDateTime": "2020-02-20 00:00:00"  # Optional.
+                    "answer": "str",  # Optional. Answer text.
+                    "dialog": {
+                        "isContextOnly": bool,  # Optional. To mark if a prompt is relevant
+                          only with a previous question or not. If true, do not include this QnA as
+                          answer for queries without context; otherwise, ignores context and includes
+                          this QnA in answers.
+                        "prompts": [
+                            {
+                                "displayOrder": 0,  # Optional. Index of the prompt.
+                                  It is used for ordering of the prompts.
+                                "displayText": "str",  # Optional. Text displayed to
+                                  represent a follow up question prompt.
+                                "qna": {
+                                    "activeLearningSuggestions": [
+                                        {
+                                            "clusterHead": "str",  #
+                                              Optional. Question chosen as the head of suggested
+                                              questions cluster by Active Learning clustering
+                                              algorithm.
+                                            "suggestedQuestions": [
+                                                {
+                "autoSuggestedCount": 0,  # Optional. The number
+                                                      of times the question was suggested automatically
+                                                      by the Active Learning algorithm.
+                                                    "question":
+                                                      "str",  # Optional. Question suggested by the
+                                                      Active Learning feature.
+                "userSuggestedCount": 0  # Optional. The number
+                                                      of times the question was suggested explicitly by
+                                                      the user.
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "answer": "str",  # Optional. Answer text.
+                                    "dialog": ...,
+                                    "id": 0,  # Optional. Unique ID for the QnA.
+                                    "metadata": {
+                                        "str": "str"  # Optional. Metadata
+                                          associated with the answer, useful to categorize or filter
+                                          question answers.
+                                    },
+                                    "questions": [
+                                        "str"  # Optional. List of questions
+                                          associated with the answer.
+                                    ],
+                                    "source": "str"  # Optional. Source from
+                                      which QnA was indexed e.g.
+                                      https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs
+                                      .
+                                },
+                                "qnaId": 0  # Optional. ID of the QnA corresponding
+                                  to the prompt.
+                            }
+                        ]
+                    },
+                    "id": 0,  # Optional. Unique ID for the QnA.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Optional. Date-time when the
+                      QnA was last updated.
+                    "metadata": {
+                        "str": "str"  # Optional. Metadata associated with the answer, useful
+                          to categorize or filter question answers.
+                    },
+                    "questions": [
+                        "str"  # Optional. List of questions associated with the answer.
+                    ],
+                    "source": "str"  # Optional. Source from which QnA was indexed e.g.
+                      https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs .
                 }
         """
+
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(qnas, (IO, bytes)):
+            _content = qnas
+        else:
+            _json = qnas
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_update_qnas_request(
+                    project_name=project_name,
+                    content_type=content_type,
+                    api_version=self._config.api_version,
+                    json=_json,
+                    content=_content,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
@@ -2793,14 +2998,12 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
+            async def internal_get_next(next_link=None):
+                if next_link is None:
+                    return pipeline_response
+                return await get_next(next_link)
+
+            return AsyncItemPaged(internal_get_next, extract_data)
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),

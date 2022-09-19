@@ -99,18 +99,26 @@ directive:
     };
 - where-operation: QuestionAnsweringProjects_UpdateQnas
   transform: |
+    $["x-ms-pageable"] = {
+      "nextLinkName": "nextLink",
+      "itemName": "value"
+    };
     $.responses["200"] = {
       description: "Update QnAs job state.",
       schema: {
-        "$ref": "#/definitions/JobState"
+        "$ref": "#/definitions/QnaAssets"
       }
     };
 - where-operation: QuestionAnsweringProjects_UpdateSources
   transform: |
+    $["x-ms-pageable"] = {
+      "nextLinkName": "nextLink",
+      "itemName": "value"
+    };
     $.responses["200"] = {
       description: "Update sources job state.",
       schema: {
-        "$ref": "#/definitions/JobState"
+        "$ref": "#/definitions/QnaSources"
       }
     };
 ```
