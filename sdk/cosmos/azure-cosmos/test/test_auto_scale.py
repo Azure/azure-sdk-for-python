@@ -59,6 +59,7 @@ class AutoScaleTest(unittest.TestCase):
         self.assertEqual(
             created_container_properties.auto_scale_max_throughput, 7000)
         self.assertEqual(created_container_properties.auto_scale_increment_percent, 0)
+        self.assertEqual(created_container_properties.offer_throughput, None)
 
         self.created_database.delete_container(created_container)
 
