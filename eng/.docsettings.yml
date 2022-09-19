@@ -11,6 +11,7 @@ omitted_paths:
   - sdk/**/tests/perfstress_tests/*
   - sdk/nspkg/*
   - sdk/**/swagger/*
+  - sdk/ml/azure-ai-ml/tests/*
 
 language: python
 root_check_enabled: True
@@ -101,6 +102,8 @@ known_content_issues:
   - ['sdk/attestation/azure-security-attestation/swagger/README.md', '#4554']
   - ['sdk/core/azure-core/tests/testserver_tests/coretestserver/README.rst', '#4554']
   - ['sdk/media/azure-media-analytics-edge/README.md', '#4554']
+  - ['sdk/remoterendering/azure-mixedreality-remoterendering/README.md', '#4554']
+  - ['sdk/modelsrepository/azure-iot-modelsrepository/README.md', '#4554']
 
   # common.
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'common']
