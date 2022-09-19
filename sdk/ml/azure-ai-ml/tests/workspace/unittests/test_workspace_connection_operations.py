@@ -45,7 +45,6 @@ class TestWorkspaceConnectionsOperation:
         self,
         mock_from_rest,
         mock_workspace_connection_operation: WorkspaceConnectionsOperations,
-        randstr: Callable[[], str],
     ) -> None:
         mock_from_rest.return_value = WorkspaceConnection(
             target="dummy_target",
@@ -53,7 +52,7 @@ class TestWorkspaceConnectionsOperation:
             credentials=PatTokenCredentials(pat="dummy_pat"),
             name="dummy_connection",
         )
-        mock_workspace_connection_operation.get(randstr())
+        mock_workspace_connection_operation.get("random_name")
         mock_workspace_connection_operation._operation.get.assert_called_once()
 
     @patch.object(WorkspaceConnection, "_from_rest_object")

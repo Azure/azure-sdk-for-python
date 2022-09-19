@@ -11,7 +11,7 @@ DATA_VERSION = "2"
 PARAMETERS_TO_TEST = [
     # which of them are available for other components?
     (
-        "./tests/test_configs/internal/ls_command_component.yaml",
+        "tests/test_configs/internal/ls_command_component.yaml",
         {},
         {
             "compute": "cpu-cluster",  # runsettings.target
@@ -31,7 +31,7 @@ PARAMETERS_TO_TEST = [
         },
     ),  # Command
     (
-        "./tests/test_configs/internal/distribution-component/component_spec.yaml",  # Distributed
+        "tests/test_configs/internal/distribution-component/component_spec.yaml",  # Distributed
         {
             "input_path": Input(type=AssetTypes.MLTABLE, path="mltable_imdb_reviews_train@latest"),
         },
@@ -51,7 +51,7 @@ PARAMETERS_TO_TEST = [
         },
     ),
     (
-        "./tests/test_configs/internal/batch_inference/batch_score.yaml",  # Parallel
+        "tests/test_configs/internal/batch_inference/batch_score.yaml",  # Parallel
         {
             "model_path": Input(type=AssetTypes.MLTABLE, path="mltable_mnist_model@latest"),
             "images_to_score": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest"),
@@ -72,7 +72,7 @@ PARAMETERS_TO_TEST = [
         },
     ),
     (
-        "./tests/test_configs/internal/scope-component/component_spec.yaml",
+        "tests/test_configs/internal/scope-component/component_spec.yaml",
         {
             "TextData": Input(
                 type=AssetTypes.MLTABLE,
@@ -101,7 +101,7 @@ PARAMETERS_TO_TEST = [
         },
     ),  # Scope
     (
-        "./tests/test_configs/internal/hdi-component/component_spec.yaml",
+        "tests/test_configs/internal/hdi-component/component_spec.yaml",
         {
             "input_path": Input(type=AssetTypes.MLTABLE, path="mltable_imdb_reviews_train@latest"),
         },
@@ -125,7 +125,7 @@ PARAMETERS_TO_TEST = [
         },
     ),  # HDInsight
     (
-        "./tests/test_configs/internal/hemera-component/component.yaml",
+        "tests/test_configs/internal/hemera-component/component.yaml",
         {},
         {},  # no specific run settings
         {
@@ -134,7 +134,7 @@ PARAMETERS_TO_TEST = [
         },
     ),  # Hemera
     (
-        "./tests/test_configs/internal/data-transfer-component/component_spec.yaml",
+        "tests/test_configs/internal/data-transfer-component/component_spec.yaml",
         {
             "source_data": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest"),
         },
@@ -146,7 +146,7 @@ PARAMETERS_TO_TEST = [
         },
     ),  # Data Transfer
     (
-        "./tests/test_configs/internal/starlite-component/component_spec.yaml",
+        "tests/test_configs/internal/starlite-component/component_spec.yaml",
         {
             "FileList": Input(type=AssetTypes.MLTABLE, path="mltable_starlite_sample_output@latest"),
             "FileListFileName": "\\output.tsv",
@@ -159,7 +159,7 @@ PARAMETERS_TO_TEST = [
         },
     ),  # Starlite
     (
-        "./tests/test_configs/internal/ae365exepool-component/component_spec.yaml",
+        "tests/test_configs/internal/ae365exepool-component/component_spec.yaml",
         {
             "HeronId": "c6c849c5-4d52-412a-b4de-6cc5755bca73",
             "DataToLookAt": Input(type=AssetTypes.MLTABLE, path="mltable_reghits@latest"),

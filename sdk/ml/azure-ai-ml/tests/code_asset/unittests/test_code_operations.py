@@ -39,10 +39,9 @@ class TestCodeOperations:
         self,
         mock_code_operation: CodeOperations,
         mock_workspace_scope: OperationScope,
-        randstr: Callable[[], str],
         tmp_path: Path,
     ) -> None:
-        code_name = randstr()
+        code_name = "random_code_name"
         p = tmp_path / "code.yml"
         code_path = tmp_path / "code_asset.txt"
         code_path.write_text("hello world")
@@ -73,7 +72,6 @@ class TestCodeOperations:
 
     def test_get(
         self,
-        randstr: Callable[[], str],
         mock_code_operation: CodeOperations,
     ) -> None:
         mock_code_operation._container_operation.get.return_value = None
@@ -81,6 +79,6 @@ class TestCodeOperations:
             "azure.ai.ml.operations._code_operations.Code._from_rest_object",
             return_value=None,
         ):
-            mock_code_operation.get(name=randstr(), version="1")
+            mock_code_operation.get(name="random_name", version="1")
         mock_code_operation._version_operation.get.assert_called_once()
         assert mock_code_operation._container_operation.list.call_count == 0

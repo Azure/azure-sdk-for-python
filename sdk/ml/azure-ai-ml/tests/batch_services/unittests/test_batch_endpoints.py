@@ -154,7 +154,6 @@ class TestBatchEndpointOperations:
     def test_batch_endpoint_create(
         self,
         mock_batch_endpoint_operations: BatchEndpointOperations,
-        rand_compute_name: Callable[[], str],
         create_yaml_happy_path: str,
         mocker: MockFixture,
     ) -> None:
@@ -168,7 +167,7 @@ class TestBatchEndpointOperations:
         mock_batch_endpoint_operations._credentials = Mock(spec_set=DefaultAzureCredential)
 
         online_endpoint = load_batch_endpoint(create_yaml_happy_path)
-        online_endpoint.name = rand_compute_name()
+        online_endpoint.name = "random_name"
         mock_batch_endpoint_operations.begin_create_or_update(endpoint=online_endpoint)
         mock_create_or_update_batch_endpoint.assert_called_once()
         # mock_batch_endpoint_operations.create_or_update.assert_called_once()
@@ -180,11 +179,10 @@ class TestBatchEndpointOperations:
         mock_from_rest,
         mock_batch_endpoint_operations: BatchEndpointOperations,
         mocker: MockFixture,
-        randstr: Callable[[], str],
         randint: Callable[[], int],
     ) -> None:
 
-        data_name = randstr()
+        data_name = "data_name"
         data_version = randint()
         endpoint_name = "myBatchEndpoint"
         deployment_name = "myDeployment"
@@ -215,6 +213,7 @@ class TestBatchEndpointOperations:
         assert mock_batch_endpoint_operations._batch_operation.get.call_count == 2
 
     @patch.object(BatchEndpoint, "_from_rest_object")
+    @pytest.mark.skip(reason="non-functional test")
     def test_batch_invoke_failed(
         self,
         mock_from_rest,
@@ -296,10 +295,9 @@ class TestBatchEndpointOperations:
     def test_batch_get(
         self,
         mock_batch_endpoint_operations: BatchEndpointOperations,
-        randstr: Callable[[], str],
         mock_aml_services_2022_05_01: Mock,
     ) -> None:
-        random_name = randstr()
+        random_name = "random_name"
         mock_aml_services_2022_05_01.batch_endpoints.get.return_value = BatchEndpointData(
             name=random_name,
             location="eastus",
@@ -313,10 +311,9 @@ class TestBatchEndpointOperations:
         mock_batch_endpoint_operations: BatchEndpointOperations,
         mock_aml_services_2022_05_01: Mock,
         mocker: MockFixture,
-        randstr: Callable[[], str],
         mock_delete_poller: LROPoller,
     ) -> None:
-        random_name = randstr()
+        random_name = "random_name"
         mock_aml_services_2022_05_01.batch_endpoints.begin_delete.return_value = mock_delete_poller
         mock_batch_endpoint_operations.begin_delete(name=random_name)
         mock_batch_endpoint_operations._batch_operation.begin_delete.assert_called_once()
