@@ -3,14 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
-import os
 import sys
-import uuid
 
 import pytest
 from devtools_testutils import test_proxy
-from devtools_testutils.sanitizers import add_remove_header_sanitizer, add_general_regex_sanitizer, set_custom_default_matcher
+from devtools_testutils.sanitizers import (
+    add_remove_header_sanitizer,
+    add_general_regex_sanitizer,
+    add_oauth_response_sanitizer,
+    set_custom_default_matcher
+)
 
 
 collect_ignore = []
@@ -32,16 +34,19 @@ collect_ignore.append("tests/async_tests/test_topic_async.py")
 collect_ignore.append("tests/async_tests/test_subscriptions_async.py")
 
 @pytest.fixture(scope="session", autouse=True)
-def add_aeg_sanitizer(test_proxy):
-    set_custom_default_matcher(
-        compare_bodies=False, excluded_headers="ServiceBusSupplementaryAuthorization,ServiceBusDlqSupplementaryAuthorization"
-    )
-    add_remove_header_sanitizer(headers="aeg-sas-key, aeg-sas-token")
+def add_sanitizers(test_proxy):
+    # set_custom_default_matcher(
+    #     compare_bodies=False,
+    # )
+    add_remove_header_sanitizer(headers="aeg-sas-key")
+    add_remove_header_sanitizer(headers="aeg-sas-token")
+    add_remove_header_sanitizer(headers="ServiceBusSupplementaryAuthorization")
+    add_remove_header_sanitizer(headers="ServiceBusDlqSupplementaryAuthorization")
     add_general_regex_sanitizer(
         value="fakeresource",
         regex="(?<=\\/\\/)[a-z-]+(?=\\.servicebus\\.windows\\.net)"
     )
-
+    add_oauth_response_sanitizer()
 
 # Only run stress tests on request.
 if not any([arg.startswith('test_stress') or arg.endswith('StressTest') for arg in sys.argv]):
