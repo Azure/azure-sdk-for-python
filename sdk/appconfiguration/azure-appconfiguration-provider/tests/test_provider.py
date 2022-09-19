@@ -26,5 +26,4 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_provider_creation(self, appconfiguration_endpoint_string):
         client = self.buildClient(appconfiguration_endpoint_string)
-
-        assert client.get_configuration_setting("message","\0") == "hi"
+        assert client.get_configuration_setting(key="message",label="\0").value == "hi"
