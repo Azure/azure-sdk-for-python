@@ -109,6 +109,7 @@ def sanitized_environment_variables(environment_variables, fake_datastore_key) -
     return environment_variables.sanitize_batch(sanitizings)
 
 
+@pytest.fixture
 def mock_registry_scope() -> OperationScope:
     yield OperationScope(
         subscription_id=Test_Subscription,
