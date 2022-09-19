@@ -1,14 +1,20 @@
 # Release History
 
-## 1.11.0b4 (Unreleased)
+## 1.11.0 (2022-09-20)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added `additionally_allowed_tenants` to the following credential options to force explicit opt-in behavior for multi-tenant authentication:
+  - `AuthorizationCodeCredential`
+  - `AzureCliCredential`
+  - `AzurePowerShellCredential`
+  - `CertificateCredential`
+  - `ClientAssertionCredential`
+  - `ClientSecretCredential`
+  - `DefaultAzureCredential`
+  - `OnBehalfOfCredential`
+  - `UsernamePasswordCredential`
+  - `VisualStudioCodeCredential`
 
 ## 1.11.0b3 (2022-08-09)
 

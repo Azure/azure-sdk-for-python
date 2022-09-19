@@ -7,8 +7,8 @@ from abc import abstractmethod
 from os import PathLike
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -30,8 +30,8 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
     :type properties: dict[str, str]
     :param scoring_uri: str, Endpoint URI, readonly
     :type scoring_uri: str, optional
-    :param swagger_uri: str, Endpoint Swagger URI, readonly
-    :type swagger_uri: str, optional
+    :param openapi_uri: str, Endpoint Open API URI, readonly
+    :type openapi_uri: str, optional
     :param provisioning_state: str, provisioning state, readonly
     :type provisioning_state: str, optional
     :param description: Description of the resource.
@@ -52,7 +52,7 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
         if name:
             name = name.lower()
         self._scoring_uri = kwargs.pop("scoring_uri", None)
-        self._swagger_uri = kwargs.pop("swagger_uri", None)
+        self._openapi_uri = kwargs.pop("openapi_uri", None)
         self._provisioning_state = kwargs.pop("provisioning_state", None)
         super().__init__(name, description, tags, properties, **kwargs)
         self.auth_mode = auth_mode
@@ -68,13 +68,13 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
         return self._scoring_uri
 
     @property
-    def swagger_uri(self) -> Optional[str]:
-        """URI to check the swagger definition of the endpoint.
+    def openapi_uri(self) -> Optional[str]:
+        """URI to check the open api definition of the endpoint.
 
-        :return: The swagger URI
+        :return: The open API URI
         :rtype: Optional[str]
         """
-        return self._swagger_uri
+        return self._openapi_uri
 
     @property
     def provisioning_state(self) -> Optional[str]:

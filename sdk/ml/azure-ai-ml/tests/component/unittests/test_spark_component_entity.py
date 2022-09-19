@@ -44,7 +44,7 @@ class TestSparkComponentEntity:
             description="Aml Spark add greeting column test module",
             version="1",
             inputs={
-                "file_input": {"type": "uri_file"},
+                "file_input": {"type": "uri_file", "mode": "direct"},
             },
             driver_cores=2,
             driver_memory="1g",
@@ -81,7 +81,7 @@ class TestSparkComponentEntity:
             "jars": None,
             "files": ["my_files.txt"],
             "archives": None,
-            "identity": None,
+            "identity": {"identity_type": "UserIdentity"},
             "conf": {
                 "spark.driver.cores": 2,
                 "spark.driver.memory": "1g",

@@ -178,8 +178,8 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         :param endpoint_name: The name of the endpoint
         :type endpoint_name: str
-        :return: an iterator of deployment entities
-        :rtype: Iterable[BatchDeployment]
+        :return: An iterator of deployment entities
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.BatchDeployment]
         """
         return self._batch_deployment.list(
             endpoint_name=endpoint_name,
@@ -190,16 +190,17 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(logger, "BatchDeployment.ListJobs", ActivityType.PUBLICAPI)
-    def list_jobs(self, endpoint_name: str, name: str = None):
+    def list_jobs(self, endpoint_name: str, name: str = None) -> list:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.
 
-        :param endpoint_name: Name of endpoint.
+        :param endpoint_name: Name of the endpoint.
         :type endpoint_name: str
-        :param name: Name of deployment.
+        :param name: Name of the deployment.
         :type name: str
         :raise: Exception if endpoint_type is not BATCH_ENDPOINT_TYPE
-        :return: Iterable[BatchJobResourceArmPaginatedResult]
+        :return: List of jobs
+        :rtype: list
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]

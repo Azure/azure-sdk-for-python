@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from typing import Callable, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..job_limits import SweepJobLimits
 from .early_termination_policy import (

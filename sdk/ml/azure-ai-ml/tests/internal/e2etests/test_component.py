@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import json
+import os.path
 from typing import Callable, Dict, List
 
 from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
@@ -80,16 +81,18 @@ class TestComponent(AzureRecordedTestCase):
         randstr: Callable[[str], str],
         yaml_path: str,
     ) -> None:
-        omit_fields = ["id", "creation_context", "code"]
+        omit_fields = ["id", "creation_context", "code", "name"]
         component_name = randstr("component_name")
 
         component_resource = create_component(client, component_name, path=yaml_path)
         loaded_dict = load_registered_component(client, component_name, component_resource.version, omit_fields)
 
         json_path = yaml_path.rsplit(".", 1)[0] + ".loaded_from_rest.json"
+        if not os.path.isfile(json_path):
+            with open(json_path, "w") as f:
+                json.dump(loaded_dict, f, indent=2)
         with open(json_path, "r") as f:
             expected_dict = json.load(f)
-            expected_dict["name"] = component_name
 
             # TODO: check if loaded environment is expected to be an ordered dict
             assert pydash.omit(loaded_dict, *omit_fields) == pydash.omit(expected_dict, *omit_fields)

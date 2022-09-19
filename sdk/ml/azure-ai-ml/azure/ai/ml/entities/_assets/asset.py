@@ -7,15 +7,10 @@ from abc import abstractmethod
 from os import PathLike
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-    log_and_raise_error,
-)
+from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
 class Asset(Resource):

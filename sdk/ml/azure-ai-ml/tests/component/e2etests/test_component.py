@@ -156,7 +156,7 @@ class TestComponent(AzureRecordedTestCase):
             },
             "is_deterministic": True,
             "outputs": {"component_out_path": {"type": "uri_folder"}},
-            "resources": {"instance_count": 1, "properties": {}},
+            "resources": {"instance_count": 1},
             "tags": {"owner": "sdkteam", "tag": "tagvalue"},
             "type": "command",
             "version": "0.0.1",
@@ -185,6 +185,7 @@ class TestComponent(AzureRecordedTestCase):
             "is_deterministic": True,
             "max_concurrency_per_instance": 12,
             "mini_batch_error_threshold": 5,
+            "logging_level": "INFO",
             "mini_batch_size": "10240",
             "outputs": {"scored_result": {"type": "mltable"}, "scoring_summary": {"type": "uri_file"}},
             "retry_settings": {"max_retries": 10, "timeout": 3},
@@ -296,7 +297,7 @@ class TestComponent(AzureRecordedTestCase):
         component_entity._creation_context = None
         assert target_entity.id
         # server side will remove \n from the code now. Skip them given it's not targeted to check in this test
-        omit_fields = ["id", "command"]
+        omit_fields = ["id", "command", "environment"]
         assert pydash.omit(component_entity._to_dict(), *omit_fields) == pydash.omit(
             target_entity._to_dict(), *omit_fields
         )

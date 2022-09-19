@@ -16,6 +16,7 @@ from azure.ai.ml.constants._common import AML_TOKEN_YAML, KEY, ONLINE_ENDPOINT_T
 from azure.ai.ml.constants._endpoint import EndpointKeyType
 from azure.ai.ml.entities import KubernetesOnlineEndpoint, OnlineEndpoint
 from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
 from azure.identity import EnvironmentCredential
 
 from devtools_testutils import AzureRecordedTestCase
@@ -311,7 +312,7 @@ def run_endpoint_tests_e2e_create(
     except Exception as e:
         raise e
     finally:
-        client.endpoints.begin_delete(endpoint_type=ONLINE_ENDPOINT_TYPE, name=endpoint_name, no_wait=True)
+        client.endpoints.begin_delete(endpoint_type=ONLINE_ENDPOINT_TYPE, name=endpoint_name)
 
 
 def run_double_create_e2e(endpoint_yaml: str, endpoint_name: str, client: MLClient):

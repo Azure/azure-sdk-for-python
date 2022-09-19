@@ -4,11 +4,11 @@
 
 from typing import Optional
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     SparkResourceConfiguration as RestSparkResourceConfiguration,
 )
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):

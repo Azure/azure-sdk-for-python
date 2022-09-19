@@ -6,7 +6,6 @@ import pytest
 from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
 
 from azure.ai.ml import load_data
-from azure.ai.ml._ml_exceptions import ErrorTarget
 from azure.ai.ml._restclient.v2021_10_01.models._models_py3 import (
     DatasetContainerData,
     DatasetContainerDetails,
@@ -17,6 +16,7 @@ from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
+from azure.ai.ml.exceptions import ErrorTarget
 from azure.ai.ml.operations import DataOperations, DatastoreOperations
 from azure.core.paging import ItemPaged
 

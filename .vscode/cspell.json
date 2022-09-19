@@ -42,7 +42,6 @@
     "sdk/cognitiveservices/azure-cognitiveservices-search-videosearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-websearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-vision-computervision/**",
-    "sdk/cognitiveservices/azure-cognitiveservices-vision-contentmoderator/**",
     "sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-visualsearch/**",
     "sdk/communication/azure-communication-networktraversal/**",
@@ -57,7 +56,6 @@
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventgrid/azure-eventgrid/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
-    "sdk/eventhub/azure-eventhub-checkpointstoreblob/**",
     "sdk/eventhub/azure-eventhub/**",
     "sdk/graphrbac/azure-graphrbac/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
@@ -183,6 +181,7 @@
     "illumos",
     "imds",
     "inotify",
+    "ints",
     "iohttp",
     "IOHTTP",
     "inprogress",
@@ -218,6 +217,7 @@
     "LPCWSTR",
     "Lucene",
     "mbps",
+    "mday",
     "mibps",
     "mgmt",
     "mhsm",
@@ -232,6 +232,7 @@
     "mydirectory",
     "myfile",
     "nazsdk",
+    "nbytes",
     "noarch",
     "NOPERM",
     "northcentralus",
@@ -244,6 +245,7 @@
     "onboarded",
     "onmicrosoft",
     "owasp",
+    "ownerid",
     "PBYTE",
     "PCREDENTIAL",
     "perfmon",
@@ -257,6 +259,7 @@
     "popen",
     "prebuilts",
     "premf",
+    "prevsnapshot",
     "pschema",
     "PSECRET",
     "pyfuncitem",
@@ -293,6 +296,8 @@
     "skus",
     "southcentralus",
     "ssis",
+    "struct",
+    "STRUCT",
     "substringof",
     "systemperf",
     "tenvparallel",
@@ -304,8 +309,10 @@
     "uamqp",
     "uksouth",
     "ukwest",
+    "unpad",
     "unpadder",
     "unredacted",
+    "unseekable",
     "unsubscriptable",
     "upns",
     "upserted",
@@ -323,8 +330,10 @@
     "utid",
     "Uvsc",
     "vcrpy",
+    "vendored",
     "verifysdist",
     "verifywhl",
+    "versionid",
     "vmimage",
     "vmss",
     "vmwarecloudsimple",
@@ -492,6 +501,22 @@
       "filename": "sdk/eventhub/test-resources.json",
       "words": [
         "mmspecial"
+      ]
+    },
+    {
+      "filename": "sdk/eventhub/azure-eventhub-checkpointstoreblob/**",
+      "words": [
+        "blobstoragecs",
+        "blobstoragepm",
+        "rscc",
+        "rscd",
+        "rsce",
+        "rscl",
+        "rsct",
+        "saoid",
+        "scid",
+        "skoid",
+        "suoid"
       ]
     },
     {
@@ -739,7 +764,8 @@
         "reprlib",
         "gzrs",
         "ragzrs",
-        "wsid"
+        "wsid",
+        "azml"
       ]
     },
     {
@@ -932,6 +958,12 @@
       "filename": "sdk/cognitiveservices/azure-cognitiveservices-vision-face/azure/cognitiveservices/vision/face/models/*.py",
       "words": [
         "responsed"
+      ]
+    },
+    {
+      "filename": "sdk/cognitiveservices/azure-cognitiveservices-vision-contentmoderator/azure/cognitiveservices/vision/contentmoderator/operations/*.py",
+      "words": [
+        "tfile"
       ]
     },
     {

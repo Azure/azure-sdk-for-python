@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, MlException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException
 
 
 class EmptyDirectoryError(MlException):

@@ -65,12 +65,12 @@ from enum import EnumMeta
 from inspect import Parameter, signature
 from typing import Dict, Iterable, Sequence, Union, overload
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._schema.component.input_output import SUPPORTED_PARAM_TYPES
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
 from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
 class _InputOutputBase(DictMixin, RestTranslatableMixin):
@@ -373,10 +373,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def _update_default(self, default_value):
         """Update provided default values."""
         name = "" if not self.name else f"{self.name!r} "
-        if not self._multiple_types:
-            msg_prefix = f"Default value of {self.type} Input {name}"
-        else:
-            msg_prefix = "Default value of [" + ", ".join(self.type) + f"] Input {name}"
+        msg_prefix = f"Default value of Input {name}"
         if not self._is_primitive_type and default_value is not None:
             msg = f"{msg_prefix}cannot be set: Non-primitive type Input has no default value."
             raise UserErrorException(msg)
@@ -500,8 +497,9 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         return None
 
     @classmethod
-    def _get_default_string_input(cls, optional=None):
-        return cls(type="string", optional=optional)
+    def _get_default_unknown_input(cls, optional=None):
+        # Set type as None here to avoid schema validation failed
+        return cls(type=None, optional=optional)
 
     @classmethod
     def _get_param_with_standard_annotation(cls, func):
@@ -770,7 +768,7 @@ class GroupInput(Input):
         for key, value in values.items():
             if not isinstance(value, Input):
                 raise ValueError(msg.format(key, type(value).__name__))
-            if value.type == "unknown":
+            if value.type is None:
                 # Skip check for parameter translated from pipeline job (lost type)
                 continue
             if value.type not in IOConstants.PRIMITIVE_STR_2_TYPE and not isinstance(value, GroupInput):
@@ -913,7 +911,7 @@ def _get_annotation_by_value(val):
     elif val is Parameter.empty or val is None:
         # If no default value or default is None, create val as the basic parameter type,
         # it could be replaced using component parameter definition.
-        annotation = Input._get_default_string_input()
+        annotation = Input._get_default_unknown_input()
     elif isinstance(val, PyEnum):
         # Handle enum values
         annotation = EnumInput(enum=val.__class__)
@@ -921,7 +919,7 @@ def _get_annotation_by_value(val):
         annotation = _get_annotation_cls_by_type(type(val), raise_error=False)
         if not annotation:
             # Fall back to default
-            annotation = Input._get_default_string_input()
+            annotation = Input._get_default_unknown_input()
     return annotation
 
 

@@ -5,13 +5,13 @@
 import logging
 from abc import ABC
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, JobException
 from azure.ai.ml._restclient.v2022_06_01_preview.models import AmlToken as RestAmlToken
 from azure.ai.ml._restclient.v2022_06_01_preview.models import IdentityConfiguration, IdentityConfigurationType
 from azure.ai.ml._restclient.v2022_06_01_preview.models import ManagedIdentity as RestManagedIdentity
 from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 
 module_logger = logging.getLogger(__name__)
 

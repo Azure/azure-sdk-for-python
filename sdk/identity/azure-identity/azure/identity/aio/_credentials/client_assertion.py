@@ -8,7 +8,7 @@ from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Optional
+    from typing import Any, Callable, Optional, List
     from azure.core.credentials import AccessToken
 
 
@@ -20,14 +20,17 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
         convenient API for the most common assertion scenario, authenticating a service principal with a certificate.
 
         :param str tenant_id: ID of the principal's tenant. Also called its "directory" ID.
-        :param str client_id: the principal's client ID
-        :param func: a callable that returns a string assertion. The credential will call this every time it
+        :param str client_id: The principal's client ID
+        :param func: A callable that returns a string assertion. The credential will call this every time it
             acquires a new token.
         :paramtype func: Callable[[], str]
 
-        :keyword str authority: authority of an Azure Active Directory endpoint, for example
+        :keyword str authority: Authority of an Azure Active Directory endpoint, for example
             "login.microsoftonline.com", the authority for Azure Public Cloud (which is the default).
             :class:`~azure.identity.AzureAuthorityHosts` defines authorities for other clouds.
+        :keyword List[str] additionally_allowed_tenants: Optional additional tenant ids for which the credential
+            may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
+            any tenant the application is installed.
         """
         self._func = func
         self._client = AadClient(tenant_id, client_id, **kwargs)

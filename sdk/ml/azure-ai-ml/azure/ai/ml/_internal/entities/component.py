@@ -20,6 +20,7 @@ from azure.ai.ml.entities._validation import ValidationResult
 from ... import Input, Output
 from .._schema.component import InternalBaseComponentSchema
 from ._additional_includes import _AdditionalIncludes
+from ._input_outputs import InternalInput
 from .environment import InternalEnvironment
 from .node import InternalBaseNode
 
@@ -115,7 +116,8 @@ class InternalComponent(Component):
         self.code = code
         self.environment = InternalEnvironment(**environment) if isinstance(environment, dict) else environment
         self.environment_variables = environment_variables
-        # TODO: remove this to keep it a general component class
+        self.__additional_includes = None
+        # TODO: remove these to keep it a general component class
         self.command = command
         self.scope = scope
         self.hemera = hemera
@@ -124,12 +126,20 @@ class InternalComponent(Component):
         self.starlite = starlite
         self.ae365exepool = ae365exepool
         self.launcher = launcher
-        self.__additional_includes = None
 
         # add some internal specific attributes to inputs/outputs after super().__init__()
-        self._build_internal_inputs_outputs(inputs, outputs)
+        self._post_process_internal_inputs_outputs(inputs, outputs)
 
-    def _build_internal_inputs_outputs(
+    @classmethod
+    def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
+        if not is_input:
+            return super()._build_io(io_dict, is_input)
+        component_io = {}
+        for name, port in io_dict.items():
+            component_io[name] = InternalInput._cast_from_input_or_dict(port)
+        return component_io
+
+    def _post_process_internal_inputs_outputs(
         self,
         inputs_dict: Union[Dict, Input, Output],
         outputs_dict: Union[Dict, Input, Output],
@@ -138,7 +148,7 @@ class InternalComponent(Component):
             original = inputs_dict[io_name]
             # force append attribute for internal inputs
             if isinstance(original, dict):
-                for attr_name in ["is_resource", "default", "optional"]:
+                for attr_name in ["is_resource"]:
                     if attr_name in original:
                         io_object.__setattr__(attr_name, original[attr_name])
 

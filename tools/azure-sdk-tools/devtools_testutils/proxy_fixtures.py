@@ -94,9 +94,12 @@ class VariableRecorder:
         return self.variables.setdefault(variable, default)
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def environment_variables(test_proxy: None) -> EnvironmentVariableSanitizer:
     """Fixture that returns an EnvironmentVariableSanitizer for convenient environment variable fetching and sanitizing.
+
+    This fixture is session-scoped, so a single instance of EnvironmentVariableSanitizer is shared across all
+    tests using this fixture in the test session.
 
     :param test_proxy: The fixture responsible for starting up the test proxy server.
     :type test_proxy: None
@@ -113,7 +116,7 @@ def environment_variables(test_proxy: None) -> EnvironmentVariableSanitizer:
 
 
 @pytest.fixture
-async def recorded_test(test_proxy: None, request: "FixtureRequest") -> "Dict[str, Any]":
+async def recorded_test(test_proxy: None, request: "FixtureRequest") -> "Optional[Dict[str, Any]]":
     """Fixture that redirects network requests to target the azure-sdk-tools test proxy.
 
     Use with recorded tests. For more details and usage examples, refer to
@@ -125,21 +128,24 @@ async def recorded_test(test_proxy: None, request: "FixtureRequest") -> "Dict[st
     :type request: ~pytest.FixtureRequest
 
     :yields: A dictionary containing information relevant to the currently executing test.
+        If the current test session is live but recording is disabled, yields None.
     """
-
-    test_id, recording_id, variables = start_proxy_session()
-
-    # True if the function requesting the fixture is an async test
-    if iscoroutinefunction(request._pyfuncitem.function):
-        original_transport_func = await redirect_async_traffic(recording_id)
-        yield {"variables": variables}  # yield relevant test info and allow tests to run
-        restore_async_traffic(original_transport_func, request)
+    if is_live_and_not_recording():
+        yield
     else:
-        original_transport_func = redirect_traffic(recording_id)
-        yield {"variables": variables}  # yield relevant test info and allow tests to run
-        restore_traffic(original_transport_func, request)
+        test_id, recording_id, variables = start_proxy_session()
 
-    stop_record_or_playback(test_id, recording_id, variables)
+        # True if the function requesting the fixture is an async test
+        if iscoroutinefunction(request._pyfuncitem.function):
+            original_transport_func = await redirect_async_traffic(recording_id)
+            yield {"variables": variables}  # yield relevant test info and allow tests to run
+            restore_async_traffic(original_transport_func, request)
+        else:
+            original_transport_func = redirect_traffic(recording_id)
+            yield {"variables": variables}  # yield relevant test info and allow tests to run
+            restore_traffic(original_transport_func, request)
+
+        stop_record_or_playback(test_id, recording_id, variables)
 
 
 @pytest.fixture
@@ -162,16 +168,13 @@ def variable_recorder(recorded_test: "Dict[str, Any]") -> VariableRecorder:
 # ----------HELPERS----------
 
 
-def start_proxy_session() -> "Optional[Tuple[str, str, Dict[str, str]]]":
+def start_proxy_session() -> "Tuple[str, str, Dict[str, str]]":
     """Begins a playback or recording session and returns the current test ID, recording ID, and recorded variables.
 
     :returns: A tuple, (a, b, c), where a is the test ID, b is the recording ID, and c is the `variables` dictionary
         that maps test variables to string values. If no variable dictionary was stored when the test was recorded, c is
-        an empty dictionary. If the current test session is live but recording is disabled, this returns None.
+        an empty dictionary.
     """
-    if is_live_and_not_recording():
-        return
-
     test_id = get_test_id()
     recording_id, variables = start_record_or_playback(test_id)
     return (test_id, recording_id, variables)

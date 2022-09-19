@@ -8,7 +8,6 @@ import pytest
 from test_utilities.utils import get_arm_id
 
 from azure.ai.ml import MLClient
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml.entities._assets import Code
 
 

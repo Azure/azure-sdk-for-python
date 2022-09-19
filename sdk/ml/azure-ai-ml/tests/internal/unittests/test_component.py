@@ -6,16 +6,17 @@ import os
 from pathlib import Path
 from typing import Dict
 
+import pydash
 import pytest
 import yaml
 
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
 from azure.ai.ml._internal.entities.component import InternalComponent
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
 from azure.ai.ml.entities import Component
+from azure.ai.ml.exceptions import ValidationException
 
 from .._utils import PARAMETERS_TO_TEST
 
@@ -62,7 +63,7 @@ class TestComponent:
             "display_name": "0.0.1",
             "is_deterministic": True,
             "successful_return_code": "Zero",
-            "inputs": {"train_data": {"type": "path", "optional": False}},
+            "inputs": {"train_data": {"type": "path"}},
             "outputs": {"output_dir": {"type": "path", "datastore_mode": "Upload"}},
             "command": "sh ls.sh {inputs.input_dir} {inputs.file_name} {outputs.output_dir}",
             "environment": {"name": "AzureML-Minimal", "version": "45", "os": "Linux"},
@@ -78,7 +79,7 @@ class TestComponent:
             "is_deterministic": True,
             "successful_return_code": "Zero",
             "inputs": {"train_data": {"type": "path"}},  # optional will be drop if False
-            "outputs": {"output_dir": {"type": "path"}},  # TODO: 1871902 "datastore_mode": "Upload"}},
+            "outputs": {"output_dir": {"type": "path", "datastore_mode": "Upload"}},
             "command": "sh ls.sh {inputs.input_dir} {inputs.file_name} {outputs.output_dir}",
             "environment": {"name": "AzureML-Minimal", "version": "45", "os": "Linux"},
         }
@@ -94,7 +95,7 @@ class TestComponent:
             is_deterministic=True,
             inputs={
                 "TextData": {
-                    "type": "AnyFile",  # TODO: support list of type
+                    "type": "AnyFile",
                     "optional": False,
                     "description": "relative path on ADLS storage",
                 },
@@ -122,12 +123,10 @@ class TestComponent:
             "inputs": {
                 "TextData": {
                     "type": "AnyFile",
-                    "optional": False,
                     "description": "relative path on ADLS storage",
                 },
                 "ExtractionClause": {
                     "type": "string",
-                    "optional": False,
                     "description": 'the extraction clause,something like "column1:string, column2:int"',
                 },
             },
@@ -179,19 +178,28 @@ class TestComponent:
         entity = load_component(yaml_path)
 
         expected_dict = copy.deepcopy(yaml_dict)
-        if expected_dict["type"].endswith("@1-legacy"):
-            expected_dict["type"] = expected_dict["type"].rsplit("@", 1)[0]
-        for key in ["tags", "inputs", "outputs"]:
-            if key not in expected_dict:
-                expected_dict[key] = {}
+        for key, value in {
+            "type": expected_dict["type"].rsplit("@", 1)[0]
+            if expected_dict["type"].endswith("@1-legacy")
+            else expected_dict["type"],
+            "tags": expected_dict.get("tags", {}),
+            "inputs": expected_dict.get("inputs", {}),
+            "outputs": expected_dict.get("outputs", {}),
+        }.items():
+            pydash.set_(expected_dict, key, value)
+        if "environment" in expected_dict:
+            expected_dict["environment"]["os"] = "Linux"
         for input_port_name in expected_dict["inputs"]:
             input_port = expected_dict["inputs"][input_port_name]
             # enum will be transformed to string
-            if isinstance(input_port["type"], str) and input_port["type"].lower() == "enum":
+            if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum"]:
                 if "enum" in input_port:
                     input_port["enum"] = list(map(lambda x: str(x), input_port["enum"]))
                 if "default" in input_port:
                     input_port["default"] = str(input_port["default"])
+            # optional will be dropped if it's False
+            if "optional" in input_port and input_port["optional"] is False:
+                del input_port["optional"]
 
         assert entity._to_dict() == expected_dict
         rest_obj = entity._to_rest_object()
@@ -369,6 +377,33 @@ class TestComponent:
         validation_result = component._customized_validate()
         assert validation_result.passed is False
         assert validation_result.messages["*"].startswith(expected_error_msg_prefix), validation_result.messages["*"]
+
+    def test_component_input_types(self) -> None:
+        yaml_path = "./tests/test_configs/internal/component_with_input_types/component_spec.yaml"
+        component: InternalComponent = load_component(path=yaml_path)
+        component.code = "scope:1"
+
+        with open(yaml_path, "r") as f:
+            yaml_dict = yaml.safe_load(f)
+            for key, value in {
+                "inputs.param_enum.default": None,
+                "inputs.param_enum_cap.default": None,
+                "inputs.param_enum_cap.type": "enum",
+            }.items():
+                pydash.set_(yaml_dict, key, value)
+        assert component._to_rest_object().properties.component_spec["inputs"] == yaml_dict["inputs"]
+        assert component._to_rest_object().properties.component_spec["outputs"] == yaml_dict["outputs"]
+        assert component._customized_validate().passed is True
+
+        for key, value in {
+            "inputs.param_bool_cap.type": "boolean",
+            "inputs.param_int_cap.type": "integer",
+            "inputs.param_string_cap.type": "string",
+        }.items():
+            pydash.set_(yaml_dict, key, value)
+        regen_component = Component._from_rest_object(component._to_rest_object())
+        assert regen_component._to_rest_object().properties.component_spec["inputs"] == yaml_dict["inputs"]
+        assert regen_component._to_rest_object().properties.component_spec["outputs"] == yaml_dict["outputs"]
 
     def test_component_input_list_type(self) -> None:
         yaml_path = "./tests/test_configs/internal/scope-component/component_spec.yaml"
