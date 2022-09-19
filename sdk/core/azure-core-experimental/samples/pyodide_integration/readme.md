@@ -32,7 +32,7 @@ All all packages listed in `requirements.txt` will be available in the testing e
  
 ## Azure Resources
 
-You need your own Text Analytics and Blob Storage accounts to run these tests. Blob storage requirest some additional configuration to work. To set up Blob Storage, navigate to your storage client homepage and go to the `Resource Sharing (CORS)` tab. Create a rule with the following values
+You need your own Text Analytics and Blob Storage accounts to run these tests. Blob storage requires some additional configuration to work. To set up Blob Storage, navigate to your storage client homepage and go to the `Resource Sharing (CORS)` tab. Create a rule with the following values
 
 | Allowed origins | Allowed methods | Allowed headers | Exposed headers | Max age |
 |-----------------|-----------------|-----------------|-----------------|---------|
