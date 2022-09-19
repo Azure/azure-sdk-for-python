@@ -319,12 +319,16 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             # no input to validate job
             _validate_job = self.jobs[_validate_job_name]
             for _input_name in _validate_job.inputs:
+                if not hasattr(_validate_job.inputs[_input_name]._data, "_data_binding"):
+                    continue
                 _data_binding = _validate_job.inputs[_input_name]._data._data_binding()
                 if is_data_binding_expression(_data_binding, ["parent", "jobs"]):
                     return False
             # no output from validate job
             for _job_name, _job in self.jobs.items():
                 for _input_name in _job.inputs:
+                    if not hasattr(_job.inputs[_input_name]._data, "_data_binding"):
+                        continue
                     _data_binding = _job.inputs[_input_name]._data._data_binding()
                     if is_data_binding_expression(_data_binding, ["parent", "jobs", _validate_job_name]):
                         return False
