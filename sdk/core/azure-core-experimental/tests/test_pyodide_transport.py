@@ -163,45 +163,6 @@ class TestPyodideTransportClass:
         # 3 retries plus the original request.
         assert mock_pyfetch.call_count == retry_total + 1
 
-    @pytest.mark.asyncio
-    async def test_download_generator(self, transport):
-        """Test that the download generator is working correctly."""
-
-        class ReaderReturn(NamedTuple):
-            value: bytes
-            done: bool
-
-        response_mock = mock.Mock()
-        response_mock._block_size = 5
-        response_mock._js_reader.read = mock.Mock()
-        read_promise = asyncio.Future()
-        read_promise.set_result(ReaderReturn(value=b"01", done=False))
-        reader = mock.Mock()
-        reader.read.return_value = read_promise
-        response_mock.js_stream.getReader.return_value = reader
-        generator = transport.PyodideStreamDownloadGenerator(pipeline=None, response=response_mock)
-
-        assert len(await generator.__anext__()) == response_mock._block_size
-        assert reader.read.call_count == 3
-        assert len(await generator.__anext__()) == response_mock._block_size
-        # 5 because there is a leftover byte from the previous `__anext__` call.
-        assert reader.read.call_count == 5
-
-        read_promise = asyncio.Future()
-        read_promise.set_result(ReaderReturn(value=None, done=True))
-        reader.read.return_value = read_promise
-        await generator.__anext__()
-        with pytest.raises(StopAsyncIteration):
-            await generator.__anext__()
-
-    @pytest.mark.asyncio
-    async def test_download_generator_compress(self, transport, mock_js_module):
-        """Test that we are attempting to decompress data when passing the `decompress`."""
-        response = mock.Mock()
-        response.headers = {"enc": "deflate"}
-        transport.PyodideStreamDownloadGenerator(pipeline=None, response=response, decompress=True)
-        mock_js_module.DecompressionStream.new.assert_called_once_with("gzip")
-
     def test_valid_import(self, transport):
         """Test that we can import Pyodide classes from `azure.core.pipeline.transport`
         Adding the transport fixture will mock the Pyodide modules in `sys.modules`.
@@ -209,4 +170,3 @@ class TestPyodideTransportClass:
         # Use patch so we don't clutter up the `sys.modules` namespace.
         import azure.core.experimental.transport as transport
         assert transport.PyodideTransport
-        assert transport.PyodideTransportResponse

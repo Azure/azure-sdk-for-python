@@ -28,33 +28,16 @@
 
 __all__ = [
     'PyodideTransport',
-    'PyodideTransportResponse',
-    'PyodideStreamDownloadGenerator',
 ]
 
 def __dir__():
     return __all__
 
 def __getattr__(name):
-    transport = None
     if name == 'PyodideTransport':
         try:
             from ._pyodide import PyodideTransport
-            transport = PyodideTransport
+            return PyodideTransport
         except ImportError:
             raise ImportError("pyodide package is not installed")
-    if name == 'PyodideTransportResponse':
-        try:
-            from ._pyodide import PyodideTransportResponse
-            transport = PyodideTransportResponse
-        except ImportError:
-            raise ImportError("pyodide package is not installed")
-    if name == 'PyodideStreamDownloadGenerator':
-        try:
-            from ._pyodide import PyodideStreamDownloadGenerator
-            transport = PyodideStreamDownloadGenerator
-        except ImportError:
-            raise ImportError("pyodide package is not installed")
-    if transport:
-        return transport
     raise AttributeError(f"module 'azure.core.experimental.transport' has no attribute {name}")
