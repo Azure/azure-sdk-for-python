@@ -14,7 +14,7 @@ and run
 python -h http.server
 ```
 
-to set up the test server. Then, from a Chromium-based browser such as Edge, go to [`http://localhost:8000/samples/pyodide_integration`](http://localhost:8000/samples/test_pyodide_integration) and the tests will be run in the browser. Dev tip: keep your browser's devtools open. If you make a change to the source code, remember to rebuild your wheel. Note that you might have to update `requirements.txt` depending on the version of `azure-core`. Just make sure the url to `azure-core` in `requirements.txt` matches that of the wheel in `../../dist/`.
+to set up the test server. Then, from a Chromium-based browser such as Edge, go to [`http://localhost:8000/samples/pyodide_integration`](http://localhost:8000/samples/pyodide_integration) and the tests will be run in the browser. Dev tip: keep your browser's devtools open. If you make a change to the source code, remember to rebuild your wheel. Note that you might have to update `requirements.txt` depending on the version of `azure-core`. Just make sure the url to `azure-core` in `requirements.txt` matches that of the wheel in `../../dist/`.
 
 ## Adding tests
 
