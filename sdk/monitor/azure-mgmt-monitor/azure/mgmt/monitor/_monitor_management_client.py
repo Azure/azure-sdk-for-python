@@ -9,20 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
-
-from msrest import Deserializer, Serializer
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
 from ._configuration import MonitorManagementClientConfiguration
+from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
 
 class _SDKClient(object):
@@ -43,9 +40,9 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -56,16 +53,16 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2022-06-01'
+    DEFAULT_API_VERSION = '2022-10-01'
     _PROFILE_TAG = "azure.mgmt.monitor.MonitorManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
+            'action_groups': '2022-06-01',
             'activity_log_alerts': '2020-10-01',
             'activity_logs': '2015-04-01',
             'alert_rule_incidents': '2016-03-01',
             'alert_rules': '2016-03-01',
-            'autoscale_settings': '2015-04-01',
             'baselines': '2019-03-01',
             'data_collection_endpoints': '2021-04-01',
             'data_collection_rule_associations': '2021-04-01',
@@ -83,7 +80,6 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
             'metric_namespaces': '2017-12-01-preview',
             'metrics': '2018-01-01',
             'operations': '2015-07-01',
-            'predictive_metric': '2021-05-01-preview',
             'private_endpoint_connections': '2019-10-17-preview',
             'private_link_resources': '2019-10-17-preview',
             'private_link_scope_operation_status': '2019-10-17-preview',
@@ -100,10 +96,10 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
+        credential: "TokenCredential",
+        subscription_id: str,
         api_version=None, # type: Optional[str]
-        base_url="https://management.azure.com",  # type: str
+        base_url: str = "https://management.azure.com",
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
@@ -149,6 +145,7 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01-preview: :mod:`v2022_02_01_preview.models<azure.mgmt.monitor.v2022_02_01_preview.models>`
            * 2022-04-01: :mod:`v2022_04_01.models<azure.mgmt.monitor.v2022_04_01.models>`
            * 2022-06-01: :mod:`v2022_06_01.models<azure.mgmt.monitor.v2022_06_01.models>`
+           * 2022-10-01: :mod:`v2022_10_01.models<azure.mgmt.monitor.v2022_10_01.models>`
         """
         if api_version == '2015-04-01':
             from .v2015_04_01 import models
@@ -230,6 +227,9 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
             return models
         elif api_version == '2022-06-01':
             from .v2022_06_01 import models
+            return models
+        elif api_version == '2022-10-01':
+            from .v2022_10_01 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -337,12 +337,15 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2015-04-01: :class:`AutoscaleSettingsOperations<azure.mgmt.monitor.v2015_04_01.operations.AutoscaleSettingsOperations>`
            * 2021-05-01-preview: :class:`AutoscaleSettingsOperations<azure.mgmt.monitor.v2021_05_01_preview.operations.AutoscaleSettingsOperations>`
+           * 2022-10-01: :class:`AutoscaleSettingsOperations<azure.mgmt.monitor.v2022_10_01.operations.AutoscaleSettingsOperations>`
         """
         api_version = self._get_api_version('autoscale_settings')
         if api_version == '2015-04-01':
             from .v2015_04_01.operations import AutoscaleSettingsOperations as OperationClass
         elif api_version == '2021-05-01-preview':
             from .v2021_05_01_preview.operations import AutoscaleSettingsOperations as OperationClass
+        elif api_version == '2022-10-01':
+            from .v2022_10_01.operations import AutoscaleSettingsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'autoscale_settings'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -618,10 +621,13 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2021-05-01-preview: :class:`PredictiveMetricOperations<azure.mgmt.monitor.v2021_05_01_preview.operations.PredictiveMetricOperations>`
+           * 2022-10-01: :class:`PredictiveMetricOperations<azure.mgmt.monitor.v2022_10_01.operations.PredictiveMetricOperations>`
         """
         api_version = self._get_api_version('predictive_metric')
         if api_version == '2021-05-01-preview':
             from .v2021_05_01_preview.operations import PredictiveMetricOperations as OperationClass
+        elif api_version == '2022-10-01':
+            from .v2022_10_01.operations import PredictiveMetricOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'predictive_metric'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
