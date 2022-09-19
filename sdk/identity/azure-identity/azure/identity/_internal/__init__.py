@@ -84,7 +84,7 @@ def resolve_tenant(
         return default_tenant
     if not default_tenant:
         return tenant_id
-    if additionally_allowed_tenants == ['*'] or tenant_id in additionally_allowed_tenants:
+    if '*' in additionally_allowed_tenants or tenant_id in additionally_allowed_tenants:
         _LOGGER.info("A token was requested for a different tenant than was configured on the credential, "
                      "and the requested tenant ID was used to authenticate. Configured tenant ID: %s, "
                      "Requested tenant ID %s", default_tenant, tenant_id)

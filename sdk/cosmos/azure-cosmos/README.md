@@ -162,7 +162,6 @@ Currently the features below are **not supported**. For alternatives options, ch
 
 * Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics
 * Create Geospatial Index
-* Update Autoscale throughput
 * Get the connection string
 * Get the minimum RU/s of a container
 
@@ -654,12 +653,6 @@ even when it isn't enabled for the client:
 ```py
 database = client.create_database(DATABASE_NAME, logger=logger, enable_diagnostics_logging=True)
 ```
-| Name                    | Policy Flavor    | Parameters                 | Accepted in Init? | Accepted in Request? | Description                                                                   |
-|-------------------------|------------------|----------------------------|----------------|------------------|-------------------------------------------------------------------------------|
-| CosmosHttpLoggingPolicy | SansIOHTTPPolicy |                    |                |                  |                                                                               |
-|       |   |  logger  | X              | X                | If specified, it will be used to log information.                             |
-|       |   | enable_diagnostics_logging | X              | X                | Used to enable logging additional diagnostic information. Defaults to `False` |
-You can learn more about the different policies and how they work [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies).
 
 ## Next steps
 

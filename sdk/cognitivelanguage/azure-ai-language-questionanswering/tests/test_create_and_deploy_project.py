@@ -5,7 +5,7 @@
 # ------------------------------------
 import pytest
 
-from azure.ai.language.questionanswering.projects import QuestionAnsweringProjectsClient
+from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
 from azure.core.credentials import AzureKeyCredential
 
 from helpers import QnaAuthoringHelper
@@ -15,8 +15,8 @@ from testcase import QuestionAnsweringTestCase
 class TestCreateAndDeploy(QuestionAnsweringTestCase):
 
     def test_create_project_aad(self, recorded_test, qna_creds):
-        token = self.get_credential(QuestionAnsweringProjectsClient)
-        client = QuestionAnsweringProjectsClient(qna_creds["qna_endpoint"], token)
+        token = self.get_credential(QuestionAnsweringAuthoringClient)
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], token)
 
         # create project
         project_name = "IssacNewton"
@@ -40,7 +40,7 @@ class TestCreateAndDeploy(QuestionAnsweringTestCase):
         assert found
 
     def test_create_project(self, recorded_test, qna_creds):
-        client = QuestionAnsweringProjectsClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
@@ -64,7 +64,7 @@ class TestCreateAndDeploy(QuestionAnsweringTestCase):
         assert found
 
     def test_deploy_project(self, recorded_test, qna_creds):
-        client = QuestionAnsweringProjectsClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create deployable project
         project_name = "IssacNewton"
