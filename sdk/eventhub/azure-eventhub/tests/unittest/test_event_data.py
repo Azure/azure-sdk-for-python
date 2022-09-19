@@ -323,3 +323,12 @@ def test_legacy_message(uamqp_transport):
     assert event_data_batch.message.max_message_length == 1024 * 1024
     assert event_data_batch.message.size_offset == 0
     assert event_data_batch.message.batch_format == 0x80013700
+    assert len(event_data_batch.message.annotations) == 1
+    assert event_data_batch.message.application_properties is None
+    assert event_data_batch.message.header.delivery_count == 0
+    assert event_data_batch.message.header.time_to_live is None
+    assert event_data_batch.message.header.first_acquirer is None
+    assert event_data_batch.message.header.durable is True
+    assert event_data_batch.message.header.priority is None
+    assert event_data_batch.message.on_send_complete is None
+    assert event_data_batch.message.properties is None
