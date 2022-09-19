@@ -1,30 +1,31 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Union, Dict, Optional, Callable, NoReturn
-from azure.ai.ml._schema.job.loadable_mixin import LoadableMixin
+from typing import Callable, Dict, Optional, Union
+
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+
 from ..job_limits import SweepJobLimits
 from .early_termination_policy import (
-    EarlyTerminationPolicy,
     BanditPolicy,
+    EarlyTerminationPolicy,
+    EarlyTerminationPolicyType,
     MedianStoppingPolicy,
     TruncationSelectionPolicy,
-    EarlyTerminationPolicyType,
 )
 from .objective import Objective
-from .search_space import SweepDistribution
 from .sampling_algorithm import (
-    SamplingAlgorithm,
-    RandomSamplingAlgorithm,
-    GridSamplingAlgorithm,
     BayesianSamplingAlgorithm,
-    SamplingAlgorithmType,
-    RestSamplingAlgorithm,
-    RestRandomSamplingAlgorithm,
-    RestGridSamplingAlgorithm,
+    GridSamplingAlgorithm,
+    RandomSamplingAlgorithm,
     RestBayesianSamplingAlgorithm,
+    RestGridSamplingAlgorithm,
+    RestRandomSamplingAlgorithm,
+    RestSamplingAlgorithm,
+    SamplingAlgorithm,
+    SamplingAlgorithmType,
 )
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from .search_space import SweepDistribution
 
 SAMPLING_ALGORITHM_TO_REST_CONSTRUCTOR: Dict[SamplingAlgorithmType, Callable[[], RestSamplingAlgorithm]] = {
     SamplingAlgorithmType.RANDOM: lambda: RestRandomSamplingAlgorithm(),
@@ -39,7 +40,7 @@ SAMPLING_ALGORITHM_CONSTRUCTOR: Dict[SamplingAlgorithmType, Callable[[], Samplin
 }
 
 
-class ParameterizedSweep(LoadableMixin):
+class ParameterizedSweep:
     """Shared logic for standalone and pipeline sweep job."""
 
     def __init__(
@@ -73,6 +74,7 @@ class ParameterizedSweep(LoadableMixin):
                 no_personal_data_message=msg,
                 target=ErrorTarget.SWEEP_JOB,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
         self._limits = value
 
@@ -83,8 +85,9 @@ class ParameterizedSweep(LoadableMixin):
         max_total_trials: int = None,
         timeout: int = None,
         trial_timeout: int = None,
-    ) -> NoReturn:
-        """Set limits for Sweep node. Leave parameters as None if you don't want to update corresponding values.
+    ) -> None:
+        """Set limits for Sweep node. Leave parameters as None if you don't
+        want to update corresponding values.
 
         :param max_concurrent_trials: maximum concurrent trial number.
         :type max_concurrent_trials: int
@@ -113,7 +116,7 @@ class ParameterizedSweep(LoadableMixin):
                 self.limits.trial_timeout = trial_timeout
 
     def set_objective(self, *, goal: str = None, primary_metric: str = None) -> None:
-        """Set the sweep object
+        """Set the sweep object.
 
         :param goal: Required. Defines supported metric goals for hyperparameter tuning. Possible values
         include: "minimize", "maximize".
@@ -149,20 +152,24 @@ class ParameterizedSweep(LoadableMixin):
                 no_personal_data_message=msg,
                 target=ErrorTarget.SWEEP_JOB,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
     def _get_rest_sampling_algorithm(self) -> RestSamplingAlgorithm:
         # TODO: self.sampling_algorithm will always return SamplingAlgorithm
         if isinstance(self.sampling_algorithm, SamplingAlgorithm):
-            return self.sampling_algorithm
+            return self.sampling_algorithm._to_rest_object()
         elif isinstance(self.sampling_algorithm, str):
-            return SAMPLING_ALGORITHM_CONSTRUCTOR[SamplingAlgorithmType(self.sampling_algorithm.lower().capitalize())]()
+            return SAMPLING_ALGORITHM_CONSTRUCTOR[
+                SamplingAlgorithmType(self.sampling_algorithm.lower().capitalize())
+            ]()._to_rest_object()
         msg = f"Received unsupported value {self._sampling_algorithm} as the sampling algorithm"
         raise ValidationException(
             message=msg,
             no_personal_data_message=msg,
             target=ErrorTarget.SWEEP_JOB,
             error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.INVALID_VALUE,
         )
 
     @property
@@ -190,6 +197,7 @@ class ParameterizedSweep(LoadableMixin):
                     no_personal_data_message=msg,
                     target=ErrorTarget.SWEEP_JOB,
                     error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )
         else:
             msg = f"Received unsupported value of type {type(value)} as the early termination policy"
@@ -198,6 +206,7 @@ class ParameterizedSweep(LoadableMixin):
                 no_personal_data_message=msg,
                 target=ErrorTarget.SWEEP_JOB,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
     def _override_missing_properties_from_trial(self):

@@ -79,7 +79,7 @@ client = CosmosClient(URL, credential=KEY)
 ### AAD Authentication
 
 You can also authenticate a client utilizing your service principal's AAD credentials and the azure identity package. 
-You can directly pass in the credentials information to ClientSecretCrednetial, or use the DefaultAzureCredential:
+You can directly pass in the credentials information to ClientSecretCredential, or use the DefaultAzureCredential:
 ```Python
 from azure.cosmos import CosmosClient
 from azure.identity import ClientSecretCredential, DefaultAzureCredential
@@ -162,9 +162,7 @@ Currently the features below are **not supported**. For alternatives options, ch
 
 * Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics
 * Create Geospatial Index
-* Provision Autoscale DBs or containers
 * Update Autoscale throughput
-* Update analytical store ttl (time to live)
 * Get the connection string
 * Get the minimum RU/s of a container
 
@@ -551,6 +549,39 @@ async def create_lists():
     item_list = [item async for item in results]
     await client.close()
 ```
+
+### Using Integrated Cache
+An integrated cache is an in-memory cache that helps you ensure manageable costs and low latency as your request volume grows. The integrated cache has two parts: an item cache for point reads and a query cache for queries. The code snippet below shows you how to use this feature with the point read and query cache methods.
+
+The benefit of using this is that the point reads and queries that hit the integrated cache won't use any RUs. This means you will have a much lower per-operation cost than reads from the backend.
+
+[How to configure the Azure Cosmos DB integrated cache (Preview)][cosmos_configure_integrated_cache]
+
+```Python
+import azure.cosmos.cosmos_client as cosmos_client
+import os
+
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+client = cosmos_client.CosmosClient(URL, credential=KEY)
+DATABASE_NAME = 'testDatabase'
+database = client.get_database_client(DATABASE_NAME)
+CONTAINER_NAME = 'testContainer'
+container = database.get_container_client(CONTAINER_NAME)
+
+def integrated_cache_snippet():
+    item_id = body['id'] 
+    query = 'SELECT * FROM c'
+
+    #item cache
+    container.read_item(item=item_id, partition_key=item_id, max_integrated_cache_staleness_in_ms=30000)
+
+    #query cache   
+    container.query_items(query=query,
+         partition_key=item_id, max_integrated_cache_staleness_in_ms=30000)
+```
+For more information on Integrated Cache, see [Azure Cosmos DB integrated cache - Overview][cosmos_integrated_cache].
+
 ## Troubleshooting
 
 ### General
@@ -601,6 +632,34 @@ even when it isn't enabled for the client:
 ```py
 database = client.create_database(DATABASE_NAME, logging_enable=True)
 ```
+Alternatively, you can log using the CosmosHttpLoggingPolicy, which extends from the azure core HttpLoggingPolicy, by passing in your logger to the `logger` argument.
+By default, it will use the behaviour from HttpLoggingPolicy. The `enable_diagnostics_logging` argument will add additional diagnostic information to the logger.
+```python
+import logging
+from azure.cosmos import CosmosClient
+
+#Create a logger for the 'azure' SDK
+logger = logging.getLogger('azure')
+logger.setLevel(logging.DEBUG)
+
+# Configure a file output
+handler = logging.FileHandler(filename="azure")
+logger.addHandler(handler)
+
+# This client will log diagnostic information from the HTTP session by using the CosmosHttpLoggingPolicy
+client = CosmosClient(URL, credential=KEY, logger=logger, enable_diagnostics_logging=True)
+```
+Similarly, CosmosHttpLoggingPolicy can enable detailed logging for a single operation,
+even when it isn't enabled for the client:
+```py
+database = client.create_database(DATABASE_NAME, logger=logger, enable_diagnostics_logging=True)
+```
+| Name                    | Policy Flavor    | Parameters                 | Accepted in Init? | Accepted in Request? | Description                                                                   |
+|-------------------------|------------------|----------------------------|----------------|------------------|-------------------------------------------------------------------------------|
+| CosmosHttpLoggingPolicy | SansIOHTTPPolicy |                    |                |                  |                                                                               |
+|       |   |  logger  | X              | X                | If specified, it will be used to log information.                             |
+|       |   | enable_diagnostics_logging | X              | X                | Used to enable logging additional diagnostic information. Defaults to `False` |
+You can learn more about the different policies and how they work [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies).
 
 ## Next steps
 
@@ -624,6 +683,8 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_resources]: https://docs.microsoft.com/azure/cosmos-db/databases-containers-items
 [cosmos_sql_queries]: https://docs.microsoft.com/azure/cosmos-db/how-to-sql-query
 [cosmos_ttl]: https://docs.microsoft.com/azure/cosmos-db/time-to-live
+[cosmos_integrated_cache]: https://docs.microsoft.com/azure/cosmos-db/integrated-cache
+[cosmos_configure_integrated_cache]: https://docs.microsoft.com/azure/cosmos-db/how-to-configure-integrated-cache
 [python]: https://www.python.org/downloads/
 [ref_container_delete_item]: https://aka.ms/azsdk-python-cosmos-ref-delete-item
 [ref_container_query_items]: https://aka.ms/azsdk-python-cosmos-ref-query-items

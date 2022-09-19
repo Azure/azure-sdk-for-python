@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from _shared.testcase import CommunicationTestCase
-from _shared.uri_replacer_processor import URIReplacerProcessor
+from _shared.helper import URIReplacerProcessor
 from _shared.utils import create_token_credential, get_http_logging_policy
 
 from azure.communication.phonenumbers.siprouting import SipRoutingClient, SipTrunk, SipTrunkRoute

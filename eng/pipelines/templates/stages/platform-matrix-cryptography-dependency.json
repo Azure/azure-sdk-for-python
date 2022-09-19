@@ -5,7 +5,7 @@
   "matrix": {
     "Agent": {
       "ubuntu-20.04": { "OSVmImage": "MMSUbuntu20.04", "Pool": "azsdk-pool-mms-ubuntu-2004-general" },
-      "macOS-10.15": { "OSVmImage": "macOS-10.15", "Pool": "Azure Pipelines" }
+      "macos-11": { "OSVmImage": "macos-11", "Pool": "Azure Pipelines" }
     },
     "PythonVersion": [ "pypy3.7", "3.8"],
     "CoverageArg": "--disablecov"
@@ -24,7 +24,7 @@
     },
     {
       "Agent": {
-        "macOS-10.15": { "OSVmImage": "macOS-10.15", "Pool": "Azure Pipelines" }
+        "macos-11": { "OSVmImage": "macos-11", "Pool": "Azure Pipelines" }
       },
       "PythonVersion": "3.7",
       "CoverageArg": "--disablecov"

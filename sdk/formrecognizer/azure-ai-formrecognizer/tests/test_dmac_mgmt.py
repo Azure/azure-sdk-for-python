@@ -13,7 +13,7 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure.ai.formrecognizer import (
     DocumentModelAdministrationClient,
     DocumentAnalysisApiVersion,
-    ModelOperation
+    OperationDetails
 )
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -31,7 +31,7 @@ class TestManagement(FormRecognizerTest):
         token = self.generate_oauth_token()
         endpoint = self.get_oauth_endpoint()
         client = DocumentModelAdministrationClient(endpoint, token)
-        info = client.get_resource_info()
+        info = client.get_resource_details()
         assert info
 
     @FormRecognizerPreparer()
@@ -39,71 +39,71 @@ class TestManagement(FormRecognizerTest):
     def test_dmac_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with pytest.raises(ClientAuthenticationError):
-            result = client.get_resource_info()
+            result = client.get_resource_details()
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_get_model_empty_model_id(self, **kwargs):
         client = kwargs.pop("client")
         with pytest.raises(ValueError):
-            result = client.get_model("")
+            result = client.get_document_model("")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_get_model_none_model_id(self, **kwargs):
         client = kwargs.pop("client")
         with pytest.raises(ValueError):
-            result = client.get_model(None)
+            result = client.get_document_model(None)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_delete_model_none_model_id(self, **kwargs):
         client = kwargs.pop("client")
         with pytest.raises(ValueError):
-            result = client.delete_model(None)
+            result = client.delete_document_model(None)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_delete_model_empty_model_id(self, **kwargs):
         client = kwargs.pop("client")
         with pytest.raises(ValueError):
-            result = client.delete_model("")
+            result = client.delete_document_model("")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_account_info(self, client):
-        info = client.get_resource_info()
+        info = client.get_resource_details()
 
-        assert info.document_model_limit
-        assert info.document_model_count
+        assert info.custom_document_models.limit
+        assert info.custom_document_models.count
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_get_model_prebuilt(self, client, **kwargs):
-        model = client.get_model("prebuilt-invoice")
+        model = client.get_document_model("prebuilt-invoice")
         assert model.model_id == "prebuilt-invoice"
         assert model.description is not None
         assert model.created_on
         assert model.api_version
-        assert model.tags is None
+        assert model.tags == {}
         for name, doc_type in model.doc_types.items():
             assert name
             for key, field in doc_type.field_schema.items():
                 assert key
                 assert field["type"]
-            assert doc_type.field_confidence is None
+            assert doc_type.field_confidence == {}
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_mgmt_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", description="mgmt model")
+        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url, description="mgmt model")
         model = poller.result()
 
-        model_from_get = client.get_model(model.model_id)
+        model_from_get = client.get_document_model(model.model_id)
 
         assert model.model_id == model_from_get.model_id
         assert model.description == model_from_get.description
@@ -115,15 +115,15 @@ class TestManagement(FormRecognizerTest):
                 assert field["type"] == model_from_get.doc_types[name].field_schema[key]["type"]
                 assert doc_type.field_confidence[key] == model_from_get.doc_types[name].field_confidence[key]
 
-        models_list = client.list_models()
+        models_list = client.list_document_models()
         for model in models_list:
             assert model.model_id
             assert model.created_on
 
-        client.delete_model(model.model_id)
+        client.delete_document_model(model.model_id)
 
         with pytest.raises(ResourceNotFoundError):
-            client.get_model(model.model_id)
+            client.get_document_model(model.model_id)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -154,7 +154,7 @@ class TestManagement(FormRecognizerTest):
             # assert op.tags is None
             # test to/from dict
             op_dict = op.to_dict()
-            op = ModelOperation.from_dict(op_dict)
+            op = OperationDetails.from_dict(op_dict)
             assert op.error is None
             model = op.result
             assert model.model_id
@@ -174,7 +174,7 @@ class TestManagement(FormRecognizerTest):
             op = client.get_operation(failed_op.operation_id)
             # test to/from dict
             op_dict = op.to_dict()
-            op = ModelOperation.from_dict(op_dict)
+            op = OperationDetails.from_dict(op_dict)
 
             assert op.result is None
             error = op.error
@@ -198,11 +198,11 @@ class TestManagement(FormRecognizerTest):
         dtc = DocumentModelAdministrationClient(endpoint=formrecognizer_test_endpoint, credential=AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
 
         with dtc:
-            dtc.get_resource_info()
+            dtc.get_resource_details()
             assert transport.session is not None
             with dtc.get_document_analysis_client() as dac:
                 assert transport.session is not None
                 dac.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg).wait()
-                assert dac._api_version == DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
-            dtc.get_resource_info()
+                assert dac._api_version == DocumentAnalysisApiVersion.V2022_08_31
+            dtc.get_resource_details()
             assert transport.session is not None

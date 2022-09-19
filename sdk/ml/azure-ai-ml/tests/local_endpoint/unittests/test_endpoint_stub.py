@@ -3,12 +3,14 @@
 # ---------------------------------------------------------
 
 
-from azure.ai.ml._local_endpoints.endpoint_stub import EndpointStub
-from azure.ai.ml.entities._endpoint.online_endpoint import OnlineEndpoint
-import pytest
 import random
 from pathlib import Path
+
+import pytest
+
 from azure.ai.ml import load_online_endpoint
+from azure.ai.ml._local_endpoints.endpoint_stub import EndpointStub
+from azure.ai.ml.entities._endpoint.online_endpoint import OnlineEndpoint
 
 
 @pytest.fixture

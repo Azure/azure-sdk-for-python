@@ -1,24 +1,23 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=too-many-instance-attributes
+
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Union
-from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
+from typing import IO, AnyStr, Dict, Union
 
-from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
-from azure.ai.ml._utils._workspace_utils import get_endpoint_parts
-from .customer_managed_key import CustomerManagedKey
-from .private_endpoint import PrivateEndpoint, EndpointConnection
-from azure.ai.ml.entities import Resource
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    WorkspaceResourceConstants,
-    PublicNetworkAccess,
-)
-from azure.ai.ml._restclient.v2022_01_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2022_05_01.models import Workspace as RestWorkspace
+from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
+from azure.ai.ml._utils.utils import dump_yaml_to_file
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
+from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._workspace.identity import ManagedServiceIdentity
+
+from .customer_managed_key import CustomerManagedKey
 
 
 class Workspace(Resource):
@@ -39,8 +38,8 @@ class Workspace(Resource):
         customer_managed_key: CustomerManagedKey = None,
         image_build_compute: str = None,
         public_network_access: str = None,
-        softdelete_enable: bool = False,
-        allow_recover_softdeleted_workspace: bool = False,
+        identity: ManagedServiceIdentity = None,
+        primary_user_assigned_identity: str = None,
         **kwargs,
     ):
 
@@ -54,30 +53,39 @@ class Workspace(Resource):
         :type tags: dict
         :param display_name: Display name for the workspace. This is non-unique within the resource group.
         :type display_name: str
-        :param location: The location to create the workspace in. If not specified, the same location as the resource group will be used.
+        :param location: The location to create the workspace in.
+            If not specified, the same location as the resource group will be used.
         :type location: str
         :param resource_group: Name of resource group to create the workspace in.
         :type resource_group: str
-        :param hbi_workspace: Whether the customer data is of high business impact (HBI), containing sensitive business information. For more information, see https://docs.microsoft.com/azure/machine-learning/concept-data-encryption#encryption-at-rest.
+        :param hbi_workspace: Whether the customer data is of high business impact (HBI),
+            containing sensitive business information.
+            For more information, see
+            https://docs.microsoft.com/azure/machine-learning/concept-data-encryption#encryption-at-rest.
         :type hbi_workspace: bool
         :param storage_account: The resource ID of an existing storage account to use instead of creating a new one.
         :type storage_account: str
-        :param container_registry: The resource ID of an existing container registry to use instead of creating a new one.
+        :param container_registry: The resource ID of an existing container registry
+            to use instead of creating a new one.
         :type container_registry: str
         :param key_vault: The resource ID of an existing key vault to use instead of creating a new one.
         :type key_vault: str
-        :param application_insights: The resource ID of an existing application insights to use instead of creating a new one.
+        :param application_insights: The resource ID of an existing application insights
+            to use instead of creating a new one.
         :type application_insights: str
-        :param customer_managed_key: Key vault details for encrypting data with customer-managed keys. If not specified, Microsoft-managed keys will be used by default.
+        :param customer_managed_key: Key vault details for encrypting data with customer-managed keys.
+            If not specified, Microsoft-managed keys will be used by default.
         :type customer_managed_key: CustomerManagedKey
-        :param image_build_compute: The name of the compute target to use for building environment Docker images with the container registry is behind a VNet.
+        :param image_build_compute: The name of the compute target to use for building environment
+            Docker images with the container registry is behind a VNet.
         :type image_build_compute: str
-        :param public_network_access: Whether to allow public endpoint connectivity when a workspace is private link enabled.
+        :param public_network_access: Whether to allow public endpoint connectivity
+            when a workspace is private link enabled.
         :type public_network_access: str
-        :param softdelete_enable: Create a workspace with soft delete capability
-        :type softdelete_enable: bool
-        :param allow_recover_softdeleted_workspace: Allow an existing soft-deleted workspace to be recovered
-        :type allow_recover_softdeleted_workspace: bool
+        :param identity: workspace's Managed Identity (user assigned, or system assigned)
+        :type identity: ManagedServiceIdentity
+        :param primary_user_assigned_identity: The workspace's primary user assigned identity
+        :type primary_user_assigned_identity: str
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
@@ -96,8 +104,8 @@ class Workspace(Resource):
         self.customer_managed_key = customer_managed_key
         self.image_build_compute = image_build_compute
         self.public_network_access = public_network_access
-        self.softdelete_enable = softdelete_enable
-        self.allow_recover_softdeleted_workspace = allow_recover_softdeleted_workspace
+        self.identity = identity
+        self.primary_user_assigned_identity = primary_user_assigned_identity
 
     @property
     def discovery_url(self) -> str:
@@ -109,7 +117,7 @@ class Workspace(Resource):
         return self._discovery_url
 
     @property
-    def mlflow_tracking_uri(self) -> bool:
+    def mlflow_tracking_uri(self) -> str:
         """MLflow tracking uri for the workspace.
 
         :return: Returns mlflow tracking uri of the workspace.
@@ -117,16 +125,30 @@ class Workspace(Resource):
         """
         return self._mlflow_tracking_uri
 
-    def dump(self, path: Union[PathLike, str]) -> None:
+    def dump(
+        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
+    ) -> None:
         """Dump the workspace spec into a file in yaml format.
 
-        :param path: Path to a local file as the target, new file will be created, raises exception if the file exists.
-        :type path: str
+        :param dest: The destination to receive this workspace's spec.
+            Must be either a path to a local file, or an already-open file stream.
+            If dest is a file path, a new file will be created,
+            and an exception is raised if the file exists.
+            If dest is an open file, the file will be written to directly,
+            and an exception will be raised if the file is not writable.
+        :type dest: Union[PathLike, str, IO[AnyStr]]
+        :param path: Deprecated path to a local file as the target, a new file
+            will be created, raises exception if the file exists.
+            It's recommended what you change 'path=' inputs to 'dest='.
+            The first unnamed input of this function will also be treated like
+            a path input.
+        :type path: Union[str, Pathlike]
         """
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(path, yaml_serialized, default_flow_style=False)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, args=args, **kwargs)
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return WorkspaceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
@@ -155,9 +177,6 @@ class Workspace(Resource):
             CustomerManagedKey(
                 key_vault=rest_obj.encryption.key_vault_properties.key_vault_arm_id,
                 key_uri=rest_obj.encryption.key_vault_properties.key_identifier,
-                cosmosdb_id=rest_obj.encryption.cosmos_db_resource_id,
-                storage_id=rest_obj.encryption.storage_account_resource_id,
-                search_id=rest_obj.encryption.search_account_resource_id,
             )
             if rest_obj.encryption
             and rest_obj.encryption.status == WorkspaceResourceConstants.ENCRYPTION_STATUS_ENABLED
@@ -171,6 +190,9 @@ class Workspace(Resource):
 
         armid_parts = str(rest_obj.id).split("/")
         group = None if len(armid_parts) < 4 else armid_parts[4]
+        identity = None
+        if rest_obj.identity and isinstance(rest_obj.identity, RestManagedServiceIdentity):
+            identity = ManagedServiceIdentity._from_rest_object(rest_obj.identity)
         return Workspace(
             name=rest_obj.name,
             id=rest_obj.id,
@@ -189,6 +211,6 @@ class Workspace(Resource):
             image_build_compute=rest_obj.image_build_compute,
             public_network_access=rest_obj.public_network_access,
             mlflow_tracking_uri=mlflow_tracking_uri,
-            softdelete_enable=rest_obj.soft_delete_enabled,
-            allow_recover_softdeleted_workspace=rest_obj.allow_recover_soft_deleted_workspace,
+            identity=identity,
+            primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
         )

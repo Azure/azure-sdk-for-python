@@ -35,13 +35,11 @@ from ._models_py3 import TextAnalyticsError
 from ._models_py3 import TextAnalyticsWarning
 
 
-from ._text_analytics_client_enums import (
-    DocumentSentimentValue,
-    ErrorCodeValue,
-    InnerErrorCodeValue,
-    SentenceSentimentValue,
-    WarningCodeValue,
-)
+from ._text_analytics_client_enums import DocumentSentimentValue
+from ._text_analytics_client_enums import ErrorCodeValue
+from ._text_analytics_client_enums import InnerErrorCodeValue
+from ._text_analytics_client_enums import SentenceSentimentValue
+from ._text_analytics_client_enums import WarningCodeValue
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk

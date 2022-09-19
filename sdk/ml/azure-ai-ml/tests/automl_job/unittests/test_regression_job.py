@@ -4,12 +4,11 @@
 
 import pytest
 
-from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    MLTableJobInput,
-    UserIdentity,
-)
-from azure.ai.ml.automl import regression, RegressionModels, RegressionPrimaryMetrics
+from azure.ai.ml import UserIdentity
+from azure.ai.ml._restclient.v2022_06_01_preview.models import MLTableJobInput
+from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml.automl import RegressionModels, RegressionPrimaryMetrics, regression
+from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.tabular import RegressionJob
 
@@ -31,7 +30,7 @@ class TestAutoMLRegression:
             name="regression_job",
             experiment_name="foo_exp",
             tags={"foo_tag": "bar"},
-            identity = identity,
+            identity=identity,
         )  # type: RegressionJob
         regression_job.set_limits(timeout_minutes=60, max_trials=100, max_concurrent_trials=4)
         regression_job.set_training(
@@ -45,12 +44,12 @@ class TestAutoMLRegression:
 
         # check the rest object
         rest_obj = regression_job._to_rest_object()  # serialize to rest object
-        assert rest_obj.properties.identity == identity
+        assert isinstance(rest_obj.properties.identity, RestUserIdentity)
         assert isinstance(
-            rest_obj.properties.task_details.data_settings.training_data.data, MLTableJobInput
+            rest_obj.properties.task_details.training_data, MLTableJobInput
         ), "Training data is not MLTableJobInput"
         assert isinstance(
-            rest_obj.properties.task_details.data_settings.test_data.data, MLTableJobInput
+            rest_obj.properties.task_details.test_data, MLTableJobInput
         ), "Test data is not MLTableJobInput"
 
         original_obj = RegressionJob._from_rest_object(rest_obj)  # deserialize from rest object
@@ -63,15 +62,13 @@ class TestAutoMLRegression:
         assert original_obj.experiment_name == "foo_exp", "Experiment name not set correctly"
         assert original_obj.tags == {"foo_tag": "bar"}, "Tags not set correctly"
         # check if the original job inputs were restored
-        assert isinstance(original_obj._data.training_data.data, Input), "Training data is not Input"
-        assert original_obj._data.training_data.data.type == AssetTypes.MLTABLE, "Training data type not set correctly"
+        assert isinstance(original_obj.training_data, Input), "Training data is not Input"
+        assert original_obj.training_data.type == AssetTypes.MLTABLE, "Training data type not set correctly"
         assert original_obj.identity == identity
-        assert (
-            original_obj._data.training_data.data.path == "https://foo/bar/train.csv"
-        ), "Training data path not set correctly"
-        assert isinstance(original_obj._data.test_data.data, Input), "Training data is not Input"
-        assert original_obj._data.test_data.data.type == AssetTypes.MLTABLE, "Test data type not set correctly"
-        assert original_obj._data.test_data.data.path == "https://foo/bar/test.csv", "Test data path not set correctly"
+        assert original_obj.training_data.path == "https://foo/bar/train.csv", "Training data path not set correctly"
+        assert isinstance(original_obj.test_data, Input), "Training data is not Input"
+        assert original_obj.test_data.type == AssetTypes.MLTABLE, "Test data type not set correctly"
+        assert original_obj.test_data.path == "https://foo/bar/test.csv", "Test data path not set correctly"
         assert original_obj.training.allowed_training_algorithms == [
             RegressionModels.RANDOM_FOREST,
             RegressionModels.LIGHT_GBM,

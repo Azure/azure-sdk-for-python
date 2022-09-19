@@ -29,7 +29,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
 
 from ._cosmos_client_connection_async import CosmosClientConnection
-from .._base import build_options as _build_options, validate_cache_staleness_value
+from .._base import build_options as _build_options, validate_cache_staleness_value, _deserialize_throughput
 from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes
 from ..offer import ThroughputProperties
@@ -218,7 +218,6 @@ class ContainerProxy(object):
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
-        **Provisional** keyword argument max_integrated_cache_staleness_in_ms
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
@@ -265,7 +264,6 @@ class ContainerProxy(object):
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
-        **Provisional** keyword argument max_integrated_cache_staleness_in_ms
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
@@ -321,7 +319,6 @@ class ContainerProxy(object):
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
-        **Provisional** keyword argument max_integrated_cache_staleness_in_ms
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
@@ -597,8 +594,7 @@ class ContainerProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, throughput_properties)
 
-        return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
-                                    properties=throughput_properties[0])
+        return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace_async
     async def replace_throughput(self, throughput: int, **kwargs: Any) -> ThroughputProperties:

@@ -1,5 +1,21 @@
 # Release History
 
+## 20.3.0 (2022-08-26)
+
+### Features Added
+
+  - Added operation AgentPoolsOperations.abort_latest_operation
+  - Added operation ManagedClustersOperations.abort_latest_operation
+  - Model ManagedCluster has a new parameter azure_monitor_profile
+  - Model ManagedClusterSecurityProfile has a new parameter image_cleaner
+  - Model ManagedClusterWorkloadAutoScalerProfile has a new parameter vertical_pod_autoscaler
+
+## 20.2.0 (2022-07-25)
+
+**Features**
+
+  - Add a new api-version `2022-06-01`
+
 ## 20.1.0 (2022-07-21)
 
 **Features**

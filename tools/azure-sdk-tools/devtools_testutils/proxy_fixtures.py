@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from inspect import iscoroutinefunction
 import logging
+import os
 from typing import TYPE_CHECKING
 import urllib.parse as url_parse
 
@@ -16,64 +17,63 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 # the functions we patch
 from azure.core.pipeline.transport import RequestsTransport
 
-from .helpers import get_test_id, is_live_and_not_recording
+from .helpers import get_test_id, is_live, is_live_and_not_recording
 from .proxy_testcase import start_record_or_playback, stop_record_or_playback, transform_request
 from .proxy_startup import test_proxy
+from .sanitizers import add_general_string_sanitizer
 
 if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Optional, Tuple
     from pytest import FixtureRequest
 
 
-@pytest.fixture
-async def recorded_test(test_proxy: None, request: "FixtureRequest") -> "Dict[str, Any]":
-    """Fixture that redirects network requests to target the azure-sdk-tools test proxy.
-
-    Use with recorded tests. For more details and usage examples, refer to
-    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md.
-
-    :param test_proxy: The fixture responsible for starting up the test proxy server.
-    :type test_proxy: None
-    :param request: The built-in `request` fixture.
-    :type request: ~pytest.FixtureRequest
-
-    :yields: A dictionary containing information relevant to the currently executing test.
-    """
-
-    test_id, recording_id, variables = start_proxy_session()
-
-    # True if the function requesting the fixture is an async test
-    if iscoroutinefunction(request._pyfuncitem.function):
-        original_transport_func = await redirect_async_traffic(recording_id)
-        yield {"variables": variables}  # yield relevant test info and allow tests to run
-        restore_async_traffic(original_transport_func, request)
-    else:
-        original_transport_func = redirect_traffic(recording_id)
-        yield {"variables": variables}  # yield relevant test info and allow tests to run
-        restore_traffic(original_transport_func, request)
-
-    stop_record_or_playback(test_id, recording_id, variables)
+_LOGGER = logging.getLogger()
 
 
-@pytest.fixture
-def variable_recorder(recorded_test: "Dict[str, Any]") -> "Dict[str, str]":
-    """Fixture that invokes the `recorded_test` fixture and returns a dictionary of recorded test variables.
+class EnvironmentVariableSanitizer:
+    def __init__(self) -> None:
+        self._fake_values = {}
 
-    :param recorded_test: The fixture responsible for redirecting network traffic to target the test proxy.
-        This should return a dictionary containing information about the current test -- in particular, the variables
-        that were recorded with the test.
-    :type recorded_test: Dict[str, Any]
+    def sanitize(self, variable: str, value: str) -> str:
+        """Registers a sanitizer that replaces the value of the specified environment variable with the provided value.
 
-    :returns: A dictionary that maps test variables to string values. If no variable dictionary was stored when the test
-        was recorded, this returns an empty dictionary.
-    """
-    return VariableRecorder(recorded_test["variables"])
+        :param str variable: Name of the environment variable to sanitize.
+        :param str value: Value to sanitize the environment variable's value with.
+
+        :returns: The real value of `variable` in live mode, or the sanitized value in playback.
+        """
+        self._fake_values[variable] = value
+        real_value = os.getenv(variable)
+        if real_value:
+            add_general_string_sanitizer(target=real_value, value=value)
+        else:
+            _LOGGER.info(f"No value for {variable} was found, so a sanitizer could not be registered for the variable.")
+
+        return real_value if is_live() else value
+
+    def sanitize_batch(self, variables: "Dict[str, str]") -> "Dict[str, str]":
+        """Registers sanitizers that replace the values of multiple environment variables with the provided values.
+
+        :param variables: A dictionary mapping environment variable names to values they should be sanitized with.
+            For example: {"SERICE_CLIENT_ID": "fake_client_id", "SERVICE_ENDPOINT": "https://fake-endpoint.azure.net"}
+
+        :returns: A dictionary mapping environment variables to their real values in live mode, or their sanitized
+            values in playback.
+        """
+        current_values = {variable: self.sanitize(variable, variables[variable]) for variable in variables}
+        return current_values
+
+    def get(self, variable: str) -> str:
+        """Returns the value of the specified environment variable in live mode, or the sanitized value in playback.
+
+        :param str variable: Name of the environment variable to fetch the value of.
+
+        :returns: The real value of `variable` in live mode, or the sanitized value in playback.
+        """
+        return os.getenv(variable) if is_live() else self._fake_values.get(variable)
 
 
-# ----------HELPERS----------
-
-
-class VariableRecorder():
+class VariableRecorder:
     def __init__(self, variables: "Dict[str, str]") -> None:
         self.variables = variables
 
@@ -94,16 +94,87 @@ class VariableRecorder():
         return self.variables.setdefault(variable, default)
 
 
-def start_proxy_session() -> "Optional[Tuple[str, str, Dict[str, str]]]":
+@pytest.fixture(scope="session")
+def environment_variables(test_proxy: None) -> EnvironmentVariableSanitizer:
+    """Fixture that returns an EnvironmentVariableSanitizer for convenient environment variable fetching and sanitizing.
+
+    This fixture is session-scoped, so a single instance of EnvironmentVariableSanitizer is shared across all
+    tests using this fixture in the test session.
+
+    :param test_proxy: The fixture responsible for starting up the test proxy server.
+    :type test_proxy: None
+
+    :returns: An EnvironmentVariableSanitizer object. Calling:
+        - `sanitize(a, b)` will sanitize the value of environment variable `a` with value `b`
+        - `sanitize_batch(dict)` will sanitize the values of all variables in dictionary `dict`
+        - `get(a)` will return the value of environment variable `a` in the current context (live or playback mode)
+        See the definition of EnvironmentVariableSanitizer in
+        https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/proxy_fixtures.py
+        for more details.
+    """
+    return EnvironmentVariableSanitizer()
+
+
+@pytest.fixture
+async def recorded_test(test_proxy: None, request: "FixtureRequest") -> "Optional[Dict[str, Any]]":
+    """Fixture that redirects network requests to target the azure-sdk-tools test proxy.
+
+    Use with recorded tests. For more details and usage examples, refer to
+    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md.
+
+    :param test_proxy: The fixture responsible for starting up the test proxy server.
+    :type test_proxy: None
+    :param request: The built-in `request` fixture.
+    :type request: ~pytest.FixtureRequest
+
+    :yields: A dictionary containing information relevant to the currently executing test.
+        If the current test session is live but recording is disabled, yields None.
+    """
+    if is_live_and_not_recording():
+        yield
+    else:
+        test_id, recording_id, variables = start_proxy_session()
+
+        # True if the function requesting the fixture is an async test
+        if iscoroutinefunction(request._pyfuncitem.function):
+            original_transport_func = await redirect_async_traffic(recording_id)
+            yield {"variables": variables}  # yield relevant test info and allow tests to run
+            restore_async_traffic(original_transport_func, request)
+        else:
+            original_transport_func = redirect_traffic(recording_id)
+            yield {"variables": variables}  # yield relevant test info and allow tests to run
+            restore_traffic(original_transport_func, request)
+
+        stop_record_or_playback(test_id, recording_id, variables)
+
+
+@pytest.fixture
+def variable_recorder(recorded_test: "Dict[str, Any]") -> VariableRecorder:
+    """Fixture that invokes the `recorded_test` fixture and returns a dictionary of recorded test variables.
+
+    :param recorded_test: The fixture responsible for redirecting network traffic to target the test proxy.
+        This should return a dictionary containing information about the current test -- in particular, the variables
+        that were recorded with the test.
+    :type recorded_test: Dict[str, Any]
+
+    :returns: A VariableRecorder object. Calling `get_or_record(a, b)` on this object will return the recorded value of
+        `a` in playback mode, or record the value `b` in recording mode. See the definition of VariableRecorder in
+        https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/proxy_fixtures.py
+        for more details.
+    """
+    return VariableRecorder(recorded_test["variables"])
+
+
+# ----------HELPERS----------
+
+
+def start_proxy_session() -> "Tuple[str, str, Dict[str, str]]":
     """Begins a playback or recording session and returns the current test ID, recording ID, and recorded variables.
 
     :returns: A tuple, (a, b, c), where a is the test ID, b is the recording ID, and c is the `variables` dictionary
         that maps test variables to string values. If no variable dictionary was stored when the test was recorded, c is
-        an empty dictionary. If the current test session is live but recording is disabled, this returns None.
+        an empty dictionary.
     """
-    if is_live_and_not_recording():
-        return
-
     test_id = get_test_id()
     recording_id, variables = start_record_or_playback(test_id)
     return (test_id, recording_id, variables)
@@ -205,8 +276,7 @@ def restore_async_traffic(original_transport_func: "Callable", request: "Fixture
         if isinstance(error, ResourceNotFoundError):
             error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
             message = error_body.get("message") or error_body.get("Message")
-            logger = logging.getLogger()
-            logger.error(f"\n\n-----Test proxy playback error:-----\n\n{message}")
+            _LOGGER.error(f"\n\n-----Test proxy playback error:-----\n\n{message}")
 
 
 def restore_traffic(original_transport_func: "Callable", request: "FixtureRequest") -> None:
@@ -229,5 +299,4 @@ def restore_traffic(original_transport_func: "Callable", request: "FixtureReques
         if isinstance(error, ResourceNotFoundError):
             error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
             message = error_body.get("message") or error_body.get("Message")
-            logger = logging.getLogger()
-            logger.error(f"\n\n-----Test proxy playback error:-----\n\n{message}")
+            _LOGGER.error(f"\n\n-----Test proxy playback error:-----\n\n{message}")

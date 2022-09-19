@@ -1,27 +1,41 @@
 import asyncio
 import hashlib
 import os
+from typing import Dict, List, Union
+from urllib.parse import urlparse
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import (
+    PemCertificate,
+    create_combined_bundle,
+    is_live,
+    is_live_and_not_recording,
+    recorded_by_proxy,
+    set_function_recording_options,
+)
 
 from azure.confidentialledger.aio import ConfidentialLedgerClient
 from azure.confidentialledger import ConfidentialLedgerCertificateCredential
 
-from _shared.constants import USER_CERTIFICATE_THUMBPRINT
+from _shared.constants import (
+    TEST_PROXY_CERT,
+    USER_CERTIFICATE_THUMBPRINT,
+    USER_CERTIFICATE_PRIVATE_KEY,
+    USER_CERTIFICATE_PUBLIC_KEY,
+)
 from _shared.testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestCase
 
 
-class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
+class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     async def create_confidentialledger_client(
-        self, endpoint, ledger_id, is_aad, fetch_tls_cert=True
+        self, endpoint, ledger_id, is_aad,
     ):
-        if fetch_tls_cert:  # If True, explicitly fetch the ledger TLS certificate.
-            self.set_ledger_identity(ledger_id)
-        else:
-            # Remove the file so the client sees it doesn't exist and creates it.
-            os.remove(self.network_certificate_path)
+        # Always explicitly fetch the TLS certificate.
+        network_cert = await self.set_ledger_identity_async(ledger_id)
 
         # The ACL instance should already have the potential AAD user added as an Administrator.
         credential = self.get_credential(ConfidentialLedgerClient, is_async=True)
-        client = self.create_client_from_credential(
+        aad_based_client = self.create_client_from_credential(
             ConfidentialLedgerClient,
             credential=credential,
             endpoint=endpoint,
@@ -29,32 +43,74 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
 
+        certificate_credential = ConfidentialLedgerCertificateCredential(
+            certificate_path=self.user_certificate_path
+        )
+        certificate_based_client = ConfidentialLedgerClient(
+            credential=certificate_credential,
+            endpoint=endpoint,
+            # self.network_certificate_path is set via self.set_ledger_identity
+            ledger_certificate_path=self.network_certificate_path,  # type: ignore
+        )
+
+        # The Confidential Ledger always presents a self-signed certificate, so add that certificate
+        # to the recording options for the Confidential Ledger endpoint.
+        function_recording_options: Dict[str, Union[str, List[PemCertificate]]] = {
+            "tls_certificate": network_cert,
+            "tls_certificate_host": urlparse(endpoint).netloc,
+        }
+        if is_live():
+            set_function_recording_options(**function_recording_options)
+
+        if not is_live_and_not_recording():
+            # For live, non-recorded tests, we want to test normal client behavior so the only
+            # certificate used for TLS verification is the Confidential Ledger identity certificate.
+            #
+            # However, in this case outbound connections are to the proxy, so the certificate used
+            # for verifying the TLS connection should actually be the test proxy's certificate.
+            # With that in mind, we'll update the file at self.network_certificate_path to be a
+            # certificate bundle including both the ledger's TLS certificate (though technically
+            # unnecessary I think) and the test-proxy certificate. This way the client setup (i.e.
+            # the logic for overriding the default certificate verification) is still tested when
+            # the test-proxy is involved.
+            #
+            # Note the combined bundle should be created *after* any os.remove calls so we don't 
+            # interfere with auto-magic certificate retrieval tests.
+            create_combined_bundle(
+                [self.network_certificate_path, TEST_PROXY_CERT],
+                self.network_certificate_path
+            )
+
         if not is_aad:
-            # Add the certificate-based user.
+            # We need to add the certificate-based user as an Administrator.
             try:
-                await client.create_or_update_user(
+                await aad_based_client.create_or_update_user(
                     USER_CERTIFICATE_THUMBPRINT, {"assignedRole": "Administrator"}
                 )
             finally:
-                await client.close()
+                await aad_based_client.close()
 
             # Sleep to make sure all replicas know the user is added.
             await asyncio.sleep(3)
 
-            credential = ConfidentialLedgerCertificateCredential(
-                certificate_path=self.user_certificate_path
-            )
-            client = ConfidentialLedgerClient(
-                credential=credential,
-                endpoint=endpoint,
-                # self.network_certificate_path is set via self.set_ledger_identity
-                ledger_certificate_path=self.network_certificate_path,  # type: ignore
-            )
+            # Update the options to account for certificate-based authentication.
+            function_recording_options["certificates"] = [
+                PemCertificate(key=USER_CERTIFICATE_PRIVATE_KEY, data=USER_CERTIFICATE_PUBLIC_KEY)
+            ]
+            if is_live():
+                set_function_recording_options(**function_recording_options)
+
+            client = certificate_based_client
+        else:
+            client = aad_based_client
 
         return client
 
     @ConfidentialLedgerPreparer()
-    async def test_append_entry_flow_aad_user(self, confidentialledger_endpoint, confidentialledger_id):
+    @recorded_by_proxy_async
+    async def test_append_entry_flow_aad_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
@@ -64,7 +120,10 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             await client.close()
 
     @ConfidentialLedgerPreparer()
-    async def test_append_entry_flow_cert_user(self, confidentialledger_endpoint, confidentialledger_id):
+    @recorded_by_proxy_async
+    async def test_append_entry_flow_cert_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=False
         )
@@ -131,9 +190,12 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         assert original_entry["entry"]["collectionId"] == append_result_sub_ledger_id
 
     @ConfidentialLedgerPreparer()
+    @recorded_by_proxy_async
     async def test_append_entry_flow_with_collection_id_aad_user(
-        self, confidentialledger_endpoint, confidentialledger_id
+        self, **kwargs,
     ):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
@@ -143,9 +205,12 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             await client.close()
 
     @ConfidentialLedgerPreparer()
+    @recorded_by_proxy_async
     async def test_append_entry_flow_with_collection_id_cert_user(
-        self, confidentialledger_endpoint, confidentialledger_id
+        self, **kwargs,
     ):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=False
         )
@@ -228,7 +293,10 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         assert collection_id in collection_ids
 
     @ConfidentialLedgerPreparer()
-    async def test_range_query_aad_user(self, confidentialledger_endpoint, confidentialledger_id):
+    @recorded_by_proxy_async
+    async def test_range_query_aad_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
@@ -238,7 +306,10 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             await client.close()
 
     @ConfidentialLedgerPreparer()
-    async def test_range_query_cert_user(self, confidentialledger_endpoint, confidentialledger_id):
+    @recorded_by_proxy_async
+    async def test_range_query_cert_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=False
         )
@@ -301,7 +372,10 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         assert num_matched == num_messages_sent
 
     @ConfidentialLedgerPreparer()
-    async def test_user_management_aad_user(self, confidentialledger_endpoint, confidentialledger_id):
+    @recorded_by_proxy_async
+    async def test_user_management_aad_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
@@ -311,7 +385,10 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             await client.close()
 
     @ConfidentialLedgerPreparer()
-    async def test_user_management_cert_user(self, confidentialledger_endpoint, confidentialledger_id):
+    @recorded_by_proxy_async
+    async def test_user_management_cert_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=False
         )
@@ -354,7 +431,10 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             await client.delete_user(user_id)
 
     @ConfidentialLedgerPreparer()
-    async def test_verification_methods_aad_user(self, confidentialledger_endpoint, confidentialledger_id):
+    @recorded_by_proxy_async
+    async def test_verification_methods_aad_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
@@ -364,7 +444,10 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             await client.close()
 
     @ConfidentialLedgerPreparer()
-    async def test_verification_methods_cert_user(self, confidentialledger_endpoint, confidentialledger_id):
+    @recorded_by_proxy_async
+    async def test_verification_methods_cert_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=False
         )
@@ -401,26 +484,52 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             assert quote["quoteVersion"]
 
     @ConfidentialLedgerPreparer()
-    async def test_tls_cert_convenience_aad_user(self, confidentialledger_endpoint, confidentialledger_id):
-        client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True, fetch_tls_cert=False,
+    @recorded_by_proxy
+    # The async client makes a non-async call in __init__ to fetch the certificate (can't use await
+    # in __init__), so we'll have to record using the non-async recorder. If the async recorder is
+    # used, non-async calls are not recorded.
+    def test_tls_cert_convenience_aad_user(self, **kwargs):
+        os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
+
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+
+        # Create the client directly instead of going through the create_confidentialledger_client
+        # as we don't need any additional setup.
+        credential = self.get_credential(ConfidentialLedgerClient, is_async=True)
+        client = self.create_client_from_credential(
+            ConfidentialLedgerClient,
+            credential=credential,
+            endpoint=confidentialledger_endpoint,
+            ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
-        try:
-            await self.tls_cert_convenience_actions(client)
-        finally:
-            await client.close()
+        self.tls_cert_convenience_actions(client)
 
     @ConfidentialLedgerPreparer()
-    async def test_tls_cert_convenience_cert_user(self, confidentialledger_endpoint, confidentialledger_id):
-        client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False, fetch_tls_cert=False,
-        )
-        try:
-            await self.tls_cert_convenience_actions(client)
-        finally:
-            await client.close()
+    @recorded_by_proxy
+    # The async client makes a non-async call in __init__ to fetch the certificate (can't use await
+    # in __init__), so we'll have to record using the non-async recorder. If the async recorder is
+    # used, non-async calls are not recorded.
+    def test_tls_cert_convenience_cert_user(self, **kwargs):
+        os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
 
-    async def tls_cert_convenience_actions(self, client):
-        # It's sufficient to use any arbitrary endpoint to test the TLS connection.
-        constitution = await client.get_constitution()
-        assert constitution["script"]
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+
+        # Create the client directly instead of going through the create_confidentialledger_client
+        # as we don't need any additional setup.
+        certificate_credential = ConfidentialLedgerCertificateCredential(
+            certificate_path=self.user_certificate_path
+        )
+        client = self.create_client_from_credential(
+            ConfidentialLedgerClient,
+            credential=certificate_credential,
+            endpoint=confidentialledger_endpoint,
+            ledger_certificate_path=self.network_certificate_path,  # type: ignore
+        )
+        self.tls_cert_convenience_actions(client)
+
+    def tls_cert_convenience_actions(self, _):
+        # Simply check that the certificate file is present and populated.
+        with open(self.network_certificate_path) as infile:
+            certificate = infile.read()
+
+        assert certificate

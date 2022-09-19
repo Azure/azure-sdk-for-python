@@ -2,20 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Dict, Union, Optional
+from typing import Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    LogVerbosity,
-    NlpVerticalDataSettings,
-    TrainingDataSettings,
-    NlpVerticalValidationDataSettings,
-)
+from azure.ai.ml._restclient.v2022_06_01_preview.models import LogVerbosity
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
 from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import NlpFeaturizationSettings
 from azure.ai.ml.entities._job.automl.nlp.nlp_limit_settings import NlpLimitSettings
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class AutoMLNLPJob(AutoMLVertical, ABC):
@@ -32,27 +27,22 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         featurization: Optional[NlpFeaturizationSettings] = None,
         **kwargs,
     ):
-        super().__init__(task_type, **kwargs)
+        super().__init__(task_type, training_data=training_data, validation_data=validation_data, **kwargs)
         self.log_verbosity = log_verbosity
         self.primary_metric = primary_metric
 
         self.target_column_name = target_column_name
-        self.training_data = training_data
-        self.validation_data = validation_data
 
-        self._data = None
         self._limits = limits
         self._featurization = featurization
-
-        self.set_data(
-            target_column_name=target_column_name,
-            training_data=training_data,
-            validation_data=validation_data,
-        )
 
     @property
     def primary_metric(self):
         return self._primary_metric
+
+    @primary_metric.setter
+    def primary_metric(self, value):
+        self._primary_metric = value
 
     @property
     def log_verbosity(self) -> LogVerbosity:
@@ -106,12 +96,6 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         self.training_data = training_data
         self.validation_data = validation_data
 
-        self._data = NlpVerticalDataSettings(
-            target_column_name=self.target_column_name,
-            training_data=TrainingDataSettings(data=training_data),
-            validation_data=NlpVerticalValidationDataSettings(data=validation_data),
-        )
-
     def set_limits(self, *, max_concurrent_trials: Optional[int] = 1, timeout_minutes: int = None) -> None:
         self._limits = NlpLimitSettings(
             max_concurrent_trials=max_concurrent_trials,
@@ -124,19 +108,16 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         )
 
     def _restore_data_inputs(self):
-        """
-        Restore MLTableJobInputs to Inputs within data_settings.
+        """Restore MLTableJobInputs to Inputs within data_settings.
 
-        self.training_data and self.validation_data should reflect what user passed in (Input)
-        Once we get response back from service (as MLTableJobInput), we should set responsible ones back to Input
+        self.training_data and self.validation_data should reflect what
+        user passed in (Input) Once we get response back from service
+        (as MLTableJobInput), we should set responsible ones back to
+        Input
         """
         super()._restore_data_inputs()
-        self.training_data = (
-            self._data.training_data.data if self._data.training_data and self._data.training_data.data else None
-        )
-        self.validation_data = (
-            self._data.validation_data.data if self._data.validation_data and self._data.validation_data.data else None
-        )
+        self.training_data = self.training_data if self.training_data else None
+        self.validation_data = self.validation_data if self.validation_data else None
 
     def __eq__(self, other):
         if not isinstance(other, AutoMLNLPJob):
@@ -145,7 +126,8 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         return (
             self.primary_metric == other.primary_metric
             and self.log_verbosity == other.log_verbosity
-            and self._data == other._data
+            and self.training_data == other.training_data
+            and self.validation_data == other.validation_data
             and self._featurization == other._featurization
             and self._limits == other._limits
         )

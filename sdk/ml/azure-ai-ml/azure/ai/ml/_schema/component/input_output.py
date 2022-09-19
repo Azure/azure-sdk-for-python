@@ -1,71 +1,72 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from marshmallow import fields, validate, pre_load
 
-from azure.ai.ml._schema import PatchedSchemaMeta, UnionField
-from azure.ai.ml.constants import AssetTypes, LegacyAssetTypes
+# pylint: disable=unused-argument,no-self-use
+
+from marshmallow import fields
+
+from azure.ai.ml._schema.core.fields import DumpableEnumField, UnionField
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
+from azure.ai.ml.constants._common import AssetTypes, InputOutputModes, LegacyAssetTypes
+from azure.ai.ml.constants._component import ComponentParameterTypes
+
+# Here we use an adhoc way to collect all class constant attributes by checking if it's upper letter
+# because making those constants enum will fail in string serialization in marshmallow
+asset_type_obj = AssetTypes()
+SUPPORTED_PORT_TYPES = [LegacyAssetTypes.PATH] + [
+    getattr(asset_type_obj, k) for k in dir(asset_type_obj) if k.isupper()
+]
+param_obj = ComponentParameterTypes()
+SUPPORTED_PARAM_TYPES = [getattr(param_obj, k) for k in dir(param_obj) if k.isupper()]
+
+input_output_type_obj = InputOutputModes()
+# Link mode is only supported in component level currently
+SUPPORTED_INPUT_OUTPUT_MODES = [
+    getattr(input_output_type_obj, k) for k in dir(input_output_type_obj) if k.isupper()
+] + ["link"]
 
 
 class InputPortSchema(metaclass=PatchedSchemaMeta):
-    type = fields.Str(
-        validate=validate.OneOf(
-            [
-                LegacyAssetTypes.PATH,
-                AssetTypes.URI_FILE,
-                AssetTypes.URI_FOLDER,
-                AssetTypes.CUSTOM_MODEL,
-                AssetTypes.MLFLOW_MODEL,
-                AssetTypes.MLTABLE,
-                AssetTypes.TRITON_MODEL,
-            ]
-        ),
+    type = DumpableEnumField(
+        allowed_values=SUPPORTED_PORT_TYPES,
         required=True,
-        data_key="type",
     )
     description = fields.Str()
     optional = fields.Bool()
     default = fields.Str()
-
-    @pre_load
-    def trim_input(self, data, **kwargs):
-        if isinstance(data, dict):
-            if "mode" in data:
-                data.pop("mode")
-        return data
+    mode = DumpableEnumField(
+        allowed_values=SUPPORTED_INPUT_OUTPUT_MODES,
+    )
 
 
 class OutputPortSchema(metaclass=PatchedSchemaMeta):
-    type = fields.Str(
-        validate=validate.OneOf(
-            [
-                LegacyAssetTypes.PATH,
-                AssetTypes.URI_FILE,
-                AssetTypes.URI_FOLDER,
-                AssetTypes.CUSTOM_MODEL,
-                AssetTypes.MLFLOW_MODEL,
-                AssetTypes.MLTABLE,
-                AssetTypes.TRITON_MODEL,
-            ]
-        ),
+    type = DumpableEnumField(
+        allowed_values=SUPPORTED_PORT_TYPES,
         required=True,
-        data_key="type",
     )
     description = fields.Str()
+    mode = DumpableEnumField(
+        allowed_values=SUPPORTED_INPUT_OUTPUT_MODES,
+    )
 
-    @pre_load
-    def trim_output(self, data, **kwargs):
-        if isinstance(data, dict):
-            if "mode" in data:
-                data.pop("mode")
-        return data
+
+class PrimitiveOutputSchema(metaclass=PatchedSchemaMeta):
+    type = DumpableEnumField(
+        allowed_values=SUPPORTED_PARAM_TYPES,
+        required=True,
+    )
+    description = fields.Str()
+    is_control = fields.Bool()
+    mode = DumpableEnumField(
+        allowed_values=SUPPORTED_INPUT_OUTPUT_MODES,
+    )
 
 
 class ParameterSchema(metaclass=PatchedSchemaMeta):
-    type = fields.Str(
-        validate=validate.OneOf(["number", "integer", "boolean", "string", "object"]),
+    type = DumpableEnumField(
+        allowed_values=SUPPORTED_PARAM_TYPES,
         required=True,
-        data_key="type",
     )
     optional = fields.Bool()
     default = UnionField([fields.Str(), fields.Number(), fields.Bool()])

@@ -46,7 +46,7 @@ setup(
     url='https://github.com/Azure/azure-sdk-for-python',
     keywords="azure, form recognizer, cognitive services, document analyzer, document analysis, applied ai",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
@@ -68,5 +68,6 @@ setup(
         "azure-core<2.0.0,>=1.23.0",
         "msrest>=0.6.21",
         'azure-common~=1.1',
+        "typing-extensions>=4.0.1",
     ]
 )

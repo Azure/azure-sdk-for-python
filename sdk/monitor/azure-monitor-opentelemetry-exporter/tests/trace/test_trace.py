@@ -19,6 +19,7 @@ from opentelemetry.trace.status import Status, StatusCode
 from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import (
     AzureMonitorTraceExporter,
+    _check_instrumentation_span,
     _get_trace_export_result,
 )
 from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
@@ -41,6 +42,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         os.environ[
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
+        os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         cls._exporter = AzureMonitorTraceExporter()
 
     @classmethod
@@ -307,6 +309,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.target, "www.wikipedia.org")
 
         # url
+        # spell-checker:ignore ddds
         span._attributes = {
             "http.method": "GET",
             "http.scheme": "https",
@@ -644,6 +647,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.target, "messaging")
 
         # azure specific
+        # spell-checker:ignore myeventhub
         span._attributes = {
             "az.namespace": "Microsoft.EventHub",
             "peer.address": "Test_peer",
@@ -1054,7 +1058,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             ),
             parent=SpanContext(
                 trace_id=36873507687745823477771305566750195432,
-                span_id=12030755672171557337,
+                span_id=12030755672171557338,
                 is_remote=False,
             ),
             kind=SpanKind.CLIENT,
@@ -1108,7 +1112,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             ),
             parent=SpanContext(
                 trace_id=36873507687745823477771305566750195432,
-                span_id=12030755672171557337,
+                span_id=12030755672171557338,
                 is_remote=False,
             ),
             kind=SpanKind.CLIENT,
@@ -1159,3 +1163,21 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
             SpanExportResult.FAILURE,
         )
         self.assertEqual(_get_trace_export_result(None), None)
+
+    def test_check_instrumentation_span(self):
+        span = mock.Mock()
+        span.instrumentation_scope.name = "opentelemetry.instrumentation.test"
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
+            _check_instrumentation_span(span)
+            add.assert_called_once_with("test")
+
+    def test_check_instrumentation_span_not_instrumentation(self):
+        span = mock.Mock()
+        span.instrumentation_scope.name = "__main__"
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
+            _check_instrumentation_span(span)
+            add.assert_not_called()

@@ -9,7 +9,7 @@ import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient, DocumentModelAdministrationClient, AnalyzeResult
-from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2022_08_31.models import AnalyzeResultOperation
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
@@ -41,7 +41,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
-        poller = client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url, "template")
+        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_selection_mark_storage_container_sas_url)
         model = poller.result()
 
         responses = []
@@ -83,7 +83,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
-        build_poller = client.begin_build_model(formrecognizer_table_variable_rows_container_sas_url, "template")
+        build_poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_table_variable_rows_container_sas_url)
         model = build_poller.result()
 
         responses = []
@@ -124,7 +124,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
-        build_poller = client.begin_build_model(formrecognizer_table_fixed_rows_container_sas_url, "template")
+        build_poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_table_fixed_rows_container_sas_url)
         model = build_poller.result()
 
         responses = []

@@ -40,7 +40,7 @@ def test_override_content_length_header():
     assert request.headers["Content-Length"] == "0"
 
 @pytest.mark.asyncio
-async def test_aiterbale_content(assert_aiterator_body):
+async def test_aiterable_content(assert_aiterator_body): # cspell:disable-line
     class Content:
         async def __aiter__(self):
             yield b"test 123"

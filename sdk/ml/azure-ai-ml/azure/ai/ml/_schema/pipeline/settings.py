@@ -2,18 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields, post_dump, post_load, INCLUDE
-from marshmallow import Schema
-from azure.ai.ml.constants import AzureMLResourceType
-from azure.ai.ml._schema import (
-    AnonymousCodeAssetSchema,
-    ArmStr,
-    ArmVersionedStr,
-    NestedField,
-    PatchedSchemaMeta,
-    UnionField,
-)
-from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema
+# pylint: disable=unused-argument,no-self-use
+
+from marshmallow import INCLUDE, Schema, fields, post_dump, post_load
+
+from azure.ai.ml._schema.core.fields import ArmStr
+from azure.ai.ml._schema.pipeline.pipeline_component import NodeNameStr
+from azure.ai.ml.constants._common import AzureMLResourceType
 
 
 class PipelineJobSettingsSchema(Schema):
@@ -24,6 +19,8 @@ class PipelineJobSettingsSchema(Schema):
     default_compute = ArmStr(azureml_type=AzureMLResourceType.COMPUTE)
     continue_on_step_failure = fields.Bool()
     force_rerun = fields.Bool()
+    on_init = NodeNameStr()
+    on_finalize = NodeNameStr()
 
     @post_load
     def make(self, data, **kwargs) -> "PipelineJobSettings":

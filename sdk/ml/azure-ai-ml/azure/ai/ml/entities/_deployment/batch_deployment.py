@@ -2,42 +2,36 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import logging
-import collections.abc
+from os import PathLike
+from pathlib import Path
 from typing import Any, Dict, Union
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    BatchDeploymentDetails as RestBatchDeployment,
-    BatchDeploymentData,
-    CodeConfiguration as RestCodeConfiguration,
-    IdAssetReference,
-    BatchOutputAction,
-)
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    BatchDeploymentOutputAction,
-)
-from os import PathLike
-from azure.ai.ml._utils.utils import load_yaml
-from pathlib import Path
-from azure.ai.ml.entities._util import load_from_dict
-
-from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
-from .deployment import Deployment
-from .code_configuration import CodeConfiguration
-from azure.ai.ml.entities._assets import Model, Environment
-from azure.ai.ml.entities import ResourceConfiguration
+from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentData
+from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentDetails as RestBatchDeployment
+from azure.ai.ml._restclient.v2022_05_01.models import BatchOutputAction
+from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
+from azure.ai.ml._restclient.v2022_05_01.models import IdAssetReference
 from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
+from azure.ai.ml.entities._assets import Environment, Model
+from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
+from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from .code_configuration import CodeConfiguration
+from .deployment import Deployment
 
 module_logger = logging.getLogger(__name__)
 
 
 class BatchDeployment(Deployment):
-    """Batch endpoint deployment entity
+    """Batch endpoint deployment entity.
 
     :param name: the name of the batch deployment
     :type name: str
@@ -57,7 +51,7 @@ class BatchDeployment(Deployment):
     :type compute: str
     :param output_action: Indicates how the output will be organized. Possible values include:
      "summary_only", "append_row". Defaults to "append_row"
-    :type output_action: str or ~azure.mgmt.machinelearningservices.models.BatchOutputAction
+    :type output_action: str or ~azure.ai.ml.constants._deployment.BatchDeploymentOutputAction
     :param output_file_name: Customized output file name for append_row output action, defaults to "predictions.csv"
     :type output_file_name: str
     :param max_concurrency_per_instance: Indicates maximum number of parallelism per instance, defaults to 1
@@ -85,7 +79,6 @@ class BatchDeployment(Deployment):
     :type scoring_script: Union[str, PathLike], optional
     :param instance_count: Number of instances the interfering will run on. Equivalent to resources.instance_count.
     :type instance_count: int, optional
-
     """
 
     def __init__(
@@ -102,7 +95,7 @@ class BatchDeployment(Deployment):
         compute: str = None,
         resources: ResourceConfiguration = None,
         output_file_name: str = None,
-        output_action: BatchOutputAction = None,
+        output_action: BatchDeploymentOutputAction = None,
         error_threshold: int = None,
         retry_settings: BatchRetrySettings = None,
         logging_level: str = None,
@@ -164,7 +157,7 @@ class BatchDeployment(Deployment):
         self.resources.instance_count = value
 
     def _to_dict(self) -> Dict:
-        return BatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return BatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
     @classmethod
     def _rest_output_action_to_yaml_output_action(cls, rest_output_action: str) -> str:
@@ -185,11 +178,12 @@ class BatchDeployment(Deployment):
 
         return output_switcher.get(yaml_output_action, yaml_output_action)
 
-    def _to_rest_object(self, location: str) -> BatchDeploymentData:
+    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # pylint: disable=arguments-differ
         self._validate()
         code_config = (
             RestCodeConfiguration(
-                code_id=self.code_configuration.code, scoring_script=self.code_configuration.scoring_script
+                code_id=self.code_configuration.code,
+                scoring_script=self.code_configuration.scoring_script,
             )
             if self.code_configuration
             else None
@@ -217,7 +211,7 @@ class BatchDeployment(Deployment):
         return BatchDeploymentData(location=location, properties=batch_deployment, tags=self.tags)
 
     @classmethod
-    def _from_rest_object(cls, deployment: BatchDeploymentData):
+    def _from_rest_object(cls, deployment: BatchDeploymentData):  # pylint: disable=arguments-renamed
 
         modelId = deployment.properties.model.asset_id if deployment.properties.model else None
         code_configuration = (
@@ -252,11 +246,12 @@ class BatchDeployment(Deployment):
     @classmethod
     def _load(
         cls,
-        data: dict,
+        data: Dict = None,
         yaml_path: Union[PathLike, str] = None,
         params_override: list = None,
         **kwargs,
     ) -> "BatchDeployment":
+        data = data or {}
         params_override = params_override or []
         cls._update_params(params_override)
 
@@ -269,7 +264,8 @@ class BatchDeployment(Deployment):
     def _validate(self) -> None:
         self._validate_output_action()
 
-    def _update_params(params_override) -> None:
+    @classmethod
+    def _update_params(cls, params_override) -> None:
         for param in params_override:
             endpoint_name = param.get("endpoint_name")
             if isinstance(endpoint_name, str):
@@ -281,7 +277,8 @@ class BatchDeployment(Deployment):
             and self.output_action == BatchDeploymentOutputAction.SUMMARY_ONLY
             and self.output_file_name
         ):
-            msg = f"When output_action is set to {BatchDeploymentOutputAction.SUMMARY_ONLY}, the output_file_name need not to be specified."
+            msg = "When output_action is set to {}, the output_file_name need not to be specified."
+            msg = msg.format(BatchDeploymentOutputAction.SUMMARY_ONLY)
             raise ValidationException(
                 message=msg,
                 target=ErrorTarget.BATCH_DEPLOYMENT,

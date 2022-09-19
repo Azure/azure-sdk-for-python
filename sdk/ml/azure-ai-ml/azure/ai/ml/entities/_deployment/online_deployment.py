@@ -2,48 +2,49 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from abc import abstractmethod
+# pylint: disable=protected-access,no-member,arguments-renamed,unidiomatic-typecheck
+
 import logging
-from typing import Any, Dict, Union, Optional
-
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    CodeConfiguration as RestCodeConfiguration,
-    OnlineDeploymentDetails as RestOnlineDeploymentDetails,
-    OnlineDeploymentData as RestOnlineDeploymentData,
-    KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
-    ManagedOnlineDeployment as RestManagedOnlineDeployment,
-    Sku as RestSku,
-    EndpointComputeType,
-)
-from azure.ai.ml._utils.utils import camel_to_snake, load_yaml
-from azure.ai.ml.entities import CodeConfiguration, Environment, Model
-from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.entities._deployment.deployment_settings import ProbeSettings, OnlineRequestSettings
-
-from azure.ai.ml.entities._deployment.scale_settings import (
-    OnlineScaleSettings,
-    TargetUtilizationScaleSettings,
-    DefaultScaleSettings,
-)
-from azure.ai.ml.entities._deployment.resource_requirements_settings import ResourceRequirementsSettings
-from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
-from azure.ai.ml.entities._endpoint._endpoint_helpers import validate_endpoint_or_deployment_name
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    ArmConstants,
-)
+from abc import abstractmethod
 from os import PathLike
 from pathlib import Path
-from azure.ai.ml.entities._util import load_from_dict
-from marshmallow.exceptions import ValidationError
+from typing import Any, Dict, Optional, Union
 
+from azure.ai.ml._restclient.v2022_02_01_preview.models import CodeConfiguration as RestCodeConfiguration
+from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointComputeType
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
+)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import ManagedOnlineDeployment as RestManagedOnlineDeployment
+from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineDeploymentData as RestOnlineDeploymentData
+from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineDeploymentDetails as RestOnlineDeploymentDetails
+from azure.ai.ml._restclient.v2022_02_01_preview.models import Sku as RestSku
 from azure.ai.ml._schema._deployment.online.online_deployment import (
     KubernetesOnlineDeploymentSchema,
     ManagedOnlineDeploymentSchema,
 )
+from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
+from azure.ai.ml._utils.utils import camel_to_snake, is_private_preview_enabled
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, TYPE, ArmConstants
+from azure.ai.ml.constants._endpoint import EndpointYamlFields
+from azure.ai.ml.entities._assets import Code
+from azure.ai.ml.entities._assets._artifacts.model import Model
+from azure.ai.ml.entities._assets.environment import Environment
+from azure.ai.ml.entities._deployment.code_configuration import CodeConfiguration
+from azure.ai.ml.entities._deployment.data_collector import DataCollector
+from azure.ai.ml.entities._deployment.deployment_settings import OnlineRequestSettings, ProbeSettings
+from azure.ai.ml.entities._deployment.resource_requirements_settings import ResourceRequirementsSettings
+from azure.ai.ml.entities._deployment.scale_settings import (
+    DefaultScaleSettings,
+    OnlineScaleSettings,
+    TargetUtilizationScaleSettings,
+)
+from azure.ai.ml.entities._endpoint._endpoint_helpers import validate_endpoint_or_deployment_name
+from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
+
+from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 from .deployment import Deployment
-from azure.ai.ml._ml_exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -85,7 +86,8 @@ class OnlineDeployment(Deployment):
     :type model_mount_path: str
     :param code_path: Equivalent to code_configuration.code, will be ignored if code_configuration is present.
     :type code_path: Union[str, PathLike], optional
-    :param scoring_script: Equivalent to code_configuration.code.scoring_script, will be ignored if code_configuration is present.
+    :param scoring_script: Equivalent to code_configuration.code.scoring_script
+        Will be ignored if code_configuration is present.
     :type scoring_script: Union[str, PathLike], optional
     """
 
@@ -141,7 +143,7 @@ class OnlineDeployment(Deployment):
 
     @property
     def provisioning_state(self) -> Optional[str]:
-        """Deployment provisioning state, readonly
+        """Deployment provisioning state, readonly.
 
         :return: Deployment provisioning state.
         :rtype: Optional[str]
@@ -149,7 +151,7 @@ class OnlineDeployment(Deployment):
         return self._provisioning_state
 
     def _generate_dependencies(self) -> Any:
-        """Convert dependencies into ARM id or REST wrapper"""
+        """Convert dependencies into ARM id or REST wrapper."""
         code = None
 
         if self.code_configuration:
@@ -174,25 +176,28 @@ class OnlineDeployment(Deployment):
     def _to_dict(self) -> Dict:
         pass
 
+    def _to_arm_resource_param(self, **kwargs):
+        pass
+
     @abstractmethod
     def _to_rest_object(self) -> RestOnlineDeploymentData:
         pass
 
     @classmethod
-    def _from_rest_object(self, deployment: RestOnlineDeploymentData) -> RestOnlineDeploymentDetails:
+    def _from_rest_object(cls, deployment: RestOnlineDeploymentData) -> RestOnlineDeploymentDetails:
 
         if deployment.properties.endpoint_compute_type == EndpointComputeType.KUBERNETES:
             return KubernetesOnlineDeployment._from_rest_object(deployment)
-        elif deployment.properties.endpoint_compute_type == EndpointComputeType.MANAGED:
+        if deployment.properties.endpoint_compute_type == EndpointComputeType.MANAGED:
             return ManagedOnlineDeployment._from_rest_object(deployment)
-        else:
-            msg = f"Unsupported online endpoint type {deployment.properties.type}."
-            raise DeploymentException(
-                message=msg,
-                target=ErrorTarget.ONLINE_DEPLOYMENT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.SYSTEM_ERROR,
-            )
+
+        msg = f"Unsupported online endpoint type {deployment.properties.type}."
+        raise DeploymentException(
+            message=msg,
+            target=ErrorTarget.ONLINE_DEPLOYMENT,
+            no_personal_data_message=msg,
+            error_category=ErrorCategory.SYSTEM_ERROR,
+        )
 
     def _get_arm_resource(self, **kwargs):
         resource = super(OnlineDeployment, self)._get_arm_resource(**kwargs)
@@ -254,13 +259,27 @@ class OnlineDeployment(Deployment):
             self.instance_type = other.instance_type or self.instance_type
 
     @classmethod
+    def _set_scale_settings(cls, data: dict):
+        if not hasattr(data, EndpointYamlFields.SCALE_SETTINGS):
+            return
+
+        scale_settings = data[EndpointYamlFields.SCALE_SETTINGS]
+        keyName = TYPE
+        if scale_settings and scale_settings[keyName] == "default":
+            scale_copy = scale_settings.copy()
+            for key in scale_copy:
+                if key != keyName:
+                    scale_settings.pop(key, None)
+
+    @classmethod
     def _load(
         cls,
-        data: dict,
+        data: Dict = None,
         yaml_path: Union[PathLike, str] = None,
         params_override: list = None,
         **kwargs,
     ) -> "OnlineDeployment":
+        data = data or {}
         params_override = params_override or []
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
@@ -276,7 +295,7 @@ class OnlineDeployment(Deployment):
 
 
 class KubernetesOnlineDeployment(OnlineDeployment):
-    """Kubernetes Online endpoint deployment entity
+    """Kubernetes Online endpoint deployment entity.
 
     :param name: Name of the resource.
     :type name: str
@@ -295,7 +314,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
     :param app_insights_enabled: defaults to False
     :type app_insights_enabled: bool, optional
     :param scale_settings: How the online deployment will scale.
-    :type scale_settings: OnlineScaleSettings, optional
+    :type scale_settings: Union[DefaultScaleSettings, TargetUtilizationScaleSettings], optional
     :param request_settings: defaults to RequestSettings()
     :type request_settings: OnlineRequestSettings, optional
     :param liveness_probe: Liveness probe settings.
@@ -328,7 +347,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         code_configuration: CodeConfiguration = None,
         environment: Union[str, "Environment"] = None,
         app_insights_enabled: bool = False,
-        scale_settings: OnlineScaleSettings = None,
+        scale_settings: Union[DefaultScaleSettings, TargetUtilizationScaleSettings] = None,
         request_settings: OnlineRequestSettings = None,
         liveness_probe: ProbeSettings = None,
         readiness_probe: ProbeSettings = None,
@@ -369,7 +388,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
     def _to_dict(self) -> Dict:
         return KubernetesOnlineDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
-    def _to_rest_object(self, location: str) -> RestOnlineDeploymentData:
+    def _to_rest_object(self, location: str) -> RestOnlineDeploymentData:  # pylint: disable=arguments-differ
         self._validate()
         code, environment, model = self._generate_dependencies()
 
@@ -394,7 +413,6 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         return RestOnlineDeploymentData(location=location, properties=properties, tags=self.tags, sku=sku)
 
     def _to_arm_resource_param(self, **kwargs):
-        from azure.ai.ml.constants import ArmConstants
 
         rest_object = self._to_rest_object(**kwargs)
         properties = rest_object.properties
@@ -422,7 +440,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         self._validate_name()
 
     @classmethod
-    def _from_rest_object(self, resource: RestOnlineDeploymentData) -> "KubernetesOnlineDeployment":
+    def _from_rest_object(cls, resource: RestOnlineDeploymentData) -> "KubernetesOnlineDeployment":
 
         deployment = resource.properties
 
@@ -461,7 +479,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
 
 
 class ManagedOnlineDeployment(OnlineDeployment):
-    """Managed Online endpoint deployment entity
+    """Managed Online endpoint deployment entity.
 
     :param name: Name of the resource.
     :type name: str
@@ -480,7 +498,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :param app_insights_enabled: defaults to False
     :type app_insights_enabled: bool, optional
     :param scale_settings: How the online deployment will scale.
-    :type scale_settings: OnlineScaleSettings, optional
+    :type scale_settings: Union[DefaultScaleSettings, TargetUtilizationScaleSettings], optional
     :param request_settings: defaults to RequestSettings()
     :type request_settings: OnlineRequestSettings, optional
     :param liveness_probe: Liveness probe settings.
@@ -493,6 +511,8 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :type instance_type: str
     :param instance_count: The instance count used for this deployment.
     :type instance_count: int
+    :param data_collector: Allows model data collector for deployment.
+    :type data_collector: DataCollector, optional
     :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.
     :type code_path: Union[str, PathLike], optional
     :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
@@ -511,13 +531,14 @@ class ManagedOnlineDeployment(OnlineDeployment):
         code_configuration: CodeConfiguration = None,
         environment: Union[str, "Environment"] = None,
         app_insights_enabled: bool = False,
-        scale_settings: OnlineScaleSettings = None,
+        scale_settings: Union[DefaultScaleSettings, TargetUtilizationScaleSettings] = None,
         request_settings: OnlineRequestSettings = None,
         liveness_probe: ProbeSettings = None,
         readiness_probe: ProbeSettings = None,
         environment_variables: Dict[str, str] = None,
         instance_type: str = None,
         instance_count: int = None,
+        data_collector: DataCollector = None,
         code_path: Union[str, PathLike] = None,  # promoted property from code_configuration.code
         scoring_script: Union[str, PathLike] = None,  # promoted property from code_configuration.scoring_script
         **kwargs,
@@ -550,15 +571,15 @@ class ManagedOnlineDeployment(OnlineDeployment):
             **kwargs,
         )
 
+        self.data_collector = data_collector
         self.readiness_probe = readiness_probe
 
     def _to_dict(self) -> Dict:
         return ManagedOnlineDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
-    def _to_rest_object(self, location: str) -> RestOnlineDeploymentData:
+    def _to_rest_object(self, location: str) -> RestOnlineDeploymentData:  # pylint: disable=arguments-differ
         self._validate()
         code, environment, model = self._generate_dependencies()
-
         properties = RestManagedOnlineDeployment(
             code_configuration=code,
             environment_id=environment,
@@ -573,7 +594,18 @@ class ManagedOnlineDeployment(OnlineDeployment):
             liveness_probe=self.liveness_probe._to_rest_object() if self.liveness_probe else None,
             instance_type=self.instance_type,
             readiness_probe=self.readiness_probe._to_rest_object() if self.readiness_probe else None,
+            data_collector=self.data_collector,
         )
+        # temporarily storing the data collector in the properties since it is no part of the contract
+        # will be removed once the contract is fixed to reflect data collector attribute
+        if is_private_preview_enabled():
+            if self.data_collector and self.data_collector.enabled:
+                non_flat_data = {}
+                non_flat_data["data_collector"] = self.data_collector._to_dict()
+                flat_data = flatten(non_flat_data, ".")
+                flat_data_keys = flat_data.keys()
+                for k in flat_data_keys:
+                    self.tags[k] = flat_data[k]
         # TODO: SKU name is defaulted to value "Default" since service side requires it.
         #  Should be removed once service side defaults it.
         sku = RestSku(name="Default", capacity=self.instance_count)
@@ -588,7 +620,6 @@ class ManagedOnlineDeployment(OnlineDeployment):
         return RestOnlineDeploymentData(location=location, properties=properties, tags=self.tags, sku=sku)
 
     def _to_arm_resource_param(self, **kwargs):
-        from azure.ai.ml.constants import ArmConstants
 
         rest_object = self._to_rest_object(**kwargs)
         properties = rest_object.properties
@@ -605,7 +636,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
         }
 
     @classmethod
-    def _from_rest_object(self, resource: RestOnlineDeploymentData) -> "ManagedOnlineDeployment":
+    def _from_rest_object(cls, resource: RestOnlineDeploymentData) -> "ManagedOnlineDeployment":
 
         deployment = resource.properties
 
@@ -639,7 +670,21 @@ class ManagedOnlineDeployment(OnlineDeployment):
             private_network_connection=deployment.private_network_connection,
             egress_public_network_access=deployment.egress_public_network_access,
         )
-
+        # Data collector is private preview. If Private Preview environment variable is not enable
+        # data collector will be removed from tags. Data Collector values will be stored in tags
+        # until data collector is added to the contract.
+        if not is_private_preview_enabled():
+            del_key = []
+            for k in entity.tags:
+                if k.startswith("data_collector"):
+                    del_key.append(k)
+            if len(del_key) > 0:
+                for k in del_key:
+                    del entity.tags[k]
+        else:
+            unflat_data = unflatten(entity.tags, ".")
+            if unflat_data.get("data_collector", None):
+                entity.data_collector = unflat_data.get("data_collector")
         entity._provisioning_state = deployment.provisioning_state
         return entity
 

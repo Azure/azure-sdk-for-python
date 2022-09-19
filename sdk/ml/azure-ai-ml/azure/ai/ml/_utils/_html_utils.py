@@ -4,8 +4,9 @@
 
 import logging
 from collections import OrderedDict
-import six
 from datetime import datetime, timedelta
+
+import six
 
 if six.PY3:
     from html import escape
@@ -48,10 +49,10 @@ def convert_dict_to_table(object_to_convert):
 
     if all(is_collection):
         # Cases 2 and 4
-        length = len(ordered_obj.values[0])
+        length = len(list(ordered_obj.values)[0])
         if any([len(v) != length for v in ordered_obj.values()]):
             # Case 4
-            logging.warn("Uneven column lengths in table conversion")
+            logging.warning("Uneven column lengths in table conversion")
             all_rows.append(values_to_data_row(ordered_obj.values()))
 
         else:
@@ -86,14 +87,14 @@ _type_to_converter = {list: convert_list_to_table, dict: convert_dict_to_table}
 
 
 def to_html(object_to_convert):
-    candidate_converters = [k for k in _type_to_converter.keys() if isinstance(object_to_convert, k)]
+    candidate_converters = [k for k in _type_to_converter if isinstance(object_to_convert, k)]
 
     if len(candidate_converters) == 0:
         converter = convert_value
     elif len(candidate_converters) == 1:
         converter = _type_to_converter[candidate_converters[0]]
     else:
-        logging.warn("Multiple candidate converters found for type {0}".format(type(object_to_convert)))
+        logging.warning("Multiple candidate converters found for type %s", type(object_to_convert))
         converter = convert_value
 
     converted_value = converter(object_to_convert)
@@ -119,7 +120,7 @@ def convert_value(value):
     if is_string_link(value):
         return make_link(value)
     if not isinstance(value, SUPPORTED_VALUE_TYPE_TUPLE):
-        logging.warn("Unsupported type %s for html, converting", type(value))
+        logging.warning("Unsupported type %s for html, converting", type(value))
 
     # TODO: Figure out a good escaping story here right now it breaks existing tags
     return str(value)
