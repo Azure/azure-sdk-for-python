@@ -67,7 +67,7 @@ In this example all configuration with empty label and the dev label are loaded.
 
 ### Trimming Keys
 
-You can trim the prefix off of keys by providing a list of trimmed key prefixes to the provider. For example, if you have the key(s) like `/applicaiton/message` in your configuration store, you could trim `/application/` from them.
+You can trim the prefix off of keys by providing a list of trimmed key prefixes to the provider. For example, if you have the key(s) like `/application/message` in your configuration store, you could trim `/application/` from them.
 
 ```python
 trimmed_key_prefixes={"/application/"}
