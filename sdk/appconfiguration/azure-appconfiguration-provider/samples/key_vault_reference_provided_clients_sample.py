@@ -6,7 +6,8 @@
 
 from azure.appconfigurationprovider import (
     AzureAppConfigurationProvider,
-    AzureAppConfigurationKeyVaultOptions
+    AzureAppConfigurationKeyVaultOptions,
+    SettingSelector
 )
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
@@ -18,9 +19,10 @@ credential = DefaultAzureCredential()
 
 # Connection to Azure App Configuration using AAD with Provided Client
 secret_client = SecretClient(vault_url=key_vault_uri, credential=credential)
+selects = {SettingSelector("*", "prod")}
 key_vault_options = AzureAppConfigurationKeyVaultOptions(secret_clients=[
                                                          secret_client])
 config = AzureAppConfigurationProvider.load(
-    endpoint=endpoint, credential=credential, key_vault_options=key_vault_options)
+    endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects)
 
 print(config["secret"])
