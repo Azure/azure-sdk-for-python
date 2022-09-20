@@ -3,6 +3,12 @@
 ## 5.3.0b1 (Unreleased)
 
 ### Features Added
+- Added automatic language detection to long-running operation APIs. Pass `auto` into the document `language` hint to use this feature.
+- Added `autodetect_default_language` to long-running operation APIs. Pass as the default/fallback language for automatic language detection.
+- Added property `detected_language` to `RecognizeEntitiesResult`, `RecognizePiiEntitiesResult`, `AnalyzeHealthcareEntitiesResult`,
+  `DetectLanguageResult`, `ExtractKeyPhrasesResult`, `RecognizeLinkedEntitiesResult`, `AnalyzeSentimentResult`,
+  `RecognizeCustomEntitiesResult`, `ClassifyDocumentResult` to indicate the language detected by automatic language detection.
+- Added property `script` to `DetectedLanguage` to indicate the script of the input document.
 
 ### Breaking Changes
 
