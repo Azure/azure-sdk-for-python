@@ -183,7 +183,7 @@
         "Accept-Encoding": "gzip, deflate",
         "client-request-id": "72b30cb2-f149-4eeb-a2c8-f318375aa74c",
         "Connection": "keep-alive",
-        "Content-Length": "392",
+        "Content-Length": "296",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "fpc=Ath0zAFi31FNvKANFWwF1y8; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.10.7 (Windows-10-10.0.22000-SP0)",
@@ -195,7 +195,7 @@
         "x-client-ver": "1.18.0",
         "x-ms-lib-capability": "retry-after, h429"
       },
-      "RequestBody": "client_id=5b99b3ef-331b-47b1-b984-a967ab4c2623\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fpython-provider.azconfig.io%2F.default",
+      "RequestBody": "client_id=5b99b3ef-331b-47b1-b984-a967ab4c2623\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=SomeFakeClientSecretToxCM3YWvEqxHXaBa\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Ffake_app_config.azconfig.io%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
@@ -226,13 +226,14 @@
       }
     },
     {
-      "RequestUri": "https://fake_app_config.azconfig-test.io/kv/message?label=%00\u0026api-version=1.0",
+      "RequestUri": "https://fake_app_config.azconfig-test.io/kv?key=%2A\u0026label=%00\u0026api-version=1.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
-        "Accept": "application/vnd.microsoft.appconfig.kv\u002Bjson, application/json, application/problem\u002Bjson",
+        "Accept": "application/vnd.microsoft.appconfig.kvset\u002Bjson, application/json, application/problem\u002Bjson",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+        "Correlation-Context": "RequestType=Startup",
+        "User-Agent": "python-appconfigurationprovider/1.0.0b1 azsdk-python-appconfiguration/1.4.0 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -241,10 +242,8 @@
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
         "Connection": "keep-alive",
-        "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson; charset=utf-8",
+        "Content-Type": "application/vnd.microsoft.appconfig.kvset\u002Bjson; charset=utf-8",
         "Date": "Fri, 09 Sep 2022 22:21:53 GMT",
-        "ETag": "\u0022RoGYeJO9kYRaIkF69f6aL0yN0lZvGExgomEA8mwYSAk\u0022",
-        "Last-Modified": "Thu, 01 Sep 2022 17:53:26 GMT",
         "Server": "openresty/1.17.8.2",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Sync-Token": "zAJw6V16=NjoxNyMxNjY5NTQ1Mg==;sn=16695452",
@@ -252,14 +251,28 @@
         "x-ms-correlation-request-id": "cb587955-b687-4421-8aed-c29479a5b118"
       },
       "ResponseBody": {
-        "etag": "RoGYeJO9kYRaIkF69f6aL0yN0lZvGExgomEA8mwYSAk",
-        "key": "message",
-        "label": null,
-        "content_type": "",
-        "value": "hi",
-        "tags": {},
-        "locked": false,
-        "last_modified": "2022-09-01T17:53:26\u002B00:00"
+        "items": [
+          {
+            "etag": "RoGYeJO9kYRaIkF69f6aL0yN0lZvGExgomEA8mwYSAk",
+            "key": "message",
+            "label": null,
+            "content_type": "",
+            "value": "hi",
+            "tags": {},
+            "locked": false,
+            "last_modified": "2022-09-01T17:53:26\u002B00:00"
+          },
+          {
+            "etag": "MUD4TSfiMxgwTqVTAlI_rNyXQz9bAPZ3VXDO-Hk_ejI",
+            "key": "test.message",
+            "label": null,
+            "content_type": "",
+            "value": "Hi with test Prefix",
+            "tags": {},
+            "locked": false,
+            "last_modified": "2022-09-01T17:53:46\u002B00:00"
+          }
+        ]
       }
     }
   ],
