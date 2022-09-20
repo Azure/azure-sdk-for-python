@@ -58,7 +58,7 @@ from ._models import (
     AnalyzeHealthcareEntitiesAction,
     TextAnalysisKind,
 )
-
+from ._generated.models import DocumentType
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller, TextAnalysisLROPoller
 
 __all__ = [
@@ -117,6 +117,7 @@ __all__ = [
     "AnalyzeHealthcareEntitiesAction",
     "TextAnalysisLROPoller",
     "TextAnalysisKind",
+    "DocumentType",
 ]
 
 __version__ = VERSION

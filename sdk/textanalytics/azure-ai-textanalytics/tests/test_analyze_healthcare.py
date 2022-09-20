@@ -21,7 +21,8 @@ from azure.ai.textanalytics import (
     VERSION,
     TextAnalyticsApiVersion,
     HealthcareEntityRelation,
-    AnalyzeHealthcareEntitiesLROPoller
+    AnalyzeHealthcareEntitiesLROPoller,
+    DocumentType
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -443,6 +444,7 @@ class TestHealth(TextAnalyticsTest):
 
         relation = result.entity_relations[0]
         assert relation.relation_type == HealthcareEntityRelation.ABBREVIATION
+        assert relation.confidence_score
         assert len(relation.roles) == 2
 
         parkinsons_entity = list(filter(lambda x: x.text == "Parkinsons Disease", result.entities))[0]
@@ -597,3 +599,20 @@ class TestHealth(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )
         assert str(e.value) == "'display_name' is not available in API version v3.1. Use service API version 2022-05-01 or newer.\n"
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_healthcare_fhir_bundle(self, client):
+        poller = client.begin_analyze_healthcare_entities(
+            documents=[
+                "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."
+            ],
+            fhir_version="4.0.1",
+            document_type=DocumentType.PROGRESS_NOTE,
+            polling_interval=self._interval(),
+        )
+
+        response = poller.result()
+        for res in response:
+            assert res.fhir_bundle

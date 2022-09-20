@@ -3,6 +3,10 @@
 ## 5.3.0b1 (Unreleased)
 
 ### Features Added
+- Added keyword arguments `fhir_version` and `document_type` to `begin_analyze_healthcare_entities` and `AnalyzeHealthcareEntitiesAction`.
+- Added property `fhir_bundle` to `AnalyzeHealthcareEntitiesResult`.
+- Added property `confidence_score` to `HealthcareRelation`.
+- Added enum `DocumentType`.
 
 ### Breaking Changes
 
