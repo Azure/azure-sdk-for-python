@@ -1,5 +1,4 @@
 import time
-from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
 from azure.mgmt.netapp.models import SnapshotPolicy, SnapshotPolicyPatch, HourlySchedule, DailySchedule, VolumeSnapshotProperties, VolumePatchPropertiesDataProtection, VolumePatch
 from test_account import create_account, delete_account
@@ -54,10 +53,11 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)
         if self.is_live:
-            self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
+            from azure.mgmt.network import NetworkManagementClient
+            self.network_client = self.create_mgmt_client(NetworkManagementClient)
 
 
-    # Before tests are run live a resource group needs to be created along with vnet and subnet
+            # Before tests are run live a resource group needs to be created along with vnet and subnet
     # Note that when tests are run in live mode it is best to run one test at a time.
     @recorded_by_proxy
     def test_create_delete_snapshot_policy(self):
