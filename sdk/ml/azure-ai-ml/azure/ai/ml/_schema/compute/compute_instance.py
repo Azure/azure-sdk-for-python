@@ -12,6 +12,7 @@ from azure.ai.ml.constants._compute import ComputeType
 from ..core.fields import ExperimentalField, NestedField, StringTransformedEnum
 from .compute import ComputeSchema, IdentitySchema, NetworkSettingsSchema
 from .schedule import ComputeSchedulesSchema
+from .setup_scripts import SetupScriptsSchema
 
 
 class ComputeInstanceSshSettingsSchema(PathAwareSchema):
@@ -50,3 +51,4 @@ class ComputeInstanceSchema(ComputeSchema):
     schedules = ExperimentalField(NestedField(ComputeSchedulesSchema))
     identity = ExperimentalField(NestedField(IdentitySchema))
     idle_time_before_shutdown = ExperimentalField(fields.Str())
+    setup_scripts = ExperimentalField(NestedField(SetupScriptsSchema))
