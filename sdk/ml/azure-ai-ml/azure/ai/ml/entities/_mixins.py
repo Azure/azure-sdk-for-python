@@ -17,6 +17,12 @@ class RestTranslatableMixin:
 
 
 class DictMixin(object):
+    def __contains__(self, item):
+        return self.__dict__.__contains__(item)
+
+    def __iter__(self):
+        return self.__dict__.__iter__()
+
     def __setitem__(self, key, item):
         # type: (Any, Any) -> None
         self.__dict__[key] = item
@@ -28,10 +34,6 @@ class DictMixin(object):
     def __repr__(self):
         # type: () -> str
         return str(self)
-
-    def __len__(self):
-        # type: () -> int
-        return len(self.keys())
 
     def __delitem__(self, key):
         # type: (Any) -> None
@@ -78,6 +80,10 @@ class DictMixin(object):
         if key in self.__dict__:
             return self.__dict__[key]
         return default
+
+    def __len__(self):
+        # type: () -> int
+        return len(self.keys())
 
 
 class TelemetryMixin:

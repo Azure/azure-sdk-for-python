@@ -7,11 +7,12 @@ from typing import List
 from azure.ai.ml._restclient.v2022_01_01_preview.models import Identity as RestIdentity
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.entities._mixins import DictMixin
 
 from ._user_assigned_identity import UserAssignedIdentity
 
 
-class IdentityConfiguration(RestTranslatableMixin):
+class IdentityConfiguration(RestTranslatableMixin, DictMixin):
     """Managed identity specification."""
 
     def __init__(self, *, type: str, user_assigned_identities: List[UserAssignedIdentity] = None):

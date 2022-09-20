@@ -168,6 +168,9 @@ class InputOutputBase(ABC):
         """Return data binding string representation for this input/output."""
         raise NotImplementedError()
 
+    # Why did we have this function? It prevents the DictMixin from being applied.
+    # Unclear if we explicitly do NOT want the mapping protocol to be applied to this, or it this was just
+    # confirmation that it didn't at the time.
     def keys(self):
         # This property is introduced to raise catchable Exception in marshmallow mapping validation trial.
         raise TypeError(f"'{type(self).__name__}' object is not a mapping")

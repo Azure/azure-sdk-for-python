@@ -61,7 +61,7 @@ class AmlToken(Identity):
         return cls()
 
 
-class ManagedIdentity(Identity, DictMixin):
+class ManagedIdentity(Identity):
     """Managed identity configuration.
 
     :param client_id: Specifies a user-assigned identity by client ID. For system-assigned, do not

@@ -3,12 +3,15 @@
 ## 0.1.0 (Unreleased)
 
 ### Features Added
+ - Added a `show_progress` parameter to MLClient for enable/disable progress bars of long running operations.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+ - Removed declaration on Python 3.6 support
+ - Added support for custom setup scripts on compute instances.
  - Removed declaration on Python 3.6 support.
  - Updated dependencies upper bounds to be major versions.
 
@@ -20,6 +23,7 @@
  - Entity load and dump now also accept a file pointer as input.
  - Load and dump input names changed from path to 'source' and 'dest', respectively.
  - Load and dump 'path' input still works, but is deprecated and emits a warning.
+ - Most configuration classes from the entity package now implement the standard mapping protocol.
  - Managed Identity Support for Compute Instance (experimental).
  - Enable using @dsl.pipeline without brackets when no additional parameters.
  - Expose Azure subscription Id and resource group name from MLClient objects.
@@ -30,13 +34,14 @@
  - Remove invalid option from create_or_update typehints.
  - Change error returned by (begin_)create_or_update invalid input to TypeError.
  - Rename set_image_model APIs for all vision tasks to set_training_parameters
+ - JobOperations.download no longer provides a default value for download_path
  - JobOperations.download defaults to "." instead of Path.cwd()
+ - Workspace.list_keys renamed to Workspace.get_keys.
 
 ### Bugs Fixed
 
 ### Other Changes
  - Show 'properties' on data assets
-
 
 ## 0.1.0b6
 
