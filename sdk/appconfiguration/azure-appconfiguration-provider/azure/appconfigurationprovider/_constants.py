@@ -5,3 +5,5 @@
 # -------------------------------------------------------------------------
 
 KEY_VAULT_REFERNCE_CONTENT_TYPE = u"application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
+
+Key_VAULT_SECRET_PREFIX = u"/secrets/"
