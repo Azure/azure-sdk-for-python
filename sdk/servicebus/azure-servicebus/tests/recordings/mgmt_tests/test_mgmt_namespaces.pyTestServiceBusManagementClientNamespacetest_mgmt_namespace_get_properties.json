@@ -13,11 +13,11 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/atom\u002Bxml; type=entry; charset=utf-8",
-        "Date": "Mon, 19 Sep 2022 22:00:21 GMT",
+        "Date": "Tue, 20 Sep 2022 16:55:39 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Transfer-Encoding": "chunked"
       },
-      "ResponseBody": "\u003Centry xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/$namespaceinfo?api-version=2021-05\u003C/id\u003E\u003Ctitle type=\u0022text\u0022\u003Esb-llawsb\u003C/title\u003E\u003Cupdated\u003E2022-09-19T22:00:21Z\u003C/updated\u003E\u003Cauthor\u003E\u003Cname\u003Esb-llawsb\u003C/name\u003E\u003C/author\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/$namespaceinfo?api-version=2021-05\u0022\u003E\u003C/link\u003E\u003Ccontent type=\u0022application/xml\u0022\u003E\u003CNamespaceInfo xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022 xmlns:i=\u0022http://www.w3.org/2001/XMLSchema-instance\u0022\u003E\u003CCreatedTime\u003E2022-09-19T17:41:40.2Z\u003C/CreatedTime\u003E\u003CMessagingSKU\u003EStandard\u003C/MessagingSKU\u003E\u003CModifiedTime\u003E2022-09-19T17:41:40.2Z\u003C/ModifiedTime\u003E\u003CName\u003Esb-llawsb\u003C/Name\u003E\u003CNamespaceType\u003EMessaging\u003C/NamespaceType\u003E\u003C/NamespaceInfo\u003E\u003C/content\u003E\u003C/entry\u003E"
+      "ResponseBody": "\u003Centry xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/$namespaceinfo?api-version=2021-05\u003C/id\u003E\u003Ctitle type=\u0022text\u0022\u003Esb-llawsb2\u003C/title\u003E\u003Cupdated\u003E2022-09-20T16:55:39Z\u003C/updated\u003E\u003Cauthor\u003E\u003Cname\u003Esb-llawsb2\u003C/name\u003E\u003C/author\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/$namespaceinfo?api-version=2021-05\u0022\u003E\u003C/link\u003E\u003Ccontent type=\u0022application/xml\u0022\u003E\u003CNamespaceInfo xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022 xmlns:i=\u0022http://www.w3.org/2001/XMLSchema-instance\u0022\u003E\u003CCreatedTime\u003E2022-09-20T15:16:37.323Z\u003C/CreatedTime\u003E\u003CMessagingSKU\u003EStandard\u003C/MessagingSKU\u003E\u003CModifiedTime\u003E2022-09-20T15:21:00.66Z\u003C/ModifiedTime\u003E\u003CName\u003Esb-llawsb2\u003C/Name\u003E\u003CNamespaceType\u003EMessaging\u003C/NamespaceType\u003E\u003C/NamespaceInfo\u003E\u003C/content\u003E\u003C/entry\u003E"
     }
   ],
   "Variables": {}
