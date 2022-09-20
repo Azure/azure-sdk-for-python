@@ -130,7 +130,7 @@ class Command(BaseNode):
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
         # resolve normal dict to dict[str, JobService]
-        services = self._resolve_job_services(services)
+        services = _resolve_job_services(services)
         kwargs.pop("type", None)
         self._parameters = kwargs.pop("parameters", {})
         BaseNode.__init__(
@@ -221,7 +221,7 @@ class Command(BaseNode):
 
     @services.setter
     def services(self, value: Dict):
-        self._services = self._resolve_job_services(value)
+        self._services = _resolve_job_services(value)
 
     @property
     def component(self) -> Union[str, CommandComponent]:
@@ -550,37 +550,6 @@ class Command(BaseNode):
 
         return CommandSchema(context=context)
 
-    def _resolve_job_services(self, services: dict) -> dict:
-        """Resolve normal dict to dict[str, JobService]"""
-        # pylint disable=no-self-use
-        if services is None:
-            return None
-        if not isinstance(services, dict):
-            msg = f"Services must be a dict, got {type(services)} instead."
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
-                target=ErrorTarget.COMMAND_JOB,
-                error_category=ErrorCategory.USER_ERROR,
-            )
-
-        result = {}
-        for name, service in services.items():
-            if isinstance(service, dict):
-                service = load_from_dict(JobServiceSchema, service, context={BASE_PATH_CONTEXT_KEY: "."})
-            elif not isinstance(service, JobService):
-                msg = (
-                    f"Service value for key {name!r} must be a dict or JobService object, got {type(service)} instead."
-                )
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    target=ErrorTarget.COMMAND_JOB,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
-            result[name] = service
-        return result
-
     def __call__(self, *args, **kwargs) -> "Command":
         """Call Command as a function will return a new instance each time."""
         if isinstance(self._component, Component):
@@ -618,3 +587,33 @@ class Command(BaseNode):
             target=ErrorTarget.COMMAND_JOB,
             error_type=ValidationErrorType.INVALID_VALUE,
         )
+
+
+def _resolve_job_services(services: dict) -> dict:
+    """Resolve normal dict to dict[str, JobService]"""
+    if services is None:
+        return None
+
+    if not isinstance(services, dict):
+        msg = f"Services must be a dict, got {type(services)} instead."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.COMMAND_JOB,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+
+    result = {}
+    for name, service in services.items():
+        if isinstance(service, dict):
+            service = load_from_dict(JobServiceSchema, service, context={BASE_PATH_CONTEXT_KEY: "."})
+        elif not isinstance(service, JobService):
+            msg = f"Service value for key {name!r} must be a dict or JobService object, got {type(service)} instead."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.COMMAND_JOB,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+        result[name] = service
+    return result
