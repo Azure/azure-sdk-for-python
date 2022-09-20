@@ -30,7 +30,6 @@ except ImportError:
     import mock
 
 import pytest
-import six
 
 from azure.core import PipelineClient
 from azure.core.exceptions import ServiceResponseError
@@ -43,7 +42,7 @@ from msrest.serialization import Model
 
 @pytest.fixture
 def client():
-    # The poller itself don't use it, so we don't need something functionnal
+    # The poller itself don't use it, so we don't need something functional
     return PipelineClient("https://baseurl")
 
 
@@ -87,7 +86,7 @@ def test_no_polling(client):
     assert no_polling.resource() == "Treated: "+initial_response
 
     continuation_token = no_polling.get_continuation_token()
-    assert isinstance(continuation_token, six.string_types)
+    assert isinstance(continuation_token, str)
 
     no_polling_revived_args = NoPolling.from_continuation_token(
         continuation_token,

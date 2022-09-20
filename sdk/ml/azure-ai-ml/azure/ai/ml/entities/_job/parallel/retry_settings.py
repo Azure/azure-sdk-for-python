@@ -6,13 +6,10 @@ from pathlib import Path
 from typing import Dict, Union
 
 from azure.ai.ml._schema.component.retry_settings import RetrySettingsSchema
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-)
 from azure.ai.ml._utils.utils import load_yaml
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._mixins import RestTranslatableMixin, DictMixin
 
 
 class RetrySettings(RestTranslatableMixin, DictMixin):
@@ -32,27 +29,27 @@ class RetrySettings(RestTranslatableMixin, DictMixin):
         *,
         timeout: int = None,
         max_retries: int = None,
-        **kwargs,
+        **kwargs,  # pylint: disable=unused-argument
     ):
         self.timeout = timeout
         self.max_retries = max_retries
 
     def _to_dict(self) -> Dict:
-        return RetrySettingsSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return RetrySettingsSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
     @classmethod
-    def load(
+    def _load(
         cls,
         path: Union[PathLike, str] = None,
         params_override: list = None,
-        **kwargs,
+        **kwargs,  # pylint: disable=unused-argument
     ) -> "RetrySettings":
         params_override = params_override or []
         data = load_yaml(path)
-        return RetrySettings.load_from_dict(data=data, path=path, params_override=params_override)
+        return RetrySettings._load_from_dict(data=data, path=path, params_override=params_override)
 
     @classmethod
-    def load_from_dict(
+    def _load_from_dict(
         cls,
         data: dict,
         path: Union[PathLike, str] = None,
@@ -67,7 +64,14 @@ class RetrySettings(RestTranslatableMixin, DictMixin):
         return load_from_dict(RetrySettingsSchema, data, context, **kwargs)
 
     @classmethod
-    def from_dict(cls, dct: dict):
+    def _from_dict(cls, dct: dict):
         """Convert a dict to an Input object."""
-        obj = cls(**{key: val for key, val in dct.items()})
+        obj = cls(**dict(dct.items()))
         return obj
+
+    def _to_rest_object(self):
+        return self._to_dict()
+
+    @classmethod
+    def _from_rest_object(cls, obj):
+        return cls._from_dict(obj)

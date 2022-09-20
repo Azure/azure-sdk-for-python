@@ -5,7 +5,7 @@
 import asyncio
 import sys
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from azure.core.exceptions import ClientAuthenticationError
 from .._internal import AsyncContextManager
@@ -31,11 +31,16 @@ class AzureCliCredential(AsyncContextManager):
     """Authenticates by requesting a token from the Azure CLI.
 
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
+
+    :keyword str tenant_id: Optional tenant to include in the token request.
+    :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
+        for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
+        acquire tokens for any tenant the application can access.
     """
-    def __init__(self, tenant_id: str = ""):
-        AsyncContextManager.__init__(self)
+    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: List[str] = None):
 
         self.tenant_id = tenant_id
+        self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
     @log_get_token_async
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
@@ -59,7 +64,11 @@ class AzureCliCredential(AsyncContextManager):
 
         resource = _scopes_to_resource(*scopes)
         command = COMMAND_LINE.format(resource)
-        tenant = resolve_tenant(default_tenant= self.tenant_id, **kwargs)
+        tenant = resolve_tenant(
+            default_tenant=self.tenant_id,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
+            **kwargs
+        )
 
         if tenant:
             command += " --tenant " + tenant

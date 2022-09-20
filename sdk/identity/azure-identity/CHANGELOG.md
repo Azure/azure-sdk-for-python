@@ -1,6 +1,43 @@
 # Release History
 
-## 1.11.0 (2022-08-09)
+## 1.12.0b1 (2022-09-22)
+
+### Features Added
+
+- Added ability to specify `tenant_id` for `AzureCliCredential` & `AzurePowerShellCredential` (thanks @tikicoder)    ([#25207](https://github.com/Azure/azure-sdk-for-python/pull/25207))
+- Removed `VisualStudioCodeCredential` from `DefaultAzureCredential` token chain. ([#23249](https://github.com/Azure/azure-sdk-for-python/issues/23249))
+- `EnvironmentCredential` added `AZURE_CLIENT_CERTIFICATE_PASSWORD` support for the cert password    ([#24652](https://github.com/Azure/azure-sdk-for-python/issues/24652))
+- Added `validate_authority` support for msal client  ([#22625](https://github.com/Azure/azure-sdk-for-python/issues/22625))
+
+## 1.11.0 (2022-09-19)
+
+### Features Added
+
+- Added `additionally_allowed_tenants` to the following credential options to force explicit opt-in behavior for multi-tenant authentication:
+  - `AuthorizationCodeCredential`
+  - `AzureCliCredential`
+  - `AzurePowerShellCredential`
+  - `CertificateCredential`
+  - `ClientAssertionCredential`
+  - `ClientSecretCredential`
+  - `DefaultAzureCredential`
+  - `OnBehalfOfCredential`
+  - `UsernamePasswordCredential`
+  - `VisualStudioCodeCredential`
+
+### Breaking Changes
+
+- Credential types supporting multi-tenant authentication will now throw `ClientAuthenticationError` if the requested tenant ID doesn't match the credential's tenant ID, and is not included in `additionally_allowed_tenants`. Applications must now explicitly add additional tenants to the `additionally_allowed_tenants` list, or add '*' to list, to enable acquiring tokens from tenants other than the originally specified tenant ID.
+
+More information on this change and the consideration behind it can be found [here](https://aka.ms/azsdk/blog/multi-tenant-guidance).
+
+- These beta features in 1.11.0b3 have been removed from this release and will be added back in 1.12.0b1
+  - `tenant_id` for `AzureCliCredential`
+  - removed `VisualStudioCodeCredential` from `DefaultAzureCredential` token chain
+  - `AZURE_CLIENT_CERTIFICATE_PASSWORD` support for `EnvironmentCredential`
+  - `validate_authority` support
+
+## 1.11.0b3 (2022-08-09)
 
 Azure-identity is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 
@@ -11,10 +48,6 @@ Azure-identity is supported on Python 3.7 or later. For more details, please rea
 ### Breaking Changes
 
 - Removed `VisualStudioCodeCredential` from `DefaultAzureCredential` token chain. ([#23249](https://github.com/Azure/azure-sdk-for-python/issues/23249))
-
-> These changes do not impact the API of stable versions such as 1.10.0.
-> Only code written against a beta version such as 1.11.0b2 may be affected.
-- `validate_authority` support is not available in 1.11.0.
 
 ## 1.11.0b2 (2022-07-05)
 

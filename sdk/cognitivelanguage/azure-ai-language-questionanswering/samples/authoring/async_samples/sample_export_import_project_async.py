@@ -24,14 +24,14 @@ async def sample_export_import_project_async():
     # [START export_import_project]
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.language.questionanswering.projects.aio import QuestionAnsweringProjectsClient
+    from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
 
     # get service secrets
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
     key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
 
     # create client
-    client = QuestionAnsweringProjectsClient(endpoint, AzureKeyCredential(key))
+    client = QuestionAnsweringAuthoringClient(endpoint, AzureKeyCredential(key))
     async with client:
 
         # create project
@@ -54,12 +54,6 @@ async def sample_export_import_project_async():
         )
         export_result = await export_poller.result()
         export_url = export_result["resultUrl"]
-
-        # delete old project
-        delete_poller = await client.begin_delete_project(
-            project_name=project_name
-        )
-        await delete_poller.result()
 
         # import project
         project = {

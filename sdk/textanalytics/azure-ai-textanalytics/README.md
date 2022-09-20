@@ -3,11 +3,13 @@
 The Azure Cognitive Service for Language is a cloud-based service that provides Natural Language Processing (NLP) features for understanding and analyzing text, and includes the following main features:
 
 - Sentiment Analysis
-- Entity Recognition (Named, Linked, and Personally Identifiable Information (PII) entities)
+- Named Entity Recognition
 - Language Detection
 - Key Phrase Extraction
+- Entity Linking
 - Multiple Analysis
-- Healthcare Entities Analysis
+- Personally Identifiable Information (PII) Detection
+- Text Analytics for Health
 - Custom Named Entity Recognition
 - Custom Text Classification
 
@@ -74,18 +76,18 @@ For example, `https://<region>.api.cognitive.microsoft.com/`.
 Install the Azure Text Analytics client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-textanalytics --pre
+pip install azure-ai-textanalytics
 ```
 
-> Note that `5.2.0b4` is the first version of the client library that targets the Azure Cognitive Service for Language APIs which includes the existing text analysis and natural language processing features found in the Text Analytics client library.
-In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-04-01-preview`.
+> Note that `5.2.X` targets the Azure Cognitive Service for Language APIs. These APIs include the text analysis and natural language processing features found in the previous versions of the Text Analytics client library.
+In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-05-01`.
 
 This table shows the relationship between SDK versions and supported API versions of the service
 
 | SDK version  | Supported API version of service  |
 | ------------ | --------------------------------- |
-| 5.2.0b4 - Latest beta release | 3.0, 3.1, 2022-04-01-preview (default) |
-| 5.1.0 - Latest stable release | 3.0, 3.1 (default) |
+| 5.2.0 - Latest stable release | 3.0, 3.1, 2022-05-01 (default) |
+| 5.1.0  | 3.0, 3.1 (default) |
 | 5.0.0  | 3.0 |
 
 API version can be selected by passing the [api_version][text_analytics_client] keyword argument into the client.
@@ -136,7 +138,7 @@ Authentication with AAD requires some initial setup:
 
 - [Install azure-identity][install_azure_identity]
 - [Register a new AAD application][register_aad_app]
-- [Grant access][grant_role_access] to the Language service by assigning the `"Cognitive Services User"` role to your service principal.
+- [Grant access][grant_role_access] to the Language service by assigning the `"Cognitive Services Language Reader"` role to your service principal.
 
 After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
 As an example, [DefaultAzureCredential][default_azure_credential]
@@ -211,13 +213,28 @@ response = text_analytics_client.analyze_sentiment(documents)
 successful_responses = [doc for doc in response if not doc.is_error]
 ```
 
+You can also use the `kind` attribute to filter between result types:
+
+```python
+poller = text_analytics_client.begin_analyze_actions(documents, actions)
+response = poller.result()
+for result in response:
+    if result.kind == "SentimentAnalysis":
+        print(f"Sentiment is {result.sentiment}")
+    elif result.kind == "KeyPhraseExtraction":
+        print(f"Key phrases: {result.key_phrases}")
+    elif result.is_error is True:
+        print(f"Document error: {result.code}, {result.message}")
+```
+
+
 ### Long-Running Operations
 
 Long-running operations are operations which consist of an initial request sent to the service to start an operation,
 followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
 succeeded, to get the result.
 
-Methods that support healthcare analysis or multiple analyses are modeled as long-running operations.
+Methods that support healthcare analysis, custom text analysis, or multiple analyses are modeled as long-running operations.
 The client exposes a `begin_<method-name>` method that returns a poller object. Callers should wait
 for the operation to complete by calling `result()` on the poller object returned from the `begin_<method-name>` method.
 Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
@@ -386,7 +403,7 @@ The returned response is a heterogeneous list of result and error objects: list[
 
 Please refer to the service documentation for [supported PII entity types][pii_entity_categories].
 
-Note: The Recognize PII Entities service is available in API version v3.1 and up.
+Note: The Recognize PII Entities service is available in API version v3.1 and newer.
 
 ### Extract key phrases
 
@@ -502,7 +519,7 @@ for idx, doc in enumerate(docs):
     print("------------------------------------------")
 ```
 
-Note: The Healthcare Entities Analysis service is only available in the Standard pricing tier with API versions v3.1 and up.
+Note: Healthcare Entities Analysis is only available with API version v3.1 and newer.
 
 ### Multiple Analysis
 
@@ -513,9 +530,9 @@ Note: The Healthcare Entities Analysis service is only available in the Standard
 - Linked Entity Recognition
 - Key Phrase Extraction
 - Sentiment Analysis
-- Custom Entity Recognition (see sample [here][recognize_custom_entities_sample])
-- Custom Single Label Classification (see sample [here][single_label_classify_sample])
-- Custom Multi Label Classification (see sample [here][multi_label_classify_sample])
+- Custom Entity Recognition
+- Custom Single Label Classification
+- Custom Multi Label Classification
 - Healthcare Entities Analysis
 
 ```python
@@ -545,34 +562,33 @@ poller = text_analytics_client.begin_analyze_actions(
 # returns multiple actions results in the same order as the inputted actions
 document_results = poller.result()
 for doc, action_results in zip(documents, document_results):
-    recognize_entities_result, analyze_sentiment_result = action_results
     print(f"\nDocument text: {doc}")
-    print("...Results of Recognize Entities Action:")
-    if recognize_entities_result.is_error:
-        print(f"......Is an error with code '{recognize_entities_result.code}' "
-              f"and message '{recognize_entities_result.message}'")
-    else:
-        for entity in recognize_entities_result.entities:
-            print(f"......Entity: {entity.text}")
-            print(f".........Category: {entity.category}")
-            print(f".........Confidence Score: {entity.confidence_score}")
-            print(f".........Offset: {entity.offset}")
+    for result in action_results:
+        if result.kind == "EntityRecognition":
+            print("...Results of Recognize Entities Action:")
+            for entity in result.entities:
+                print(f"......Entity: {entity.text}")
+                print(f".........Category: {entity.category}")
+                print(f".........Confidence Score: {entity.confidence_score}")
+                print(f".........Offset: {entity.offset}")
 
-    print("...Results of Analyze Sentiment action:")
-    if analyze_sentiment_result.is_error:
-        print(f"......Is an error with code '{analyze_sentiment_result.code}' "
-              f"and message '{analyze_sentiment_result.message}'")
-    else:
-        print(f"......Overall sentiment: {analyze_sentiment_result.sentiment}")
-        print(f"......Scores: positive={analyze_sentiment_result.confidence_scores.positive}; "
-              f"neutral={analyze_sentiment_result.confidence_scores.neutral}; "
-              f"negative={analyze_sentiment_result.confidence_scores.negative}\n")
+        elif result.kind == "SentimentAnalysis":
+            print("...Results of Analyze Sentiment action:")
+            print(f"......Overall sentiment: {result.sentiment}")
+            print(f"......Scores: positive={result.confidence_scores.positive}; "
+                  f"neutral={result.confidence_scores.neutral}; "
+                  f"negative={result.confidence_scores.negative}\n")
+
+        elif result.is_error is True:
+            print(f"......Is an error with code '{result.code}' "
+                  f"and message '{result.message}'")
+
     print("------------------------------------------")
 ```
 
 The returned response is an object encapsulating multiple iterables, each representing results of individual analyses.
 
-Note: Multiple analysis is available in API version v3.1 and up.
+Note: Multiple analysis is available in API version v3.1 and newer.
 
 ## Optional Configuration
 
@@ -749,6 +765,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [single_label_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_single_label_classify_async.py
 [multi_label_classify_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_multi_label_classify.py
 [multi_label_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_multi_label_classify_async.py
+[healthcare_action_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_healthcare_action.py
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/

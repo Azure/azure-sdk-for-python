@@ -16,6 +16,193 @@ if TYPE_CHECKING:
     import __init__ as _models
 
 
+class AdministratorListResult(msrest.serialization.Model):
+    """A List of azure ad administrators.
+
+    :ivar value: The list of azure ad administrator of a server.
+    :vartype value: list[~azure.mgmt.rdbms.mysql_flexibleservers.models.AzureADAdministrator]
+    :ivar next_link: The link used to get the next page of operations.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[AzureADAdministrator]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.AzureADAdministrator"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: The list of azure ad administrator of a server.
+        :paramtype value: list[~azure.mgmt.rdbms.mysql_flexibleservers.models.AzureADAdministrator]
+        :keyword next_link: The link used to get the next page of operations.
+        :paramtype next_link: str
+        """
+        super(AdministratorListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class Resource(msrest.serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class AzureADAdministrator(ProxyResource):
+    """Represents a Administrator.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
+    :ivar administrator_type: Type of the sever administrator. Known values are: "ActiveDirectory".
+    :vartype administrator_type: str or
+     ~azure.mgmt.rdbms.mysql_flexibleservers.models.AdministratorType
+    :ivar login: Login name of the server administrator.
+    :vartype login: str
+    :ivar sid: SID (object ID) of the server administrator.
+    :vartype sid: str
+    :ivar tenant_id: Tenant ID of the administrator.
+    :vartype tenant_id: str
+    :ivar identity_resource_id: The resource id of the identity used for AAD Authentication.
+    :vartype identity_resource_id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'administrator_type': {'key': 'properties.administratorType', 'type': 'str'},
+        'login': {'key': 'properties.login', 'type': 'str'},
+        'sid': {'key': 'properties.sid', 'type': 'str'},
+        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
+        'identity_resource_id': {'key': 'properties.identityResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        administrator_type: Optional[Union[str, "_models.AdministratorType"]] = None,
+        login: Optional[str] = None,
+        sid: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        identity_resource_id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword administrator_type: Type of the sever administrator. Known values are:
+         "ActiveDirectory".
+        :paramtype administrator_type: str or
+         ~azure.mgmt.rdbms.mysql_flexibleservers.models.AdministratorType
+        :keyword login: Login name of the server administrator.
+        :paramtype login: str
+        :keyword sid: SID (object ID) of the server administrator.
+        :paramtype sid: str
+        :keyword tenant_id: Tenant ID of the administrator.
+        :paramtype tenant_id: str
+        :keyword identity_resource_id: The resource id of the identity used for AAD Authentication.
+        :paramtype identity_resource_id: str
+        """
+        super(AzureADAdministrator, self).__init__(**kwargs)
+        self.system_data = None
+        self.administrator_type = administrator_type
+        self.login = login
+        self.sid = sid
+        self.tenant_id = tenant_id
+        self.identity_resource_id = identity_resource_id
+
+
 class Backup(msrest.serialization.Model):
     """Storage Profile properties of a server.
 
@@ -135,81 +322,6 @@ class CapabilityProperties(msrest.serialization.Model):
         self.supported_ha_mode = None
         self.supported_geo_backup_regions = None
         self.supported_flexible_server_editions = None
-
-
-class Resource(msrest.serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
 
 
 class Configuration(ProxyResource):
@@ -524,9 +636,9 @@ class DataEncryption(msrest.serialization.Model):
 
     _attribute_map = {
         'primary_user_assigned_identity_id': {'key': 'primaryUserAssignedIdentityId', 'type': 'str'},
-        'primary_key_uri': {'key': 'primaryKeyUri', 'type': 'str'},
+        'primary_key_uri': {'key': 'primaryKeyURI', 'type': 'str'},
         'geo_backup_user_assigned_identity_id': {'key': 'geoBackupUserAssignedIdentityId', 'type': 'str'},
-        'geo_backup_key_uri': {'key': 'geoBackupKeyUri', 'type': 'str'},
+        'geo_backup_key_uri': {'key': 'geoBackupKeyURI', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -2181,16 +2293,24 @@ class VirtualNetworkSubnetUsageResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar location: The location name.
+    :vartype location: str
+    :ivar subscription_id: The subscription id.
+    :vartype subscription_id: str
     :ivar delegated_subnets_usage: A list of delegated subnet usage.
     :vartype delegated_subnets_usage:
      list[~azure.mgmt.rdbms.mysql_flexibleservers.models.DelegatedSubnetUsage]
     """
 
     _validation = {
+        'location': {'readonly': True},
+        'subscription_id': {'readonly': True},
         'delegated_subnets_usage': {'readonly': True},
     }
 
     _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
         'delegated_subnets_usage': {'key': 'delegatedSubnetsUsage', 'type': '[DelegatedSubnetUsage]'},
     }
 
@@ -2201,4 +2321,6 @@ class VirtualNetworkSubnetUsageResult(msrest.serialization.Model):
         """
         """
         super(VirtualNetworkSubnetUsageResult, self).__init__(**kwargs)
+        self.location = None
+        self.subscription_id = None
         self.delegated_subnets_usage = None

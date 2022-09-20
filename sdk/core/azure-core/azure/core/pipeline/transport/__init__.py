@@ -38,7 +38,7 @@ __all__ = [
     'AsyncHttpTransport',
     'AsyncHttpResponse',
     'AsyncioRequestsTransport',
-    'AsyncioRequestsTransportResponse'
+    'AsyncioRequestsTransportResponse',
     'TrioRequestsTransport',
     'TrioRequestsTransportResponse',
     'AioHttpTransport',

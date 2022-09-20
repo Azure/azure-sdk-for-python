@@ -9,9 +9,8 @@ import functools
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2022_08_31.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient, DocumentModelAdministrationClient
-from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
@@ -59,7 +58,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             my_file = fd.read()
 
         async with client:
-            build_polling = await client.begin_build_model("template", formrecognizer_storage_container_sas_url)
+            build_polling = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await build_polling.result()
 
             async with da_client:
@@ -106,7 +105,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             my_file = fd.read()
 
         async with client:
-            build_poller = await client.begin_build_model("template", formrecognizer_multipage_storage_container_sas_url)
+            build_poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_multipage_storage_container_sas_url)
             model = await build_poller.result()
 
             async with da_client:
@@ -152,7 +151,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             responses.append(document)
 
         async with client:
-            poller = await client.begin_build_model("template", formrecognizer_selection_mark_storage_container_sas_url)
+            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_selection_mark_storage_container_sas_url)
             model = await poller.result()
 
             poller = await da_client.begin_analyze_document(
@@ -190,7 +189,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             my_file = fd.read()
 
         async with client:
-            build_poller = await client.begin_build_model("template", formrecognizer_storage_container_sas_url)
+            build_poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await build_poller.result()
 
             async with da_client:
@@ -210,7 +209,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             my_file = fd.read()
 
         async with client:
-            build_polling = await client.begin_build_model("template", formrecognizer_storage_container_sas_url, )
+            build_polling = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url, )
             model = await build_polling.result()
 
             async with da_client:
@@ -236,7 +235,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             my_file = fd.read()
 
         async with client:
-            build_polling = await client.begin_build_model("template", formrecognizer_storage_container_sas_url)
+            build_polling = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await build_polling.result()
 
             async with da_client:

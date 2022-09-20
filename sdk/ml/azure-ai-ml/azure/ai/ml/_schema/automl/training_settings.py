@@ -2,21 +2,25 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
+
 from marshmallow import fields, post_load
-from azure.ai.ml.constants import AutoMLConstants
-from azure.ai.ml._schema import PatchedSchemaMeta, NestedField, StringTransformedEnum
-from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities._job.automl.training_settings import (
-    ClassificationTrainingSettings,
-    ForecastingTrainingSettings,
-    RegressionTrainingSettings,
-)
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+
+from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     ClassificationModels,
     ForecastingModels,
     RegressionModels,
     StackEnsembleSettings,
     StackMetaLearnerType,
+)
+from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
+from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.constants import AutoMLConstants
+from azure.ai.ml.entities._job.automl.training_settings import (
+    ClassificationTrainingSettings,
+    ForecastingTrainingSettings,
+    RegressionTrainingSettings,
 )
 
 
@@ -24,7 +28,8 @@ class StackEnsembleSettingsSchema(metaclass=PatchedSchemaMeta):
     stack_meta_learner_kwargs = fields.Dict()
     stack_meta_learner_train_percentage = fields.Float()
     stack_meta_learner_type = StringTransformedEnum(
-        allowed_values=[o.value for o in StackMetaLearnerType], casing_transform=camel_to_snake
+        allowed_values=[o.value for o in StackMetaLearnerType],
+        casing_transform=camel_to_snake,
     )
 
     @post_load

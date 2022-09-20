@@ -2,22 +2,23 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 from abc import ABC
 from typing import List, Union
 
-from azure.ai.ml.constants import SearchSpace, TYPE
-
+from azure.ai.ml.constants._common import TYPE
+from azure.ai.ml.constants._job.sweep import SearchSpace
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, JobException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 
 
 class SweepDistribution(ABC, RestTranslatableMixin):
-    def __init__(self, *, type: str = None):
+    def __init__(self, *, type: str = None):  # pylint: disable=redefined-builtin
         self.type = type
 
     @classmethod
-    def _from_rest_object(cls, rest: List) -> "SweepDistribution":
+    def _from_rest_object(cls, obj: List) -> "SweepDistribution":
 
         mapping = {
             SearchSpace.CHOICE: Choice,
@@ -32,17 +33,17 @@ class SweepDistribution(ABC, RestTranslatableMixin):
             SearchSpace.QLOGUNIFORM: QLogUniform,
         }
 
-        ss_class = mapping.get(rest[0], None)
+        ss_class = mapping.get(obj[0], None)
         if ss_class:
-            return ss_class._from_rest_object(rest)
-        else:
-            msg = f"Unknown search space type: {rest[0]}"
-            raise JobException(
-                message=msg,
-                no_personal_data_message=msg,
-                target=ErrorTarget.SWEEP_JOB,
-                error_category=ErrorCategory.SYSTEM_ERROR,
-            )
+            return ss_class._from_rest_object(obj)
+
+        msg = f"Unknown search space type: {obj[0]}"
+        raise JobException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.SWEEP_JOB,
+            error_category=ErrorCategory.SYSTEM_ERROR,
+        )
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, SweepDistribution):
@@ -72,8 +73,8 @@ class Choice(SweepDistribution):
         return [self.type, [items]]
 
     @classmethod
-    def _from_rest_object(cls, rest: List) -> "Choice":
-        rest_values = rest[1][0]
+    def _from_rest_object(cls, obj: List) -> "Choice":
+        rest_values = obj[1][0]
         from_rest_values = []
         for rest_value in rest_values:
             if isinstance(rest_value, dict):
@@ -83,7 +84,7 @@ class Choice(SweepDistribution):
                         # first assume that any dictionary value is a valid distribution (i.e. normal, uniform, etc)
                         # and try to deserialize it into a the correct SDK distribution object
                         from_rest_dict[k] = SweepDistribution._from_rest_object(v)
-                    except Exception:
+                    except Exception:  # pylint: disable=broad-except
                         # if an exception is raised, assume that the value was not a valid distribution and use the
                         # value as it is for deserialization
                         from_rest_dict[k] = v
@@ -104,8 +105,8 @@ class Normal(SweepDistribution):
         return [self.type, [self.mu, self.sigma]]
 
     @classmethod
-    def _from_rest_object(cls, rest: List) -> "Normal":
-        return cls(mu=rest[1][0], sigma=rest[1][1])
+    def _from_rest_object(cls, obj: List) -> "Normal":
+        return cls(mu=obj[1][0], sigma=obj[1][1])
 
 
 class LogNormal(Normal):
@@ -124,8 +125,8 @@ class QNormal(Normal):
         return [self.type, [self.mu, self.sigma, self.q]]
 
     @classmethod
-    def _from_rest_object(cls, rest: List) -> "QNormal":
-        return cls(mu=rest[1][0], sigma=rest[1][1], q=rest[1][2])
+    def _from_rest_object(cls, obj: List) -> "QNormal":
+        return cls(mu=obj[1][0], sigma=obj[1][1], q=obj[1][2])
 
 
 class QLogNormal(QNormal):
@@ -144,8 +145,8 @@ class Randint(SweepDistribution):
         return [self.type, [self.upper]]
 
     @classmethod
-    def _from_rest_object(cls, rest: List) -> "Randint":
-        return cls(upper=rest[1][0])
+    def _from_rest_object(cls, obj: List) -> "Randint":
+        return cls(upper=obj[1][0])
 
 
 class Uniform(SweepDistribution):
@@ -159,8 +160,8 @@ class Uniform(SweepDistribution):
         return [self.type, [self.min_value, self.max_value]]
 
     @classmethod
-    def _from_rest_object(cls, rest: List) -> "Uniform":
-        return cls(min_value=rest[1][0], max_value=rest[1][1])
+    def _from_rest_object(cls, obj: List) -> "Uniform":
+        return cls(min_value=obj[1][0], max_value=obj[1][1])
 
 
 class LogUniform(Uniform):
@@ -171,7 +172,11 @@ class LogUniform(Uniform):
 
 class QUniform(Uniform):
     def __init__(
-        self, min_value: Union[int, float] = None, max_value: Union[int, float] = None, q: int = None, **kwargs
+        self,
+        min_value: Union[int, float] = None,
+        max_value: Union[int, float] = None,
+        q: int = None,
+        **kwargs,
     ):
         kwargs.setdefault(TYPE, SearchSpace.QUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, **kwargs)
@@ -181,8 +186,8 @@ class QUniform(Uniform):
         return [self.type, [self.min_value, self.max_value, self.q]]
 
     @classmethod
-    def _from_rest_object(cls, rest: List) -> "QUniform":
-        return cls(min_value=rest[1][0], max_value=rest[1][1], q=rest[1][2])
+    def _from_rest_object(cls, obj: List) -> "QUniform":
+        return cls(min_value=obj[1][0], max_value=obj[1][1], q=obj[1][2])
 
 
 class QLogUniform(QUniform):

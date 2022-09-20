@@ -21,6 +21,7 @@ DESCRIPTION:
 # an SGX "quote". The "report" has a 16 byte header attached to the front
 # of an SGX "quote". That means a "report" can be transformed into a quote
 # by stripping the first 16 bytes from the "report".
+''' cSpell:disable '''
 sample_open_enclave_report = (
     "AQAAAAIAAADkEQAAAAAAAAMAAg"
     + "AAAAAABQAKAJOacjP3nEyplAoNs5V_Bgc42MPzGo7hPWS_h-3tExJrAAAAABERAwX_g"
@@ -116,7 +117,7 @@ sample_open_enclave_report = (
     + "RHZvOGgyazVkdTFpV0RkQmtBbiswaWlBPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0"
     + "tLQoA="
 )
-
+''' cSpell:enable '''
 
 sample_runtime_data = (
     "CiAgICAgICAgewogI"

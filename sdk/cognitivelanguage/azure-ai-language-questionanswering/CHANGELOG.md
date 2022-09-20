@@ -5,10 +5,13 @@
 ### Features Added
 
 ### Breaking Changes
+* `QuestionAnsweringProjectsClient` was renamed to `QuestionAnsweringAuthoringClient`.
+* The `azure.ai.language.questionanswering.projects` namespace was renamed to `azure.ai.language.questionanswering.authoring`
 
 ### Bugs Fixed
 
 ### Other Changes
+* Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, see [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 
 ## 1.1.0b2 (2022-07-19)
 
