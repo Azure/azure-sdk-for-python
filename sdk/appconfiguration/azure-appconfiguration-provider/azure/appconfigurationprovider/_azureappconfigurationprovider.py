@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 import json
 from azure.appconfiguration import AzureAppConfigurationClient
 from azure.keyvault.secrets import SecretClient
+from azure.keyvault.secrets import KeyVaultSecretIdentifier
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError
@@ -124,60 +125,53 @@ class AzureAppConfigurationProvider:
             raise AttributeError(
                 "Key Vault reference must have a uri value.")
 
-        uri = urlparse(uri_value)
+        key_vault_idenfier = KeyVaultSecretIdentifier(uri_value)
 
-        key_vault_uri = "https://" + uri.hostname
-
-        if Key_VAULT_SECRET_PREFIX not in uri.path:
-            raise AttributeError(
-                "Key Vault reference must have a secret identifier.")
-
-        key_vault_secret_name = uri.path[len(Key_VAULT_SECRET_PREFIX):]
         if key_vault_options.credential is not None:
             secret_client = None
 
             # Clients only should be made once, will reuse if client already made
             for client_uri in secret_clients:
-                if client_uri == key_vault_uri:
+                if client_uri == key_vault_idenfier.vault_url:
                     secret_client = secret_clients[client_uri]
                     break
             if secret_client is None:
                 secret_client = SecretClient(
-                    vault_url=key_vault_uri, credential=key_vault_options.credential)
-                secret_clients[key_vault_uri] = secret_client
+                    vault_url=key_vault_idenfier.vault_url, credential=key_vault_options.credential)
+                secret_clients[key_vault_idenfier.vault_url] = secret_client
                 try:
                     secret = secret_client.get_secret(
-                        key_vault_secret_name)
+                        key_vault_idenfier.name, version=key_vault_idenfier.version)
 
                     self._dict[self.__trim(config.key)] = secret.value
                     return
                 except ResourceNotFoundError as e:
                     raise ValueError("Key Vault %s does not contain secret %s" % (
-                        key_vault_uri, key_vault_secret_name))
+                        key_vault_idenfier.vault_url, key_vault_idenfier.name))
                 except HttpResponseError as e:
                     raise e
             raise AttributeError(
-                "No Secret Client found for Key Vault reference %s%s" % (key_vault_uri, uri.path))
+                "No Secret Client found for Key Vault reference %s" % (key_vault_idenfier.vault_url))
         if key_vault_options.secret_clients is not None:
             for secret_client in key_vault_options.secret_clients:
-                if secret_client.vault_url == key_vault_uri:
+                if secret_client.vault_url == key_vault_idenfier.vault_url:
                     try:
                         secret = secret_client.get_secret(
-                            key_vault_secret_name)
+                            key_vault_idenfier.name, version=key_vault_idenfier.version)
                         self._dict[self.__trim(
                             config.key)] = secret.value
                         return
                     except ResourceNotFoundError as e:
                         raise ValueError("Key Vault %s does not contain secret %s" % (
-                            key_vault_uri, key_vault_secret_name))
+                            key_vault_idenfier.vault_url, key_vault_idenfier.name))
                     except HttpResponseError as e:
                         raise e
         if key_vault_options.secret_resolver is not None:
             self._dict[self.__trim(
-                config.key)] = key_vault_options.secret_resolver(uri)
+                config.key)] = key_vault_options.secret_resolver(key_vault_idenfier.vault_url)
             return
         raise AttributeError(
-            "No Secret Client found for Key Vault reference %s%s" % (key_vault_uri, uri.path))
+            "No Secret Client found for Key Vault reference %s" % (key_vault_idenfier.vault_url))
 
     def __is_json_content_type(self, content_type):
         if not content_type:
