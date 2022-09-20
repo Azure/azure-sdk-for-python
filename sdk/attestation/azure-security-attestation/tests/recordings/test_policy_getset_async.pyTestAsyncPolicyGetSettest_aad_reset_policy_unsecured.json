@@ -16,18 +16,18 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "92",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 20 Sep 2022 16:46:40 GMT",
+        "Date": "Tue, 20 Sep 2022 17:33:46 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=AsdfsOzXBO1MsS-RS6MY0T1xWF_wCQAAAFblu9oOAAAA; expires=Thu, 20-Oct-2022 16:46:40 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AipkpSUAXSpEqVJozNbDzchxWF_wCAAAAFnwu9oOAAAA; expires=Thu, 20-Oct-2022 17:33:47 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13672.7 - SEASLR1 ProdSlices",
+        "x-ms-ests-server": "2.1.13672.7 - KRSLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -52,12 +52,12 @@
       "ResponseHeaders": {
         "Content-Length": "732",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 20 Sep 2022 16:46:41 GMT",
+        "Date": "Tue, 20 Sep 2022 17:33:47 GMT",
         "Server": "Kestrel",
         "x-ms-maa-service-version": "1.11.02043.302"
       },
       "ResponseBody": {
-        "token": "eyJhbGciOiJSUzI1NiIsImprdSI6Imh0dHBzOi8vcHludmF0dGVzdGF0aW9uYWFkLnd1cy5hdHRlc3QuYXp1cmUubmV0L2NlcnRzIiwia2lkIjoiWHhSYzJ2TGgxRTVGcnNOYXduUkgzUHp1RmdxZzNxN052Q2Ruam9KSEJHRT0iLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE2NjM2OTYwMDEsImlhdCI6MTY2MzY5MjQwMSwiaXNzIjoiaHR0cHM6Ly9weW52YXR0ZXN0YXRpb25hYWQud3VzLmF0dGVzdC5henVyZS5uZXQiLCJuYmYiOjE2NjM2OTI0MDEsIngtbXMtcG9saWN5LXJlc3VsdCI6IlJlbW92ZWQifQ.ZQxnbUpqQTHPWkPOY8tT8uTvcrh5vdTM_l6Es8Rr4_JlQUXGPb-fTPP3xhjcrWgPw8NKSLBFzyKb-He6NjGvuzMBzsghfR8-jT74OI2GDsT1bxTbRE8L2v1Q2r1hqOci-mcXdIRLajMUstinW0p76XbKUnguvIuciUWY-TJmDpk5dp67wivcJp4MAsR3j1qmoNiiBvrKY4WJOkDBeJP2WvBcfDKuX00ZHLE1586FXCcTG17yV0fZRSVAQfj-Cw6qSPvhImEjsGyfUbAJknOOUnZ68J-Zn4pfPdWEX_Qx50aAFwajlYIErl1qmAgDx3nyqoqzhTEMpf1t3O9w-CAc_g"
+        "token": "eyJhbGciOiJSUzI1NiIsImprdSI6Imh0dHBzOi8vcHludmF0dGVzdGF0aW9uYWFkLnd1cy5hdHRlc3QuYXp1cmUubmV0L2NlcnRzIiwia2lkIjoiWHhSYzJ2TGgxRTVGcnNOYXduUkgzUHp1RmdxZzNxN052Q2Ruam9KSEJHRT0iLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE2NjM2OTg4MjgsImlhdCI6MTY2MzY5NTIyOCwiaXNzIjoiaHR0cHM6Ly9weW52YXR0ZXN0YXRpb25hYWQud3VzLmF0dGVzdC5henVyZS5uZXQiLCJuYmYiOjE2NjM2OTUyMjgsIngtbXMtcG9saWN5LXJlc3VsdCI6IlJlbW92ZWQifQ.U_hU_uLOle3dDqNc9hpzX3Qsbbfpp2EjUtsoQvFwq_-0S2sg154aZ2RdTDPsdk29OwObHXbTIbc1RrBot5J_ABIg_vu-A7D6S0W3EbJMiE1UVGm5IzgYMLQ5NAuNFiTPztaMtW1brNFQAIUs9dz2MSXmnwVB9qTRRg2_rMb3-epEXMld-yv0L9SFfvY1zrvyZdGusD5jvi6VMxbbPC_NyqZ1X5ppSEQI4dPWbhJe_3J4qzn_GqR6p8ZLyS0yoAswV9TvYpasXs6YrMdNtK7fkFmggH3pSUWjQo05enyRQWELTBW8-Q917gF5FGFmwIIyq5mk0Db5I5Hkm0FrvlxiKQ"
       }
     },
     {
@@ -73,7 +73,7 @@
       "ResponseHeaders": {
         "Content-Length": "20578",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 20 Sep 2022 16:46:41 GMT",
+        "Date": "Tue, 20 Sep 2022 17:33:47 GMT",
         "Server": "Kestrel",
         "x-ms-maa-service-version": "1.11.02043.302"
       },
