@@ -442,17 +442,17 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         self.ws = None
         self.session = None
         self._http_proxy = kwargs.get("http_proxy", None)
-        self.http_proxy_auth = None
-        self.http_proxy_host = None
         
     async def connect(self):
         username, password = None, None
+        http_proxy_host, http_proxy_port = None, None
+        http_proxy_auth = None
 
         if self._http_proxy:
-            self.http_proxy_host = self._http_proxy["proxy_hostname"]
-            self.http_proxy_port = self._http_proxy["proxy_port"]
-            if self.http_proxy_host and self.http_proxy_port:
-                self.http_proxy_host += f":{self.http_proxy_port}"
+            http_proxy_host = self._http_proxy["proxy_hostname"]
+            http_proxy_port = self._http_proxy["proxy_port"]
+            if http_proxy_host and http_proxy_port:
+                self.http_proxy_host = f"{http_proxy_host}:{http_proxy_port}"
             username = self._http_proxy.get("username", None)
             password = self._http_proxy.get("password", None)
 
@@ -461,7 +461,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
 
             if username or password:
                 from aiohttp import BasicAuth
-                self.http_proxy_auth = BasicAuth(login=username, password=password)
+                http_proxy_auth = BasicAuth(login=username, password=password)
                 
             self.session = ClientSession()
             self.ws = await self.session.ws_connect(
@@ -469,8 +469,8 @@ class WebSocketTransportAsync(AsyncTransportMixin):
                 timeout=self._connect_timeout,
                 protocols=[AMQP_WS_SUBPROTOCOL],
                 autoclose=False,
-                proxy=self.http_proxy_host,
-                proxy_auth=self.http_proxy_auth,
+                proxy=http_proxy_host,
+                proxy_auth=http_proxy_auth,
                 ssl=self.sslopts
             )
            
@@ -507,7 +507,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         self.connected = False
 
     async def write(self, s):
-        """Completely write a string to the peer.
+        """Completely write a string (byte array) to the peer.
         ABNF, OPCODE_BINARY = 0x2
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
