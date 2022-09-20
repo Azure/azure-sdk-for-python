@@ -9,6 +9,8 @@
 ### Bugs Fixed
 
 ### Other Changes
+ - Removed declaration on Python 3.6 support
+ - Added support for custom setup scripts on compute instances.
  - Removed declaration on Python 3.6 support.
  - Updated dependencies upper bounds to be major versions.
 
