@@ -9,6 +9,7 @@ the challenge cache is global to the process.
 import functools
 import os
 import time
+from urllib.parse import urlparse
 from uuid import uuid4
 
 from devtools_testutils import recorded_by_proxy
@@ -85,10 +86,11 @@ def get_random_url():
     return "https://{}.vault.azure.net/{}".format(uuid4(), uuid4()).replace("-", "")
 
 
-def get_random_url_with_port():
+def add_url_port(url: str):
     """Like `get_random_url`, but includes a port number (comes after the domain, and before the path of the URL)."""
 
-    return "https://{}.vault.azure.net:443/{}".format(uuid4(), uuid4()).replace("-", "")
+    parsed = urlparse(url)
+    return f"{parsed.scheme}://{parsed.netloc}:443{parsed.path}"
 
 
 def test_enforces_tls():
@@ -114,7 +116,7 @@ def test_challenge_cache():
         assert HttpChallengeCache.get_challenge_for_url(url) == challenge
         assert HttpChallengeCache.get_challenge_for_url(url + "/some/path") == challenge
         assert HttpChallengeCache.get_challenge_for_url(url + "/some/path?with-query=string") == challenge
-        assert HttpChallengeCache.get_challenge_for_url(get_random_url_with_port()) == challenge
+        assert HttpChallengeCache.get_challenge_for_url(add_url_port(url)) == challenge
 
         HttpChallengeCache.remove_challenge_for_url(url)
         assert not HttpChallengeCache.get_challenge_for_url(url)
@@ -398,9 +400,9 @@ def test_verify_challenge_resource_matches(verify_challenge_resource):
     """The auth policy should raise if the challenge resource doesn't match the request URL unless check is disabled"""
 
     url = get_random_url()
-    url_with_port = get_random_url_with_port()
+    url_with_port = add_url_port(url)
     token = "**"
-    resource = "https://bad-resource.azure.net"
+    resource = "https://myvault.azure.net"  # Doesn't match a "".vault.azure.net" resource because of the "my" prefix
 
     def get_token(*_, **__):
         return AccessToken(token, 0)
@@ -416,19 +418,28 @@ def test_verify_challenge_resource_matches(verify_challenge_resource):
             mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
         ]
     )
+    transport_2 = validating_transport(
+        requests=[Request(), Request(required_headers={"Authorization": f"Bearer {token}"})],
+        responses=[
+            mock_response(
+                status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
+            ),
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
+        ]
+    )
 
     client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)
     client_with_port = KeyClient(
-        url_with_port, credential, transport=transport, verify_challenge_resource=verify_challenge_resource
+        url_with_port, credential, transport=transport_2, verify_challenge_resource=verify_challenge_resource
     )
 
     if verify_challenge_resource:
         with pytest.raises(ValueError) as e:
             client.get_key("key-name")
-        assert f"The challenge resource 'bad-resource.azure.net' does not match the requested domain" in str(e.value)
+        assert f"The challenge resource 'myvault.azure.net' does not match the requested domain" in str(e.value)
         with pytest.raises(ValueError) as e:
             client_with_port.get_key("key-name")
-        assert f"The challenge resource 'bad-resource.azure.net' does not match the requested domain" in str(e.value)
+        assert f"The challenge resource 'myvault.azure.net' does not match the requested domain" in str(e.value)
     else:
         key = client.get_key("key-name")
         assert key.name == "key-name"

@@ -28,7 +28,7 @@ from _async_test_case import AsyncKeysClientPreparer, get_decorator
 from _shared.helpers import Request, mock_response
 from _shared.helpers_async import async_validating_transport
 from _shared.test_case_async import KeyVaultTestCase
-from test_challenge_auth import empty_challenge_cache, get_random_url, get_random_url_with_port
+from test_challenge_auth import empty_challenge_cache, get_random_url, add_url_port
 
 only_default_version = get_decorator(is_async=True, api_versions=[DEFAULT_VERSION])
 
@@ -360,9 +360,9 @@ async def test_verify_challenge_resource_matches(verify_challenge_resource):
     """The auth policy should raise if the challenge resource doesn't match the request URL unless check is disabled"""
 
     url = get_random_url()
-    url_with_port = get_random_url_with_port()
+    url_with_port = add_url_port(url)
     token = "**"
-    resource = "https://bad-resource.azure.net"
+    resource = "https://myvault.azure.net"  # Doesn't match a "".vault.azure.net" resource because of the "my" prefix
 
     async def get_token(*_, **__):
         return AccessToken(token, 0)
@@ -378,19 +378,28 @@ async def test_verify_challenge_resource_matches(verify_challenge_resource):
             mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
         ]
     )
+    transport_2 = async_validating_transport(
+        requests=[Request(), Request(required_headers={"Authorization": f"Bearer {token}"})],
+        responses=[
+            mock_response(
+                status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
+            ),
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
+        ]
+    )
 
     client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)
     client_with_port = KeyClient(
-        url_with_port, credential, transport=transport, verify_challenge_resource=verify_challenge_resource
+        url_with_port, credential, transport=transport_2, verify_challenge_resource=verify_challenge_resource
     )
 
     if verify_challenge_resource:
         with pytest.raises(ValueError) as e:
             await client.get_key("key-name")
-        assert f"The challenge resource 'bad-resource.azure.net' does not match the requested domain" in str(e.value)
+        assert f"The challenge resource 'myvault.azure.net' does not match the requested domain" in str(e.value)
         with pytest.raises(ValueError) as e:
             await client_with_port.get_key("key-name")
-        assert f"The challenge resource 'bad-resource.azure.net' does not match the requested domain" in str(e.value)
+        assert f"The challenge resource 'myvault.azure.net' does not match the requested domain" in str(e.value)
     else:
         key = await client.get_key("key-name")
         assert key.name == "key-name"
