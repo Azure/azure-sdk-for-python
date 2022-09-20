@@ -4,7 +4,7 @@ from devtools_testutils import PowerShellPreparer
 ServiceBusPreparer = functools.partial(
     PowerShellPreparer, 'servicebus',
     servicebus_connection_str='Endpoint=sb://fakeresource.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyf=',
-    servicebus_fully_qualified_namespace='fakeresource',
+    servicebus_fully_qualified_namespace='fakeresource.servicebus.windows.net',
     servicebus_topic_name='faketopic',
     servicebus_subscription_name='fakesubscription',
     servicebus_queue_name='fakequeue',
