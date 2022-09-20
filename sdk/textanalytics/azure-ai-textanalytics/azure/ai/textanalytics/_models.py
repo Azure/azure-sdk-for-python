@@ -376,24 +376,31 @@ class DetectedLanguage(DictMixin):
     :ivar confidence_score: A confidence score between 0 and 1. Scores close
         to 1 indicate 100% certainty that the identified language is true.
     :vartype confidence_score: float
+    :ivar Optional[str] script: Identifies the script of the input document. Possible values: "Latin".
+
+    .. versionadded:: 2022-10-01-preview
+        The *script* property.
     """
 
     def __init__(self, **kwargs):
         self.name = kwargs.get("name", None)
         self.iso6391_name = kwargs.get("iso6391_name", None)
         self.confidence_score = kwargs.get("confidence_score", None)
+        self.script = kwargs.get("script", None)
 
     @classmethod
     def _from_generated(cls, language):
+        script = language.script if hasattr(language, "script") else None
         return cls(
             name=language.name,
             iso6391_name=language.iso6391_name,
             confidence_score=language.confidence_score,
+            script=script
         )
 
     def __repr__(self):
-        return "DetectedLanguage(name={}, iso6391_name={}, confidence_score={})".format(
-            self.name, self.iso6391_name, self.confidence_score
+        return "DetectedLanguage(name={}, iso6391_name={}, confidence_score={}, script={})".format(
+            self.name, self.iso6391_name, self.confidence_score, self.script
         )[:1024]
 
 
