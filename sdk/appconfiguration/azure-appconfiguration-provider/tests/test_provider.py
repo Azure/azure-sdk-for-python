@@ -4,9 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from azure.appconfiguration import AzureAppConfigurationClient
+from azure.appconfigurationprovider import AzureAppConfigurationProvider
 from azure.identity import DefaultAzureCredential
-
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 
 AppConfigProviderPreparer = functools.partial(
@@ -16,14 +15,15 @@ AppConfigProviderPreparer = functools.partial(
     appconfiguration_endpoint_string="https://fake_app_config.azconfig-test.io"
 )
 
+
 class TestAppConfigurationProvider(AzureRecordedTestCase):
 
-    def buildClient(self, endpoint):
-        return AzureAppConfigurationClient(base_url=endpoint, credential=DefaultAzureCredential())
+    def buildProvider(self, endpoint):
+        return AzureAppConfigurationProvider.load(endpoint=endpoint, credential=DefaultAzureCredential())
 
     # method: provider_creation
     @AppConfigProviderPreparer()
     @recorded_by_proxy
     def test_provider_creation(self, appconfiguration_endpoint_string):
-        client = self.buildClient(appconfiguration_endpoint_string)
-        assert client.get_configuration_setting(key="message",label="\0").value == "hi"
+        client = self.buildProvider(appconfiguration_endpoint_string)
+        assert client["message"] == "hi"
