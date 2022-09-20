@@ -17,7 +17,8 @@
 # ----------------------
 
 from cryptography.hazmat.primitives import hashes
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
 from cryptography.hazmat.backends import default_backend
 import base64
 import pytest
@@ -38,10 +39,11 @@ from dotenv import find_dotenv, load_dotenv
 load_dotenv(find_dotenv())
 
 
-class AsyncPolicyGetSetTests(AzureTestCase):
+class TestAsyncPolicyGetSet(AzureRecordedTestCase):
     @AttestationPreparer()
     @AllAttestationTypes
     @AllInstanceTypes
+    @recorded_by_proxy_async
     async def test_get_policy_async(self, **kwargs):
         attest_client = self.create_admin_client(
             kwargs.pop("instance_url", kwargs.pop("attestation_aad_url"))
@@ -55,6 +57,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
 
     @AttestationPreparer()
     @AllAttestationTypes
+    @recorded_by_proxy_async
     async def test_aad_set_policy_unsecured(self, attestation_aad_url, **kwargs):
         attestation_policy = (
             u"version=1.0; authorizationrules{=> permit();}; issuancerules{};"
@@ -78,6 +81,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
 
     @AttestationPreparer()
     @AllAttestationTypes
+    @recorded_by_proxy_async
     async def test_aad_reset_policy_unsecured(self, attestation_aad_url, **kwargs):
 
         attest_client = self.create_admin_client(attestation_aad_url)
