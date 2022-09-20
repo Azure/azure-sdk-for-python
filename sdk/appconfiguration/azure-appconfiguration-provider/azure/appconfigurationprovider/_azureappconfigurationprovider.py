@@ -4,7 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from urllib.parse import urlparse
 import json
 from azure.appconfiguration import AzureAppConfigurationClient
 from azure.keyvault.secrets import SecretClient
@@ -63,7 +62,8 @@ class AzureAppConfigurationProvider:
             "trimmed_key_prefixes", []), key=len, reverse=True)
 
         provider._dict = {}
-        secret_clients = {}
+
+        secret_clients = key_vault_options.secret_clients if key_vault_options else {}
 
         for select in selects:
             try:
@@ -75,7 +75,7 @@ class AzureAppConfigurationProvider:
                 if config.content_type == KEY_VAULT_REFERENCE_CONTENT_TYPE:
                     provider.__resolve_keyvault_references(
                         config, key_vault_options, secret_clients)
-                elif (provider.__is_json_content_type(config.content_type)):
+                elif provider.__is_json_content_type(config.content_type):
                     try:
                         j_object = json.loads(config.value)
                         provider._dict[provider.__trim(config.key)] = j_object
@@ -126,45 +126,29 @@ class AzureAppConfigurationProvider:
 
         key_vault_identifier = KeyVaultSecretIdentifier(uri_value)
 
-        if key_vault_options.credential is not None:
-            secret_client = None
+        referenced_client = None
 
-            # Clients only should be made once, will reuse if client already made
-            for client_uri in secret_clients:
-                if client_uri == key_vault_identifier.vault_url:
-                    secret_client = secret_clients[client_uri]
-                    break
-            if secret_client is None:
-                secret_client = SecretClient(
-                    vault_url=key_vault_identifier.vault_url, credential=key_vault_options.credential)
-                secret_clients[key_vault_identifier.vault_url] = secret_client
-                try:
-                    secret = secret_client.get_secret(
-                        key_vault_identifier.name, version=key_vault_identifier.version)
+        for secret_client in secret_clients:
+            if secret_client.vault_url == key_vault_identifier.vault_url:
+                referenced_client = secret_client
+                break
+        if referenced_client is None and key_vault_options.credential is not None:
+            referenced_client = SecretClient(
+                vault_url=key_vault_identifier.vault_url, credential=key_vault_options.credential)
+            secret_clients[key_vault_identifier.vault_url] = referenced_client
 
-                    self._dict[self.__trim(config.key)] = secret.value
-                    return
-                except ResourceNotFoundError as e:
-                    raise ValueError("Key Vault %s does not contain secret %s" % (
-                        key_vault_identifier.vault_url, key_vault_identifier.name))
-                except HttpResponseError as e:
-                    raise e
-            raise AttributeError(
-                "No Secret Client found for Key Vault reference %s" % (key_vault_identifier.vault_url))
-        if key_vault_options.secret_clients is not None:
-            for secret_client in key_vault_options.secret_clients:
-                if secret_client.vault_url == key_vault_identifier.vault_url:
-                    try:
-                        secret = secret_client.get_secret(
-                            key_vault_identifier.name, version=key_vault_identifier.version)
-                        self._dict[self.__trim(
-                            config.key)] = secret.value
-                        return
-                    except ResourceNotFoundError as e:
-                        raise ValueError("Key Vault %s does not contain secret %s" % (
-                            key_vault_identifier.vault_url, key_vault_identifier.name))
-                    except HttpResponseError as e:
-                        raise e
+        if referenced_client:
+            try:
+                secret = referenced_client.get_secret(
+                    key_vault_identifier.name, version=key_vault_identifier.version)
+                self._dict[self.__trim(config.key)] = secret.value
+                return
+            except ResourceNotFoundError as e:
+                raise ValueError("Key Vault %s does not contain secret %s" % (
+                    key_vault_identifier.vault_url, key_vault_identifier.name))
+            except HttpResponseError as e:
+                raise e
+
         if key_vault_options.secret_resolver is not None:
             self._dict[self.__trim(
                 config.key)] = key_vault_options.secret_resolver(key_vault_identifier.vault_url)
@@ -172,7 +156,8 @@ class AzureAppConfigurationProvider:
         raise AttributeError(
             "No Secret Client found for Key Vault reference %s" % (key_vault_identifier.vault_url))
 
-    def __is_json_content_type(self, content_type):
+    @staticmethod
+    def __is_json_content_type(content_type):
         if not content_type:
             return False
 

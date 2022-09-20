@@ -17,6 +17,7 @@ config = AzureAppConfigurationProvider.load(
     connection_string=connection_string)
 
 print(config["message"])
+print(config["myjson"]["key"])
 
 # Connecting to Azure App Configuration using connection string and trimmed key prefixes
 trimmed = {"test."}
