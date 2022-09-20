@@ -394,7 +394,8 @@
         "mytableasync",
         "mytable",
         "mycontainer",
-        "edmtypes"
+        "edmtypes",
+        "aefg"
       ]
     },
     {
