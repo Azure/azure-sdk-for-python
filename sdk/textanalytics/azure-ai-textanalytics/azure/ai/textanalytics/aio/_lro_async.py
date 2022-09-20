@@ -14,8 +14,6 @@ from azure.core.polling.base_polling import OperationFailed, BadStatus
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._lro import TextAnalyticsOperationResourcePolling
-from .._generated.v2022_05_01.models import JobState
-
 
 _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted", "partiallysucceeded"])
 _FAILED = frozenset(["failed"])
@@ -172,6 +170,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
 
     @property
     def _current_body(self):
+        from .._generated.models import JobState
         return JobState.deserialize(self._pipeline_response)
 
     @property
@@ -334,6 +333,7 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
 
     @property
     def _current_body(self):
+        from .._generated.models import JobState
         return JobState.deserialize(self._pipeline_response)
 
     @property
