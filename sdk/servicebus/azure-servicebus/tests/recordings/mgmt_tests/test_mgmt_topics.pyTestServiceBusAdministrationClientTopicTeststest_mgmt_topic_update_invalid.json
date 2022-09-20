@@ -13,11 +13,11 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/atom\u002Bxml; type=feed; charset=utf-8",
-        "Date": "Tue, 20 Sep 2022 16:58:04 GMT",
+        "Date": "Tue, 20 Sep 2022 17:56:22 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Transfer-Encoding": "chunked"
       },
-      "ResponseBody": "\u003Cfeed xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Ctitle type=\u0022text\u0022\u003ETopics\u003C/title\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/$Resources/topics?$skip=0\u0026amp;$top=100\u0026amp;api-version=2021-05\u003C/id\u003E\u003Cupdated\u003E2022-09-20T16:58:05Z\u003C/updated\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/$Resources/topics?$skip=0\u0026amp;$top=100\u0026amp;api-version=2021-05\u0022/\u003E\u003C/feed\u003E"
+      "ResponseBody": "\u003Cfeed xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Ctitle type=\u0022text\u0022\u003ETopics\u003C/title\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/$Resources/topics?$skip=0\u0026amp;$top=100\u0026amp;api-version=2021-05\u003C/id\u003E\u003Cupdated\u003E2022-09-20T17:56:23Z\u003C/updated\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/$Resources/topics?$skip=0\u0026amp;$top=100\u0026amp;api-version=2021-05\u0022/\u003E\u003C/feed\u003E"
     },
     {
       "RequestUri": "https://fakeresource.servicebus.windows.net/dfjfj?api-version=2021-05",
@@ -37,12 +37,12 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/atom\u002Bxml; type=entry; charset=utf-8",
-        "Date": "Tue, 20 Sep 2022 16:58:05 GMT",
+        "Date": "Tue, 20 Sep 2022 17:56:24 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked"
       },
-      "ResponseBody": "\u003Centry xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/dfjfj?api-version=2021-05\u003C/id\u003E\u003Ctitle type=\u0022text\u0022\u003Edfjfj\u003C/title\u003E\u003Cpublished\u003E2022-09-20T16:58:05Z\u003C/published\u003E\u003Cupdated\u003E2022-09-20T16:58:05Z\u003C/updated\u003E\u003Cauthor\u003E\u003Cname\u003Esb-llawsb2\u003C/name\u003E\u003C/author\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/dfjfj?api-version=2021-05\u0022/\u003E\u003Ccontent type=\u0022application/xml\u0022\u003E\u003CTopicDescription xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022 xmlns:i=\u0022http://www.w3.org/2001/XMLSchema-instance\u0022\u003E\u003CDefaultMessageTimeToLive\u003EP10675199DT2H48M5.4775807S\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E1024\u003C/MaxSizeInMegabytes\u003E\u003CRequiresDuplicateDetection\u003Efalse\u003C/RequiresDuplicateDetection\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EPT10M\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CSizeInBytes\u003E0\u003C/SizeInBytes\u003E\u003CFilteringMessagesBeforePublishing\u003Efalse\u003C/FilteringMessagesBeforePublishing\u003E\u003CIsAnonymousAccessible\u003Efalse\u003C/IsAnonymousAccessible\u003E\u003CAuthorizationRules\u003E\u003C/AuthorizationRules\u003E\u003CStatus\u003EActive\u003C/Status\u003E\u003CCreatedAt\u003E2022-09-20T16:58:05.597Z\u003C/CreatedAt\u003E\u003CUpdatedAt\u003E2022-09-20T16:58:05.643Z\u003C/UpdatedAt\u003E\u003CSupportOrdering\u003Etrue\u003C/SupportOrdering\u003E\u003CAutoDeleteOnIdle\u003EP10675199DT2H48M5.4775807S\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Efalse\u003C/EnablePartitioning\u003E\u003CEntityAvailabilityStatus\u003EAvailable\u003C/EntityAvailabilityStatus\u003E\u003CEnableSubscriptionPartitioning\u003Efalse\u003C/EnableSubscriptionPartitioning\u003E\u003CEnableExpress\u003Efalse\u003C/EnableExpress\u003E\u003CMaxMessageSizeInKilobytes\u003E256\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/content\u003E\u003C/entry\u003E"
+      "ResponseBody": "\u003Centry xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/dfjfj?api-version=2021-05\u003C/id\u003E\u003Ctitle type=\u0022text\u0022\u003Edfjfj\u003C/title\u003E\u003Cpublished\u003E2022-09-20T17:56:23Z\u003C/published\u003E\u003Cupdated\u003E2022-09-20T17:56:23Z\u003C/updated\u003E\u003Cauthor\u003E\u003Cname\u003Esb-llawsb2\u003C/name\u003E\u003C/author\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/dfjfj?api-version=2021-05\u0022/\u003E\u003Ccontent type=\u0022application/xml\u0022\u003E\u003CTopicDescription xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022 xmlns:i=\u0022http://www.w3.org/2001/XMLSchema-instance\u0022\u003E\u003CDefaultMessageTimeToLive\u003EP10675199DT2H48M5.4775807S\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E1024\u003C/MaxSizeInMegabytes\u003E\u003CRequiresDuplicateDetection\u003Efalse\u003C/RequiresDuplicateDetection\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EPT10M\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CSizeInBytes\u003E0\u003C/SizeInBytes\u003E\u003CFilteringMessagesBeforePublishing\u003Efalse\u003C/FilteringMessagesBeforePublishing\u003E\u003CIsAnonymousAccessible\u003Efalse\u003C/IsAnonymousAccessible\u003E\u003CAuthorizationRules\u003E\u003C/AuthorizationRules\u003E\u003CStatus\u003EActive\u003C/Status\u003E\u003CCreatedAt\u003E2022-09-20T17:56:23.727Z\u003C/CreatedAt\u003E\u003CUpdatedAt\u003E2022-09-20T17:56:23.763Z\u003C/UpdatedAt\u003E\u003CSupportOrdering\u003Etrue\u003C/SupportOrdering\u003E\u003CAutoDeleteOnIdle\u003EP10675199DT2H48M5.4775807S\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Efalse\u003C/EnablePartitioning\u003E\u003CEntityAvailabilityStatus\u003EAvailable\u003C/EntityAvailabilityStatus\u003E\u003CEnableSubscriptionPartitioning\u003Efalse\u003C/EnableSubscriptionPartitioning\u003E\u003CEnableExpress\u003Efalse\u003C/EnableExpress\u003E\u003CMaxMessageSizeInKilobytes\u003E256\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/content\u003E\u003C/entry\u003E"
     },
     {
       "RequestUri": "https://fakeresource.servicebus.windows.net/iewdm?api-version=2021-05",
@@ -58,17 +58,17 @@
       },
       "RequestBody": [
         "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
-        "\u003Cns0:entry xmlns:ns0=\u0022http://www.w3.org/2005/Atom\u0022 xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022\u003E\u003Cns0:content type=\u0022application/xml\u0022\u003E\u003CTopicDescription\u003E\u003CDefaultMessageTimeToLive\u003EP10675199DT2H48M5.477539S\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E1024\u003C/MaxSizeInMegabytes\u003E\u003CRequiresDuplicateDetection\u003Efalse\u003C/RequiresDuplicateDetection\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EPT10M\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CSizeInBytes\u003E0\u003C/SizeInBytes\u003E\u003CFilteringMessagesBeforePublishing\u003Efalse\u003C/FilteringMessagesBeforePublishing\u003E\u003CIsAnonymousAccessible\u003Efalse\u003C/IsAnonymousAccessible\u003E\u003CAuthorizationRules /\u003E\u003CStatus\u003EActive\u003C/Status\u003E\u003CCreatedAt\u003E2022-09-20T16:58:05.597Z\u003C/CreatedAt\u003E\u003CUpdatedAt\u003E2022-09-20T16:58:05.643Z\u003C/UpdatedAt\u003E\u003CSupportOrdering\u003Etrue\u003C/SupportOrdering\u003E\u003CAutoDeleteOnIdle\u003EP10675199DT2H48M5.477539S\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Efalse\u003C/EnablePartitioning\u003E\u003CEntityAvailabilityStatus\u003EAvailable\u003C/EntityAvailabilityStatus\u003E\u003CEnableSubscriptionPartitioning\u003Efalse\u003C/EnableSubscriptionPartitioning\u003E\u003CEnableExpress\u003Efalse\u003C/EnableExpress\u003E\u003CMaxMessageSizeInKilobytes\u003E256\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/ns0:content\u003E\u003C/ns0:entry\u003E"
+        "\u003Cns0:entry xmlns:ns0=\u0022http://www.w3.org/2005/Atom\u0022 xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022\u003E\u003Cns0:content type=\u0022application/xml\u0022\u003E\u003CTopicDescription\u003E\u003CDefaultMessageTimeToLive\u003EP10675199DT2H48M5.477539S\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E1024\u003C/MaxSizeInMegabytes\u003E\u003CRequiresDuplicateDetection\u003Efalse\u003C/RequiresDuplicateDetection\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EPT10M\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CSizeInBytes\u003E0\u003C/SizeInBytes\u003E\u003CFilteringMessagesBeforePublishing\u003Efalse\u003C/FilteringMessagesBeforePublishing\u003E\u003CIsAnonymousAccessible\u003Efalse\u003C/IsAnonymousAccessible\u003E\u003CAuthorizationRules /\u003E\u003CStatus\u003EActive\u003C/Status\u003E\u003CCreatedAt\u003E2022-09-20T17:56:23.727Z\u003C/CreatedAt\u003E\u003CUpdatedAt\u003E2022-09-20T17:56:23.763Z\u003C/UpdatedAt\u003E\u003CSupportOrdering\u003Etrue\u003C/SupportOrdering\u003E\u003CAutoDeleteOnIdle\u003EP10675199DT2H48M5.477539S\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Efalse\u003C/EnablePartitioning\u003E\u003CEntityAvailabilityStatus\u003EAvailable\u003C/EntityAvailabilityStatus\u003E\u003CEnableSubscriptionPartitioning\u003Efalse\u003C/EnableSubscriptionPartitioning\u003E\u003CEnableExpress\u003Efalse\u003C/EnableExpress\u003E\u003CMaxMessageSizeInKilobytes\u003E256\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/ns0:content\u003E\u003C/ns0:entry\u003E"
       ],
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/xml; charset=utf-8",
-        "Date": "Tue, 20 Sep 2022 16:58:06 GMT",
+        "Date": "Tue, 20 Sep 2022 17:56:24 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked"
       },
-      "ResponseBody": "\u003CError\u003E\u003CCode\u003E404\u003C/Code\u003E\u003CDetail\u003ESubCode=40400. Not Found. The Operation doesn\u0027t exist. To know more visit https://aka.ms/sbResourceMgrExceptions. . TrackingId:1b70b857-4e59-44e1-b69b-0d41d124080f_G2, SystemTracker:fakeresource.servicebus.windows.net:iewdm, Timestamp:2022-09-20T16:58:06\u003C/Detail\u003E\u003C/Error\u003E"
+      "ResponseBody": "\u003CError\u003E\u003CCode\u003E404\u003C/Code\u003E\u003CDetail\u003ESubCode=40400. Not Found. The Operation doesn\u0027t exist. To know more visit https://aka.ms/sbResourceMgrExceptions. . TrackingId:8d7865d6-85f9-4e4d-a7e3-e4f20029f62a_G4, SystemTracker:fakeresource.servicebus.windows.net:iewdm, Timestamp:2022-09-20T17:56:24\u003C/Detail\u003E\u003C/Error\u003E"
     },
     {
       "RequestUri": "https://fakeresource.servicebus.windows.net/dfjfj?api-version=2021-05",
@@ -84,13 +84,13 @@
       },
       "RequestBody": [
         "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
-        "\u003Cns0:entry xmlns:ns0=\u0022http://www.w3.org/2005/Atom\u0022 xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022\u003E\u003Cns0:content type=\u0022application/xml\u0022\u003E\u003CTopicDescription\u003E\u003CDefaultMessageTimeToLive\u003EP10675199DT2H48M5.477539S\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E1024\u003C/MaxSizeInMegabytes\u003E\u003CRequiresDuplicateDetection\u003Efalse\u003C/RequiresDuplicateDetection\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EP25D\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CSizeInBytes\u003E0\u003C/SizeInBytes\u003E\u003CFilteringMessagesBeforePublishing\u003Efalse\u003C/FilteringMessagesBeforePublishing\u003E\u003CIsAnonymousAccessible\u003Efalse\u003C/IsAnonymousAccessible\u003E\u003CAuthorizationRules /\u003E\u003CStatus\u003EActive\u003C/Status\u003E\u003CCreatedAt\u003E2022-09-20T16:58:05.597Z\u003C/CreatedAt\u003E\u003CUpdatedAt\u003E2022-09-20T16:58:05.643Z\u003C/UpdatedAt\u003E\u003CSupportOrdering\u003Etrue\u003C/SupportOrdering\u003E\u003CAutoDeleteOnIdle\u003EP10675199DT2H48M5.477539S\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Efalse\u003C/EnablePartitioning\u003E\u003CEntityAvailabilityStatus\u003EAvailable\u003C/EntityAvailabilityStatus\u003E\u003CEnableSubscriptionPartitioning\u003Efalse\u003C/EnableSubscriptionPartitioning\u003E\u003CEnableExpress\u003Efalse\u003C/EnableExpress\u003E\u003CMaxMessageSizeInKilobytes\u003E256\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/ns0:content\u003E\u003C/ns0:entry\u003E"
+        "\u003Cns0:entry xmlns:ns0=\u0022http://www.w3.org/2005/Atom\u0022 xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022\u003E\u003Cns0:content type=\u0022application/xml\u0022\u003E\u003CTopicDescription\u003E\u003CDefaultMessageTimeToLive\u003EP10675199DT2H48M5.477539S\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E1024\u003C/MaxSizeInMegabytes\u003E\u003CRequiresDuplicateDetection\u003Efalse\u003C/RequiresDuplicateDetection\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EP25D\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CSizeInBytes\u003E0\u003C/SizeInBytes\u003E\u003CFilteringMessagesBeforePublishing\u003Efalse\u003C/FilteringMessagesBeforePublishing\u003E\u003CIsAnonymousAccessible\u003Efalse\u003C/IsAnonymousAccessible\u003E\u003CAuthorizationRules /\u003E\u003CStatus\u003EActive\u003C/Status\u003E\u003CCreatedAt\u003E2022-09-20T17:56:23.727Z\u003C/CreatedAt\u003E\u003CUpdatedAt\u003E2022-09-20T17:56:23.763Z\u003C/UpdatedAt\u003E\u003CSupportOrdering\u003Etrue\u003C/SupportOrdering\u003E\u003CAutoDeleteOnIdle\u003EP10675199DT2H48M5.477539S\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Efalse\u003C/EnablePartitioning\u003E\u003CEntityAvailabilityStatus\u003EAvailable\u003C/EntityAvailabilityStatus\u003E\u003CEnableSubscriptionPartitioning\u003Efalse\u003C/EnableSubscriptionPartitioning\u003E\u003CEnableExpress\u003Efalse\u003C/EnableExpress\u003E\u003CMaxMessageSizeInKilobytes\u003E256\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/ns0:content\u003E\u003C/ns0:entry\u003E"
       ],
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/xml; charset=utf-8",
-        "Date": "Tue, 20 Sep 2022 16:58:06 GMT",
-        "ETag": "637992898856430000",
+        "Date": "Tue, 20 Sep 2022 17:56:24 GMT",
+        "ETag": "637992933837630000",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked"
@@ -98,7 +98,7 @@
       "ResponseBody": [
         "\u003CError\u003E\u003CCode\u003E400\u003C/Code\u003E\u003CDetail\u003ESubCode=40000. The value supplied must be between 00:00:20 and 7.00:00:00.\u0026#xD;\n",
         "Parameter name: DuplicateDetectionHistoryTimeWindow\u0026#xD;\n",
-        "Actual value was 25.00:00:00. TrackingId:463aa319-1f22-4f9e-aae9-b0db6eefb151_G2, SystemTracker:fakeresource.servicebus.windows.net:dfjfj, Timestamp:2022-09-20T16:58:06\u003C/Detail\u003E\u003C/Error\u003E"
+        "Actual value was 25.00:00:00. TrackingId:5213eb18-7925-4f92-b101-4541e7606a12_G4, SystemTracker:fakeresource.servicebus.windows.net:dfjfj, Timestamp:2022-09-20T17:56:24\u003C/Detail\u003E\u003C/Error\u003E"
       ]
     },
     {
@@ -115,8 +115,8 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Tue, 20 Sep 2022 16:58:06 GMT",
-        "ETag": "637992898856430000",
+        "Date": "Tue, 20 Sep 2022 17:56:25 GMT",
+        "ETag": "637992933837630000",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000"
       },
