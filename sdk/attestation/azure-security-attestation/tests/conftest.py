@@ -10,3 +10,4 @@ def start_proxy(test_proxy):
     add_general_string_sanitizer(target="policies/SgxEnclave", value="policies/Tpm")
     add_general_string_sanitizer(target="policies/OpenEnclave", value="policies/Tpm")
     return
+ 
