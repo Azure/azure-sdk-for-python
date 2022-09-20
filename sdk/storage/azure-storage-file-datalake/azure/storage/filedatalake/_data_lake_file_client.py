@@ -25,7 +25,7 @@ from ._upload_helper import upload_datalake_file
 from ._download import StorageStreamDownloader
 from ._path_client import PathClient
 from ._serialize import get_mod_conditions, get_path_http_headers, get_access_conditions, add_metadata_headers, \
-    convert_datetime_to_rfc1123, get_cpk_info
+    convert_datetime_to_rfc1123, get_cpk_info, get_lease_action_properties
 from ._deserialize import process_storage_error, deserialize_file_properties
 from ._models import FileProperties, DataLakeFileQueryError
 
@@ -465,14 +465,13 @@ class DataLakeFileClient(PathClient):
         if isinstance(data, bytes):
             data = data[:length]
 
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         cpk_info = get_cpk_info(scheme, kwargs)
+        kwargs.update(get_lease_action_properties(kwargs))
 
         options = {
             'body': data,
             'position': offset,
             'content_length': length,
-            'lease_access_conditions': access_conditions,
             'validate_content': kwargs.pop('validate_content', False),
             'cpk_info': cpk_info,
             'timeout': kwargs.pop('timeout', None),
@@ -499,9 +498,26 @@ class DataLakeFileClient(PathClient):
             bitflips on the wire if using http instead of https as https (the default)
             will already validate. Note that this MD5 hash is not stored with the
             file.
+        :keyword lease_action:
+            Used to perform lease operations along with appending data.
+
+            "acquire" - Acquire a lease.
+            "auto-renew" - Re-new an existing lease.
+            "release" - Release the lease once the operation is complete. Requires `flush=True`.
+            "acquire-release" - Acquire a lease and release it once the operations is complete. Requires `flush=True`.
+        :paramtype lease_action: Literal["acquire", "auto-renew", "release", "acquire-release"]
+        :keyword int lease_duration:
+            Valid if `lease_action` is set to "acquire" or "acquire-release".
+
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change. Default is -1 (infinite lease).
         :keyword lease:
-            Required if the file has an active lease. Value can be a DataLakeLeaseClient object
-            or the lease ID as a string.
+            Required if the file has an active lease or if `lease_action` is set to "acquire" or "acquire-release".
+            If the file has an existing lease, this will be used to access the file. If acquiring a new lease,
+            this will be used as the new lease id.
+            Value can be a DataLakeLeaseClient object or the lease ID as a string.
         :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
@@ -538,7 +554,6 @@ class DataLakeFileClient(PathClient):
         ):
         # type: (...) -> Dict[str, Any]
 
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
 
         path_http_headers = None
@@ -546,6 +561,7 @@ class DataLakeFileClient(PathClient):
             path_http_headers = get_path_http_headers(content_settings)
 
         cpk_info = get_cpk_info(scheme, kwargs)
+        kwargs.update(get_lease_action_properties(kwargs))
 
         options = {
             'position': offset,
@@ -553,7 +569,6 @@ class DataLakeFileClient(PathClient):
             'path_http_headers': path_http_headers,
             'retain_uncommitted_data': retain_uncommitted_data,
             'close': kwargs.pop('close', False),
-            'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
             'cpk_info': cpk_info,
             'timeout': kwargs.pop('timeout', None),
@@ -609,6 +624,27 @@ class DataLakeFileClient(PathClient):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword lease_action:
+            Used to perform lease operations along with appending data.
+
+            "acquire" - Acquire a lease.
+            "auto-renew" - Re-new an existing lease.
+            "release" - Release the lease once the operation is complete.
+            "acquire-release" - Acquire a lease and release it once the operations is complete.
+        :paramtype lease_action: Literal["acquire", "auto-renew", "release", "acquire-release"]
+        :keyword int lease_duration:
+            Valid if `lease_action` is set to "acquire" or "acquire-release".
+
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change. Default is -1 (infinite lease).
+        :keyword lease:
+            Required if the file has an active lease or if `lease_action` is set to "acquire" or "acquire-release".
+            If the file has an existing lease, this will be used to access the file. If acquiring a new lease,
+            this will be used as the new lease id.
+            Value can be a DataLakeLeaseClient object or the lease ID as a string.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
