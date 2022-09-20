@@ -379,6 +379,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
     def _to_node(self, context: Dict = None, **kwargs):
         """Translate a command job to a pipeline node when load schema.
 
+        (Write a pipeline job as node in yaml is not supported presently.)
+
         :param context: Context of command job YAML file.
         :param kwargs: Extra arguments.
         :return: Translated command component.
@@ -394,6 +396,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             description=self.description,
             tags=self.tags,
             display_name=self.display_name,
+            properties=self.properties,
         )
 
     def _to_rest_object(self) -> JobBase:

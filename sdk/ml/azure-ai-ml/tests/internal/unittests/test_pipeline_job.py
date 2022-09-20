@@ -349,6 +349,7 @@ class TestPipelineJob:
             node_internal.adla_account_name = "adla_account_name"
             node_internal.scope_param = "-tokens 50"
             node_internal.custom_job_name_suffix = "component_sdk_test"
+            node_internal.properties["AZURE_ML_PathOnCompute_mock_output"] = "mock_path"
 
         dsl_pipeline: PipelineJob = pipeline_func()
         internal_node_name = "node_internal"
@@ -359,7 +360,6 @@ class TestPipelineJob:
         scope_node._set_base_path(yaml_path.parent)
         scope_node_dict = scope_node._to_dict()
         assert scope_node_dict == {
-            "$schema": "{}",
             "priority": 800,
             "adla_account_name": "adla_account_name",
             "custom_job_name_suffix": "component_sdk_test",
@@ -371,6 +371,7 @@ class TestPipelineJob:
                 "TextData": {"path": "azureml:scope_tsv:1", "type": "mltable"},
             },
             "outputs": {},
+            "properties": {"AZURE_ML_PathOnCompute_mock_output": "mock_path"},
         }
         assert pydash.omit(scope_node._to_rest_object(), "componentId") == {
             "_source": "YAML.COMPONENT",
@@ -384,6 +385,7 @@ class TestPipelineJob:
             },
             "outputs": {},
             "type": "ScopeComponent",
+            "properties": {"AZURE_ML_PathOnCompute_mock_output": "mock_path"},
         }
         scope_node._validate(raise_error=True)
 

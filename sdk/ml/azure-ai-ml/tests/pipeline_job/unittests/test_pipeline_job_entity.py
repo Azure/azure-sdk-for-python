@@ -1436,3 +1436,15 @@ class TestPipelineJobEntity:
             },
             "type": "command",
         }
+
+    def test_job_properties(self):
+        pipeline_job: PipelineJob = load_job(path="./tests/test_configs/pipeline_jobs/pipeline_job_with_properties.yml")
+        pipeline_dict = pipeline_job._to_dict()
+        rest_pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["properties"] == {"AZURE_ML_PathOnCompute_input_data": "/tmp/test"}
+        assert rest_pipeline_dict["properties"] == pipeline_dict["properties"]
+        for name, node_dict in pipeline_dict["jobs"].items():
+            rest_node_dict = rest_pipeline_dict["jobs"][name]
+            assert len(node_dict["properties"]) == 1
+            assert "AZURE_ML_PathOnCompute_" in list(node_dict["properties"].keys())[0]
+            assert node_dict["properties"] == rest_node_dict["properties"]
