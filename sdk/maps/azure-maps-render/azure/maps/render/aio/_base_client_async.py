@@ -7,7 +7,7 @@ from typing import Union, Any
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from .._generated.aio import RenderClient as _MapsRenderClient
+from .._generated.aio import MapsRenderClient as _MapsRenderClient
 from .._version import API_VERSION
 
 def _authentication_policy(credential):
@@ -38,7 +38,7 @@ class AsyncMapsRenderClientBase:
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             **kwargs
         )
-        self._render_client = self._maps_client.render_v2
+        self._render_client = self._maps_client.render
 
     async def __aenter__(self):
         await self._maps_client.__aenter__()  # pylint:disable=no-member

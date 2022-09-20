@@ -30,9 +30,9 @@ class Copyright(_serialization.Model):
     """
 
     _validation = {
-        'format_version': {'readonly': True},
-        'general_copyrights': {'readonly': True},
-        'regions': {'readonly': True},
+        "format_version": {"readonly": True},
+        "general_copyrights": {"readonly": True},
+        "regions": {"readonly": True},
     }
 
     _attribute_map = {
@@ -41,12 +41,8 @@ class Copyright(_serialization.Model):
         "regions": {"key": "regions", "type": "[RegionCopyrights]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.format_version = None
         self.general_copyrights = None
@@ -65,8 +61,8 @@ class CopyrightCaption(_serialization.Model):
     """
 
     _validation = {
-        'format_version': {'readonly': True},
-        'copyrights_caption': {'readonly': True},
+        "format_version": {"readonly": True},
+        "copyrights_caption": {"readonly": True},
     }
 
     _attribute_map = {
@@ -74,12 +70,8 @@ class CopyrightCaption(_serialization.Model):
         "copyrights_caption": {"key": "copyrightsCaption", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.format_version = None
         self.copyrights_caption = None
@@ -97,8 +89,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
@@ -106,12 +98,8 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.type = None
         self.info = None
@@ -135,11 +123,11 @@ class ErrorDetail(_serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
@@ -150,12 +138,8 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.code = None
         self.message = None
@@ -175,12 +159,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.maps.render.models.ErrorDetail
@@ -200,12 +179,7 @@ class MapAttribution(_serialization.Model):
         "copyrights": {"key": "copyrights", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        copyrights: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, copyrights: Optional[List[str]] = None, **kwargs):
         """
         :keyword copyrights: A list of copyright strings.
         :paramtype copyrights: list[str]
@@ -265,10 +239,10 @@ class MapTileset(_serialization.Model):  # pylint: disable=too-many-instance-att
     """
 
     _validation = {
-        'tilejson': {'pattern': r'\d+\.\d+\.\d+\w?[\w\d]*'},
-        'version': {'pattern': r'\d+\.\d+\.\d+\w?[\w\d]*'},
-        'min_zoom': {'maximum': 30, 'minimum': 0},
-        'max_zoom': {'maximum': 30, 'minimum': 0},
+        "tilejson": {"pattern": r"\d+\.\d+\.\d+\w?[\w\d]*"},
+        "version": {"pattern": r"\d+\.\d+\.\d+\w?[\w\d]*"},
+        "min_zoom": {"maximum": 30, "minimum": 0},
+        "max_zoom": {"maximum": 30, "minimum": 0},
     }
 
     _attribute_map = {
@@ -386,8 +360,8 @@ class RegionCopyrights(_serialization.Model):
     """
 
     _validation = {
-        'copyrights': {'readonly': True},
-        'country': {'readonly': True},
+        "copyrights": {"readonly": True},
+        "country": {"readonly": True},
     }
 
     _attribute_map = {
@@ -395,12 +369,8 @@ class RegionCopyrights(_serialization.Model):
         "country": {"key": "country", "type": "RegionCopyrightsCountry"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.copyrights = None
         self.country = None
@@ -418,8 +388,8 @@ class RegionCopyrightsCountry(_serialization.Model):
     """
 
     _validation = {
-        'iso3': {'readonly': True},
-        'label': {'readonly': True},
+        "iso3": {"readonly": True},
+        "label": {"readonly": True},
     }
 
     _attribute_map = {
@@ -427,12 +397,8 @@ class RegionCopyrightsCountry(_serialization.Model):
         "label": {"key": "label", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.iso3 = None
         self.label = None

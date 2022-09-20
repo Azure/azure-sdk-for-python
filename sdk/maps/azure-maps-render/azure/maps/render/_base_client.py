@@ -6,7 +6,7 @@
 from typing import Union, Any
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, TokenCredential
-from ._generated import RenderClient as _MapsRenderClient
+from ._generated import MapsRenderClient as _MapsRenderClient
 from ._version import API_VERSION
 
 # To check the credential is either AzureKeyCredential or TokenCredential
@@ -38,7 +38,7 @@ class MapsRenderClientBase:
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             **kwargs
         )
-        self._render_client = self._maps_client.render_v2
+        self._render_client = self._maps_client.render
 
     def __enter__(self):
         self._maps_client.__enter__()  # pylint:disable=no-member

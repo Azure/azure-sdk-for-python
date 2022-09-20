@@ -9,25 +9,44 @@
 import datetime
 from typing import Any, AsyncIterator, Callable, Dict, List, Optional, TypeVar, Union
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
-from ...operations._operations import build_render_v2_get_copyright_caption_request, build_render_v2_get_copyright_for_tile_request, build_render_v2_get_copyright_for_world_request, build_render_v2_get_copyright_from_bounding_box_request, build_render_v2_get_map_attribution_request, build_render_v2_get_map_state_tile_request, build_render_v2_get_map_static_image_request, build_render_v2_get_map_tile_request, build_render_v2_get_map_tileset_request
-T = TypeVar('T')
+from ...operations._operations import (
+    build_render_get_copyright_caption_request,
+    build_render_get_copyright_for_tile_request,
+    build_render_get_copyright_for_world_request,
+    build_render_get_copyright_from_bounding_box_request,
+    build_render_get_map_attribution_request,
+    build_render_get_map_state_tile_request,
+    build_render_get_map_static_image_request,
+    build_render_get_map_tile_request,
+    build_render_get_map_tileset_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class RenderV2Operations:
+
+class RenderOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.maps.render.aio.RenderClient`'s
-        :attr:`render_v2` attribute.
+        :class:`~azure.maps.render.aio.MapsRenderClient`'s
+        :attr:`render` attribute.
     """
 
     models = _models
@@ -38,7 +57,6 @@ class RenderV2Operations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
 
     @distributed_trace_async
     async def get_map_tile(
@@ -143,17 +161,19 @@ class RenderV2Operations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[AsyncIterator[bytes]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[AsyncIterator[bytes]]
 
-        
-        request = build_render_v2_get_map_tile_request(
+        request = build_render_get_map_tile_request(
             tileset_id=tileset_id,
             z=z,
             x=x,
@@ -170,9 +190,7 @@ class RenderV2Operations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=True,
-            **kwargs
+            request, stream=True, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -183,7 +201,7 @@ class RenderV2Operations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         deserialized = response.iter_bytes()
 
@@ -192,14 +210,9 @@ class RenderV2Operations:
 
         return deserialized
 
-
-
     @distributed_trace_async
     async def get_map_tileset(
-        self,
-        *,
-        tileset_id: Union[str, "_models.TilesetID"],
-        **kwargs: Any
+        self, *, tileset_id: Union[str, "_models.TilesetID"], **kwargs: Any
     ) -> _models.MapTileset:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
@@ -226,17 +239,19 @@ class RenderV2Operations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.MapTileset]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MapTileset]
 
-        
-        request = build_render_v2_get_map_tileset_request(
+        request = build_render_get_map_tileset_request(
             tileset_id=tileset_id,
             client_id=self._config.client_id,
             api_version=self._config.api_version,
@@ -246,9 +261,7 @@ class RenderV2Operations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -258,23 +271,16 @@ class RenderV2Operations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('MapTileset', pipeline_response)
+        deserialized = self._deserialize("MapTileset", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-
-
     @distributed_trace_async
     async def get_map_attribution(
-        self,
-        *,
-        tileset_id: Union[str, "_models.TilesetID"],
-        zoom: int,
-        bounds: List[float],
-        **kwargs: Any
+        self, *, tileset_id: Union[str, "_models.TilesetID"], zoom: int, bounds: List[float], **kwargs: Any
     ) -> _models.MapAttribution:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
@@ -310,17 +316,19 @@ class RenderV2Operations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.MapAttribution]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MapAttribution]
 
-        
-        request = build_render_v2_get_map_attribution_request(
+        request = build_render_get_map_attribution_request(
             tileset_id=tileset_id,
             zoom=zoom,
             bounds=bounds,
@@ -332,9 +340,7 @@ class RenderV2Operations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -344,32 +350,23 @@ class RenderV2Operations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('MapAttribution', pipeline_response)
+        deserialized = self._deserialize("MapAttribution", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-
-
     @distributed_trace_async
     async def get_map_state_tile(
-        self,
-        *,
-        z: int,
-        x: int,
-        y: int,
-        stateset_id: str,
-        **kwargs: Any
+        self, *, z: int, x: int, y: int, stateset_id: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Fetches state tiles in vector format typically to be integrated into indoor maps module of map
         control or SDK. The map control will call this API after user turns on dynamic styling (see
         `Zoom Levels and Tile Grid
-        <https://docs.microsoft.com/en-us/azure/location-based-services/zoom-levels-and-tile-grid>`_\
-        ).
+        <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_\ ).
 
         :keyword z: Zoom level for the desired tile.
 
@@ -398,17 +395,19 @@ class RenderV2Operations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[AsyncIterator[bytes]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[AsyncIterator[bytes]]
 
-        
-        request = build_render_v2_get_map_state_tile_request(
+        request = build_render_get_map_state_tile_request(
             z=z,
             x=x,
             y=y,
@@ -421,9 +420,7 @@ class RenderV2Operations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=True,
-            **kwargs
+            request, stream=True, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -434,7 +431,7 @@ class RenderV2Operations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         deserialized = response.iter_bytes()
 
@@ -443,19 +440,15 @@ class RenderV2Operations:
 
         return deserialized
 
-
-
     @distributed_trace_async
     async def get_copyright_caption(
-        self,
-        format: Union[str, "_models.ResponseFormat"] = "json",
-        **kwargs: Any
+        self, format: Union[str, "_models.ResponseFormat"] = "json", **kwargs: Any
     ) -> _models.CopyrightCaption:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Copyrights API is designed to serve copyright information for Render Tile
         service. In addition to basic copyright for the whole map, API is serving
-        specific groups of copyrights for some countries.
+        specific groups of copyrights for some countries/regions.
 
         As an alternative to copyrights for map request, one can receive captions
         for displaying the map provider information on the map.
@@ -468,17 +461,19 @@ class RenderV2Operations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CopyrightCaption]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CopyrightCaption]
 
-        
-        request = build_render_v2_get_copyright_caption_request(
+        request = build_render_get_copyright_caption_request(
             format=format,
             client_id=self._config.client_id,
             api_version=self._config.api_version,
@@ -488,9 +483,7 @@ class RenderV2Operations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -500,14 +493,12 @@ class RenderV2Operations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('CopyrightCaption', pipeline_response)
+        deserialized = self._deserialize("CopyrightCaption", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-
-
 
     @distributed_trace_async
     async def get_map_static_image(
@@ -530,32 +521,19 @@ class RenderV2Operations:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The static image service renders a user-defined, rectangular image containing a map section
-        using a zoom level from 0 to 20. The static image service renders a user-defined, rectangular
-        image containing a map section using a zoom level from 0 to 20. The supported resolution range
-        for the map image is from 1x1 to 8192x8192. If you are deciding when to use the static image
-        service over the map tile service, you may want to consider how you would like to interact with
-        the rendered map. If the map contents will be relatively unchanging, a static map is a good
-        choice. If you want to support a lot of zooming, panning and changing of the map content, the
-        map tile service would be a better choice.
+        using a zoom level from 0 to 20. The supported resolution range for the map image is from 1x1
+        to 8192x8192. If you are deciding when to use the static image service over the map tile
+        service, you may want to consider how you would like to interact with the rendered map. If the
+        map contents will be relatively unchanging, a static map is a good choice. If you want to
+        support a lot of zooming, panning and changing of the map content, the map tile service would
+        be a better choice.
 
         Service also provides Image Composition functionality to get a static image back with
-        additional data like; pushpins and geometry overlays with following S0 and S1 capabilities.
-
-        In S0 you can:
+        additional data like; pushpins and geometry overlays with following capabilities.
 
 
-        * Render up to 5 pushpins specified in the request
-        * Provide one custom image for the pins referenced in the request
-        * Add labels to the pushpins
-
-        In S1 you can:
-
-
-        * Render pushpins through `Azure Maps Data Service <https://aka.ms/AzureMapsMapDataService>`_
         * Specify multiple pushpin styles
         * Render circle, polyline and polygon geometry types.
-        * Render of supported GeoJSON geometry types uploaded through `Azure Maps Data Service
-        <https://aka.ms/AzureMapsMapDataService>`_
 
         Please see `How-to-Guide <https://aka.ms/AzureMapsHowToGuideImageCompositor>`_ for detailed
         examples.
@@ -647,8 +625,8 @@ class RenderV2Operations:
         :paramtype style: str or ~azure.maps.render.models.MapImageStyle
         :keyword zoom: Desired zoom level of the map. Zoom value must be in the range: 0-20
          (inclusive). Default value is 12.:code:`<br>`:code:`<br>`Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/en-us/azure/location-based-services/zoom-levels-and-tile-grid>`_
-         for details. Default value is None.
+         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`_ for
+         details. Default value is None.
         :paramtype zoom: int
         :keyword center: Coordinates of the center point. Format: 'lon,lat'. Projection used
 
@@ -823,35 +801,6 @@ class RenderV2Operations:
          would usually
          only be done with a solid-color custom image.
 
-         Getting Pushpins from Azure Maps Data Storage
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-         For all Azure Maps account SKUs other than S0,
-         the pushpin location information can be obtained from Azure Maps Data Storage. After uploading
-         a GeoJSON document containing pin locations, the Data Storage service returns a Unique Data ID
-         (UDID) that you can use
-         to reference the data in the pins parameter.
-
-         To use the point geometry from an uploaded GeoJSON document as the pin locations, specify the
-         UDID in the locations
-         section of the pins parameter. For example,
-
-         ``pins=default||udid-29dc105a-dee7-409f-a3f9-22b066ae4713``
-
-         Note that
-         only point and multipoint geometry, points and multipoints from geometry collections, and
-         point geometry from features
-         will be used. Linestring and polygon geometry will be ignored. If the point comes from a
-         feature and the feature
-         has a string property called "label", the value of that property will be used as the label for
-         the pin.
-
-         You can mix pin locations from Data Storage and pin locations specified in the pins parameter.
-         Any of the pipe-delimited
-         pin locations can be a longitude and latitude or a UDID. For example,
-
-         ``pins=default||-122 45|udid-29dc105a-dee7-409f-a3f9-22b066ae4713|-119 43``
-
          Scale, Rotation, and Opacity
          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -978,24 +927,6 @@ class RenderV2Operations:
 
          ``lc0000FF|lw3|la0.60|fa0.50||-122.2 47.6|-122.2 47.7|-122.3 47.7|-122.3 47.6|-122.2 47.6``
 
-         Getting Path locations from Azure Maps Data Storage
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-         For all Azure Maps account SKUs other than S0, the path location information can be obtained
-         from Azure Maps Data Storage.
-         After uploading a GeoJSON document containing path locations, the Data Storage service returns
-         a Unique Data ID (UDID) that you can use
-         to reference the data in the path parameter.
-
-         To use the point geometry from an uploaded GeoJSON document as the path locations, specify the
-         UDID in the locations
-         section of the path parameter. For example,
-
-         ``path=||udid-29dc105a-dee7-409f-a3f9-22b066ae4713``
-
-         Note the it is not allowed to mix path locations from Data Storage with locations specified in
-         the path parameter.
-
          Style Modifier Summary
          ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1029,17 +960,19 @@ class RenderV2Operations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[AsyncIterator[bytes]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[AsyncIterator[bytes]]
 
-        
-        request = build_render_v2_get_map_static_image_request(
+        request = build_render_get_map_static_image_request(
             format=format,
             layer=layer,
             style=style,
@@ -1060,9 +993,7 @@ class RenderV2Operations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=True,
-            **kwargs
+            request, stream=True, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1073,7 +1004,7 @@ class RenderV2Operations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         deserialized = response.iter_bytes()
 
@@ -1081,8 +1012,6 @@ class RenderV2Operations:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-
-
 
     @distributed_trace_async
     async def get_copyright_from_bounding_box(
@@ -1116,17 +1045,19 @@ class RenderV2Operations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Copyright]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Copyright]
 
-        
-        request = build_render_v2_get_copyright_from_bounding_box_request(
+        request = build_render_get_copyright_from_bounding_box_request(
             format=format,
             south_west=south_west,
             north_east=north_east,
@@ -1139,9 +1070,7 @@ class RenderV2Operations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1151,14 +1080,12 @@ class RenderV2Operations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('Copyright', pipeline_response)
+        deserialized = self._deserialize("Copyright", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-
-
 
     @distributed_trace_async
     async def get_copyright_for_tile(
@@ -1175,7 +1102,7 @@ class RenderV2Operations:
 
         Copyrights API is designed to serve copyright information for Render Tile  service. In addition
         to basic copyright for the whole map, API is serving  specific groups of copyrights for some
-        countries.
+        countries/regions.
         Returns the copyright information for a given tile. To obtain the copyright information for a
         particular tile, the request should specify the tile's zoom level and x and y coordinates (see:
         Zoom Levels and Tile Grid).
@@ -1211,17 +1138,19 @@ class RenderV2Operations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Copyright]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Copyright]
 
-        
-        request = build_render_v2_get_copyright_for_tile_request(
+        request = build_render_get_copyright_for_tile_request(
             format=format,
             z=z,
             x=x,
@@ -1235,9 +1164,7 @@ class RenderV2Operations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1247,14 +1174,12 @@ class RenderV2Operations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('Copyright', pipeline_response)
+        deserialized = self._deserialize("Copyright", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-
-
 
     @distributed_trace_async
     async def get_copyright_for_world(
@@ -1268,7 +1193,7 @@ class RenderV2Operations:
 
         Copyrights API is designed to serve copyright information for Render Tile  service. In addition
         to basic copyright for the whole map, API is serving  specific groups of copyrights for some
-        countries.
+        countries/regions.
         Returns the copyright information for the world. To obtain the default copyright information
         for the whole world, do not specify a tile or bounding box.
 
@@ -1283,17 +1208,19 @@ class RenderV2Operations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Copyright]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Copyright]
 
-        
-        request = build_render_v2_get_copyright_for_world_request(
+        request = build_render_get_copyright_for_world_request(
             format=format,
             include_text=include_text,
             client_id=self._config.client_id,
@@ -1304,9 +1231,7 @@ class RenderV2Operations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1316,11 +1241,9 @@ class RenderV2Operations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('Copyright', pipeline_response)
+        deserialized = self._deserialize("Copyright", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-
-

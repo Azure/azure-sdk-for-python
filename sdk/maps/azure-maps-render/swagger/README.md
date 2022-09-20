@@ -20,11 +20,14 @@ autorest --v3 --python
 ## Settings
 
 ```yaml
-input: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/maps/data-plane/Render/preview/2.1/render.json
+tag: '2022-08-01'
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/48bb51ee0753ed56a88b3e7f989a70bf19ba96bb/specification/maps/data-plane/Render/readme.md
 output-folder: ../azure/maps/render/_generated
 namespace: azure.maps.render
 package-name: azure-maps-render
 no-namespace-folders: true
+use-extension:
+  "@autorest/modelerfour": "4.22.3"
 license-header: MICROSOFT_MIT_NO_VERSION
 credential-scopes: https://atlas.microsoft.com/.default
 clear-output-folder: true
@@ -34,4 +37,7 @@ add-credential: false
 title: MapsRenderClient
 disable-async-iterators: true
 python-sdks-folder: $(python-sdks-folder)
+python3-only: true
+version-tolerant: true
+models-mode: msrest
 ```

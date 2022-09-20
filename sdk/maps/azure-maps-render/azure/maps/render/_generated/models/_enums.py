@@ -11,17 +11,16 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class IncludeText(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """IncludeText.
-    """
+    """IncludeText."""
 
     #: Include all textual data in response.
     YES = "yes"
     #: Exclude textual data from response. Only images and country names will be in response.
     NO = "no"
 
+
 class LocalizedMapView(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """LocalizedMapView.
-    """
+    """LocalizedMapView."""
 
     #: United Arab Emirates (Arabic View)
     AE = "AE"
@@ -60,43 +59,43 @@ class LocalizedMapView(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Unified View (Others)
     UNIFIED = "Unified"
 
+
 class MapImageStyle(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """MapImageStyle.
-    """
+    """MapImageStyle."""
 
     #: Azure Maps main style
     MAIN = "main"
     #: Dark grey version of the Azure Maps main style
     DARK = "dark"
 
+
 class MapTileSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """MapTileSize.
-    """
+    """MapTileSize."""
 
     #: Return a 256 by 256 pixel tile.
     SIZE256 = "256"
     #: Return a 512 by 512 pixel tile.
     SIZE512 = "512"
 
+
 class RasterTileFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RasterTileFormat.
-    """
+    """RasterTileFormat."""
 
     #: An image in the png format. Supports zoom levels 0 through 18.
     PNG = "png"
 
+
 class ResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ResponseFormat.
-    """
+    """ResponseFormat."""
 
     #: `The JavaScript Object Notation Data Interchange Format <https://tools.ietf.org/html/rfc8259>`_
     JSON = "json"
     #: `The Extensible Markup Language <https://www.w3.org/TR/xml/>`_
     XML = "xml"
 
+
 class StaticMapLayer(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """StaticMapLayer.
-    """
+    """StaticMapLayer."""
 
     #: Returns an image containing all map features including polygons, borders, roads and labels.
     BASIC = "basic"
@@ -106,74 +105,74 @@ class StaticMapLayer(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Returns an image of just the map's label information.
     LABELS = "labels"
 
+
 class TilesetID(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TilesetID.
-    """
+    """TilesetID."""
 
     #: A base map is a standard map that displays roads, natural and artificial features along with
     #: the labels for those features in a vector tile.:code:`<br>`
-    #: 
+    #:
     #: Supports zoom levels 0 through 22. Format: vector (pbf).
     MICROSOFT_BASE = "microsoft.base"
     #: Displays labels for roads, natural and artificial features in a vector tile.:code:`<br>`
-    #: 
+    #:
     #: Supports zoom levels 0 through 22. Format: vector (pbf).
     MICROSOFT_BASE_LABELS = "microsoft.base.labels"
     #: Displays road, boundary and label data in a vector tile.:code:`<br>`
-    #: 
+    #:
     #: Supports zoom levels 0 through 22. Format: vector (pbf).
     MICROSOFT_BASE_HYBRID = "microsoft.base.hybrid"
     #: Shaded relief and terra layers.:code:`<br>`
-    #: 
+    #:
     #: Supports zoom levels 0 through 6. Format: raster (png).
     MICROSOFT_TERRA_MAIN = "microsoft.terra.main"
     #: All layers with our main style.:code:`<br>`
-    #: 
+    #:
     #: Supports zoom levels 0 through 22. Format: raster (png).
     MICROSOFT_BASE_ROAD = "microsoft.base.road"
     #: All layers with our dark grey style.:code:`<br>`
-    #: 
+    #:
     #: Supports zoom levels 0 through 22. Format: raster (png).
     MICROSOFT_BASE_DARKGREY = "microsoft.base.darkgrey"
     #: Label data in our main style.:code:`<br>`
-    #: 
+    #:
     #: Supports zoom levels 0 through 22. Format: raster (png).
     MICROSOFT_BASE_LABELS_ROAD = "microsoft.base.labels.road"
     #: Label data in our dark grey style.:code:`<br>`
-    #: 
+    #:
     #: Supports zoom levels 0 through 22. Format: raster (png).
     MICROSOFT_BASE_LABELS_DARKGREY = "microsoft.base.labels.darkgrey"
     #: Road, boundary and label data in our main style.:code:`<br>`
-    #: 
+    #:
     #: Supports zoom levels 0 through 22. Format: raster (png).
     MICROSOFT_BASE_HYBRID_ROAD = "microsoft.base.hybrid.road"
     #: Road, boundary and label data in our dark grey style.:code:`<br>`
-    #: 
+    #:
     #: Supports zoom levels 0 through 22. Format: raster (png).
     MICROSOFT_BASE_HYBRID_DARKGREY = "microsoft.base.hybrid.darkgrey"
     #: A combination of satellite and aerial imagery. Only available in S1 pricing SKU.:code:`<br>`
-    #: 
+    #:
     #: Supports zoom levels 1 through 19. Format: raster (jpeg).
     MICROSOFT_IMAGERY = "microsoft.imagery"
     #: Weather radar tiles. Latest weather radar images including areas of rain, snow, ice and mixed
     #: conditions. Please see `coverage information <https://aka.ms/AzureMapsWeatherCoverage>`_ for
     #: Azure Maps Weather service.  To learn more about the Radar data, please see `Weather concepts
     #: <https://aka.ms/AzureMapsWeatherConcepts>`_.:code:`<br>`
-    #: 
+    #:
     #: Supports zoom levels 0 through 15. Format: raster (png).
     MICROSOFT_WEATHER_RADAR_MAIN = "microsoft.weather.radar.main"
     #: Weather infrared tiles. Latest Infrared Satellite images shows clouds by their temperature.
     #: Please see `coverage information <https://aka.ms/AzureMapsWeatherCoverage>`_ for Azure Maps
     #: Weather service. To learn more about the returned Satellite data, please see `Weather concepts
     #: <https://aka.ms/AzureMapsWeatherConcepts>`_.:code:`<br>`
-    #: 
+    #:
     #: Supports zoom levels 0 through 15. Format: raster (png).
     MICROSOFT_WEATHER_INFRARED_MAIN = "microsoft.weather.infrared.main"
     #: Digital Elevation Model tiles. The tiles are in the GeoTIFF format with a single 32-bit
     #: floating point band. The tiles cover the whole landmass of Earth. Some small islands (e.g.,
     #: atolls) might not be represented accurately.:code:`<br>`
-    #: 
-    #: 
+    #:
+    #:
     #: * The vertical unit for measurement of elevation height is meters. An elevation value of
     #: -32767.0 is used for points that have no data value, most often returned where there isn't
     #: landmass (i.e. water).:code:`<br>`
@@ -186,14 +185,14 @@ class TilesetID(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: <https://www.intelligence-airbusds.com/worlddem-streaming/>`_. Urban areas are approximately
     #: leveled down to ground level. All other areas are represented by the object surface level
     #: (e.g., trees). :code:`<br>`
-    #: 
+    #:
     #: Supports zoom level 13 only. Format: raster (tiff).
     MICROSOFT_DEM = "microsoft.dem"
     #: Digital elevation contour line tiles. Compared to the microsoft.dem option, these tiles are in
     #: vector format and intended for visualization purpose. The tiles cover the whole landmass of
     #: Earth. Some small islands (e.g., atolls) might not be represented accurately.:code:`<br>`
-    #: 
-    #: 
+    #:
+    #:
     #: * The vertical unit for measurement of elevation height is meters.:code:`<br>`
     #: * The horizontal reference datum is the World Geodetic System 1984 (WGS84-G1150) and the
     #: vertical reference datum is the Earth Gravitational Model 2008 (EGM2008).:code:`<br>`
@@ -201,7 +200,7 @@ class TilesetID(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: <https://www.intelligence-airbusds.com/worlddem-streaming/>`_. Urban areas are approximately
     #: leveled down to ground level. All other areas are represented by the object surface level
     #: (e.g., trees).:code:`<br>`
-    #: 
+    #:
     #: Supports zoom levels 9 through 14. Format: vector (pbf).
     MICROSOFT_DEM_CONTOURS = "microsoft.dem.contours"
     #: absolute traffic tiles in vector

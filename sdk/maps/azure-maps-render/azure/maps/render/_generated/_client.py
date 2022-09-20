@@ -13,19 +13,20 @@ from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
 from . import models
-from ._configuration import RenderClientConfiguration
+from ._configuration import MapsRenderClientConfiguration
 from ._serialization import Deserializer, Serializer
-from .operations import RenderV2Operations
+from .operations import RenderOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class RenderClient:  # pylint: disable=client-accepts-api-version-keyword
+
+class MapsRenderClient:  # pylint: disable=client-accepts-api-version-keyword
     """Azure Maps Render REST APIs.
 
-    :ivar render_v2: RenderV2Operations operations
-    :vartype render_v2: azure.maps.render.operations.RenderV2Operations
+    :ivar render: RenderOperations operations
+    :vartype render: azure.maps.render.operations.RenderOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param client_id: Specifies which account is intended for usage in conjunction with the Azure
@@ -35,8 +36,8 @@ class RenderClient:  # pylint: disable=client-accepts-api-version-keyword
     :type client_id: str
     :keyword endpoint: Service URL. Default value is "https://atlas.microsoft.com".
     :paramtype endpoint: str
-    :keyword api_version: Api Version. Default value is "2.1". Note that overriding this default
-     value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-08-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -48,23 +49,16 @@ class RenderClient:  # pylint: disable=client-accepts-api-version-keyword
         endpoint: str = "https://atlas.microsoft.com",
         **kwargs: Any
     ) -> None:
-        self._config = RenderClientConfiguration(credential=credential, client_id=client_id, **kwargs)
+        self._config = MapsRenderClientConfiguration(credential=credential, client_id=client_id, **kwargs)
         self._client = PipelineClient(base_url=endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.render_v2 = RenderV2Operations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.render = RenderOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -91,7 +85,7 @@ class RenderClient:  # pylint: disable=client-accepts-api-version-keyword
         self._client.close()
 
     def __enter__(self):
-        # type: () -> RenderClient
+        # type: () -> MapsRenderClient
         self._client.__enter__()
         return self
 
