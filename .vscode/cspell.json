@@ -614,6 +614,12 @@
       ]
     },
     {
+      "filename": "sdk/attestation/azure-security-attestation/tests/conftest.py",
+      "words":[
+        "sharedwus"
+      ]
+    },
+    {
       "filename": "sdk/confidentialledger/test-resources.bicep",
       "words": [
         "pysdkci"
