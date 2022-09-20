@@ -56,8 +56,12 @@ class RegistryOperations:
         :return: An iterator like instance of Registry objects
         :rtype: ~azure.core.paging.ItemPaged[Registry]
         """
-
-        return self._operation.list_by_subscription(cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs])
+        # TODO add scope variable to allow calls to either list or
+        # list_by_subscription once the backend work for this is complete.
+        return self._operation.list(
+            resource_group_name=self._resource_group_name,
+            cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs],
+        )
 
     @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
     def get(self, name: str = None, **kwargs: Dict) -> Registry:
