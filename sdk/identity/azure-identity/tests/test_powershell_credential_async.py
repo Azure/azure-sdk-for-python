@@ -302,6 +302,7 @@ async def test_multitenant_authentication_not_allowed():
         match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
         tenant = match[2]
 
+        assert tenant is None, "credential shouldn't accept an explicit tenant ID"
         stdout = "azsdk%{}%{}".format(expected_token, int(time.time()) + 3600)
         communicate = Mock(return_value=get_completed_future((stdout.encode(), b"")))
         return Mock(communicate=communicate, returncode=0)
@@ -311,5 +312,6 @@ async def test_multitenant_authentication_not_allowed():
         token = await credential.get_token("scope")
         assert token.token == expected_token
 
-        token = await credential.get_token("scope", tenant_id="some tenant")
-        assert token.token == expected_token
+        with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+            token = await credential.get_token("scope", tenant_id="some tenant")
+            assert token.token == expected_token

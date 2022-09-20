@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from typing import Callable
 
+from devtools_testutils import AzureRecordedTestCase, is_live
 import pydash
 import pytest
 
@@ -46,11 +47,21 @@ def create_internal_sample_dependent_datasets(client: MLClient):
             )
 
 
-@pytest.mark.usefixtures("enable_pipeline_private_preview_features")
-@pytest.mark.usefixtures("create_internal_sample_dependent_datasets")
-@pytest.mark.usefixtures("enable_internal_components")
+@pytest.mark.usefixtures(
+    "recorded_test",
+    "mock_code_hash",
+    "mock_asset_name",
+    "mock_component_hash",
+    "enable_pipeline_private_preview_features",
+    "create_internal_sample_dependent_datasets",
+    "enable_internal_components",
+)
+@pytest.mark.skipif(
+    condition=not is_live(),
+    reason="Works in live mode, does not work in playback"
+)
 @pytest.mark.e2etest
-class TestPipelineJob:
+class TestPipelineJob(AzureRecordedTestCase):
     @classmethod
     def _test_component(cls, node_func, inputs, runsettings_dict, pipeline_runsettings_dict, client):
         @pipeline()
@@ -113,8 +124,8 @@ class TestPipelineJob:
         runsettings_dict,
         pipeline_runsettings_dict,
     ):
-        component_to_register = load_component(yaml_path, params_override=[{"name": randstr()}])
-        component_name = randstr()
+        component_to_register = load_component(yaml_path, params_override=[{"name": randstr("name")}])
+        component_name = randstr("component_name")
         component_resource = client.components.create_or_update(component_to_register)
 
         created_component = client.components.get(component_name, component_resource.version)
@@ -128,7 +139,6 @@ class TestPipelineJob:
     def test_data_as_node_inputs(
         self,
         client: MLClient,
-        randstr: Callable[[], str],
         yaml_path,
         inputs,
         runsettings_dict,
@@ -178,7 +188,7 @@ class TestPipelineJob:
         runsettings_dict,
         pipeline_runsettings_dict,
     ):
-        component_func = load_component(yaml_path, params_override=[{"name": randstr()}])
+        component_func = load_component(yaml_path, params_override=[{"name": randstr("name")}])
 
         @pipeline()
         def sub_pipeline_func():

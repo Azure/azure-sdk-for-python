@@ -5,6 +5,7 @@ import time
 from io import StringIO
 from typing import Dict
 from zipfile import ZipFile
+from io import StringIO
 
 import pydash
 import urllib3

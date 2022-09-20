@@ -15,6 +15,8 @@ from azure.ai.ml.constants._common import LONG_URI_REGEX_FORMAT
 from azure.ai.ml.entities._assets import Model
 from azure.core.paging import ItemPaged
 
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher, is_live
+
 
 @pytest.fixture
 def uuid_name() -> str:
@@ -29,11 +31,17 @@ def artifact_path(tmpdir_factory) -> str:  # type: ignore
     return str(file_name)
 
 
+@pytest.mark.fixture(autouse=True)
+def bodiless_matching(test_proxy):
+    set_bodiless_matcher()
+
+
 @pytest.mark.e2etest
-class TestModel:
+@pytest.mark.usefixtures("recorded_test")
+class TestModel(AzureRecordedTestCase):
     def test_crud_file(self, client: MLClient, randstr: Callable[[], str], tmp_path: Path) -> None:
         path = Path("./tests/test_configs/model/model_full.yml")
-        model_name = randstr()
+        model_name = randstr("model_name")
 
         model = load_model(path)
         model.name = model_name
@@ -65,7 +73,7 @@ class TestModel:
 
     def test_create_autoincrement(self, client: MLClient, randstr: Callable[[], str], tmp_path: Path) -> None:
         path = Path("./tests/test_configs/model/model_no_version.yml")
-        model_name = randstr()
+        model_name = randstr("model_name")
 
         model = load_model(path)
         model.name = model_name
@@ -89,7 +97,7 @@ class TestModel:
         assert isinstance(test_model, Model)
 
     def test_models_get_latest_label(self, client: MLClient, randstr: Callable[[], str], tmp_path: Path) -> None:
-        name = f"model_{randstr()}"
+        name = f"model_{randstr('name')}"
         versions = ["1", "2", "3", "4"]
         model_path = tmp_path / "model.pkl"
         model_path.write_text("hello world")
@@ -98,7 +106,7 @@ class TestModel:
             assert client.models.get(name, label="latest").version == version
 
     def test_model_archive_restore_version(self, client: MLClient, randstr: Callable[[], str], tmp_path: Path) -> None:
-        name = f"model_{randstr()}"
+        name = f"model_{randstr('name')}"
         versions = ["1", "2"]
         version_archived = versions[0]
         model_path = tmp_path / "model.pkl"
@@ -108,7 +116,8 @@ class TestModel:
 
         def get_model_list():
             # Wait for list index to update before calling list command
-            sleep(30)
+            if is_live():
+                sleep(30)
             model_list = client.models.list(name=name, list_view_type=ListViewType.ACTIVE_ONLY)
             return [m.version for m in model_list if m is not None]
 
@@ -122,7 +131,7 @@ class TestModel:
     def test_model_archive_restore_container(
         self, client: MLClient, randstr: Callable[[], str], tmp_path: Path
     ) -> None:
-        name = f"model_{randstr()}"
+        name = f"model_{randstr('name')}"
         version = "1"
         model_path = tmp_path / "model.pkl"
         model_path.write_text("hello world")
@@ -140,9 +149,13 @@ class TestModel:
         client.models.restore(name=name)
         assert name in get_model_list()
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="Registry uploads do not record well. Investigate later"
+    )
     def test_create_get_download_model_registry(self, registry_client: MLClient, randstr: Callable[[], str]) -> None:
         model_path = Path("./tests/test_configs/model/model_full.yml")
-        model_name = randstr()
+        model_name = randstr("model_name")
         model_version = "2"
 
         model_entity = load_model(model_path)
@@ -166,9 +179,13 @@ class TestModel:
         assert os.path.exists(wd)
         assert os.path.exists(f"{wd}/lightgbm_mlflow_model/MLmodel")
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="Registry uploads do not record well. Investigate later"
+    )
     def test_list_model_registry(self, registry_client: MLClient, randstr: Callable[[], str]) -> None:
         model_path = Path("./tests/test_configs/model/model_full.yml")
-        model_name = randstr()
+        model_name = randstr("model_name")
         model_version = "2"
 
         model_entity = load_model(model_path)
