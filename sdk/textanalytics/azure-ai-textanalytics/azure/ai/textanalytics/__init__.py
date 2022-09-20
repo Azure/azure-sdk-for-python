@@ -57,6 +57,9 @@ from ._models import (
     ClassificationCategory,
     AnalyzeHealthcareEntitiesAction,
     TextAnalysisKind,
+    ExtractSummaryAction,
+    ExtractSummaryResult,
+    SummarySentence,
 )
 
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller, TextAnalysisLROPoller
@@ -117,6 +120,9 @@ __all__ = [
     "AnalyzeHealthcareEntitiesAction",
     "TextAnalysisLROPoller",
     "TextAnalysisKind",
+    "ExtractSummaryAction",
+    "ExtractSummaryResult",
+    "SummarySentence",
 ]
 
 __version__ = VERSION

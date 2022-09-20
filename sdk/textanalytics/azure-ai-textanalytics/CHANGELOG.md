@@ -3,6 +3,9 @@
 ## 5.3.0b1 (Unreleased)
 
 ### Features Added
+- Added the Extractive Summarization feature and related models: `ExtractSummaryAction`, `ExtractSummaryResult`, and `SummarySentence`.
+  Access the feature through the `begin_analyze_actions` API.
+
 
 ### Breaking Changes
 
