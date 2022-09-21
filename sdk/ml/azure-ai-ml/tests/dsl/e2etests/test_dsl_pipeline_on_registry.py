@@ -6,7 +6,12 @@ from azure.core.exceptions import HttpResponseError
 
 from .._util import _DSL_TIMEOUT_SECOND
 
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
+
+
+@pytest.mark.fixture(autouse=True)
+def bodiless_matching(test_proxy):
+    set_bodiless_matcher()
 
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features", "recorded_test")

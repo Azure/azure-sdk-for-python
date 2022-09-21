@@ -19,7 +19,7 @@ from azure.core.exceptions import HttpResponseError
 
 from .._util import _DSL_TIMEOUT_SECOND, cancel_pipeline_job
 
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
 
 tests_root_dir = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(tests_root_dir / "test_configs"))
@@ -51,6 +51,11 @@ def assert_dsl_curated(pipeline: PipelineJob, job_yaml, omit_fields):
     print(json.dumps(dsl_pipeline_job_dict, indent=2))
     print(json.dumps(pipeline_job_dict, indent=2))
     assert dsl_pipeline_job_dict == pipeline_job_dict
+
+
+@pytest.mark.fixture(autouse=True)
+def bodiless_matching(test_proxy):
+    set_bodiless_matcher()
 
 
 @pytest.mark.usefixtures(

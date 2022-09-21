@@ -23,9 +23,14 @@ from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import Foreca
 from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
 
 tests_root_dir = Path(__file__).parent.parent.parent
+
+
+@pytest.mark.fixture(autouse=True)
+def bodiless_matching(test_proxy):
+    set_bodiless_matcher()
 
 
 @pytest.mark.automle2etest
