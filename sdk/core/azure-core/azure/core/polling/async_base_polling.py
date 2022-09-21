@@ -77,6 +77,7 @@ class AsyncLROBasePolling(LROBasePolling):
         :raises: BadResponse if response invalid.
         """
 
+        await self.update_status()
         while not self.finished():
             await self._delay()
             await self.update_status()
