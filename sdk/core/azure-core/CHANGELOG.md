@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- LRO polling will not wait anymore before doing the first status check  #26376
+
 ## 1.25.1 (2022-09-01)
 
 ### Bugs Fixed
