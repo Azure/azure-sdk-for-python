@@ -19,7 +19,7 @@ from azure.core.exceptions import HttpResponseError
 
 from .._util import _DSL_TIMEOUT_SECOND
 
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase
 
 tests_root_dir = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(tests_root_dir / "test_configs"))
@@ -53,12 +53,8 @@ def assert_dsl_curated(pipeline: PipelineJob, job_yaml, omit_fields):
     assert dsl_pipeline_job_dict == pipeline_job_dict
 
 
-@pytest.mark.fixture(autouse=True)
-def bodiless_matching(test_proxy):
-    set_bodiless_matcher()
-
-
 @pytest.mark.usefixtures(
+    "enable_environment_id_arm_expansion",
     "enable_pipeline_private_preview_features",
     "mock_code_hash",
     "mock_component_hash",

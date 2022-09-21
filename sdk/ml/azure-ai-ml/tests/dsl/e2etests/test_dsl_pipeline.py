@@ -34,7 +34,7 @@ from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
 
 from .._util import _DSL_TIMEOUT_SECOND
 
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase
 
 tests_root_dir = Path(__file__).parent.parent.parent
 components_dir = tests_root_dir / "test_configs/components/"
@@ -53,11 +53,6 @@ common_omit_fields = [
     "settings._source",
     "source_job_id",
 ]
-
-
-@pytest.mark.fixture(autouse=True)
-def bodiless_matching(test_proxy):
-    set_bodiless_matcher()
 
 
 @pytest.mark.usefixtures(
