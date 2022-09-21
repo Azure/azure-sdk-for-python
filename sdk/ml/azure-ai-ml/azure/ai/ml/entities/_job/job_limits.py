@@ -37,6 +37,7 @@ class CommandJobLimits(JobLimits):
     """
 
     def __init__(self, *, timeout: int = None):
+        super().__init__()
         self.type = JobType.COMMAND
         self.timeout = timeout
 
@@ -76,6 +77,7 @@ class SweepJobLimits(JobLimits):
         timeout: int = None,
         trial_timeout: int = None,
     ):
+        super().__init__()
         self.type = JobType.SWEEP
         self.max_concurrent_trials = max_concurrent_trials
         self.max_total_trials = max_total_trials
