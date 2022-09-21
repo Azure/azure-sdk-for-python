@@ -352,7 +352,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
             experiment_name="nyc_taxi_data_regression",
         )
 
-    @pytest.mark.skip(reason="migration skip: environment variables mismatch with recording.")
     def test_command_function(self, randstr: Callable[[str], str], client: MLClient):
         hello_world_component_yaml = str(components_dir / "helloworld_component.yml")
         hello_world_component_func = load_component(source=hello_world_component_yaml)
@@ -362,7 +361,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
         distribution = {"type": "Pytorch", "process_count_per_instance": 2}
         resources = {"instance_count": 2}
-        environment_variables = {"key": "val"}
+        environment_variables = {"environ": "val"}
         inputs = {
             "component_in_path": Input(type="uri_folder", path="https://my-blob/path/to/data", mode="ro_mount"),
             "component_in_number": 0.01,
@@ -477,7 +476,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     "computeId": None,
                     "display_name": "command-function-job",
                     "distribution": {"distribution_type": "PyTorch", "process_count_per_instance": 2},
-                    "environment_variables": {"key": "val"},
+                    "environment_variables": {"environ": "val"},
                     "inputs": {
                         "component_in_number": {"job_input_type": "literal", "value": "3"},
                         "component_in_path": {
@@ -505,7 +504,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skip(reason="migration skip: environment variables mismatch with recording.")
     def test_command_with_optional_inputs(self, randstr: Callable[[str], str], client: MLClient):
         hello_world_component_yaml = str(components_dir / "helloworld_component_with_optional_inputs.yml")
         hello_world_component_func = load_component(source=hello_world_component_yaml)
@@ -526,7 +524,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             ),
             distribution={"type": "Pytorch", "process_count_per_instance": 2},
             resources={"instance_count": 2},
-            environment_variables={"key": "val"},
+            environment_variables={"environ": "val"},
             inputs={
                 "float": Input(type="number", default=1.1, min=0, max=5, optional=True),
                 "integer": Input(type="integer", default=2, min=-1, max=4, optional=True),
@@ -593,7 +591,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     "computeId": None,
                     "display_name": "command_with_optional_inputs",
                     "distribution": {"distribution_type": "PyTorch", "process_count_per_instance": 2},
-                    "environment_variables": {"key": "val"},
+                    "environment_variables": {"environ": "val"},
                     "inputs": {
                         "uri_folder": {
                             "job_input_type": "literal",
@@ -1700,7 +1698,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         error_threshold = 1
         mini_batch_error_threshold = 1
         mini_batch_size = "5"
-        environment_variables = {"key": "val"}
+        environment_variables = {"environment": "val"}
 
         @dsl.pipeline(
             name=randstr("pipeline_name"),
