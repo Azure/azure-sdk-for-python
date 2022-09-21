@@ -382,7 +382,7 @@ class TestOnlineEndpointsOperations:
             properties=RestOnlineEndpoint(auth_mode="Key", scoring_uri="xxx"),
         )
         mockresponse = Mock()
-        mockresponse.text = '{"key": "value"}'
+        mockresponse.text = lambda: '{"key": "value"}'
         mockresponse.status_code = 200
 
         mocker.patch.object(mock_online_endpoint_operations._requests_pipeline, "post", return_value=mockresponse)

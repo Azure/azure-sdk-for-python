@@ -345,7 +345,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
         response = self._requests_pipeline.post(endpoint.properties.scoring_uri, json=data, headers=headers)
         validate_response(response)
-        return response.text
+        return response.text()
 
     def _get_workspace_location(self) -> str:
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
