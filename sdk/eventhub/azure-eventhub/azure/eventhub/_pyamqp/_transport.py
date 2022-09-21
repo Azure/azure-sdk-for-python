@@ -88,8 +88,9 @@ AMQPS_PORT = 5671
 AMQP_FRAME = memoryview(b"AMQP")
 EMPTY_BUFFER = bytes()
 SIGNED_INT_MAX = 0x7FFFFFFF
-TIMEOUT_INTERVAL = 0.2
+TIMEOUT_INTERVAL = 1
 WS_TIMEOUT_INTERVAL = 1
+READ_TIMEOUT_INTERVAL = 0.2
 
 # Match things like: [fe80::1]:5432, from RFC 2732
 IPV6_LITERAL = re.compile(r"\[([\.0-9a-f:]+)\](?::(\d+))?")
@@ -161,7 +162,7 @@ class _AbstractTransport(object):
         self.host, self.port = to_host_port(host, port)
 
         self.connect_timeout = connect_timeout or TIMEOUT_INTERVAL
-        self.read_timeout = read_timeout
+        self.read_timeout = read_timeout or READ_TIMEOUT_INTERVAL
         self.write_timeout = write_timeout
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
@@ -176,7 +177,6 @@ class _AbstractTransport(object):
                 self.socket_settings,
                 self.read_timeout,
                 self.write_timeout,
-                connect_timeout=self.connect_timeout,
             )
             # we've sent the banner; signal connect
             # EINTR, EAGAIN, EWOULDBLOCK would signal that the banner
@@ -317,7 +317,7 @@ class _AbstractTransport(object):
                     # hurray, we established connection
                     return
 
-    def _init_socket(self, socket_settings, read_timeout, write_timeout, *, connect_timeout=1):
+    def _init_socket(self, socket_settings, read_timeout, write_timeout):
         self.sock.settimeout(None)  # set socket back to blocking mode
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
         self._set_socket_options(socket_settings)
@@ -336,7 +336,7 @@ class _AbstractTransport(object):
         # TODO: a greater timeout value is needed in long distance communication
         #  we should either figure out a reasonable value error/dynamically adjust the timeout
         #  0.2 second is enough for perf analysis
-        self.sock.settimeout(connect_timeout)  # set socket back to non-blocking mode
+        self.sock.settimeout(read_timeout)  # set socket back to non-blocking mode
 
     def _get_tcp_socket_defaults(self, sock):
         tcp_opts = {}
