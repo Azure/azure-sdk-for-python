@@ -268,6 +268,11 @@ class OperationResourcePolling(LongRunningOperation):
 
         self._set_async_url_if_present(response)
 
+        try:
+            return self.get_status(pipeline_response)
+        except BadResponse:
+            pass
+
         if response.status_code in {200, 201, 202, 204} and self._async_url:
             return "InProgress"
         raise OperationFailed("Operation failed or canceled")
