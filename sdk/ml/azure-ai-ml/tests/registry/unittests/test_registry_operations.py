@@ -30,10 +30,10 @@ def mock_registry_operation(
 class TestRegistryOperation:
     def test_list(self, mock_registry_operation: RegistryOperations) -> None:
         mock_registry_operation.list()
-        mock_registry_operation._operation.list_by_subscription.assert_called_once()
+        mock_registry_operation._operation.list.assert_called_once()
 
-    def test_get(self, mock_registry_operation: RegistryOperations) -> None:
-        mock_registry_operation.get("random_name")
+    def test_get(self, mock_registry_operation: RegistryOperations, randstr: Callable[[], str]) -> None:
+        mock_registry_operation.get(randstr())
         mock_registry_operation._operation.get.assert_called_once()
 
     def test_check_registry_name(self, mock_registry_operation: RegistryOperations):
