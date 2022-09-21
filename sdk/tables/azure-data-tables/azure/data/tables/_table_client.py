@@ -333,6 +333,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
             entity = kwargs.pop('entity', None)
             if not entity:
                 entity = args[0]
+            entity = _add_entity_properties(entity)
             partition_key = entity['PartitionKey']
             row_key = entity['RowKey']
         except (TypeError, IndexError):
