@@ -197,7 +197,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_compute_log_analytics(self, resource_group):
         RESOURCE_GROUP = resource_group.name
-        STORAGE_ACCOUNT_NAME = self.get_resource_name("accountxyz")
+        STORAGE_ACCOUNT_NAME = self.get_resource_name("accountxyzz")
         LOG_ANALYTIC_NAME = self.get_resource_name("loganalyticx")
 
         sas_uri = self.create_sas_uri(RESOURCE_GROUP, AZURE_LOCATION, STORAGE_ACCOUNT_NAME)
