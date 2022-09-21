@@ -11,7 +11,7 @@ import pytest
 from azure.core.exceptions import ResourceNotFoundError
 
 from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 
 test_id = os.environ.get("TEST_ID", "000")
 file_id = os.environ.get("FILE_ID", "000")
@@ -66,6 +66,9 @@ class TestRunSmokeTest(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_create_or_update_loadtest(self, loadtesting_endpoint):
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
+        )
         # create prerequisites
         self.create_run_prerequisite(endpoint=loadtesting_endpoint)
 
@@ -91,6 +94,9 @@ class TestRunSmokeTest(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_delete_test_run(self, loadtesting_endpoint):
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
+        )
         # creating test run
         self.create_test_run(endpoint=loadtesting_endpoint, test_run_name=test_run_id)
 
@@ -106,6 +112,9 @@ class TestRunSmokeTest(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_get_test_run(self, loadtesting_endpoint):
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
+        )
         # creating test run
         self.create_test_run(endpoint=loadtesting_endpoint, test_run_name=test_run_id)
 
@@ -121,6 +130,9 @@ class TestRunSmokeTest(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_get_test_run_file(self, loadtesting_endpoint):
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
+        )
         # creating test run
         self.create_test_run(endpoint=loadtesting_endpoint, test_run_name=test_run_id)
 
@@ -136,6 +148,9 @@ class TestRunSmokeTest(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_stop_test_run(self, loadtesting_endpoint):
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
+        )
         # creating test run
         self.create_test_run(endpoint=loadtesting_endpoint, test_run_name=test_run_id)
 
@@ -151,6 +166,9 @@ class TestRunSmokeTest(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_get_test_run_client_metrics(self, loadtesting_endpoint):
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
+        )
         # creating test run
         self.create_test_run(endpoint=loadtesting_endpoint, test_run_name=test_run_id)
 

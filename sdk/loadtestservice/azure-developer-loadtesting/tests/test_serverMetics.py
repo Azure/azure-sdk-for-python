@@ -11,7 +11,7 @@ import pytest
 from azure.core.exceptions import ResourceNotFoundError
 
 from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 
 test_id = os.environ.get("TEST_ID", "000")
 file_id = os.environ.get("FILE_ID", "000")
@@ -64,6 +64,9 @@ class TestServerMetricsSmoke(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_create_or_update_server_metrics_config(self, loadtesting_endpoint):
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
+        )
         self.prepare(endpoint=loadtesting_endpoint)
 
         # positive test
@@ -74,7 +77,6 @@ class TestServerMetricsSmoke(LoadtestingTest):
                 "testRunId": test_run_id,
             }
         )
-        print(result)
         assert result is not None
 
         # negative test
@@ -89,6 +91,9 @@ class TestServerMetricsSmoke(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_delete_server_metrics_config(self, loadtesting_endpoint):
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
+        )
         self.prepare(endpoint=loadtesting_endpoint)
 
         # positive test
@@ -107,6 +112,9 @@ class TestServerMetricsSmoke(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_get_server_metrics_config(self, loadtesting_endpoint):
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
+        )
         self.prepare(endpoint=loadtesting_endpoint)
 
         # positive test
@@ -126,6 +134,9 @@ class TestServerMetricsSmoke(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_get_server_default_metrics_config(self, loadtesting_endpoint):
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
+        )
         self.prepare(endpoint=loadtesting_endpoint)
 
         # positive test
@@ -137,9 +148,11 @@ class TestServerMetricsSmoke(LoadtestingTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_list_supported_resource_types(self, loadtesting_endpoint):
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
+        )
         self.prepare(endpoint=loadtesting_endpoint)
 
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.list_supported_resource_types()
-        print(result)
         assert result is not None
