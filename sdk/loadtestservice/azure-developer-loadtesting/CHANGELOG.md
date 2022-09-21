@@ -3,7 +3,7 @@
 ## 1.0.0b2 (2022-08-04)
 
 ### Bug Fixed 
-- fixed `delete_app_components` method from `azure.developer.loadtesting.LoadTestingClient.load_test_administration.delete_app_components`
+- `delete_app_components` method from `azure.developer.loadtesting.LoadTestingClient.load_test_administration.delete_app_components` was not discoverable in expected location, fixed discoverability.
 
 ### Other Chnages
 - Updated README
