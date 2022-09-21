@@ -48,7 +48,7 @@ batch:
 These settings apply only when `--tag=release_runtime_1_1_preview` is specified on the command line.
 
 ```yaml $(tag) == 'release_runtime_1_1_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/34a2c0723155d134311419fd997925ce96b85bec/specification/cognitiveservices/data-plane/Language/stable/2021-10-01/questionanswering.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/59ad2b7dd63e952822aa51e11a26a0af5724f996/specification/cognitiveservices/data-plane/Language/stable/2021-10-01/questionanswering.json
 output-folder: ../azure/ai/language/questionanswering
 models-mode: msrest
 title: QuestionAnsweringClient
@@ -84,7 +84,7 @@ directive:
 - where-operation: QuestionAnsweringProjects_DeployProject
   transform: |
     $.responses["200"] = {
-      description: "Deploy job state.",
+      description: "Project deployment details.",
       schema: {
         "$ref": "#/definitions/ProjectDeployment"
       }
@@ -104,7 +104,7 @@ directive:
       "itemName": "value"
     };
     $.responses["200"] = {
-      description: "Update QnAs job state.",
+      description: "All the QnAs of a project.",
       schema: {
         "$ref": "#/definitions/QnaAssets"
       }
@@ -116,7 +116,7 @@ directive:
       "itemName": "value"
     };
     $.responses["200"] = {
-      description: "Update sources job state.",
+      description: "All the sources of a project.",
       schema: {
         "$ref": "#/definitions/QnaSources"
       }
