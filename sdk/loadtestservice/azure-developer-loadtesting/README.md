@@ -37,7 +37,12 @@ The data plane URI should be provided as the endpoint to create the client. The 
 
 ```python
 from azure.developer.loadtesting import LoadTestingClient
+
+# for managing authentication and authorization
+# can be installed from pypi, follow: https://pypi.org/project/azure-identity/
+# using DefaultAzureCredentials, read more at: https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python
 from azure.identity import DefaultAzureCredential
+
 client = LoadTestingClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
 
