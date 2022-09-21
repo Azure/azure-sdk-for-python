@@ -187,7 +187,6 @@ class TestDataOperations:
         _mock_read_local_mltable_metadata_contents: Mock,
         mock_datastore_operation: DatastoreOperations,
         mock_data_operations: DataOperations,
-        randstr: Callable[[], str],
     ):
         """
         Expect to skip validation when remote metadata is inaccessible
@@ -222,7 +221,6 @@ class TestDataOperations:
         _mock_read_local_mltable_metadata_contents: Mock,
         mock_data_operations: DataOperations,
         tmp_path: Path,
-        randstr: Callable[[], str],
     ):
         """
         Expect to raise exception when local metadata is inaccessible
@@ -260,7 +258,6 @@ class TestDataOperations:
         _mock_read_local_mltable_metadata_contents: Mock,
         mock_data_operations: DataOperations,
         tmp_path: Path,
-        randstr: Callable[[], str],
     ):
         """
         Expect to skip jsonschema validation when we fail to fetch mltable jsonschema
@@ -303,7 +300,6 @@ class TestDataOperations:
         _mock_read_local_mltable_metadata_contents: Mock,
         mock_data_operations: DataOperations,
         tmp_path: Path,
-        randstr: Callable[[], str],
     ):
         """
         Expect to raise exception when jsonschema detects invalid mltable metadata
@@ -349,7 +345,6 @@ class TestDataOperations:
         _mock_read_local_mltable_metadata_contents: Mock,
         mock_data_operations: DataOperations,
         tmp_path: Path,
-        randstr: Callable[[], str],
     ):
         """
         Expect to skip validation when skip_validation is set on Data
@@ -437,7 +432,6 @@ class TestDataOperations:
         self,
         mock_workspace_scope: OperationScope,
         mock_data_operations: DataOperations,
-        randstr: Callable[[], str],
     ) -> None:
         data_path = "./tests/test_configs/dataset/data_with_datastore.yaml"
         data_name = f"data_random_name"
