@@ -10,7 +10,7 @@ This version and all future versions will require Python 3.7+. Python 3.6 is no 
 
 ### Bugs Fixed
 
-- Fixed bug on async `ServiceBusClient` where `custom_endpoint_address` and `connection_verify` kwargs were not being used due to not being passed through correctly.
+- Fixed bug on async `ServiceBusClient` where `custom_endpoint_address` and `connection_verify` kwargs were not being passed through correctly.
 
 ### Other Changes
 
