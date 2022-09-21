@@ -34,5 +34,7 @@ extends:
     Artifacts:
     - name: azure-appconfiguration
       safeName: azureappconfiguration
+    - name: azure-appconfiguration-provider
+      safeName: azureappconfigurationprovider
     - name: azure-mgmt-appconfiguration
       safeName: azuremgmtappconfiguration
