@@ -40,8 +40,8 @@ from azure.core.exceptions import HttpResponseError
 from dotenv import load_dotenv
 from uuid import uuid4
 
-# logging.basicConfig(level=logging.DEBUG)
-# LOG = logging.getLogger()
+logging.basicConfig(level=logging.DEBUG)
+LOG = logging.getLogger()
 
 # Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
 # AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, SUBSCRIPTION_ID, RESOURCE_GROUP
