@@ -17,7 +17,7 @@ class AzureAppConfigurationKeyVaultOptions:
     :type secret_resolver: callable
     """
 
-    def __init__(self, credential=None, secret_clients={}, secret_resolver=None):
+    def __init__(self, credential=None, secret_clients=dict(), secret_resolver=None):
         # type: (TokenCredential, List[SecretClient], Callable) -> None
         self.credential = credential
         self.secret_clients = secret_clients
