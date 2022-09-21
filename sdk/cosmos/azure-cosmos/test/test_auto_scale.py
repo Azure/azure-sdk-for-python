@@ -45,7 +45,7 @@ class AutoScaleTest(unittest.TestCase):
 
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session",
                                                 connection_policy=cls.connectionPolicy)
-        cls.created_database = cls.client.create_database(test_config._test_config.TEST_DATABASE_ID)
+        cls.created_database = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
 
     def test_auto_scale(self):
         created_container = self.created_database.create_container(
