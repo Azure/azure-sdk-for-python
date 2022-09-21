@@ -6,7 +6,7 @@
 import functools
 from devtools_testutils import EnvironmentVariableLoader
 
-TimezonePreparer = functools.partial(
+MapsTimezonePreparer = functools.partial(
     EnvironmentVariableLoader, "maps",
     subscription_key="<maps-subscription-key>",
     maps_client_id="fake_client_id",

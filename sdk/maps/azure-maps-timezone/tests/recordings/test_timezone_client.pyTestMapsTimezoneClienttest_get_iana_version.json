@@ -1,0 +1,31 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://atlas.microsoft.com/timezone/ianaVersion/json?api-version=1.0.0b1",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-timezoneclient/1.0.0b1 Python/3.10.5 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-id": "fake_client_id"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "19",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 20 Sep 2022 07:59:11 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-azuremaps-region": "West US 2",
+        "X-MSEdge-Ref": "Ref A: 7074131A239643709B684B76106C8E86 Ref B: TPE30EDGE0718 Ref C: 2022-09-20T07:59:12Z"
+      },
+      "ResponseBody": {
+        "Version": "2022c"
+      }
+    }
+  ],
+  "Variables": {}
+}

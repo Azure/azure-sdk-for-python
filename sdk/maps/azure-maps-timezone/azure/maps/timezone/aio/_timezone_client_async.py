@@ -7,22 +7,23 @@
 # --------------------------------------------------------------------------
 
 from typing import Union, Any, List, TYPE_CHECKING
-from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
-from azure.core.tracing.decorator import distributed_trace
-from .models import LatLon
-from ._generated import TimezoneClient as _MapsTimezoneClient
-from ._generated.models import (
+from azure.core.tracing.decorator_async import distributed_trace_async
+from ..models import LatLon
+from .._generated.aio import TimezoneClient as _MapsTimezoneClient
+from .._generated.models import (
     IanaId,
     TimezoneIanaVersionResult,
     TimezoneResult,
     TimezoneWindows
 )
-from ._version import VERSION
+from .._version import VERSION
 
 
-# To check the credential is either AzureKeyCredential or TokenCredential
+# To check the credential is either AzureKeyCredential or AsyncTokenCredential
 def _authentication_policy(credential):
     authentication_policy = None
     if credential is None:
@@ -43,7 +44,7 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
     """Azure Maps Time Zone REST APIs.
 
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AsyncTokenCredential
     :keyword client_id: Specifies which account is intended for usage in conjunction with the Azure
      AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved
      from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see
@@ -57,16 +58,16 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sample_authentication.py
-            :start-after: [START create_maps_timezone_service_client_with_key]
-            :end-before: [END create_maps_timezone_service_client_with_key]
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_maps_timezone_service_client_with_key_async]
+            :end-before: [END create_maps_timezone_service_client_with_key_async]
             :language: python
             :dedent: 4
             :caption: Creating the MapsTimezoneClient with an subscription key.
 
-        .. literalinclude:: ../samples/sample_authentication.py
-            :start-after: [START create_maps_timezone_service_client_with_aad]
-            :end-before: [END create_maps_timezone_service_client_with_aad]
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_maps_timezone_service_client_with_aad_async]
+            :end-before: [END create_maps_timezone_service_client_with_aad_async]
             :language: python
             :dedent: 4
             :caption: Creating the MapsTimezoneClient with a token credential.
@@ -74,7 +75,7 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(
         self,
-        credential: Union[AzureKeyCredential, TokenCredential],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any
     )-> None:
 
@@ -87,18 +88,18 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         self._timezone_client = self._maps_client.timezone
 
-    def close(self)-> None:
-        self._maps_client.close()
+    async def close(self)-> None:
+        await self._maps_client.close()
 
-    def __enter__(self):
-        self._maps_client.__enter__()
+    async def __aenter__(self):
+        await self._maps_client.__aenter__()
         return self
 
-    def __exit__(self, *args):
-        return self._maps_client.__exit__(*args)
+    async def __aexit__(self, *args):
+        return await self._maps_client.__aexit__(*args)
 
-    @distributed_trace
-    def get_timezone_by_id(
+    @distributed_trace_async
+    async def get_timezone_by_id(
         self,
         timezone_id: str,
         ** kwargs: Any
@@ -135,21 +136,21 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_get_timezone_by_id.py
-                :start-after: [START get_timezone_by_id]
-                :end-before: [END get_timezone_by_id]
+            .. literalinclude:: ../samples/async_samples/sample_get_timezone_by_id_async.py
+                :start-after: [START get_timezone_by_id_async]
+                :end-before: [END get_timezone_by_id_async]
                 :language: python
                 :dedent: 4
                 :caption: Get time zone information for the specified IANA time zone ID.
         """
 
-        return self._timezone_client.get_timezone_by_id(
+        return await self._timezone_client.get_timezone_by_id(
             timezone_id=timezone_id,
             **kwargs
         )
 
-    @distributed_trace
-    def get_timezone_by_coordinates(
+    @distributed_trace_async
+    async def get_timezone_by_coordinates(
         self,
         coordinates: LatLon,
         **kwargs: Any
@@ -189,20 +190,20 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_get_timezone_by_coordinates.py
-                :start-after: [START get_timezone_by_coordinates]
-                :end-before: [END get_timezone_by_coordinates]
+            .. literalinclude:: ../samples/async_samples/sample_get_timezone_by_coordinates_async.py
+                :start-after: [START get_timezone_by_coordinates_async]
+                :end-before: [END get_timezone_by_coordinates_async]
                 :language: python
                 :dedent: 4
                 :caption: Get time zone information for the specified coordinate.
         """
-        return self._timezone_client.get_timezone_by_coordinates(
+        return await self._timezone_client.get_timezone_by_coordinates(
             coordinates=coordinates,
             **kwargs
         )
 
-    @distributed_trace
-    def get_windows_timezone_ids(
+    @distributed_trace_async
+    async def get_windows_timezone_ids(
         self,
         **kwargs: Any
     )-> List[TimezoneWindows]:
@@ -215,17 +216,17 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_get_windows_timezone_ids.py
-                :start-after: [START get_windows_timezone_ids]
-                :end-before: [END get_windows_timezone_ids]
+            .. literalinclude:: ../samples/async_samples/sample_get_windows_timezone_ids_async.py
+                :start-after: [START get_windows_timezone_ids_async]
+                :end-before: [END get_windows_timezone_ids_async]
                 :language: python
                 :dedent: 4
                 :caption: Get the full list of Windows Time Zone IDs.
         """
-        return self._timezone_client.get_windows_timezone_ids(**kwargs)
+        return await self._timezone_client.get_windows_timezone_ids(**kwargs)
 
-    @distributed_trace
-    def get_iana_timezone_ids(
+    @distributed_trace_async
+    async def get_iana_timezone_ids(
         self,
         **kwargs: Any
     )-> List[IanaId]:
@@ -239,17 +240,17 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_get_iana_timezone_ids.py
-                :start-after: [START get_iana_timezone_ids]
-                :end-before: [END get_iana_timezone_ids]
+            .. literalinclude:: ../samples/async_samples/sample_get_iana_timezone_ids_async.py
+                :start-after: [START get_iana_timezone_ids_async]
+                :end-before: [END get_iana_timezone_ids_async]
                 :language: python
                 :dedent: 4
                 :caption: Get the full list of IANA Time Zone IDs.
         """
-        return self._timezone_client.get_iana_timezone_ids(**kwargs)
+        return await self._timezone_client.get_iana_timezone_ids(**kwargs)
 
-    @distributed_trace
-    def get_iana_version(
+    @distributed_trace_async
+    async def get_iana_version(
         self,
         **kwargs: Any
     )-> TimezoneIanaVersionResult:
@@ -262,17 +263,17 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_get_iana_version.py
-                :start-after: [START get_iana_version]
-                :end-before: [END get_iana_version]
+            .. literalinclude:: ../samples/async_samples/sample_get_iana_version_async.py
+                :start-after: [START get_iana_version_async]
+                :end-before: [END get_iana_version_async]
                 :language: python
                 :dedent: 4
                 :caption: Get current IANA version number.
         """
-        return self._timezone_client.get_iana_version(**kwargs)
+        return await self._timezone_client.get_iana_version(**kwargs)
 
-    @distributed_trace
-    def convert_windows_timezone_to_iana(
+    @distributed_trace_async
+    async def convert_windows_timezone_to_iana(
         self,
         windows_timezone_id: str,
         **kwargs: Any
@@ -292,11 +293,11 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_convert_windows_timezone_to_iana.py
-                :start-after: [START convert_windows_timezone_to_iana]
-                :end-before: [END convert_windows_timezone_to_iana]
+            .. literalinclude:: ../samples/async_samples/sample_convert_windows_timezone_to_iana_async.py
+                :start-after: [START convert_windows_timezone_to_iana_async]
+                :end-before: [END convert_windows_timezone_to_iana_async]
                 :language: python
                 :dedent: 4
                 :caption: Returns a corresponding IANA ID, given a valid Windows Time Zone ID.
         """
-        return self._timezone_client.convert_windows_timezone_to_iana(windows_timezone_id=windows_timezone_id, **kwargs)
+        return await self._timezone_client.convert_windows_timezone_to_iana(windows_timezone_id=windows_timezone_id, **kwargs)

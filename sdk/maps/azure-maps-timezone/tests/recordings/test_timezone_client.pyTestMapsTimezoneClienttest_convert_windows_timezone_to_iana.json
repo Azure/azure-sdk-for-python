@@ -1,0 +1,29 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://atlas.microsoft.com/timezone/windowsToIana/json?api-version=1.0.0b1\u0026query=pacific%20standard%20time",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-timezoneclient/1.0.0b1 Python/3.10.5 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-id": "fake_client_id"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "204",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 20 Sep 2022 07:59:11 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-azuremaps-region": "West US 2",
+        "X-MSEdge-Ref": "Ref A: 5AEB22E82E5C48F5B93EB001FCB28E1F Ref B: TPE30EDGE0718 Ref C: 2022-09-20T07:59:12Z"
+      },
+      "ResponseBody": "[{\u0022Id\u0022:\u0022America/Vancouver\u0022,\u0022IsAlias\u0022:false,\u0022HasZone1970Location\u0022:true},{\u0022Id\u0022:\u0022America/Los_Angeles\u0022,\u0022IsAlias\u0022:false,\u0022HasZone1970Location\u0022:true},{\u0022Id\u0022:\u0022PST8PDT\u0022,\u0022IsAlias\u0022:false,\u0022HasZone1970Location\u0022:false}]"
+    }
+  ],
+  "Variables": {}
+}

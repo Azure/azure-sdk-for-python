@@ -1,0 +1,53 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://atlas.microsoft.com/timezone/byCoordinates/json?api-version=1.0.0b1\u0026query=52.5069,13.2843",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-timezoneclient/1.0.0b1 Python/3.10.5 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-id": "fake_client_id"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "556",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 20 Sep 2022 07:59:10 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-azuremaps-region": "West US 2",
+        "X-MSEdge-Ref": "Ref A: 560B0E4CE4CD41AF9F84EF2A14B60CE4 Ref B: TPE30EDGE0718 Ref C: 2022-09-20T07:59:10Z"
+      },
+      "ResponseBody": {
+        "Version": "2022c",
+        "ReferenceUtcTimestamp": "2022-09-20T07:59:10.7035735Z",
+        "TimeZones": [
+          {
+            "Id": "Europe/Berlin",
+            "Names": {
+              "ISO6391LanguageCode": "en",
+              "Generic": "Central European Time",
+              "Standard": "Central European Standard Time",
+              "Daylight": "Central European Summer Time"
+            },
+            "ReferenceTime": {
+              "Tag": "CEST",
+              "StandardOffset": "01:00:00",
+              "DaylightSavings": "01:00:00",
+              "WallTime": "2022-09-20T09:59:10.7035735\u002B02:00",
+              "PosixTzValidYear": 2022,
+              "PosixTz": "CET-1CEST,M3.4.0,M10.5.0/3",
+              "Sunrise": "2022-09-20T06:48:42.314003\u002B02:00",
+              "Sunset": "2022-09-20T19:12:20.9007415\u002B02:00"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}
