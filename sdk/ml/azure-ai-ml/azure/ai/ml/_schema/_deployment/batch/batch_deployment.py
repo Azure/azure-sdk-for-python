@@ -58,5 +58,4 @@ class BatchDeploymentSchema(DeploymentSchema):
     def make(self, data: Any, **kwargs: Any) -> Any:
         from azure.ai.ml.entities import BatchDeployment
 
-        exit_if_registry_assets(data=data, caller="BatchDeployment")
         return BatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
