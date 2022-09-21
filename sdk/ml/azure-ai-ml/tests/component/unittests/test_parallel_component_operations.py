@@ -28,7 +28,7 @@ def mock_component_operation(
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
 class TestComponentOperation:
-    def test_create(self, mock_component_operation: ComponentOperations, randstr: Callable[[], str]) -> None:
+    def test_create(self, mock_component_operation: ComponentOperations) -> None:
         task = {
             "type": "run_function",
             "model": {"name": "sore_model", "type": "mlflow_model"},
@@ -40,7 +40,7 @@ class TestComponentOperation:
             "mini_batch_size": "${{inputs.mini_batch_size}}",
         }
         component = ParallelComponent(
-            name=randstr(),
+            name="random_name",
             version="1",
             mini_batch=mini_batch,
             task=task,
@@ -62,7 +62,7 @@ class TestComponentOperation:
         )
 
     def test_create_autoincrement(
-        self, mock_component_operation: ComponentOperations, randstr: Callable[[], str]
+        self, mock_component_operation: ComponentOperations
     ) -> None:
         task = {
             "type": "run_function",
@@ -75,7 +75,7 @@ class TestComponentOperation:
             "mini_batch_size": "${{inputs.mini_batch_size}}",
         }
         component = ParallelComponent(
-            name=randstr(),
+            name="random_name",
             version=None,
             mini_batch=mini_batch,
             task=task,

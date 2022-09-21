@@ -163,7 +163,6 @@ class TestBatchEndpointOperations:
     def test_batch_endpoint_create(
         self,
         mock_batch_endpoint_operations: BatchEndpointOperations,
-        rand_compute_name: Callable[[], str],
         create_yaml_happy_path: str,
         mocker: MockFixture,
     ) -> None:
@@ -177,7 +176,7 @@ class TestBatchEndpointOperations:
         mock_batch_endpoint_operations._credentials = Mock(spec_set=DefaultAzureCredential)
 
         online_endpoint = load_batch_endpoint(create_yaml_happy_path)
-        online_endpoint.name = rand_compute_name()
+        online_endpoint.name = "random_compute_name"
         mock_batch_endpoint_operations.begin_create_or_update(endpoint=online_endpoint)
         mock_create_or_update_batch_endpoint.assert_called_once()
         # mock_batch_endpoint_operations.create_or_update.assert_called_once()

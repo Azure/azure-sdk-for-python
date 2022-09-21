@@ -80,7 +80,6 @@ class TestBatchDeploymentOperations:
     def test_batch_deployment_create(
         self,
         mock_batch_deployment_operations: BatchDeploymentOperations,
-        rand_compute_name: Callable[[], str],
         create_yaml_happy_path: str,
         mocker: MockFixture,
     ) -> None:
@@ -92,7 +91,7 @@ class TestBatchDeploymentOperations:
             BatchDeploymentOperations, "begin_create_or_update", autospec=True
         )
         batch_deployment = load_batch_deployment(create_yaml_happy_path)
-        batch_deployment.name = rand_compute_name()
+        batch_deployment.name = "random_compute_name"
         mock_batch_deployment_operations.begin_create_or_update(deployment=batch_deployment)
         mock_create_or_update_batch_deployment.assert_called_once()
 
@@ -120,10 +119,9 @@ class TestBatchDeploymentOperations:
         mock_batch_deployment_operations: BatchDeploymentOperations,
         mock_aml_services_2022_05_01: Mock,
         mocker: MockFixture,
-        randstr: Callable[[], str],
         mock_delete_poller: LROPoller,
     ) -> None:
-        random_name = randstr()
+        random_name = "radom_name"
         mock_aml_services_2022_05_01.batch_deployments.begin_delete.return_value = mock_delete_poller
         mock_batch_deployment_operations.begin_delete(endpoint_name="batch-ept", name=random_name)
         mock_batch_deployment_operations._batch_deployment.begin_delete.assert_called_once()
