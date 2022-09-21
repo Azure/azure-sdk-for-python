@@ -13,4 +13,5 @@ package-name: azure-appconfiguration
 clear-output-folder: true
 enable-xml: true
 vanilla: true
+version-tolerant: false
 ```
