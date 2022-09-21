@@ -156,8 +156,8 @@ class TestField:
             schema.load(input_data)
         input_data = {"model": "azureml:/subscription/something/other/value/name/"}
 
-    def test_version_types(self, tmp_path):
-        data_name = f"version_rand_name"
+    def test_version_types(self, tmp_path, randstr):
+        data_name = f"version_{randstr()}"
         p = tmp_path / "version_float.yml"
         p.write_text(
             f"""

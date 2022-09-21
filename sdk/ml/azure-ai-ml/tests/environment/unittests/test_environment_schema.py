@@ -183,8 +183,7 @@ class TestEnvironmentSchema:
         batch_deployment2 = load_batch_deployment(
             "tests/test_configs/deployments/batch/batch_deployment_anon_env_with_docker.yaml"
         )
-        # flaky assertion
-        # assert batch_deployment1.environment.version == "880440cb2c75af4b1344125dcd3b2d62"
+        assert batch_deployment1.environment.version == "880440cb2c75af4b1344125dcd3b2d62"
         assert batch_deployment1.environment.name == ANONYMOUS_ENV_NAME
         assert batch_deployment1.environment.version == batch_deployment2.environment.version
         assert batch_deployment1.environment.name == batch_deployment2.environment.name

@@ -46,8 +46,8 @@ def no_ignore_file(no_ignore_file_directory: str) -> IgnoreFile:
 
 
 @pytest.fixture
-def target_file_path(storage_test_directory: str) -> os.PathLike:
-    target_file_name = "target_file_rand_name.txt"
+def target_file_path(randstr: Callable[[], str], storage_test_directory: str) -> os.PathLike:
+    target_file_name = f"target_file_{randstr()}.txt"
     target_file = Path(os.path.join(os.path.abspath(storage_test_directory), target_file_name))
     target_file.write_text("some text")
     target_file = convert_windows_path_to_unix(target_file)
@@ -59,9 +59,9 @@ def target_file_path(storage_test_directory: str) -> os.PathLike:
 
 @pytest.fixture
 def link_file_path(
-    storage_test_directory: str, target_file_path: os.PathLike
+    randstr: Callable[[], str], storage_test_directory: str, target_file_path: os.PathLike
 ) -> os.PathLike:
-    link_file_name = "link_file_rand_name.txt"
+    link_file_name = f"link_file_{randstr()}.txt"
     link_file = Path(os.path.join(os.path.abspath(storage_test_directory), link_file_name))
 
     os.symlink(target_file_path, link_file)

@@ -5,7 +5,7 @@ import pytest
 
 from azure.ai.ml import load_workspace_connection
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionCategory
-from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities import WorkspaceConnection
 from azure.ai.ml.entities._workspace.connections.credentials import PatTokenCredentials
 from azure.ai.ml.operations import WorkspaceConnectionsOperations
@@ -19,12 +19,14 @@ def mock_credential() -> Mock:
 @pytest.fixture
 def mock_workspace_connection_operation(
     mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
     mock_aml_services_2022_01_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
 ) -> WorkspaceConnectionsOperations:
     yield WorkspaceConnectionsOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_01_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
@@ -45,6 +47,7 @@ class TestWorkspaceConnectionsOperation:
         self,
         mock_from_rest,
         mock_workspace_connection_operation: WorkspaceConnectionsOperations,
+        randstr: Callable[[], str],
     ) -> None:
         mock_from_rest.return_value = WorkspaceConnection(
             target="dummy_target",
@@ -52,7 +55,7 @@ class TestWorkspaceConnectionsOperation:
             credentials=PatTokenCredentials(pat="dummy_pat"),
             name="dummy_connection",
         )
-        mock_workspace_connection_operation.get("random_name")
+        mock_workspace_connection_operation.get(randstr())
         mock_workspace_connection_operation._operation.get.assert_called_once()
 
     @patch.object(WorkspaceConnection, "_from_rest_object")

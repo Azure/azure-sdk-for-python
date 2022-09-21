@@ -30,7 +30,12 @@ from azure.ai.ml._restclient.v2022_06_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2022_06_01_preview.models import ListViewType, UserIdentity
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -123,12 +128,13 @@ class JobOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client_06_2022_preview: ServiceClient062022Preview,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
     ):
-        super(JobOperations, self).__init__(operation_scope)
+        super(JobOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation_2022_06_preview = service_client_06_2022_preview.jobs
         self._all_operations = all_operations
@@ -142,7 +148,7 @@ class JobOperations(_ScopeDependentOperations):
         self._api_base_url = None
         self._container = "azureml"
         self._credential = credential
-        self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope)
+        self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
 
         self._kwargs = kwargs
 
@@ -170,7 +176,9 @@ class JobOperations(_ScopeDependentOperations):
             service_client_run_history = ServiceClientRunHistory(
                 self._credential, base_url=self._api_url, **self._service_client_kwargs
             )
-            self._runs_operations_client = RunOperations(self._operation_scope, service_client_run_history)
+            self._runs_operations_client = RunOperations(
+                self._operation_scope, self._operation_config, service_client_run_history
+            )
         return self._runs_operations_client
 
     @property
@@ -921,6 +929,7 @@ class JobOperations(_ScopeDependentOperations):
                     self._datastore_operations,
                     entry.path,
                     datastore_name=datastore_name,
+                    show_progress=self._show_progress,
                 )
                 # TODO : Move this part to a common place
                 if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
@@ -938,6 +947,7 @@ class JobOperations(_ScopeDependentOperations):
                     self._datastore_operations,
                     local_path,
                     datastore_name=datastore_name,
+                    show_progress=self._show_progress,
                 )
                 # TODO : Move this part to a common place
                 if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):

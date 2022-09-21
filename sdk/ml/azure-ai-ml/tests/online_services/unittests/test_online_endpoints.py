@@ -17,7 +17,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     OnlineEndpointData,
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
-from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AzureMLResourceType, HttpResponseStatusCode
 from azure.ai.ml.entities import OnlineEndpoint
 from azure.ai.ml.operations import (
@@ -110,10 +110,11 @@ auth_mode: Key
 
 @pytest.fixture
 def mock_datastore_operations(
-    mock_workspace_scope: OperationScope, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_05_01: Mock
 ) -> CodeOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         serviceclient_2022_05_01=mock_aml_services_2022_05_01,
     )
 
@@ -121,11 +122,13 @@ def mock_datastore_operations(
 @pytest.fixture
 def mock_model_operations(
     mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
     mock_aml_services_2022_05_01: Mock,
     mock_datastore_operations: DatastoreOperations,
 ) -> ModelOperations:
     yield ModelOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_05_01,
         datastore_operations=mock_datastore_operations,
     )
@@ -134,11 +137,13 @@ def mock_model_operations(
 @pytest.fixture
 def mock_code_assets_operations(
     mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
     mock_aml_services_2022_05_01: Mock,
     mock_datastore_operations: DatastoreOperations,
 ) -> CodeOperations:
     yield CodeOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_05_01,
         datastore_operations=mock_datastore_operations,
     )
@@ -147,11 +152,13 @@ def mock_code_assets_operations(
 @pytest.fixture
 def mock_environment_operations(
     mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
     mock_aml_services_2022_05_01: Mock,
     mock_machinelearning_client: Mock,
 ) -> EnvironmentOperations:
     yield EnvironmentOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_05_01,
         all_operations=mock_machinelearning_client._operation_container,
     )
@@ -183,6 +190,7 @@ def mock_local_endpoint_helper() -> Mock:
 @pytest.fixture
 def mock_online_endpoint_operations(
     mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
     mock_aml_services_2022_02_01_preview: Mock,
     mock_aml_services_2020_09_01_dataplanepreview: Mock,
     mock_machinelearning_client: Mock,
@@ -201,6 +209,7 @@ def mock_online_endpoint_operations(
 
     yield OnlineEndpointOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         service_client_02_2022_preview=mock_aml_services_2022_02_01_preview,
         service_client_09_2020_dataplanepreview=mock_aml_services_2020_09_01_dataplanepreview,
         all_operations=mock_machinelearning_client._operation_container,
@@ -218,9 +227,10 @@ class TestOnlineEndpointsOperations:
     def test_online_get(
         self,
         mock_online_endpoint_operations: OnlineEndpointOperations,
+        randstr: Callable[[], str],
         mock_aml_services_2022_02_01_preview: Mock,
     ) -> None:
-        random_name = "random_name"
+        random_name = randstr()
         mock_aml_services_2022_02_01_preview.online_endpoints.get.return_value = OnlineEndpointData(
             name=random_name,
             location="eastus",
@@ -243,9 +253,10 @@ class TestOnlineEndpointsOperations:
     def test_online_get_keys(
         self,
         mock_online_endpoint_operations: OnlineEndpointOperations,
+        randstr: Callable[[], str],
         mock_aml_services_2022_02_01_preview: Mock,
     ) -> None:
-        random_name = "random_name"
+        random_name = randstr()
         mock_aml_services_2022_02_01_preview.online_endpoints.get.return_value = OnlineEndpointData(
             name=random_name,
             location="eastus",
@@ -258,9 +269,10 @@ class TestOnlineEndpointsOperations:
     def test_online_get_token(
         self,
         mock_online_endpoint_operations: OnlineEndpointOperations,
+        randstr: Callable[[], str],
         mock_aml_services_2022_02_01_preview: Mock,
     ) -> None:
-        random_name = "random_name"
+        random_name = randstr()
         mock_aml_services_2022_02_01_preview.online_endpoints.get.return_value = OnlineEndpointData(
             name=random_name,
             location="eastus",
@@ -275,9 +287,10 @@ class TestOnlineEndpointsOperations:
         mock_online_endpoint_operations: OnlineEndpointOperations,
         mock_aml_services_2022_02_01_preview: Mock,
         mocker: MockFixture,
+        randstr: Callable[[], str],
         mock_delete_poller: LROPoller,
     ) -> None:
-        random_name = "random_name"
+        random_name = randstr()
         mock_aml_services_2022_02_01_preview.online_endpoints.begin_delete.return_value = mock_delete_poller
         mock_online_endpoint_operations.begin_delete(name=random_name)
         mock_online_endpoint_operations._online_operation.begin_delete.assert_called_once()
@@ -285,6 +298,7 @@ class TestOnlineEndpointsOperations:
     def test_online_create(
         self,
         mock_online_endpoint_operations: OnlineEndpointOperations,
+        rand_compute_name: Callable[[], str],
         create_yaml_happy_path: str,
         mocker: MockFixture,
     ) -> None:
@@ -298,7 +312,7 @@ class TestOnlineEndpointsOperations:
         mock_online_endpoint_operations._credentials = Mock(spec_set=DefaultAzureCredential)
 
         online_endpoint = load_online_endpoint(create_yaml_happy_path)
-        online_endpoint.name = "random_name"
+        online_endpoint.name = rand_compute_name()
         mock_online_endpoint_operations.begin_create_or_update(endpoint=online_endpoint)
         mock_create_or_update_online_endpoint.assert_called_once()
         # mock_online_endpoint_operations.create_or_update.assert_called_once()
@@ -338,6 +352,7 @@ class TestOnlineEndpointsOperations:
     def test_online_create_without_oldendpoint(
         self,
         mock_online_endpoint_operations: OnlineEndpointOperations,
+        rand_compute_name: Callable[[], str],
         create_yaml_happy_path: str,
         mocker: MockFixture,
     ) -> None:
@@ -350,7 +365,7 @@ class TestOnlineEndpointsOperations:
             return_value="xxx",
         )
         online_endpoint = load_online_endpoint(create_yaml_happy_path)
-        online_endpoint.name = "random-name"
+        online_endpoint.name = rand_compute_name()
         http_err = HttpResponseError()
         http_err.status_code = HttpResponseStatusCode.NOT_FOUND
         mock_online_endpoint_operations._online_operation.get = Mock(side_effect=http_err)
@@ -364,18 +379,19 @@ class TestOnlineEndpointsOperations:
     def test_online_invoke(
         self,
         mock_online_endpoint_operations: OnlineEndpointOperations,
+        randstr: Callable[[], str],
         request_file: str,
         mocker: MockFixture,
         mock_aml_services_2022_02_01_preview: Mock,
     ) -> None:
-        random_name = "random_name"
+        random_name = randstr()
         mock_aml_services_2022_02_01_preview.online_endpoints.get.return_value = OnlineEndpointData(
             name=random_name,
             location="eastus",
             properties=RestOnlineEndpoint(auth_mode="Key", scoring_uri="xxx"),
         )
         mockresponse = Mock()
-        mockresponse.text = '{"key": "value"}'
+        mockresponse.text = lambda: '{"key": "value"}'
         mockresponse.status_code = 200
 
         mocker.patch.object(mock_online_endpoint_operations._requests_pipeline, "post", return_value=mockresponse)
@@ -384,30 +400,31 @@ class TestOnlineEndpointsOperations:
         mock_online_endpoint_operations._online_operation.list_keys.assert_called_once()
 
     def test_create_no_file_throw_exception(
-        self, mock_online_endpoint_operations: OnlineEndpointOperations
+        self, mock_online_endpoint_operations: OnlineEndpointOperations, randstr: Callable[[], str]
     ) -> None:
         with pytest.raises(Exception):
-            mock_online_endpoint_operations.begin_create(name="random_name", file=None)
+            mock_online_endpoint_operations.begin_create(name=randstr(), file=None)
 
     def test_create_no_type_throw_exception(
-        self, mock_online_endpoint_operations: OnlineEndpointOperations
+        self, mock_online_endpoint_operations: OnlineEndpointOperations, randstr: Callable[[], str]
     ) -> None:
         with pytest.raises(Exception):
-            mock_online_endpoint_operations.begin_create(name="random_name", file=None)
+            mock_online_endpoint_operations.begin_create(name=randstr(), file=None)
 
     def test_create_no_type_in_file_throw_exception(
-        self, mock_online_endpoint_operations: OnlineEndpointOperations,  create_yaml_no_type
+        self, mock_online_endpoint_operations: OnlineEndpointOperations, randstr: Callable[[], str], create_yaml_no_type
     ) -> None:
         with pytest.raises(Exception):
-            mock_online_endpoint_operations.begin_create(name="random_name", file=None)
+            mock_online_endpoint_operations.begin_create(name=randstr(), file=None)
 
     def test_online_regenerate_keys(
         self,
         mock_online_endpoint_operations: OnlineEndpointOperations,
+        randstr: str,
         mock_aml_services_2022_02_01_preview: Mock,
     ) -> None:
         mock_aml_services_2022_02_01_preview.online_endpoints.get.return_value = OnlineEndpointData(
-            name="random_name",
+            name=randstr,
             location="eastus",
             properties=RestOnlineEndpoint(auth_mode="Key", scoring_uri="xxx"),
         )
@@ -415,16 +432,16 @@ class TestOnlineEndpointsOperations:
             primary_key="primexxx",
             secondary_key="secondxxx",
         )
-        mock_online_endpoint_operations.begin_regenerate_keys(name="random_name", key_type="secondary")
+        mock_online_endpoint_operations.begin_regenerate_keys(name=randstr, key_type="secondary")
         mock_online_endpoint_operations._online_operation.list_keys.assert_called_once()
         mock_online_endpoint_operations._online_operation.begin_regenerate_keys.assert_called_once()
         mock_online_endpoint_operations._online_operation.get.assert_called_once()
 
     def test_regenerate_invalid_key_type(
-        self, mock_online_endpoint_operations: OnlineEndpointOperations
+        self, mock_online_endpoint_operations: OnlineEndpointOperations, randstr: str
     ) -> None:
         with pytest.raises(Exception):
-            mock_online_endpoint_operations.begin_regenerate_keys(name="random_name", key_type="invalid key type")
+            mock_online_endpoint_operations.begin_regenerate_keys(name=randstr, key_type="invalid key type")
 
 
 @pytest.mark.parametrize(

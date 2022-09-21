@@ -11,7 +11,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
     EnvironmentVersionData,
     EnvironmentVersionDetails,
 )
-from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, OrderString
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.operations import DatastoreOperations, EnvironmentOperations
@@ -21,10 +21,11 @@ from azure.core.paging import ItemPaged
 
 @pytest.fixture
 def mock_datastore_operations(
-    mock_workspace_scope: OperationScope, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_05_01: Mock
 ) -> CodeOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         serviceclient_2022_05_01=mock_aml_services_2022_05_01,
     )
 
@@ -32,11 +33,13 @@ def mock_datastore_operations(
 @pytest.fixture
 def mock_environment_operation(
     mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
     mock_machinelearning_client: Mock,
     mock_aml_services_2022_05_01: Mock,
 ) -> EnvironmentOperations:
     yield EnvironmentOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_05_01,
         all_operations=mock_machinelearning_client._operation_container,
     )
@@ -46,7 +49,7 @@ def mock_environment_operation(
 class TestEnvironmentOperations:
     @patch.object(Environment, "_from_rest_object", new=Mock())
     @patch.object(Environment, "_from_container_rest_object", new=Mock())
-    def test_list(self, mock_environment_operation: EnvironmentOperations) -> None:
+    def test_list(self, mock_environment_operation: EnvironmentOperations, randstr: Callable[[], str]) -> None:
         mock_environment_operation._version_operations.list.return_value = [Mock(Environment) for _ in range(10)]
         mock_environment_operation._containers_operations.list.return_value = [Mock(Environment) for _ in range(10)]
         result = mock_environment_operation.list()
@@ -55,39 +58,39 @@ class TestEnvironmentOperations:
         mock_environment_operation.list(name="name")
         mock_environment_operation._version_operations.list.assert_called_once()
 
-    def test_list_versions(self, mock_environment_operation: EnvironmentOperations) -> None:
+    def test_list_versions(self, mock_environment_operation: EnvironmentOperations, randstr: Callable[[], str]) -> None:
         mock_environment_operation.list(name="name")
         mock_environment_operation._version_operations.list.assert_called_once()
 
     def test_list_versions_with_azureml_prefix(
-        self, mock_environment_operation: EnvironmentOperations
+        self, mock_environment_operation: EnvironmentOperations, randstr: Callable[[], str]
     ) -> None:
-        name = "random_name"
+        name = randstr()
         with patch("azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None):
             mock_environment_operation.list(name=ARM_ID_PREFIX + name)
         mock_environment_operation._version_operations.list.assert_called_once()
         args, kwargs = mock_environment_operation._version_operations.list.call_args
         assert ARM_ID_PREFIX + name == kwargs.get("name")
 
-    def test_get(self, mock_environment_operation: EnvironmentOperations) -> None:
+    def test_get(self, mock_environment_operation: EnvironmentOperations, randstr: Callable[[], str]) -> None:
         with patch("azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None):
-            mock_environment_operation.get("random_name", "1")
+            mock_environment_operation.get(randstr(), "1")
         mock_environment_operation._version_operations.get.assert_called_once()
 
     def test_get_with_azureml_prefix(
-        self, mock_environment_operation: EnvironmentOperations
+        self, mock_environment_operation: EnvironmentOperations, randstr: Callable[[], str]
     ) -> None:
-        name = "random_name"
+        name = randstr()
         with patch("azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None):
-            mock_environment_operation.get(ARM_ID_PREFIX + name, "random_name")
+            mock_environment_operation.get(ARM_ID_PREFIX + name, randstr())
         mock_environment_operation._version_operations.get.assert_called_once()
         args, kwargs = mock_environment_operation._version_operations.get.call_args
         assert name == kwargs.get("name")
 
     def test_get_no_version(
-        self, mock_environment_operation: EnvironmentOperations
+        self, mock_environment_operation: EnvironmentOperations, randstr: Callable[[], str]
     ) -> None:
-        name = "random_name"
+        name = randstr()
         with pytest.raises(Exception):
             mock_environment_operation.get(name=name)
 
@@ -123,8 +126,8 @@ class TestEnvironmentOperations:
                 workspace_name=mock_workspace_scope.workspace_name,
             )
 
-    def test_archive_version(self, mock_environment_operation: EnvironmentOperations):
-        name = "random_name"
+    def test_archive_version(self, mock_environment_operation: EnvironmentOperations, randstr: Callable[[], str]):
+        name = randstr()
         env_version = Mock(EnvironmentVersionData(properties=Mock(EnvironmentVersionDetails())))
         version = "1"
         mock_environment_operation._version_operations.get.return_value = env_version
@@ -138,8 +141,8 @@ class TestEnvironmentOperations:
             resource_group_name=mock_environment_operation._resource_group_name,
         )
 
-    def test_archive_container(self, mock_environment_operation: EnvironmentOperations):
-        name = "random_name"
+    def test_archive_container(self, mock_environment_operation: EnvironmentOperations, randstr: Callable[[], str]):
+        name = randstr()
         env_container = Mock(EnvironmentContainerData(properties=Mock(EnvironmentContainerDetails())))
         mock_environment_operation._containers_operations.get.return_value = env_container
         mock_environment_operation.archive(name=name)
@@ -151,8 +154,8 @@ class TestEnvironmentOperations:
             resource_group_name=mock_environment_operation._resource_group_name,
         )
 
-    def test_restore_version(self, mock_environment_operation: EnvironmentOperations):
-        name = "random_name"
+    def test_restore_version(self, mock_environment_operation: EnvironmentOperations, randstr: Callable[[], str]):
+        name = randstr()
         env_version = Mock(EnvironmentVersionData(properties=Mock(EnvironmentVersionDetails())))
         version = "1"
         mock_environment_operation._version_operations.get.return_value = env_version
@@ -166,8 +169,8 @@ class TestEnvironmentOperations:
             resource_group_name=mock_environment_operation._resource_group_name,
         )
 
-    def test_restore_container(self, mock_environment_operation: EnvironmentOperations):
-        name = "random_name"
+    def test_restore_container(self, mock_environment_operation: EnvironmentOperations, randstr: Callable[[], str]):
+        name = randstr()
         env_container = Mock(EnvironmentContainerData(properties=Mock(EnvironmentContainerDetails())))
         mock_environment_operation._containers_operations.get.return_value = env_container
         mock_environment_operation.restore(name=name)
