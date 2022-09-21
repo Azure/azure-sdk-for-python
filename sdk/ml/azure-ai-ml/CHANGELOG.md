@@ -3,6 +3,7 @@
 ## 0.1.0 (Unreleased)
 
 ### Features Added
+ - Support passing JobService as argument to Command()
 
 ### Breaking Changes
 - ComputeOperations.attach has been renamed to begin_attach.

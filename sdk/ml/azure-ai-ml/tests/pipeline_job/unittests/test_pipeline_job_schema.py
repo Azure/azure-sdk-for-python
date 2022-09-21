@@ -11,9 +11,10 @@ from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobService, MLTableJobInput
+from azure.ai.ml._restclient.v2022_06_01_preview.models import MLTableJobInput
 from azure.ai.ml._restclient.v2022_06_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._restclient.v2022_06_01_preview.models import UriFolderJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
 from azure.ai.ml._utils.utils import is_data_binding_expression, load_yaml
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.constants._component import ComponentJobConstants
@@ -26,6 +27,7 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     INPUT_MOUNT_MAPPING_FROM_REST,
     validate_pipeline_input_key_contains_allowed_characters,
 )
+from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
 from azure.ai.ml.exceptions import ValidationException
@@ -1479,15 +1481,14 @@ class TestPipelineJobSchema:
             assert isinstance(service, JobService)
 
         job_rest_obj = job._to_rest_object()
-        assert job_rest_obj.properties.jobs["hello_world_component_inline"]["services"] == {
-            "my_jupyter": {"job_service_type": "Jupyter"},
-            "my_tensorboard": {
-                "job_service_type": "TensorBoard",
-                "properties": {
-                    "logDir": "~/tblog",
-                },
-            },
-            "my_jupyterlab": {"job_service_type": "JupyterLab"},
+        rest_services = job_rest_obj.properties.jobs["hello_world_component_inline"]["services"]
+        for name, service in rest_services.items():
+            assert isinstance(service, RestJobService)
+
+        assert rest_services == {
+            "my_jupyter": RestJobService(job_service_type="Jupyter"),
+            "my_tensorboard": RestJobService(job_service_type="TensorBoard", properties={"logDir": "~/tblog"}),
+            "my_jupyterlab": RestJobService(job_service_type="JupyterLab"),
         }
 
     def test_command_job_node_services_in_pipeline_with_no_component(self):
@@ -1500,14 +1501,14 @@ class TestPipelineJobSchema:
 
         job_rest_obj = job._to_rest_object()
         assert job_rest_obj.properties.jobs["hello_world_component_inline"]["services"] == {
-            "my_jupyter": {"job_service_type": "Jupyter"},
-            "my_tensorboard": {
-                "job_service_type": "TensorBoard",
-                "properties": {
+            "my_jupyter": RestJobService(job_service_type="Jupyter"),
+            "my_tensorboard": RestJobService(
+                job_service_type="TensorBoard",
+                properties={
                     "logDir": "~/tblog",
                 },
-            },
-            "my_jupyterlab": {"job_service_type": "JupyterLab"},
+            ),
+            "my_jupyterlab": RestJobService(job_service_type="JupyterLab"),
         }
 
     def test_dump_pipeline_inputs(self):
