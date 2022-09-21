@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Breaking Changes
+- ComputeOperations.attach has been renamed to begin_attach.
 
 ### Bugs Fixed
 

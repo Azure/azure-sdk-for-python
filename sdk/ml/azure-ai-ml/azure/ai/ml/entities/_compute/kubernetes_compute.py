@@ -28,7 +28,7 @@ class KubernetesCompute(Compute):
     :param resource_id: ARM resource id of the underlying compute, defaults to None
     :type resource_id: Optional[str], optional
     :param created_on: defaults to None
-    :type created_on: Optional[str], optional
+    :type created_on: Optional[~datetime.datetime], optional
     :param provisioning_state: defaults to None
     :type provisioning_state: Optional[str], optional
     :param namespace: Namespace of the KubernetesCompute
