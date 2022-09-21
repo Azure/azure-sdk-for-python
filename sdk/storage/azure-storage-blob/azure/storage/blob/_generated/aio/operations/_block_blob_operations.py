@@ -70,6 +70,7 @@ class BlockBlobOperations:
         immutability_policy_expiry: Optional[datetime.datetime] = None,
         immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
+        transactional_content_crc64: Optional[bytes] = None,
         blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
@@ -122,6 +123,9 @@ class BlockBlobOperations:
         :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
         :param legal_hold: Specified if a legal hold should be set on the blob. Default value is None.
         :type legal_hold: bool
+        :param transactional_content_crc64: Specify the transactional crc64 for the body, to be
+         validated by the service. Default value is None.
+        :type transactional_content_crc64: bytes
         :param blob_http_headers: Parameter group. Default value is None.
         :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -218,6 +222,7 @@ class BlockBlobOperations:
             immutability_policy_expiry=immutability_policy_expiry,
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
+            transactional_content_crc64=transactional_content_crc64,
             blob_type=blob_type,
             content_type=content_type,
             version=self._config.version,

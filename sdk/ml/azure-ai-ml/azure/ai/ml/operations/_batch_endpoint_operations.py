@@ -5,52 +5,52 @@
 # pylint: disable=protected-access
 
 import json
-import logging
 import os
+import re
 import time
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Union
+from typing import TYPE_CHECKING, Any, Dict, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
 from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
-)
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointTrackedResourceArmPaginatedResult
 from azure.ai.ml._schema._deployment.batch.batch_job import BatchJobSchema
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._arm_id_utils import get_datastore_arm_id, is_ARM_id_for_resource, remove_datastore_prefix
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import polling_wait, post_and_validate_response
+from azure.ai.ml._utils._endpoint_utils import polling_wait, validate_response
+from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client
-from azure.ai.ml.constants import (
+from azure.ai.ml.constants._common import (
     ARM_ID_FULL_PREFIX,
     BASE_PATH_CONTEXT_KEY,
     HTTP_PREFIX,
+    LONG_URI_REGEX_FORMAT,
     PARAMS_OVERRIDE_KEY,
+    SHORT_URI_REGEX_FORMAT,
     AssetTypes,
     AzureMLResourceType,
-    EndpointInvokeFields,
-    EndpointYamlFields,
     LROConfigurations,
 )
+from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointYamlFields
 from azure.ai.ml.entities import BatchEndpoint
 from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
+from azure.core.credentials import TokenCredential
+from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
-from azure.identity import ChainedTokenCredential
 
 from ._operation_orchestrator import OperationOrchestrator
 
 if TYPE_CHECKING:
     from azure.ai.ml.operations import DatastoreOperations
 
-logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
-logger.propagate = False
-module_logger = logging.getLogger(__name__)
+ops_logger = OpsLogger(__name__)
+logger, module_logger = ops_logger.logger, ops_logger.module_logger
 
 
 class BatchEndpointOperations(_ScopeDependentOperations):
@@ -65,33 +65,32 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         service_client_05_2022: ServiceClient052022,
-        service_client_09_2020_dataplanepreview: ServiceClient092020DataplanePreview,
         all_operations: OperationsContainer,
-        credentials: ChainedTokenCredential = None,
+        credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
 
         super(BatchEndpointOperations, self).__init__(operation_scope)
-        if "app_insights_handler" in kwargs:
-            logger.addHandler(kwargs.pop("app_insights_handler"))
+        ops_logger.update_info(kwargs)
         self._batch_operation = service_client_05_2022.batch_endpoints
         self._batch_deployment_operation = service_client_05_2022.batch_deployments
-        self._batch_job_endpoint = service_client_09_2020_dataplanepreview.batch_job_endpoint
+        self._batch_job_endpoint = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_endpoint
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs
+
+        self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
     @property
     def _datastore_operations(self) -> "DatastoreOperations":
         return self._all_operations.all_operations[AzureMLResourceType.DATASTORE]
 
     @monitor_with_activity(logger, "BatchEndpoint.List", ActivityType.PUBLICAPI)
-    def list(
-        self,
-    ) -> Iterable[BatchEndpointTrackedResourceArmPaginatedResult]:
+    def list(self) -> ItemPaged[BatchEndpoint]:
         """List endpoints of the workspace.
 
-        :return: a list of endpoints
+        :return: A list of endpoints
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.BatchEndpoint]
         """
         return self._batch_operation.list(
             resource_group_name=self._resource_group_name,
@@ -204,7 +203,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         deployment_name: str = None,
         input: Input = None,  # pylint: disable=redefined-builtin
         params_override=None,
-        **kwargs,
+        **kwargs,  # pylint: disable=unused-argument
     ) -> BatchJobResource:
         """Invokes the batch endpoint with the provided payload.
 
@@ -274,26 +273,30 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         if deployment_name:
             headers[EndpointInvokeFields.MODEL_DEPLOYMENT] = deployment_name
 
-        response = post_and_validate_response(
-            url=endpoint.properties.scoring_uri,
+        response = self._requests_pipeline.post(
+            endpoint.properties.scoring_uri,
             json=BatchJobResource(properties=batch_job).serialize(),
             headers=headers,
-            **kwargs,
         )
-        batch_job = json.loads(response.text)
+        validate_response(response)
+        batch_job = json.loads(response.text())
         return BatchJobResource.deserialize(batch_job)
 
     @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
-    def list_jobs(self, endpoint_name: str):
+    def list_jobs(self, endpoint_name: str) -> list:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.
 
-        :param str endpoint_name: the endpoint name
-        :return: Iterable[BatchJobResourceArmPaginatedResult]
+        :param endpoint_name: The endpoint name
+        :type endpoint_name: str
+        :return: List of jobs
+        :rtype: list
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
-        mfe_base_uri = _get_mfe_base_url_from_discovery_service(workspace_operations, self._workspace_name)
+        mfe_base_uri = _get_mfe_base_url_from_discovery_service(
+            workspace_operations, self._workspace_name, self._requests_pipeline
+        )
 
         with modified_operation_client(self._batch_job_endpoint, mfe_base_uri):
             result = self._batch_job_endpoint.list(
@@ -374,6 +377,10 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
                     entry.path = entry.path + "/"
             elif ":" in entry.path or "@" in entry.path:  # Check registered file or folder datastore
+                # If we receive a datastore path in long/short form we don't need
+                # to get the arm asset id
+                if re.match(SHORT_URI_REGEX_FORMAT, entry.path) or re.match(LONG_URI_REGEX_FORMAT, entry.path):
+                    return
                 asset_type = AzureMLResourceType.DATASTORE
                 entry.path = remove_datastore_prefix(entry.path)
                 orchestrator = OperationOrchestrator(self._all_operations, self._operation_scope)
@@ -387,6 +394,8 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 )
                 if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
                     entry.path = entry.path + "/"
+        except (MlException, HttpResponseError) as e:
+            raise e
         except Exception as e:
             raise ValidationException(
                 message=f"Supported input path value are: path on the datastore, public URI, "

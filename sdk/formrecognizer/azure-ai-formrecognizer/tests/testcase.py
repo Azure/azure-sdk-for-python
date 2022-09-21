@@ -657,7 +657,6 @@ class FormRecognizerTest(AzureRecordedTestCase):
             self.assertSpanTransformCorrect(transformed_span, span)
 
     def assertDocumentWordTransformCorrect(self, word, expected):
-        assert word.kind == "word"
         assert word.content == expected.content
         self.assertBoundingPolygonTransformCorrect(word.polygon, expected.polygon)
         self.assertSpanTransformCorrect(word.span, expected.span)
@@ -669,7 +668,6 @@ class FormRecognizerTest(AzureRecordedTestCase):
         assert span.length == expected.length
 
     def assertDocumentSelectionMarkTransformCorrect(self, selection_mark, expected):
-        assert selection_mark.kind == "selectionMark"
         assert selection_mark.confidence == adjust_confidence(expected.confidence)
         assert selection_mark.state == expected.state
         self.assertBoundingPolygonTransformCorrect(selection_mark.polygon, expected.polygon)

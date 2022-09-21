@@ -93,7 +93,7 @@ CLIENT._pipeline.run = types.MethodType(mock_run, CLIENT)
 
 @pytest.fixture
 def client():
-    # The poller itself don't use it, so we don't need something functionnal
+    # The poller itself don't use it, so we don't need something functional
     return PipelineClient("https://baseurl")
 
 
@@ -642,7 +642,7 @@ class TestBasePolling(object):
 
     @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(REQUESTS_TRANSPORT_RESPONSES))
     def test_long_running_post_legacy(self, http_request, http_response):
-        # Former oooooold tests to refactor one day to something more readble
+        # Former oooooold tests to refactor one day to something more readable
 
         # Test polling from operation-location header
         response = TestBasePolling.mock_send(

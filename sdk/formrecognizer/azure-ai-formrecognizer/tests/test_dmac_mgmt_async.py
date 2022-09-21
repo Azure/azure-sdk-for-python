@@ -51,7 +51,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         client = kwargs.pop("client")
         with pytest.raises(ValueError):
             async with client:
-                result = await client.get_model("")
+                result = await client.get_document_model("")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -59,7 +59,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         client = kwargs.pop("client")
         with pytest.raises(ValueError):
             async with client:
-                result = await client.get_model(None)
+                result = await client.get_document_model(None)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -67,7 +67,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         client = kwargs.pop("client")
         with pytest.raises(ValueError):
             async with client:
-                result = await client.delete_model(None)
+                result = await client.delete_document_model(None)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -75,7 +75,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         client = kwargs.pop("client")
         with pytest.raises(ValueError):
             async with client:
-                result = await client.delete_model("")
+                result = await client.delete_document_model("")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -92,7 +92,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @recorded_by_proxy_async
     async def test_get_model_prebuilt(self, client):
         async with client:
-            model = await client.get_model("prebuilt-invoice")
+            model = await client.get_document_model("prebuilt-invoice")
             assert model.model_id == "prebuilt-invoice"
             assert model.description is not None
             assert model.created_on
@@ -101,7 +101,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                 for key, field in doc_type.field_schema.items():
                     assert key
                     assert field["type"]
-                assert doc_type.field_confidence is None
+                assert doc_type.field_confidence == {}
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -110,10 +110,10 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         set_bodiless_matcher()
         
         async with client:
-            poller = await client.begin_build_model("template", blob_container_url=formrecognizer_storage_container_sas_url, description="mgmt model")
+            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url, description="mgmt model")
             model = await poller.result()
 
-            model_from_get = await client.get_model(model.model_id)
+            model_from_get = await client.get_document_model(model.model_id)
 
             assert model.model_id == model_from_get.model_id
             assert model.description == model_from_get.description
@@ -125,15 +125,15 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                     assert field["type"] == model_from_get.doc_types[name].field_schema[key]["type"]
                     assert doc_type.field_confidence[key] == model_from_get.doc_types[name].field_confidence[key]
 
-            models_list = client.list_models()
+            models_list = client.list_document_models()
             async for model in models_list:
                 assert model.model_id
                 assert model.created_on
 
-            await client.delete_model(model.model_id)
+            await client.delete_document_model(model.model_id)
 
             with pytest.raises(ResourceNotFoundError):
-                await client.get_model(model.model_id)
+                await client.get_document_model(model.model_id)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()

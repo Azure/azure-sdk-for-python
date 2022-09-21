@@ -17,17 +17,17 @@
       "automl_train_data": {
         "mode": "ReadOnlyMount",
         "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/bd78e427f4dfc10f2287e268fc69a3b4/train",
-        "jobInputType": "MLTable"
+        "jobInputType": "mltable"
       },
       "automl_validate_data": {
         "mode": "ReadOnlyMount",
         "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/eefbbf3722a18e7dcbfb0fb6ca14832d/valid",
-        "jobInputType": "MLTable"
+        "jobInputType": "mltable"
       },
       "automl_test_data": {
         "mode": "ReadOnlyMount",
         "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/8ffa1e4dc82b3f3b17fabf07728f8e46/test",
-        "jobInputType": "MLTable"
+        "jobInputType": "mltable"
       }
     },
     "jobs": {
@@ -42,7 +42,7 @@
         "outputs": {
           "best_model": {
             "mode": "ReadWriteMount",
-            "job_output_type": "MLFlowModel"
+            "job_output_type": "mlflow_model"
           }
         },
         "log_verbosity": "info",
@@ -73,7 +73,7 @@
         "computeId": null,
         "inputs": {
           "automl_output": {
-            "job_input_type": "Literal",
+            "job_input_type": "literal",
             "value": "${{parent.jobs.hello_automl_regression.outputs.best_model}}"
           }
         },

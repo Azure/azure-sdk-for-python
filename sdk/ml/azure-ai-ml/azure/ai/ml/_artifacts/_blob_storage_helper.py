@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes,client-method-missing-type-annotations,missing-client-constructor-parameter-kwargs
+
 import logging
 import os
 import sys
@@ -20,7 +22,6 @@ from azure.ai.ml._artifacts._constants import (
     MAX_CONCURRENCY,
     UPLOAD_CONFIRMATION,
 )
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
 from azure.ai.ml._utils._asset_utils import (
     AssetNotChangedError,
     IgnoreFile,
@@ -30,7 +31,8 @@ from azure.ai.ml._utils._asset_utils import (
     upload_directory,
     upload_file,
 )
-from azure.ai.ml.constants import STORAGE_AUTH_MISMATCH_ERROR
+from azure.ai.ml.constants._common import STORAGE_AUTH_MISMATCH_ERROR
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
 from azure.core.exceptions import ResourceNotFoundError
 from azure.storage.blob import BlobServiceClient, ContainerClient
 
@@ -171,43 +173,29 @@ class BlobStorageClient:
                 self.name = metadata.get("name")
                 self.version = metadata.get("version")
                 raise AssetNotChangedError
-            else:
-                self.overwrite = True  # if upload never confirmed, approve overriding the partial upload
+            self.overwrite = True  # if upload never confirmed, approve overriding the partial upload
         except ResourceNotFoundError:
             pass
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
+            # pylint: disable=no-member
             if hasattr(e, "error_code") and e.error_code == STORAGE_AUTH_MISMATCH_ERROR:
-                msg = "You don't have permission to alter this storage account. Ensure that you have been assigned both Storage Blob Data Reader and Storage Blob Data Contributor roles."
+                msg = (
+                    "You don't have permission to alter this storage account. "
+                    "Ensure that you have been assigned both Storage Blob Data Reader "
+                    "and Storage Blob Data Contributor roles."
+                )
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
                     target=ErrorTarget.ARTIFACT,
                     error_category=ErrorCategory.USER_ERROR,
                 )
-            else:
-                raise e
+            raise e
 
     def _set_confirmation_metadata(self, name: str, version: str) -> None:
         blob_client = self.container_client.get_blob_client(blob=self.indicator_file)
         metadata_dict = _build_metadata_dict(name, version)
         blob_client.set_blob_metadata(metadata_dict)
-
-    def _blob_is_hdi_folder(self, blob: "BlobProperties") -> bool:
-        """Checks if a given blob actually represents a folder.
-
-        Blob datastores do not natively have any conception of a folder. Instead,
-        empty blobs with the same name as a "folder" can have additional metadata
-        specifying that it is actually a folder.
-
-        :param BlobProperties blob: Blob to check
-        :return bool: True if blob represents a folder, False otherwise
-        """
-
-        # Metadata isn't always a populated field, and may need to be explicitly
-        # requested from whatever function generates the blobproperties object
-        #
-        # e.g self.container_client.list_blobs(..., include='metadata')
-        return bool(blob.metadata and blob.metadata.get(BLOB_DATASTORE_IS_HDI_FOLDER_KEY, None))
 
     def download(
         self,
@@ -228,7 +216,7 @@ class BlobStorageClient:
                 blob_name = item.name[len(starts_with) :].lstrip("/") or Path(starts_with).name
                 target_path = Path(destination, blob_name).resolve()
 
-                if self._blob_is_hdi_folder(item):
+                if _blob_is_hdi_folder(item):
                     target_path.mkdir(parents=True, exist_ok=True)
                     continue
 
@@ -288,3 +276,21 @@ class BlobStorageClient:
             None,
         )
         return result is not None
+
+
+def _blob_is_hdi_folder(blob: "BlobProperties") -> bool:
+    """Checks if a given blob actually represents a folder.
+
+    Blob datastores do not natively have any conception of a folder. Instead,
+    empty blobs with the same name as a "folder" can have additional metadata
+    specifying that it is actually a folder.
+
+    :param BlobProperties blob: Blob to check
+    :return bool: True if blob represents a folder, False otherwise
+    """
+
+    # Metadata isn't always a populated field, and may need to be explicitly
+    # requested from whatever function generates the blobproperties object
+    #
+    # e.g self.container_client.list_blobs(..., include='metadata')
+    return bool(blob.metadata and blob.metadata.get(BLOB_DATASTORE_IS_HDI_FOLDER_KEY, None))

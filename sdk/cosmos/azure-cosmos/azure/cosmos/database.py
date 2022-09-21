@@ -28,7 +28,7 @@ import warnings
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
-from ._base import build_options
+from ._base import build_options, _set_throughput_options, _deserialize_throughput, _replace_throughput
 from .container import ContainerProxy
 from .offer import ThroughputProperties
 from .http_constants import StatusCodes
@@ -155,7 +155,7 @@ class DatabaseProxy(object):
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
         populate_query_metrics=None,  # type: Optional[bool]
-        offer_throughput=None,  # type: Optional[int]
+        offer_throughput=None,  # type: Optional[Union[int, ThroughputProperties]]
         unique_key_policy=None,  # type: Optional[Dict[str, Any]]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
         **kwargs  # type: Any
@@ -170,6 +170,7 @@ class DatabaseProxy(object):
         :param indexing_policy: The indexing policy to apply to the container.
         :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
         :param offer_throughput: The provisioned throughput for this offer.
+        :type offer_throughput: int or ~azure.cosmos.ThroughputProperties.
         :param unique_key_policy: The unique key policy to apply to the container.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
@@ -232,9 +233,7 @@ class DatabaseProxy(object):
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if offer_throughput is not None:
-            request_options["offerThroughput"] = offer_throughput
-
+        _set_throughput_options(offer=offer_throughput, request_options=request_options)
         data = self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
@@ -252,7 +251,7 @@ class DatabaseProxy(object):
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
         populate_query_metrics=None,  # type: Optional[bool]
-        offer_throughput=None,  # type: Optional[int]
+        offer_throughput=None,  # type: Optional[Union[int, ThroughputProperties]]
         unique_key_policy=None,  # type: Optional[Dict[str, Any]]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
         **kwargs  # type: Any
@@ -270,6 +269,7 @@ class DatabaseProxy(object):
         :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param offer_throughput: The provisioned throughput for this offer.
+        :paramtype offer_throughput: int or ~azure.cosmos.ThroughputProperties.
         :param unique_key_policy: The unique key policy to apply to the container.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
@@ -774,12 +774,11 @@ class DatabaseProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, throughput_properties)
 
-        return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
-                                    properties=throughput_properties[0])
+        return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace
     def replace_throughput(self, throughput, **kwargs):
-        # type: (Optional[int], Any) -> ThroughputProperties
+        # type: (Optional[Union[int, ThroughputProperties]], Any) -> ThroughputProperties
         """Replace the database-level throughput.
 
         :param throughput: The throughput to be set (an integer).
@@ -805,7 +804,7 @@ class DatabaseProxy(object):
                 status_code=StatusCodes.NOT_FOUND,
                 message="Could not find ThroughputProperties for database " + self.database_link)
         new_offer = throughput_properties[0].copy()
-        new_offer["content"]["offerThroughput"] = throughput
+        _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
         data = self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
                                                    offer=throughput_properties[0], **kwargs)
         if response_hook:

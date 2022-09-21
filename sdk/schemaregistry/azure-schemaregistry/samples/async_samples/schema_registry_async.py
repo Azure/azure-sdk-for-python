@@ -9,6 +9,7 @@ DESCRIPTION:
     This sample demonstrates asynchronously authenticating the SchemaRegistryClient and basic usage, including:
         - registering a schema
         - getting a schema by its ID
+        - getting a schema by its version.
         - getting schema id.
 USAGE:
     python schema_registry_async.py
@@ -43,7 +44,18 @@ SCHEMA_JSON = {
         {"name": "favorite_color", "type": ["string", "null"]},
     ],
 }
+NEW_SCHEMA_JSON = {
+    "namespace": "example.avro",
+    "type": "record",
+    "name": "User2",
+    "fields": [
+        {"name": "name", "type": "string"},
+        {"name": "favorite_number", "type": ["int", "null"]},
+        {"name": "favorite_color", "type": ["string", "null"]},
+    ],
+}
 DEFINITION = json.dumps(SCHEMA_JSON, separators=(",", ":"))
+NEW_DEFINITION = json.dumps(NEW_SCHEMA_JSON, separators=(",", ":"))
 
 
 async def register_schema(client, group_name, name, definition, format):
@@ -53,20 +65,38 @@ async def register_schema(client, group_name, name, definition, format):
     )
     print("Schema registered, returned schema id is {}".format(schema_properties.id))
     print("Schema properties are {}".format(schema_properties))
-    return schema_properties.id
+    return schema_properties
 
 
 async def get_schema_by_id(client, schema_id):
     print("Getting schema by id...")
     schema = await client.get_schema(schema_id)
     print(
-        "The schema string of schema id: {} string is {}".format(
+        "The schema string of schema id: {} is {}".format(
             schema_id, schema.definition
         )
     )
-    print("Schema properties are {}".format(schema_id))
+    print("Schema properties are {}".format(schema.properties))
     return schema.definition
 
+async def get_schema_by_version(client, group_name, name, version):
+    print("Getting schema by version...")
+    schema = await client.get_schema_by_version(group_name, name, version)
+    print(
+        "The schema string of schema id: {} is {}".format(schema.properties.id, schema.definition)
+    )
+    print("Schema properties are {}".format(schema.properties))
+    return schema.definition
+
+async def get_old_schema_by_version(client, group_name, name, new_definition):
+    updated_schema_properties = await client.register_schema(
+        group_name, name, new_definition, FORMAT
+    )
+    print(f"Registered new schema of version: {updated_schema_properties.version}")
+    old_version = updated_schema_properties.version - 1
+    schema = await client.get_schema_by_version(group_name, name, old_version)
+    print(f"Retrieving old schema v{schema.properties.version}: {schema.definition}")
+    return schema.definition
 
 async def get_schema_id(client, group_name, name, definition, format):
     print("Getting schema id...")
@@ -84,14 +114,15 @@ async def main():
         fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential
     )
     async with token_credential, schema_registry_client:
-        schema_id = await register_schema(
+        schema_properties = await register_schema(
             schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT
         )
-        schema_str = await get_schema_by_id(schema_registry_client, schema_id)
+        schema_str = await get_schema_by_id(schema_registry_client, schema_properties.id)
+        schema_str = await get_schema_by_version(schema_registry_client, GROUP_NAME, NAME, schema_properties.version)
+        schema_str = await get_old_schema_by_version(schema_registry_client, GROUP_NAME, NAME, NEW_DEFINITION)
         schema_id = await get_schema_id(
             schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT
         )
 
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+asyncio.run(main())

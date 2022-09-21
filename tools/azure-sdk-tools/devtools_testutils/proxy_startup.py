@@ -28,33 +28,42 @@ WINDOWS_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-win"
 CONTAINER_STARTUP_TIMEOUT = 6000
 PROXY_MANUALLY_STARTED = os.getenv("PROXY_MANUAL_START", False)
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "..", ".."))
 PROXY_CHECK_URL = PROXY_URL.rstrip("/") + "/Info/Available"
 TOOL_ENV_VAR = "PROXY_PID"
 
 
-def get_image_tag() -> str:
+def get_image_tag(repo_root: str) -> str:
     """Gets the test proxy Docker image tag from the target_version.txt file in /eng/common/testproxy"""
     version_file_location = os.path.relpath("eng/common/testproxy/target_version.txt")
-    version_file_location_from_root = os.path.abspath(os.path.join(REPO_ROOT, version_file_location))
+    version_file_location_from_root = os.path.abspath(os.path.join(repo_root, version_file_location))
 
-    try:
-        with open(version_file_location_from_root, "r") as f:
-            image_tag = f.read().strip()
-
-    # In live pipeline tests the root of the repo is in a different location relative to this file
-    except FileNotFoundError:
-        # REPO_ROOT only gets us to /sdk/{service}/{package}/.tox/whl on Windows
-        # REPO_ROOT only gets us to /sdk/{service}/{package}/.tox/whl/lib on Ubuntu
-        head, tail = os.path.split(REPO_ROOT)
-        while tail != "sdk":
-            head, tail = os.path.split(head)
-
-        version_file_location_from_root = os.path.abspath(os.path.join(head, version_file_location))
-        with open(version_file_location_from_root, "r") as f:
-            image_tag = f.read().strip()
+    with open(version_file_location_from_root, "r") as f:
+        image_tag = f.read().strip()
 
     return image_tag
+
+
+def ascend_to_root(start_dir_or_file: str) -> str:
+    """
+    Given a path, ascend until encountering a folder with a `.git` folder present within it. Return that directory.
+
+    :param str start_dir_or_file: The starting directory or file. Either is acceptable.
+    """
+    if os.path.isfile(start_dir_or_file):
+        current_dir = os.path.dirname(start_dir_or_file)
+    else:
+        current_dir = start_dir_or_file
+
+    while current_dir is not None and not (os.path.dirname(current_dir) == current_dir):
+        possible_root = os.path.join(current_dir, ".git")
+
+        # we need the git check to prevent ascending out of the repo
+        if os.path.exists(possible_root):
+            return current_dir
+        else:
+            current_dir = os.path.dirname(current_dir)
+
+    raise Exception(f'Requested target "{start_dir_or_file}" does not exist within a git repo.')
 
 
 def delete_container() -> None:
@@ -88,7 +97,7 @@ def check_proxy_availability() -> None:
         now = time.time()
 
 
-def create_container() -> None:
+def create_container(repo_root: str) -> None:
     """Creates the test proxy Docker container"""
     # Most of the time, running this script on a Windows machine will work just fine, as Docker defaults to Linux
     # containers. However, in CI, Windows images default to _Windows_ containers. We cannot swap them. We can tell
@@ -104,19 +113,21 @@ def create_container() -> None:
         path_prefix = ""
         linux_container_args = "--add-host=host.docker.internal:host-gateway"
 
-    image_tag = get_image_tag()
+    image_tag = get_image_tag(repo_root)
     subprocess.Popen(
         shlex.split(
-            f"docker run --rm --name {CONTAINER_NAME} -v '{REPO_ROOT}:{path_prefix}/srv/testproxy' "
+            f"docker run --rm --name {CONTAINER_NAME} -v '{repo_root}:{path_prefix}/srv/testproxy' "
             f"{linux_container_args} -p 5001:5001 -p 5000:5000 {image_prefix}:{image_tag}"
         )
     )
 
 
-def start_test_proxy() -> None:
+def start_test_proxy(request) -> None:
     """Starts the test proxy and returns when the proxy server is ready to receive requests. In regular use
     cases, this will auto-start the test-proxy docker container. In CI, or when environment variable TF_BUILD is set, this
     function will start the test-proxy .NET tool."""
+
+    repo_root = ascend_to_root(request.node.items[0].module.__file__)
 
     if not PROXY_MANUALLY_STARTED:
         if os.getenv("TF_BUILD"):
@@ -125,7 +136,7 @@ def start_test_proxy() -> None:
                 _LOGGER.debug("Tool is responding, exiting...")
             else:
                 envname = os.getenv("TOX_ENV_NAME", "default")
-                root = os.getenv("BUILD_SOURCESDIRECTORY", REPO_ROOT)
+                root = os.getenv("BUILD_SOURCESDIRECTORY", repo_root)
                 log = open(os.path.join(root, "_proxy_log_{}.log".format(envname)), "a")
 
                 _LOGGER.info("{} is calculated repo root".format(root))
@@ -137,7 +148,7 @@ def start_test_proxy() -> None:
                 os.environ[TOOL_ENV_VAR] = str(proc.pid)
         else:
             _LOGGER.info("Starting the test proxy container...")
-            create_container()
+            create_container(repo_root)
 
     # Wait for the proxy server to become available
     check_proxy_availability()
@@ -166,12 +177,12 @@ def stop_test_proxy() -> None:
 
 
 @pytest.fixture(scope="session")
-def test_proxy() -> None:
+def test_proxy(request) -> None:
     """Pytest fixture to be used before running any tests that are recorded with the test proxy"""
     if is_live_and_not_recording():
         yield
     else:
-        start_test_proxy()
+        start_test_proxy(request)
         # Everything before this yield will be run before fixtures that invoke this one are run
         # Everything after it will be run after invoking fixtures are done executing
         yield
