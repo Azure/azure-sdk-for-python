@@ -136,5 +136,3 @@ class AutoScaleTest(unittest.TestCase):
             created_container_properties.auto_scale_increment_percent, 20)
 
         self.created_database.delete_container(created_container.id)
-
-        self.client.delete_database(self.created_database)
