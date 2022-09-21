@@ -2415,7 +2415,7 @@ class TestDSLPipeline:
                 in std_out.getvalue()
             )
 
-    @pytest.mark.skip(reason="error related to recording, need to further investigation.")
+    @pytest.mark.skip(reason="migration skip: error related to recording, need to further investigation.")
     def test_multi_parallel_components_with_file_input_pipeline_output(self, randstr: Callable[[], str]) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
         batch_inference1 = load_component(source=str(components_dir / "score.yml"))

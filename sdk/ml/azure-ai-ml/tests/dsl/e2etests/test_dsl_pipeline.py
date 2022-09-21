@@ -218,7 +218,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             "type": "command",
         }
 
-    @pytest.mark.skip(reason="gpu-cluster is not available yet.")
+    @pytest.mark.skip(reason="migration skip: gpu-cluster is not available yet.")
     def test_distribution_components(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         mpi_func = load_component(source=str(components_dir / "helloworld_component_mpi.yml"))
         pytorch_func = load_component(source=str(components_dir / "helloworld_component_pytorch.yml"))
@@ -352,7 +352,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             experiment_name="nyc_taxi_data_regression",
         )
 
-    @pytest.mark.skip(reason="environment variables mismatch with recording.")
+    @pytest.mark.skip(reason="migration skip: environment variables mismatch with recording.")
     def test_command_function(self, randstr: Callable[[str], str], client: MLClient):
         hello_world_component_yaml = str(components_dir / "helloworld_component.yml")
         hello_world_component_func = load_component(source=hello_world_component_yaml)
@@ -505,7 +505,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skip(reason="environment variables mismatch with recording.")
+    @pytest.mark.skip(reason="migration skip: environment variables mismatch with recording.")
     def test_command_with_optional_inputs(self, randstr: Callable[[str], str], client: MLClient):
         hello_world_component_yaml = str(components_dir / "helloworld_component_with_optional_inputs.yml")
         hello_world_component_func = load_component(source=hello_world_component_yaml)
@@ -1293,7 +1293,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         assert len(component_ids) == 1, f"Got multiple component id: {component_ids} for same anon component."
 
-    @pytest.mark.skip(reason="TODO: need to discuss reuse in current test mechanism.")
+    @pytest.mark.skip(reason="migration skip: need to discuss reuse in current test mechanism.")
     def test_pipeline_reuse(self, client: MLClient, randstr: Callable[[str], str], randint: Callable) -> None:
         component_yaml = components_dir / "helloworld_component.yml"
         component_func1 = load_component(source=component_yaml, params_override=[{"name": randstr("component_name")}])
@@ -1408,7 +1408,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             _ = client.jobs.create_or_update(dsl_pipeline)
             mock_logging.assert_called_with("Warnings: [jobs.node1.jeff_special_option: Unknown field.]")
 
-    @pytest.mark.skip(reason="gpu-cluster is not available yet.")
+    @pytest.mark.skip(reason="migration skip: gpu-cluster is not available yet.")
     def test_anon_component_in_pipeline(
         self, client: MLClient, randstr: Callable[[str], str], hello_world_component: Component
     ) -> None:
