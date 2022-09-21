@@ -71,6 +71,8 @@ class AutoScaleTest(unittest.TestCase):
                 offer_throughput=ThroughputProperties(auto_scale_max_throughput=-200, auto_scale_increment_percent=0))
         assert "Requested throughput -200 is less than required minimum throughput 1000" in str(e.value)
 
+        self.created_database.delete_container(created_container)
+
     def test_create_container_if_not_exist(self):
         # Testing auto_scale_settings for the create_container_if_not_exists method
         created_container = self.created_database.create_container_if_not_exists(
@@ -85,6 +87,8 @@ class AutoScaleTest(unittest.TestCase):
         # Testing the input value of the increment_percentage
         self.assertEqual(
             created_container_properties.auto_scale_increment_percent, 3)
+
+        self.created_database.delete_container(created_container)
 
     def test_create_database(self):
         # Testing auto_scale_settings for the create_database method
