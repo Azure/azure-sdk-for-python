@@ -8,6 +8,7 @@
 
 ### Bugs Fixed
 * Fix handling of client-side exceptions that get raised during service requests (such as [#21416](https://github.com/Azure/azure-sdk-for-python/issues/21416)) ([#24788](https://github.com/Azure/azure-sdk-for-python/pull/24788))
+* Allow passing `TableEntity`'s with non-string Partion/RowKey fields to `delete_entity` ([#26360](https://github.com/Azure/azure-sdk-for-python/issues/26360))
 
 ### Other Changes
 * Python 3.6 is no longer supported. Please use Python version 3.7 or later.
