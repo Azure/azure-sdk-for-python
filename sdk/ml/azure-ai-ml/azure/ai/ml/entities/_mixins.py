@@ -35,6 +35,10 @@ class DictMixin(object):
         # type: () -> str
         return str(self)
 
+    def __len__(self):
+        # type: () -> int
+        return len(self.keys())
+
     def __delitem__(self, key):
         # type: (Any) -> None
         self.__dict__[key] = None
@@ -80,10 +84,6 @@ class DictMixin(object):
         if key in self.__dict__:
             return self.__dict__[key]
         return default
-
-    def __len__(self):
-        # type: () -> int
-        return len(self.keys())
 
 
 class TelemetryMixin:
