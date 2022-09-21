@@ -31,7 +31,6 @@ SEARCH_SPACE_UNION_FIELD = UnionField(
 
 class ImageModelDistributionSettingsSchema(metaclass=PatchedSchemaMeta):
     ams_gradient = SEARCH_SPACE_UNION_FIELD
-    augmentations = SEARCH_SPACE_UNION_FIELD
     beta1 = SEARCH_SPACE_UNION_FIELD
     beta2 = SEARCH_SPACE_UNION_FIELD
     distributed = SEARCH_SPACE_UNION_FIELD

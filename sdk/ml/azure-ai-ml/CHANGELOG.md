@@ -7,6 +7,7 @@
  - Added a `show_progress` parameter to MLClient for enable/disable progress bars of long running operations.
 
 ### Breaking Changes
+- ComputeOperations.attach has been renamed to begin_attach.
 
 ### Bugs Fixed
 

@@ -130,7 +130,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "Compute.Attach", ActivityType.PUBLICAPI)
-    def attach(self, compute: Compute, **kwargs: Any) -> LROPoller[Compute]:
+    def begin_attach(self, compute: Compute, **kwargs: Any) -> LROPoller[Compute]:
         """Attaches a compute to the workspace.
 
         :param compute: Compute definition.
