@@ -11,7 +11,7 @@ from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._restclient.v2021_10_01 import models
-from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationScope, OperationConfig
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -31,20 +31,22 @@ from .test_vcr_utils import before_record_cb, vcr_header_filters
 
 @pytest.fixture
 def mock_datastore_operation(
-    mock_workspace_scope: OperationScope, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_05_01: Mock
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         serviceclient_2022_05_01=mock_aml_services_2022_05_01,
     )
 
 
 @pytest.fixture
 def mock_code_operation(
-    mock_workspace_scope: OperationScope, mock_aml_services_2022_05_01: Mock, mock_datastore_operation: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_05_01: Mock, mock_datastore_operation: Mock
 ) -> CodeOperations:
     yield CodeOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_05_01,
         datastore_operations=mock_datastore_operation,
     )
@@ -52,10 +54,11 @@ def mock_code_operation(
 
 @pytest.fixture
 def mock_environment_operation(
-    mock_workspace_scope: OperationScope, mock_machinelearning_client: Mock, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_machinelearning_client: Mock, mock_aml_services_2022_05_01: Mock
 ) -> EnvironmentOperations:
     yield EnvironmentOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_05_01,
         all_operations=mock_machinelearning_client._operation_container,
     )
@@ -82,6 +85,7 @@ def mock_runs_operation(mock_workspace_scope: OperationScope, mock_aml_services_
 @pytest.fixture
 def mock_job_operation(
     mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
     mock_aml_services_2022_06_01_preview: Mock,
     mock_aml_services_run_history: Mock,
     mock_machinelearning_client: Mock,
@@ -98,6 +102,7 @@ def mock_job_operation(
     mock_machinelearning_client._operation_container.add("run", mock_runs_operation)
     yield JobOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         service_client_06_2022_preview=mock_aml_services_2022_06_01_preview,
         service_client_run_history=mock_aml_services_run_history,
         all_operations=mock_machinelearning_client._operation_container,

@@ -89,6 +89,7 @@ version: 3"""
                 asset_hash=None,
                 sas_uri=None,
                 artifact_type=ErrorTarget.MODEL,
+                show_progress=True,
             )
         mock_model_operation._model_versions_operation.create_or_update.assert_called_once()
         assert "version='3'" in str(mock_model_operation._model_versions_operation.create_or_update.call_args)
@@ -250,4 +251,5 @@ path: ./model.pkl"""
                 asset_hash=None,
                 sas_uri=None,
                 artifact_type=ErrorTarget.MODEL,
+                show_progress=True,
             )
