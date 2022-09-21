@@ -15,7 +15,7 @@ from azure.servicebus.management._constants import INT32_MAX_VALUE
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
-from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from sb_env_loader import (
     ServiceBusPreparer
@@ -29,6 +29,7 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
     @ServiceBusPreparer()
     @recorded_by_proxy_async
     async def test_async_mgmt_rule_create(self, servicebus_connection_str, **kwargs):
+        set_bodiless_matcher()
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
