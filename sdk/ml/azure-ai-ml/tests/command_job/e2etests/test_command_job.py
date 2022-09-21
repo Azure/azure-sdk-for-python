@@ -19,6 +19,7 @@ from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
+from azure.core.polling import LROPoller
 
 # These params are logged in ..\test_configs\python\simple_train.py. test_command_job_with_params asserts these parameters are
 # logged in the training script, so any changes to parameter logging in simple_train.py must preserve this logging or change it both
@@ -250,7 +251,9 @@ class TestCommandJob(AzureRecordedTestCase):
         )
         command_job_resource = client.jobs.create_or_update(job=job)
         assert command_job_resource.name == job_name
-        client.jobs.cancel(job_name)
+        cancel_poller = client.jobs.begin_cancel(job_name)
+        assert isinstance(cancel_poller, LROPoller)
+        assert cancel_poller.result() is None
         command_job_resource_2 = client.jobs.get(job_name)
         assert command_job_resource_2.status in (JobStatus.CANCEL_REQUESTED, JobStatus.CANCELED)
 
@@ -295,7 +298,9 @@ class TestCommandJob(AzureRecordedTestCase):
             ],
         )
         command_job_resource = client.jobs.create_or_update(job=job)
-        client.jobs.cancel(job_name)
+        cancel_poller = client.jobs.begin_cancel(job_name)
+        assert isinstance(cancel_poller, LROPoller)
+        assert cancel_poller.result() is None
 
         # Check that environment resolves to latest version
         assert command_job_resource.environment == f"{environment_name}:{environment_versions[-1]}"

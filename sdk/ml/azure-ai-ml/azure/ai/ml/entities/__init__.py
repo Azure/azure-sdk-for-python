@@ -83,6 +83,7 @@ from ._resource import Resource
 from ._schedule.schedule import JobSchedule
 from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
 from ._system_data import SystemData
+from ._validation import ValidationResult
 from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.customer_managed_key import CustomerManagedKey
 from ._workspace.identity import ManagedServiceIdentity
@@ -194,6 +195,7 @@ __all__ = [
     "AmlComputeNodeInfo",
     "SystemCreatedAcrAccount",
     "SystemCreatedStorageAccount",
+    "ValidationResult",
     "RegistryRegionArmDetails",
     "Registry",
     "SynapseSparkCompute",

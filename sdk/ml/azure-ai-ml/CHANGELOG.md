@@ -27,6 +27,7 @@
  - Enable using @dsl.pipeline without brackets when no additional parameters.
  - Expose Azure subscription Id and resource group name from MLClient objects.
  - Added Idle Shutdown support for Compute Instances, allowing instances to shutdown after a set period of inactivity.
+ - JobOperations.cancel() returns a LROPoller.
 
 ### Breaking Changes
  - Change (begin_)create_or_update typehints to use generics.
@@ -34,6 +35,7 @@
  - Change error returned by (begin_)create_or_update invalid input to TypeError.
  - Rename set_image_model APIs for all vision tasks to set_training_parameters
  - JobOperations.download defaults to "." instead of Path.cwd()
+ - JobOperations.cancel() is renamed to JobOperations.begin_cancel() and it returns LROPoller[None]
 
 ### Bugs Fixed
 
