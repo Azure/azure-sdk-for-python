@@ -112,19 +112,12 @@ class AzureAppConfigurationProvider:
         if key_vault_options is None:
             raise AttributeError(
                 "Key Vault options must be set to resolve Key Vault references.")
-        try:
-            j_object = json.loads(config.value)
-        except json.JSONDecodeError as e:
-            raise ValueError(
-                "Invalid JSON value for key vault reference: " + config.key)
 
-        uri_value = j_object.get("uri", None)
-
-        if uri_value is None:
+        if config.secret_id is None:
             raise AttributeError(
                 "Key Vault reference must have a uri value.")
 
-        key_vault_identifier = KeyVaultSecretIdentifier(uri_value)
+        key_vault_identifier = KeyVaultSecretIdentifier(config.secret_id)
 
         referenced_client = None
 
