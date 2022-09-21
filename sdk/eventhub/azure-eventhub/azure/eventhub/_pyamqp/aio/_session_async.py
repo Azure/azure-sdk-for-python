@@ -181,7 +181,15 @@ class Session(object):
                 outgoing_handle = self._get_next_output_handle()
             except ValueError:
                 # detach the link that would have been set.
-                await self.links[frame[0].decode('utf-8')].detach()
+                await self.links[frame[0].decode('utf-8')].detach(
+                    error=AMQPError(
+                        condition=ErrorCondition.LinkDetachForced,
+                        description="Cannot allocate more handles, the max number of handles is {}. Detaching link".format(
+                            self.handle_max
+                        ),
+                        info=None,
+                    )
+                )
                 return
             if frame[2] == Role.Sender:
                 new_link = ReceiverLink.from_incoming_frame(self, outgoing_handle, frame)
