@@ -15,61 +15,11 @@ from ._generated.v3_0 import models as _v3_0_models
 from ._generated.v3_1 import models as _v3_1_models
 from ._generated.v2022_10_01_preview import models as _v2022_10_01_preview_models
 from ._check import is_language_api, string_index_type_compatibility
+from ._dict_mixin import DictMixin
 
 
 def _get_indices(relation):
     return [int(s) for s in re.findall(r"\d+", relation)]
-
-
-class DictMixin:
-    def __setitem__(self, key, item):
-        self.__dict__[key] = item
-
-    def __getitem__(self, key):
-        return self.__dict__[key]
-
-    def __repr__(self):
-        return str(self)
-
-    def __len__(self):
-        return len(self.keys())
-
-    def __delitem__(self, key):
-        self.__dict__[key] = None
-
-    def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __contains__(self, key):
-        return key in self.__dict__
-
-    def __str__(self):
-        return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
-
-    def has_key(self, k):
-        return k in self.__dict__
-
-    def update(self, *args, **kwargs):
-        return self.__dict__.update(*args, **kwargs)
-
-    def keys(self):
-        return [k for k in self.__dict__ if not k.startswith("_")]
-
-    def values(self):
-        return [v for k, v in self.__dict__.items() if not k.startswith("_")]
-
-    def items(self):
-        return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
-
-    def get(self, key, default=None):
-        if key in self.__dict__:
-            return self.__dict__[key]
-        return default
 
 
 class TextAnalysisKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -711,9 +661,16 @@ class CategorizedEntity(DictMixin):
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :vartype confidence_score: float
+    :ivar resolutions: The collection of entity resolution objects.
+    :vartype resolutions: Optional[list[AgeResolution or AreaResolution or BooleanResolution or
+        CurrencyResolution or DateTimeResolution or InformationResolution or LengthResolution or
+        NumberResolution or NumericRangeResolution or OrdinalResolution or SpeedResolution or
+        TemperatureResolution or TemporalSpanResolution or VolumeResolution or WeightResolution]]
 
     .. versionadded:: v3.1
         The *offset* and *length* properties.
+    .. versionadded:: 2022-10-01-preview
+        The *resolutions* property.
     """
 
     def __init__(self, **kwargs):
@@ -723,6 +680,7 @@ class CategorizedEntity(DictMixin):
         self.length = kwargs.get("length", None)
         self.offset = kwargs.get("offset", None)
         self.confidence_score = kwargs.get("confidence_score", None)
+        self.resolutions = kwargs.get("resolutions", None)
 
     @classmethod
     def _from_generated(cls, entity):
@@ -740,18 +698,20 @@ class CategorizedEntity(DictMixin):
             length=length,
             offset=offset,
             confidence_score=entity.confidence_score,
+            resolutions=entity.resolutions if hasattr(entity, "resolutions") else None
         )
 
     def __repr__(self):
         return (
             "CategorizedEntity(text={}, category={}, subcategory={}, "
-            "length={}, offset={}, confidence_score={})".format(
+            "length={}, offset={}, confidence_score={}, resolutions={})".format(
                 self.text,
                 self.category,
                 self.subcategory,
                 self.length,
                 self.offset,
                 self.confidence_score,
+                repr(self.resolutions)
             )[:1024]
         )
 
