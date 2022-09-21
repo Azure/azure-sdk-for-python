@@ -202,7 +202,7 @@ def test_post(pipeline_client_builder, deserialization_cb, http_request, http_re
                 'location': 'http://example.org/location',
                 'operation-location': 'http://example.org/async_monitor',
             },
-            ''
+            None
         )
 
         def send(request, **kwargs):
@@ -287,7 +287,7 @@ def test_post_resource_location(pipeline_client_builder, deserialization_cb, htt
             {
                 'operation-location': 'http://example.org/async_monitor',
             },
-            ''
+            None
         )
 
         def send(request, **kwargs):
@@ -630,7 +630,7 @@ class TestBasePolling(object):
             http_response,
             'DELETE', 202,
             {'operation-location': ASYNC_URL},
-            body=""
+            body=None
         )
         CLIENT.http_request_type = http_request
         CLIENT.http_response_type = http_response
@@ -773,7 +773,7 @@ class TestBasePolling(object):
                 'location': 'http://example.org/location',
                 'operation-location': 'http://example.org/async_monitor',
             },
-            ''
+            None
         )
 
         def send(request, **kwargs):

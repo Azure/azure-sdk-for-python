@@ -182,7 +182,7 @@ async def test_post(async_pipeline_client_builder, deserialization_cb, http_requ
                 'location': 'http://example.org/location',
                 'operation-location': 'http://example.org/async_monitor',
             },
-            ''
+            None
         )
 
         async def send(request, **kwargs):
@@ -268,7 +268,7 @@ async def test_post_resource_location(async_pipeline_client_builder, deserializa
             {
                 'operation-location': 'http://example.org/async_monitor',
             },
-            ''
+            None
         )
 
         async def send(request, **kwargs):
@@ -621,7 +621,7 @@ async def test_long_running_delete(http_request, http_response):
         http_response,
         'DELETE', 202,
         {'operation-location': ASYNC_URL},
-        body=""
+        body=None
     )
     polling_method = AsyncLROBasePolling(0)
     poll = await async_poller(CLIENT, response,
@@ -765,7 +765,7 @@ async def test_post_final_state_via(async_pipeline_client_builder, deserializati
             'location': 'http://example.org/location',
             'operation-location': 'http://example.org/async_monitor',
         },
-        ''
+        None
     )
 
     async def send(request, **kwargs):
