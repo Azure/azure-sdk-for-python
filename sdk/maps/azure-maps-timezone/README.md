@@ -33,9 +33,12 @@ pip install azure-maps-timezone
 
 ### Create and Authenticate the MapsTimezoneClient
 
-To create a client object to access the Azure Maps Timezone API, you will need a **credential** object. Azure Maps Timezone client also support two ways to authenticate.
+To create a client object to access the Azure Maps Timezone API, you will need a **credential** object. Azure Maps Timezone client also support two ways to authenticate:
 
-#### 1. Authenticate with a Subscription Key Credential
+1. Authenticate with subscription key credential
+2. Authenticate with Azure Active Directory credential
+
+#### Authenticate with a Subscription Key Credential
 
 You can authenticate with your Azure Maps Subscription Key.
 Once the Azure Maps Subscription Key is created, set the value of the key as environment variable: `AZURE_SUBSCRIPTION_KEY`.
@@ -46,10 +49,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.maps.timezone import MapsTimezoneClient
 
 credential = AzureKeyCredential(os.environ.get("AZURE_SUBSCRIPTION_KEY"))
-
-timezone_client = MapsTimezoneClient(
-    credential=credential,
-)
+timezone_client = MapsTimezoneClient(credential=credential)
 ```
 
 #### 2. Authenticate with an Azure Active Directory credential
@@ -68,14 +68,17 @@ can be used to authenticate the client:
 Next, set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`
 
-You will also need to specify the Azure Maps resource you intend to use by specifying the `clientId` in the client options. The Azure Maps resource client id can be found in the Authentication sections in the Azure Maps resource. Please refer to the [documentation][how_to_manage_authentication] on how to find it.
+You will also need to specify the Azure Maps resource you intend to use by specifying the `client_id` in the client argument. The Azure Maps resource client id can be found in the Authentication sections in the Azure Maps resource. Please refer to the [documentation][how_to_manage_authentication] on how to find it.
 
 ```python
 from azure.maps.timezone import MapsTimezoneClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-timezone_client = MapsTimezoneClient(credential=credential)
+timezone_client = MapsTimezoneClient(
+    client_id="<Azure Maps Client ID>",
+    credential=credential
+)
 ```
 
 ## Key concepts
@@ -99,54 +102,90 @@ objects are async context managers and define async `close` methods.
 
 The following sections provide several code snippets covering some of the most common Azure Maps Timezone tasks, including:
 
-[TODO] Update
-- [Request and Get Timezone Directions](#request-and-get-timezone-directions)
-- [Request and Get Timezone Range](#reqest-and-get-timezone-range)
-- [Get Timezone Matrix](#get-timezone-matrix)
-- [Get Timezone Directions Batch](#get-timezone-directions-batch)
+- [Get timezone by IANA ID](#get-timezone-by-iana-id)
+- [Get Timezone by Coordinates](#get-timezone-by-coordinates)
+- [Get Windows Timezone ID](#get-windows-timezone-id)
+- [Get IANA Timezone ID](#get-iana-timezone-id)
+- [Get IANA Version](#get-iana-version)
+- [Convert Windows Timezone to IANA](#convert-windows-timezone-to-iana)
 
-### Request and Get Timezone Directions
+### Get timezone by IANA ID
 
-This service request returns a timezone between an origin and a destination, passing through waypoints if they are specified. The timezone will take into account factors such as current traffic and the typical road speeds on the requested day of the week and time of day.
+Get timezone information for specific IANA ID:
 
 ```python
-from azure.maps.timezone import MapsTimezoneClient
+timezone = timezone_client.get_timezone_by_id("America/New_York")
 
-timezone_directions_result = client.get_timezone_directions(timezone_points=[LatLon(47.60323, -122.33028), LatLon(53.2, -106)]);
+print("Timzone name: {}, tag: {}, standard offset: {}".format(
+    timezone.time_zones[0].names.generic,
+    timezone.time_zones[0].reference_time.tag,
+    timezone.time_zones[0].reference_time.standard_offset,
+))
 ```
 
-### Request and Get Timezone Range
+### Get Timezone by Coordinates
 
-This service will calculate a set of locations that can be reached from the origin point by given coordinates and based on fuel, energy,  time or distance budget that is specified.
+This API can get timzone by coordinate:
 
 ```python
-from azure.maps.timezone import MapsTimezoneClient
+timezone = client.get_timezone_by_coordinates(
+    coordinates=LatLon(52.5069,13.2843)
+)
 
-timezone_range_result = client.get_timezone_range(coordinates=LatLon(47.60323, -122.33028), time_budget_in_sec=6000);
+print("Timzone name: {}, tag: {}, standard offset: {}".format(
+    timezone.time_zones[0].names.generic,
+    timezone.time_zones[0].reference_time.tag,
+    timezone.time_zones[0].reference_time.standard_offset,
+))
 ```
 
-### Get Timezone Matrix
+### Get Windows Timezone ID
 
-If the Matrix Timezone request was accepted successfully, the Location header in the response contains the URL to download the results of the request.
-
-Retrieves the result of a previous timezone matrix request.
-The method returns a poller for retrieving the result.
+This API will return all timezones with Windows ID. You can enumerate from the returned list:
 
 ```python
-from azure.maps.timezone import MapsTimezoneClient
+timezone_ids = timezone_client.get_windows_timezone_ids()
 
-timezone_matrix_result = client.begin_get_timezone_matrix_result(matrix_id="11111111-2222-3333-4444-555555555555");
+for timezone in timezone_ids:
+    print('Timezone "{}": IANA ID is {}'.format(timezone.windows_id, timezone.iana_ids[0]))
 ```
 
-### Get Timezone Directions Batch
+### Get IANA Timezone ID
 
-Retrieves the result of a previous timezone direction batch request.
-The method returns a poller for retrieving the result.
+This API will return all IANA timezone IDs. You can enumerate from the returned list:
 
 ```python
-from azure.maps.timezone import MapsTimezoneClient
+timezone_ids = timezone_client.get_iana_timezone_ids()
 
-timezone_directions_batch_poller_result = client.begin_get_timezone_directions_batch_result(batch_id="11111111-2222-3333-4444-555555555555");
+for timezone in timezone_ids:
+    print("IANA ID: {}".format(timezone.id))
+    if timezone.is_alias:
+        print(" -> is also alias of {}".format(timezone.alias_of))
+```
+
+### Get IANA Version
+
+This API will return IANA version:
+
+```python
+version = timezone_client.get_iana_version()
+
+print("Current IANA versions is: {}".format(version.version))
+```
+
+convert_windows_timezone_to_iana
+
+### Convert Windows Timezone to IANA
+
+This API will convert Windows timezone to IANA. You need to assign windows ID as argument:
+
+```python
+windows_timezone = "pacific standard time"
+iana_results = timezone_client.convert_windows_timezone_to_iana(windows_timezone)
+
+print("IANA list for timezone {}:".format(windows_timezone))
+for iana in iana_results:
+    print(iana.id)
 ```
 
 ## Troubleshooting
@@ -177,18 +216,17 @@ logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-```
+client_id = "<Azure Maps Client ID>"
+credential = DefaultAzureCredential()
 
-Similarly, `logging_enable` can enable detailed logging for a single operation,
-even when it isn't enabled for the client:
-
-```python
-service_client.get_service_stats(logging_enable=True)
+# This client will log detailed information about its HTTP sessions, at DEBUG level
+timezone_client = MapsTimezoneClient(
+    credential=credential, client_id=client_id, logging_enable=True)
 ```
 
 ### Additional
 
-Still running into issues? If you encounter any bugs or have suggestions, please file an issue in the [Issues](<https://github.com/Azure/azure-sdk-for-python/issues>) section of the project.
+Still running into issues? If you encounter any bugs or have suggestions, please file an issue in the [Issues](https://github.com/Azure/azure-sdk-for-python/issues) section of the project.
 
 ## Next steps
 
@@ -238,6 +276,5 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [register_aad_app]: https://docs.microsoft.com/powershell/module/Az.Resources/New-AzADApplication?view=azps-8.0.0
 [maps_authentication_aad]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication
-[create_new_application_registration]: https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/applicationsListBlade/quickStartType/AspNetWebAppQuickstartPage/sourceType/docs
 [manage_aad_auth_page]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication
 [how_to_manage_authentication]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication#view-authentication-details

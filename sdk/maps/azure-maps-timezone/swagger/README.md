@@ -26,16 +26,18 @@ We automatically hardcode in that this is `python`.
 ## Basic Information
 
 ```yaml
+tag: 1.0-preview
 require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/maps/data-plane/Timezone/readme.md
 output-folder: ../azure/maps/timezone/_generated
+package-version: 1.0.0b1
 use-extension:
   "@autorest/modelerfour": "4.22.3"
 namespace: azure.maps.timezone
 no-namespace-folders: true
 license-header: MICROSOFT_MIT_NO_VERSION
-enable-xml: true
-vanilla: true
 clear-output-folder: true
 python: true
-version-tolerant: false
+python3-enable: true
+version-tolerant: true
+models-mode: msrest
 ```

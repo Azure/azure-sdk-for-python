@@ -6,22 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import CountryRecord
-from ._models_py3 import ErrorAdditionalInfo
-from ._models_py3 import ErrorDetail
-from ._models_py3 import ErrorResponse
-from ._models_py3 import IanaId
-from ._models_py3 import ReferenceTime
-from ._models_py3 import RepresentativePoint
-from ._models_py3 import TimeTransition
-from ._models_py3 import TimezoneIanaVersionResult
-from ._models_py3 import TimezoneId
-from ._models_py3 import TimezoneNames
-from ._models_py3 import TimezoneResult
-from ._models_py3 import TimezoneWindows
+from ._models import CountryRecord
+from ._models import ErrorAdditionalInfo
+from ._models import ErrorDetail
+from ._models import ErrorResponse
+from ._models import IanaId
+from ._models import ReferenceTime
+from ._models import RepresentativePoint
+from ._models import TimeTransition
+from ._models import TimezoneIanaVersionResult
+from ._models import TimezoneId
+from ._models import TimezoneNames
+from ._models import TimezoneResult
+from ._models import TimezoneWindows
 
-from ._timezone_client_enums import JsonFormat
-from ._timezone_client_enums import TimezoneOptions
+from ._enums import JsonFormat
+from ._enums import TimezoneOptions
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk

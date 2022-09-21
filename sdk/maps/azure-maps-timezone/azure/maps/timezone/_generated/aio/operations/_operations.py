@@ -14,23 +14,22 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._vendor import _convert_request
-from ...operations._timezone_operations import (
-    build_convert_windows_timezone_to_iana_request,
-    build_get_iana_timezone_ids_request,
-    build_get_iana_version_request,
-    build_get_timezone_by_coordinates_request,
-    build_get_timezone_by_id_request,
-    build_get_windows_timezone_ids_request,
+from ...operations._operations import (
+    build_timezone_convert_windows_timezone_to_iana_request,
+    build_timezone_get_iana_timezone_ids_request,
+    build_timezone_get_iana_version_request,
+    build_timezone_get_timezone_by_coordinates_request,
+    build_timezone_get_timezone_by_id_request,
+    build_timezone_get_windows_timezone_ids_request,
 )
 
 T = TypeVar("T")
@@ -59,13 +58,14 @@ class TimezoneOperations:
     @distributed_trace_async
     async def get_timezone_by_id(
         self,
+        format: Union[str, "_models.JsonFormat"] = "json",
+        *,
         timezone_id: str,
         accept_language: Optional[str] = None,
         options: Optional[Union[str, "_models.TimezoneOptions"]] = None,
         time_stamp: Optional[datetime.datetime] = None,
         daylight_savings_time_from: Optional[datetime.datetime] = None,
         daylight_savings_time_lasting_years: Optional[int] = None,
-        format: Union[str, "_models.JsonFormat"] = "json",
         **kwargs: Any
     ) -> _models.TimezoneResult:
         """**Time Zone by Id**
@@ -75,46 +75,49 @@ class TimezoneOperations:
         This API returns current, historical, and future time zone information for the specified IANA
         time zone ID.
 
-        :param timezone_id: The IANA time zone ID. Required.
-        :type timezone_id: str
-        :param accept_language: Specifies the language code in which the timezone names should be
-         returned. If no language code is provided, the response will be in "EN". Please refer to
-         `Supported Languages <https://docs.microsoft.com/en-us/azure/azure-maps/supported-languages>`_
-         for details. Default value is None.
-        :type accept_language: str
-        :param options: Alternatively, use alias "o". Options available for types of information
-         returned in the result. Known values are: "none", "zoneInfo", "transitions", and "all". Default
-         value is None.
-        :type options: str or ~azure.maps.timezone.models.TimezoneOptions
-        :param time_stamp: Alternatively, use alias "stamp", or "s". Reference time, if omitted, the
-         API will use the machine time serving the request. Default value is None.
-        :type time_stamp: ~datetime.datetime
-        :param daylight_savings_time_from: Alternatively, use alias "tf". The start date from which
-         daylight savings time (DST) transitions are requested, only applies when "options" = all or
-         "options" = transitions. Default value is None.
-        :type daylight_savings_time_from: ~datetime.datetime
-        :param daylight_savings_time_lasting_years: Alternatively, use alias "ty". The number of years
-         from "transitionsFrom" for which DST transitions are requested, only applies when "options" =
-         all or "options" = transitions. Default value is None.
-        :type daylight_savings_time_lasting_years: int
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
         :type format: str or ~azure.maps.timezone.models.JsonFormat
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TimezoneResult or the result of cls(response)
+        :keyword timezone_id: The IANA time zone ID. Required.
+        :paramtype timezone_id: str
+        :keyword accept_language: Specifies the language code in which the timezone names should be
+         returned. If no language code is provided, the response will be in "EN". Please refer to
+         `Supported Languages <https://docs.microsoft.com/en-us/azure/azure-maps/supported-languages>`_
+         for details. Default value is None.
+        :paramtype accept_language: str
+        :keyword options: Alternatively, use alias "o". Options available for types of information
+         returned in the result. Known values are: "none", "zoneInfo", "transitions", and "all". Default
+         value is None.
+        :paramtype options: str or ~azure.maps.timezone.models.TimezoneOptions
+        :keyword time_stamp: Alternatively, use alias "stamp", or "s". Reference time, if omitted, the
+         API will use the machine time serving the request. Default value is None.
+        :paramtype time_stamp: ~datetime.datetime
+        :keyword daylight_savings_time_from: Alternatively, use alias "tf". The start date from which
+         daylight savings time (DST) transitions are requested, only applies when "options" = all or
+         "options" = transitions. Default value is None.
+        :paramtype daylight_savings_time_from: ~datetime.datetime
+        :keyword daylight_savings_time_lasting_years: Alternatively, use alias "ty". The number of
+         years from "transitionsFrom" for which DST transitions are requested, only applies when
+         "options" = all or "options" = transitions. Default value is None.
+        :paramtype daylight_savings_time_lasting_years: int
+        :return: TimezoneResult
         :rtype: ~azure.maps.timezone.models.TimezoneResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.TimezoneResult]
 
-        request = build_get_timezone_by_id_request(
+        request = build_timezone_get_timezone_by_id_request(
             format=format,
             timezone_id=timezone_id,
             accept_language=accept_language,
@@ -123,12 +126,10 @@ class TimezoneOperations:
             daylight_savings_time_from=daylight_savings_time_from,
             daylight_savings_time_lasting_years=daylight_savings_time_lasting_years,
             client_id=self._config.client_id,
-            api_version=api_version,
-            template_url=self.get_timezone_by_id.metadata["url"],
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
@@ -149,18 +150,17 @@ class TimezoneOperations:
 
         return deserialized
 
-    get_timezone_by_id.metadata = {"url": "/timezone/byId/{format}"}  # type: ignore
-
     @distributed_trace_async
     async def get_timezone_by_coordinates(
         self,
+        format: Union[str, "_models.JsonFormat"] = "json",
+        *,
         coordinates: List[float],
         accept_language: Optional[str] = None,
         options: Optional[Union[str, "_models.TimezoneOptions"]] = None,
         time_stamp: Optional[datetime.datetime] = None,
         daylight_savings_time_from: Optional[datetime.datetime] = None,
         daylight_savings_time_lasting_years: Optional[int] = None,
-        format: Union[str, "_models.JsonFormat"] = "json",
         **kwargs: Any
     ) -> _models.TimezoneResult:
         """**Time Zone by Coordinates**
@@ -171,49 +171,52 @@ class TimezoneOperations:
         latitude-longitude pair. In addition, the API provides sunset and sunrise times for a given
         location.
 
-        :param coordinates: Coordinates of the point for which time zone information is requested. This
-         parameter is a list of coordinates, containing a pair of coordinate(lat, long). When this
-         endpoint is called directly, coordinates are passed in as a single string containing
-         coordinates, separated by commas. Required.
-        :type coordinates: list[float]
-        :param accept_language: Specifies the language code in which the timezone names should be
-         returned. If no language code is provided, the response will be in "EN". Please refer to
-         `Supported Languages <https://docs.microsoft.com/en-us/azure/azure-maps/supported-languages>`_
-         for details. Default value is None.
-        :type accept_language: str
-        :param options: Alternatively, use alias "o". Options available for types of information
-         returned in the result. Known values are: "none", "zoneInfo", "transitions", and "all". Default
-         value is None.
-        :type options: str or ~azure.maps.timezone.models.TimezoneOptions
-        :param time_stamp: Alternatively, use alias "stamp", or "s". Reference time, if omitted, the
-         API will use the machine time serving the request. Default value is None.
-        :type time_stamp: ~datetime.datetime
-        :param daylight_savings_time_from: Alternatively, use alias "tf". The start date from which
-         daylight savings time (DST) transitions are requested, only applies when "options" = all or
-         "options" = transitions. Default value is None.
-        :type daylight_savings_time_from: ~datetime.datetime
-        :param daylight_savings_time_lasting_years: Alternatively, use alias "ty". The number of years
-         from "transitionsFrom" for which DST transitions are requested, only applies when "options" =
-         all or "options" = transitions. Default value is None.
-        :type daylight_savings_time_lasting_years: int
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
         :type format: str or ~azure.maps.timezone.models.JsonFormat
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TimezoneResult or the result of cls(response)
+        :keyword coordinates: Coordinates of the point for which time zone information is requested.
+         This parameter is a list of coordinates, containing a pair of coordinate(lat, long). When this
+         endpoint is called directly, coordinates are passed in as a single string containing
+         coordinates, separated by commas. Required.
+        :paramtype coordinates: list[float]
+        :keyword accept_language: Specifies the language code in which the timezone names should be
+         returned. If no language code is provided, the response will be in "EN". Please refer to
+         `Supported Languages <https://docs.microsoft.com/en-us/azure/azure-maps/supported-languages>`_
+         for details. Default value is None.
+        :paramtype accept_language: str
+        :keyword options: Alternatively, use alias "o". Options available for types of information
+         returned in the result. Known values are: "none", "zoneInfo", "transitions", and "all". Default
+         value is None.
+        :paramtype options: str or ~azure.maps.timezone.models.TimezoneOptions
+        :keyword time_stamp: Alternatively, use alias "stamp", or "s". Reference time, if omitted, the
+         API will use the machine time serving the request. Default value is None.
+        :paramtype time_stamp: ~datetime.datetime
+        :keyword daylight_savings_time_from: Alternatively, use alias "tf". The start date from which
+         daylight savings time (DST) transitions are requested, only applies when "options" = all or
+         "options" = transitions. Default value is None.
+        :paramtype daylight_savings_time_from: ~datetime.datetime
+        :keyword daylight_savings_time_lasting_years: Alternatively, use alias "ty". The number of
+         years from "transitionsFrom" for which DST transitions are requested, only applies when
+         "options" = all or "options" = transitions. Default value is None.
+        :paramtype daylight_savings_time_lasting_years: int
+        :return: TimezoneResult
         :rtype: ~azure.maps.timezone.models.TimezoneResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.TimezoneResult]
 
-        request = build_get_timezone_by_coordinates_request(
+        request = build_timezone_get_timezone_by_coordinates_request(
             format=format,
             coordinates=coordinates,
             accept_language=accept_language,
@@ -222,12 +225,10 @@ class TimezoneOperations:
             daylight_savings_time_from=daylight_savings_time_from,
             daylight_savings_time_lasting_years=daylight_savings_time_lasting_years,
             client_id=self._config.client_id,
-            api_version=api_version,
-            template_url=self.get_timezone_by_coordinates.metadata["url"],
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
@@ -247,8 +248,6 @@ class TimezoneOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-
-    get_timezone_by_coordinates.metadata = {"url": "/timezone/byCoordinates/{format}"}  # type: ignore
 
     @distributed_trace_async
     async def get_windows_timezone_ids(
@@ -263,29 +262,30 @@ class TimezoneOperations:
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
         :type format: str or ~azure.maps.timezone.models.JsonFormat
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list of TimezoneWindows or the result of cls(response)
+        :return: list of TimezoneWindows
         :rtype: list[~azure.maps.timezone.models.TimezoneWindows]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[List[_models.TimezoneWindows]]
 
-        request = build_get_windows_timezone_ids_request(
+        request = build_timezone_get_windows_timezone_ids_request(
             format=format,
             client_id=self._config.client_id,
-            api_version=api_version,
-            template_url=self.get_windows_timezone_ids.metadata["url"],
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
@@ -306,8 +306,6 @@ class TimezoneOperations:
 
         return deserialized
 
-    get_windows_timezone_ids.metadata = {"url": "/timezone/enumWindows/{format}"}  # type: ignore
-
     @distributed_trace_async
     async def get_iana_timezone_ids(
         self, format: Union[str, "_models.JsonFormat"] = "json", **kwargs: Any
@@ -322,29 +320,30 @@ class TimezoneOperations:
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
         :type format: str or ~azure.maps.timezone.models.JsonFormat
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list of IanaId or the result of cls(response)
+        :return: list of IanaId
         :rtype: list[~azure.maps.timezone.models.IanaId]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[List[_models.IanaId]]
 
-        request = build_get_iana_timezone_ids_request(
+        request = build_timezone_get_iana_timezone_ids_request(
             format=format,
             client_id=self._config.client_id,
-            api_version=api_version,
-            template_url=self.get_iana_timezone_ids.metadata["url"],
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
@@ -365,8 +364,6 @@ class TimezoneOperations:
 
         return deserialized
 
-    get_iana_timezone_ids.metadata = {"url": "/timezone/enumIana/{format}"}  # type: ignore
-
     @distributed_trace_async
     async def get_iana_version(
         self, format: Union[str, "_models.JsonFormat"] = "json", **kwargs: Any
@@ -380,29 +377,30 @@ class TimezoneOperations:
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
         :type format: str or ~azure.maps.timezone.models.JsonFormat
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TimezoneIanaVersionResult or the result of cls(response)
+        :return: TimezoneIanaVersionResult
         :rtype: ~azure.maps.timezone.models.TimezoneIanaVersionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.TimezoneIanaVersionResult]
 
-        request = build_get_iana_version_request(
+        request = build_timezone_get_iana_version_request(
             format=format,
             client_id=self._config.client_id,
-            api_version=api_version,
-            template_url=self.get_iana_version.metadata["url"],
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
@@ -423,13 +421,12 @@ class TimezoneOperations:
 
         return deserialized
 
-    get_iana_version.metadata = {"url": "/timezone/ianaVersion/{format}"}  # type: ignore
-
     @distributed_trace_async
     async def convert_windows_timezone_to_iana(
         self,
-        windows_timezone_id: str,
         format: Union[str, "_models.JsonFormat"] = "json",
+        *,
+        windows_timezone_id: str,
         windows_territory_code: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.IanaId]:
@@ -441,38 +438,39 @@ class TimezoneOperations:
         may be returned for a single Windows ID. It is possible to narrow these results by adding an
         optional territory parameter.
 
-        :param windows_timezone_id: The Windows time zone ID. Required.
-        :type windows_timezone_id: str
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
         :type format: str or ~azure.maps.timezone.models.JsonFormat
-        :param windows_territory_code: Windows Time Zone territory code. Default value is None.
-        :type windows_territory_code: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list of IanaId or the result of cls(response)
+        :keyword windows_timezone_id: The Windows time zone ID. Required.
+        :paramtype windows_timezone_id: str
+        :keyword windows_territory_code: Windows Time Zone territory code. Default value is None.
+        :paramtype windows_territory_code: str
+        :return: list of IanaId
         :rtype: list[~azure.maps.timezone.models.IanaId]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[List[_models.IanaId]]
 
-        request = build_convert_windows_timezone_to_iana_request(
+        request = build_timezone_convert_windows_timezone_to_iana_request(
             format=format,
             windows_timezone_id=windows_timezone_id,
             windows_territory_code=windows_territory_code,
             client_id=self._config.client_id,
-            api_version=api_version,
-            template_url=self.convert_windows_timezone_to_iana.metadata["url"],
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
@@ -492,5 +490,3 @@ class TimezoneOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-
-    convert_windows_timezone_to_iana.metadata = {"url": "/timezone/windowsToIana/{format}"}  # type: ignore

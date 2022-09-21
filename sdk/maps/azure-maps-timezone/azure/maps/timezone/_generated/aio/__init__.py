@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._timezone_client import TimezoneClient
+from ._client import TimezoneClient
 
 try:
     from ._patch import __all__ as _patch_all
