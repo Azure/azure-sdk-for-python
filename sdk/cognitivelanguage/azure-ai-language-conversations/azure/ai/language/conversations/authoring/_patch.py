@@ -22,8 +22,8 @@ def _authentication_policy(credential):
         )
     elif credential is not None and not hasattr(credential, "get_token"):
         raise TypeError(
-            "Unsupported credential: {}. Use an instance of AzureKeyCredential "
-            "or a token credential from azure.identity".format(type(credential))
+            f"Unsupported credential: {type(credential)}. Use an instance of AzureKeyCredential "
+            "or a token credential from azure.identity"
         )
     return authentication_policy
 
@@ -53,6 +53,11 @@ class ConversationAuthoringClient(GeneratedConversationAuthoringClient): # pylin
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
+        try:
+            endpoint = endpoint.rstrip("/")
+        except AttributeError:
+            raise ValueError("Parameter 'endpoint' must be a string.")
+
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore

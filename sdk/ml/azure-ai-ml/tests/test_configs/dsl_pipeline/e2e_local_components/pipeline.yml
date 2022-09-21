@@ -5,15 +5,15 @@ description: "Dummy train-score-eval pipeline with local components"
 display_name: "e2e_registered_components"
 
 inputs:
-  pipeline_job_training_input: 
+  pipeline_job_training_input:
     path: ./data
-#  pipeline_job_test_input: 
+#  pipeline_job_test_input:
 #    path: ./data
   pipeline_job_training_max_epocs: 20
   pipeline_job_training_learning_rate: 1.8
   pipeline_job_learning_rate_schedule: 'time-based'
 
-outputs: 
+outputs:
   pipeline_job_trained_model:
     mode: upload
 #  pipeline_job_scored_data:
@@ -21,7 +21,7 @@ outputs:
   pipeline_job_evaluation_report:
 #    mode: upload
 
-#settings: 
+#settings:
 #  datastore: azureml:workspaceblobstore
 
 compute: azureml:cpu-cluster
@@ -38,17 +38,17 @@ jobs:
       learning_rate_schedule: ${{parent.inputs.pipeline_job_learning_rate_schedule}}
     outputs:
       model_output: ${{parent.outputs.pipeline_job_trained_model}}
-  
+
   score_job:
     type: command
     component: file:./score.yml
     compute: azureml:cpu-cluster
     inputs:
       model_input: ${{parent.jobs.train_job.outputs.model_output}}
-      test_data: 
+      test_data:
         path: ./data
     outputs:
-      score_output: 
+      score_output:
         mode: upload
 
   evaluate_job:

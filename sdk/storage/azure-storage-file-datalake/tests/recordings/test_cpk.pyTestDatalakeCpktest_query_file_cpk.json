@@ -1,0 +1,267 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utfilesysteme40d26d0?restype=container\u0026timeout=5",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Tue, 09 Aug 2022 22:25:40 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Tue, 09 Aug 2022 22:25:40 GMT",
+        "ETag": "\u00220x8DA7A5617A3868D\u0022",
+        "Last-Modified": "Tue, 09 Aug 2022 22:25:40 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.dfs.core.windows.net/utfilesysteme40d26d0/directorye40d26d0?resource=directory",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Tue, 09 Aug 2022 22:25:40 GMT",
+        "x-ms-encryption-algorithm": "AES256",
+        "x-ms-encryption-key": "Sanitized",
+        "x-ms-encryption-key-sha256": "3QFFFpRA5\u002BXANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Tue, 09 Aug 2022 22:25:40 GMT",
+        "ETag": "\u00220x8DA7A5617AE66FD\u0022",
+        "Last-Modified": "Tue, 09 Aug 2022 22:25:40 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-encryption-key-sha256": "3QFFFpRA5\u002BXANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.dfs.core.windows.net/utfilesysteme40d26d0/directorye40d26d0%2Ffilee40d26d0?resource=file",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Tue, 09 Aug 2022 22:25:41 GMT",
+        "x-ms-encryption-algorithm": "AES256",
+        "x-ms-encryption-key": "Sanitized",
+        "x-ms-encryption-key-sha256": "3QFFFpRA5\u002BXANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Tue, 09 Aug 2022 22:25:40 GMT",
+        "ETag": "\u00220x8DA7A5617B69EEF\u0022",
+        "Last-Modified": "Tue, 09 Aug 2022 22:25:40 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-encryption-key-sha256": "3QFFFpRA5\u002BXANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.dfs.core.windows.net/utfilesysteme40d26d0/directorye40d26d0%2Ffilee40d26d0?resource=file",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Tue, 09 Aug 2022 22:25:41 GMT",
+        "x-ms-encryption-algorithm": "AES256",
+        "x-ms-encryption-key": "Sanitized",
+        "x-ms-encryption-key-sha256": "3QFFFpRA5\u002BXANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Tue, 09 Aug 2022 22:25:40 GMT",
+        "ETag": "\u00220x8DA7A5617BFF8D7\u0022",
+        "Last-Modified": "Tue, 09 Aug 2022 22:25:41 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-encryption-key-sha256": "3QFFFpRA5\u002BXANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.dfs.core.windows.net/utfilesysteme40d26d0/directorye40d26d0%2Ffilee40d26d0?action=append\u0026position=0",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "2264",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Tue, 09 Aug 2022 22:25:41 GMT",
+        "x-ms-encryption-algorithm": "AES256",
+        "x-ms-encryption-key": "Sanitized",
+        "x-ms-encryption-key-sha256": "3QFFFpRA5\u002BXANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": [
+        "DataLakeStorage,Package,Version,RepoPath,MissingDocs\r\n",
+        "App Configuration,azure-data-appconfiguration,1,appconfiguration,FALSE\r\n",
+        "Event Hubs\r\n",
+        "Event Hubs - Azure Storage CheckpointStore,azure-messaging-eventhubs-checkpointstore-blob,1.0.1,eventhubs,FALSE\r\n",
+        "Identity,azure-identity,1.1.0-beta.1,identity,FALSE\r\n",
+        "Key Vault - Certificates,azure-security-keyvault-certificates,4.0.0,keyvault,FALSE\r\n",
+        "Key Vault - Keys,azure-security-keyvault-keys,4.2.0-beta.1,keyvault,FALSE\r\n",
+        "Key Vault - Secrets,azure-security-keyvault-secrets,4.1.0,keyvault,FALSE\r\n",
+        "Storage - Blobs,azure-storage-blob,12.4.0,storage,FALSE\r\n",
+        "Storage - Blobs Batch,azure-storage-blob-batch,12.4.0-beta.1,storage,FALSE\r\n",
+        "Storage - Blobs Cryptography,azure-storage-blob-cryptography,12.4.0,storage,FALSE\r\n",
+        "Storage - File Shares,azure-storage-file-share,12.2.0,storage,FALSE\r\n",
+        "Storage - Queues,azure-storage-queue,12.3.0,storage,FALSE\r\n",
+        "Text Analytics,azure-ai-textanalytics,1.0.0-beta.2,textanalytics,FALSE\r\n",
+        "Tracing,azure-core-tracing-opentelemetry,1.0.0-beta.2,core,FALSE\r\n",
+        "Service,Package,Version,RepoPath,MissingDocs\r\n",
+        "App Configuration,azure-data-appconfiguration,1.0.1,appconfiguration,FALSE\r\n",
+        "Event Hubs,azure-messaging-eventhubs,5.0.1,eventhubs,FALSE\r\n",
+        "Event Hubs - Azure Storage CheckpointStore,azure-messaging-eventhubs-checkpointstore-blob,1.0.1,eventhubs,FALSE\r\n",
+        "Identity,azure-identity,1.1.0-beta.1,identity,FALSE\r\n",
+        "Key Vault - Certificates,azure-security-keyvault-certificates,4.0.0,keyvault,FALSE\r\n",
+        "Key Vault - Keys,azure-security-keyvault-keys,4.2.0-beta.1,keyvault,FALSE\r\n",
+        "Key Vault - Secrets,azure-security-keyvault-secrets,4.1.0,keyvault,FALSE\r\n",
+        "Storage - Blobs,azure-storage-blob,12.4.0,storage,FALSE\r\n",
+        "Storage - Blobs Batch,azure-storage-blob-batch,12.4.0-beta.1,storage,FALSE\r\n",
+        "Storage - Blobs Cryptography,azure-storage-blob-cryptography,12.4.0,storage,FALSE\r\n",
+        "Storage - File Shares,azure-storage-file-share,12.2.0,storage,FALSE\r\n",
+        "Storage - Queues,azure-storage-queue,12.3.0,storage,FALSE\r\n",
+        "Text Analytics,azure-ai-textanalytics,1.0.0-beta.2,textanalytics,FALSE\r\n",
+        "Tracing,azure-core-tracing-opentelemetry,1.0.0-beta.2,core,FALSE\r\n",
+        "Service,Package,Version,RepoPath,MissingDocs\r\n",
+        "App Configuration,azure-data-appconfiguration,1.0.1,appconfiguration,FALSE\r\n",
+        "Event Hubs,azure-messaging-eventhubs,5.0.1,eventhubs,FALSE\r\n"
+      ],
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Tue, 09 Aug 2022 22:25:40 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-encryption-key-sha256": "3QFFFpRA5\u002BXANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.dfs.core.windows.net/utfilesysteme40d26d0/directorye40d26d0%2Ffilee40d26d0?action=flush\u0026position=2264\u0026close=true",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "If-Match": "\u00220x8DA7A5617BFF8D7\u0022",
+        "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Tue, 09 Aug 2022 22:25:41 GMT",
+        "x-ms-encryption-algorithm": "AES256",
+        "x-ms-encryption-key": "Sanitized",
+        "x-ms-encryption-key-sha256": "3QFFFpRA5\u002BXANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Tue, 09 Aug 2022 22:25:41 GMT",
+        "ETag": "\u00220x8DA7A5617D0B487\u0022",
+        "Last-Modified": "Tue, 09 Aug 2022 22:25:41 GMT",
+        "Server": [
+          "Windows-Azure-HDFS/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-encryption-key-sha256": "3QFFFpRA5\u002BXANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utfilesysteme40d26d0/directorye40d26d0/filee40d26d0?comp=query",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "144",
+        "Content-Type": "application/xml",
+        "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Tue, 09 Aug 2022 22:25:41 GMT",
+        "x-ms-encryption-algorithm": "AES256",
+        "x-ms-encryption-key": "Sanitized",
+        "x-ms-encryption-key-sha256": "3QFFFpRA5\u002BXANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": [
+        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
+        "\u003CQueryRequest\u003E\u003CQueryType\u003ESQL\u003C/QueryType\u003E\u003CExpression\u003ESELECT * from BlobStorage\u003C/Expression\u003E\u003C/QueryRequest\u003E"
+      ],
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Type": "avro/binary",
+        "Date": "Tue, 09 Aug 2022 22:25:40 GMT",
+        "ETag": "\u00220x8DA7A5617D0B487\u0022",
+        "Last-Modified": "Tue, 09 Aug 2022 22:25:41 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-creation-time": "Tue, 09 Aug 2022 22:25:41 GMT",
+        "x-ms-encryption-key-sha256": "3QFFFpRA5\u002BXANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=",
+        "x-ms-resource-type": "file",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "T2JqAQIWYXZyby5zY2hlbWHOHlsKICB7CiAgICAidHlwZSI6ICJyZWNvcmQiLAogICAgIm5hbWUiOiAiY29tLm1pY3Jvc29mdC5henVyZS5zdG9yYWdlLnF1ZXJ5QmxvYkNvbnRlbnRzLnJlc3VsdERhdGEiLAogICAgImRvYyI6ICJIb2xkcyByZXN1bHQgZGF0YSBpbiB0aGUgZm9ybWF0IHNwZWNpZmllZCBmb3IgdGhpcyBxdWVyeSAoQ1NWLCBKU09OLCBldGMuKS4iLAogICAgImZpZWxkcyI6IFsKICAgICAgewogICAgICAgICJuYW1lIjogImRhdGEiLAogICAgICAgICJ0eXBlIjogImJ5dGVzIgogICAgICB9CiAgICBdCiAgfSwKICB7CiAgICAidHlwZSI6ICJyZWNvcmQiLAogICAgIm5hbWUiOiAiY29tLm1pY3Jvc29mdC5henVyZS5zdG9yYWdlLnF1ZXJ5QmxvYkNvbnRlbnRzLmVycm9yIiwKICAgICJkb2MiOiAiQW4gZXJyb3IgdGhhdCBvY2N1cnJlZCB3aGlsZSBwcm9jZXNzaW5nIHRoZSBxdWVyeS4iLAogICAgImZpZWxkcyI6IFsKICAgICAgewogICAgICAgICJuYW1lIjogImZhdGFsIiwKICAgICAgICAidHlwZSI6ICJib29sZWFuIiwKICAgICAgICAiZG9jIjogIklmIHRydWUsIHRoaXMgZXJyb3IgcHJldmVudHMgZnVydGhlciBxdWVyeSBwcm9jZXNzaW5nLiAgTW9yZSByZXN1bHQgZGF0YSBtYXkgYmUgcmV0dXJuZWQsIGJ1dCB0aGVyZSBpcyBubyBndWFyYW50ZWUgdGhhdCBhbGwgb2YgdGhlIG9yaWdpbmFsIGRhdGEgd2lsbCBiZSBwcm9jZXNzZWQuICBJZiBmYWxzZSwgdGhpcyBlcnJvciBkb2VzIG5vdCBwcmV2ZW50IGZ1cnRoZXIgcXVlcnkgcHJvY2Vzc2luZy4iCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAibmFtZSI6ICJuYW1lIiwKICAgICAgICAidHlwZSI6ICJzdHJpbmciLAogICAgICAgICJkb2MiOiAiVGhlIG5hbWUgb2YgdGhlIGVycm9yIgogICAgICB9LAogICAgICB7CiAgICAgICAgIm5hbWUiOiAiZGVzY3JpcHRpb24iLAogICAgICAgICJ0eXBlIjogInN0cmluZyIsCiAgICAgICAgImRvYyI6ICJBIGRlc2NyaXB0aW9uIG9mIHRoZSBlcnJvciIKICAgICAgfSwKICAgICAgewogICAgICAgICJuYW1lIjogInBvc2l0aW9uIiwKICAgICAgICAidHlwZSI6ICJsb25nIiwKICAgICAgICAiZG9jIjogIlRoZSByZWNvcmQgb2Zmc2V0IGluIHRoZSBibG9iIGF0IHdoaWNoIHRoZSBlcnJvciBvY2N1cnJlZCIKICAgICAgfQogICAgXQogIH0sCiAgewogICAgInR5cGUiOiAicmVjb3JkIiwKICAgICJuYW1lIjogImNvbS5taWNyb3NvZnQuYXp1cmUuc3RvcmFnZS5xdWVyeUJsb2JDb250ZW50cy5wcm9ncmVzcyIsCiAgICAiZG9jIjogIkluZm9ybWF0aW9uIGFib3V0IHRoZSBwcm9ncmVzcyBvZiB0aGUgcXVlcnkiLAogICAgImZpZWxkcyI6IFsKICAgICAgewogICAgICAgICJuYW1lIjogImJ5dGVzU2Nhbm5lZCIsCiAgICAgICAgInR5cGUiOiAibG9uZyIsCiAgICAgICAgImRvYyI6ICJUaGUgbnVtYmVyIG9mIGJ5dGVzIHRoYXQgaGF2ZSBiZWVuIHNjYW5uZWQiCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAibmFtZSI6ICJ0b3RhbEJ5dGVzIiwKICAgICAgICAidHlwZSI6ICJsb25nIiwKICAgICAgICAiZG9jIjogIlRoZSB0b3RhbCBudW1iZXIgb2YgYnl0ZXMgdG8gYmUgc2Nhbm5lZCBpbiB0aGlzIHF1ZXJ5IgogICAgICB9CiAgICBdCiAgfSwKICB7CiAgICAidHlwZSI6ICJyZWNvcmQiLAogICAgIm5hbWUiOiAiY29tLm1pY3Jvc29mdC5henVyZS5zdG9yYWdlLnF1ZXJ5QmxvYkNvbnRlbnRzLmVuZCIsCiAgICAiZG9jIjogIlNlbnQgYXMgdGhlIGZpbmFsIG1lc3NhZ2Ugb2YgdGhlIHJlc3BvbnNlLCBpbmRpY2F0aW5nIHRoYXQgYWxsIHJlc3VsdHMgaGF2ZSBiZWVuIHNlbnQuIiwKICAgICJmaWVsZHMiOiBbCiAgICAgIHsKICAgICAgICAibmFtZSI6ICJ0b3RhbEJ5dGVzIiwKICAgICAgICAidHlwZSI6ICJsb25nIiwKICAgICAgICAiZG9jIjogIlRoZSB0b3RhbCBudW1iZXIgb2YgYnl0ZXMgc2Nhbm5lZCBpbiB0aGlzIHF1ZXJ5IgogICAgICB9CiAgICBdCiAgfQpdCgAUKGj/kAprQ6IeMFpLNTKPAvQiAO4iRGF0YUxha2VTdG9yYWdlLFBhY2thZ2UsVmVyc2lvbixSZXBvUGF0aCxNaXNzaW5nRG9jcwpBcHAgQ29uZmlndXJhdGlvbixhenVyZS1kYXRhLWFwcGNvbmZpZ3VyYXRpb24sMSxhcHBjb25maWd1cmF0aW9uLEZBTFNFCkV2ZW50IEh1YnMKRXZlbnQgSHVicyAtIEF6dXJlIFN0b3JhZ2UgQ2hlY2twb2ludFN0b3JlLGF6dXJlLW1lc3NhZ2luZy1ldmVudGh1YnMtY2hlY2twb2ludHN0b3JlLWJsb2IsMS4wLjEsZXZlbnRodWJzLEZBTFNFCklkZW50aXR5LGF6dXJlLWlkZW50aXR5LDEuMS4wLWJldGEuMSxpZGVudGl0eSxGQUxTRQpLZXkgVmF1bHQgLSBDZXJ0aWZpY2F0ZXMsYXp1cmUtc2VjdXJpdHkta2V5dmF1bHQtY2VydGlmaWNhdGVzLDQuMC4wLGtleXZhdWx0LEZBTFNFCktleSBWYXVsdCAtIEtleXMsYXp1cmUtc2VjdXJpdHkta2V5dmF1bHQta2V5cyw0LjIuMC1iZXRhLjEsa2V5dmF1bHQsRkFMU0UKS2V5IFZhdWx0IC0gU2VjcmV0cyxhenVyZS1zZWN1cml0eS1rZXl2YXVsdC1zZWNyZXRzLDQuMS4wLGtleXZhdWx0LEZBTFNFClN0b3JhZ2UgLSBCbG9icyxhenVyZS1zdG9yYWdlLWJsb2IsMTIuNC4wLHN0b3JhZ2UsRkFMU0UKU3RvcmFnZSAtIEJsb2JzIEJhdGNoLGF6dXJlLXN0b3JhZ2UtYmxvYi1iYXRjaCwxMi40LjAtYmV0YS4xLHN0b3JhZ2UsRkFMU0UKU3RvcmFnZSAtIEJsb2JzIENyeXB0b2dyYXBoeSxhenVyZS1zdG9yYWdlLWJsb2ItY3J5cHRvZ3JhcGh5LDEyLjQuMCxzdG9yYWdlLEZBTFNFClN0b3JhZ2UgLSBGaWxlIFNoYXJlcyxhenVyZS1zdG9yYWdlLWZpbGUtc2hhcmUsMTIuMi4wLHN0b3JhZ2UsRkFMU0UKU3RvcmFnZSAtIFF1ZXVlcyxhenVyZS1zdG9yYWdlLXF1ZXVlLDEyLjMuMCxzdG9yYWdlLEZBTFNFClRleHQgQW5hbHl0aWNzLGF6dXJlLWFpLXRleHRhbmFseXRpY3MsMS4wLjAtYmV0YS4yLHRleHRhbmFseXRpY3MsRkFMU0UKVHJhY2luZyxhenVyZS1jb3JlLXRyYWNpbmctb3BlbnRlbGVtZXRyeSwxLjAuMC1iZXRhLjIsY29yZSxGQUxTRQpTZXJ2aWNlLFBhY2thZ2UsVmVyc2lvbixSZXBvUGF0aCxNaXNzaW5nRG9jcwpBcHAgQ29uZmlndXJhdGlvbixhenVyZS1kYXRhLWFwcGNvbmZpZ3VyYXRpb24sMS4wLjEsYXBwY29uZmlndXJhdGlvbixGQUxTRQpFdmVudCBIdWJzLGF6dXJlLW1lc3NhZ2luZy1ldmVudGh1YnMsNS4wLjEsZXZlbnRodWJzLEZBTFNFCkV2ZW50IEh1YnMgLSBBenVyZSBTdG9yYWdlIENoZWNrcG9pbnRTdG9yZSxhenVyZS1tZXNzYWdpbmctZXZlbnRodWJzLWNoZWNrcG9pbnRzdG9yZS1ibG9iLDEuMC4xLGV2ZW50aHVicyxGQUxTRQpJZGVudGl0eSxhenVyZS1pZGVudGl0eSwxLjEuMC1iZXRhLjEsaWRlbnRpdHksRkFMU0UKS2V5IFZhdWx0IC0gQ2VydGlmaWNhdGVzLGF6dXJlLXNlY3VyaXR5LWtleXZhdWx0LWNlcnRpZmljYXRlcyw0LjAuMCxrZXl2YXVsdCxGQUxTRQpLZXkgVmF1bHQgLSBLZXlzLGF6dXJlLXNlY3VyaXR5LWtleXZhdWx0LWtleXMsNC4yLjAtYmV0YS4xLGtleXZhdWx0LEZBTFNFCktleSBWYXVsdCAtIFNlY3JldHMsYXp1cmUtc2VjdXJpdHkta2V5dmF1bHQtc2VjcmV0cyw0LjEuMCxrZXl2YXVsdCxGQUxTRQpTdG9yYWdlIC0gQmxvYnMsYXp1cmUtc3RvcmFnZS1ibG9iLDEyLjQuMCxzdG9yYWdlLEZBTFNFClN0b3JhZ2UgLSBCbG9icyBCYXRjaCxhenVyZS1zdG9yYWdlLWJsb2ItYmF0Y2gsMTIuNC4wLWJldGEuMSxzdG9yYWdlLEZBTFNFClN0b3JhZ2UgLSBCbG9icyBDcnlwdG9ncmFwaHksYXp1cmUtc3RvcmFnZS1ibG9iLWNyeXB0b2dyYXBoeSwxMi40LjAsc3RvcmFnZSxGQUxTRQpTdG9yYWdlIC0gRmlsZSBTaGFyZXMsYXp1cmUtc3RvcmFnZS1maWxlLXNoYXJlLDEyLjIuMCxzdG9yYWdlLEZBTFNFClN0b3JhZ2UgLSBRdWV1ZXMsYXp1cmUtc3RvcmFnZS1xdWV1ZSwxMi4zLjAsc3RvcmFnZSxGQUxTRQpUZXh0IEFuYWx5dGljcyxhenVyZS1haS10ZXh0YW5hbHl0aWNzLDEuMC4wLWJldGEuMix0ZXh0YW5hbHl0aWNzLEZBTFNFClRyYWNpbmcsYXp1cmUtY29yZS10cmFjaW5nLW9wZW50ZWxlbWV0cnksMS4wLjAtYmV0YS4yLGNvcmUsRkFMU0UKU2VydmljZSxQYWNrYWdlLFZlcnNpb24sUmVwb1BhdGgsTWlzc2luZ0RvY3MKQXBwIENvbmZpZ3VyYXRpb24sYXp1cmUtZGF0YS1hcHBjb25maWd1cmF0aW9uLDEuMC4xLGFwcGNvbmZpZ3VyYXRpb24sRkFMU0UKRXZlbnQgSHVicyxhenVyZS1tZXNzYWdpbmctZXZlbnRodWJzLDUuMC4xLGV2ZW50aHVicyxGQUxTRQoUKGj/kAprQ6IeMFpLNTKPAgoEsCOwIxQoaP\u002BQCmtDoh4wWks1Mo8CBgawIxQoaP\u002BQCmtDoh4wWks1Mo8="
+    }
+  ],
+  "Variables": {}
+}

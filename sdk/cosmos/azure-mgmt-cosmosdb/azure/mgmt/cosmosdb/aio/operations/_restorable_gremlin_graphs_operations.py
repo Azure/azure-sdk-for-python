@@ -7,9 +7,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -20,8 +27,10 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._restorable_gremlin_graphs_operations import build_list_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class RestorableGremlinGraphsOperations:
     """
@@ -42,7 +51,6 @@ class RestorableGremlinGraphsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def list(
         self,
@@ -52,14 +60,15 @@ class RestorableGremlinGraphsOperations:
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.RestorableGremlinGraphsListResult]:
+    ) -> AsyncIterable["_models.RestorableGremlinGraphGetResult"]:
         """Show the event feed of all mutations done on all the Azure Cosmos DB Gremlin graphs under a
         specific database. This helps in scenario where container was accidentally deleted. This API
         requires 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read' permission.
 
         :param location: Cosmos DB region, with spaces between words and each word capitalized.
+         Required.
         :type location: str
-        :param instance_id: The instanceId GUID of a restorable database account.
+        :param instance_id: The instanceId GUID of a restorable database account. Required.
         :type instance_id: str
         :param restorable_gremlin_database_rid: The resource ID of the Gremlin database. Default value
          is None.
@@ -69,34 +78,33 @@ class RestorableGremlinGraphsOperations:
         :param end_time: Restorable Gremlin graphs event feed end time. Default value is None.
         :type end_time: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either RestorableGremlinGraphsListResult or the result of
+        :return: An iterator like instance of either RestorableGremlinGraphGetResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.RestorableGremlinGraphsListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.RestorableGremlinGraphGetResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-15-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RestorableGremlinGraphsListResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RestorableGremlinGraphsListResult]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
-                    subscription_id=self._config.subscription_id,
                     location=location,
                     instance_id=instance_id,
-                    api_version=api_version,
+                    subscription_id=self._config.subscription_id,
                     restorable_gremlin_database_rid=restorable_gremlin_database_rid,
                     start_time=start_time,
                     end_time=end_time,
-                    template_url=self.list.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -104,19 +112,11 @@ class RestorableGremlinGraphsOperations:
                 request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
-                
-                request = build_list_request(
-                    subscription_id=self._config.subscription_id,
-                    location=location,
-                    instance_id=instance_id,
-                    api_version=api_version,
-                    restorable_gremlin_database_rid=restorable_gremlin_database_rid,
-                    start_time=start_time,
-                    end_time=end_time,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -132,10 +132,8 @@ class RestorableGremlinGraphsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -145,8 +143,6 @@ class RestorableGremlinGraphsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts/{instanceId}/restorableGraphs"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts/{instanceId}/restorableGraphs"}  # type: ignore

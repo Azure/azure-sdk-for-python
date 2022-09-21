@@ -22,10 +22,11 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._form_recognizer_client_operations import build_analyze_business_card_async_request_initial, build_analyze_id_document_async_request_initial, build_analyze_invoice_async_request_initial, build_analyze_layout_async_request_initial, build_analyze_receipt_async_request_initial, build_analyze_with_custom_model_request_initial, build_compose_custom_models_async_request_initial, build_copy_custom_model_request_initial, build_delete_custom_model_request, build_generate_model_copy_authorization_request, build_get_analyze_business_card_result_request, build_get_analyze_form_result_request, build_get_analyze_id_document_result_request, build_get_analyze_invoice_result_request, build_get_analyze_layout_result_request, build_get_analyze_receipt_result_request, build_get_custom_model_copy_result_request, build_get_custom_model_request, build_get_custom_models_request, build_list_custom_models_request, build_train_custom_model_async_request_initial
+from .._vendor import MixinABC
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class FormRecognizerClientOperationsMixin:  # pylint: disable=too-many-public-methods
+class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many-public-methods
 
     async def _train_custom_model_async_initial(  # pylint: disable=inconsistent-return-statements
         self,

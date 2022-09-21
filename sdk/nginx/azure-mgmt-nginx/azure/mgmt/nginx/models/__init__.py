@@ -22,10 +22,12 @@ from ._models_py3 import NginxDeploymentProperties
 from ._models_py3 import NginxDeploymentUpdateParameters
 from ._models_py3 import NginxDeploymentUpdateProperties
 from ._models_py3 import NginxFrontendIPConfiguration
+from ._models_py3 import NginxLogging
 from ._models_py3 import NginxNetworkInterfaceConfiguration
 from ._models_py3 import NginxNetworkProfile
 from ._models_py3 import NginxPrivateIPAddress
 from ._models_py3 import NginxPublicIPAddress
+from ._models_py3 import NginxStorageAccount
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
 from ._models_py3 import OperationResult
@@ -34,44 +36,48 @@ from ._models_py3 import ResourceSku
 from ._models_py3 import SystemData
 from ._models_py3 import UserIdentityProperties
 
-
-from ._nginx_management_client_enums import (
-    CreatedByType,
-    IdentityType,
-    NginxPrivateIPAllocationMethod,
-    ProvisioningState,
-)
+from ._nginx_management_client_enums import CreatedByType
+from ._nginx_management_client_enums import IdentityType
+from ._nginx_management_client_enums import NginxPrivateIPAllocationMethod
+from ._nginx_management_client_enums import ProvisioningState
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ErrorResponseBody',
-    'IdentityProperties',
-    'NginxCertificate',
-    'NginxCertificateListResponse',
-    'NginxCertificateProperties',
-    'NginxConfiguration',
-    'NginxConfigurationFile',
-    'NginxConfigurationListResponse',
-    'NginxConfigurationPackage',
-    'NginxConfigurationProperties',
-    'NginxDeployment',
-    'NginxDeploymentListResponse',
-    'NginxDeploymentProperties',
-    'NginxDeploymentUpdateParameters',
-    'NginxDeploymentUpdateProperties',
-    'NginxFrontendIPConfiguration',
-    'NginxNetworkInterfaceConfiguration',
-    'NginxNetworkProfile',
-    'NginxPrivateIPAddress',
-    'NginxPublicIPAddress',
-    'OperationDisplay',
-    'OperationListResult',
-    'OperationResult',
-    'ResourceProviderDefaultErrorResponse',
-    'ResourceSku',
-    'SystemData',
-    'UserIdentityProperties',
-    'CreatedByType',
-    'IdentityType',
-    'NginxPrivateIPAllocationMethod',
-    'ProvisioningState',
+    "ErrorResponseBody",
+    "IdentityProperties",
+    "NginxCertificate",
+    "NginxCertificateListResponse",
+    "NginxCertificateProperties",
+    "NginxConfiguration",
+    "NginxConfigurationFile",
+    "NginxConfigurationListResponse",
+    "NginxConfigurationPackage",
+    "NginxConfigurationProperties",
+    "NginxDeployment",
+    "NginxDeploymentListResponse",
+    "NginxDeploymentProperties",
+    "NginxDeploymentUpdateParameters",
+    "NginxDeploymentUpdateProperties",
+    "NginxFrontendIPConfiguration",
+    "NginxLogging",
+    "NginxNetworkInterfaceConfiguration",
+    "NginxNetworkProfile",
+    "NginxPrivateIPAddress",
+    "NginxPublicIPAddress",
+    "NginxStorageAccount",
+    "OperationDisplay",
+    "OperationListResult",
+    "OperationResult",
+    "ResourceProviderDefaultErrorResponse",
+    "ResourceSku",
+    "SystemData",
+    "UserIdentityProperties",
+    "CreatedByType",
+    "IdentityType",
+    "NginxPrivateIPAllocationMethod",
+    "ProvisioningState",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -2,37 +2,33 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
+import json
 import logging
+import os
 import re
+import subprocess
 import sys
 import time
-import json
-import os
-import subprocess
+from typing import Dict, Iterable, List, Optional, Union
 
-from typing import Dict, Iterable, Optional, List, Union
-
-from azure.ai.ml.operations._datastore_operations import DatastoreOperations
-from azure.ai.ml.operations._run_operations import RunOperations
-from azure.ai.ml.operations._dataset_dataplane_operations import DatasetDataplaneOperations
-from azure.ai.ml.operations._model_dataplane_operations import ModelDataplaneOperations
-from azure.ai.ml._utils.utils import create_session_with_retry, download_text_from_url
-from azure.ai.ml.operations._run_history_constants import RunHistoryConstants, JobStatus
-from azure.ai.ml._restclient.v2021_10_01.models import JobBaseData
-from azure.ai.ml._restclient.v2022_02_01_preview.models import DataType, ModelType
-from azure.ai.ml.constants import GitProperties, JobType, JobLogPattern
 from azure.ai.ml._artifacts._artifact_utilities import get_datastore_info, list_logs_in_datastore
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    JobType as RestJobType,
-)
-from azure.ai.ml._restclient.runhistory.models import (
-    PaginatedRunList,
-    RunDetails,
-    Run,
-    TypedAssetReference,
-)
-from azure.ai.ml.entities._job.base_job import _BaseJob
-from azure.ai.ml._ml_exceptions import JobException, ErrorCategory, ErrorTarget
+from azure.ai.ml._restclient.runhistory.models import Run, RunDetails, TypedAssetReference
+from azure.ai.ml._restclient.v2021_10_01.models import JobBaseData
+from azure.ai.ml._restclient.v2022_02_01_preview.models import DataType
+from azure.ai.ml._restclient.v2022_02_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2022_02_01_preview.models import ModelType
+from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml._utils.utils import create_requests_pipeline_with_retry, download_text_from_url
+from azure.ai.ml.constants._common import GitProperties
+from azure.ai.ml.constants._job.job import JobLogPattern, JobType
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
+from azure.ai.ml.operations._dataset_dataplane_operations import DatasetDataplaneOperations
+from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+from azure.ai.ml.operations._model_dataplane_operations import ModelDataplaneOperations
+from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
+from azure.ai.ml.operations._run_operations import RunOperations
 
 STATUS_KEY = "status"
 
@@ -40,9 +36,11 @@ module_logger = logging.getLogger(__name__)
 
 
 def _get_sorted_filtered_logs(
-    logs_dict: dict, job_type: str, processed_logs: dict = {}, only_streamable=True
+    logs_dict: dict, job_type: str, processed_logs: dict = None, only_streamable=True
 ) -> List[str]:
-    """Filters log file names, sorts, and returns list starting with where we left off last iteration.
+    """Filters log file names, sorts, and returns list starting with where we
+    left off last iteration.
+
     :param run_details:
     :type run_details: dict
     :param processed_logs: dictionary tracking the state of how many lines of each file have been written out
@@ -52,6 +50,7 @@ def _get_sorted_filtered_logs(
     :return:
     :rtype: list[str]
     """
+    processed_logs = processed_logs if processed_logs else {}
     # First, attempt to read logs in new Common Runtime form
     output_logs_pattern = (
         JobLogPattern.COMMON_RUNTIME_STREAM_LOG_PATTERN
@@ -84,6 +83,7 @@ def _get_sorted_filtered_logs(
 
 def _incremental_print(log, processed_logs, current_log_name, fileout) -> None:
     """Incremental print.
+
     :param log:
     :type log: str
     :param processed_logs: The record of how many lines have been written for each log file
@@ -115,6 +115,7 @@ def _incremental_print(log, processed_logs, current_log_name, fileout) -> None:
 
 def _get_last_log_primary_instance(logs):
     """Return last log for primary instance.
+
     :param logs:
     :type logs: builtin.list
     :return: Returns the last log primary instance.
@@ -147,7 +148,10 @@ def _wait_before_polling(current_seconds):
     if current_seconds < 0:
         msg = "current_seconds must be positive"
         raise JobException(
-            message=msg, target=ErrorTarget.JOB, no_personal_data_message=msg, error_category=ErrorCategory.USER_ERROR
+            message=msg,
+            target=ErrorTarget.JOB,
+            no_personal_data_message=msg,
+            error_category=ErrorCategory.USER_ERROR,
         )
     import math
 
@@ -165,14 +169,18 @@ def list_logs(run_operations: RunOperations, job_resource: JobBaseData):
     return {key: logs_dict[key] for key in keys}
 
 
+# pylint: disable=too-many-statements,too-many-locals
 def stream_logs_until_completion(
     run_operations: RunOperations,
     job_resource: JobBaseData,
     datastore_operations: DatastoreOperations = None,
     raise_exception_on_failed_job=True,
+    *,
+    requests_pipeline: HttpPipeline
 ) -> None:
-    """Stream the experiment run output to the specified file handle.
-    By default the the file handle points to stdout.
+    """Stream the experiment run output to the specified file handle. By
+    default the the file handle points to stdout.
+
     :param run_operations: The run history operations class.
     :type run_operations: RunOperations
     :param job_resource: The job to stream
@@ -214,46 +222,50 @@ def stream_logs_until_completion(
         file_handle.write("Web View: {}\n".format(studio_endpoint))
 
         _current_details: RunDetails = run_operations.get_run_details(job_name)
-        session = create_session_with_retry()
 
         processed_logs = {}
 
         poll_start_time = time.time()
-        while (
-            _current_details.status in RunHistoryConstants.IN_PROGRESS_STATUSES
-            or _current_details.status == JobStatus.FINALIZING
-        ):
-            file_handle.flush()
-            time.sleep(_wait_before_polling(time.time() - poll_start_time))
-            _current_details: RunDetails = run_operations.get_run_details(job_name)  # TODO use FileWatcher
-            if job_type.lower() in JobType.PIPELINE:
-                legacy_folder_name = "/logs/azureml/"
-            else:
-                legacy_folder_name = "/azureml-logs/"
-            _current_logs_dict = (
-                list_logs_in_datastore(ds_properties, prefix=prefix, legacy_log_folder_name=legacy_folder_name)
-                if ds_properties is not None
-                else _current_details.log_files
-            )
-            # Get the list of new logs available after filtering out the processed ones
-            available_logs = _get_sorted_filtered_logs(_current_logs_dict, job_type, processed_logs)
-            content = ""
-            for current_log in available_logs:
-                content = download_text_from_url(
-                    _current_logs_dict[current_log],
-                    session,
-                    timeout=RunHistoryConstants._DEFAULT_GET_CONTENT_TIMEOUT,
-                )
-
-                _incremental_print(content, processed_logs, current_log, file_handle)
-
-            # TODO: Temporary solution to wait for all the logs to be printed in the finalizing state.
-            if (
-                _current_details.status not in RunHistoryConstants.IN_PROGRESS_STATUSES
-                and _current_details.status == JobStatus.FINALIZING
-                and "The activity completed successfully. Finalizing run..." in content
+        with create_requests_pipeline_with_retry(requests_pipeline=requests_pipeline) as session:
+            while (
+                _current_details.status in RunHistoryConstants.IN_PROGRESS_STATUSES
+                or _current_details.status == JobStatus.FINALIZING
             ):
-                break
+                file_handle.flush()
+                time.sleep(_wait_before_polling(time.time() - poll_start_time))
+                _current_details: RunDetails = run_operations.get_run_details(job_name)  # TODO use FileWatcher
+                if job_type.lower() in JobType.PIPELINE:
+                    legacy_folder_name = "/logs/azureml/"
+                else:
+                    legacy_folder_name = "/azureml-logs/"
+                _current_logs_dict = (
+                    list_logs_in_datastore(
+                        ds_properties,
+                        prefix=prefix,
+                        legacy_log_folder_name=legacy_folder_name,
+                    )
+                    if ds_properties is not None
+                    else _current_details.log_files
+                )
+                # Get the list of new logs available after filtering out the processed ones
+                available_logs = _get_sorted_filtered_logs(_current_logs_dict, job_type, processed_logs)
+                content = ""
+                for current_log in available_logs:
+                    content = download_text_from_url(
+                        _current_logs_dict[current_log],
+                        session,
+                        timeout=RunHistoryConstants._DEFAULT_GET_CONTENT_TIMEOUT,
+                    )
+
+                    _incremental_print(content, processed_logs, current_log, file_handle)
+
+                # TODO: Temporary solution to wait for all the logs to be printed in the finalizing state.
+                if (
+                    _current_details.status not in RunHistoryConstants.IN_PROGRESS_STATUSES
+                    and _current_details.status == JobStatus.FINALIZING
+                    and "The activity completed successfully. Finalizing run..." in content
+                ):
+                    break
 
         file_handle.write("\n")
         file_handle.write("Execution Summary\n")
@@ -286,6 +298,7 @@ def stream_logs_until_completion(
                     message="Exception : \n {} ".format(json.dumps(error, indent=4)),
                     target=ErrorTarget.JOB,
                     no_personal_data_message="Exception raised on failed job.",
+                    error_category=ErrorCategory.SYSTEM_ERROR,
                 )
 
         file_handle.write("\n")
@@ -297,12 +310,16 @@ def stream_logs_until_completion(
             "Details for canceling the run can be found here: "
             "https://aka.ms/aml-docs-cancel-run"
         )
-        raise JobException(message=error_message, target=ErrorTarget.JOB, no_personal_data_message=error_message)
+        raise JobException(
+            message=error_message,
+            target=ErrorTarget.JOB,
+            no_personal_data_message=error_message,
+            error_category=ErrorCategory.USER_ERROR,
+        )
 
 
 def get_git_properties() -> Dict[str, str]:
-    """
-    Gather Git tracking info from the local environment.
+    """Gather Git tracking info from the local environment.
 
     :return: Properties dictionary.
     :rtype: dict
@@ -311,23 +328,22 @@ def get_git_properties() -> Dict[str, str]:
     def _clean_git_property_bool(value) -> Optional[bool]:
         if value is None:
             return None
-        else:
-            return str(value).strip().lower() in ["true", "1"]
+        return str(value).strip().lower() in ["true", "1"]
 
     def _clean_git_property_str(value) -> Optional[str]:
         if value is None:
             return None
-        else:
-            return str(value).strip() or None
+        return str(value).strip() or None
 
     def _run_git_cmd(args) -> Optional[str]:
-        """Return the output of running git with arguments, or None if it fails."""
+        """Return the output of running git with arguments, or None if it
+        fails."""
         try:
             with open(os.devnull, "wb") as devnull:
                 return subprocess.check_output(["git"] + list(args), stderr=devnull).decode()
         except KeyboardInterrupt:
             raise
-        except BaseException:
+        except BaseException:  # pylint: disable=broad-except
             return None
 
     # Check for environment variable overrides.
@@ -384,10 +400,13 @@ def get_job_output_uris_from_dataplane(
     model_dataplane_operations: ModelDataplaneOperations,
     output_names: Optional[Union[Iterable[str], str]] = None,
 ) -> Dict[str, str]:
-    """Returns the output path for the given output in cloud storage of the given job.
+    """Returns the output path for the given output in cloud storage of the
+    given job.
+
     If no output names are given, the output paths for all outputs will be returned.
     URIs obtained from the service will be in the long-form azureml:// format.
-    For example, azureml://subscriptions/<sub_id>/resource[gG]roups/<rg_name>/workspaces/<ws_name>/datastores/<ds_name>/paths/<path_on_ds>
+    For example:
+    azureml://subscriptions/<sub>/resource[gG]roups/<rg_name>/workspaces/<ws_name>/datastores/<ds_name>/paths/<ds_path>
     :return: Dictionary mapping user-defined output name to output uri
     :rtype: Dict[str, str]
     """

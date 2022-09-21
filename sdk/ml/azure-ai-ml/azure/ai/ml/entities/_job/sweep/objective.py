@@ -1,14 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from typing import Optional
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import Objective as RestObjective
-from typing import Optional
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._util import SnakeToPascalDescriptor
 
 
-class Objective(RestObjective):
+class Objective(RestTranslatableMixin):
     """Optimization objective.
 
     All required parameters must be populated in order to send to Azure.
@@ -22,8 +22,15 @@ class Objective(RestObjective):
 
     goal = SnakeToPascalDescriptor()
 
-    def __init__(self, goal: str = None, primary_metric: str = None, **kwargs):
-        RestObjective.__init__(self, goal=goal, primary_metric=primary_metric, **kwargs)
+    def __init__(self, goal: str = None, primary_metric: str = None):
+        self.goal = goal
+        self.primary_metric = primary_metric
+
+    def _to_rest_object(self) -> RestObjective:
+        return RestObjective(
+            goal=self.goal,
+            primary_metric=self.primary_metric,
+        )
 
     @classmethod
     def _from_rest_object(cls, obj: RestObjective) -> Optional["Objective"]:

@@ -24,14 +24,14 @@ async def sample_create_and_deploy_project_async():
     # [START create_and_deploy_project]
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.language.questionanswering.projects.aio import QuestionAnsweringProjectsClient
+    from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
 
     # get service secrets
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
     key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
 
     # create client
-    client = QuestionAnsweringProjectsClient(endpoint, AzureKeyCredential(key))
+    client = QuestionAnsweringAuthoringClient(endpoint, AzureKeyCredential(key))
     async with client:
 
         # create project
@@ -83,9 +83,9 @@ async def sample_create_and_deploy_project_async():
             project_name=project_name
         )
         async for source in sources:
-            print("project: {}".format(source["displayName"]))
+            print("source name: {}".format(source.get("displayName", "N/A")))
             print("\tsource: {}".format(source["source"]))
-            print("\tsource Uri: {}".format(source["sourceUri"]))
+            print("\tsource Uri: {}".format(source.get("sourceUri", "N/A")))
             print("\tsource kind: {}".format(source["sourceKind"]))
 
         # deploy project

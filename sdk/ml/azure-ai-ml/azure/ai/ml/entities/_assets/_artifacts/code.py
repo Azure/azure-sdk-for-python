@@ -1,25 +1,21 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Union
-from pathlib import Path
+import os
 from os import PathLike
+from pathlib import Path
+from typing import Dict, Union
 
-from azure.ai.ml.entities._assets import Artifact
-from .artifact import ArtifactStorageInfo
-from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    ArmConstants,
-)
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    CodeVersionData,
-    CodeVersionDetails,
-)
+from azure.ai.ml._restclient.v2022_05_01.models import CodeVersionData, CodeVersionDetails
 from azure.ai.ml._schema import CodeAssetSchema
-from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
+from azure.ai.ml._utils._asset_utils import get_content_hash, get_content_hash_version, get_ignore_file
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ArmConstants
+from azure.ai.ml.entities._assets import Artifact
+from azure.ai.ml.entities._system_data import SystemData
+from azure.ai.ml.entities._util import load_from_dict
+
+from .artifact import ArtifactStorageInfo
 
 
 class Code(Artifact):
@@ -30,7 +26,7 @@ class Code(Artifact):
     :param version: Version of the resource.
     :type version: str
     :param path: A local path or a remote uri. A datastore remote uri example is like,
-        "azureml://subscriptions/my-sub-id/resourcegroups/my-rg/workspaces/myworkspace/datastores/mydatastore/paths/path_on_datastore/"
+        "azureml://subscriptions/{}/resourcegroups/{}/workspaces/{}/datastores/{}/paths/path_on_datastore/"
     :type path: str
     :param description: Description of the resource.
     :type description: str
@@ -63,6 +59,10 @@ class Code(Artifact):
             **kwargs,
         )
         self._arm_type = ArmConstants.CODE_VERSION_TYPE
+        if self.path and os.path.isabs(self.path):
+            # Only calculate hash for local files
+            _ignore_file = get_ignore_file(self.path)
+            self._hash_sha256 = get_content_hash(self.path, _ignore_file)
 
     @classmethod
     def _load(
@@ -81,7 +81,7 @@ class Code(Artifact):
         return load_from_dict(CodeAssetSchema, data, context, **kwargs)
 
     def _to_dict(self) -> Dict:
-        return CodeAssetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return CodeAssetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
     @classmethod
     def _from_rest_object(cls, code_rest_object: CodeVersionData) -> "Code":
@@ -95,29 +95,31 @@ class Code(Artifact):
             description=rest_code_version.description,
             tags=rest_code_version.tags,
             properties=rest_code_version.properties,
-            creation_context=code_rest_object.system_data,
+            creation_context=SystemData._from_rest_object(code_rest_object.system_data),
             is_anonymous=rest_code_version.is_anonymous,
         )
         return code
 
     def _to_rest_object(self) -> CodeVersionData:
-        code_version = CodeVersionDetails(code_uri=self.path, is_anonymous=self._is_anonymous)
+        properties = {}
+        if hasattr(self, "_hash_sha256"):
+            properties["hash_sha256"] = self._hash_sha256
+            properties["hash_version"] = get_content_hash_version()
+        code_version = CodeVersionDetails(code_uri=self.path, is_anonymous=self._is_anonymous, properties=properties)
         code_version_resource = CodeVersionData(properties=code_version)
 
         return code_version_resource
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
-        """Updates an an artifact with the remote path of a local upload"""
+        """Updates an an artifact with the remote path of a local upload."""
         if asset_artifact.is_file:
             # Code paths cannot be pointers to single files. It must be a pointer to a container
             # Skipping the setter to avoid being resolved as a local path
-            self._path = asset_artifact.subdir_path
+            self._path = asset_artifact.subdir_path  # pylint: disable=attribute-defined-outside-init
         else:
-            self._path = asset_artifact.full_storage_path
+            self._path = asset_artifact.full_storage_path  # pylint: disable=attribute-defined-outside-init
 
-    def _to_arm_resource_param(self, **kwargs):
-        from azure.ai.ml.constants import ArmConstants
-
+    def _to_arm_resource_param(self, **kwargs):  # pylint: disable=unused-argument
         properties = self._to_rest_object().properties
 
         return {

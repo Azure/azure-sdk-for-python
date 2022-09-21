@@ -1,10 +1,12 @@
 import os
 from pathlib import Path
-from azure.ai.ml.entities._assets import Data
-from marshmallow.exceptions import ValidationError
+
 import pytest
 import yaml
+from marshmallow.exceptions import ValidationError
+
 from azure.ai.ml import load_data
+from azure.ai.ml.entities._assets import Data
 
 
 @pytest.mark.unittest
@@ -14,7 +16,7 @@ class TestData:
         with open(test_path, "r") as f:
             target = yaml.safe_load(f)
         with open(test_path, "r") as f:
-            data: Data = load_data(path=test_path)
+            data: Data = load_data(source=test_path)
         assert data.name == target["name"]
         source = data._to_rest_object()
         assert os.path.normpath(source.properties.data_uri) == os.path.normpath(
@@ -27,7 +29,7 @@ class TestData:
         with open(test_path, "r") as f:
             target = yaml.safe_load(f)
         with open(test_path, "r") as f:
-            data: Data = load_data(path=test_path)
+            data: Data = load_data(source=test_path)
         assert data.name == target["name"]
         source = data._to_rest_object()
         assert os.path.normpath(source.properties.data_uri) == os.path.normpath(
@@ -40,7 +42,7 @@ class TestData:
         with open(test_path, "r") as f:
             target = yaml.safe_load(f)
         with open(test_path, "r") as f:
-            dataset: Data = load_data(path=test_path)
+            dataset: Data = load_data(source=test_path)
         assert dataset.name == target["name"]
         source = dataset._to_rest_object()
         assert os.path.normpath(source.properties.data_uri) == os.path.normpath(
@@ -54,5 +56,5 @@ class TestData:
             yaml.safe_load(f)
         with open(test_path, "r"):
             with pytest.raises(ValidationError) as e:
-                load_data(path=test_path)
+                load_data(source=test_path)
         assert "Missing data for required field" in e.value.messages[0]

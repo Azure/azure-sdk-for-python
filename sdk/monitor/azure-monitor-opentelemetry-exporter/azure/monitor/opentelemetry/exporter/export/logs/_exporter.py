@@ -43,12 +43,7 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         envelopes = [self._log_to_envelope(log) for log in batch]
         try:
             result = self._transmit(envelopes)
-            if result == ExportResult.FAILED_RETRYABLE:
-                envelopes_to_store = [x.as_dict() for x in envelopes]
-                self.storage.put(envelopes_to_store, 1)
-            if result == ExportResult.SUCCESS:
-                # Try to send any cached events
-                self._transmit_from_storage()
+            self._handle_transmit_from_storage(envelopes, result)
             return _get_log_export_result(result)
         except Exception:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while exporting the data.")
@@ -97,11 +92,10 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     envelope.tags["ai.operation.parentId"] = "{:016x}".format(
         log_record.span_id or _DEFAULT_SPAN_ID
     )
-    properties = {
-        k: v
-        for k, v in log_record.attributes.items()
-        if k not in _EXCEPTION_ATTRS
-    }
+    properties = _utils._filter_custom_properties(
+        log_record.attributes,
+        lambda key, val: not _is_opentelemetry_standard_attribute(key)
+    )
     exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
     exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
     # pylint: disable=line-too-long
@@ -115,10 +109,10 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         if not exc_message:
             exc_message = "Exception"
         exc_details = TelemetryExceptionDetails(
-            type_name=exc_type,
-            message=exc_message,
+            type_name=str(exc_type)[:1024],
+            message=str(exc_message)[:32768],
             has_full_stack=has_full_stack,
-            stack=stack_trace,
+            stack=str(stack_trace)[:32768],
         )
         data = TelemetryExceptionData(
             severity_level=severity_level,
@@ -132,7 +126,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         # pylint: disable=line-too-long
         # Severity number: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-severitynumber
         data = MessageData(
-            message=log_record.body,
+            message=str(log_record.body)[:32768],
             severity_level=severity_level,
             properties=properties,
         )
@@ -159,6 +153,10 @@ def _get_severity_level(severity_number: SeverityNumber):
     if severity_number.value < 9:
         return 0
     return int((severity_number.value - 1) / 4 - 1)
+
+
+def _is_opentelemetry_standard_attribute(key: str) -> bool:
+    return key in _EXCEPTION_ATTRS
 
 
 _EXCEPTION_ATTRS = frozenset(

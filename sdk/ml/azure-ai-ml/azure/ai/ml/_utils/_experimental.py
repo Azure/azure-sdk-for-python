@@ -3,15 +3,16 @@
 # ---------------------------------------------------------
 
 import functools
-import logging
 import inspect
+import logging
 import sys
-from azure.ai.ml.constants import (
-    DOCSTRING_TEMPLATE,
+
+from azure.ai.ml.constants._common import (
     DOCSTRING_DEFAULT_INDENTATION,
+    DOCSTRING_TEMPLATE,
     EXPERIMENTAL_CLASS_MESSAGE,
-    EXPERIMENTAL_METHOD_MESSAGE,
     EXPERIMENTAL_LINK_MESSAGE,
+    EXPERIMENTAL_METHOD_MESSAGE,
 )
 
 _warning_cache = set()
@@ -19,20 +20,19 @@ module_logger = logging.getLogger(__name__)
 
 
 def experimental(wrapped):
-    """Add experimental tag to a class or a method"""
+    """Add experimental tag to a class or a method."""
     if inspect.isclass(wrapped):
         return _add_class_docstring(wrapped)
-    elif inspect.isfunction(wrapped):
+    if inspect.isfunction(wrapped):
         return _add_method_docstring(wrapped)
-    else:
-        return wrapped
+    return wrapped
 
 
 def _add_class_docstring(cls):
-    """Add experimental tag to the class doc string"""
+    """Add experimental tag to the class doc string."""
 
     def _add_class_warning(func=None):
-        """Add warning message for class init"""
+        """Add warning message for class init."""
 
         @functools.wraps(func)
         def wrapped(*args, **kwargs):
@@ -53,7 +53,7 @@ def _add_class_docstring(cls):
 
 
 def _add_method_docstring(func=None):
-    """Add experimental tag to the method doc string"""
+    """Add experimental tag to the method doc string."""
     doc_string = DOCSTRING_TEMPLATE.format(EXPERIMENTAL_METHOD_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
     if func.__doc__:
         func.__doc__ = _add_note_to_docstring(func.__doc__, doc_string)
@@ -72,16 +72,16 @@ def _add_method_docstring(func=None):
 
 
 def _add_note_to_docstring(doc_string, note):
-    """Adds experimental note to docstring at the top and
-    correctly indents original docstring.
-    """
+    """Adds experimental note to docstring at the top and correctly indents
+    original docstring."""
     indent = _get_indentation_size(doc_string)
     doc_string = doc_string.rjust(len(doc_string) + indent)
     return note + doc_string
 
 
 def _get_indentation_size(doc_string):
-    """Finds the minimum indentation of all non-blank lines after the first line"""
+    """Finds the minimum indentation of all non-blank lines after the first
+    line."""
     lines = doc_string.expandtabs().splitlines()
     indent = sys.maxsize
     for line in lines[1:]:
@@ -110,6 +110,5 @@ def _is_warning_cached(warning_msg):
     # this prevents duplicated warnings got printed when user does a loop call on a method or a class
     if warning_msg in _warning_cache:
         return True
-    else:
-        _warning_cache.add(warning_msg)
-        return False
+    _warning_cache.add(warning_msg)
+    return False

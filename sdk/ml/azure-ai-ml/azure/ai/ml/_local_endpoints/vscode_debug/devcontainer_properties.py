@@ -7,7 +7,8 @@
 
 
 from typing import Optional
-from azure.ai.ml.constants import LocalEndpointConstants
+
+from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
 
 class Image(object):
@@ -21,7 +22,8 @@ class Image(object):
 
 
 class Build(object):
-    """Python object representation of devcontainer build.dockerfile property."""
+    """Python object representation of devcontainer build.dockerfile
+    property."""
 
     def __init__(
         self,
@@ -116,7 +118,7 @@ class RunArgs(object):
 class OverrideCommand(object):
     def __init__(self):
         pass
-
+    # pylint: disable=no-self-use
     def to_dict(self) -> dict:
         return {"overrideCommand": True}
 
@@ -124,7 +126,7 @@ class OverrideCommand(object):
 class Extensions(object):
     def __init__(self):
         pass
-
+    # pylint: disable=no-self-use
     def to_dict(self) -> dict:
         return {"extensions": ["ms-python.python", "ms-toolsai.vscode-ai-inference"]}
 
@@ -132,7 +134,7 @@ class Extensions(object):
 class Settings(object):
     def __init__(self):
         pass
-
+    # pylint: disable=no-self-use
     def to_dict(self) -> dict:
         return {
             "settings": {

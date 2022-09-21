@@ -417,7 +417,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         # If the file is small, the download is complete at this point.
         # If file size is large, download the rest of the file in chunks.
         if response.properties.size != self.size:
-            # Lock on the etag. This can be overriden by the user by specifying '*'
+            # Lock on the etag. This can be overridden by the user by specifying '*'
             if self._request_options.get("modified_access_conditions"):
                 if not self._request_options["modified_access_conditions"].if_match:
                     self._request_options["modified_access_conditions"].if_match = response.properties.etag

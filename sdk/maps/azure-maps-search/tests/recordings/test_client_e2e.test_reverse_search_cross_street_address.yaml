@@ -1,0 +1,46 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-maps-search/1.0-preview Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      subscription-key:
+      - <RealSubscriptionKey>
+      x-ms-client-id:
+      - <RealClientId>
+    method: GET
+    uri: https://atlas.microsoft.com/search/address/reverse/crossStreet/json?api-version=1.0&query=25.0338053,121.5640089
+  response:
+    body:
+      string: "{\"summary\":{\"numResults\":1,\"queryTime\":105},\"addresses\":[{\"address\":{\"streetName\":\"\u4FE1\u7FA9\u8DEF\u4E94\u6BB5
+        & \u5E02\u5E9C\u8DEF\",\"crossStreet\":\"\u4FE1\u7FA9\u8DEF\u4E94\u6BB5\",\"municipalitySubdivision\":\"\u4FE1\u7FA9\u5340\",\"municipality\":\"\u53F0\u5317\u5E02\",\"countrySubdivision\":\"\u53F0\u5317\u5E02\",\"postalCode\":\"110\",\"countryCode\":\"TW\",\"country\":\"\u53F0\u7063\",\"countryCodeISO3\":\"TWN\",\"freeformAddress\":\"\u4FE1\u7FA9\u8DEF\u4E94\u6BB5
+        & \u5E02\u5E9C\u8DEF, \u4FE1\u7FA9\u5340, \u53F0\u5317\u5E02 110\",\"localName\":\"\u4FE1\u7FA9\u5340\",\"street\":\"\u5E02\u5E9C\u8DEF\"},\"position\":\"25.033,121.56347\"}]}"
+    headers:
+      content-length:
+      - '475'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 12 Aug 2022 09:51:54 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-cache:
+      - CONFIG_NOCACHE
+      x-content-type-options:
+      - nosniff
+      x-ms-azuremaps-region:
+      - West US 2
+      x-msedge-ref:
+      - 'Ref A: 09935ACEEF0141F28D779D4191ABD112 Ref B: TPE30EDGE0715 Ref C: 2022-08-12T09:51:54Z'
+    status:
+      code: 200
+      message: OK
+version: 1

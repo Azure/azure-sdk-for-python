@@ -4,13 +4,12 @@
 from typing import Any, Tuple
 
 import pytest
-from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    CustomNCrossValidations,
-    MLTableJobInput,
-    UserIdentity,
-)
-from azure.ai.ml.automl import classification, ClassificationPrimaryMetrics, ClassificationModels
+
+from azure.ai.ml import UserIdentity
+from azure.ai.ml._restclient.v2022_06_01_preview.models import CustomNCrossValidations, MLTableJobInput
+from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml.automl import ClassificationModels, ClassificationPrimaryMetrics, classification
+from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob
 
@@ -23,6 +22,7 @@ class TestAutoMLClassification:
         classification_job = classification(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
             target_column_name="target",
+            positive_label="label",
             enable_model_explainability=True,
             test_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/test.csv"),
             validation_data_size=0.2,
@@ -32,7 +32,7 @@ class TestAutoMLClassification:
             experiment_name="foo_exp",
             tags={"foo_tag": "bar"},
             properties={"_automl_internal_some_flag": True},
-            identity = identity,
+            identity=identity,
         )  # type: ClassificationJob
         # classification_task.set_limits(timeout=60, max_trials=100, max_concurrent_trials=4)
         classification_job.limits = {"timeout_minutes": 60, "max_trials": 100, "max_concurrent_trials": 4}
@@ -42,12 +42,12 @@ class TestAutoMLClassification:
         classification_job.set_featurization(enable_dnn_featurization=True)
 
         rest_obj = classification_job._to_rest_object()
-        assert rest_obj.properties.identity == identity
+        assert isinstance(rest_obj.properties.identity, RestUserIdentity)
         assert isinstance(
-            rest_obj.properties.task_details.data_settings.training_data.data, MLTableJobInput
+            rest_obj.properties.task_details.training_data, MLTableJobInput
         ), "Training data is not MLTableJobInput"
         assert isinstance(
-            rest_obj.properties.task_details.data_settings.test_data.data, MLTableJobInput
+            rest_obj.properties.task_details.test_data, MLTableJobInput
         ), "Test data is not MLTableJobInput"
 
         original_obj = ClassificationJob._from_rest_object(rest_obj)
@@ -60,14 +60,13 @@ class TestAutoMLClassification:
         assert original_obj.identity == identity
         # check if the original job inputs were restored
         assert original_obj.primary_metric == ClassificationPrimaryMetrics.ACCURACY, "Primary metric is not ACCURACY"
-        assert isinstance(original_obj._data.training_data.data, Input), "Training data is not Input"
-        assert original_obj._data.training_data.data.type == AssetTypes.MLTABLE, "Training data type not set correctly"
-        assert (
-            original_obj._data.training_data.data.path == "https://foo/bar/train.csv"
-        ), "Training data path not set correctly"
-        assert isinstance(original_obj._data.test_data.data, Input), "Test data is not Input"
-        assert original_obj._data.test_data.data.type == AssetTypes.MLTABLE, "Test data type not set correctly"
-        assert original_obj._data.test_data.data.path == "https://foo/bar/test.csv", "Test data path not set correctly"
+        assert original_obj.positive_label == "label", "Positive label is not label"
+        assert isinstance(original_obj.training_data, Input), "Training data is not Input"
+        assert original_obj.training_data.type == AssetTypes.MLTABLE, "Training data type not set correctly"
+        assert original_obj.training_data.path == "https://foo/bar/train.csv", "Training data path not set correctly"
+        assert isinstance(original_obj.test_data, Input), "Test data is not Input"
+        assert original_obj.test_data.type == AssetTypes.MLTABLE, "Test data type not set correctly"
+        assert original_obj.test_data.path == "https://foo/bar/test.csv", "Test data path not set correctly"
         assert original_obj.training.blocked_training_algorithms == [
             ClassificationModels.LOGISTIC_REGRESSION
         ], "Blocked models not set correctly"
@@ -89,10 +88,21 @@ class TestAutoMLClassification:
 
         rest_obj = classification_job._to_rest_object()
         assert isinstance(
-            rest_obj.properties.task_details.data_settings.validation_data.n_cross_validations,
+            rest_obj.properties.task_details.n_cross_validations,
             type(n_cross_validations[1]),
         ), "Validation data is not CustomNCrossValidations"
         if n_cross_validations[0] is not None:
             assert (
-                rest_obj.properties.task_details.data_settings.validation_data.n_cross_validations.value == 5
+                rest_obj.properties.task_details.n_cross_validations.value == 5
             ), "N cross validations not set correctly"
+
+    def test_training_settings_model_explainability(self):
+        # Create AutoML Classification Task
+        classification_job = classification(
+            training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
+            target_column_name="target",
+        )
+        rest_obj = classification_job._to_rest_object()
+        # make sure by default enable_model_explainability is set to None
+        assert classification_job.training.enable_model_explainability == None
+        assert rest_obj.properties.task_details.training_settings.enable_model_explainability == None

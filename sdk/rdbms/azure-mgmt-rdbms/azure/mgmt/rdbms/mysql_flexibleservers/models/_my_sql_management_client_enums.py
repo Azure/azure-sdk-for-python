@@ -10,6 +10,16 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AdministratorName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+
+    ACTIVE_DIRECTORY = "ActiveDirectory"
+
+class AdministratorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the sever administrator.
+    """
+
+    ACTIVE_DIRECTORY = "ActiveDirectory"
+
 class ConfigurationSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Source of the configuration.
     """

@@ -3,21 +3,30 @@
 # ---------------------------------------------------------
 
 import logging
-import copy
-from typing import Any
+from abc import ABC
 
-from azure.ai.ml._restclient.v2021_10_01.models import (
-    CommandJobLimits as RestCommandJobLimits,
-    SweepJobLimits as RestSweepJobLimits,
-)
+from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJobLimits as RestCommandJobLimits
+from azure.ai.ml._restclient.v2022_06_01_preview.models import SweepJobLimits as RestSweepJobLimits
 from azure.ai.ml._utils.utils import from_iso_duration_format, to_iso_duration_format
+from azure.ai.ml.constants import JobType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-
 
 module_logger = logging.getLogger(__name__)
 
 
-class CommandJobLimits(RestCommandJobLimits, RestTranslatableMixin):
+class JobLimits(RestTranslatableMixin, ABC):
+    def __init__(
+        self,
+    ):
+        self.type = None
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, JobLimits):
+            return NotImplemented
+        return self._to_rest_object() == other._to_rest_object()
+
+
+class CommandJobLimits(JobLimits):
     """Command Job limit class.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -27,31 +36,24 @@ class CommandJobLimits(RestCommandJobLimits, RestTranslatableMixin):
     :type timeout: int
     """
 
-    def __init__(self, *, timeout: int = None, **kwargs):
-        super().__init__(timeout=timeout, **kwargs)
-
-    @property
-    def timeout(self) -> int:
-        return from_iso_duration_format(self.__dict__["timeout"])
-
-    @timeout.setter
-    def timeout(self, value: int) -> None:
-        self.__dict__["timeout"] = to_iso_duration_format(value)
+    def __init__(self, *, timeout: int = None):
+        super().__init__()
+        self.type = JobType.COMMAND
+        self.timeout = timeout
 
     def _to_rest_object(self) -> RestCommandJobLimits:
-        return RestCommandJobLimits(**self.__dict__)
+        return RestCommandJobLimits(timeout=to_iso_duration_format(self.timeout))
 
     @classmethod
     def _from_rest_object(cls, obj: RestCommandJobLimits) -> "CommandJobLimits":
         if not obj:
             return None
 
-        result = cls()
-        result.__dict__.update(obj.as_dict())
+        result = cls(timeout=from_iso_duration_format(obj.timeout))
         return result
 
 
-class SweepJobLimits(RestSweepJobLimits, RestTranslatableMixin):
+class SweepJobLimits(JobLimits):
     """Sweep Job limit class.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -74,49 +76,69 @@ class SweepJobLimits(RestSweepJobLimits, RestTranslatableMixin):
         max_total_trials: int = None,
         timeout: int = None,
         trial_timeout: int = None,
-        **kwargs: Any
     ):
-        super().__init__(
-            max_concurrent_trials=max_concurrent_trials,
-            max_total_trials=max_total_trials,
-            timeout=timeout,
-            trial_timeout=trial_timeout,
-            **kwargs
-        )
+        super().__init__()
+        self.type = JobType.SWEEP
+        self.max_concurrent_trials = max_concurrent_trials
+        self.max_total_trials = max_total_trials
+        self._timeout = _get_floored_timeout(timeout)
+        self._trial_timeout = _get_floored_timeout(trial_timeout)
 
     @property
     def timeout(self) -> int:
-        return from_iso_duration_format(self.__dict__["timeout"])
+        return self._timeout
 
     @timeout.setter
     def timeout(self, value: int) -> None:
-        # Bug 1335978:  Service rounds durations less than 60 seconds to 60 days.
-        # If duration is non-0 and less than 60, set to 60.
-        floored_timeout = value if not value or value > 60 else 60
-        self.__dict__["timeout"] = to_iso_duration_format(floored_timeout)
+        self._timeout = _get_floored_timeout(value)
 
     @property
     def trial_timeout(self) -> int:
-        return from_iso_duration_format(self.__dict__["trial_timeout"])
+        return self._trial_timeout
 
     @trial_timeout.setter
     def trial_timeout(self, value: int) -> None:
-        # Bug 1335978:  Service rounds durations less than 60 seconds to 60 days.
-        # If duration is non-0 and less than 60, set to 60.
-        floored_timeout = value if not value or value > 60 else 60
-        self.__dict__["trial_timeout"] = to_iso_duration_format(floored_timeout)
+        self._trial_timeout = _get_floored_timeout(value)
 
     def _to_rest_object(self) -> RestSweepJobLimits:
-        data = copy.deepcopy(self.__dict__)
-        data.pop("additional_properties", None)
-
-        return RestSweepJobLimits(**data)
+        return RestSweepJobLimits(
+            max_concurrent_trials=self.max_concurrent_trials,
+            max_total_trials=self.max_total_trials,
+            timeout=to_iso_duration_format(self.timeout),
+            trial_timeout=to_iso_duration_format(self.trial_timeout),
+        )
 
     @classmethod
     def _from_rest_object(cls, obj: RestSweepJobLimits) -> "SweepJobLimits":
         if not obj:
             return None
 
-        result = cls()
-        result.__dict__.update(obj.as_dict())
-        return result
+        return cls(
+            max_concurrent_trials=obj.max_concurrent_trials,
+            max_total_trials=obj.max_total_trials,
+            timeout=from_iso_duration_format(obj.timeout),
+            trial_timeout=from_iso_duration_format(obj.trial_timeout),
+        )
+
+
+def _get_floored_timeout(value: int) -> int:
+    # Bug 1335978:  Service rounds durations less than 60 seconds to 60 days.
+    # If duration is non-0 and less than 60, set to 60.
+    return value if not value or value > 60 else 60
+
+
+class DoWhileJobLimits(JobLimits):
+    """DoWhile Job limit class.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param max_iteration_count:
+    :type max_iteration_count: int
+    """
+
+    def __init__(self, *, max_iteration_count: int = None, **kwargs):
+        self._max_iteration_count = max_iteration_count
+
+    @property
+    def max_iteration_count(self) -> int:
+        return self._max_iteration_count

@@ -38,5 +38,4 @@ async def handle_event_grid_notifications(event_grid_events):
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(handle_event_grid_notifications([]))
+    asyncio.run(handle_event_grid_notifications([]))

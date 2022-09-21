@@ -2,19 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
+
 import logging
 from typing import Any
-from azure.ai.ml._schema.core.fields import ArmStr, StringTransformedEnum
-from marshmallow import fields, post_load, validates_schema, ValidationError, pre_load, validates
-from azure.ai.ml._schema import NestedField, ExperimentalField
-from azure.ai.ml._schema._endpoint.endpoint import EndpointSchema
-from azure.ai.ml.constants import PublicNetworkAccess
 
-from azure.ai.ml.constants import (
-    AzureMLResourceType,
-    BASE_PATH_CONTEXT_KEY,
-    EndpointYamlFields,
-)
+from marshmallow import ValidationError, fields, post_load, validates
+
+from azure.ai.ml._schema._endpoint.endpoint import EndpointSchema
+from azure.ai.ml._schema.core.fields import ArmStr, ExperimentalField, StringTransformedEnum
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureMLResourceType, PublicNetworkAccess
 
 module_logger = logging.getLogger(__name__)
 
@@ -24,7 +21,8 @@ class OnlineEndpointSchema(EndpointSchema):
         keys=fields.Str(),
         values=fields.Int(),
         metadata={
-            "description": "a dict with key as deployment name and value as traffic percentage. The values need to sum to 100"
+            "description": """a dict with key as deployment name and value as traffic percentage.
+             The values need to sum to 100 """
         },
     )
     kind = fields.Str(dump_only=True)
@@ -34,7 +32,8 @@ class OnlineEndpointSchema(EndpointSchema):
             keys=fields.Str(),
             values=fields.Int(),
             metadata={
-                "description": "a dict with key as deployment name and value as traffic percentage. Only one key will be accepted and value needs to be less than or equal to 50%"
+                "description": """a dict with key as deployment name and value as traffic percentage.
+                 Only one key will be accepted and value needs to be less than or equal to 50%"""
             },
         )
     )
@@ -43,12 +42,6 @@ class OnlineEndpointSchema(EndpointSchema):
     def validate_traffic(self, data, **kwargs):
         if sum(data.values()) > 100:
             raise ValidationError("Traffic rule percentages must sum to less than or equal to 100%")
-
-    @post_load
-    def make(self, data: Any, **kwargs: Any) -> Any:
-        from azure.ai.ml.entities import OnlineEndpoint
-
-        return OnlineEndpoint(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
 
 
 class KubernetesOnlineEndpointSchema(OnlineEndpointSchema):
