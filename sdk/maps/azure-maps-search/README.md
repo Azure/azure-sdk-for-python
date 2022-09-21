@@ -47,9 +47,7 @@ from azure.maps.search import MapsSearchClient
 
 credential = AzureKeyCredential(os.environ.get("AZURE_SUBSCRIPTION_KEY"))
 
-search_client = MapsSearchClient(
-    credential=credential,
-)
+search_client = MapsSearchClient(credential=credential)
 ```
 
 #### 2. Authenticate with an Azure Active Directory credential
@@ -68,14 +66,17 @@ can be used to authenticate the client:
 Next, set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`
 
-You will also need to specify the Azure Maps resource you intend to use by specifying the `clientId` in the client options. The Azure Maps resource client id can be found in the Authentication sections in the Azure Maps resource. Please refer to the [documentation][how_to_manage_authentication] on how to find it.
+You will also need to specify the Azure Maps resource you intend to use by specifying the `client_id` in the client argument. The Azure Maps resource client id can be found in the Authentication sections in the Azure Maps resource. Please refer to the [documentation][how_to_manage_authentication] on how to find it.
 
 ```python
 from azure.maps.search import MapsSearchClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-search_client = MapsSearchClient(credential=credential)
+search_client = MapsSearchClient(
+    client_id="<Azure Maps Client ID>",
+    credential=credential
+)
 ```
 
 ## Key concepts
@@ -373,6 +374,5 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [register_aad_app]: https://docs.microsoft.com/powershell/module/Az.Resources/New-AzADApplication?view=azps-8.0.0
 [maps_authentication_aad]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication
-[create_new_application_registration]: https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/applicationsListBlade/quickStartType/AspNetWebAppQuickstartPage/sourceType/docs
 [manage_aad_auth_page]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication
 [how_to_manage_authentication]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication#view-authentication-details
