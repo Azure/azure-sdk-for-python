@@ -18,7 +18,7 @@ import os
 import uuid
 from azure.servicebus.management import ServiceBusAdministrationClient
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 QUEUE_NAME = "sb_mgmt_queue" + str(uuid.uuid4())
 
 
