@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._client import AzureAppConfiguration
+from ._azure_app_configuration import AzureAppConfiguration
 
 try:
     from ._patch import __all__ as _patch_all

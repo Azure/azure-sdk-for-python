@@ -7,18 +7,15 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, Optional
 
-from azure.core import PipelineClient
-from azure.core.rest import HttpRequest, HttpResponse
+from azure.core import AsyncPipelineClient
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 
+from .. import models
+from .._serialization import Deserializer, Serializer
 from ._configuration import AzureAppConfigurationConfiguration
-from ._operations import AzureAppConfigurationOperationsMixin
-from ._serialization import Deserializer, Serializer
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
+from .operations import AzureAppConfigurationOperationsMixin
 
 
 class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
@@ -39,20 +36,21 @@ class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):  # pylint: di
     ) -> None:
         _endpoint = "{endpoint}"
         self._config = AzureAppConfigurationConfiguration(endpoint=endpoint, sync_token=sync_token, **kwargs)
-        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
+        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self._serialize = Serializer(client_models)
+        self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
 
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = client.send_request(request)
-        <HttpResponse: 200 OK>
+        >>> response = await client._send_request(request)
+        <AsyncHttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
@@ -60,7 +58,7 @@ class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):  # pylint: di
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.HttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
 
         request_copy = deepcopy(request)
@@ -71,15 +69,12 @@ class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):  # pylint: di
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> AzureAppConfiguration
-        self._client.__enter__()
+    async def __aenter__(self) -> "AzureAppConfiguration":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)
