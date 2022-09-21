@@ -6,10 +6,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Union, Any, List, TYPE_CHECKING
+from typing import Union, Any, List
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ..models import LatLon
@@ -34,8 +33,8 @@ def _authentication_policy(credential):
         )
     elif credential is not None and not hasattr(credential, "get_token"):
         raise TypeError(
-            "Unsupported credential: {}. Use an instance of AzureKeyCredential "
-            "or a token credential from azure.identity".format(type(credential))
+            f"Unsupported credential type: {type(credential)}. "
+            "Use an instance of AzureKeyCredential or a token credential from azure.identity"
         )
     return authentication_policy
 
@@ -300,4 +299,5 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
                 :dedent: 4
                 :caption: Returns a corresponding IANA ID, given a valid Windows Time Zone ID.
         """
-        return await self._timezone_client.convert_windows_timezone_to_iana(windows_timezone_id=windows_timezone_id, **kwargs)
+        return await self._timezone_client.convert_windows_timezone_to_iana(
+            windows_timezone_id=windows_timezone_id, **kwargs)

@@ -61,7 +61,7 @@ class TestMapsTimezoneClient(AzureRecordedTestCase):
     @MapsTimezonePreparer()
     @recorded_by_proxy
     def test_get_timezone_by_coordinate(self, **kwargs):
-        timezone = self.client.get_timezone_by_coordinates(coordinates=LatLon(52.5069,13.2843))
+        timezone = self.client.get_timezone_by_coordinates(coordinates=(52.5069,13.2843))
 
         assert timezone is not None
         assert timezone.version == '2022c'

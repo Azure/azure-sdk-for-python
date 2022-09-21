@@ -65,7 +65,6 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
@@ -78,11 +77,9 @@ setup(
         'azure',
         'azure.maps',
     ]),
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     install_requires=[
-        'msrest>=0.6.21',
-        'azure-common~=1.1',
-        'azure-mgmt-core>=1.3.0,<2.0.0',
-        "azure-core<2.0.0,>=1.10.0",
+        "msrest>=0.7.1",
+        "azure-core<2.0.0,>=1.24.0",
     ]
 )

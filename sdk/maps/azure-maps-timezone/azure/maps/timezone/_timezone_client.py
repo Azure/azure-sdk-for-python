@@ -6,9 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Union, Any, List, TYPE_CHECKING
+from typing import Union, Any, List
 from azure.core.credentials import AzureKeyCredential, TokenCredential
-from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.tracing.decorator import distributed_trace
 from .models import LatLon
@@ -33,8 +32,8 @@ def _authentication_policy(credential):
         )
     elif credential is not None and not hasattr(credential, "get_token"):
         raise TypeError(
-            "Unsupported credential: {}. Use an instance of AzureKeyCredential "
-            "or a token credential from azure.identity".format(type(credential))
+            f"Unsupported credential type: {type(credential)}. "
+            "Use an instance of AzureKeyCredential or a token credential from azure.identity"
         )
     return authentication_policy
 
