@@ -56,7 +56,6 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
             from azure.mgmt.network import NetworkManagementClient
             self.network_client = self.create_mgmt_client(NetworkManagementClient)
 
-
     # Before tests are run live a resource group needs to be created along with vnet and subnet
     # Note that when tests are run in live mode it is best to run one test at a time.
     @recorded_by_proxy
