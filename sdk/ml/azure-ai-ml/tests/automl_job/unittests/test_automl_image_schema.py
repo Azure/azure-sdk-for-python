@@ -74,10 +74,18 @@ def compute_binding_expected(mock_workspace_scope: OperationScope) -> str:
 
 @pytest.fixture
 def expected_image_limits(run_type: str) -> RestImageLimitSettings:
+    maxTrials = 1
+    maxConcurrentTrials = 1
+    if run_type == "sweep":
+        maxTrials = 20
+        maxConcurrentTrials = 4
+    elif run_type == "automode":
+        maxTrials = 2
+
     return RestImageLimitSettings(
         timeout=to_iso_duration_format_mins(60),
-        max_concurrent_trials=4 if run_type == "sweep" else 1,
-        max_trials=2 if run_type == "automode" else 1,
+        max_concurrent_trials=maxConcurrentTrials,
+        max_trials=maxTrials,
     )
 
 
