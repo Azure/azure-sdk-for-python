@@ -188,7 +188,7 @@ class JobOperations(_ScopeDependentOperations):
                 self._credential, base_url=self._api_url, **self._service_client_kwargs
             )
             self._dataset_dataplane_operations_client = DatasetDataplaneOperations(
-                self._operation_scope, service_client_dataset_dataplane
+                self._operation_scope, self._operation_config, service_client_dataset_dataplane
             )
         return self._dataset_dataplane_operations_client
 

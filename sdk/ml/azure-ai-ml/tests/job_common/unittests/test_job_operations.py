@@ -78,8 +78,8 @@ def mock_workspace_operation(
 
 
 @pytest.fixture
-def mock_runs_operation(mock_workspace_scope: OperationScope, mock_aml_services_2021_10_01: Mock) -> RunOperations:
-    yield RunOperations(operation_scope=mock_workspace_scope, service_client=mock_aml_services_2021_10_01)
+def mock_runs_operation(mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2021_10_01: Mock) -> RunOperations:
+    yield RunOperations(operation_scope=mock_workspace_scope, operation_config=mock_operation_config, service_client=mock_aml_services_2021_10_01)
 
 
 @pytest.fixture
