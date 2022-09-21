@@ -1,6 +1,16 @@
 ## Release History
 
-### 4.3.1b1 (Unreleased)
+### 4.3.1b2 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
+### 4.3.1b1 (2022-09-19)
 
 #### Features Added
 - GA release of integrated cache functionality. For more information on integrated cache please see [Azure Cosmos DB integrated cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache).

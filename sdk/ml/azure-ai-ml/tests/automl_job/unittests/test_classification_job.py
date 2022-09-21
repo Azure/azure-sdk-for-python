@@ -105,4 +105,4 @@ class TestAutoMLClassification:
         rest_obj = classification_job._to_rest_object()
         # make sure by default enable_model_explainability is set to None
         assert classification_job.training.enable_model_explainability == None
-        assert rest_obj.properties.task_details.training_settings .enable_model_explainability == None
+        assert rest_obj.properties.task_details.training_settings.enable_model_explainability == None
