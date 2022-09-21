@@ -338,6 +338,10 @@ def loaded_image_classification_job(
     test_config = load_yaml(test_schema_path)
     if run_type == "automode":
         test_config["limits"]["max_trials"] = 2
+        test_config["limits"]["max_concurrent_trials"] = 1
+    elif run_type == "single":
+        test_config["limits"]["max_trials"] = 1
+        test_config["limits"]["max_concurrent_trials"] = 1
     if run_type != "sweep":
         # Remove search_space and sweep sections from the yaml
         del test_config["search_space"]
@@ -362,6 +366,10 @@ def loaded_image_classification_multilabel_job(
     test_config = load_yaml(test_schema_path)
     if run_type == "automode":
         test_config["limits"]["max_trials"] = 2
+        test_config["limits"]["max_concurrent_trials"] = 1
+    elif run_type == "single":
+        test_config["limits"]["max_trials"] = 1
+        test_config["limits"]["max_concurrent_trials"] = 1
     if run_type != "sweep":
         # Remove search_space and sweep sections from the yaml
         del test_config["search_space"]
@@ -384,6 +392,10 @@ def loaded_image_object_detection_job(
     test_config = load_yaml(test_schema_path)
     if run_type == "automode":
         test_config["limits"]["max_trials"] = 2
+        test_config["limits"]["max_concurrent_trials"] = 1
+    elif run_type == "single":
+        test_config["limits"]["max_trials"] = 1
+        test_config["limits"]["max_concurrent_trials"] = 1
     if run_type != "sweep":
         # Remove search_space and sweep sections from the yaml
         del test_config["search_space"]
@@ -406,6 +418,10 @@ def loaded_image_instance_segmentation_job(
     test_config = load_yaml(test_schema_path)
     if run_type == "automode":
         test_config["limits"]["max_trials"] = 2
+        test_config["limits"]["max_concurrent_trials"] = 1
+    elif run_type == "single":
+        test_config["limits"]["max_trials"] = 1
+        test_config["limits"]["max_concurrent_trials"] = 1
     if run_type != "sweep":
         # Remove search_space and sweep sections from the yaml
         del test_config["search_space"]
