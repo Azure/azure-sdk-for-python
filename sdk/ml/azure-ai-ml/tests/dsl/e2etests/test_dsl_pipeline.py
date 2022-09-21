@@ -32,7 +32,7 @@ from azure.ai.ml.entities import Data, PipelineJob
 from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
 
-from .._util import _DSL_TIMEOUT_SECOND, cancel_pipeline_job
+from .._util import _DSL_TIMEOUT_SECOND
 
 from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
 
@@ -1618,8 +1618,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         pipeline = parallel_in_pipeline(data)
 
-        # submit pipeline job
-        pipeline_job = cancel_pipeline_job(pipeline, client)
+        pipeline_job = client.create_or_update(pipeline)  # submit pipeline job
 
         actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
         expected_job = {
