@@ -176,8 +176,8 @@ class _AbstractTransport(object):
                 self.socket_settings,
                 self.read_timeout,
                 self.write_timeout,
+                connect_timeout=self.connect_timeout,
             )
-            self.sock.settimeout(0.2)
             # we've sent the banner; signal connect
             # EINTR, EAGAIN, EWOULDBLOCK would signal that the banner
             # has _not_ been sent
@@ -317,7 +317,7 @@ class _AbstractTransport(object):
                     # hurray, we established connection
                     return
 
-    def _init_socket(self, socket_settings, read_timeout, write_timeout):
+    def _init_socket(self, socket_settings, read_timeout, write_timeout, *, connect_timeout=1):
         self.sock.settimeout(None)  # set socket back to blocking mode
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
         self._set_socket_options(socket_settings)
@@ -335,8 +335,8 @@ class _AbstractTransport(object):
         self._setup_transport()
         # TODO: a greater timeout value is needed in long distance communication
         #  we should either figure out a reasonable value error/dynamically adjust the timeout
-        #  1 second is enough for perf analysis
-        self.sock.settimeout(1)  # set socket back to non-blocking mode
+        #  0.2 second is enough for perf analysis
+        self.sock.settimeout(connect_timeout)  # set socket back to non-blocking mode
 
     def _get_tcp_socket_defaults(self, sock):
         tcp_opts = {}

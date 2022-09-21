@@ -215,7 +215,7 @@ class ClientBaseAsync(ClientBase):
         **kwargs: Any
     ) -> None:
         self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))
-        uamqp_transport = kwargs.pop("uamqp_transport", False)
+        uamqp_transport = kwargs.get("uamqp_transport", False)
         if uamqp_transport and not UamqpTransportAsync:
             raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.0,<2.0.0`.")
         self._amqp_transport = UamqpTransportAsync if uamqp_transport else PyamqpTransportAsync
@@ -229,7 +229,6 @@ class ClientBaseAsync(ClientBase):
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
             credential=self._credential,
-            uamqp_transport=uamqp_transport,
             amqp_transport=self._amqp_transport,
             **kwargs
         )
