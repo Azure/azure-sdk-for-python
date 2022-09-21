@@ -49,7 +49,7 @@ class AutoScaleTest(unittest.TestCase):
 
     def test_auto_scale(self):
         created_container = self.created_database.create_container(
-            id='container_with_auto_scale',
+            id='auto_scale',
             partition_key=PartitionKey(path="/id"),
             offer_throughput=ThroughputProperties(auto_scale_max_throughput=7000, auto_scale_increment_percent=0)
 
@@ -61,7 +61,7 @@ class AutoScaleTest(unittest.TestCase):
         self.assertEqual(created_container_properties.auto_scale_increment_percent, 0)
         self.assertEqual(created_container_properties.offer_throughput, None)
 
-        self.created_database.delete_container(created_container.id)
+        self.created_database.delete_container(created_container)
 
         # Testing the incorrect passing of an input value of the max_throughput to verify negative behavior
         with pytest.raises(exceptions.CosmosHttpResponseError) as e:
@@ -74,7 +74,7 @@ class AutoScaleTest(unittest.TestCase):
     def test_create_container_if_not_exist(self):
         # Testing auto_scale_settings for the create_container_if_not_exists method
         created_container = self.created_database.create_container_if_not_exists(
-            id='container_if_not_exist_with_auto_scale',
+            id='auto_scale_2',
             partition_key=PartitionKey(path="/id"),
             offer_throughput=ThroughputProperties(auto_scale_max_throughput=1000, auto_scale_increment_percent=3)
         )
@@ -90,7 +90,7 @@ class AutoScaleTest(unittest.TestCase):
 
     def test_create_database(self):
         # Testing auto_scale_settings for the create_database method
-        created_database = self.client.create_database("created_db", offer_throughput=ThroughputProperties(
+        created_database = self.client.create_database("db_auto_scale", offer_throughput=ThroughputProperties(
             auto_scale_max_throughput=5000,
             auto_scale_increment_percent=0))
         created_db_properties = created_database.get_throughput()
@@ -101,13 +101,14 @@ class AutoScaleTest(unittest.TestCase):
         self.assertEqual(
             created_db_properties.auto_scale_increment_percent, 0)
 
-        self.client.delete_database("created_db")
+        self.client.delete_database("db_auto_scale")
 
     def test_create_database_if_not_exists(self):
         # Testing auto_scale_settings for the create_database_if_not_exists method
-        created_database = self.client.create_database_if_not_exists("created_db2", offer_throughput=ThroughputProperties(
-            auto_scale_max_throughput=9000,
-            auto_scale_increment_percent=11))
+        created_database = self.client.create_database_if_not_exists("db_auto_scale_2",
+                                                                     offer_throughput=ThroughputProperties(
+                                                                         auto_scale_max_throughput=9000,
+                                                                         auto_scale_increment_percent=11))
         created_db_properties = created_database.get_throughput()
         # Testing the input value of the max_throughput
         self.assertNotEqual(
@@ -116,7 +117,7 @@ class AutoScaleTest(unittest.TestCase):
         self.assertEqual(
             created_db_properties.auto_scale_increment_percent, 11)
 
-        self.client.delete_database("created_db2")
+        self.client.delete_database("db_auto_scale_2")
 
     def test_replace_throughput(self):
         created_container = self.created_database.create_container(
@@ -136,4 +137,4 @@ class AutoScaleTest(unittest.TestCase):
 
         self.created_database.delete_container(created_container.id)
 
-        self.client.delete_database(test_config._test_config.TEST_DATABASE_ID)
+        self.client.delete_database(self.created_database)
