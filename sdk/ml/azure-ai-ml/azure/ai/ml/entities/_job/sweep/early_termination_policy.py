@@ -32,13 +32,13 @@ class EarlyTerminationPolicy(ABC, RestTranslatableMixin):
 
         policy = None
         if obj.policy_type == EarlyTerminationPolicyType.BANDIT:
-            policy = BanditPolicy._from_rest_object(obj)
+            policy = BanditPolicy._from_rest_object(obj)  # pylint: disable=protected-access
 
         if obj.policy_type == EarlyTerminationPolicyType.MEDIAN_STOPPING:
-            policy = MedianStoppingPolicy._from_rest_object(obj)
+            policy = MedianStoppingPolicy._from_rest_object(obj)  # pylint: disable=protected-access
 
         if obj.policy_type == EarlyTerminationPolicyType.TRUNCATION_SELECTION:
-            policy = TruncationSelectionPolicy._from_rest_object(obj)
+            policy = TruncationSelectionPolicy._from_rest_object(obj)  # pylint: disable=protected-access
 
         return policy
 
