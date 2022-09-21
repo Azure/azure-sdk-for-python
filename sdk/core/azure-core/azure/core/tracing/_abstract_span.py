@@ -49,7 +49,7 @@ class AbstractSpan(Protocol):
         # type: (Optional[Any], Optional[str], Any) -> None
         """
         If a span is given wraps the span. Else a new span is created.
-        The optional arguement name is given to the new span.
+        The optional argument name is given to the new span.
         """
 
     def span(self, name="child_span", **kwargs):

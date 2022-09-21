@@ -4,14 +4,13 @@
 # ------------------------------------
 import os
 import logging
-from typing import TYPE_CHECKING
+from typing import List
 
 from six.moves.urllib_parse import urlparse
 
+from azure.core.exceptions import ClientAuthenticationError
 from .._constants import EnvironmentVariables, KnownAuthorities
 
-if TYPE_CHECKING:
-    from typing import Any, Optional
 
 try:
     from contextvars import ContextVar
@@ -66,10 +65,14 @@ def validate_tenant_id(tenant_id):
         )
 
 
-def resolve_tenant(default_tenant, tenant_id=None, **_):
-    # type: (str, Optional[str], **Any) -> str
+def resolve_tenant(
+        default_tenant: str,
+        tenant_id: str = None,
+        *,
+        additionally_allowed_tenants: List[str] = [],
+        **_) -> str:
     """Returns the correct tenant for a token request given a credential's configuration"""
-    if tenant_id is None:
+    if tenant_id is None or tenant_id == default_tenant:
         return default_tenant
     if (
         default_tenant == "adfs"
@@ -79,10 +82,20 @@ def resolve_tenant(default_tenant, tenant_id=None, **_):
                      "but the configured value was used since multi tenant authentication has been disabled. "
                      "Configured tenant ID: %s, Requested tenant ID %s", default_tenant, tenant_id)
         return default_tenant
-    _LOGGER.info("A token was requested for a different tenant than was configured on the credential, "
-                 "and the requested tenant ID was used to authenticate. Configured tenant ID: %s, "
-                 "Requested tenant ID %s", default_tenant, tenant_id)
-    return tenant_id
+    if not default_tenant:
+        return tenant_id
+    if '*' in additionally_allowed_tenants or tenant_id in additionally_allowed_tenants:
+        _LOGGER.info("A token was requested for a different tenant than was configured on the credential, "
+                     "and the requested tenant ID was used to authenticate. Configured tenant ID: %s, "
+                     "Requested tenant ID %s", default_tenant, tenant_id)
+        return tenant_id
+    raise ClientAuthenticationError(
+        message='The current credential is not configured to acquire tokens for tenant {}. '
+                'To enable acquiring tokens for this tenant add it to the additionally_allowed_tenants '
+                'when creating the credential, or add "*" to additionally_allowed_tenants to allow '
+                'acquiring tokens for any tenant.'.format(tenant_id)
+    )
+
 
 
 # pylint:disable=wrong-import-position

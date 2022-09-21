@@ -5,6 +5,8 @@
 ### Features Added
 
 ### Breaking Changes
+* `QuestionAnsweringProjectsClient` was renamed to `QuestionAnsweringAuthoringClient`.
+* The `azure.ai.language.questionanswering.projects` namespace was renamed to `azure.ai.language.questionanswering.authoring`
 
 ### Bugs Fixed
 

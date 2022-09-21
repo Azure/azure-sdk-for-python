@@ -16,5 +16,6 @@ class TestPurviewCatalogSmokeAsync(PurviewCatalogTestAsync):
     async def test_basic_smoke_test(self, purviewcatalog_endpoint):
         client = self.create_async_client(endpoint=purviewcatalog_endpoint)
         response = await client.types.get_all_type_definitions()
-
+        
+        # cspell: disable-next-line
         assert set(response.keys()) == set(['enumDefs', 'structDefs', 'classificationDefs', 'entityDefs', 'relationshipDefs','businessMetadataDefs'])

@@ -4,11 +4,12 @@
 
 # pylint: disable=protected-access
 
-import logging
 from typing import Any, Iterable, Union
 
+from marshmallow.exceptions import ValidationError as SchemaValidationError
+
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
@@ -22,13 +23,14 @@ from azure.ai.ml._utils._asset_utils import (
     _get_latest,
     _resolve_label_to_asset,
 )
+from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
-from azure.ai.ml.constants import ARM_ID_PREFIX, AzureMLResourceType
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType
 from azure.ai.ml.entities._assets import Environment
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
-logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
-logger.propagate = False
-module_logger = logging.getLogger(__name__)
+ops_logger = OpsLogger(__name__)
+logger, module_logger = ops_logger.logger, ops_logger.module_logger
 
 
 class EnvironmentOperations(_ScopeDependentOperations):
@@ -47,8 +49,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ):
         super(EnvironmentOperations, self).__init__(operation_scope)
-        if "app_insights_handler" in kwargs:
-            logger.addHandler(kwargs.pop("app_insights_handler"))
+        ops_logger.update_info(kwargs)
         self._kwargs = kwargs
         self._containers_operations = service_client.environment_containers
         self._version_operations = service_client.environment_versions
@@ -68,70 +69,82 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :type environment: Environment
         :return: Created or updated Environment object
         """
+        try:
+            sas_uri = None
 
-        sas_uri = None
-
-        if not environment.version and self._registry_name:
-            raise Exception("Environment version is required for registry")
-
-        if self._registry_name:
-            sas_uri = get_sas_uri_for_registry_asset(
-                service_client=self._service_client,
-                name=environment.name,
-                version=environment.version,
-                resource_group=self._resource_group_name,
-                registry=self._registry_name,
-                body=get_asset_body_for_registry_storage(
-                    self._registry_name,
-                    "environments",
-                    environment.name,
-                    environment.version,
-                ),
-            )
-            if not sas_uri:
-                module_logger.debug(
-                    "Getting the existing asset name: %s, version: %s", environment.name, environment.version
+            if not environment.version and self._registry_name:
+                msg = "Environment version is required for registry"
+                raise ValidationException(
+                    message=msg,
+                    no_personal_data_message=msg,
+                    target=ErrorTarget.ENVIRONMENT,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.MISSING_FIELD,
                 )
-                return self.get(name=environment.name, version=environment.version)
 
-        environment = _check_and_upload_env_build_context(environment=environment, operations=self, sas_uri=sas_uri)
-
-        env_version_resource = environment._to_rest_object()
-
-        if environment._auto_increment_version:
-            env_rest_obj = _create_or_update_autoincrement(
-                name=environment.name,
-                body=env_version_resource,
-                version_operation=self._version_operations,
-                container_operation=self._containers_operations,
-                workspace_name=self._workspace_name,
-                **self._scope_kwargs,
-                **self._kwargs,
-            )
-        else:
-            env_rest_obj = (
-                self._version_operations.begin_create_or_update(
+            if self._registry_name:
+                sas_uri = get_sas_uri_for_registry_asset(
+                    service_client=self._service_client,
                     name=environment.name,
                     version=environment.version,
-                    registry_name=self._registry_name,
+                    resource_group=self._resource_group_name,
+                    registry=self._registry_name,
+                    body=get_asset_body_for_registry_storage(
+                        self._registry_name,
+                        "environments",
+                        environment.name,
+                        environment.version,
+                    ),
+                )
+                if not sas_uri:  # This means the env already exists and we just get the env
+                    module_logger.debug(
+                        "Getting the existing asset name: %s, version: %s", environment.name, environment.version
+                    )
+                    return self.get(name=environment.name, version=environment.version)
+
+            environment = _check_and_upload_env_build_context(environment=environment, operations=self, sas_uri=sas_uri)
+
+            env_version_resource = environment._to_rest_object()
+
+            if environment._auto_increment_version:
+                env_rest_obj = _create_or_update_autoincrement(
+                    name=environment.name,
                     body=env_version_resource,
-                    **self._scope_kwargs,
-                    **self._kwargs,
-                ).result()
-                if self._registry_name
-                else self._version_operations.create_or_update(
-                    name=environment.name,
-                    version=environment.version,
+                    version_operation=self._version_operations,
+                    container_operation=self._containers_operations,
                     workspace_name=self._workspace_name,
-                    body=env_version_resource,
                     **self._scope_kwargs,
                     **self._kwargs,
                 )
-            )
+            else:
+                env_rest_obj = (
+                    self._version_operations.begin_create_or_update(
+                        name=environment.name,
+                        version=environment.version,
+                        registry_name=self._registry_name,
+                        body=env_version_resource,
+                        **self._scope_kwargs,
+                        **self._kwargs,
+                    ).result()
+                    if self._registry_name
+                    else self._version_operations.create_or_update(
+                        name=environment.name,
+                        version=environment.version,
+                        workspace_name=self._workspace_name,
+                        body=env_version_resource,
+                        **self._scope_kwargs,
+                        **self._kwargs,
+                    )
+                )
 
-        if not env_rest_obj and self._registry_name:
-            env_rest_obj = self._get(name=environment.name, version=environment.version)
-        return Environment._from_rest_object(env_rest_obj)
+            if not env_rest_obj and self._registry_name:
+                env_rest_obj = self._get(name=environment.name, version=environment.version)
+            return Environment._from_rest_object(env_rest_obj)
+        except Exception as ex:
+            if isinstance(ex, (ValidationException, SchemaValidationError)):
+                log_and_raise_error(ex)
+            else:
+                raise ex
 
     def _get(self, name: str, version: str = None) -> EnvironmentVersionData:
         if version:
@@ -187,6 +200,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 target=ErrorTarget.ENVIRONMENT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
         if label:
@@ -199,6 +213,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 target=ErrorTarget.ENVIRONMENT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )
         name = _preprocess_environment_name(name)
         env_version_resource = self._get(name, version)

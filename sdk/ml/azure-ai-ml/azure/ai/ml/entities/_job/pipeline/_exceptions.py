@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, MlException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException
 
 
 class UserErrorException(MlException):
@@ -66,7 +66,7 @@ class UnexpectedAttributeError(KeywordError, AttributeError):
     def __init__(self, keyword, keywords=None):
         message = "Got an unexpected attribute %r" % keyword
         message += ", valid attributes: %s." % ", ".join("%r" % key for key in keywords) if keywords else "."
-        KeywordError.__init__(self, message=message, no_personal_data_message=message)
+        super().__init__(message=message, no_personal_data_message=message)
 
 
 class MissingPositionalArgsError(KeywordError):

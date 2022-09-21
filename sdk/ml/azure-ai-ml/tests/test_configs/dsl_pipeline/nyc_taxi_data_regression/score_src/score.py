@@ -1,9 +1,10 @@
 import argparse
-import pandas as pd
 import os
-from pathlib import Path
-from sklearn.linear_model import LinearRegression
 import pickle
+from pathlib import Path
+
+import pandas as pd
+from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 
 parser = argparse.ArgumentParser("score")
