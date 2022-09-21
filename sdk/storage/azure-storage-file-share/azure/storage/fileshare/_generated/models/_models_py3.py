@@ -293,7 +293,7 @@ class DirectoryItem(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar name: Required.
-    :vartype name: str
+    :vartype name: ~azure.storage.fileshare.models.StringEncoded
     :ivar file_id:
     :vartype file_id: str
     :ivar properties: File properties.
@@ -309,7 +309,7 @@ class DirectoryItem(_serialization.Model):
     }
 
     _attribute_map = {
-        "name": {"key": "Name", "type": "str"},
+        "name": {"key": "Name", "type": "StringEncoded"},
         "file_id": {"key": "FileId", "type": "str"},
         "properties": {"key": "Properties", "type": "FileProperty"},
         "attributes": {"key": "Attributes", "type": "str"},
@@ -320,7 +320,7 @@ class DirectoryItem(_serialization.Model):
     def __init__(
         self,
         *,
-        name: str,
+        name: "_models.StringEncoded",
         file_id: Optional[str] = None,
         properties: Optional["_models.FileProperty"] = None,
         attributes: Optional[str] = None,
@@ -329,7 +329,7 @@ class DirectoryItem(_serialization.Model):
     ):
         """
         :keyword name: Required.
-        :paramtype name: str
+        :paramtype name: ~azure.storage.fileshare.models.StringEncoded
         :keyword file_id:
         :paramtype file_id: str
         :keyword properties: File properties.
@@ -418,7 +418,7 @@ class FileItem(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar name: Required.
-    :vartype name: str
+    :vartype name: ~azure.storage.fileshare.models.StringEncoded
     :ivar file_id:
     :vartype file_id: str
     :ivar properties: File properties. Required.
@@ -435,7 +435,7 @@ class FileItem(_serialization.Model):
     }
 
     _attribute_map = {
-        "name": {"key": "Name", "type": "str"},
+        "name": {"key": "Name", "type": "StringEncoded"},
         "file_id": {"key": "FileId", "type": "str"},
         "properties": {"key": "Properties", "type": "FileProperty"},
         "attributes": {"key": "Attributes", "type": "str"},
@@ -446,7 +446,7 @@ class FileItem(_serialization.Model):
     def __init__(
         self,
         *,
-        name: str,
+        name: "_models.StringEncoded",
         properties: "_models.FileProperty",
         file_id: Optional[str] = None,
         attributes: Optional[str] = None,
@@ -455,7 +455,7 @@ class FileItem(_serialization.Model):
     ):
         """
         :keyword name: Required.
-        :paramtype name: str
+        :paramtype name: ~azure.storage.fileshare.models.StringEncoded
         :keyword file_id:
         :paramtype file_id: str
         :keyword properties: File properties. Required.
@@ -629,8 +629,8 @@ class HandleItem(_serialization.Model):
 
     :ivar handle_id: XSMB service handle ID. Required.
     :vartype handle_id: str
-    :ivar path: File or directory name including full path starting from share root. Required.
-    :vartype path: str
+    :ivar path: Required.
+    :vartype path: ~azure.storage.fileshare.models.StringEncoded
     :ivar file_id: FileId uniquely identifies the file or directory. Required.
     :vartype file_id: str
     :ivar parent_id: ParentId uniquely identifies the parent directory of the object.
@@ -657,7 +657,7 @@ class HandleItem(_serialization.Model):
 
     _attribute_map = {
         "handle_id": {"key": "HandleId", "type": "str"},
-        "path": {"key": "Path", "type": "str"},
+        "path": {"key": "Path", "type": "StringEncoded"},
         "file_id": {"key": "FileId", "type": "str"},
         "parent_id": {"key": "ParentId", "type": "str"},
         "session_id": {"key": "SessionId", "type": "str"},
@@ -671,7 +671,7 @@ class HandleItem(_serialization.Model):
         self,
         *,
         handle_id: str,
-        path: str,
+        path: "_models.StringEncoded",
         file_id: str,
         session_id: str,
         client_ip: str,
@@ -683,8 +683,8 @@ class HandleItem(_serialization.Model):
         """
         :keyword handle_id: XSMB service handle ID. Required.
         :paramtype handle_id: str
-        :keyword path: File or directory name including full path starting from share root. Required.
-        :paramtype path: str
+        :keyword path: Required.
+        :paramtype path: ~azure.storage.fileshare.models.StringEncoded
         :keyword file_id: FileId uniquely identifies the file or directory. Required.
         :paramtype file_id: str
         :keyword parent_id: ParentId uniquely identifies the parent directory of the object.
@@ -744,9 +744,9 @@ class ListFilesAndDirectoriesSegmentResponse(_serialization.Model):
     :ivar share_snapshot:
     :vartype share_snapshot: str
     :ivar directory_path: Required.
-    :vartype directory_path: str
+    :vartype directory_path: ~azure.storage.fileshare.models.StringEncoded
     :ivar prefix: Required.
-    :vartype prefix: str
+    :vartype prefix: ~azure.storage.fileshare.models.StringEncoded
     :ivar marker:
     :vartype marker: str
     :ivar max_results:
@@ -772,8 +772,8 @@ class ListFilesAndDirectoriesSegmentResponse(_serialization.Model):
         "service_endpoint": {"key": "ServiceEndpoint", "type": "str", "xml": {"attr": True}},
         "share_name": {"key": "ShareName", "type": "str", "xml": {"attr": True}},
         "share_snapshot": {"key": "ShareSnapshot", "type": "str", "xml": {"attr": True}},
-        "directory_path": {"key": "DirectoryPath", "type": "str", "xml": {"attr": True}},
-        "prefix": {"key": "Prefix", "type": "str"},
+        "directory_path": {"key": "DirectoryPath", "type": "StringEncoded"},
+        "prefix": {"key": "Prefix", "type": "StringEncoded"},
         "marker": {"key": "Marker", "type": "str"},
         "max_results": {"key": "MaxResults", "type": "int"},
         "segment": {"key": "Segment", "type": "FilesAndDirectoriesListSegment"},
@@ -787,8 +787,8 @@ class ListFilesAndDirectoriesSegmentResponse(_serialization.Model):
         *,
         service_endpoint: str,
         share_name: str,
-        directory_path: str,
-        prefix: str,
+        directory_path: "_models.StringEncoded",
+        prefix: "_models.StringEncoded",
         segment: "_models.FilesAndDirectoriesListSegment",
         next_marker: str,
         share_snapshot: Optional[str] = None,
@@ -805,9 +805,9 @@ class ListFilesAndDirectoriesSegmentResponse(_serialization.Model):
         :keyword share_snapshot:
         :paramtype share_snapshot: str
         :keyword directory_path: Required.
-        :paramtype directory_path: str
+        :paramtype directory_path: ~azure.storage.fileshare.models.StringEncoded
         :keyword prefix: Required.
-        :paramtype prefix: str
+        :paramtype prefix: ~azure.storage.fileshare.models.StringEncoded
         :keyword marker:
         :paramtype marker: str
         :keyword max_results:
@@ -1574,3 +1574,29 @@ class StorageServiceProperties(_serialization.Model):
         self.minute_metrics = minute_metrics
         self.cors = cors
         self.protocol = protocol
+
+
+class StringEncoded(_serialization.Model):
+    """StringEncoded.
+
+    :ivar encoded:
+    :vartype encoded: bool
+    :ivar content:
+    :vartype content: str
+    """
+
+    _attribute_map = {
+        "encoded": {"key": "Encoded", "type": "bool", "xml": {"name": "Encoded", "attr": True}},
+        "content": {"key": "content", "type": "str", "xml": {"text": True}},
+    }
+
+    def __init__(self, *, encoded: Optional[bool] = None, content: Optional[str] = None, **kwargs):
+        """
+        :keyword encoded:
+        :paramtype encoded: bool
+        :keyword content:
+        :paramtype content: str
+        """
+        super().__init__(**kwargs)
+        self.encoded = encoded
+        self.content = content

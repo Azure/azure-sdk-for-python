@@ -13,6 +13,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -49,7 +50,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype = kwargs.pop("restype", _params.pop("restype", "directory"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -92,7 +93,7 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype = kwargs.pop("restype", _params.pop("restype", "directory"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -122,7 +123,7 @@ def build_delete_request(url: str, *, timeout: Optional[int] = None, **kwargs: A
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype = kwargs.pop("restype", _params.pop("restype", "directory"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -162,7 +163,7 @@ def build_set_properties_request(
 
     restype = kwargs.pop("restype", _params.pop("restype", "directory"))  # type: str
     comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -205,7 +206,7 @@ def build_set_metadata_request(
 
     restype = kwargs.pop("restype", _params.pop("restype", "directory"))  # type: str
     comp = kwargs.pop("comp", _params.pop("comp", "metadata"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -248,7 +249,7 @@ def build_list_files_and_directories_segment_request(
 
     restype = kwargs.pop("restype", _params.pop("restype", "directory"))  # type: str
     comp = kwargs.pop("comp", _params.pop("comp", "list"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -298,7 +299,7 @@ def build_list_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp = kwargs.pop("comp", _params.pop("comp", "listhandles"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -343,7 +344,7 @@ def build_force_close_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp = kwargs.pop("comp", _params.pop("comp", "forceclosehandles"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -396,7 +397,7 @@ def build_rename_request(
 
     restype = kwargs.pop("restype", _params.pop("restype", "directory"))  # type: str
     comp = kwargs.pop("comp", _params.pop("comp", "rename"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -518,7 +519,12 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -613,7 +619,12 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -699,7 +710,12 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -794,7 +810,12 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -891,7 +912,12 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -991,7 +1017,12 @@ class DirectoryOperations:
         :rtype: ~azure.storage.fileshare.models.ListFilesAndDirectoriesSegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1086,7 +1117,12 @@ class DirectoryOperations:
         :rtype: ~azure.storage.fileshare.models.ListHandlesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1176,7 +1212,12 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1298,7 +1339,12 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}

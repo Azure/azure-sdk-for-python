@@ -13,6 +13,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -41,7 +42,7 @@ def build_set_properties_request(
     restype = kwargs.pop("restype", _params.pop("restype", "service"))  # type: str
     comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -73,7 +74,7 @@ def build_get_properties_request(url: str, *, timeout: Optional[int] = None, **k
 
     restype = kwargs.pop("restype", _params.pop("restype", "service"))  # type: str
     comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -111,7 +112,7 @@ def build_list_shares_segment_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp = kwargs.pop("comp", _params.pop("comp", "list"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -186,7 +187,12 @@ class ServiceOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -255,7 +261,12 @@ class ServiceOperations:
         :rtype: ~azure.storage.fileshare.models.StorageServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -343,7 +354,12 @@ class ServiceOperations:
         :rtype: ~azure.storage.fileshare.models.ListSharesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
