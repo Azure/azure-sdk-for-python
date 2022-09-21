@@ -9,6 +9,8 @@ import math
 from inspect import Parameter
 from typing import Dict, Union, overload
 
+from typing_extensions import Literal
+
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
 from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -51,7 +53,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
-        type: str = "uri_folder",
+        type: Literal["uri_folder"] = "uri_folder",
         path: str = None,
         mode: str = None,
         optional: bool = None,
@@ -83,7 +85,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
-        type: str = "number",
+        type: Literal["number"] = "number",
         default: float = None,
         min: float = None,
         max: float = None,
@@ -111,7 +113,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
-        type: str = "integer",
+        type: Literal["integer"] = "integer",
         default: int = None,
         min: int = None,
         max: int = None,
@@ -139,7 +141,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
-        type: str = "string",
+        type: Literal["string"] = "string",
         default: str = None,
         optional: bool = None,
         description: str = None,
@@ -161,7 +163,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
-        type: str = "boolean",
+        type: Literal["boolean"] = "boolean",
         default: bool = None,
         optional: bool = None,
         description: str = None,

@@ -52,6 +52,12 @@ class SweepDistribution(ABC, RestTranslatableMixin):
 
 
 class Choice(SweepDistribution):
+    """Choice distribution configuration.
+
+    :ivar type: Specifies the type of sweep distribution. Set automatically to "choice" for this class.
+    :vartype type: str
+    """
+
     def __init__(self, values: List[Union[float, str, dict]] = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.CHOICE)
         super().__init__(**kwargs)
@@ -95,6 +101,12 @@ class Choice(SweepDistribution):
 
 
 class Normal(SweepDistribution):
+    """Normal distribution configuration.
+
+    :ivar type: Specifies the type of sweep distribution. Set automatically to "normal" for this class.
+    :vartype type: str
+    """
+
     def __init__(self, mu: float = None, sigma: float = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.NORMAL)
         super().__init__(**kwargs)
@@ -110,12 +122,24 @@ class Normal(SweepDistribution):
 
 
 class LogNormal(Normal):
+    """LogNormal distribution configuration.
+
+    :ivar type: Specifies the type of sweep distribution. Set automatically to "lognormal" for this class.
+    :vartype type: str
+    """
+
     def __init__(self, mu: float = None, sigma: float = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.LOGNORMAL)
         super().__init__(mu=mu, sigma=sigma, **kwargs)
 
 
 class QNormal(Normal):
+    """QNormal distribution configuration.
+
+    :ivar type: Specifies the type of sweep distribution. Set automatically to "qnormal" for this class.
+    :vartype type: str
+    """
+
     def __init__(self, mu: float = None, sigma: float = None, q: int = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.QNORMAL)
         super().__init__(mu=mu, sigma=sigma, **kwargs)
@@ -130,12 +154,23 @@ class QNormal(Normal):
 
 
 class QLogNormal(QNormal):
+    """QLogNormal distribution configuration.
+
+    :ivar type: Specifies the type of sweep distribution. Set automatically to "qlognormal" for this class.
+    :vartype type: str
+    """
+
     def __init__(self, mu: float = None, sigma: float = None, q: int = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.QLOGNORMAL)
         super().__init__(mu=mu, sigma=sigma, q=q, **kwargs)
 
 
 class Randint(SweepDistribution):
+    """Randint distribution configuration.
+
+    :ivar type: Specifies the type of sweep distribution. Set automatically to "randint" for this class.
+    :vartype type: str
+    """
     def __init__(self, upper: int = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.RANDINT)
         super().__init__(**kwargs)
@@ -150,6 +185,12 @@ class Randint(SweepDistribution):
 
 
 class Uniform(SweepDistribution):
+    """Uniform distribution configuration.
+
+    :ivar type: Specifies the type of sweep distribution. Set automatically to "uniform" for this class.
+    :vartype type: str
+    """
+
     def __init__(self, min_value: float = None, max_value: float = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.UNIFORM)
         super().__init__(**kwargs)
@@ -165,12 +206,24 @@ class Uniform(SweepDistribution):
 
 
 class LogUniform(Uniform):
+    """LogUniform distribution configuration.
+
+    :ivar type: Specifies the type of sweep distribution. Set automatically to "loguniform" for this class.
+    :vartype type: str
+    """
+
     def __init__(self, min_value: float = None, max_value: float = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.LOGUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, **kwargs)
 
 
 class QUniform(Uniform):
+    """QUniform distribution configuration.
+
+    :ivar type: Specifies the type of sweep distribution. Set automatically to "quniform" for this class.
+    :vartype type: str
+    """
+
     def __init__(
         self,
         min_value: Union[int, float] = None,
@@ -191,6 +244,11 @@ class QUniform(Uniform):
 
 
 class QLogUniform(QUniform):
+    """QLogUniform distribution configuration.
+
+    :ivar type: Specifies the type of sweep distribution. Set automatically to "qloguniform" for this class.
+    :vartype type: str
+    """
     def __init__(self, min_value: float = None, max_value: float = None, q: int = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.QLOGUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, q=q, **kwargs)
