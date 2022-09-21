@@ -4,15 +4,10 @@
 
 This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
 
-### Features Added
-
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Fixed bug on async `ServiceBusClient` where `custom_endpoint_address` and `connection_verify` kwargs were not being passed through correctly. (Issue #26015)
 
-### Other Changes
 
 ## 7.8.0 (2022-07-06)
 
