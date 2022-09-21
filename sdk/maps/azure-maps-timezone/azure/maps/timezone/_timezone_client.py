@@ -127,8 +127,6 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
          from "transitionsFrom" for which DST transitions are requested, only applies when "options" =
          all or "options" = transitions. Default value is None.
         :type daylight_savings_time_lasting_years: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TimezoneResult or the result of cls(response)
         :rtype: ~azure.maps.timezone.models.TimezoneResult
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -181,8 +179,6 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
          from "transitionsFrom" for which DST transitions are requested, only applies when "options" =
          all or "options" = transitions. Default value is None.
         :type daylight_savings_time_lasting_years: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TimezoneResult or the result of cls(response)
         :rtype: ~azure.maps.timezone.models.TimezoneResult
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -207,8 +203,6 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
     )-> List[TimezoneWindows]:
         """Returns a full list of Windows Time Zone IDs.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list of TimezoneWindows or the result of cls(response)
         :rtype: list[~azure.maps.timezone.models.TimezoneWindows]
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -231,8 +225,6 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
         """This API returns a full list of IANA time zone IDs. Updates to the IANA service will be
         reflected in the system within one day.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list of IanaId or the result of cls(response)
         :rtype: list[~azure.maps.timezone.models.IanaId]
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -254,8 +246,6 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
     )-> TimezoneIanaVersionResult:
         """This API returns the current IANA version number as Metadata.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TimezoneIanaVersionResult or the result of cls(response)
         :rtype: ~azure.maps.timezone.models.TimezoneIanaVersionResult
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -284,8 +274,6 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
         :type windows_timezone_id: str
         :keyword windows_territory_code: Windows Time Zone territory code. Default value is None.
         :type windows_territory_code: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list of IanaId or the result of cls(response)
         :rtype: list[~azure.maps.timezone.models.IanaId]
         :raises ~azure.core.exceptions.HttpResponseError:
 
