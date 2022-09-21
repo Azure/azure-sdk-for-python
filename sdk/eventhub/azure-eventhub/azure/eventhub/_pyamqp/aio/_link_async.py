@@ -183,7 +183,7 @@ class Link(object):
         if self.network_trace:
             _LOGGER.info("<- %r", AttachFrame(*frame), extra=self.network_trace_params)
         if self._is_closed:
-            raise AMQPLinkError(condition=ErrorCondition.ClientError, description="Invalid link", info=None)
+            raise AMQPLinkError(condition=ErrorCondition.ClientError, description="Received attach frame on a link that is already closed", info=None)
         elif not frame[5] or not frame[6]: 
             _LOGGER.info("Cannot get source or target. Detaching link")
             await self.detach(
