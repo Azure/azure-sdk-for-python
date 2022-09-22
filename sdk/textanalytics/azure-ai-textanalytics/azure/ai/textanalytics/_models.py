@@ -88,6 +88,7 @@ class TextAnalysisKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM_ENTITY_RECOGNITION = "CustomEntityRecognition"
     CUSTOM_DOCUMENT_CLASSIFICATION = "CustomDocumentClassification"
     LANGUAGE_DETECTION = "LanguageDetection"
+    EXTRACTIVE_SUMMARIZATION = "ExtractiveSummarization"
 
 
 class EntityAssociation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2673,7 +2674,7 @@ class ExtractSummaryResult(DictMixin):
         self.warnings = kwargs.get("warnings", None)
         self.statistics = kwargs.get("statistics", None)
         self.detected_language = kwargs.get("detected_language", None)
-        self.is_error = False
+        self.is_error: Literal[False] = False
         self.kind: Literal["ExtractiveSummarization"] = "ExtractiveSummarization"
 
     def __repr__(self):
