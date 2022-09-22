@@ -90,7 +90,6 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
             credential_policy = AppConfigRequestsCredentialsPolicy(credential) # type: ignore
 
         self._impl = AzureAppConfiguration(
-            credential, # type: ignore
             base_url,
             credential_scopes=credential_scopes,
             authentication_policy=credential_policy,

@@ -285,7 +285,7 @@ class TestSweepJob:
             MpiDistribution(process_count_per_instance=2),
             PyTorchDistribution(process_count_per_instance=4),
             TensorFlowDistribution(parameter_server_count=2, worker_count=10),
-        ]
+        ],
     )
     def test_sweep_job_trial_distribution_to_rest(self, distribution) -> None:
         command_job = CommandJob(

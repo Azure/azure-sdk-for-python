@@ -33,26 +33,6 @@ def _enable_internal_components():
             create_schema_func=create_schema_func,
         )
 
-    # hack - internal primitive type
-    int_primitive_type = "int"
-    IOConstants.PRIMITIVE_STR_2_TYPE[int_primitive_type] = int
-    IOConstants.PARAM_PARSERS[int_primitive_type] = int
-    IOConstants.TYPE_MAPPING_YAML_2_REST[int_primitive_type] = "Int"
-
-    float_primitive_type = "float"
-    IOConstants.PRIMITIVE_STR_2_TYPE[float_primitive_type] = float
-    IOConstants.PARAM_PARSERS[float_primitive_type] = float
-    IOConstants.TYPE_MAPPING_YAML_2_REST[float_primitive_type] = "Float"
-
-    # TODO: do we support both Enum & enum?
-    enum_primitive_type = "Enum"
-    IOConstants.PRIMITIVE_STR_2_TYPE[enum_primitive_type] = str
-    IOConstants.TYPE_MAPPING_YAML_2_REST[enum_primitive_type] = "Enum"
-
-    enum_primitive_type = "enum"
-    IOConstants.PRIMITIVE_STR_2_TYPE[enum_primitive_type] = str
-    IOConstants.TYPE_MAPPING_YAML_2_REST[enum_primitive_type] = "enum"
-
 
 _registered = False
 

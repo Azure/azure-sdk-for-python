@@ -19,20 +19,13 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
-from azure.ai.ml._ml_exceptions import (
-    AssetPathException,
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-    log_and_raise_error,
-)
+from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType, ModelVersionData
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
@@ -51,6 +44,13 @@ from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_fl
 from azure.ai.ml.constants._common import ASSET_ID_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._assets import Model, WorkspaceModelReference
 from azure.ai.ml.entities._datastore.credentials import AccountKeyCredentials
+from azure.ai.ml.exceptions import (
+    AssetPathException,
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.exceptions import ResourceNotFoundError
 
@@ -69,11 +69,12 @@ class ModelOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client: Union[ServiceClient052022, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
-        super(ModelOperations, self).__init__(operation_scope)
+        super(ModelOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._model_versions_operation = service_client.model_versions
         self._model_container_operation = service_client.model_containers

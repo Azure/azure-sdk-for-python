@@ -22,8 +22,6 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
 
     :param ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
     :type ams_gradient: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
-    :param augmentations: Settings for using Augmentations.
-    :type augmentations: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
     :param beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the
         range [0, 1].
     :type beta1: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
@@ -119,7 +117,6 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
         self,
         *,
         ams_gradient: Union[bool, SweepDistribution] = None,
-        augmentations: Union[str, SweepDistribution] = None,
         beta1: Union[float, SweepDistribution] = None,
         beta2: Union[float, SweepDistribution] = None,
         distributed: Union[bool, SweepDistribution] = None,
@@ -152,7 +149,6 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
         weighted_loss: Union[int, SweepDistribution] = None,
     ) -> None:
         self.ams_gradient = ams_gradient
-        self.augmentations = augmentations
         self.beta1 = beta1
         self.beta2 = beta2
         self.distributed = distributed
@@ -187,7 +183,6 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
     def _to_rest_object(self) -> ImageModelDistributionSettingsClassification:
         return ImageModelDistributionSettingsClassification(
             ams_gradient=_convert_to_rest_object(self.ams_gradient) if self.ams_gradient is not None else None,
-            augmentations=_convert_to_rest_object(self.augmentations) if self.augmentations is not None else None,
             beta1=_convert_to_rest_object(self.beta1) if self.beta1 is not None else None,
             beta2=_convert_to_rest_object(self.beta2) if self.beta2 is not None else None,
             distributed=_convert_to_rest_object(self.distributed) if self.distributed is not None else None,
@@ -272,7 +267,6 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
     def _from_rest_object(cls, obj: ImageModelDistributionSettingsClassification) -> "ImageClassificationSearchSpace":
         return cls(
             ams_gradient=_convert_from_rest_object(obj.ams_gradient) if obj.ams_gradient is not None else None,
-            augmentations=_convert_from_rest_object(obj.augmentations) if obj.augmentations is not None else None,
             beta1=_convert_from_rest_object(obj.beta1) if obj.beta1 is not None else None,
             beta2=_convert_from_rest_object(obj.beta2) if obj.beta2 is not None else None,
             distributed=_convert_from_rest_object(obj.distributed) if obj.distributed is not None else None,
@@ -357,7 +351,6 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
     def _from_search_space_object(cls, obj: SearchSpace) -> "ImageClassificationSearchSpace":
         return cls(
             ams_gradient=obj.ams_gradient if hasattr(obj, "ams_gradient") else None,
-            augmentations=obj.augmentations if hasattr(obj, "augmentations") else None,
             beta1=obj.beta1 if hasattr(obj, "beta1") else None,
             beta2=obj.beta2 if hasattr(obj, "beta2") else None,
             distributed=obj.distributed if hasattr(obj, "distributed") else None,
@@ -402,7 +395,6 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
 
         return (
             self.ams_gradient == other.ams_gradient
-            and self.augmentations == other.augmentations
             and self.beta1 == other.beta1
             and self.beta2 == other.beta2
             and self.distributed == other.distributed

@@ -140,6 +140,20 @@ class TestComputeEntity:
         assert compute_instance2.schedules.compute_start_stop[1].trigger.interval == 1
         assert compute_instance2.schedules.compute_start_stop[1].trigger.schedule is not None
 
+    def test_compute_instance_setup_scripts_from_yaml(self):
+        loaded_instance: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci-setup-scripts.yaml")
+        compute_resource: ComputeResource = loaded_instance._to_rest_object()
+        compute_instance: ComputeInstance = ComputeInstance._load_from_rest(compute_resource)
+
+        assert compute_instance.setup_scripts is not None
+        assert compute_instance.setup_scripts.creation_script is not None
+        assert compute_instance.setup_scripts.creation_script.path == "Users/test/creation-script.sh"
+        assert compute_instance.setup_scripts.creation_script.timeout_minutes == "20"
+        assert compute_instance.setup_scripts.startup_script is not None
+        assert compute_instance.setup_scripts.startup_script.path == "Users/test/startup-script.sh"
+        assert compute_instance.setup_scripts.startup_script.command == "ls"
+        assert compute_instance.setup_scripts.startup_script.timeout_minutes == "15"
+
     def test_compute_instance_uai_from_yaml(self):
         compute: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci-uai.yaml")
         assert compute.name == "banchci"

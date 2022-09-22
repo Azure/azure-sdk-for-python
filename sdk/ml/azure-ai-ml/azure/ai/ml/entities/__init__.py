@@ -5,6 +5,7 @@
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from azure.ai.ml._restclient.v2021_10_01.models import CreatedByType
+from azure.ai.ml._restclient.v2022_01_01_preview.models import UsageUnit
 
 from ._assets._artifacts.data import Data
 from ._assets._artifacts.model import Model
@@ -56,6 +57,7 @@ from ._job.parameterized_command import ParameterizedCommand
 # Pipeline related entities goes behind component since it depends on component
 from ._job.pipeline.pipeline_job import PipelineJob, PipelineJobSettings
 from ._job.resource_configuration import ResourceConfiguration
+from ._job.service_instance import ServiceInstance
 from ._job.spark_job import SparkJob
 from ._job.spark_job_entry import SparkJobEntry, SparkJobEntryType
 from ._job.spark_resource_configuration import SparkResourceConfiguration
@@ -87,6 +89,7 @@ from ._workspace.identity import ManagedServiceIdentity
 from ._workspace.identity import UserAssignedIdentity as WorkspaceUserAssignedIdentity
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
+from ._workspace.workspace_keys import WorkspaceKeys
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
@@ -99,6 +102,7 @@ __all__ = [
     "Job",
     "CommandJob",
     "PipelineJob",
+    "ServiceInstance",
     "SystemData",
     "SparkJob",
     "SparkJobEntry",
@@ -134,6 +138,7 @@ __all__ = [
     "BuildContext",
     "Model",
     "Workspace",
+    "WorkspaceKeys",
     "WorkspaceConnection",
     "ManagedServiceIdentity",
     "WorkspaceUserAssignedIdentity",
@@ -176,6 +181,7 @@ __all__ = [
     "VmSize",
     "Usage",
     "UsageName",
+    "UsageUnit",
     "CronTrigger",
     "RecurrenceTrigger",
     "RecurrencePattern",

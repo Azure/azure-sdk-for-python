@@ -13,7 +13,6 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJobLimits as RestCommandJobLimits
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
@@ -42,12 +41,11 @@ from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTermin
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._system_data import SystemData
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..._schema import PathAwareSchema
 from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
 from .._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
-from .._job.pipeline._io import PipelineInput, PipelineOutputBase
-from .._job.pipeline._pipeline_expression import PipelineExpression
 from .._util import convert_ordered_dict_to_dict, get_rest_dict, load_from_dict, validate_attribute_type
 from .base_node import BaseNode
 from .sweep import Sweep
@@ -132,7 +130,7 @@ class Command(BaseNode):
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
         # resolve normal dict to dict[str, JobService]
-        services = self._resolve_job_services(services)
+        services = _resolve_job_services(services)
         kwargs.pop("type", None)
         self._parameters = kwargs.pop("parameters", {})
         BaseNode.__init__(
@@ -166,18 +164,10 @@ class Command(BaseNode):
 
     @classmethod
     def _get_supported_inputs_types(cls):
-        # when command node is constructed inside dsl.pipeline, inputs can be PipelineInput or Output of another node
+        supported_types = super()._get_supported_inputs_types() or ()
         return (
-            PipelineInput,
-            PipelineOutputBase,
-            Input,
             SweepDistribution,
-            str,
-            bool,
-            int,
-            float,
-            Enum,
-            PipelineExpression,
+            *supported_types,
         )
 
     @classmethod
@@ -231,7 +221,7 @@ class Command(BaseNode):
 
     @services.setter
     def services(self, value: Dict):
-        self._services = self._resolve_job_services(value)
+        self._services = _resolve_job_services(value)
 
     @property
     def component(self) -> Union[str, CommandComponent]:
@@ -560,36 +550,6 @@ class Command(BaseNode):
 
         return CommandSchema(context=context)
 
-    def _resolve_job_services(self, services: dict) -> dict:
-        """Resolve normal dict to dict[str, JobService]"""
-        if services is None:
-            return None
-        elif not isinstance(services, dict):
-            msg = f"Services must be a dict, got {type(services)} instead."
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
-                target=ErrorTarget.COMMAND_JOB,
-                error_category=ErrorCategory.USER_ERROR,
-            )
-
-        result = {}
-        for name, service in services.items():
-            if isinstance(service, dict):
-                service = load_from_dict(JobServiceSchema, service, context={BASE_PATH_CONTEXT_KEY: "."})
-            elif not isinstance(service, JobService):
-                msg = (
-                    f"Service value for key {name!r} must be a dict or JobService object, got {type(service)} instead."
-                )
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    target=ErrorTarget.COMMAND_JOB,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
-            result[name] = service
-        return result
-
     def __call__(self, *args, **kwargs) -> "Command":
         """Call Command as a function will return a new instance each time."""
         if isinstance(self._component, Component):
@@ -627,3 +587,33 @@ class Command(BaseNode):
             target=ErrorTarget.COMMAND_JOB,
             error_type=ValidationErrorType.INVALID_VALUE,
         )
+
+
+def _resolve_job_services(services: dict) -> dict:
+    """Resolve normal dict to dict[str, JobService]"""
+    if services is None:
+        return None
+
+    if not isinstance(services, dict):
+        msg = f"Services must be a dict, got {type(services)} instead."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.COMMAND_JOB,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+
+    result = {}
+    for name, service in services.items():
+        if isinstance(service, dict):
+            service = load_from_dict(JobServiceSchema, service, context={BASE_PATH_CONTEXT_KEY: "."})
+        elif not isinstance(service, JobService):
+            msg = f"Service value for key {name!r} must be a dict or JobService object, got {type(service)} instead."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.COMMAND_JOB,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+        result[name] = service
+    return result

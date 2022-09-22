@@ -7,7 +7,6 @@
 import logging
 from abc import abstractmethod
 
-from azure.ai.ml._ml_exceptions import DeploymentException, ErrorCategory, ErrorTarget
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DefaultScaleSettings as RestDefaultScaleSettings
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineScaleSettings as RestOnlineScaleSettings
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ScaleType
@@ -16,6 +15,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
 )
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format, to_iso_duration_format
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.exceptions import DeploymentException, ErrorCategory, ErrorTarget
 
 module_logger = logging.getLogger(__name__)
 
@@ -23,12 +23,12 @@ module_logger = logging.getLogger(__name__)
 class OnlineScaleSettings(RestTranslatableMixin):
     """Scale settings for online deployment.
 
-    :param scale_type: Type of the scale settings, allowed values are "default" and "target_utilization".
-    :type scale_type: str
+    :param type: Type of the scale settings, allowed values are "default" and "target_utilization".
+    :type type: str
     """
 
-    def __init__(self, scale_type: str, **kwargs):  # pylint: disable=unused-argument
-        self.scale_type = camel_to_snake(scale_type)
+    def __init__(self, type: str, **kwargs):  # pylint: disable=unused-argument
+        self.type = camel_to_snake(type)
 
     @abstractmethod
     def _to_rest_object(self) -> RestOnlineScaleSettings:
@@ -36,7 +36,7 @@ class OnlineScaleSettings(RestTranslatableMixin):
 
     def _merge_with(self, other: "OnlineScaleSettings") -> None:
         if other:
-            self.scale_type = other.scale_type or self.scale_type
+            self.type = other.type or self.type
 
     @classmethod
     def _from_rest_object(  # pylint: disable=arguments-renamed
@@ -47,7 +47,7 @@ class OnlineScaleSettings(RestTranslatableMixin):
         if isinstance(settings, RestTargetUtilizationScaleSettings):
             return TargetUtilizationScaleSettings._from_rest_object(settings)
 
-        msg = f"Unsupported online scale setting type {settings.scale_type}."
+        msg = f"Unsupported online scale setting type {settings.type}."
         raise DeploymentException(
             message=msg,
             target=ErrorTarget.ONLINE_DEPLOYMENT,
@@ -57,11 +57,15 @@ class OnlineScaleSettings(RestTranslatableMixin):
 
 
 class DefaultScaleSettings(OnlineScaleSettings):
-    """Default scale settings."""
+    """Default scale settings.
+
+    :ivar type: Default scale settings type. Set automatically to "default" for this class.
+    :vartype type: str
+    """
 
     def __init__(self, **kwargs):
         super(DefaultScaleSettings, self).__init__(
-            scale_type=ScaleType.DEFAULT.value,  # pylint: disable=no-member
+            type=ScaleType.DEFAULT.value,  # pylint: disable=no-member
         )
 
     def _to_rest_object(self) -> RestDefaultScaleSettings:
@@ -77,7 +81,7 @@ class DefaultScaleSettings(OnlineScaleSettings):
         if not other:
             return False
         # only compare mutable fields
-        return self.scale_type.lower() == other.scale_type.lower()
+        return self.type.lower() == other.type.lower()
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
@@ -95,6 +99,8 @@ class TargetUtilizationScaleSettings(OnlineScaleSettings):
     :type polling_interval: str
     :param target_utilization_percentage:
     :type target_utilization_percentage: int
+    :ivar type: Target utilization scale settings type. Set automatically to "target_utilization" for this class.
+    :vartype type: str
     """
 
     def __init__(
@@ -107,7 +113,7 @@ class TargetUtilizationScaleSettings(OnlineScaleSettings):
         **kwargs,
     ):
         super(TargetUtilizationScaleSettings, self).__init__(
-            scale_type=ScaleType.TARGET_UTILIZATION.value,  # pylint: disable=no-member
+            type=ScaleType.TARGET_UTILIZATION.value,  # pylint: disable=no-member
         )
         self.min_instances = min_instances
         self.max_instances = max_instances
@@ -148,7 +154,7 @@ class TargetUtilizationScaleSettings(OnlineScaleSettings):
             return False
         # only compare mutable fields
         return (
-            self.scale_type.lower() == other.scale_type.lower()
+            self.type.lower() == other.type.lower()
             and self.min_instances == other.min_instances
             and self.max_instances == other.max_instances
             and self.polling_interval == other.polling_interval
