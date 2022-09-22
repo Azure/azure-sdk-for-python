@@ -1,7 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+# pylint: disable=client-accepts-api-version-keyword
 
 import json
 import logging
@@ -41,7 +42,7 @@ DEFAULT_LABELS = {
 class DockerClient(object):
     """Client for interacting with User's Docker environment for local
     endpoints."""
-
+    # pylint: disable=client-method-missing-type-annotations
     def __init__(
         self,
         client: docker.DockerClient = None,
@@ -83,7 +84,7 @@ class DockerClient(object):
         labels = DEFAULT_LABELS.copy()
         labels[LocalEndpointConstants.LABEL_KEY_ENDPOINT_NAME] = endpoint_name
         labels[LocalEndpointConstants.LABEL_KEY_ENDPOINT_JSON] = endpoint_metadata
-        container_name = self._get_container_name(endpoint_name)
+        container_name = _get_container_name(endpoint_name)
         self._client.containers.run(
             image_name,
             name=container_name,
@@ -92,7 +93,7 @@ class DockerClient(object):
             tty=True,
             publish_all_ports=True,
         )
-
+    # pylint: disable=client-method-has-more-than-5-positional-arguments
     def create_deployment(
         self,
         endpoint_name: str,
@@ -140,11 +141,11 @@ class DockerClient(object):
         """
         # Prepare image
         if prebuilt_image_name is None:
-            image_name = self._get_image_name(endpoint_name, deployment_name)
-            module_logger.debug(f"Building local image [{image_name}].\n")
-            module_logger.debug(f"Build directory: {build_directory}\n")
-            module_logger.debug(f"Dockerfile path: {dockerfile_path}\n")
-            module_logger.debug(f"Image [{image_name}] is built.\n")
+            image_name = _get_image_name(endpoint_name, deployment_name)
+            module_logger.debug("Building local image '%s'\n", image_name)
+            module_logger.debug("Build directory: '%s'\n", build_directory)
+            module_logger.debug("Dockerfile path: '%s'\n", dockerfile_path)
+            module_logger.debug("Image '%s' is built.", image_name)
             self._build_image(
                 build_directory=build_directory,
                 image_name=image_name,
@@ -157,30 +158,35 @@ class DockerClient(object):
             try:
                 self._client.images.get(image_name)
             except ImageNotFound:
-                module_logger.info(f"\nDid not find image '{image_name}' locally. Pulling from registry.")
+                module_logger.info("\nDid not find image '%s' locally. Pulling from registry.\n", image_name)
                 try:
                     self._client.images.pull(image_name)
                 except NotFound:
                     raise InvalidLocalEndpointError(
-                        message=f"Could not find image '{image_name}' locally or in registry. Please check your image name.",
-                        no_personal_data_message="Could not find image locally or in registry. Please check your image name.",
+                        message=(
+                            f"Could not find image '{image_name}' locally or in registry. "
+                            "Please check your image name."
+                        ),
+                        no_personal_data_message=(
+                            "Could not find image locally or in registry. Please check your image name."
+                        ),
                     )
 
         module_logger.info("\nStarting up endpoint")
         # Delete container if exists
         self.delete(endpoint_name=endpoint_name, verify_exists=False)
 
-        labels = self.get_container_labels(
+        labels = get_container_labels(
             endpoint_name=endpoint_name,
             deployment_name=deployment_name,
             endpoint_metadata=endpoint_metadata,
             deployment_metadata=deployment_metadata,
             azureml_port=azureml_port,
         )
-        module_logger.debug(f"Setting labels: {labels}\n")
-        module_logger.debug(f"Mounting volumes: {volumes}\n")
-        module_logger.debug(f"Setting environment variables: {environment}\n")
-        container_name = self._get_container_name(endpoint_name, deployment_name)
+        module_logger.debug("Setting labels: '%s'\n", labels)
+        module_logger.debug("Mounting volumes: '%s'\n", volumes)
+        module_logger.debug("Setting environment variables: '%s'\n", environment)
+        container_name = _get_container_name(endpoint_name, deployment_name)
         container = self._client.containers.create(
             image_name,
             name=container_name,
@@ -208,19 +214,19 @@ class DockerClient(object):
                 # to add debugpy statements
                 container.remove()
             app_path = environment[LocalEndpointConstants.ENVVAR_KEY_AML_APP_ROOT]
-            self._vscode_client.invoke_dev_container(devcontainer_path=devcontainer_path, app_path=app_path)
+            self._vscode_client.invoke_dev_container(devcontainer_path=devcontainer_path, app_path=app_path) # pylint: disable=redundant-keyword-arg
             time.sleep(LocalEndpointConstants.DEFAULT_STARTUP_WAIT_TIME_SECONDS)
         else:
             container.start()
             time.sleep(LocalEndpointConstants.DEFAULT_STARTUP_WAIT_TIME_SECONDS)
             container.reload()
-            self._validate_container_state(
+            _validate_container_state(
                 endpoint_name=endpoint_name,
                 deployment_name=deployment_name,
                 container=container,
             )
             scoring_uri = self.get_scoring_uri(endpoint_name=endpoint_name, deployment_name=deployment_name)
-            module_logger.debug(f"Container [{container_name}] is up and running at {scoring_uri}\n")
+            module_logger.debug("Container '%s' is up and running at '%s'\n", container_name, scoring_uri)
 
     def delete(
         self,
@@ -245,7 +251,7 @@ class DockerClient(object):
         for container in containers:
             container.stop()
             container.remove()
-            module_logger.debug(f"Endpoint container [{container.name}] is removed.\n")
+            module_logger.debug("Endpoint container '%s' is removed.", container.name)
 
     def get_endpoint(self, endpoint_name: str) -> dict:
         """Returns metadata for local endpoint or deployment.
@@ -257,7 +263,7 @@ class DockerClient(object):
         container = self.get_endpoint_container(endpoint_name=endpoint_name)
         if container is None:
             raise LocalEndpointNotFoundError(endpoint_name=endpoint_name)
-        return self.get_endpoint_json_from_container(container=container)
+        return get_endpoint_json_from_container(container=container)
 
     def get_deployment(self, endpoint_name: str, deployment_name: str = None) -> dict:
         """Returns metadata for local deployment.
@@ -271,7 +277,7 @@ class DockerClient(object):
         container = self.get_endpoint_container(endpoint_name=endpoint_name, deployment_name=deployment_name)
         if container is None:
             raise LocalEndpointNotFoundError(endpoint_name=endpoint_name, deployment_name=deployment_name)
-        return self.get_deployment_json_from_container(container=container)
+        return get_deployment_json_from_container(container=container)
 
     def get_scoring_uri(self, endpoint_name: str, deployment_name: str = None) -> str:
         """Returns scoring uri for local endpoint or deployment.
@@ -290,12 +296,12 @@ class DockerClient(object):
         )
         if container is None:
             return
-        self._validate_container_state(
+        _validate_container_state(
             endpoint_name=endpoint_name,
             deployment_name=deployment_name,
             container=container,
         )
-        return self.get_scoring_uri_from_container(container=container)
+        return get_scoring_uri_from_container(container=container)
 
     def logs(self, endpoint_name: str, deployment_name: str, lines: int) -> str:
         """Returns logs from local deployment.
@@ -319,7 +325,7 @@ class DockerClient(object):
         endpoint_name: str = None,
         deployment_name: str = None,
         include_stopped: bool = True,
-    ):
+    ) -> list:
         """Returns a list of local endpoints.
 
         :param endpoint_name: Name of local endpoint. If none, all local endpoints will be returned.
@@ -337,22 +343,6 @@ class DockerClient(object):
             filters["label"].append(f"{LocalEndpointConstants.LABEL_KEY_DEPLOYMENT_NAME}={deployment_name}")
 
         return self._client.containers.list(filters=filters, all=include_stopped)
-
-    def get_container_labels(
-        self,
-        endpoint_name: str,
-        deployment_name: str,
-        endpoint_metadata: dict,
-        deployment_metadata: dict,
-        azureml_port: int,
-    ) -> dict:
-        labels = DEFAULT_LABELS.copy()
-        labels[LocalEndpointConstants.LABEL_KEY_ENDPOINT_NAME] = endpoint_name
-        labels[LocalEndpointConstants.LABEL_KEY_DEPLOYMENT_NAME] = deployment_name
-        labels[LocalEndpointConstants.LABEL_KEY_ENDPOINT_JSON] = endpoint_metadata
-        labels[LocalEndpointConstants.LABEL_KEY_DEPLOYMENT_JSON] = deployment_metadata
-        labels[LocalEndpointConstants.LABEL_KEY_AZUREML_PORT] = str(azureml_port)
-        return labels
 
     def get_endpoint_container(
         self,
@@ -383,47 +373,6 @@ class DockerClient(object):
         if len(containers) > 1 and verify_single_deployment:
             raise MultipleLocalDeploymentsFoundError(endpoint_name=endpoint_name)
         return containers[0]
-
-    def get_endpoint_json_from_container(self, container: Container) -> dict:
-        if container:
-            data = container.labels[LocalEndpointConstants.LABEL_KEY_ENDPOINT_JSON]
-            return json.loads(data)
-        return
-
-    def get_deployment_json_from_container(self, container: Container) -> dict:
-        if container:
-            data = container.labels[LocalEndpointConstants.LABEL_KEY_DEPLOYMENT_JSON]
-            return json.loads(data)
-        return
-
-    def get_status_from_container(self, container: Container) -> str:
-        """Returns status of container.
-
-        :param container: container of local Deployment
-        :type container: docker.models.containers.Container
-        :return str: container status
-        """
-        return container.status
-
-    def get_scoring_uri_from_container(self, container: Container) -> str:
-        """Returns scoring_uri of container.
-
-        :param container: container of local Deployment
-        :type container: docker.models.containers.Container
-        :return str: container scoring_uri
-        """
-        port = 5001
-        # Example container.ports: {'5001/tcp': [{'HostIp': '0.0.0.0', 'HostPort': '5001'}], '8883/tcp': None, '8888/tcp': None}
-        if container is not None and container.ports is not None:
-            azureml_port = container.labels["azureml-port"]
-            for docker_port, host_addresses in container.ports.items():
-                if azureml_port in docker_port and host_addresses is not None:
-                    for address in host_addresses:
-                        if "HostPort" in address:
-                            port = address["HostPort"]
-                            break
-        # TODO: resolve scoring path correctly
-        return f"http://localhost:{port}/score"
 
     def _build_image(
         self,
@@ -467,44 +416,7 @@ class DockerClient(object):
                 raise
             raise LocalEndpointImageBuildError(e)
 
-    def _get_image_name(self, endpoint_name: str, deployment_name: str) -> str:
-        """Returns an image name.
-
-        :param endpoint_name: name of local endpoint
-        :type endpoint_name: str
-        :param deployment_name: name of local deployment
-        :type deployment_name: str
-        :return str: image name
-        """
-        return f"{endpoint_name}:{deployment_name}"
-
-    def _get_container_name(self, endpoint_name: str, deployment_name: str = None) -> str:
-        """Returns a container name.
-
-        :param endpoint_name: name of local endpoint
-        :type endpoint_name: str
-        :param deployment_name: name of local deployment
-        :type deployment_name: str
-        :return str: container name
-        """
-        return f"{endpoint_name}.{deployment_name}" if deployment_name else endpoint_name
-
-    def _validate_container_state(self, endpoint_name: str, deployment_name: str, container: Container):
-        """Returns a container name.
-
-        :param endpoint_name: name of local endpoint
-        :type endpoint_name: str
-        :param deployment_name: name of local deployment
-        :type deployment_name: str
-        :param container: container of local Deployment
-        :type container: docker.models.containers.Container
-        :raises: azure.ai.ml._local_endpoints.errors.LocalEndpointInFailedStateError
-        """
-        status = self.get_status_from_container(container=container)
-        if LocalEndpointConstants.CONTAINER_EXITED == status:
-            raise LocalEndpointInFailedStateError(endpoint_name=endpoint_name, deployment_name=deployment_name)
-
-    def _reformat_volumes(self, volumes_dict: dict) -> list:
+    def _reformat_volumes(self, volumes_dict: dict) -> list: # pylint: disable=no-self-use
         """Returns a list of volumes to pass to docker.
 
         :param volumes_dict: custom formatted dict of volumes to mount. We expect the keys to be unique.
@@ -524,3 +436,97 @@ class DockerClient(object):
         :return list: list of volumes to pass to docker. Example: ["codesrc:codedest", "modelsrc:modeldest"]
         """
         return list(volumes_dict.keys())
+
+def get_container_labels(
+    endpoint_name: str,
+    deployment_name: str,
+    endpoint_metadata: dict,
+    deployment_metadata: dict,
+    azureml_port: int,
+) -> dict:
+    labels = DEFAULT_LABELS.copy()
+    labels[LocalEndpointConstants.LABEL_KEY_ENDPOINT_NAME] = endpoint_name
+    labels[LocalEndpointConstants.LABEL_KEY_DEPLOYMENT_NAME] = deployment_name
+    labels[LocalEndpointConstants.LABEL_KEY_ENDPOINT_JSON] = endpoint_metadata
+    labels[LocalEndpointConstants.LABEL_KEY_DEPLOYMENT_JSON] = deployment_metadata
+    labels[LocalEndpointConstants.LABEL_KEY_AZUREML_PORT] = str(azureml_port)
+    return labels
+
+def get_endpoint_json_from_container(container: Container) -> dict:
+    if container:
+        data = container.labels[LocalEndpointConstants.LABEL_KEY_ENDPOINT_JSON]
+        return json.loads(data)
+    return
+
+def get_deployment_json_from_container(container: Container) -> dict:
+    if container:
+        data = container.labels[LocalEndpointConstants.LABEL_KEY_DEPLOYMENT_JSON]
+        return json.loads(data)
+    return
+
+def get_status_from_container(container: Container) -> str:
+    """Returns status of container.
+
+    :param container: container of local Deployment
+    :type container: docker.models.containers.Container
+    :return str: container status
+    """
+    return container.status
+
+def get_scoring_uri_from_container(container: Container) -> str:
+    """Returns scoring_uri of container.
+
+    :param container: container of local Deployment
+    :type container: docker.models.containers.Container
+    :return str: container scoring_uri
+    """
+    port = 5001
+    # Example container.ports: {'5001/tcp': [{'HostIp': '0.0.0.0', 'HostPort': '5001'}],
+    # '8883/tcp': None, '8888/tcp': None }
+    if container is not None and container.ports is not None:
+        azureml_port = container.labels["azureml-port"]
+        for docker_port, host_addresses in container.ports.items():
+            if azureml_port in docker_port and host_addresses is not None:
+                for address in host_addresses:
+                    if "HostPort" in address:
+                        port = address["HostPort"]
+                        break
+    # TODO: resolve scoring path correctly
+    return f"http://localhost:{port}/score"
+
+def _get_image_name(endpoint_name: str, deployment_name: str) -> str:
+    """Returns an image name.
+
+    :param endpoint_name: name of local endpoint
+    :type endpoint_name: str
+    :param deployment_name: name of local deployment
+    :type deployment_name: str
+    :return str: image name
+    """
+    return f"{endpoint_name}:{deployment_name}"
+
+def _get_container_name(endpoint_name: str, deployment_name: str = None) -> str:
+    """Returns a container name.
+
+    :param endpoint_name: name of local endpoint
+    :type endpoint_name: str
+    :param deployment_name: name of local deployment
+    :type deployment_name: str
+    :return str: container name
+    """
+    return f"{endpoint_name}.{deployment_name}" if deployment_name else endpoint_name
+
+def _validate_container_state(endpoint_name: str, deployment_name: str, container: Container):
+    """Returns a container name.
+
+    :param endpoint_name: name of local endpoint
+    :type endpoint_name: str
+    :param deployment_name: name of local deployment
+    :type deployment_name: str
+    :param container: container of local Deployment
+    :type container: docker.models.containers.Container
+    :raises: azure.ai.ml._local_endpoints.errors.LocalEndpointInFailedStateError
+    """
+    status = get_status_from_container(container=container)
+    if LocalEndpointConstants.CONTAINER_EXITED == status:
+        raise LocalEndpointInFailedStateError(endpoint_name=endpoint_name, deployment_name=deployment_name)

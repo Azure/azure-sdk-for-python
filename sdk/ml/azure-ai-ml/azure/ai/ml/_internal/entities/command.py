@@ -67,7 +67,7 @@ class Command(InternalBaseNode):
         self._limits = value
 
     @property
-    def resources(self):
+    def resources(self) -> JobResourceConfiguration:
         """Compute Resource configuration for the component."""
         return self._resources
 

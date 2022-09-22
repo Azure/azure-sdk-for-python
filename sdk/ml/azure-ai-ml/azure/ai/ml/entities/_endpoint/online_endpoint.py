@@ -9,7 +9,6 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     EndpointAuthMode,
     IdentityConfiguration,
@@ -27,6 +26,7 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._util import is_compute_in_override, load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ._endpoint_helpers import validate_endpoint_or_deployment_name, validate_identity_type_defined
 from .endpoint import Endpoint
@@ -51,7 +51,7 @@ class OnlineEndpoint(Endpoint):
     :type location: str, optional
     :param traffic:  Traffic rules on how the traffic will be routed across deployments, defaults to {}
     :type traffic: Dict[str, int], optional
-    :param mirror_traffic: Duplicated life traffic used to train a single deployment, defaults to {}
+    :param mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to {}
     :type mirror_traffic: Dict[str, int], optional
     :param provisioning_state: str, provisioning state, readonly
     :type provisioning_state: str, optional
@@ -73,7 +73,7 @@ class OnlineEndpoint(Endpoint):
         mirror_traffic: Dict[str, int] = None,
         identity: IdentityConfiguration = None,
         scoring_uri: str = None,
-        swagger_uri: str = None,
+        openapi_uri: str = None,
         provisioning_state: str = None,
         kind: str = None,
         **kwargs,
@@ -88,7 +88,7 @@ class OnlineEndpoint(Endpoint):
             description=description,
             location=location,
             scoring_uri=scoring_uri,
-            swagger_uri=swagger_uri,
+            openapi_uri=openapi_uri,
             provisioning_state=provisioning_state,
             **kwargs,
         )
@@ -186,7 +186,7 @@ class OnlineEndpoint(Endpoint):
                 traffic=resource.properties.traffic,
                 provisioning_state=resource.properties.provisioning_state,
                 scoring_uri=resource.properties.scoring_uri,
-                swagger_uri=resource.properties.swagger_uri,
+                openapi_uri=resource.properties.swagger_uri,
                 identity=resource.identity,
                 kind=resource.kind,
             )
@@ -203,7 +203,7 @@ class OnlineEndpoint(Endpoint):
                 mirror_traffic=resource.properties.mirror_traffic,
                 provisioning_state=resource.properties.provisioning_state,
                 scoring_uri=resource.properties.scoring_uri,
-                swagger_uri=resource.properties.swagger_uri,
+                openapi_uri=resource.properties.swagger_uri,
                 identity=resource.identity,
                 kind=resource.kind,
                 public_network_access=resource.properties.public_network_access,

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputePowerAction
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeSchedules as RestComputeSchedules
@@ -31,7 +31,7 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        trigger: TriggerBase = None,
+        trigger: Union[CronTrigger, RecurrenceTrigger] = None,
         action: ComputePowerAction = None,
         state: ScheduleState = ScheduleState.ENABLED,
         **kwargs

@@ -5,10 +5,10 @@ from typing import Dict
 
 import pytest
 
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml._utils._data_utils import download_mltable_metadata_schema, validate_mltable_metadata
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import MLTABLE_METADATA_SCHEMA_URL_FALLBACK
+from azure.ai.ml.exceptions import ValidationException
 
 
 @pytest.fixture
@@ -18,6 +18,7 @@ def mltable_schema():
 
 
 @pytest.mark.unittest
+@pytest.mark.skip(reason="extension folder does not exist in GitHub")
 class TestDataUtils:
     def test_validate_mltable_metadata_schema(self, tmp_path: Path, mltable_schema: Dict):
         mltable_folder = tmp_path / "mltable_folder"

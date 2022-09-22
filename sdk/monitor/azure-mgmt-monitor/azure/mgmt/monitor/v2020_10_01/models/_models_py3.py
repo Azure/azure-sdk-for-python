@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,21 +9,20 @@
 
 from typing import Dict, List, Optional, TYPE_CHECKING
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
 
 
-class ActionGroup(msrest.serialization.Model):
+class ActionGroup(_serialization.Model):
     """A pointer to an Azure Action Group.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar action_group_id: Required. The resource ID of the Action Group. This cannot be null or
-     empty.
+    :ivar action_group_id: The resource ID of the Action Group. This cannot be null or empty.
+     Required.
     :vartype action_group_id: str
     :ivar webhook_properties: the dictionary of custom properties to include with the post
      operation. These data are appended to the webhook payload.
@@ -30,35 +30,29 @@ class ActionGroup(msrest.serialization.Model):
     """
 
     _validation = {
-        'action_group_id': {'required': True},
+        "action_group_id": {"required": True},
     }
 
     _attribute_map = {
-        'action_group_id': {'key': 'actionGroupId', 'type': 'str'},
-        'webhook_properties': {'key': 'webhookProperties', 'type': '{str}'},
+        "action_group_id": {"key": "actionGroupId", "type": "str"},
+        "webhook_properties": {"key": "webhookProperties", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        action_group_id: str,
-        webhook_properties: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, action_group_id: str, webhook_properties: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword action_group_id: Required. The resource ID of the Action Group. This cannot be null or
-         empty.
+        :keyword action_group_id: The resource ID of the Action Group. This cannot be null or empty.
+         Required.
         :paramtype action_group_id: str
         :keyword webhook_properties: the dictionary of custom properties to include with the post
          operation. These data are appended to the webhook payload.
         :paramtype webhook_properties: dict[str, str]
         """
-        super(ActionGroup, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.action_group_id = action_group_id
         self.webhook_properties = webhook_properties
 
 
-class ActionList(msrest.serialization.Model):
+class ActionList(_serialization.Model):
     """A list of Activity Log Alert rule actions.
 
     :ivar action_groups: The list of the Action Groups.
@@ -66,24 +60,19 @@ class ActionList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'action_groups': {'key': 'actionGroups', 'type': '[ActionGroup]'},
+        "action_groups": {"key": "actionGroups", "type": "[ActionGroup]"},
     }
 
-    def __init__(
-        self,
-        *,
-        action_groups: Optional[List["_models.ActionGroup"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, action_groups: Optional[List["_models.ActionGroup"]] = None, **kwargs):
         """
         :keyword action_groups: The list of the Action Groups.
         :paramtype action_groups: list[~$(python-base-namespace).v2020_10_01.models.ActionGroup]
         """
-        super(ActionList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.action_groups = action_groups
 
 
-class AzureResource(msrest.serialization.Model):
+class AzureResource(_serialization.Model):
     """An Azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -97,39 +86,33 @@ class AzureResource(msrest.serialization.Model):
     :ivar location: The location of the resource. Since Azure Activity Log Alerts is a global
      service, the location of the rules should always be 'global'.
     :vartype location: str
-    :ivar tags: A set of tags. The tags of the resource.
+    :ivar tags: The tags of the resource.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = "global",
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str = "global", tags: Optional[Dict[str, str]] = None, **kwargs):
         """
         :keyword location: The location of the resource. Since Azure Activity Log Alerts is a global
          service, the location of the rules should always be 'global'.
         :paramtype location: str
-        :keyword tags: A set of tags. The tags of the resource.
+        :keyword tags: The tags of the resource.
         :paramtype tags: dict[str, str]
         """
-        super(AzureResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -151,7 +134,7 @@ class ActivityLogAlertResource(AzureResource):
     :ivar location: The location of the resource. Since Azure Activity Log Alerts is a global
      service, the location of the rules should always be 'global'.
     :vartype location: str
-    :ivar tags: A set of tags. The tags of the resource.
+    :ivar tags: The tags of the resource.
     :vartype tags: dict[str, str]
     :ivar scopes: A list of resource IDs that will be used as prefixes. The alert will only apply
      to Activity Log events with resource IDs that fall under one of these prefixes. This list must
@@ -169,33 +152,33 @@ class ActivityLogAlertResource(AzureResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'scopes': {'key': 'properties.scopes', 'type': '[str]'},
-        'condition': {'key': 'properties.condition', 'type': 'AlertRuleAllOfCondition'},
-        'actions': {'key': 'properties.actions', 'type': 'ActionList'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "scopes": {"key": "properties.scopes", "type": "[str]"},
+        "condition": {"key": "properties.condition", "type": "AlertRuleAllOfCondition"},
+        "actions": {"key": "properties.actions", "type": "ActionList"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = "global",
+        location: str = "global",
         tags: Optional[Dict[str, str]] = None,
         scopes: Optional[List[str]] = None,
         condition: Optional["_models.AlertRuleAllOfCondition"] = None,
         actions: Optional["_models.ActionList"] = None,
-        enabled: Optional[bool] = True,
+        enabled: bool = True,
         description: Optional[str] = None,
         **kwargs
     ):
@@ -203,7 +186,7 @@ class ActivityLogAlertResource(AzureResource):
         :keyword location: The location of the resource. Since Azure Activity Log Alerts is a global
          service, the location of the rules should always be 'global'.
         :paramtype location: str
-        :keyword tags: A set of tags. The tags of the resource.
+        :keyword tags: The tags of the resource.
         :paramtype tags: dict[str, str]
         :keyword scopes: A list of resource IDs that will be used as prefixes. The alert will only
          apply to Activity Log events with resource IDs that fall under one of these prefixes. This list
@@ -219,7 +202,7 @@ class ActivityLogAlertResource(AzureResource):
         :keyword description: A description of this Activity Log Alert rule.
         :paramtype description: str
         """
-        super(ActivityLogAlertResource, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.scopes = scopes
         self.condition = condition
         self.actions = actions
@@ -227,60 +210,55 @@ class ActivityLogAlertResource(AzureResource):
         self.description = description
 
 
-class AlertRuleAllOfCondition(msrest.serialization.Model):
+class AlertRuleAllOfCondition(_serialization.Model):
     """An Activity Log Alert rule condition that is met when all its member conditions are met.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar all_of: Required. The list of Activity Log Alert rule conditions.
+    :ivar all_of: The list of Activity Log Alert rule conditions. Required.
     :vartype all_of:
      list[~$(python-base-namespace).v2020_10_01.models.AlertRuleAnyOfOrLeafCondition]
     """
 
     _validation = {
-        'all_of': {'required': True},
+        "all_of": {"required": True},
     }
 
     _attribute_map = {
-        'all_of': {'key': 'allOf', 'type': '[AlertRuleAnyOfOrLeafCondition]'},
+        "all_of": {"key": "allOf", "type": "[AlertRuleAnyOfOrLeafCondition]"},
     }
 
-    def __init__(
-        self,
-        *,
-        all_of: List["_models.AlertRuleAnyOfOrLeafCondition"],
-        **kwargs
-    ):
+    def __init__(self, *, all_of: List["_models.AlertRuleAnyOfOrLeafCondition"], **kwargs):
         """
-        :keyword all_of: Required. The list of Activity Log Alert rule conditions.
+        :keyword all_of: The list of Activity Log Alert rule conditions. Required.
         :paramtype all_of:
          list[~$(python-base-namespace).v2020_10_01.models.AlertRuleAnyOfOrLeafCondition]
         """
-        super(AlertRuleAllOfCondition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.all_of = all_of
 
 
-class AlertRuleLeafCondition(msrest.serialization.Model):
+class AlertRuleLeafCondition(_serialization.Model):
     """An Activity Log Alert rule condition that is met by comparing the field and value of an Activity Log event.
-This condition must contain 'field' and either 'equals' or 'containsAny'.
+    This condition must contain 'field' and either 'equals' or 'containsAny'.
 
-    :ivar field: The name of the Activity Log event's field that this condition will examine.
-     The possible values for this field are (case-insensitive): 'resourceId', 'category', 'caller',
-     'level', 'operationName', 'resourceGroup', 'resourceProvider', 'status', 'subStatus',
-     'resourceType', or anything beginning with 'properties'.
-    :vartype field: str
-    :ivar equals: The value of the event's field will be compared to this value (case-insensitive)
-     to determine if the condition is met.
-    :vartype equals: str
-    :ivar contains_any: The value of the event's field will be compared to the values in this array
-     (case-insensitive) to determine if the condition is met.
-    :vartype contains_any: list[str]
+        :ivar field: The name of the Activity Log event's field that this condition will examine.
+         The possible values for this field are (case-insensitive): 'resourceId', 'category', 'caller',
+         'level', 'operationName', 'resourceGroup', 'resourceProvider', 'status', 'subStatus',
+         'resourceType', or anything beginning with 'properties'.
+        :vartype field: str
+        :ivar equals: The value of the event's field will be compared to this value (case-insensitive)
+         to determine if the condition is met.
+        :vartype equals: str
+        :ivar contains_any: The value of the event's field will be compared to the values in this array
+         (case-insensitive) to determine if the condition is met.
+        :vartype contains_any: list[str]
     """
 
     _attribute_map = {
-        'field': {'key': 'field', 'type': 'str'},
-        'equals': {'key': 'equals', 'type': 'str'},
-        'contains_any': {'key': 'containsAny', 'type': '[str]'},
+        "field": {"key": "field", "type": "str"},
+        "equals": {"key": "equals", "type": "str"},
+        "contains_any": {"key": "containsAny", "type": "[str]"},
     }
 
     def __init__(
@@ -304,7 +282,7 @@ This condition must contain 'field' and either 'equals' or 'containsAny'.
          array (case-insensitive) to determine if the condition is met.
         :paramtype contains_any: list[str]
         """
-        super(AlertRuleLeafCondition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.field = field
         self.equals = equals
         self.contains_any = contains_any
@@ -312,37 +290,37 @@ This condition must contain 'field' and either 'equals' or 'containsAny'.
 
 class AlertRuleAnyOfOrLeafCondition(AlertRuleLeafCondition):
     """An Activity Log Alert rule condition that is met when all its member conditions are met.
-Each condition can be of one of the following types:
-**Important**\ : Each type has its unique subset of properties. Properties from different types CANNOT exist in one condition.
+    Each condition can be of one of the following types:
+    **Important**\ : Each type has its unique subset of properties. Properties from different types CANNOT exist in one condition.
 
 
-* **Leaf Condition -** must contain 'field' and either 'equals' or 'containsAny'.
-  *Please note, 'anyOf' should **not** be set in a Leaf Condition.*
+    * **Leaf Condition -** must contain 'field' and either 'equals' or 'containsAny'.
+      *Please note, 'anyOf' should **not** be set in a Leaf Condition.*
 
-  * **AnyOf Condition -** must contain **only** 'anyOf' (which is an array of Leaf Conditions).
-    *Please note, 'field', 'equals' and 'containsAny' should **not** be set in an AnyOf Condition.*.
+      * **AnyOf Condition -** must contain **only** 'anyOf' (which is an array of Leaf Conditions).
+        *Please note, 'field', 'equals' and 'containsAny' should **not** be set in an AnyOf Condition.*.
 
-    :ivar field: The name of the Activity Log event's field that this condition will examine.
-     The possible values for this field are (case-insensitive): 'resourceId', 'category', 'caller',
-     'level', 'operationName', 'resourceGroup', 'resourceProvider', 'status', 'subStatus',
-     'resourceType', or anything beginning with 'properties'.
-    :vartype field: str
-    :ivar equals: The value of the event's field will be compared to this value (case-insensitive)
-     to determine if the condition is met.
-    :vartype equals: str
-    :ivar contains_any: The value of the event's field will be compared to the values in this array
-     (case-insensitive) to determine if the condition is met.
-    :vartype contains_any: list[str]
-    :ivar any_of: An Activity Log Alert rule condition that is met when at least one of its member
-     leaf conditions are met.
-    :vartype any_of: list[~$(python-base-namespace).v2020_10_01.models.AlertRuleLeafCondition]
+        :ivar field: The name of the Activity Log event's field that this condition will examine.
+         The possible values for this field are (case-insensitive): 'resourceId', 'category', 'caller',
+         'level', 'operationName', 'resourceGroup', 'resourceProvider', 'status', 'subStatus',
+         'resourceType', or anything beginning with 'properties'.
+        :vartype field: str
+        :ivar equals: The value of the event's field will be compared to this value (case-insensitive)
+         to determine if the condition is met.
+        :vartype equals: str
+        :ivar contains_any: The value of the event's field will be compared to the values in this array
+         (case-insensitive) to determine if the condition is met.
+        :vartype contains_any: list[str]
+        :ivar any_of: An Activity Log Alert rule condition that is met when at least one of its member
+         leaf conditions are met.
+        :vartype any_of: list[~$(python-base-namespace).v2020_10_01.models.AlertRuleLeafCondition]
     """
 
     _attribute_map = {
-        'field': {'key': 'field', 'type': 'str'},
-        'equals': {'key': 'equals', 'type': 'str'},
-        'contains_any': {'key': 'containsAny', 'type': '[str]'},
-        'any_of': {'key': 'anyOf', 'type': '[AlertRuleLeafCondition]'},
+        "field": {"key": "field", "type": "str"},
+        "equals": {"key": "equals", "type": "str"},
+        "contains_any": {"key": "containsAny", "type": "[str]"},
+        "any_of": {"key": "anyOf", "type": "[AlertRuleLeafCondition]"},
     }
 
     def __init__(
@@ -370,11 +348,11 @@ Each condition can be of one of the following types:
          member leaf conditions are met.
         :paramtype any_of: list[~$(python-base-namespace).v2020_10_01.models.AlertRuleLeafCondition]
         """
-        super(AlertRuleAnyOfOrLeafCondition, self).__init__(field=field, equals=equals, contains_any=contains_any, **kwargs)
+        super().__init__(field=field, equals=equals, contains_any=contains_any, **kwargs)
         self.any_of = any_of
 
 
-class AlertRuleList(msrest.serialization.Model):
+class AlertRuleList(_serialization.Model):
     """A list of Activity Log Alert rules.
 
     :ivar value: The list of Activity Log Alert rules.
@@ -384,8 +362,8 @@ class AlertRuleList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ActivityLogAlertResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ActivityLogAlertResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -401,15 +379,15 @@ class AlertRuleList(msrest.serialization.Model):
         :keyword next_link: Provides the link to retrieve the next set of elements.
         :paramtype next_link: str
         """
-        super(AlertRuleList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class AlertRulePatchObject(msrest.serialization.Model):
+class AlertRulePatchObject(_serialization.Model):
     """An Activity Log Alert rule object for the body of patch operations.
 
-    :ivar tags: A set of tags. The resource tags.
+    :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
     :ivar enabled: Indicates whether this Activity Log Alert rule is enabled. If an Activity Log
      Alert rule is not enabled, then none of its actions will be activated.
@@ -417,30 +395,24 @@ class AlertRulePatchObject(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        enabled: Optional[bool] = True,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs):
         """
-        :keyword tags: A set of tags. The resource tags.
+        :keyword tags: The resource tags.
         :paramtype tags: dict[str, str]
         :keyword enabled: Indicates whether this Activity Log Alert rule is enabled. If an Activity Log
          Alert rule is not enabled, then none of its actions will be activated.
         :paramtype enabled: bool
         """
-        super(AlertRulePatchObject, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.enabled = enabled
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """The error response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -452,21 +424,17 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None

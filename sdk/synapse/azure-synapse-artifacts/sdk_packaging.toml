@@ -1,10 +1,9 @@
 [packaging]
 package_name = "azure-synapse-artifacts"
-package_nspkg = "azure-synapse-nspkg"
 package_pprint_name = "Synapse Artifacts"
 package_doc_id = ""
-is_stable = false
-is_arm = false
+is_stable = true
+is_arm = true
 need_msrestazure = false
-need_azurecore = true
+need_azurecore = false
 auto_update = false

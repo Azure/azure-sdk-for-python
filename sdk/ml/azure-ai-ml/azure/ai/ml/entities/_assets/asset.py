@@ -7,15 +7,10 @@ from abc import abstractmethod
 from os import PathLike
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-    log_and_raise_error,
-)
+from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
 class Asset(Resource):
@@ -49,7 +44,7 @@ class Asset(Resource):
         self._auto_increment_version = kwargs.pop("auto_increment_version", False)
 
         if not name and version is None:
-            name = str(uuid.uuid4())
+            name = _get_random_name()
             version = "1"
             self._is_anonymous = True
         elif version is not None and not name:
@@ -137,3 +132,7 @@ class Asset(Resource):
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
+
+
+def _get_random_name() -> str:
+    return str(uuid.uuid4())

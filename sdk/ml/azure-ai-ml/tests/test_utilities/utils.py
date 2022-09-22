@@ -1,10 +1,12 @@
 import copy
 import os
 import signal
+import tempfile
 import time
 from io import StringIO
 from typing import Dict
 from zipfile import ZipFile
+from io import StringIO
 
 import pydash
 import urllib3
@@ -188,7 +190,7 @@ def verify_entity_load_and_dump(
     load_function,
     entity_validation_function,
     test_load_file_path: str,
-    test_dump_file_path="./dump-test.yaml",
+    test_dump_file_path="dump-test.yaml",
     **load_kwargs,
 ):
     # test loading
@@ -222,27 +224,32 @@ def verify_entity_load_and_dump(
     # TODO once dump functionality audit is complete, this testing should be
     # made more robust, like comparing it to the inputted yaml or something.
     if test_dump_file_path is not None:
-        # delete test dump file if it still exists for some reason
-        delete_file_if_exists(test_dump_file_path)
+
         # test file pointer-based dump
-        with open(test_dump_file_path, "w") as f:
-            file_entity.dump(f)
-        assert get_file_contents(test_dump_file_path) != ""
-        delete_file_if_exists(test_dump_file_path)
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            tmpfilename = f"{tmpdirname}/{test_dump_file_path}"
+            with open(tmpfilename, "w+") as f:
+                file_entity.dump(f)
+            assert get_file_contents(tmpfilename) != ""
 
         # test string stream dump
         with StringIO() as outputStream:
             stream_entity.dump(outputStream)
             assert outputStream.tell() > 0
+
         # test path-based dump
-        first_input_entity.dump(test_dump_file_path)
-        assert get_file_contents(test_dump_file_path) != ""
-        delete_file_if_exists(test_dump_file_path)
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            tmpfilename = f"{tmpdirname}/{test_dump_file_path}"
+            first_input_entity.dump(tmpfilename)
+            assert get_file_contents(tmpfilename) != ""
+            delete_file_if_exists(tmpfilename)
 
         # test path-based dump using deprecated input name
-        first_input_entity.dump(path=test_dump_file_path)
-        assert get_file_contents(test_dump_file_path) != ""
-        delete_file_if_exists(test_dump_file_path)
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            tmpfilename = f"{tmpdirname}/{test_dump_file_path}"
+            first_input_entity.dump(path=tmpfilename)
+            assert get_file_contents(tmpfilename) != ""
+            delete_file_if_exists(tmpfilename)
 
     return (old_path_entity, file_entity)
 
