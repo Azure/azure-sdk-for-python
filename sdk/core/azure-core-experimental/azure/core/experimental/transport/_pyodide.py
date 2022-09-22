@@ -42,8 +42,8 @@ from azure.core.pipeline.transport import HttpRequest, AsyncioRequestsTransport
 class PyodideTransportResponse(AsyncHttpResponseImpl):
     """Async response object for the `PyodideTransport`."""
 
-    @property
-    def js_stream(self):
+
+    def _js_stream(self):
         """So we get a fresh stream every time."""
         return self._internal_response.clone().js_response.body
 
@@ -73,9 +73,9 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
         self.response = response
         # use this to efficiently store bytes.
         if kwargs.pop("decompress", False) and self.response.headers.get("enc", None) in ("gzip", "deflate"):
-            self._js_reader = response.js_stream.pipeThrough(js.DecompressionStream.new("gzip")).getReader()
+            self._js_reader = response._js_stream().pipeThrough(js.DecompressionStream.new("gzip")).getReader()
         else:
-            self._js_reader = response.js_stream.getReader()
+            self._js_reader = response._js_stream().getReader()
         self._stream = BytesIO()
 
         self._closed = False
