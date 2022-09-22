@@ -497,7 +497,7 @@ class CodegenTestPR:
     def get_tests_info(self, module_name):
         operations_info = {}
         operations_classes = []
-        print_check('pip list')
+        print_check('python3 -m pip list')
         module_to_generate = importlib.import_module(module_name)
         client_name = getattr(module_to_generate, "__all__")[0]
         service_name = module_name.replace('.', '-')
