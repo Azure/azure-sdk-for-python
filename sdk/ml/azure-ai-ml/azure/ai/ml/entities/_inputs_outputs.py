@@ -2,7 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access, redefined-builtin, too-many-lines
+# disable redefined-builtin to use type/min/max as argument name
 
 """This file includes the type classes which could be used in dsl.pipeline,
 command function, or any other place that requires job inputs/outputs.
@@ -56,6 +57,7 @@ command function, or any other place that requires job inputs/outputs.
         )
         node = my_command()
 """
+import copy
 import math
 from collections import OrderedDict
 from enum import Enum as PyEnum
@@ -63,11 +65,14 @@ from enum import EnumMeta
 from inspect import Parameter, signature
 from typing import Dict, Iterable, Sequence, Union, overload
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from typing_extensions import Literal
+
 from azure.ai.ml._schema.component.input_output import SUPPORTED_PARAM_TYPES
-from azure.ai.ml.constants import AssetTypes, ComponentParameterTypes, InputOutputModes, IOConstants
+from azure.ai.ml.constants import AssetTypes
+from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
 from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
 class _InputOutputBase(DictMixin, RestTranslatableMixin):
@@ -75,7 +80,7 @@ class _InputOutputBase(DictMixin, RestTranslatableMixin):
         self,
         *,
         type,
-        **kwargs,
+        **kwargs,  # pylint: disable=unused-argument
     ):
         """Base class for Input & Output class.
 
@@ -91,15 +96,16 @@ class _InputOutputBase(DictMixin, RestTranslatableMixin):
         return self.type in SUPPORTED_PARAM_TYPES
 
 
-class Input(_InputOutputBase):
+class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     """Define an input of a Component or Job.
 
     Default to be a uri_folder Input.
 
     :param type: The type of the data input. Possible values include:
-                        'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', 'integer', 'number', 'string', 'boolean'
+        'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', 'integer', 'number', 'string', 'boolean'
     :type type: str
-    :param path: The path to which the input is pointing. Could be pointing to local data, cloud data, a registered name, etc.
+    :param path: The path to which the input is pointing.
+        Could be pointing to local data, cloud data, a registered name, etc.
     :type path: str
     :param mode: The mode of the data input. Possible values are:
                         'ro_mount': Read-only mount the data,
@@ -124,7 +130,7 @@ class Input(_InputOutputBase):
     def __init__(
         self,
         *,
-        type: str = "uri_folder",
+        type: Literal["uri_folder"] = "uri_folder",
         path: str = None,
         mode: str = None,
         optional: bool = None,
@@ -136,7 +142,8 @@ class Input(_InputOutputBase):
         :param type: The type of the data input. Possible values include:
                             'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', and user-defined types.
         :type type: str
-        :param path: The path to which the input is pointing. Could be pointing to local data, cloud data, a registered name, etc.
+        :param path: The path to which the input is pointing.
+            Could be pointing to local data, cloud data, a registered name, etc.
         :type path: str
         :param mode: The mode of the data input. Possible values are:
                             'ro_mount': Read-only mount the data,
@@ -147,13 +154,15 @@ class Input(_InputOutputBase):
         :type optional: bool
         :param description: Description of the input
         :type description: str
+        :param datastore: The datastore to upload local files to.
+        :type datastore: str
         """
 
     @overload
     def __init__(
         self,
         *,
-        type: str = "number",
+        type: Literal["number"] = "number",
         default: float = None,
         min: float = None,
         max: float = None,
@@ -181,7 +190,7 @@ class Input(_InputOutputBase):
     def __init__(
         self,
         *,
-        type: str = "integer",
+        type: Literal["integer"] = "integer",
         default: int = None,
         min: int = None,
         max: int = None,
@@ -209,7 +218,7 @@ class Input(_InputOutputBase):
     def __init__(
         self,
         *,
-        type: str = "string",
+        type: Literal["string"] = "string",
         default: str = None,
         optional: bool = None,
         description: str = None,
@@ -231,7 +240,7 @@ class Input(_InputOutputBase):
     def __init__(
         self,
         *,
-        type: str = "boolean",
+        type: Literal["boolean"] = "boolean",
         default: bool = None,
         optional: bool = None,
         description: str = None,
@@ -261,6 +270,7 @@ class Input(_InputOutputBase):
         max: Union[int, float] = None,
         enum=None,
         description: str = None,
+        datastore: str = None,
         **kwargs,
     ):
         super(Input, self).__init__(type=type)
@@ -269,8 +279,13 @@ class Input(_InputOutputBase):
         self.name = None
         self.description = description
 
-        self._allowed_types = IOConstants.PRIMITIVE_STR_2_TYPE.get(self.type)
-        self._is_primitive_type = self.type in IOConstants.PRIMITIVE_STR_2_TYPE
+        if self._multiple_types:
+            # note: we suppose that no primitive type will be included when there are multiple types
+            self._allowed_types = None
+            self._is_primitive_type = False
+        else:
+            self._allowed_types = IOConstants.PRIMITIVE_STR_2_TYPE.get(self.type)
+            self._is_primitive_type = self.type in IOConstants.PRIMITIVE_STR_2_TYPE
         if path and not isinstance(path, str):
             # this logic will make dsl data binding expression working in the same way as yaml
             # it's written to handle InputOutputBase, but there will be loop import if we import InputOutputBase here
@@ -285,10 +300,25 @@ class Input(_InputOutputBase):
         self.min = min
         self.max = max
         self.enum = enum
+        self.datastore = datastore
         # normalize properties like ["default", "min", "max", "optional"]
         self._normalize_self_properties()
 
         self._validate_parameter_combinations()
+
+    @property
+    def _multiple_types(self) -> bool:
+        """Returns True if this input has multiple types.
+
+        Currently, there are two scenarios that need to check this property:
+        1. before `in` as it may throw exception; there will be `in` operation for validation/transformation.
+        2. `str()` of list is not ideal, so we need to manually create its string result.
+        """
+        return isinstance(self.type, list)
+
+    def _is_literal(self) -> bool:
+        """Override this function as `self.type` can be list and not hashable for operation `in`."""
+        return not self._multiple_types and super(Input, self)._is_literal()
 
     def _is_enum(self):
         """returns true if the input is enum."""
@@ -296,18 +326,7 @@ class Input(_InputOutputBase):
 
     def _to_dict(self, remove_name=True):
         """Convert the Input object to a dict."""
-        keys = [
-            "name",
-            "path",
-            "type",
-            "mode",
-            "description",
-            "default",
-            "min",
-            "max",
-            "enum",
-            "optional",
-        ]
+        keys = ["name", "path", "type", "mode", "description", "default", "min", "max", "enum", "optional", "datastore"]
         if remove_name:
             keys.remove("name")
         result = {key: getattr(self, key) for key in keys}
@@ -321,9 +340,9 @@ class Input(_InputOutputBase):
         """
         if self.type == "integer":
             return int(val)
-        elif self.type == "number":
+        if self.type == "number":
             return float(val)
-        elif self.type == "boolean":
+        if self.type == "boolean":
             lower_val = str(val).lower()
             if lower_val not in {"true", "false"}:
                 msg = "Boolean parameter '{}' only accept True/False, got {}."
@@ -332,9 +351,10 @@ class Input(_InputOutputBase):
                     no_personal_data_message=msg.format("[self.name]", "[val]"),
                     error_category=ErrorCategory.USER_ERROR,
                     target=ErrorTarget.PIPELINE,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )
-            return True if lower_val == "true" else False
-        elif self.type == "string":
+            return lower_val == "true"
+        if self.type == "string":
             return val if isinstance(val, str) else str(val)
         return val
 
@@ -355,30 +375,36 @@ class Input(_InputOutputBase):
     def _update_default(self, default_value):
         """Update provided default values."""
         name = "" if not self.name else f"{self.name!r} "
-        msg_prefix = f"Default value of {self.type} Input {name}"
+        msg_prefix = f"Default value of Input {name}"
         if not self._is_primitive_type and default_value is not None:
             msg = f"{msg_prefix}cannot be set: Non-primitive type Input has no default value."
             raise UserErrorException(msg)
-        else:
-            if isinstance(default_value, float) and not math.isfinite(default_value):
-                # Since nan/inf cannot be stored in the backend, just ignore them.
-                # logger.warning("Float default value %r is not allowed, ignored." % default_value)
-                return
-            """Update provided default values.
-            Here we need to make sure the type of default value is allowed or it could be parsed..
-            """
-            if default_value is not None:
-                if type(default_value) not in IOConstants.PRIMITIVE_TYPE_2_STR:
-                    msg = f"{msg_prefix}cannot be set: type must be one of {list(IOConstants.PRIMITIVE_TYPE_2_STR.values())}, got '{type(default_value)}'."
-                    raise UserErrorException(msg)
+        if isinstance(default_value, float) and not math.isfinite(default_value):
+            # Since nan/inf cannot be stored in the backend, just ignore them.
+            # logger.warning("Float default value %r is not allowed, ignored." % default_value)
+            return
+        # pylint: disable=pointless-string-statement
+        """Update provided default values.
+        Here we need to make sure the type of default value is allowed or it could be parsed..
+        """
+        if default_value is not None:
+            if type(default_value) not in IOConstants.PRIMITIVE_TYPE_2_STR:
+                msg = (
+                    f"{msg_prefix}cannot be set: type must be one of "
+                    f"{list(IOConstants.PRIMITIVE_TYPE_2_STR.values())}, got '{type(default_value)}'."
+                )
+                raise UserErrorException(msg)
 
-                if not isinstance(default_value, self._allowed_types):
-                    try:
-                        default_value = self._parse(default_value)
-                    except Exception as e:
-                        msg = f"{msg_prefix}cannot be parsed, got '{default_value}', type = {type(default_value)!r}."
-                        raise UserErrorException(msg) from e
-            self.default = default_value
+            if not isinstance(default_value, self._allowed_types):
+                try:
+                    default_value = self._parse(default_value)
+                # return original validation exception which is custom defined if raised by self._parse
+                except ValidationException as e:
+                    raise e
+                except Exception as e:
+                    msg = f"{msg_prefix}cannot be parsed, got '{default_value}', type = {type(default_value)!r}."
+                    raise UserErrorException(msg) from e
+        self.default = default_value
 
     def _validate_or_throw(self, value):
         """Validate input parameter value, throw exception if not as expected.
@@ -393,6 +419,7 @@ class Input(_InputOutputBase):
                 no_personal_data_message=msg.format("[self.name]"),
                 error_category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.PIPELINE,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
         if self._allowed_types and value is not None:
             if not isinstance(value, self._allowed_types):
@@ -402,9 +429,10 @@ class Input(_InputOutputBase):
                     no_personal_data_message=msg.format("[name]", self._allowed_types, type(value)),
                     error_category=ErrorCategory.USER_ERROR,
                     target=ErrorTarget.PIPELINE,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )
         # for numeric values, need extra check for min max value
-        if self.type in ("integer", "number"):
+        if not self._multiple_types and self.type in ("integer", "number"):
             if self.min is not None and value < self.min:
                 msg = "Parameter '{}' should not be less than {}."
                 raise ValidationException(
@@ -412,6 +440,7 @@ class Input(_InputOutputBase):
                     no_personal_data_message=msg.format("[name]", self.min),
                     error_category=ErrorCategory.USER_ERROR,
                     target=ErrorTarget.PIPELINE,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )
             if self.max is not None and value > self.max:
                 msg = "Parameter '{}' should not be greater than {}."
@@ -420,6 +449,7 @@ class Input(_InputOutputBase):
                     no_personal_data_message=msg.format("[name]", self.max),
                     error_category=ErrorCategory.USER_ERROR,
                     target=ErrorTarget.PIPELINE,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )
 
     def _get_python_builtin_type_str(self) -> str:
@@ -427,7 +457,9 @@ class Input(_InputOutputBase):
 
         Return yaml type if not available.
         """
-        return IOConstants.PRIMITIVE_STR_2_TYPE[self.type].__name__ if self._is_primitive_type else self.type
+        if not self._multiple_types:
+            return IOConstants.PRIMITIVE_STR_2_TYPE[self.type].__name__ if self._is_primitive_type else self.type
+        return "[" + ", ".join(self.type) + "]"
 
     def _validate_parameter_combinations(self):
         """Validate different parameter combinations according to type."""
@@ -436,7 +468,7 @@ class Input(_InputOutputBase):
         type = parameters.pop("type")
 
         # validate parameter combination
-        if type in IOConstants.INPUT_TYPE_COMBINATION:
+        if not self._multiple_types and type in IOConstants.INPUT_TYPE_COMBINATION:
             valid_parameters = IOConstants.INPUT_TYPE_COMBINATION[type]
             for key, value in parameters.items():
                 if key not in valid_parameters and value is not None:
@@ -446,11 +478,12 @@ class Input(_InputOutputBase):
                         no_personal_data_message=msg.format("[type]", "[parameter]", "[parameter_value]"),
                         error_category=ErrorCategory.USER_ERROR,
                         target=ErrorTarget.PIPELINE,
+                        error_type=ValidationErrorType.INVALID_VALUE,
                     )
 
     def _normalize_self_properties(self):
         # parse value from string to it's original type. eg: "false" -> False
-        if self.type in IOConstants.PARAM_PARSERS:
+        if not self._multiple_types and self.type in IOConstants.PARAM_PARSERS:
             for key in ["min", "max"]:
                 if getattr(self, key) is not None:
                     origin_value = getattr(self, key)
@@ -466,8 +499,9 @@ class Input(_InputOutputBase):
         return None
 
     @classmethod
-    def _get_default_string_input(cls, optional=None):
-        return cls(type="string", optional=optional)
+    def _get_default_unknown_input(cls, optional=None):
+        # Set type as None here to avoid schema validation failed
+        return cls(type=None, optional=optional)
 
     @classmethod
     def _get_param_with_standard_annotation(cls, func):
@@ -483,14 +517,14 @@ class Input(_InputOutputBase):
         return result
 
     @classmethod
-    def _from_rest_object(cls, rest_dict: Dict) -> "Input":
+    def _from_rest_object(cls, obj: Dict) -> "Input":
         # this is for component rest object when using Input as component inputs
         reversed_data_type_mapping = {v: k for k, v in IOConstants.TYPE_MAPPING_YAML_2_REST.items()}
         # parse String -> string, Integer -> integer, etc
-        if rest_dict["type"] in reversed_data_type_mapping:
-            rest_dict["type"] = reversed_data_type_mapping[rest_dict["type"]]
+        if not isinstance(obj["type"], list) and obj["type"] in reversed_data_type_mapping:
+            obj["type"] = reversed_data_type_mapping[obj["type"]]
 
-        return Input(**rest_dict)
+        return Input(**obj)
 
 
 class Output(_InputOutputBase):
@@ -511,7 +545,14 @@ class Output(_InputOutputBase):
     """
 
     @overload
-    def __init__(self, type="uri_folder", path=None, mode=None, description=None):
+    def __init__(
+        self,
+        *,
+        type: Literal["uri_folder"] = "uri_folder",
+        path=None,
+        mode=None,
+        description=None,
+    ):
         """Define a uri_folder output.
 
         :param type: The type of the data output. Possible values include:
@@ -529,7 +570,7 @@ class Output(_InputOutputBase):
         """
 
     @overload
-    def __init__(self, type="uri_file", path=None, mode=None, description=None):
+    def __init__(self, type: Literal["uri_file"] = "uri_file", path=None, mode=None, description=None):
         """Define a uri_file output.
 
         :param type: The type of the data output. Possible values include:
@@ -556,6 +597,8 @@ class Output(_InputOutputBase):
 
         self.path = path
         self.mode = mode
+        # use this field to determine the Output is control or not, currently hide in kwargs
+        self.is_control = kwargs.pop("is_control", None)
 
     def _get_hint(self, new_line_style=False):
         comment_str = self.description.replace('"', '\\"') if self.description else self.type
@@ -563,7 +606,7 @@ class Output(_InputOutputBase):
 
     def _to_dict(self, remove_name=True):
         """Convert the Output object to a dict."""
-        keys = ["name", "path", "type", "mode", "description"]
+        keys = ["name", "path", "type", "mode", "description", "is_control"]
         if remove_name:
             keys.remove("name")
         result = {key: getattr(self, key) for key in keys}
@@ -575,9 +618,9 @@ class Output(_InputOutputBase):
         return self._to_dict()
 
     @classmethod
-    def _from_rest_object(cls, rest_dict: Dict) -> "Output":
+    def _from_rest_object(cls, obj: Dict) -> "Output":
         # this is for component rest object when using Output as component outputs
-        return Output(**rest_dict)
+        return Output(**obj)
 
 
 class EnumInput(Input):
@@ -605,7 +648,7 @@ class EnumInput(Input):
         # This is used to parse enum class instead of enum str value if a enum class is provided.
         if isinstance(enum, EnumMeta):
             self._enum_class = enum
-            self._str2enum = {v: e for v, e in zip(enum_values, enum)}
+            self._str2enum = dict(zip(enum_values, enum))
         else:
             self._enum_class = None
             self._str2enum = {v: v for v in enum_values}
@@ -634,6 +677,7 @@ class EnumInput(Input):
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.PIPELINE,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
         if len(enum_values) <= 0:
@@ -643,6 +687,7 @@ class EnumInput(Input):
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.PIPELINE,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
         if any(not isinstance(v, str) for v in enum_values):
@@ -652,27 +697,29 @@ class EnumInput(Input):
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.PIPELINE,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
         return enum_values
 
-    def _parse(self, str_val: str):
+    def _parse(self, val: str):
         """Parse the enum value from a string value or the enum value."""
-        if str_val is None:
-            return str_val
+        if val is None:
+            return val
 
-        if self._enum_class and isinstance(str_val, self._enum_class):
-            return str_val  # Directly return the enum value if it is the enum.
+        if self._enum_class and isinstance(val, self._enum_class):
+            return val  # Directly return the enum value if it is the enum.
 
-        if str_val not in self._str2enum:
+        if val not in self._str2enum:
             msg = "Not a valid enum value: '{}', valid values: {}"
             raise ValidationException(
-                message=msg.format(str_val, ", ".join(self.enum)),
+                message=msg.format(val, ", ".join(self.enum)),
                 no_personal_data_message=msg.format("[val]", "[enum]"),
                 error_category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.PIPELINE,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
-        return self._str2enum[str_val]
+        return self._str2enum[val]
 
     def _update_default(self, default_value):
         """Enum parameter support updating values with a string value."""
@@ -680,6 +727,185 @@ class EnumInput(Input):
         if self._enum_class and isinstance(enum_val, self._enum_class):
             enum_val = enum_val.value
         self.default = enum_val
+
+
+def is_parameter_group(obj):
+    """Return True if obj is a parameter group or an instance of a parameter group class."""
+    return hasattr(obj, IOConstants.GROUP_ATTR_NAME)
+
+
+class GroupInput(Input):
+    def __init__(self, values: dict, _group_class):
+        super().__init__(type=IOConstants.GROUP_TYPE_NAME)
+        self.assert_group_value_valid(values)
+        self.values = values
+        # Create empty default by values
+        # Note Output do not have default so just set a None
+        self.default = self._create_default()
+        # Save group class for init function generation
+        self._group_class = _group_class
+
+    @classmethod
+    def _create_group_attr_dict(cls, dct):
+        from ._job.pipeline._io import _GroupAttrDict
+
+        return _GroupAttrDict(dct)
+
+    @classmethod
+    def _is_group_attr_dict(cls, obj):
+        from ._job.pipeline._io import _GroupAttrDict
+
+        return isinstance(obj, _GroupAttrDict)
+
+    def _create_default(self):
+        from ._job.pipeline._io import PipelineInput
+
+        default_dict = {}
+        for k, v in self.values.items():
+            # Assign directly if is subgroup, else create PipelineInput object
+            default_dict[k] = v.default if isinstance(v, GroupInput) else PipelineInput(name=k, data=v.default, meta=v)
+        return self._create_group_attr_dict(default_dict)
+
+    @classmethod
+    def assert_group_value_valid(cls, values):
+        """Check if all value in group is _Param type with unique name."""
+        names = set()
+        msg = (
+            f"Parameter {{!r}} with type {{!r}} is not supported in parameter group. "
+            f"Supported types are: {list(IOConstants.PRIMITIVE_STR_2_TYPE.keys())}"
+        )
+        for key, value in values.items():
+            if not isinstance(value, Input):
+                raise ValueError(msg.format(key, type(value).__name__))
+            if value.type is None:
+                # Skip check for parameter translated from pipeline job (lost type)
+                continue
+            if value.type not in IOConstants.PRIMITIVE_STR_2_TYPE and not isinstance(value, GroupInput):
+                raise UserErrorException(msg.format(key, value.type))
+            if key in names:
+                raise ValueError(f"Duplicate parameter name {value.name!r} found in ParameterGroup values.")
+            names.add(key)
+
+    def flatten(self, group_parameter_name):
+        """Flatten and return all parameters."""
+        all_parameters = {}
+        group_parameter_name = group_parameter_name if group_parameter_name else ""
+        for key, value in self.values.items():
+            flattened_name = ".".join([group_parameter_name, key])
+            if isinstance(value, GroupInput):
+                all_parameters.update(value.flatten(flattened_name))
+            else:
+                all_parameters[flattened_name] = value
+        return all_parameters
+
+    def _to_dict(self, remove_name=True) -> dict:
+        attr_dict = super()._to_dict(remove_name)
+        attr_dict["values"] = {k: v._to_dict() for k, v in self.values.items()}
+        return attr_dict
+
+    @staticmethod
+    def custom_class_value_to_attr_dict(value, group_names=None):
+        """Convert custom parameter group class object to GroupAttrDict."""
+        if not is_parameter_group(value):
+            return value
+        group_definition = getattr(value, IOConstants.GROUP_ATTR_NAME)
+        group_names = [*group_names] if group_names else []
+        attr_dict = {}
+        from ._job.pipeline._io import PipelineInput
+
+        for k, v in value.__dict__.items():
+            if is_parameter_group(v):
+                attr_dict[k] = GroupInput.custom_class_value_to_attr_dict(v, [*group_names, k])
+                continue
+            data = v.value if isinstance(v, PyEnum) else v
+            if GroupInput._is_group_attr_dict(data):
+                attr_dict[k] = data
+                continue
+            attr_dict[k] = PipelineInput(name=k, meta=group_definition.get(k), data=data, group_names=group_names)
+        return GroupInput._create_group_attr_dict(attr_dict)
+
+    @staticmethod
+    def validate_conflict_keys(keys):
+        """Validate conflict keys like {'a.b.c': 1, 'a.b': 1}."""
+        conflict_msg = "Conflict parameter key '%s' and '%s'."
+
+        def _group_count(s):
+            return len(s.split(".")) - 1
+
+        # Sort order by group numbers
+        keys = sorted(list(keys), key=_group_count)
+        for idx, key1 in enumerate(keys[:-1]):
+            for key2 in keys[idx + 1 :]:
+                if _group_count(key2) == 0:
+                    continue
+                # Skip case a.b.c and a.b.c1
+                if _group_count(key1) == _group_count(key2):
+                    continue
+                if not key2.startswith(key1):
+                    continue
+                # Invalid case 'a.b' in 'a.b.c'
+                raise ValidationException(
+                    message=conflict_msg % (key1, key2),
+                    no_personal_data_message=conflict_msg % ("[key1]", "[key2]"),
+                    target=ErrorTarget.PIPELINE,
+                )
+
+    @staticmethod
+    def restore_flattened_inputs(inputs):
+        """Restore flattened inputs to structured groups."""
+        GroupInput.validate_conflict_keys(inputs.keys())
+        restored_inputs = {}
+        group_inputs = {}
+        # 1. Build all group parameters dict
+        for name, data in inputs.items():
+            # for a.b.c, group names is [a, b]
+            name_splits = name.split(".")
+            group_names, param_name = name_splits[:-1], name_splits[-1]
+            if not group_names:
+                restored_inputs[name] = data
+                continue
+            # change {'a.b.c': data} -> {'a': {'b': {'c': data}}}
+            target_dict = group_inputs
+            for group_name in group_names:
+                if group_name not in target_dict:
+                    target_dict[group_name] = {}
+                target_dict = target_dict[group_name]
+            target_dict[param_name] = data
+
+        def restore_from_dict_recursively(_data):
+            for key, val in _data.items():
+                if type(val) == dict:  # pylint: disable=unidiomatic-typecheck
+                    _data[key] = restore_from_dict_recursively(val)
+            # Create GroupInput for definition and _GroupAttrDict for PipelineInput
+            # Regard all Input class as parameter definition, as data will not appear in group now.
+            if all(isinstance(val, Input) for val in _data.values()):
+                return GroupInput(values=_data, _group_class=None)
+            return GroupInput._create_group_attr_dict(dct=_data)
+
+        # 2. Rehydrate dict to GroupInput(definition) or GroupAttrDict.
+        for name, data in group_inputs.items():
+            restored_inputs[name] = restore_from_dict_recursively(data)
+        return restored_inputs
+
+    def _update_default(self, default_value=None):
+        default_cls = type(default_value)
+
+        # Assert '__parameter_group__' must in the class of default value
+        if self._is_group_attr_dict(default_value):
+            self.default = default_value
+            self.optional = False
+            return
+        if default_value and not is_parameter_group(default_cls):
+            raise ValueError(f"Default value must be instance of parameter group, got {default_cls}.")
+        if hasattr(default_value, "__dict__"):
+            # Convert default value with customer type to _AttrDict
+            self.default = GroupInput.custom_class_value_to_attr_dict(default_value)
+            # Update item annotation
+            for key, annotation in self.values.items():
+                if not hasattr(default_value, key):
+                    continue
+                annotation._update_default(getattr(default_value, key))
+        self.optional = default_value is None
 
 
 def _get_annotation_by_value(val):
@@ -694,7 +920,7 @@ def _get_annotation_by_value(val):
     elif val is Parameter.empty or val is None:
         # If no default value or default is None, create val as the basic parameter type,
         # it could be replaced using component parameter definition.
-        annotation = Input._get_default_string_input()
+        annotation = Input._get_default_unknown_input()
     elif isinstance(val, PyEnum):
         # Handle enum values
         annotation = EnumInput(enum=val.__class__)
@@ -702,7 +928,7 @@ def _get_annotation_by_value(val):
         annotation = _get_annotation_cls_by_type(type(val), raise_error=False)
         if not annotation:
             # Fall back to default
-            annotation = Input._get_default_string_input()
+            annotation = Input._get_default_unknown_input()
     return annotation
 
 
@@ -713,6 +939,7 @@ def _get_annotation_cls_by_type(t: type, raise_error=False, optional=None):
     return cls
 
 
+# pylint: disable=too-many-statements
 def _get_param_with_standard_annotation(cls_or_func, is_func=False):
     """Standardize function parameters or class fields with dsl.types
     annotation."""
@@ -727,12 +954,15 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False):
             # Handle EnumMeta annotation
             if isinstance(annotation, EnumMeta):
                 annotation = EnumInput(type="string", enum=annotation)
-            # Try create annotation by type when got like 'param: int'
+            # Handle Group annotation
+            if is_parameter_group(annotation):
+                annotation = copy.deepcopy(getattr(annotation, IOConstants.GROUP_ATTR_NAME))
+            # Try creating annotation by type when got like 'param: int'
             if not _is_dsl_type_cls(annotation) and not _is_dsl_types(annotation):
                 origin_annotation = annotation
                 annotation = _get_annotation_cls_by_type(annotation, raise_error=False)
                 if not annotation:
-                    msg = f"Unsupported annotation type '{origin_annotation}' for parameter '{name}'."
+                    msg = f"Unsupported annotation type {origin_annotation!r} for parameter {name!r}."
                     raise UserErrorException(msg)
             annotation_fields[name] = annotation
         return annotation_fields
@@ -744,21 +974,7 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False):
         dict_keys = defaults_dict.keys()
         if not dict_keys:
             return anno_keys
-        # Fields with default values must follow those without defaults, so find the first key with
-        # annotation that appear in the class dict, the previous keys must be in the front of the key list
-        all_keys = []
-        # Use this flag to guarantee all fields with defaults following fields without defaults.
-        seen_default = False
-        for key in anno_keys:
-            if key in dict_keys:
-                seen_default = True
-            else:
-                if seen_default:
-                    raise UserErrorException(f"Non-default argument {key!r} follows default argument.")
-                all_keys.append(key)
-        # Append all keys in dict
-        all_keys.extend(dict_keys)
-        return all_keys
+        return [*anno_keys, *[key for key in dict_keys if key not in anno_keys]]
 
     def _update_annotation_with_default(anno, name, default):
         """Create annotation if is type class and update the default."""
@@ -804,8 +1020,9 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False):
         # In reversed order so that more derived classes
         # override earlier field definitions in base classes.
         for base in cls_or_func.__mro__[-1:0:-1]:
-            # TODO: handle parameter group inherited fields
-            pass
+            if is_parameter_group(base):
+                # merge and reorder fields from current base with previous
+                _fields = _merge_and_reorder(_fields, copy.deepcopy(getattr(base, IOConstants.GROUP_ATTR_NAME).values))
         return _fields
 
     def _merge_and_reorder(inherited_fields, cls_fields):
@@ -842,6 +1059,7 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False):
         inherited_no_default, inherited_default = _split(inherited_fields)
         cls_no_default, cls_default = _split(cls_fields)
         # Cross comparison and delete from inherited_fields if same key appeared in cls_fields
+        # pylint: disable=consider-iterating-dictionary
         for key in cls_default.keys():
             if key in inherited_no_default.keys():
                 del inherited_no_default[key]
@@ -865,9 +1083,6 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False):
     if not is_func:
         # Only consider public fields in class dict
         defaults_dict = {key: val for key, val in cls_or_func.__dict__.items() if not key.startswith("_")}
-        # Restrict each field must have annotation(in annotation dict)
-        if any(key not in annotation_fields for key in defaults_dict):
-            raise UserErrorException(f"Each field in parameter group {cls_or_func!r} must have an annotation.")
     else:
         # Infer parameter type from value if is function
         defaults_dict = {key: val.default for key, val in signature(cls_or_func).parameters.items()}
@@ -877,7 +1092,7 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False):
 
 
 def _is_dsl_type_cls(t: type):
-    if type(t) is not type:
+    if type(t) is not type:  # pylint: disable=unidiomatic-typecheck
         return False
     return issubclass(t, (Input, Output))
 

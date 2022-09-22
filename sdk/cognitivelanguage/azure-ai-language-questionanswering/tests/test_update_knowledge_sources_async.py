@@ -5,24 +5,18 @@
 # ------------------------------------
 import pytest
 
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
+from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
 from azure.core.credentials import AzureKeyCredential
 
-from testcase import (
-    GlobalQuestionAnsweringAccountPreparer,
-)
-from asynctestcase import (
-    AsyncQuestionAnsweringTest,
-    QnaAuthoringAsyncHelper
-)
+from helpers import QnaAuthoringAsyncHelper
+from testcase import QuestionAnsweringTestCase
 
-from azure.ai.language.questionanswering.projects.aio import QuestionAnsweringProjectsClient
 
-class SourcesQnasSynonymsTests(AsyncQuestionAnsweringTest):
+class TestSourcesQnasSynonymsAsync(QuestionAnsweringTestCase):
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    async def test_add_source(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+    @pytest.mark.asyncio
+    async def test_add_source(self, recorded_test, qna_creds):
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
@@ -57,9 +51,9 @@ class SourcesQnasSynonymsTests(AsyncQuestionAnsweringTest):
                 source_added = True
         assert source_added
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    async def test_add_qna(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+    @pytest.mark.asyncio
+    async def test_add_qna(self, recorded_test, qna_creds):
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
@@ -93,9 +87,9 @@ class SourcesQnasSynonymsTests(AsyncQuestionAnsweringTest):
                 qna_added = True
         assert qna_added
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    async def test_add_synonym(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+    @pytest.mark.asyncio
+    async def test_add_synonym(self, recorded_test, qna_creds):
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"

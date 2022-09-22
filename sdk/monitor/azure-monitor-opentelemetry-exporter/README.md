@@ -30,14 +30,14 @@ To use this package, you must have:
 Interaction with Azure monitor exporter starts with an instance of the `AzureMonitorTraceExporter` class for distributed tracing, `AzureMonitorLogExporter` for logging and `AzureMonitorMetricExporter` for metrics. You will need a **connection_string** to instantiate the object.
 Please find the samples linked below for demonstration as to how to construct the exporter using a connection string.
 
-#### Logging
+#### Logging (experimental)
 
 NOTE: The logging signal for the `AzureMonitorLogExporter` is currently in an EXPERIMENTAL state. Possible breaking changes may ensue in the future.
 
 ```Python
 from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
-exporter = AzureMonitorLogExporter.from_connection_string(
-    conn_str = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+exporter = AzureMonitorLogExporter(
+    connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
 ```
 
@@ -45,18 +45,17 @@ exporter = AzureMonitorLogExporter.from_connection_string(
 
 ```Python
 from azure.monitor.opentelemetry.exporter import AzureMonitorMetricExporter
-exporter = AzureMonitorMetricExporter.from_connection_string(
-    conn_str = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+exporter = AzureMonitorMetricExporter(
+    connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
-
 ```
 
 #### Tracing
 
 ```Python
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
-exporter = AzureMonitorTraceExporter.from_connection_string(
-    conn_str = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+exporter = AzureMonitorTraceExporter(
+    connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
 ```
 
@@ -127,11 +126,15 @@ Some of the key concepts for the Azure monitor exporter include:
 
 * [Sampling][sampler_ref]: Sampling is a mechanism to control the noise and overhead introduced by OpenTelemetry by reducing the number of samples of traces collected and sent to the backend.
 
+* ApplicationInsightsSampler: Application Insights specific sampler used for consistent sampling across Application Insights SDKs and OpenTelemetry-based SDKs sending data to Application Insights. This sampler MUST be used whenever `AzureMonitorTraceExporter` is used.
+
 For more information about these resources, see [What is Azure Monitor?][product_docs].
 
 ## Examples
 
-### Logging
+### Logging (experimental)
+
+NOTE: The logging signal for the `AzureMonitorLogExporter` is currently in an EXPERIMENTAL state. Possible breaking changes may ensue in the future.
 
 The following sections provide several code snippets covering some of the most common tasks, including:
 
@@ -158,8 +161,8 @@ from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 log_emitter_provider = LogEmitterProvider()
 set_log_emitter_provider(log_emitter_provider)
 
-exporter = AzureMonitorLogExporter.from_connection_string(
-    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+exporter = AzureMonitorLogExporter(
+    connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
 
 log_emitter_provider.add_log_processor(BatchLogProcessor(exporter))
@@ -196,8 +199,8 @@ tracer = trace.get_tracer(__name__)
 log_emitter_provider = LogEmitterProvider()
 set_log_emitter_provider(log_emitter_provider)
 
-exporter = AzureMonitorLogExporter.from_connection_string(
-    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+exporter = AzureMonitorLogExporter(
+    connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
 
 log_emitter_provider.add_log_processor(BatchLogProcessor(exporter))
@@ -233,8 +236,8 @@ from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 log_emitter_provider = LogEmitterProvider()
 set_log_emitter_provider(log_emitter_provider)
 
-exporter = AzureMonitorLogExporter.from_connection_string(
-    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+exporter = AzureMonitorLogExporter(
+    connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
 
 log_emitter_provider.add_log_processor(BatchLogProcessor(exporter))
@@ -272,8 +275,8 @@ from opentelemetry.sdk._logs.export import BatchLogProcessor
 from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 
 set_log_emitter_provider(LogEmitterProvider())
-exporter = AzureMonitorLogExporter.from_connection_string(
-    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+exporter = AzureMonitorLogExporter(
+    connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
 get_log_emitter_provider().add_log_processor(BatchLogProcessor(exporter))
 
@@ -303,6 +306,8 @@ except ZeroDivisionError:
 The following sections provide several code snippets covering some of the most common tasks, including:
 
 * [Using different metric instruments](#metric-instrument-usage)
+* [Customizing outputted metrics with views](#metric-custom-views)
+* [Recording instruments with attributes](#metric-record-attributes)
 
 #### Metric instrument usage
 
@@ -324,8 +329,8 @@ from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorMetricExporter
 
-exporter = AzureMonitorMetricExporter.from_connection_string(
-    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+exporter = AzureMonitorMetricExporter(
+    connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
 reader = PeriodicExportingMetricReader(exporter, export_interval_millis=5000)
 metrics.set_meter_provider(MeterProvider(metric_readers=[reader]))
@@ -375,12 +380,100 @@ gauge = meter.create_observable_gauge("gauge", [observable_gauge_func])
 
 ```
 
+#### Metric custom views
+
+```python
+import os
+
+from opentelemetry import metrics
+from opentelemetry.sdk.metrics import Counter, MeterProvider
+from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+from opentelemetry.sdk.metrics.view import View
+
+from azure.monitor.opentelemetry.exporter import AzureMonitorMetricExporter
+
+exporter = AzureMonitorMetricExporter.from_connection_string(
+    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+)
+# Create a view matching the counter instrument `my.counter`
+# and configure the new name `my.counter.total` for the result metrics stream
+change_metric_name_view = View(
+    instrument_type=Counter,
+    instrument_name="my.counter",
+    name="my.counter.total",
+)
+
+reader = PeriodicExportingMetricReader(exporter, export_interval_millis=5000)
+provider = MeterProvider(
+    metric_readers=[
+        reader,
+    ],
+    views=[
+        change_metric_name_view,
+    ],
+)
+metrics.set_meter_provider(provider)
+
+meter = metrics.get_meter_provider().get_meter("view-name-change")
+my_counter = meter.create_counter("my.counter")
+my_counter.add(100)
+
+```
+
+#### Metric record attributes
+
+```python
+import os
+
+from opentelemetry import metrics
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+
+from azure.monitor.opentelemetry.exporter import AzureMonitorMetricExporter
+
+exporter = AzureMonitorMetricExporter.from_connection_string(
+    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+)
+reader = PeriodicExportingMetricReader(exporter, export_interval_millis=5000)
+metrics.set_meter_provider(MeterProvider(metric_readers=[reader]))
+
+attribute_set1 = {
+    "key1": "val1"
+}
+attribute_set2 = {
+    "key2": "val2"
+}
+large_attribute_set = {}
+for i in range(20):
+    key = "key{}".format(i)
+    val = "val{}".format(i)
+    large_attribute_set[key] = val
+
+meter = metrics.get_meter_provider().get_meter("sample")
+
+# Counter
+counter = meter.create_counter("attr1_counter")
+counter.add(1, attribute_set1)
+
+# Counter2
+counter2 = meter.create_counter("attr2_counter")
+counter2.add(10, attribute_set1)
+counter2.add(30, attribute_set2)
+
+# Counter3
+counter3 = meter.create_counter("large_attr_counter")
+counter3.add(100, attribute_set1)
+counter3.add(200, large_attribute_set)
+
+```
+
 ### Tracing
 
 The following sections provide several code snippets covering some of the most common tasks, including:
 
 * [Exporting a custom span](#export-hello-world-trace)
 * [Using an instrumentation to track a library](#instrumentation-with-requests-library)
+* [Enabling sampling to limit the amount of telemetry sent](#enabling-sampling)
 
 #### Export Hello World Trace
 
@@ -391,12 +484,12 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
-exporter = AzureMonitorTraceExporter.from_connection_string(
-    connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
-)
-
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
+# This is the exporter that sends data to Application Insights
+exporter = AzureMonitorTraceExporter(
+    connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+)
 span_processor = BatchSpanProcessor(exporter)
 trace.get_tracer_provider().add_span_processor(span_processor)
 
@@ -419,25 +512,50 @@ from opentelemetry import trace
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
-
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
-
-trace.set_tracer_provider(TracerProvider())
-tracer = trace.get_tracer(__name__)
 
 # This line causes your calls made with the requests library to be tracked.
 RequestsInstrumentor().instrument()
-span_processor = BatchSpanProcessor(
-    AzureMonitorTraceExporter.from_connection_string(
-        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
-    )
-)
-trace.get_tracer_provider().add_span_processor(span_processor)
 
-RequestsInstrumentor().instrument()
+trace.set_tracer_provider(TracerProvider())
+tracer = trace.get_tracer(__name__)
+exporter = AzureMonitorTraceExporter(
+    connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+)
+span_processor = BatchSpanProcessor(exporter)
+trace.get_tracer_provider().add_span_processor(span_processor)
 
 # This request will be traced
 response = requests.get(url="https://azure.microsoft.com/")
+```
+
+#### Enabling sampling
+
+```Python
+import os
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from azure.monitor.opentelemetry.exporter import (
+    ApplicationInsightsSampler,
+    AzureMonitorTraceExporter,
+)
+
+# Sampler expects a sample rate of between 0 and 1 inclusive
+# A rate of 0.75 means approximately 75% of your telemetry will be sent
+sampler = ApplicationInsightsSampler(0.75)
+trace.set_tracer_provider(TracerProvider(sampler=sampler))
+tracer = trace.get_tracer(__name__)
+exporter = AzureMonitorTraceExporter(
+    connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+)
+span_processor = BatchSpanProcessor(exporter)
+trace.get_tracer_provider().add_span_processor(span_processor)
+
+for i in range(100):
+    # Approximately 25% of these spans should be sampled out
+    with tracer.start_as_current_span("hello"):
+        print("Hello, World!")
 ```
 
 ## Troubleshooting

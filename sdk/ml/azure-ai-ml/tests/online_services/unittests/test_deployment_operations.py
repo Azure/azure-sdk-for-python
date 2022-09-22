@@ -1,10 +1,10 @@
-from azure.ai.ml.operations import OnlineDeploymentOperations
+from unittest.mock import Mock, patch
 
-from unittest.mock import patch, Mock
 import pytest
 
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.constants import AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.operations import OnlineDeploymentOperations
 
 
 @pytest.fixture

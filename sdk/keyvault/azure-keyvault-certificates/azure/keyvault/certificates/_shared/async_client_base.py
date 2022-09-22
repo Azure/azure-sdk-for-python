@@ -41,23 +41,14 @@ class AsyncKeyVaultClientBase(object):
                 self._models = models or _KeyVaultClient.models(api_version=self.api_version)
                 return
 
-            pipeline = kwargs.pop("pipeline", None)
-            transport = kwargs.pop("transport", None)
             http_logging_policy = HttpLoggingPolicy(**kwargs)
             http_logging_policy.allowed_header_names.update(
                 {"x-ms-keyvault-network-info", "x-ms-keyvault-region", "x-ms-keyvault-service-version"}
             )
 
-            if not transport and not pipeline:
-                from azure.core.pipeline.transport import AioHttpTransport
-
-                transport = AioHttpTransport(**kwargs)
-
             verify_challenge = kwargs.pop("verify_challenge_resource", True)
             self._client = _KeyVaultClient(
                 api_version=self.api_version,
-                pipeline=pipeline,
-                transport=transport,
                 authentication_policy=AsyncChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge),
                 sdk_moniker=SDK_MONIKER,
                 http_logging_policy=http_logging_policy,

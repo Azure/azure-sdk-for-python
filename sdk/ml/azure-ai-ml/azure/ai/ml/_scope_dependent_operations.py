@@ -8,7 +8,7 @@ import functools
 import logging
 from typing import Any, Callable, Dict, Optional, TypeVar, cast
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 T = TypeVar("T")
 module_logger = logging.getLogger(__name__)
@@ -117,6 +117,7 @@ class OperationsContainer(object):
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.JOB,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
         msg = f"Operation {resource_type} is not available for this client."
         raise ValidationException(
@@ -124,4 +125,5 @@ class OperationsContainer(object):
             no_personal_data_message=msg,
             error_category=ErrorCategory.USER_ERROR,
             target=ErrorTarget.JOB,
+            error_type=ValidationErrorType.INVALID_VALUE,
         )

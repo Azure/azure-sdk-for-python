@@ -1,6 +1,6 @@
 # Release History
 
-## 1.25.1 (Unreleased)
+## 1.25.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,14 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+- LRO polling will not wait anymore before doing the first status check  #26376
+
+## 1.25.1 (2022-09-01)
+
+### Bugs Fixed
+
+- Added @runtime_checkable to `TokenCredential` protocol definitions  #25187
 
 ## 1.25.0 (2022-08-04)
 
@@ -464,7 +472,7 @@ set the http logging policy of the config  #12218
 - Tracing: `azure.core.tracing.context.tracing_context.with_current_context` renamed to `azure.core.tracing.common.with_current_context`  #7252
 - Tracing: `link` renamed `link_from_headers`  and `link` takes now a string
 - Tracing: opencensus implementation has been moved to the package `azure-core-tracing-opencensus`
-- Some modules and classes that were importables from several differente places have been removed:
+- Some modules and classes that were importables from several different places have been removed:
 
    - `azure.core.HttpResponseError` is now only `azure.core.exceptions.HttpResponseError`
    - `azure.core.Configuration` is now only `azure.core.configuration.Configuration`

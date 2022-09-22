@@ -8,7 +8,7 @@ from marshmallow import fields
 from marshmallow.decorators import post_load
 
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
-from azure.ai.ml.constants import ComputeTier, ComputeType
+from azure.ai.ml.constants._compute import ComputeTier, ComputeType
 
 from ..core.fields import NestedField, StringTransformedEnum
 from .compute import ComputeSchema, IdentitySchema, NetworkSettingsSchema

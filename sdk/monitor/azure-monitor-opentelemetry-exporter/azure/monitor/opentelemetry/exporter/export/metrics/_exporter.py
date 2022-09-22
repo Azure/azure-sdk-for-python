@@ -81,12 +81,12 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
     def force_flush(
         self,
         timeout_millis: float = 10_000,
-    ) -> None:
+    ) -> bool:
         """
         Ensure that export of any metrics currently received by the exporter
         are completed as soon as possible.
         """
-        # TODO
+        return True
 
     def shutdown(
         self,
@@ -148,20 +148,20 @@ def _convert_point_to_envelope(
         value = point.value
     elif isinstance(point, HistogramDataPoint):
         value = point.sum
-        count = point.count
+        count = int(point.count)
         min_ = point.min
         max_ = point.max
 
     data_point = MetricDataPoint(
-        name=name,
+        name=str(name)[:1024],
         value=value,
-        data_point_type="Aggregation",
         count=count,
         min=min_,
         max=max_,
     )
+    properties = _utils._filter_custom_properties(point.attributes)
     data = MetricsData(
-        properties=dict(point.attributes),
+        properties=properties,
         metrics=[data_point],
     )
 

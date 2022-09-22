@@ -88,7 +88,7 @@ class DocumentModelAdministrationClientLROPoller(LROPoller[PollingReturnType]):
     """Custom poller for model build operations. Call `result()` on the poller to return
     a :class:`~azure.ai.formrecognizer.DocumentModelDetails`.
 
-    .. versionadded:: 2021-09-30-preview
+    .. versionadded:: 2022-08-31
         The *DocumentModelAdministrationLROPoller* poller object
     """
 

@@ -269,7 +269,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             The value must have the following format: "{filesystem}/{directory}/{subdirectory}".
         :keyword source_lease:
             A lease ID for the source path. If specified,
-            the source path must have an active lease and the leaase ID must
+            the source path must have an active lease and the lease ID must
             match.
         :paramtype source_lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword lease:

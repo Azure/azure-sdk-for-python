@@ -8,7 +8,13 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, Optional, TypeVar
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -19,8 +25,10 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._private_link_resources_operations import build_list_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class PrivateLinkResourcesOperations:
     """
@@ -41,13 +49,9 @@ class PrivateLinkResourcesOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace_async
     async def list(
-        self,
-        resource_group_name: str,
-        resource_name: str,
-        **kwargs: Any
+        self, resource_group_name: str, resource_name: str, **kwargs: Any
     ) -> _models.PrivateLinkResourcesListResult:
         """Gets a list of private link resources in the specified managed cluster.
 
@@ -55,32 +59,30 @@ class PrivateLinkResourcesOperations:
         https://docs.microsoft.com/azure/aks/private-clusters.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param resource_name: The name of the managed cluster resource.
+        :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateLinkResourcesListResult, or the result of cls(response)
+        :return: PrivateLinkResourcesListResult or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.v2022_03_01.models.PrivateLinkResourcesListResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PrivateLinkResourcesListResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PrivateLinkResourcesListResult]
 
-        
         request = build_list_request(
-            subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             resource_name=resource_name,
+            subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list.metadata['url'],
+            template_url=self.list.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -88,22 +90,20 @@ class PrivateLinkResourcesOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateLinkResourcesListResult', pipeline_response)
+        deserialized = self._deserialize("PrivateLinkResourcesListResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/privateLinkResources"}  # type: ignore
-
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/privateLinkResources"}  # type: ignore
