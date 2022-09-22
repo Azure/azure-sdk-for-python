@@ -1,5 +1,5 @@
 [packaging]
-package_name = "azure-appconfiguration-provider"
+package_name = "azure-appconfigurationprovider"
 package_nspkg = "azure-data-nspkg"
 package_pprint_name = "App Configuration Provider"
 package_doc_id = ""

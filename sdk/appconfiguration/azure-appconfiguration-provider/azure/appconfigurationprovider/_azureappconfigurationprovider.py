@@ -6,8 +6,10 @@
 
 import json
 from azure.appconfiguration import AzureAppConfigurationClient
-from azure.keyvault.secrets import SecretClient
-from azure.keyvault.secrets import KeyVaultSecretIdentifier
+from azure.keyvault.secrets import (
+     SecretClient,
+     KeyVaultSecretIdentifier
+)
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError
