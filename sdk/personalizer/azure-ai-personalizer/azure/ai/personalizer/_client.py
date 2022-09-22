@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -27,10 +27,6 @@ from .operations import (
     PolicyOperations,
     ServiceConfigurationOperations,
 )
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
 
 
 class PersonalizerClient(
