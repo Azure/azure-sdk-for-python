@@ -1,15 +1,25 @@
 # Release History
 
-## 4.7.0b2 (Unreleased)
+## 4.8.0b1 (2022-09-22)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+- An attempt will be made to generate an IV if one isn't provided for local encryption
+  ([#25380](https://github.com/Azure/azure-sdk-for-python/pull/25380))
 
 ### Other Changes
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+- Updated minimum `azure-core` version to 1.24.0
 - Updated minimum `msrest` version to 0.7.1
+
+## 4.7.0 (2022-09-19)
+
+### Breaking Changes
+- Clients verify the challenge resource matches the vault domain. This should affect few customers,
+  who can provide `verify_challenge_resource=False` to client constructors to disable.
+  See https://aka.ms/azsdk/blog/vault-uri for more information.
+
+### Other Changes
+- Changes from version 4.7.0b1 have been reverted and will be included in version 4.8.0b1
 
 ## 4.7.0b1 (2022-08-12)
 
