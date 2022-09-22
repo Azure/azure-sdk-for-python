@@ -15,7 +15,12 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EnvironmentVersionData, ListViewType
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
@@ -44,11 +49,12 @@ class EnvironmentOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client: Union[ServiceClient052022, ServiceClient102021Dataplane],
         all_operations: OperationsContainer,
         **kwargs: Any,
     ):
-        super(EnvironmentOperations, self).__init__(operation_scope)
+        super(EnvironmentOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._kwargs = kwargs
         self._containers_operations = service_client.environment_containers

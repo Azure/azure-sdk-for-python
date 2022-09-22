@@ -14,7 +14,12 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 )
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerDetails, ListViewType
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml._telemetry import (
     AML_INTERNAL_LOGGER_NAMESPACE,
     ActivityType,
@@ -60,11 +65,12 @@ class ComponentOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client: Union[ServiceClient052022, ServiceClient102021Dataplane],
         all_operations: OperationsContainer,
         **kwargs: Dict,
     ):
-        super(ComponentOperations, self).__init__(operation_scope)
+        super(ComponentOperations, self).__init__(operation_scope, operation_config)
         if "app_insights_handler" in kwargs:
             logger.addHandler(kwargs.pop("app_insights_handler"))
         self._version_operation = service_client.component_versions
@@ -74,7 +80,7 @@ class ComponentOperations(_ScopeDependentOperations):
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
-        self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope)
+        self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
 
     @property
     def _code_operations(self) -> CodeOperations:
@@ -418,7 +424,9 @@ class ComponentOperations(_ScopeDependentOperations):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        get_arm_id_and_fill_back = OperationOrchestrator(self._all_operations, self._operation_scope).get_asset_arm_id
+        get_arm_id_and_fill_back = OperationOrchestrator(
+            self._all_operations, self._operation_scope, self._operation_config
+        ).get_asset_arm_id
 
         # resolve component's code
         _try_resolve_code_for_component(component=component, get_arm_id_and_fill_back=get_arm_id_and_fill_back)
