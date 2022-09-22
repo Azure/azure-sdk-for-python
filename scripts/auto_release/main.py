@@ -498,7 +498,7 @@ class CodegenTestPR:
         operations_info = {}
         operations_classes = []
         print_check('python3 -m pip list')
-        debug = importlib.import_module('azure.mgmt.resource')
+        debug = importlib.import_module('black')
         module_to_generate = importlib.import_module(module_name)
         client_name = getattr(module_to_generate, "__all__")[0]
         service_name = module_name.replace('.', '-')
