@@ -5,11 +5,13 @@
 # ------------------------------------
 import re
 from enum import Enum
+from typing import Union
 from typing_extensions import Literal
 from azure.core import CaseInsensitiveEnumMeta
 from ._generated.models import (
     LanguageInput,
     MultiLanguageInput,
+    PhraseControlStrategy
 )
 from ._generated.v3_0 import models as _v3_0_models
 from ._generated.v3_1 import models as _v3_1_models
@@ -88,6 +90,7 @@ class TextAnalysisKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM_ENTITY_RECOGNITION = "CustomEntityRecognition"
     CUSTOM_DOCUMENT_CLASSIFICATION = "CustomDocumentClassification"
     LANGUAGE_DETECTION = "LanguageDetection"
+    ABSTRACTIVE_SUMMARIZATION = "AbstractiveSummarization"
 
 
 class EntityAssociation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1226,6 +1229,7 @@ class DocumentError(DictMixin):
             + AnalyzeHealthcareEntitiesResult().keys()
             + RecognizeCustomEntitiesResult().keys()
             + ClassifyDocumentResult().keys()
+            + AbstractSummaryResult().keys()
         )
         result_attrs = result_set.difference(DocumentError().keys())
         if attr in result_attrs:
@@ -1786,6 +1790,7 @@ class _AnalyzeActionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SINGLE_LABEL_CLASSIFY = "single_label_classify"
     MULTI_LABEL_CLASSIFY = "multi_label_classify"
     ANALYZE_HEALTHCARE_ENTITIES = "analyze_healthcare_entities"
+    ABSTRACT_SUMMARY = "abstract_summary"
 
 
 class ActionPointerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2566,4 +2571,261 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
                 string_index_type=string_index_type_compatibility(self.string_index_type),
                 logging_opt_out=self.disable_service_logs,
             )
+        )
+
+
+class AbstractSummaryResult(DictMixin):
+    """AbstractSummaryResult is a result object which contains
+    the summary generated for a particular document.
+.
+    :ivar id: Unique, non-empty document identifier. Required.
+    :vartype id: str
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain a 2 letter ISO 639-1 representation of the language detected for this
+        document.
+    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage}
+    :ivar warnings: Warnings encountered while processing document. Results will still be returned
+        if there are warnings, but they may not be fully accurate.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: If `show_stats=True` was specified in the request this
+        field will contain information about the document payload.
+    :vartype statistics:
+        Optional[~azure.ai.textanalytics.TextDocumentStatistics]
+    :ivar summaries: A list of abstractive summaries. Required.
+    :vartype summaries: list[~azure.ai.textanalytics.AbstractiveSummary]
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of a AbstractSummaryResult.
+    :ivar str kind: The text analysis kind - "AbstractiveSummarization".
+
+    .. versionadded:: 2022-10-01-preview
+        The *AbstractSummaryResult* model.
+    """
+
+    def __init__(self, **kwargs):
+        self.id = kwargs.get("id", None)
+        self.detected_language = kwargs.get("detected_language", None)
+        self.warnings = kwargs.get("warnings", None)
+        self.statistics = kwargs.get("statistics", None)
+        self.summaries = kwargs.get("summaries", None)
+        self.is_error: Literal[False] = False
+        self.kind: Literal["AbstractiveSummarization"] = "AbstractiveSummarization"
+
+    def __repr__(self):
+        return "AbstractSummaryResult(id={}, detected_language={}, warnings={}, statistics={}, " \
+               "summaries={}, is_error={})".format(
+                self.id,
+                repr(self.detected_language),
+                repr(self.warnings),
+                repr(self.statistics),
+                repr(self.summaries),
+                self.is_error,
+            )[
+                :1024
+            ]
+
+    @classmethod
+    def _from_generated(cls, result):
+        return cls(
+            id=result.id,
+            detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+                result.detected_language
+            ),
+            warnings=[
+                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
+                    w
+                )
+                for w in result.warnings
+            ],
+            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
+                result.statistics
+            ),
+            summaries=[
+                AbstractiveSummary._from_generated(summary)  # pylint: disable=protected-access
+                for summary in result.summaries
+            ],
+        )
+
+
+class AbstractiveSummary(DictMixin):
+    """An object representing a single summary with context for given document.
+
+    :ivar text: The text of the summary. Required.
+    :vartype text: str
+    :ivar contexts: The context list of the summary.
+    :vartype contexts: Optional[list[~azure.ai.textanalytics.SummaryContext]]
+
+    .. versionadded:: 2022-10-01-preview
+        The *AbstractiveSummary* model.
+    """
+
+    def __init__(self, **kwargs):
+        self.text = kwargs.get("text", None)
+        self.contexts = kwargs.get("contexts", None)
+
+    def __repr__(self):
+        return "AbstractiveSummary(text={}, contexts={})".format(
+                self.text,
+                repr(self.contexts),
+            )[
+                :1024
+            ]
+
+    @classmethod
+    def _from_generated(cls, result):
+        return cls(
+            text=result.text,
+            contexts=[
+                SummaryContext._from_generated(context)  # pylint: disable=protected-access
+                for context in result.contexts 
+            ] if result.contexts else None
+        )
+
+
+class SummaryContext(DictMixin):
+    """The context of the summary.
+
+    :ivar offset: Start position for the context. Use of different 'stringIndexType' values can
+     affect the offset returned. Required.
+    :vartype offset: int
+    :ivar length: The length of the context. Use of different 'stringIndexType' values can affect
+     the length returned. Required.
+    :vartype length: int
+
+    .. versionadded:: 2022-10-01-preview
+        The *SummaryContext* model.
+    """
+
+    def __init__(self, **kwargs):
+        self.offset = kwargs.get("offset", None)
+        self.length = kwargs.get("length", None)
+
+    def __repr__(self):
+        return "SummaryContext(offset={}, length={})".format(
+                self.offset,
+                self.length,
+            )[
+                :1024
+            ]
+
+    @classmethod
+    def _from_generated(cls, summary):
+        return cls(
+            offset=summary.offset,
+            length=summary.length
+        )
+
+
+class AbstractSummaryAction(DictMixin):
+    """AbstractSummaryAction encapsulates the parameters for starting a long-running
+    abstractive summarization operation.
+
+    Abstractive summarization generates a summary for the input documents. Abstractive summarization 
+    is different from extractive summarization in that extractive summarization is the strategy of
+    concatenating extracted sentences from the input document into a summary, while abstractive
+    summarization involves paraphrasing the document using novel sentences.
+
+    :keyword Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
+    :keyword phrase_controls: Control the phrases to be used in the summary.
+    :paramtype phrase_controls: Optional[list[~azure.ai.textanalytics.PhraseControl]]
+    :keyword Optional[str] model_version: The model version to use for the analysis.
+    :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :keyword Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, the Language service logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the service's natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    :ivar Optional[str] model_version: The model version to use for the analysis.
+    :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, the Language service logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the service's natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    :ivar Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
+    :ivar phrase_controls: Control the phrases to be used in the summary.
+    :vartype phrase_controls: Optional[list[~azure.ai.textanalytics.PhraseControl]]
+
+    .. versionadded:: 2022-10-01-preview
+        The *AbstractSummaryAction* model.
+    """
+
+    def __init__(self, **kwargs):
+        self.sentence_count = kwargs.get("sentence_count", None)
+        self.phrase_controls = kwargs.get("phrase_controls", None)
+        self.model_version = kwargs.get("model_version", None)
+        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
+        self.disable_service_logs = kwargs.get("disable_service_logs", None)
+
+    def __repr__(self):
+        return "AbstractSummaryAction(model_version={}, string_index_type={}, disable_service_logs={}, " \
+               "sentence_count={}, phrase_controls={})".format(
+            self.model_version,
+            self.string_index_type,
+            self.disable_service_logs,
+            self.sentence_count,
+            repr(self.phrase_controls),
+        )[
+            :1024
+        ]
+
+    def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
+        return _v2022_10_01_preview_models.AbstractiveSummarizationLROTask(
+            task_name=task_id,
+            parameters=_v2022_10_01_preview_models.AbstractiveSummarizationTaskParameters(
+                model_version=self.model_version,
+                string_index_type=string_index_type_compatibility(self.string_index_type),
+                logging_opt_out=self.disable_service_logs,
+                sentence_count=self.sentence_count,
+                phrase_controls=[phrase_control._to_generated()  # pylint: disable=protected-access 
+                for phrase_control in self.phrase_controls]
+                if self.phrase_controls else None,
+            )
+        )
+
+
+class PhraseControl(DictMixin):
+    """Control the phrases to be used in the summary.
+
+    :ivar target_phrase: The target phrase to control. Required.
+    :vartype target_phrase: str
+    :ivar strategy: The strategy to use in phrase control. Required. Known values are: "encourage",
+        "discourage", and "disallow".
+    :vartype strategy: str or ~azure.ai.textanalytics.PhraseControlStrategy
+
+    .. versionadded:: 2022-10-01-preview
+        The *PhraseControl* model.
+    """
+
+    def __init__(
+        self,
+        target_phrase: str,
+        strategy: Union[str, PhraseControlStrategy],
+    ):
+        self.target_phrase = target_phrase
+        self.strategy = strategy
+
+    def __repr__(self):
+        return "PhraseControl(target_phrase={}, strategy={})".format(
+                self.target_phrase,
+                self.strategy,
+            )[
+                :1024
+            ]
+
+    def _to_generated(self):
+        return _v2022_10_01_preview_models.PhraseControl(
+            target_phrase=self.target_phrase,
+            strategy=self.strategy
         )

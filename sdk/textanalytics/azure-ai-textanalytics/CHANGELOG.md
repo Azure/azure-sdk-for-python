@@ -3,6 +3,8 @@
 ## 5.3.0b1 (Unreleased)
 
 ### Features Added
+- Added the Abstractive Summarization feature and related models: `AbstractSummaryAction`, `AbstractSummaryResult`, `AbstractiveSummary`,
+  `SummaryContext`, `PhraseControl`, and `PhraseControlStrategy`. Access the feature through the `begin_analyze_actions` API.
 
 ### Breaking Changes
 

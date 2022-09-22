@@ -57,8 +57,13 @@ from ._models import (
     ClassificationCategory,
     AnalyzeHealthcareEntitiesAction,
     TextAnalysisKind,
+    AbstractSummaryResult,
+    AbstractiveSummary,
+    SummaryContext,
+    PhraseControl,
+    AbstractSummaryAction,
 )
-
+from ._generated.models import PhraseControlStrategy
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller, TextAnalysisLROPoller
 
 __all__ = [
@@ -117,6 +122,12 @@ __all__ = [
     "AnalyzeHealthcareEntitiesAction",
     "TextAnalysisLROPoller",
     "TextAnalysisKind",
+    "AbstractSummaryResult",
+    "AbstractiveSummary",
+    "SummaryContext",
+    "PhraseControlStrategy",
+    "PhraseControl",
+    "AbstractSummaryAction"
 ]
 
 __version__ = VERSION
