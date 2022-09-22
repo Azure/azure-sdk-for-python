@@ -431,9 +431,12 @@ class StorageDirectoryTest(StorageTestCase):
     def test_list_subdirectories_and_files_encoded(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
-        directory = share_client.create_directory('dir1')
+        # directory = share_client.create_directory('directory\uFFFE')
+        # directory.create_subdirectory("subdir1\uFFFE")
+        # directory.upload_file("file\uFFFE", "data1")
+        directory = share_client.create_directory('directory')
         directory.create_subdirectory("subdir1")
-        directory.upload_file("file1", "data1")
+        directory.upload_file("file", "data1")
 
         # Act
         list_dir = list(directory.list_directories_and_files())
