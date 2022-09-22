@@ -499,7 +499,7 @@ class CodegenTestPR:
         operations_classes = []
         print_check('python3 -m pip list')
         debug = importlib.import_module('azure.storage.blob')
-        module_to_generate = importlib.import_module(module_name)
+        module_to_generate = importlib.import_module(module_name, package=self.sdk_folder)
         client_name = getattr(module_to_generate, "__all__")[0]
         service_name = module_name.replace('.', '-')
         try:

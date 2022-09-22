@@ -69,8 +69,8 @@ jobs:
         fi
 
         # create virtual env
-        # python -m venv venv-sdk
-        # source venv-sdk/bin/activate
+        python -m venv venv-sdk
+        source venv-sdk/bin/activate
         pip install -r $script_path/requirement.txt
 
         # import env variable
