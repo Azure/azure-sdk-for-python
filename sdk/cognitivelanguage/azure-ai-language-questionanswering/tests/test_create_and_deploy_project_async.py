@@ -14,6 +14,14 @@ from testcase import QuestionAnsweringTestCase
 
 class TestCreateAndDeployAsync(QuestionAnsweringTestCase):
 
+    def test_polling_interval(self, qna_creds):
+        # test default
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
+        assert client._config.polling_interval == 5
+        # test override
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]), polling_interval=1)
+        assert client._config.polling_interval == 1
+
     @pytest.mark.asyncio
     async def test_create_project_aad(self, recorded_test, qna_creds):
         token = self.get_credential(QuestionAnsweringAuthoringClient, is_async=True)
