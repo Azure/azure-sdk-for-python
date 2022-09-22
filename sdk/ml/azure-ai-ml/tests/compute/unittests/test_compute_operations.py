@@ -6,7 +6,7 @@ import vcr
 from pytest_mock import MockFixture
 
 from azure.ai.ml import load_compute
-from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities import AmlCompute, Compute, ComputeInstance, IdentityConfiguration, UserAssignedIdentity
 from azure.ai.ml.operations import ComputeOperations
 from azure.identity import DefaultAzureCredential
@@ -14,9 +14,13 @@ from azure.identity import DefaultAzureCredential
 
 @pytest.fixture
 def mock_compute_operation(
-    mock_workspace_scope: OperationScope, mock_aml_services_2021_10_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2021_10_01: Mock
 ) -> ComputeOperations:
-    yield ComputeOperations(operation_scope=mock_workspace_scope, service_client=mock_aml_services_2021_10_01)
+    yield ComputeOperations(
+        operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
+        service_client=mock_aml_services_2021_10_01,
+    )
 
 
 class funny:

@@ -15,7 +15,7 @@ from test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Te
 
 from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
-from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationScope, OperationConfig
 from azure.ai.ml._utils._asset_utils import get_object_hash
 from azure.ai.ml._utils.utils import hash_dict
 from azure.ai.ml.constants._common import GitProperties
@@ -95,6 +95,9 @@ def mock_workspace_scope() -> OperationScope:
         subscription_id=Test_Subscription, resource_group_name=Test_Resource_Group, workspace_name=Test_Workspace_Name
     )
 
+@pytest.fixture
+def mock_operation_config() -> OperationConfig:
+    yield OperationConfig(True)
 
 @pytest.fixture
 def sanitized_environment_variables(environment_variables, fake_datastore_key) -> dict:

@@ -4,6 +4,8 @@
 
 ### Features Added
  - Support passing JobService as argument to Command()
+ - Added support for custom setup scripts on compute instances.
+ - Added a `show_progress` parameter to MLClient for enable/disable progress bars of long running operations.
 
 ### Breaking Changes
 - ComputeOperations.attach has been renamed to begin_attach.
@@ -11,8 +13,6 @@
 ### Bugs Fixed
 
 ### Other Changes
- - Removed declaration on Python 3.6 support
- - Added support for custom setup scripts on compute instances.
  - Removed declaration on Python 3.6 support.
  - Updated dependencies upper bounds to be major versions.
 
