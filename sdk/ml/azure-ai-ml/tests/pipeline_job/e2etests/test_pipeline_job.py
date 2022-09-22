@@ -1156,7 +1156,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
 
         assert actual_dict == {
-            "limits": {"timeout_minutes": 60},
+            "limits": {"timeout_minutes": 60, "max_concurrent_trials": 4, "max_trials": 20},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -1168,7 +1168,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "validation_data": "${{parent.inputs.image_multiclass_classification_validate_data}}",
             "sweep": {
                 "sampling_algorithm": "random",
-                "limits": {"max_concurrent_trials": 4, "max_trials": 20},
                 "early_termination": {
                     "evaluation_interval": 10,
                     "delay_evaluation": 0,
@@ -1208,7 +1207,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
 
         assert actual_dict == {
-            "limits": {"timeout_minutes": 60},
+            "limits": {"timeout_minutes": 60, "max_concurrent_trials": 4, "max_trials": 20},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "iou",
@@ -1220,7 +1219,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "validation_data": "${{parent.inputs.image_multilabel_classification_validate_data}}",
             "sweep": {
                 "sampling_algorithm": "random",
-                "limits": {"max_concurrent_trials": 4, "max_trials": 20},
                 "early_termination": {
                     "evaluation_interval": 10,
                     "delay_evaluation": 0,
@@ -1258,7 +1256,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
 
         assert actual_dict == {
-            "limits": {"timeout_minutes": 60},
+            "limits": {"timeout_minutes": 60, "max_concurrent_trials": 4, "max_trials": 20},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "mean_average_precision",
@@ -1270,7 +1268,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "validation_data": "${{parent.inputs.image_object_detection_validate_data}}",
             "sweep": {
                 "sampling_algorithm": "random",
-                "limits": {"max_concurrent_trials": 4, "max_trials": 20},
                 "early_termination": {
                     "evaluation_interval": 10,
                     "delay_evaluation": 0,
@@ -1313,7 +1310,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
 
         assert actual_dict == {
-            "limits": {"timeout_minutes": 60},
+            "limits": {"timeout_minutes": 60, "max_concurrent_trials": 4, "max_trials": 20},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "mean_average_precision",
@@ -1325,7 +1322,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "validation_data": "${{parent.inputs.image_instance_segmentation_validate_data}}",
             "sweep": {
                 "sampling_algorithm": "random",
-                "limits": {"max_concurrent_trials": 4, "max_trials": 20},
                 "early_termination": {
                     "evaluation_interval": 10,
                     "delay_evaluation": 0,
