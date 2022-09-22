@@ -72,6 +72,7 @@ def compute_binding_expected(mock_workspace_scope: OperationScope) -> str:
     return "/subscriptions/test_subscription/resourceGroups/test_resource_group/providers/Microsoft.MachineLearningServices/workspaces/test_workspace_name/computes/cpu-cluster"
 
 
+@pytest.fixture
 def expected_image_limits(run_type: str) -> RestImageLimitSettings:
     maxTrials = 1
     maxConcurrentTrials = 1
