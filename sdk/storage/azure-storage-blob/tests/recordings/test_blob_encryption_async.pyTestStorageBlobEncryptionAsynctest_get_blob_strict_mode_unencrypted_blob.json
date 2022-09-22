@@ -8,16 +8,16 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.14.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Wed, 21 Sep 2022 22:03:42 GMT",
+        "x-ms-date": "Thu, 22 Sep 2022 18:21:56 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Wed, 21 Sep 2022 22:03:42 GMT",
-        "ETag": "\u00220x8DA9C1D25D76F1E\u0022",
-        "Last-Modified": "Wed, 21 Sep 2022 22:03:42 GMT",
+        "Date": "Thu, 22 Sep 2022 18:21:56 GMT",
+        "ETag": "\u00220x8DA9CC75501EF09\u0022",
+        "Last-Modified": "Thu, 22 Sep 2022 18:21:56 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -37,7 +37,7 @@
         "If-None-Match": "*",
         "User-Agent": "azsdk-python-storage-blob/12.14.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-date": "Wed, 21 Sep 2022 22:03:42 GMT",
+        "x-ms-date": "Thu, 22 Sep 2022 18:21:56 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": "Rm9v",
@@ -45,9 +45,9 @@
       "ResponseHeaders": {
         "Content-Length": "0",
         "Content-MD5": "E1bGfXrRY42Ba/uCLdLCXQ==",
-        "Date": "Wed, 21 Sep 2022 22:03:42 GMT",
-        "ETag": "\u00220x8DA9C1D25E529AB\u0022",
-        "Last-Modified": "Wed, 21 Sep 2022 22:03:43 GMT",
+        "Date": "Thu, 22 Sep 2022 18:21:56 GMT",
+        "ETag": "\u00220x8DA9CC7550DC464\u0022",
+        "Last-Modified": "Thu, 22 Sep 2022 18:21:56 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -65,7 +65,7 @@
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-storage-blob/12.14.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Wed, 21 Sep 2022 22:03:42 GMT",
+        "x-ms-date": "Thu, 22 Sep 2022 18:21:56 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
@@ -75,9 +75,9 @@
         "Content-Length": "3",
         "Content-MD5": "E1bGfXrRY42Ba/uCLdLCXQ==",
         "Content-Type": "application/octet-stream",
-        "Date": "Wed, 21 Sep 2022 22:03:42 GMT",
-        "ETag": "\u00220x8DA9C1D25E529AB\u0022",
-        "Last-Modified": "Wed, 21 Sep 2022 22:03:43 GMT",
+        "Date": "Thu, 22 Sep 2022 18:21:56 GMT",
+        "ETag": "\u00220x8DA9CC7550DC464\u0022",
+        "Last-Modified": "Thu, 22 Sep 2022 18:21:56 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -86,7 +86,7 @@
         "x-ms-access-tier": "Hot",
         "x-ms-access-tier-inferred": "true",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-creation-time": "Wed, 21 Sep 2022 22:03:43 GMT",
+        "x-ms-creation-time": "Thu, 22 Sep 2022 18:21:56 GMT",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
         "x-ms-server-encrypted": "true",
@@ -101,7 +101,7 @@
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-storage-blob/12.14.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Wed, 21 Sep 2022 22:03:42 GMT",
+        "x-ms-date": "Thu, 22 Sep 2022 18:21:56 GMT",
         "x-ms-range": "bytes=0-4095",
         "x-ms-version": "2021-08-06"
       },
@@ -112,9 +112,9 @@
         "Content-Length": "3",
         "Content-Range": "bytes 0-2/3",
         "Content-Type": "application/octet-stream",
-        "Date": "Wed, 21 Sep 2022 22:03:42 GMT",
-        "ETag": "\u00220x8DA9C1D25E529AB\u0022",
-        "Last-Modified": "Wed, 21 Sep 2022 22:03:43 GMT",
+        "Date": "Thu, 22 Sep 2022 18:21:56 GMT",
+        "ETag": "\u00220x8DA9CC7550DC464\u0022",
+        "Last-Modified": "Thu, 22 Sep 2022 18:21:56 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -122,7 +122,7 @@
         "Vary": "Origin",
         "x-ms-blob-content-md5": "E1bGfXrRY42Ba/uCLdLCXQ==",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-creation-time": "Wed, 21 Sep 2022 22:03:43 GMT",
+        "x-ms-creation-time": "Thu, 22 Sep 2022 18:21:56 GMT",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
         "x-ms-server-encrypted": "true",
