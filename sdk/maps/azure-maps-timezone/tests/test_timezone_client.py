@@ -5,8 +5,7 @@
 # --------------------------------------------------------------------------
 import logging
 import os
-from azure.core.credentials import AccessToken
-from azure.identity import DefaultAzureCredential
+from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.maps.timezone import MapsTimezoneClient
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
 from timezone_preparer import MapsTimezonePreparer
@@ -14,30 +13,11 @@ from timezone_preparer import MapsTimezonePreparer
 
 logger = logging.getLogger(__name__)
 
-class FakeTokenCredential(object):
-    """Protocol for classes able to provide OAuth tokens.
-    :param str scopes: Lets you specify the type of access needed.
-    """
-
-    def __init__(self):
-        self.token = AccessToken("YOU SHALL NOT PASS", 0)
-
-    def get_token(self, *args, **kwargs):
-        return self.token
-
 
 class TestMapsTimezoneClient(AzureRecordedTestCase):
-    credential = FakeTokenCredential()
-
-    @classmethod
-    def setup_class(cls):
-        if is_live():
-            cls.credential = DefaultAzureCredential()
-
     def setup_method(self, method):
         self.client = MapsTimezoneClient(
-            client_id=os.environ.get("MAPS_CLIENT_ID", None),
-            credential=self.credential,
+            credential=AzureKeyCredential(os.environ.get('AZURE_SUBSCRIPTION_KEY', "AzureMapsSubscriptionKey"))
         )
         assert self.client is not None
 

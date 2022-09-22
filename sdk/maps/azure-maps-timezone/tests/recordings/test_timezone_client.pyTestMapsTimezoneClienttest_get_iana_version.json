@@ -7,20 +7,20 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-timezoneclient/1.0.0b1 Python/3.10.5 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-id": "fake_client_id"
+        "subscription-key": "AzureMapsSubscriptionKey",
+        "User-Agent": "azsdk-python-timezoneclient/1.0.0b1 Python/3.10.5 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "19",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 20 Sep 2022 07:59:11 GMT",
+        "Date": "Thu, 22 Sep 2022 02:40:33 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
         "x-ms-azuremaps-region": "West US 2",
-        "X-MSEdge-Ref": "Ref A: 7074131A239643709B684B76106C8E86 Ref B: TPE30EDGE0718 Ref C: 2022-09-20T07:59:12Z"
+        "X-MSEdge-Ref": "Ref A: E7E4AD258B7D40A0B0FC59D8F481D51A Ref B: TPE30EDGE0507 Ref C: 2022-09-22T02:40:33Z"
       },
       "ResponseBody": {
         "Version": "2022c"
