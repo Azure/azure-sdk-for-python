@@ -12,9 +12,9 @@ Example to show sending message(s) to and receiving messages from a Service Bus 
 import os
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
-SESSION_QUEUE_NAME = os.environ["SERVICEBUS_SESSION_QUEUE_NAME"]
-SESSION_ID = os.environ['SERVICEBUS_SESSION_ID']
+CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
+SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
+SESSION_ID = os.environ['SERVICE_BUS_SESSION_ID']
 
 
 def send_single_message(sender):

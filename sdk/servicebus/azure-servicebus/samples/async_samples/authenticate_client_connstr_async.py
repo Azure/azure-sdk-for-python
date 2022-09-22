@@ -15,7 +15,7 @@ or use the Azure CLI snippet below to populate an environment variable with the 
 RES_GROUP=<resource-group-name>
 NAMESPACE_NAME=<servicebus-namespace-name>
 
-export SERVICEBUS_CONN_STR=$(az servicebus namespace authorization-rule keys list --resource-group $RES_GROUP --namespace-name $NAMESPACE_NAME --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)
+export SERVICE_BUS_CONN_STR=$(az servicebus namespace authorization-rule keys list --resource-group $RES_GROUP --namespace-name $NAMESPACE_NAME --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)
 ```
 """
 
@@ -24,7 +24,7 @@ from azure.servicebus.aio import ServiceBusClient
 import os
 import asyncio
 
-connstr = os.environ['SERVICEBUS_CONNECTION_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 
 async def run():
     async with ServiceBusClient.from_connection_string(connstr) as client:

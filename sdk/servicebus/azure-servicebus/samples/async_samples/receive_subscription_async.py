@@ -13,9 +13,9 @@ import os
 import asyncio
 from azure.servicebus.aio import ServiceBusClient
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
-TOPIC_NAME = os.environ["SERVICEBUS_TOPIC_NAME"]
-SUBSCRIPTION_NAME = os.environ["SERVICEBUS_SUBSCRIPTION_NAME"]
+CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
+TOPIC_NAME = os.environ["SERVICE_BUS_TOPIC_NAME"]
+SUBSCRIPTION_NAME = os.environ["SERVICE_BUS_SUBSCRIPTION_NAME"]
 
 
 async def main():

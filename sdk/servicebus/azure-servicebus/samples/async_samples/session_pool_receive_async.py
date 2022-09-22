@@ -13,9 +13,9 @@ from azure.servicebus import ServiceBusMessage, NEXT_AVAILABLE_SESSION
 from azure.servicebus.exceptions import OperationTimeoutError
 
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 # Note: This must be a session-enabled queue.
-SESSION_QUEUE_NAME = os.environ["SERVICEBUS_SESSION_QUEUE_NAME"]
+SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
 
 
 async def message_processing(servicebus_client, queue_name):

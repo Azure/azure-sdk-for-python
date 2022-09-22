@@ -14,9 +14,9 @@ import asyncio
 from azure.servicebus import ServiceBusMessage
 from azure.servicebus.aio import ServiceBusClient
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
-SESSION_QUEUE_NAME = os.environ["SERVICEBUS_SESSION_QUEUE_NAME"]
-SESSION_ID = os.environ['SERVICEBUS_SESSION_ID']
+CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
+SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
+SESSION_ID = os.environ['SERVICE_BUS_SESSION_ID']
 
 
 async def send_single_message(sender):

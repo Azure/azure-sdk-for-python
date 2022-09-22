@@ -17,9 +17,9 @@ import time
 from azure.servicebus import ServiceBusClient, AutoLockRenewer, ServiceBusMessage
 from azure.servicebus.exceptions import ServiceBusError
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
-QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
-SESSION_QUEUE_NAME = os.environ['SERVICEBUS_SESSION_QUEUE_NAME']
+CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
+QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
+SESSION_QUEUE_NAME = os.environ['SERVICE_BUS_SESSION_QUEUE_NAME']
 
 
 def renew_lock_on_message_received_from_non_sessionful_entity():
