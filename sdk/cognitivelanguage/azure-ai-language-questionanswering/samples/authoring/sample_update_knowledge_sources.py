@@ -60,11 +60,7 @@ def sample_update_knowledge_sources():
                 }
             }]
         )
-        sources_poller.result() # wait until done
-
-        sources = client.list_sources(
-            project_name=project_name
-        )
+        sources = sources_poller.result() # wait until done
         for item in sources:
             print("source name: {}".format(item.get("displayName", "N/A")))
             print("\tsource: {}".format(item["source"]))
@@ -84,11 +80,7 @@ def sample_update_knowledge_sources():
                 }
             }]
         )
-        qna_poller.result()
-
-        qnas = client.list_qnas(
-            project_name=project_name
-        )
+        qnas = qna_poller.result()
         for item in qnas:
             print("qna: {}".format(item["id"]))
             print("\tquestions:")
