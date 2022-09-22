@@ -4,11 +4,16 @@ import json
 import time
 import logging
 from glob import glob
+from enum import Enum
 from contextlib import suppress
 import subprocess
 from pathlib import Path
 from functools import wraps
 from typing import List, Any, Dict
+import importlib
+import inspect
+import pkgutil
+import types
 
 import black
 import jinja2
@@ -121,6 +126,12 @@ def set_test_env_var():
 
 def start_test_proxy():
     print_check('pwsh eng/common/testproxy/docker-start-proxy.ps1 \"start\"')
+
+
+class ReturnType(str, Enum):
+    POLLING = 'Polling'
+    INTERABLE = 'Interable'
+    STRING = 'String'
 
 
 class CodegenTestPR:
@@ -458,49 +469,91 @@ class CodegenTestPR:
         add_certificate()
         start_test_proxy()
 
-    def get_tests_info(self):
-        code_report = self.sdk_code_path() + '/code_reports/latest/report.json'
-        multi_code_report = self.sdk_code_path() + '/code_reports/latest/merged_report.json'
-        if not Path(code_report).exists():
-            code_report = multi_code_report
-        with open(code_report, 'r') as reader:
-            report_json = json.load(reader)
-        client_name = report_json['client'][0]
-        operations = report_json['operations']
-        operation_name = 'Operations'
-        function_name = 'list'
-        for op_name, op in operations.items():
-            if op_name == 'Operations':
+    @staticmethod
+    def get_function(function_attr):
+        signature = inspect.signature(function_attr)
+        print(f"++++ func return:{str(signature.return_annotation)}, type:{type(signature.return_annotation)}")
+        return_type = ReturnType.STRING
+        if 'LROPoller' in str(signature.return_annotation):
+            return_type = ReturnType.POLLING
+        elif 'Iterable' in str(signature.return_annotation):
+            return_type = ReturnType.INTERABLE
+
+        func_content = {
+            "name": function_attr.__name__,
+            "return_type": return_type.value
+        }
+        for parameter_name in signature.parameters:
+            if parameter_name == "self":
                 continue
-            for func_name, func in op['functions'].items():
-                if len(func['parameters']) < 2:
-                    operation_name = op_name
-                    function_name = func_name
+            if parameter_name == "custom_headers":
+                break  # We reach Autorest generic
+            parameter = signature.parameters[parameter_name]
+            if parameter.default is parameter.empty and parameter_name != "kwargs":
+                return None
+        print(f"++++ func return:{signature.return_annotation}, type:{type(signature.return_annotation)}")
+        return func_content
+
+    def get_tests_info(self, module_name):
+        operations_info = {}
+        operations_classes = []
+        module_to_generate = importlib.import_module(module_name)
+        client_name = getattr(module_to_generate, "__all__")[0]
+        service_name = module_name.replace('.', '-')
+        try:
+            operations_classes = [op_name for op_name in dir(module_to_generate.operations) if op_name[0].isupper()]
+        except (ModuleNotFoundError, AttributeError):
+            prefix_module = importlib.import_module(module_name)
+            for _, sub_package, ispkg in list(pkgutil.iter_modules(prefix_module.__path__, module_name + "."))[::-1]:
+                if ispkg:
+                    module_to_generate = importlib.import_module(sub_package)
+                    operations_classes = [op_name for op_name in dir(module_to_generate.operations)
+                                          if op_name[0].isupper()]
                     break
-            else:
-                continue
-            break
-        return client_name, operation_name, function_name
+
+        for op_name in operations_classes:
+            op_cls = getattr(module_to_generate.operations, op_name)
+            for op_attr_name in dir(op_cls):
+                op_attr = getattr(op_cls, op_attr_name)
+                if isinstance(op_attr, types.FunctionType) and not op_attr_name.startswith("_"):
+                    func_content = self.get_function(op_attr)
+                    if not func_content:
+                        continue
+                    if operations_info.get(op_name):
+                        operations_info[op_name].append(func_content)
+                    else:
+                        operations_info[op_name] = [func_content]
+        tests_info = {'client': client_name, 'operations': operations_info}
+        print(tests_info)
+        return tests_info
 
     @return_origin_path
     def prepare_tests(self):
-        os.chdir('../../../')
-        test_path = self.sdk_code_path()+'/tests'
+        test_path = 'tests/'
         if not Path(test_path).exists():
             os.mkdir(test_path)
-        client_name, operation_name, function_name = self.get_tests_info()
+        module_name = f'azure.mgmt.{self.package_name}'
+        tests_info = self.get_tests_info(module_name)
+        client_name = tests_info['client']
+        operations = tests_info['operations']
+
         template_path = Path('scripts/auto_release/templates')
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_path))
         temp = env.get_template('testcase.py')
-        temp_out = temp.render(package_name_dot=f'azure.mgmt.{self.package_name}',
-                               package=self.package_name,
-                               client=client_name,
-                               operation=re.sub(r'([a-z])([A-Z])', r'\1_\2', operation_name).lower()[:-11],
-                               function=function_name)
-        with suppress(black.NothingChanged):
-            file_content = black.format_file_contents(temp_out, fast=True, mode=_BLACK_MODE)
-            with open(f'{test_path}/test_mgmt_{self.package_name}.py', 'w', encoding='utf-8') as f:
-                f.writelines(file_content)
+        for operation_name, functions in operations.items():
+            if operation_name != 'Operations':
+                operation_name = re.sub(r'([a-z])([A-Z])', r'\1_\2', operation_name)[:-11]
+            operation_name = operation_name.lower()
+            temp_out = temp.render(module=module_name,
+                                   package=self.package_name,
+                                   client=client_name,
+                                   operation=operation_name,
+                                   functions=functions)
+
+            with suppress(black.NothingChanged):
+                file_content = black.format_file_contents(temp_out, fast=True, mode=_BLACK_MODE)
+                with open(f'tests/test_mgmt_{self.package_name.lower()}_{operation_name}.py', 'w', encoding='utf-8') as f:
+                    f.writelines(file_content)
 
         if not Path(f'{test_path}/conftest.py').exists():
             with open(template_path/'conftest.py', 'r') as fr:
