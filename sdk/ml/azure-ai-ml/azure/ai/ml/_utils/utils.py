@@ -779,3 +779,12 @@ def _is_user_error_from_exception_type(e: Union[Exception, None]):
     # For OSError/IOError with error no 28: "No space left on device" should be sdk user error
     if isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28):
         return True
+
+
+class DockerProxy:
+    def __getattribute__(self, name: str) -> Any:
+        try:
+            import docker
+            return getattr(docker, name)
+        except ModuleNotFoundError:
+            raise Exception("Please install docker in the current python environment with `pip install docker` and try again.")

@@ -8,7 +8,6 @@ import json
 import logging
 from typing import Iterable
 
-from docker.models.containers import Container
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
@@ -20,12 +19,14 @@ from azure.ai.ml._local_endpoints.docker_client import (
     get_status_from_container,
 )
 from azure.ai.ml._local_endpoints.errors import InvalidLocalEndpointError, LocalEndpointNotFoundError
+from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, LocalEndpointConstants
 from azure.ai.ml.entities import OnlineEndpoint
 from azure.ai.ml.exceptions import ValidationException
 
+docker = DockerProxy()
 module_logger = logging.getLogger(__name__)
 
 
@@ -159,7 +160,7 @@ class _LocalEndpointHelper(object):
             raise LocalEndpointNotFoundError(endpoint_name=name)
 
 
-def _convert_container_to_endpoint(container: Container, endpoint_json: dict = None) -> OnlineEndpoint:
+def _convert_container_to_endpoint(container: "docker.models.containers.Container", endpoint_json: dict = None) -> OnlineEndpoint:
     """Converts provided Container for local deployment to OnlineEndpoint
     entity.
 

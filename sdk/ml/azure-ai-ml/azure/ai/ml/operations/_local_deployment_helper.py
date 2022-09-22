@@ -9,8 +9,6 @@ import logging
 import shutil
 from pathlib import Path
 from typing import Iterable
-
-from docker.models.containers import Container
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
@@ -25,12 +23,14 @@ from azure.ai.ml._local_endpoints.validators.code_validator import get_code_conf
 from azure.ai.ml._local_endpoints.validators.environment_validator import get_environment_artifacts
 from azure.ai.ml._local_endpoints.validators.model_validator import get_model_artifacts
 from azure.ai.ml._scope_dependent_operations import OperationsContainer
+from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 from azure.ai.ml.entities import OnlineDeployment
 from azure.ai.ml.exceptions import ValidationException
 
+docker = DockerProxy()
 module_logger = logging.getLogger(__name__)
 
 
@@ -279,7 +279,7 @@ class _LocalDeploymentHelper(object):
         )
 
 
-def _convert_container_to_deployment(container: Container) -> OnlineDeployment:
+def _convert_container_to_deployment(container: "docker.models.containers.Container") -> OnlineDeployment:
     """Converts provided Container for local deployment to OnlineDeployment
     entity.
 
