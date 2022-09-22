@@ -6,4 +6,4 @@ azure-mgmt-resource==20.0.0
 aiohttp>=3.0
 websocket-client
 -e ../../../tools/azure-devtools
--e ../../servicebus/azure-servicebus
+uamqp>=1.6.0,<2.0.0

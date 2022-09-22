@@ -80,7 +80,7 @@ def authentication_with_api_key_credential_document_model_admin_client():
 
     document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
     # [END create_dt_client_with_key]
-    info = document_model_admin_client.get_account_info()
+    info = document_model_admin_client.get_resource_details()
 
 
 def authentication_with_azure_active_directory_document_model_admin_client():
@@ -96,7 +96,7 @@ def authentication_with_azure_active_directory_document_model_admin_client():
 
     document_model_admin_client = DocumentModelAdministrationClient(endpoint, credential)
     # [END create_dt_client_with_aad]
-    info = document_model_admin_client.get_account_info()
+    info = document_model_admin_client.get_resource_details()
 
 
 if __name__ == "__main__":

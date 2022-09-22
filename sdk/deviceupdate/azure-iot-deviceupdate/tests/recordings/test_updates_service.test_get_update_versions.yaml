@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b3 Python/3.10.5 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://foo.api.adu.microsoft.com/deviceUpdate/bar/updates/providers/foo/names/bar/versions?api-version=2022-07-01-preview
+  response:
+    body:
+      string: '{"value":["2022.701.235.32","2022.609.510.21","2022.608.554.1","1.2"]}'
+    headers:
+      content-length:
+      - '81'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Jul 2022 22:02:20 GMT
+      mise-correlation-id:
+      - 8ad37851-0cb0-4a0b-8718-3c6b9aebab01
+      traceparent:
+      - 00-f1d9a4243c591f43b59352cab94e2fc3-779e6ac5293f314c-00
+    status:
+      code: 200
+      message: OK
+version: 1

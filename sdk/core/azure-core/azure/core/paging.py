@@ -102,8 +102,7 @@ class ItemPaged(Iterator[ReturnType]):
             "page_iterator_class", PageIterator
         )
 
-    def by_page(self, continuation_token=None):
-        # type: (Optional[str]) -> Iterator[Iterator[ReturnType]]
+    def by_page(self, continuation_token: Optional[str] = None) -> Iterator[Iterator[ReturnType]]:
         """Get an iterator of pages of objects, instead of an iterator of objects.
 
         :param str continuation_token:
@@ -123,7 +122,7 @@ class ItemPaged(Iterator[ReturnType]):
         """Return 'self'."""
         return self
 
-    def __next__(self):
+    def __next__(self) -> ReturnType:
         if self._page_iterator is None:
             self._page_iterator = itertools.chain.from_iterable(self.by_page())
         return next(self._page_iterator)

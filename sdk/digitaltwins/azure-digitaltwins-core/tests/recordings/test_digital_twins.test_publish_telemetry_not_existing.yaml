@@ -13,28 +13,30 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - e493de3f-b47b-4085-9017-1f2941dc88f4
+      - 94af41e5-0108-41a4-b6e8-80bba0ab6d04
       Telemetry-Source-Time:
-      - '2020-11-25 10:06:20.243959'
+      - '2022-05-26T07:27:50.611267Z'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/telemetry?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/telemetry?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
         twin instance that exists with the ID foo. Please verify that the twin id
         is valid and ensure that the twin is not deleted. See section on querying
-        the twins http://aka.ms/adtv2query."}}'
+        the twins https://aka.ms/adtv2query."}}'
     headers:
       content-length:
-      - '256'
+      - '257'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:06:22 GMT
+      - Thu, 26 May 2022 07:27:51 GMT
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-203da4432f146141a87c338902b5f1bb-b1ef342e601e7141-01
     status:
       code: 404
       message: Not Found

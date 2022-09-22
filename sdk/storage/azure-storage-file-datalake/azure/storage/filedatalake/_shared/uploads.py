@@ -6,19 +6,17 @@
 # pylint: disable=no-self-use
 
 from concurrent import futures
-from io import (BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation)
-from threading import Lock
+from io import BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation
 from itertools import islice
 from math import ceil
+from threading import Lock
 
 import six
-
 from azure.core.tracing.common import with_current_context
 
 from . import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
-from .encryption import get_blob_encryptor_and_padder
 
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
@@ -52,17 +50,8 @@ def upload_data_chunks(
         max_concurrency=None,
         stream=None,
         validate_content=None,
-        encryption_options=None,
         progress_hook=None,
         **kwargs):
-
-    if encryption_options:
-        encryptor, padder = get_blob_encryptor_and_padder(
-            encryption_options.get('cek'),
-            encryption_options.get('vector'),
-            uploader_class is not PageBlobChunkUploader)
-        kwargs['encryptor'] = encryptor
-        kwargs['padder'] = padder
 
     parallel = max_concurrency > 1
     if parallel and 'modified_access_conditions' in kwargs:
@@ -149,7 +138,6 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         self.parallel = parallel
 
         # Stream management
-        self.stream_start = stream.tell() if parallel else None
         self.stream_lock = Lock() if parallel else None
 
         # Progress feedback

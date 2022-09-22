@@ -4,3 +4,4 @@ include LICENSE
 include *.md
 include azure/__init__.py
 include azure/iot/__init__.py
+include azure/iot/deviceupdate/py.typed

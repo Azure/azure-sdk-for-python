@@ -1,0 +1,3 @@
+command: echo test
+environment: azureml:myTestEnv:18.04:2022
+compute: azureml:testCompute

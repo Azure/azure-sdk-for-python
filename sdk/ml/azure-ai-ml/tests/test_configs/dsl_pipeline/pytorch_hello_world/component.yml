@@ -1,0 +1,22 @@
+type: command
+
+description: Prints the environment variables useful for scripts running in a PyTorch training environment.
+
+name: py_torch_hello_world
+display_name: PyTorch-hello-world
+version: 1
+compute: azureml:gpu-cluster
+environment: azureml:AzureML-pytorch-1.9-ubuntu18.04-py37-cuda11-gpu:7
+command: >-
+  echo "
+  RANK: $RANK \n
+  LOCAL_RANK: $LOCAL_RANK \n
+  NODE_RANK: $NODE_RANK \n
+  MASTER_ADDR: $MASTER_ADDR \n
+  MASTER_PORT: $MASTER_PORT \n"
+
+resources:
+  instance_count: 2
+distribution:
+  type: pytorch
+  process_count_per_instance: 2

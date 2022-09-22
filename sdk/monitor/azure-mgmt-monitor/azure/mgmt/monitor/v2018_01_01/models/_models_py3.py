@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, Union
+from typing import List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -102,7 +104,7 @@ class MetadataValue(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: Optional["LocalizableString"] = None,
+        name: Optional["_models.LocalizableString"] = None,
         value: Optional[str] = None,
         **kwargs
     ):
@@ -135,9 +137,9 @@ class Metric(msrest.serialization.Model):
     :vartype error_code: str
     :ivar error_message: Error message encountered querying this specific metric.
     :vartype error_message: str
-    :ivar unit: Required. The unit of the metric. Possible values include: "Count", "Bytes",
-     "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
-     "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
+    :ivar unit: Required. The unit of the metric. Known values are: "Count", "Bytes", "Seconds",
+     "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
+     "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
     :vartype unit: str or ~$(python-base-namespace).v2018_01_01.models.MetricUnit
     :ivar timeseries: Required. the time series returned when a data query is performed.
     :vartype timeseries: list[~$(python-base-namespace).v2018_01_01.models.TimeSeriesElement]
@@ -167,9 +169,9 @@ class Metric(msrest.serialization.Model):
         *,
         id: str,
         type: str,
-        name: "LocalizableString",
-        unit: Union[str, "MetricUnit"],
-        timeseries: List["TimeSeriesElement"],
+        name: "_models.LocalizableString",
+        unit: Union[str, "_models.MetricUnit"],
+        timeseries: List["_models.TimeSeriesElement"],
         display_description: Optional[str] = None,
         error_code: Optional[str] = None,
         error_message: Optional[str] = None,
@@ -189,9 +191,9 @@ class Metric(msrest.serialization.Model):
         :paramtype error_code: str
         :keyword error_message: Error message encountered querying this specific metric.
         :paramtype error_message: str
-        :keyword unit: Required. The unit of the metric. Possible values include: "Count", "Bytes",
-         "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
-         "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
+        :keyword unit: Required. The unit of the metric. Known values are: "Count", "Bytes", "Seconds",
+         "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
+         "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
         :paramtype unit: str or ~$(python-base-namespace).v2018_01_01.models.MetricUnit
         :keyword timeseries: Required. the time series returned when a data query is performed.
         :paramtype timeseries: list[~$(python-base-namespace).v2018_01_01.models.TimeSeriesElement]
@@ -258,15 +260,15 @@ class MetricDefinition(msrest.serialization.Model):
     :vartype display_description: str
     :ivar category: Custom category name for this metric.
     :vartype category: str
-    :ivar metric_class: The class of the metric. Possible values include: "Availability",
-     "Transactions", "Errors", "Latency", "Saturation".
+    :ivar metric_class: The class of the metric. Known values are: "Availability", "Transactions",
+     "Errors", "Latency", "Saturation".
     :vartype metric_class: str or ~$(python-base-namespace).v2018_01_01.models.MetricClass
-    :ivar unit: The unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
+    :ivar unit: The unit of the metric. Known values are: "Count", "Bytes", "Seconds",
      "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
      "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
     :vartype unit: str or ~$(python-base-namespace).v2018_01_01.models.MetricUnit
     :ivar primary_aggregation_type: the primary aggregation type value defining how to use the
-     values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
+     values for display. Known values are: "None", "Average", "Count", "Minimum", "Maximum",
      "Total".
     :vartype primary_aggregation_type: str or
      ~$(python-base-namespace).v2018_01_01.models.AggregationType
@@ -306,16 +308,16 @@ class MetricDefinition(msrest.serialization.Model):
         is_dimension_required: Optional[bool] = None,
         resource_id: Optional[str] = None,
         namespace: Optional[str] = None,
-        name: Optional["LocalizableString"] = None,
+        name: Optional["_models.LocalizableString"] = None,
         display_description: Optional[str] = None,
         category: Optional[str] = None,
-        metric_class: Optional[Union[str, "MetricClass"]] = None,
-        unit: Optional[Union[str, "MetricUnit"]] = None,
-        primary_aggregation_type: Optional[Union[str, "AggregationType"]] = None,
-        supported_aggregation_types: Optional[List[Union[str, "AggregationType"]]] = None,
-        metric_availabilities: Optional[List["MetricAvailability"]] = None,
+        metric_class: Optional[Union[str, "_models.MetricClass"]] = None,
+        unit: Optional[Union[str, "_models.MetricUnit"]] = None,
+        primary_aggregation_type: Optional[Union[str, "_models.AggregationType"]] = None,
+        supported_aggregation_types: Optional[List[Union[str, "_models.AggregationType"]]] = None,
+        metric_availabilities: Optional[List["_models.MetricAvailability"]] = None,
         id: Optional[str] = None,
-        dimensions: Optional[List["LocalizableString"]] = None,
+        dimensions: Optional[List["_models.LocalizableString"]] = None,
         **kwargs
     ):
         """
@@ -331,15 +333,15 @@ class MetricDefinition(msrest.serialization.Model):
         :paramtype display_description: str
         :keyword category: Custom category name for this metric.
         :paramtype category: str
-        :keyword metric_class: The class of the metric. Possible values include: "Availability",
+        :keyword metric_class: The class of the metric. Known values are: "Availability",
          "Transactions", "Errors", "Latency", "Saturation".
         :paramtype metric_class: str or ~$(python-base-namespace).v2018_01_01.models.MetricClass
-        :keyword unit: The unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
+        :keyword unit: The unit of the metric. Known values are: "Count", "Bytes", "Seconds",
          "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
          "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
         :paramtype unit: str or ~$(python-base-namespace).v2018_01_01.models.MetricUnit
         :keyword primary_aggregation_type: the primary aggregation type value defining how to use the
-         values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
+         values for display. Known values are: "None", "Average", "Count", "Minimum", "Maximum",
          "Total".
         :paramtype primary_aggregation_type: str or
          ~$(python-base-namespace).v2018_01_01.models.AggregationType
@@ -392,7 +394,7 @@ class MetricDefinitionCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["MetricDefinition"],
+        value: List["_models.MetricDefinition"],
         **kwargs
     ):
         """
@@ -513,7 +515,7 @@ class Response(msrest.serialization.Model):
         self,
         *,
         timespan: str,
-        value: List["Metric"],
+        value: List["_models.Metric"],
         cost: Optional[int] = None,
         interval: Optional[datetime.timedelta] = None,
         namespace: Optional[str] = None,
@@ -565,8 +567,8 @@ class TimeSeriesElement(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        metadatavalues: Optional[List["MetadataValue"]] = None,
-        data: Optional[List["MetricValue"]] = None,
+        metadatavalues: Optional[List["_models.MetadataValue"]] = None,
+        data: Optional[List["_models.MetricValue"]] = None,
         **kwargs
     ):
         """

@@ -1,0 +1,54 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+name: simplepipelinejob
+description: The hello world pipeline job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+experiment_name: my_first_experiment_image_multiclass_classification
+
+compute: azureml:gpu-cluster
+
+settings:
+  continue_on_step_failure: false
+inputs:
+  image_multiclass_classification_train_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/image_classification/train
+  image_multiclass_classification_validate_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/image_classification/valid
+
+
+jobs:
+  hello_automl_image_multiclass_classification:
+    type: automl
+    task: image_classification
+    primary_metric: accuracy
+    limits:
+      timeout_minutes: 60
+    target_column_name: label
+    training_data: ${{parent.inputs.image_multiclass_classification_train_data}}
+    validation_data: ${{parent.inputs.image_multiclass_classification_validate_data}}
+    sweep:
+      limits:
+        max_trials: 20
+        max_concurrent_trials: 4
+      sampling_algorithm: Random
+      early_termination:
+        type: bandit
+        evaluation_interval: 10
+        slack_factor: 0.2
+    image_model:
+      checkpoint_frequency: 1
+      early_stopping: true
+      early_stopping_delay: 2
+      early_stopping_patience: 2
+      evaluation_frequency: 1
+    search_space:
+      - model_name: "choice('vitb16r224')"
+        learning_rate: "uniform(0.005,0.05)"
+        warmup_cosine_lr_warmup_epochs: "choice(0,3)"
+        optimizer: "choice('sgd','adam','adamw')"

@@ -12,12 +12,6 @@ from ..authentication import (
 )
 from ..constants import AUTH_DEFAULT_EXPIRATION_SECONDS
 
-try:
-    from urlparse import urlparse
-    from urllib import quote_plus  # type: ignore
-except ImportError:
-    from urllib.parse import urlparse, quote_plus
-
 
 async def _generate_sas_token_async(auth_uri, sas_name, sas_key, expiry_in=AUTH_DEFAULT_EXPIRATION_SECONDS):
     return _generate_sas_access_token(auth_uri, sas_name, sas_key, expiry_in=expiry_in)

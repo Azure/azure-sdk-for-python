@@ -1,0 +1,50 @@
+{
+    "id": "/subscriptions/5f08d643-1910-4a38-a7c7-84a39d4f42e0/resourceGroups/rihorn-cli/providers/Microsoft.MachineLearningServices/workspaces/rihorn/jobs/cd0aa20d-8cd5-47bb-a041-0c06c89d56c7",
+    "name": "cd0aa20d-8cd5-47bb-a041-0c06c89d56c7",
+    "type": "Microsoft.MachineLearningServices/workspaces/jobs",
+    "properties": {
+        "jobType": "Command",
+        "provisioningState": "Succeeded",
+        "tags": {
+            "_aml_system_ComputeTargetStatus": "{\"AllocationState\":\"steady\",\"PreparingNodeCount\":0,\"RunningNodeCount\":1,\"CurrentNodeCount\":1}"
+        },
+        "properties": {
+            "_azureml.ComputeTargetType": "amlcompute",
+            "azureml.datastoreId": "/subscriptions/5f08d643-1910-4a38-a7c7-84a39d4f42e0/resourceGroups/rihorn-cli/providers/Microsoft.MachineLearningServices/workspaces/rihorn/datastores/rihorn7698147626_azureml",
+            "my_property": "foo",
+            "mlflow.source.git.repoURL": "https://msdata.visualstudio.com/DefaultCollection/Vienna/_git/sdk-cli-v2",
+            "mlflow.source.git.branch": "master",
+            "mlflow.source.git.commit": "9151c3245dd414a3d57aedc40662ccb6df611d8c",
+            "azureml.git.dirty": "True",
+            "ProcessInfoFile": "azureml-logs/process_info.json",
+            "ProcessStatusFile": "azureml-logs/process_status.json"
+        },
+        "experimentName": "Default",
+        "computeId": "/subscriptions/5f08d643-1910-4a38-a7c7-84a39d4f42e0/resourceGroups/rihorn-cli/providers/Microsoft.MachineLearningServices/workspaces/rihorn/computes/goazurego",
+        "output": {
+            "datastoreId": "/subscriptions/5f08d643-1910-4a38-a7c7-84a39d4f42e0/resourceGroups/rihorn-cli/providers/Microsoft.MachineLearningServices/workspaces/rihorn/datastores/rihorn7698147626_azureml",
+            "path": "ExperimentRun/dcid.cd0aa20d-8cd5-47bb-a041-0c06c89d56c7"
+        },
+        "status": "Completed",
+        "command": "echo ${{inputs.filePath}} && ls ${{inputs.dirPath}}",
+        "environmentId": "/subscriptions/5f08d643-1910-4a38-a7c7-84a39d4f42e0/resourceGroups/rihorn-cli/providers/Microsoft.MachineLearningServices/workspaces/rihorn/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu/versions/1",
+        "inputs": {
+            "filePath": {
+                "jobInputType": "UriFile",
+                "uri": "/subscriptions/5f08d643-1910-4a38-a7c7-84a39d4f42e0/resourceGroups/rihorn-cli/providers/Microsoft.MachineLearningServices/workspaces/rihorn/data/f4179156-dbef-41b4-91a0-40d26a3ef5be/versions/1",
+                "mode": "ReadOnlyMount"
+            },
+            "dirPath": {
+                "jobInputType": "UriFolder",
+                "uri": "/subscriptions/5f08d643-1910-4a38-a7c7-84a39d4f42e0/resourceGroups/rihorn-cli/providers/Microsoft.MachineLearningServices/workspaces/rihorn/data/86bf5aa8-8d5e-40ab-afe8-3f753d4b4e01/versions/1",
+                "mode": "ReadWriteMount"
+            }
+        },
+        "parameters": {}
+    },
+    "systemData": {
+        "createdAt": "2021-02-18T14:56:18.593573Z",
+        "createdBy": "Brandon Horn",
+        "createdByType": "User"
+    }
+}

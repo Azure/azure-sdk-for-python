@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import pytest
 import os
 from azure.core.credentials import AccessToken
 from testcase import FormRecognizerTest

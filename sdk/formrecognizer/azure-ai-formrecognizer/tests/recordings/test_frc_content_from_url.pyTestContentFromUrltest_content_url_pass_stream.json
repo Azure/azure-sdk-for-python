@@ -9,19 +9,20 @@
         "Connection": "keep-alive",
         "Content-Length": "223",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "ec1c3dee-5eb2-11ec-812b-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
-      "RequestBody": "{\u0022source\u0022: \u0022\u003C_io.BufferedReader name=\u0027C:\\\\\\\\Users\\\\\\\\caperal\\\\\\\\Documents\\\\\\\\Python\\\\\\\\azure-sdk-for-python\\\\\\\\sdk\\\\\\\\formrecognizer\\\\\\\\azure-ai-formrecognizer\\\\\\\\tests\\\\\\\\sample_forms\\\\\\\\receipt\\\\\\\\contoso-allinone.jpg\u0027\u003E\u0022}",
+      "RequestBody": {
+        "source": "\u003C_io.BufferedReader name=\u0027C:\\\\Users\\\\caperal\\\\Documents\\\\Python\\\\azure-sdk-for-python\\\\sdk\\\\formrecognizer\\\\azure-ai-formrecognizer\\\\tests\\\\sample_forms\\\\receipt\\\\contoso-allinone.jpg\u0027\u003E"
+      },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "d5fafe22-3f99-4c45-a9a9-32b791267f89",
+        "apim-request-id": "71c36fb5-5182-42ab-8283-1cf38a7d86fc",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 20:58:28 GMT",
+        "Date": "Fri, 24 Jun 2022 00:11:43 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "2"
+        "x-envoy-upstream-service-time": "4"
       },
       "ResponseBody": {
         "error": {

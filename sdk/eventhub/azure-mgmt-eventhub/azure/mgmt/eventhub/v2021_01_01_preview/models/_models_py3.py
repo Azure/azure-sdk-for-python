@@ -66,6 +66,8 @@ class AccessKeys(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AccessKeys, self).__init__(**kwargs)
         self.primary_connection_string = None
         self.secondary_connection_string = None
@@ -107,6 +109,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -133,11 +137,11 @@ class ArmDisasterRecovery(Resource):
      "Succeeded", "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.eventhub.v2021_01_01_preview.models.ProvisioningStateDR
-    :param partner_namespace: ARM Id of the Primary/Secondary eventhub namespace name, which is
-     part of GEO DR pairing.
-    :type partner_namespace: str
-    :param alternate_name: Alternate name specified when alias and namespace names are same.
-    :type alternate_name: str
+    :ivar partner_namespace: ARM Id of the Primary/Secondary eventhub namespace name, which is part
+     of GEO DR pairing.
+    :vartype partner_namespace: str
+    :ivar alternate_name: Alternate name specified when alias and namespace names are same.
+    :vartype alternate_name: str
     :ivar role: role of namespace in GEO DR - possible values 'Primary' or 'PrimaryNotReplicating'
      or 'Secondary'. Possible values include: "Primary", "PrimaryNotReplicating", "Secondary".
     :vartype role: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.RoleDisasterRecovery
@@ -174,6 +178,13 @@ class ArmDisasterRecovery(Resource):
         alternate_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword partner_namespace: ARM Id of the Primary/Secondary eventhub namespace name, which is
+         part of GEO DR pairing.
+        :paramtype partner_namespace: str
+        :keyword alternate_name: Alternate name specified when alias and namespace names are same.
+        :paramtype alternate_name: str
+        """
         super(ArmDisasterRecovery, self).__init__(**kwargs)
         self.system_data = None
         self.provisioning_state = None
@@ -188,8 +199,8 @@ class ArmDisasterRecoveryListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of Alias(Disaster Recovery configurations).
-    :type value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.ArmDisasterRecovery]
+    :ivar value: List of Alias(Disaster Recovery configurations).
+    :vartype value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.ArmDisasterRecovery]
     :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of Alias(Disaster Recovery configuration).
     :vartype next_link: str
@@ -210,6 +221,10 @@ class ArmDisasterRecoveryListResult(msrest.serialization.Model):
         value: Optional[List["ArmDisasterRecovery"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of Alias(Disaster Recovery configurations).
+        :paramtype value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.ArmDisasterRecovery]
+        """
         super(ArmDisasterRecoveryListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -230,8 +245,8 @@ class AuthorizationRule(Resource):
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.eventhub.v2021_01_01_preview.models.SystemData
-    :param rights: The rights associated with the rule.
-    :type rights: list[str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.AccessRights]
+    :ivar rights: The rights associated with the rule.
+    :vartype rights: list[str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.AccessRights]
     """
 
     _validation = {
@@ -255,6 +270,10 @@ class AuthorizationRule(Resource):
         rights: Optional[List[Union[str, "AccessRights"]]] = None,
         **kwargs
     ):
+        """
+        :keyword rights: The rights associated with the rule.
+        :paramtype rights: list[str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.AccessRights]
+        """
         super(AuthorizationRule, self).__init__(**kwargs)
         self.system_data = None
         self.rights = rights
@@ -263,11 +282,11 @@ class AuthorizationRule(Resource):
 class AuthorizationRuleListResult(msrest.serialization.Model):
     """The response from the List namespace operation.
 
-    :param value: Result of the List Authorization Rules operation.
-    :type value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.AuthorizationRule]
-    :param next_link: Link to the next set of results. Not empty if Value contains an incomplete
+    :ivar value: Result of the List Authorization Rules operation.
+    :vartype value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.AuthorizationRule]
+    :ivar next_link: Link to the next set of results. Not empty if Value contains an incomplete
      list of Authorization Rules.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -282,6 +301,13 @@ class AuthorizationRuleListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List Authorization Rules operation.
+        :paramtype value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.AuthorizationRule]
+        :keyword next_link: Link to the next set of results. Not empty if Value contains an incomplete
+         list of Authorization Rules.
+        :paramtype next_link: str
+        """
         super(AuthorizationRuleListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -290,24 +316,24 @@ class AuthorizationRuleListResult(msrest.serialization.Model):
 class CaptureDescription(msrest.serialization.Model):
     """Properties to configure capture description for eventhub.
 
-    :param enabled: A value that indicates whether capture description is enabled.
-    :type enabled: bool
-    :param encoding: Enumerates the possible values for the encoding format of capture description.
+    :ivar enabled: A value that indicates whether capture description is enabled.
+    :vartype enabled: bool
+    :ivar encoding: Enumerates the possible values for the encoding format of capture description.
      Note: 'AvroDeflate' will be deprecated in New API Version. Possible values include: "Avro",
      "AvroDeflate".
-    :type encoding: str or
+    :vartype encoding: str or
      ~azure.mgmt.eventhub.v2021_01_01_preview.models.EncodingCaptureDescription
-    :param interval_in_seconds: The time window allows you to set the frequency with which the
+    :ivar interval_in_seconds: The time window allows you to set the frequency with which the
      capture to Azure Blobs will happen, value should between 60 to 900 seconds.
-    :type interval_in_seconds: int
-    :param size_limit_in_bytes: The size window defines the amount of data built up in your Event
+    :vartype interval_in_seconds: int
+    :ivar size_limit_in_bytes: The size window defines the amount of data built up in your Event
      Hub before an capture operation, value should be between 10485760 to 524288000 bytes.
-    :type size_limit_in_bytes: int
-    :param destination: Properties of Destination where capture will be stored. (Storage Account,
+    :vartype size_limit_in_bytes: int
+    :ivar destination: Properties of Destination where capture will be stored. (Storage Account,
      Blob Names).
-    :type destination: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Destination
-    :param skip_empty_archives: A value that indicates whether to Skip Empty Archives.
-    :type skip_empty_archives: bool
+    :vartype destination: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Destination
+    :ivar skip_empty_archives: A value that indicates whether to Skip Empty Archives.
+    :vartype skip_empty_archives: bool
     """
 
     _validation = {
@@ -335,6 +361,26 @@ class CaptureDescription(msrest.serialization.Model):
         skip_empty_archives: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: A value that indicates whether capture description is enabled.
+        :paramtype enabled: bool
+        :keyword encoding: Enumerates the possible values for the encoding format of capture
+         description. Note: 'AvroDeflate' will be deprecated in New API Version. Possible values
+         include: "Avro", "AvroDeflate".
+        :paramtype encoding: str or
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.EncodingCaptureDescription
+        :keyword interval_in_seconds: The time window allows you to set the frequency with which the
+         capture to Azure Blobs will happen, value should between 60 to 900 seconds.
+        :paramtype interval_in_seconds: int
+        :keyword size_limit_in_bytes: The size window defines the amount of data built up in your Event
+         Hub before an capture operation, value should be between 10485760 to 524288000 bytes.
+        :paramtype size_limit_in_bytes: int
+        :keyword destination: Properties of Destination where capture will be stored. (Storage Account,
+         Blob Names).
+        :paramtype destination: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Destination
+        :keyword skip_empty_archives: A value that indicates whether to Skip Empty Archives.
+        :paramtype skip_empty_archives: bool
+        """
         super(CaptureDescription, self).__init__(**kwargs)
         self.enabled = enabled
         self.encoding = encoding
@@ -349,8 +395,8 @@ class CheckNameAvailabilityParameter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name to check the namespace name availability.
-    :type name: str
+    :ivar name: Required. Name to check the namespace name availability.
+    :vartype name: str
     """
 
     _validation = {
@@ -367,6 +413,10 @@ class CheckNameAvailabilityParameter(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. Name to check the namespace name availability.
+        :paramtype name: str
+        """
         super(CheckNameAvailabilityParameter, self).__init__(**kwargs)
         self.name = name
 
@@ -378,13 +428,13 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
 
     :ivar message: The detailed info regarding the reason associated with the Namespace.
     :vartype message: str
-    :param name_available: Value indicating Namespace is availability, true if the Namespace is
+    :ivar name_available: Value indicating Namespace is availability, true if the Namespace is
      available; otherwise, false.
-    :type name_available: bool
-    :param reason: The reason for unavailability of a Namespace. Possible values include: "None",
+    :vartype name_available: bool
+    :ivar reason: The reason for unavailability of a Namespace. Possible values include: "None",
      "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown",
      "TooManyNamespaceInCurrentSubscription".
-    :type reason: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.UnavailableReason
+    :vartype reason: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.UnavailableReason
     """
 
     _validation = {
@@ -404,6 +454,15 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
         reason: Optional[Union[str, "UnavailableReason"]] = None,
         **kwargs
     ):
+        """
+        :keyword name_available: Value indicating Namespace is availability, true if the Namespace is
+         available; otherwise, false.
+        :paramtype name_available: bool
+        :keyword reason: The reason for unavailability of a Namespace. Possible values include: "None",
+         "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown",
+         "TooManyNamespaceInCurrentSubscription".
+        :paramtype reason: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.UnavailableReason
+        """
         super(CheckNameAvailabilityResult, self).__init__(**kwargs)
         self.message = None
         self.name_available = name_available
@@ -435,6 +494,8 @@ class ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalp
         self,
         **kwargs
     ):
+        """
+        """
         super(ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
@@ -443,12 +504,12 @@ class ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalp
 class ConnectionState(msrest.serialization.Model):
     """ConnectionState information.
 
-    :param status: Status of the connection. Possible values include: "Pending", "Approved",
+    :ivar status: Status of the connection. Possible values include: "Pending", "Approved",
      "Rejected", "Disconnected".
-    :type status: str or
+    :vartype status: str or
      ~azure.mgmt.eventhub.v2021_01_01_preview.models.PrivateLinkConnectionStatus
-    :param description: Description of the connection state.
-    :type description: str
+    :ivar description: Description of the connection state.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -463,6 +524,14 @@ class ConnectionState(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword status: Status of the connection. Possible values include: "Pending", "Approved",
+         "Rejected", "Disconnected".
+        :paramtype status: str or
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.PrivateLinkConnectionStatus
+        :keyword description: Description of the connection state.
+        :paramtype description: str
+        """
         super(ConnectionState, self).__init__(**kwargs)
         self.status = status
         self.description = description
@@ -487,10 +556,10 @@ class ConsumerGroup(Resource):
     :vartype created_at: ~datetime.datetime
     :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: ~datetime.datetime
-    :param user_metadata: User Metadata is a placeholder to store user-defined string data with
+    :ivar user_metadata: User Metadata is a placeholder to store user-defined string data with
      maximum length 1024. e.g. it can be used to store descriptive data, such as list of teams and
      their contact information also user-defined configuration settings can be stored.
-    :type user_metadata: str
+    :vartype user_metadata: str
     """
 
     _validation = {
@@ -518,6 +587,12 @@ class ConsumerGroup(Resource):
         user_metadata: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword user_metadata: User Metadata is a placeholder to store user-defined string data with
+         maximum length 1024. e.g. it can be used to store descriptive data, such as list of teams and
+         their contact information also user-defined configuration settings can be stored.
+        :paramtype user_metadata: str
+        """
         super(ConsumerGroup, self).__init__(**kwargs)
         self.system_data = None
         self.created_at = None
@@ -528,11 +603,11 @@ class ConsumerGroup(Resource):
 class ConsumerGroupListResult(msrest.serialization.Model):
     """The result to the List Consumer Group operation.
 
-    :param value: Result of the List Consumer Group operation.
-    :type value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.ConsumerGroup]
-    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
+    :ivar value: Result of the List Consumer Group operation.
+    :vartype value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.ConsumerGroup]
+    :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of Consumer Group.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -547,6 +622,13 @@ class ConsumerGroupListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List Consumer Group operation.
+        :paramtype value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.ConsumerGroup]
+        :keyword next_link: Link to the next set of results. Not empty if Value contains incomplete
+         list of Consumer Group.
+        :paramtype next_link: str
+        """
         super(ConsumerGroupListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -555,17 +637,17 @@ class ConsumerGroupListResult(msrest.serialization.Model):
 class Destination(msrest.serialization.Model):
     """Capture storage details for capture description.
 
-    :param name: Name for capture destination.
-    :type name: str
-    :param storage_account_resource_id: Resource id of the storage account to be used to create the
+    :ivar name: Name for capture destination.
+    :vartype name: str
+    :ivar storage_account_resource_id: Resource id of the storage account to be used to create the
      blobs.
-    :type storage_account_resource_id: str
-    :param blob_container: Blob container Name.
-    :type blob_container: str
-    :param archive_name_format: Blob naming convention for archive, e.g.
+    :vartype storage_account_resource_id: str
+    :ivar blob_container: Blob container Name.
+    :vartype blob_container: str
+    :ivar archive_name_format: Blob naming convention for archive, e.g.
      {Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}. Here all
      the parameters (Namespace,EventHub .. etc) are mandatory irrespective of order.
-    :type archive_name_format: str
+    :vartype archive_name_format: str
     """
 
     _attribute_map = {
@@ -584,6 +666,19 @@ class Destination(msrest.serialization.Model):
         archive_name_format: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name for capture destination.
+        :paramtype name: str
+        :keyword storage_account_resource_id: Resource id of the storage account to be used to create
+         the blobs.
+        :paramtype storage_account_resource_id: str
+        :keyword blob_container: Blob container Name.
+        :paramtype blob_container: str
+        :keyword archive_name_format: Blob naming convention for archive, e.g.
+         {Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}. Here all
+         the parameters (Namespace,EventHub .. etc) are mandatory irrespective of order.
+        :paramtype archive_name_format: str
+        """
         super(Destination, self).__init__(**kwargs)
         self.name = name
         self.storage_account_resource_id = storage_account_resource_id
@@ -604,10 +699,10 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -631,6 +726,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
@@ -649,14 +750,14 @@ class EHNamespace(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: Properties of sku resource.
-    :type sku: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Sku
-    :param identity: Properties of BYOK Identity description.
-    :type identity: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Identity
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: Properties of sku resource.
+    :vartype sku: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Sku
+    :ivar identity: Properties of BYOK Identity description.
+    :vartype identity: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Identity
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.eventhub.v2021_01_01_preview.models.SystemData
     :ivar provisioning_state: Provisioning state of the Namespace.
@@ -669,25 +770,25 @@ class EHNamespace(TrackedResource):
     :vartype updated_at: ~datetime.datetime
     :ivar service_bus_endpoint: Endpoint you can use to perform Service Bus operations.
     :vartype service_bus_endpoint: str
-    :param cluster_arm_id: Cluster ARM ID of the Namespace.
-    :type cluster_arm_id: str
+    :ivar cluster_arm_id: Cluster ARM ID of the Namespace.
+    :vartype cluster_arm_id: str
     :ivar metric_id: Identifier for Azure Insights metrics.
     :vartype metric_id: str
-    :param is_auto_inflate_enabled: Value that indicates whether AutoInflate is enabled for
-     eventhub namespace.
-    :type is_auto_inflate_enabled: bool
-    :param maximum_throughput_units: Upper limit of throughput units when AutoInflate is enabled,
+    :ivar is_auto_inflate_enabled: Value that indicates whether AutoInflate is enabled for eventhub
+     namespace.
+    :vartype is_auto_inflate_enabled: bool
+    :ivar maximum_throughput_units: Upper limit of throughput units when AutoInflate is enabled,
      value should be within 0 to 20 throughput units. ( '0' if AutoInflateEnabled = true).
-    :type maximum_throughput_units: int
-    :param kafka_enabled: Value that indicates whether Kafka is enabled for eventhub namespace.
-    :type kafka_enabled: bool
-    :param zone_redundant: Enabling this property creates a Standard Event Hubs Namespace in
-     regions supported availability zones.
-    :type zone_redundant: bool
-    :param encryption: Properties of BYOK Encryption description.
-    :type encryption: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Encryption
-    :param private_endpoint_connections: List of private endpoint connections.
-    :type private_endpoint_connections:
+    :vartype maximum_throughput_units: int
+    :ivar kafka_enabled: Value that indicates whether Kafka is enabled for eventhub namespace.
+    :vartype kafka_enabled: bool
+    :ivar zone_redundant: Enabling this property creates a Standard Event Hubs Namespace in regions
+     supported availability zones.
+    :vartype zone_redundant: bool
+    :ivar encryption: Properties of BYOK Encryption description.
+    :vartype encryption: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Encryption
+    :ivar private_endpoint_connections: List of private endpoint connections.
+    :vartype private_endpoint_connections:
      list[~azure.mgmt.eventhub.v2021_01_01_preview.models.PrivateEndpointConnection]
     """
 
@@ -745,6 +846,34 @@ class EHNamespace(TrackedResource):
         private_endpoint_connections: Optional[List["PrivateEndpointConnection"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: Properties of sku resource.
+        :paramtype sku: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Sku
+        :keyword identity: Properties of BYOK Identity description.
+        :paramtype identity: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Identity
+        :keyword cluster_arm_id: Cluster ARM ID of the Namespace.
+        :paramtype cluster_arm_id: str
+        :keyword is_auto_inflate_enabled: Value that indicates whether AutoInflate is enabled for
+         eventhub namespace.
+        :paramtype is_auto_inflate_enabled: bool
+        :keyword maximum_throughput_units: Upper limit of throughput units when AutoInflate is enabled,
+         value should be within 0 to 20 throughput units. ( '0' if AutoInflateEnabled = true).
+        :paramtype maximum_throughput_units: int
+        :keyword kafka_enabled: Value that indicates whether Kafka is enabled for eventhub namespace.
+        :paramtype kafka_enabled: bool
+        :keyword zone_redundant: Enabling this property creates a Standard Event Hubs Namespace in
+         regions supported availability zones.
+        :paramtype zone_redundant: bool
+        :keyword encryption: Properties of BYOK Encryption description.
+        :paramtype encryption: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Encryption
+        :keyword private_endpoint_connections: List of private endpoint connections.
+        :paramtype private_endpoint_connections:
+         list[~azure.mgmt.eventhub.v2021_01_01_preview.models.PrivateEndpointConnection]
+        """
         super(EHNamespace, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.identity = identity
@@ -767,11 +896,11 @@ class EHNamespace(TrackedResource):
 class EHNamespaceListResult(msrest.serialization.Model):
     """The response of the List Namespace operation.
 
-    :param value: Result of the List Namespace operation.
-    :type value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.EHNamespace]
-    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
+    :ivar value: Result of the List Namespace operation.
+    :vartype value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.EHNamespace]
+    :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of namespaces.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -786,6 +915,13 @@ class EHNamespaceListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List Namespace operation.
+        :paramtype value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.EHNamespace]
+        :keyword next_link: Link to the next set of results. Not empty if Value contains incomplete
+         list of namespaces.
+        :paramtype next_link: str
+        """
         super(EHNamespaceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -794,15 +930,15 @@ class EHNamespaceListResult(msrest.serialization.Model):
 class Encryption(msrest.serialization.Model):
     """Properties to configure Encryption.
 
-    :param key_vault_properties: Properties of KeyVault.
-    :type key_vault_properties:
+    :ivar key_vault_properties: Properties of KeyVault.
+    :vartype key_vault_properties:
      list[~azure.mgmt.eventhub.v2021_01_01_preview.models.KeyVaultProperties]
-    :param key_source: Enumerates the possible value of keySource for Encryption. The only
+    :ivar key_source: Enumerates the possible value of keySource for Encryption. The only
      acceptable values to pass in are None and "Microsoft.KeyVault". The default value is
      "Microsoft.KeyVault".
-    :type key_source: str
-    :param require_infrastructure_encryption: Enable Infrastructure Encryption (Double Encryption).
-    :type require_infrastructure_encryption: bool
+    :vartype key_source: str
+    :ivar require_infrastructure_encryption: Enable Infrastructure Encryption (Double Encryption).
+    :vartype require_infrastructure_encryption: bool
     """
 
     _attribute_map = {
@@ -819,6 +955,18 @@ class Encryption(msrest.serialization.Model):
         require_infrastructure_encryption: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword key_vault_properties: Properties of KeyVault.
+        :paramtype key_vault_properties:
+         list[~azure.mgmt.eventhub.v2021_01_01_preview.models.KeyVaultProperties]
+        :keyword key_source: Enumerates the possible value of keySource for Encryption. The only
+         acceptable values to pass in are None and "Microsoft.KeyVault". The default value is
+         "Microsoft.KeyVault".
+        :paramtype key_source: str
+        :keyword require_infrastructure_encryption: Enable Infrastructure Encryption (Double
+         Encryption).
+        :paramtype require_infrastructure_encryption: bool
+        """
         super(Encryption, self).__init__(**kwargs)
         self.key_vault_properties = key_vault_properties
         self.key_source = key_source
@@ -828,10 +976,10 @@ class Encryption(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Error response indicates Event Hub service is not able to process the incoming request. The reason is provided in the error message.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -846,6 +994,12 @@ class ErrorResponse(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Error message indicating why the operation failed.
+        :paramtype message: str
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -872,18 +1026,19 @@ class Eventhub(Resource):
     :vartype created_at: ~datetime.datetime
     :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: ~datetime.datetime
-    :param message_retention_in_days: Number of days to retain the events for this Event Hub, value
+    :ivar message_retention_in_days: Number of days to retain the events for this Event Hub, value
      should be 1 to 7 days.
-    :type message_retention_in_days: long
-    :param partition_count: Number of partitions created for the Event Hub, allowed values are from
+    :vartype message_retention_in_days: long
+    :ivar partition_count: Number of partitions created for the Event Hub, allowed values are from
      1 to 32 partitions.
-    :type partition_count: long
-    :param status: Enumerates the possible values for the status of the Event Hub. Possible values
+    :vartype partition_count: long
+    :ivar status: Enumerates the possible values for the status of the Event Hub. Possible values
      include: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled", "Creating",
      "Deleting", "Renaming", "Unknown".
-    :type status: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.EntityStatus
-    :param capture_description: Properties of capture description.
-    :type capture_description: ~azure.mgmt.eventhub.v2021_01_01_preview.models.CaptureDescription
+    :vartype status: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.EntityStatus
+    :ivar capture_description: Properties of capture description.
+    :vartype capture_description:
+     ~azure.mgmt.eventhub.v2021_01_01_preview.models.CaptureDescription
     """
 
     _validation = {
@@ -921,6 +1076,21 @@ class Eventhub(Resource):
         capture_description: Optional["CaptureDescription"] = None,
         **kwargs
     ):
+        """
+        :keyword message_retention_in_days: Number of days to retain the events for this Event Hub,
+         value should be 1 to 7 days.
+        :paramtype message_retention_in_days: long
+        :keyword partition_count: Number of partitions created for the Event Hub, allowed values are
+         from 1 to 32 partitions.
+        :paramtype partition_count: long
+        :keyword status: Enumerates the possible values for the status of the Event Hub. Possible
+         values include: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled",
+         "Creating", "Deleting", "Renaming", "Unknown".
+        :paramtype status: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.EntityStatus
+        :keyword capture_description: Properties of capture description.
+        :paramtype capture_description:
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.CaptureDescription
+        """
         super(Eventhub, self).__init__(**kwargs)
         self.system_data = None
         self.partition_ids = None
@@ -935,11 +1105,11 @@ class Eventhub(Resource):
 class EventHubListResult(msrest.serialization.Model):
     """The result of the List EventHubs operation.
 
-    :param value: Result of the List EventHubs operation.
-    :type value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.Eventhub]
-    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
+    :ivar value: Result of the List EventHubs operation.
+    :vartype value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.Eventhub]
+    :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of EventHubs.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -954,6 +1124,13 @@ class EventHubListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List EventHubs operation.
+        :paramtype value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.Eventhub]
+        :keyword next_link: Link to the next set of results. Not empty if Value contains incomplete
+         list of EventHubs.
+        :paramtype next_link: str
+        """
         super(EventHubListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -968,11 +1145,12 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: TenantId from the KeyVault.
     :vartype tenant_id: str
-    :param type: Type of managed service identity. Possible values include: "SystemAssigned",
+    :ivar type: Type of managed service identity. Possible values include: "SystemAssigned",
      "UserAssigned", "SystemAssigned, UserAssigned", "None".
-    :type type: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.ManagedServiceIdentityType
-    :param user_assigned_identities: Properties for User Assigned Identities.
-    :type user_assigned_identities: dict[str,
+    :vartype type: str or
+     ~azure.mgmt.eventhub.v2021_01_01_preview.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: Properties for User Assigned Identities.
+    :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.eventhub.v2021_01_01_preview.models.ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties]
     """
 
@@ -995,6 +1173,15 @@ class Identity(msrest.serialization.Model):
         user_assigned_identities: Optional[Dict[str, "ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: Type of managed service identity. Possible values include: "SystemAssigned",
+         "UserAssigned", "SystemAssigned, UserAssigned", "None".
+        :paramtype type: str or
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.ManagedServiceIdentityType
+        :keyword user_assigned_identities: Properties for User Assigned Identities.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties]
+        """
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
@@ -1005,14 +1192,15 @@ class Identity(msrest.serialization.Model):
 class KeyVaultProperties(msrest.serialization.Model):
     """Properties to configure keyVault Properties.
 
-    :param key_name: Name of the Key from KeyVault.
-    :type key_name: str
-    :param key_vault_uri: Uri of KeyVault.
-    :type key_vault_uri: str
-    :param key_version: Key Version.
-    :type key_version: str
-    :param identity:
-    :type identity: ~azure.mgmt.eventhub.v2021_01_01_preview.models.UserAssignedIdentityProperties
+    :ivar key_name: Name of the Key from KeyVault.
+    :vartype key_name: str
+    :ivar key_vault_uri: Uri of KeyVault.
+    :vartype key_vault_uri: str
+    :ivar key_version: Key Version.
+    :vartype key_version: str
+    :ivar identity:
+    :vartype identity:
+     ~azure.mgmt.eventhub.v2021_01_01_preview.models.UserAssignedIdentityProperties
     """
 
     _attribute_map = {
@@ -1031,6 +1219,17 @@ class KeyVaultProperties(msrest.serialization.Model):
         identity: Optional["UserAssignedIdentityProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword key_name: Name of the Key from KeyVault.
+        :paramtype key_name: str
+        :keyword key_vault_uri: Uri of KeyVault.
+        :paramtype key_vault_uri: str
+        :keyword key_version: Key Version.
+        :paramtype key_version: str
+        :keyword identity:
+        :paramtype identity:
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.UserAssignedIdentityProperties
+        """
         super(KeyVaultProperties, self).__init__(**kwargs)
         self.key_name = key_name
         self.key_vault_uri = key_vault_uri
@@ -1053,17 +1252,17 @@ class NetworkRuleSet(Resource):
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.eventhub.v2021_01_01_preview.models.SystemData
-    :param trusted_service_access_enabled: Value that indicates whether Trusted Service Access is
+    :ivar trusted_service_access_enabled: Value that indicates whether Trusted Service Access is
      Enabled or not.
-    :type trusted_service_access_enabled: bool
-    :param default_action: Default Action for Network Rule Set. Possible values include: "Allow",
+    :vartype trusted_service_access_enabled: bool
+    :ivar default_action: Default Action for Network Rule Set. Possible values include: "Allow",
      "Deny".
-    :type default_action: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.DefaultAction
-    :param virtual_network_rules: List VirtualNetwork Rules.
-    :type virtual_network_rules:
+    :vartype default_action: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.DefaultAction
+    :ivar virtual_network_rules: List VirtualNetwork Rules.
+    :vartype virtual_network_rules:
      list[~azure.mgmt.eventhub.v2021_01_01_preview.models.NWRuleSetVirtualNetworkRules]
-    :param ip_rules: List of IpRules.
-    :type ip_rules: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.NWRuleSetIpRules]
+    :ivar ip_rules: List of IpRules.
+    :vartype ip_rules: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.NWRuleSetIpRules]
     """
 
     _validation = {
@@ -1093,6 +1292,19 @@ class NetworkRuleSet(Resource):
         ip_rules: Optional[List["NWRuleSetIpRules"]] = None,
         **kwargs
     ):
+        """
+        :keyword trusted_service_access_enabled: Value that indicates whether Trusted Service Access is
+         Enabled or not.
+        :paramtype trusted_service_access_enabled: bool
+        :keyword default_action: Default Action for Network Rule Set. Possible values include: "Allow",
+         "Deny".
+        :paramtype default_action: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.DefaultAction
+        :keyword virtual_network_rules: List VirtualNetwork Rules.
+        :paramtype virtual_network_rules:
+         list[~azure.mgmt.eventhub.v2021_01_01_preview.models.NWRuleSetVirtualNetworkRules]
+        :keyword ip_rules: List of IpRules.
+        :paramtype ip_rules: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.NWRuleSetIpRules]
+        """
         super(NetworkRuleSet, self).__init__(**kwargs)
         self.system_data = None
         self.trusted_service_access_enabled = trusted_service_access_enabled
@@ -1104,10 +1316,10 @@ class NetworkRuleSet(Resource):
 class NWRuleSetIpRules(msrest.serialization.Model):
     """The response from the List namespace operation.
 
-    :param ip_mask: IP Mask.
-    :type ip_mask: str
-    :param action: The IP Filter Action. Possible values include: "Allow".
-    :type action: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.NetworkRuleIPAction
+    :ivar ip_mask: IP Mask.
+    :vartype ip_mask: str
+    :ivar action: The IP Filter Action. Possible values include: "Allow".
+    :vartype action: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.NetworkRuleIPAction
     """
 
     _attribute_map = {
@@ -1122,6 +1334,12 @@ class NWRuleSetIpRules(msrest.serialization.Model):
         action: Optional[Union[str, "NetworkRuleIPAction"]] = None,
         **kwargs
     ):
+        """
+        :keyword ip_mask: IP Mask.
+        :paramtype ip_mask: str
+        :keyword action: The IP Filter Action. Possible values include: "Allow".
+        :paramtype action: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.NetworkRuleIPAction
+        """
         super(NWRuleSetIpRules, self).__init__(**kwargs)
         self.ip_mask = ip_mask
         self.action = action
@@ -1130,11 +1348,11 @@ class NWRuleSetIpRules(msrest.serialization.Model):
 class NWRuleSetVirtualNetworkRules(msrest.serialization.Model):
     """The response from the List namespace operation.
 
-    :param subnet: Subnet properties.
-    :type subnet: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Subnet
-    :param ignore_missing_vnet_service_endpoint: Value that indicates whether to ignore missing
-     Vnet Service Endpoint.
-    :type ignore_missing_vnet_service_endpoint: bool
+    :ivar subnet: Subnet properties.
+    :vartype subnet: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Subnet
+    :ivar ignore_missing_vnet_service_endpoint: Value that indicates whether to ignore missing Vnet
+     Service Endpoint.
+    :vartype ignore_missing_vnet_service_endpoint: bool
     """
 
     _attribute_map = {
@@ -1149,6 +1367,13 @@ class NWRuleSetVirtualNetworkRules(msrest.serialization.Model):
         ignore_missing_vnet_service_endpoint: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword subnet: Subnet properties.
+        :paramtype subnet: ~azure.mgmt.eventhub.v2021_01_01_preview.models.Subnet
+        :keyword ignore_missing_vnet_service_endpoint: Value that indicates whether to ignore missing
+         Vnet Service Endpoint.
+        :paramtype ignore_missing_vnet_service_endpoint: bool
+        """
         super(NWRuleSetVirtualNetworkRules, self).__init__(**kwargs)
         self.subnet = subnet
         self.ignore_missing_vnet_service_endpoint = ignore_missing_vnet_service_endpoint
@@ -1161,8 +1386,8 @@ class Operation(msrest.serialization.Model):
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.eventhub.v2021_01_01_preview.models.OperationDisplay
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.eventhub.v2021_01_01_preview.models.OperationDisplay
     """
 
     _validation = {
@@ -1180,6 +1405,10 @@ class Operation(msrest.serialization.Model):
         display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.eventhub.v2021_01_01_preview.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = display
@@ -1214,6 +1443,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -1246,6 +1477,8 @@ class OperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1254,8 +1487,8 @@ class OperationListResult(msrest.serialization.Model):
 class PrivateEndpoint(msrest.serialization.Model):
     """PrivateEndpoint information.
 
-    :param id: The ARM identifier for Private Endpoint.
-    :type id: str
+    :ivar id: The ARM identifier for Private Endpoint.
+    :vartype id: str
     """
 
     _attribute_map = {
@@ -1268,6 +1501,10 @@ class PrivateEndpoint(msrest.serialization.Model):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The ARM identifier for Private Endpoint.
+        :paramtype id: str
+        """
         super(PrivateEndpoint, self).__init__(**kwargs)
         self.id = id
 
@@ -1287,14 +1524,14 @@ class PrivateEndpointConnection(Resource):
     :vartype type: str
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.eventhub.v2021_01_01_preview.models.SystemData
-    :param private_endpoint: The Private Endpoint resource for this Connection.
-    :type private_endpoint: ~azure.mgmt.eventhub.v2021_01_01_preview.models.PrivateEndpoint
-    :param private_link_service_connection_state: Details about the state of the connection.
-    :type private_link_service_connection_state:
+    :ivar private_endpoint: The Private Endpoint resource for this Connection.
+    :vartype private_endpoint: ~azure.mgmt.eventhub.v2021_01_01_preview.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: Details about the state of the connection.
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.eventhub.v2021_01_01_preview.models.ConnectionState
-    :param provisioning_state: Provisioning state of the Private Endpoint Connection. Possible
+    :ivar provisioning_state: Provisioning state of the Private Endpoint Connection. Possible
      values include: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
-    :type provisioning_state: str or
+    :vartype provisioning_state: str or
      ~azure.mgmt.eventhub.v2021_01_01_preview.models.EndPointProvisioningState
     """
 
@@ -1323,6 +1560,17 @@ class PrivateEndpointConnection(Resource):
         provisioning_state: Optional[Union[str, "EndPointProvisioningState"]] = None,
         **kwargs
     ):
+        """
+        :keyword private_endpoint: The Private Endpoint resource for this Connection.
+        :paramtype private_endpoint: ~azure.mgmt.eventhub.v2021_01_01_preview.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: Details about the state of the connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.ConnectionState
+        :keyword provisioning_state: Provisioning state of the Private Endpoint Connection. Possible
+         values include: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
+        :paramtype provisioning_state: str or
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.EndPointProvisioningState
+        """
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.system_data = None
         self.private_endpoint = private_endpoint
@@ -1333,10 +1581,10 @@ class PrivateEndpointConnection(Resource):
 class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """Result of the list of all private endpoint connections operation.
 
-    :param value: A collection of private endpoint connection resources.
-    :type value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.PrivateEndpointConnection]
-    :param next_link: A link for the next page of private endpoint connection resources.
-    :type next_link: str
+    :ivar value: A collection of private endpoint connection resources.
+    :vartype value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.PrivateEndpointConnection]
+    :ivar next_link: A link for the next page of private endpoint connection resources.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1351,6 +1599,13 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: A collection of private endpoint connection resources.
+        :paramtype value:
+         list[~azure.mgmt.eventhub.v2021_01_01_preview.models.PrivateEndpointConnection]
+        :keyword next_link: A link for the next page of private endpoint connection resources.
+        :paramtype next_link: str
+        """
         super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1359,18 +1614,18 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
 class PrivateLinkResource(msrest.serialization.Model):
     """Information of the private link resource.
 
-    :param id: Fully qualified identifier of the resource.
-    :type id: str
-    :param name: Name of the resource.
-    :type name: str
-    :param type: Type of the resource.
-    :type type: str
-    :param group_id: The private link resource group id.
-    :type group_id: str
-    :param required_members: The private link resource required member names.
-    :type required_members: list[str]
-    :param required_zone_names: The private link resource Private link DNS zone name.
-    :type required_zone_names: list[str]
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :ivar required_zone_names: The private link resource Private link DNS zone name.
+    :vartype required_zone_names: list[str]
     """
 
     _attribute_map = {
@@ -1393,6 +1648,20 @@ class PrivateLinkResource(msrest.serialization.Model):
         required_zone_names: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword id: Fully qualified identifier of the resource.
+        :paramtype id: str
+        :keyword name: Name of the resource.
+        :paramtype name: str
+        :keyword type: Type of the resource.
+        :paramtype type: str
+        :keyword group_id: The private link resource group id.
+        :paramtype group_id: str
+        :keyword required_members: The private link resource required member names.
+        :paramtype required_members: list[str]
+        :keyword required_zone_names: The private link resource Private link DNS zone name.
+        :paramtype required_zone_names: list[str]
+        """
         super(PrivateLinkResource, self).__init__(**kwargs)
         self.id = id
         self.name = name
@@ -1405,10 +1674,10 @@ class PrivateLinkResource(msrest.serialization.Model):
 class PrivateLinkResourcesListResult(msrest.serialization.Model):
     """Result of the List private link resources operation.
 
-    :param value: A collection of private link resources.
-    :type value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.PrivateLinkResource]
-    :param next_link: A link for the next page of private link resources.
-    :type next_link: str
+    :ivar value: A collection of private link resources.
+    :vartype value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.PrivateLinkResource]
+    :ivar next_link: A link for the next page of private link resources.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1423,6 +1692,12 @@ class PrivateLinkResourcesListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: A collection of private link resources.
+        :paramtype value: list[~azure.mgmt.eventhub.v2021_01_01_preview.models.PrivateLinkResource]
+        :keyword next_link: A link for the next page of private link resources.
+        :paramtype next_link: str
+        """
         super(PrivateLinkResourcesListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1433,12 +1708,12 @@ class RegenerateAccessKeyParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_type: Required. The access key to regenerate. Possible values include: "PrimaryKey",
+    :ivar key_type: Required. The access key to regenerate. Possible values include: "PrimaryKey",
      "SecondaryKey".
-    :type key_type: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.KeyType
-    :param key: Optional, if the key value provided, is set for KeyType or autogenerated Key value
+    :vartype key_type: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.KeyType
+    :ivar key: Optional, if the key value provided, is set for KeyType or autogenerated Key value
      set for keyType.
-    :type key: str
+    :vartype key: str
     """
 
     _validation = {
@@ -1457,6 +1732,14 @@ class RegenerateAccessKeyParameters(msrest.serialization.Model):
         key: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword key_type: Required. The access key to regenerate. Possible values include:
+         "PrimaryKey", "SecondaryKey".
+        :paramtype key_type: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.KeyType
+        :keyword key: Optional, if the key value provided, is set for KeyType or autogenerated Key
+         value set for keyType.
+        :paramtype key: str
+        """
         super(RegenerateAccessKeyParameters, self).__init__(**kwargs)
         self.key_type = key_type
         self.key = key
@@ -1467,16 +1750,16 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of this SKU. Possible values include: "Basic", "Standard",
+    :ivar name: Required. Name of this SKU. Possible values include: "Basic", "Standard",
      "Premium".
-    :type name: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.SkuName
-    :param tier: The billing tier of this particular SKU. Possible values include: "Basic",
+    :vartype name: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.SkuName
+    :ivar tier: The billing tier of this particular SKU. Possible values include: "Basic",
      "Standard", "Premium".
-    :type tier: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.SkuTier
-    :param capacity: The Event Hubs throughput units for Basic or Standard tiers, where value
-     should be 0 to 20 throughput units. The Event Hubs premium units for Premium tier, where value
-     should be 0 to 10 premium units.
-    :type capacity: int
+    :vartype tier: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.SkuTier
+    :ivar capacity: The Event Hubs throughput units for Basic or Standard tiers, where value should
+     be 0 to 20 throughput units. The Event Hubs premium units for Premium tier, where value should
+     be 0 to 10 premium units.
+    :vartype capacity: int
     """
 
     _validation = {
@@ -1498,6 +1781,18 @@ class Sku(msrest.serialization.Model):
         capacity: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. Name of this SKU. Possible values include: "Basic", "Standard",
+         "Premium".
+        :paramtype name: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.SkuName
+        :keyword tier: The billing tier of this particular SKU. Possible values include: "Basic",
+         "Standard", "Premium".
+        :paramtype tier: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.SkuTier
+        :keyword capacity: The Event Hubs throughput units for Basic or Standard tiers, where value
+         should be 0 to 20 throughput units. The Event Hubs premium units for Premium tier, where value
+         should be 0 to 10 premium units.
+        :paramtype capacity: int
+        """
         super(Sku, self).__init__(**kwargs)
         self.name = name
         self.tier = tier
@@ -1507,8 +1802,8 @@ class Sku(msrest.serialization.Model):
 class Subnet(msrest.serialization.Model):
     """Properties supplied for Subnet.
 
-    :param id: Resource ID of Virtual Network Subnet.
-    :type id: str
+    :ivar id: Resource ID of Virtual Network Subnet.
+    :vartype id: str
     """
 
     _attribute_map = {
@@ -1521,6 +1816,10 @@ class Subnet(msrest.serialization.Model):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Resource ID of Virtual Network Subnet.
+        :paramtype id: str
+        """
         super(Subnet, self).__init__(**kwargs)
         self.id = id
 
@@ -1528,21 +1827,21 @@ class Subnet(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.eventhub.v2021_01_01_preview.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or
+    :vartype last_modified_by_type: str or
      ~azure.mgmt.eventhub.v2021_01_01_preview.models.CreatedByType
-    :param last_modified_at: The type of identity that last modified the resource.
-    :type last_modified_at: ~datetime.datetime
+    :ivar last_modified_at: The type of identity that last modified the resource.
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -1565,6 +1864,24 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or
+         ~azure.mgmt.eventhub.v2021_01_01_preview.models.CreatedByType
+        :keyword last_modified_at: The type of identity that last modified the resource.
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -1577,8 +1894,8 @@ class SystemData(msrest.serialization.Model):
 class UserAssignedIdentityProperties(msrest.serialization.Model):
     """UserAssignedIdentityProperties.
 
-    :param user_assigned_identity: ARM ID of user Identity selected for encryption.
-    :type user_assigned_identity: str
+    :ivar user_assigned_identity: ARM ID of user Identity selected for encryption.
+    :vartype user_assigned_identity: str
     """
 
     _attribute_map = {
@@ -1591,5 +1908,9 @@ class UserAssignedIdentityProperties(msrest.serialization.Model):
         user_assigned_identity: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword user_assigned_identity: ARM ID of user Identity selected for encryption.
+        :paramtype user_assigned_identity: str
+        """
         super(UserAssignedIdentityProperties, self).__init__(**kwargs)
         self.user_assigned_identity = user_assigned_identity

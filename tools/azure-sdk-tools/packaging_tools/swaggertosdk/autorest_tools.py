@@ -19,7 +19,10 @@ def autorest_swagger_to_sdk_conf(readme, output_folder, config):
     autorest_bin = shutil.which("autorest")
     # --input-file=foo is to workaround a bug where the command is not executed at all if no input-file is found (even if we don't care about input-file here)
     cmd_line = "{} {} --perform-load=false --swagger-to-sdk --output-artifact=configuration.json --input-file=foo --output-folder={} --version={}".format(
-        autorest_bin, str(readme), str(output_folder), str(config["meta"]["autorest_options"]["version"])
+        autorest_bin,
+        str(readme),
+        str(output_folder),
+        str(config["meta"]["autorest_options"]["version"]),
     )
     execute_simple_command(cmd_line.split())
     conf_path = Path(output_folder, "configuration.json")
@@ -145,6 +148,7 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
                 print(f"[Autorest] {output_buffer[i]}")
             raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
         return output
+
     try:
         return run_command()
     except subprocess.CalledProcessError as ex:

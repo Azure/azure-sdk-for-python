@@ -1,0 +1,33 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+name: component_merge_outputs
+display_name: ComponentMergeOutputs
+version: 0.0.1
+
+command: >-
+  echo Hello World &&
+  echo ${{inputs.component_in_number}} &&
+  mkdir -p ${{outputs.component_out_path_1}} &&
+  mkdir -p ${{outputs.component_out_path_2}} &&
+  cp -r ${{inputs.component_in_path_1}} ${{outputs.component_out_path_1}} &&
+  cp -r ${{inputs.component_in_path_2}} ${{outputs.component_out_path_2}}
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+
+inputs:
+  component_in_number:
+    description: A number
+    type: number
+    default: 10.99
+  component_in_path_1:
+    description: A path
+    type: uri_folder
+  component_in_path_2:
+    description: A path
+    type: uri_folder
+
+outputs:
+  component_out_path_1:
+    type: uri_folder
+  component_out_path_2:
+    type: uri_folder

@@ -1,5 +1,9 @@
-FROM ubuntu
-MAINTAINER zikalino
+# internal users should provide MCR registry to build via 'docker build . --build-arg REGISTRY="mcr.microsoft.com/mirror/docker/library/"'
+# public OSS users should simply leave this argument blank or ignore its presence entirely
+ARG REGISTRY=""
+FROM ${REGISTRY}ubuntu:20.04
+LABEL MAINTAINER=zikalino \
+      MAINTAINER=scbedd
 
 RUN apt-get update
 RUN apt-get install -y git curl gnupg vim python3 python3-pip git software-properties-common apt-transport-https wget python3-venv nodejs npm libunwind-dev

@@ -143,8 +143,8 @@ Source = namedtuple(
         'capabilities'
     ])
 Source.__new__.__defaults__ = (None,) * len(Source._fields)
-Source._code = 0x00000028
-Source._definition = (
+Source._code = 0x00000028 # pylint: disable=protected-access
+Source._definition = ( # pylint: disable=protected-access
     FIELD("address", AMQPTypes.string, False, None, False),
     FIELD("durable", AMQPTypes.uint, False, "none", False),
     FIELD("expiry_policy", AMQPTypes.symbol, False, ExpiryPolicy.SessionEnd, False),
@@ -227,9 +227,9 @@ Target = namedtuple(
         'dynamic_node_properties',
         'capabilities'
     ])
-Target._code = 0x00000029
-Target.__new__.__defaults__ = (None,) * len(Target._fields)
-Target._definition = (
+Target._code = 0x00000029 # pylint: disable=protected-access
+Target.__new__.__defaults__ = (None,) * len(Target._fields) # pylint: disable=protected-access
+Target._definition = ( # pylint: disable=protected-access
     FIELD("address", AMQPTypes.string, False, None, False),
     FIELD("durable", AMQPTypes.uint, False, "none", False),
     FIELD("expiry_policy", AMQPTypes.symbol, False, ExpiryPolicy.SessionEnd, False),

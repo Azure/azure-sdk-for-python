@@ -1,0 +1,13 @@
+name: banchaml
+type: amlcompute
+tier: dedicated
+description: some_desc_aml
+size: Standard_DS2_v2
+ssh_public_access_enabled: true
+ssh_settings:
+   admin_username: azureuser
+   ssh_key_value: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDWm/4TTHMZdzZVJcob2aFRWDmIyJLxk028AKh7K03RDgR8bz/Knd9DgB2V3sipjY9wYJ1U9YbsUoAt24+CWZFpnoB79J6vaoqwUb7c6nGkaNrWoGZKI+v26GOX8O2MUjjOyBuPEinJtQ432J4affHfeRI+1iDQXuwFUKhNbRVpxh2h9otXF+J1UvSUaPYggS7Iivyha/x8HJzFcNnIPrAZkPiT/Nb/Qk7FyoFTEw64cIl1ByvmF3ewSOeVXKDpb2d4vrSDTVmXFKRrWduhM3sHO5dckREKc+tSQ0M+SpfBqaBgRTAie4jFVSIiSHCvL2BRQXBMRiyPgNlpiJWTPLp/ administrator@MININT-7IP9G6S
+   admin_password: passwd12345
+min_instances: 0
+max_instances: 2
+idle_time_before_scale_down: 100

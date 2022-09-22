@@ -1,0 +1,36 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+experiment_name: my_first_experiment
+
+compute: azureml:gpu-cluster
+
+settings:
+  continue_on_step_failure: false
+
+inputs:
+  text_classification_training_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/newsgroup/train
+  text_classification_validation_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/newsgroup/valid
+
+jobs:
+  automl_text_classification:
+    type: automl
+    task: text_classification
+    log_verbosity: info
+    primary_metric: accuracy
+    limits:
+      max_trials: 1
+      timeout_minutes: 60
+    target_column_name: y
+    training_data: ${{parent.inputs.text_classification_training_data}}
+    validation_data: ${{parent.inputs.text_classification_validation_data}}
+    featurization:
+      dataset_language: eng

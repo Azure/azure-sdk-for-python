@@ -7,14 +7,14 @@
     "errors": [
         {
             "code": "InternalServerError",
-            "message": "1 out of 6 job tasks failed. Failed job tasks : keyphrasescomposite."
+            "message": "1 out of 5 job tasks failed. Failed job tasks : keyphrasescomposite."
         }
     ],
     "tasks": {
-        "completed": 5,
+        "completed": 4,
         "failed": 1,
         "inProgress": 0,
-        "total": 6,
+        "total": 5,
         "items": [
             {
                 "kind": "EntityRecognitionLROResults",
@@ -115,30 +115,6 @@
                     ],
                     "errors": [],
                     "modelVersion": "2019-10-01"
-                }
-            },
-            {
-                "kind": "ExtractiveSummarizationLROResults",
-                "taskName": "5",
-                "lastUpdateDateTime": "2022-04-18T19:43:11.484971Z",
-                "status": "succeeded",
-                "results": {
-                    "documents": [
-                        {
-                            "id": "1",
-                            "sentences": [
-                                {
-                                    "text": "I did not like the hotel we stayed at.",
-                                    "rankScore": 1.0,
-                                    "offset": 0,
-                                    "length": 38
-                                }
-                            ],
-                            "warnings": []
-                        }
-                    ],
-                    "errors": [],
-                    "modelVersion": "2021-08-01"
                 }
             }
         ]

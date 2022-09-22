@@ -7,48 +7,41 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List,
+    Any, Dict, List, Optional, Union,
     TYPE_CHECKING)
-try:
-    from urllib.parse import urlparse # pylint: disable=unused-import
-except ImportError:
-    from urlparse import urlparse # type: ignore
 
-from azure.core.exceptions import HttpResponseError
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import AsyncPipeline
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._serialize import get_api_version
-from .._shared.policies_async import ExponentialRetry
-from .._queue_service_client import QueueServiceClient as QueueServiceClientBase
-from .._shared.models import LocationMode
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
+from .._shared.policies_async import ExponentialRetry
+from .._shared.models import LocationMode
 from .._shared.response_handlers import process_storage_error
 from .._generated.aio import AzureQueueStorage
 from .._generated.models import StorageServiceProperties
-
-from ._models import QueuePropertiesPaged
-from ._queue_client_async import QueueClient
+from .._encryption import StorageEncryptionMixin
 from .._models import (
     service_stats_deserialize,
     service_properties_deserialize,
 )
+from .._queue_service_client import QueueServiceClient as QueueServiceClientBase
+from ._models import QueuePropertiesPaged
+from ._queue_client_async import QueueClient
 
 if TYPE_CHECKING:
-    from datetime import datetime
-    from azure.core.configuration import Configuration
-    from azure.core.pipeline.policies import HTTPPolicy
     from .._models import (
+        CorsRule,
+        Metrics,
         QueueProperties,
         QueueAnalyticsLogging,
-        Metrics,
-        CorsRule,
     )
 
 
-class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
+class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, StorageEncryptionMixin):
     """A client to interact with the Queue Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -63,8 +56,12 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -90,7 +87,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
 
     def __init__(
             self, account_url,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -104,6 +101,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop) # type: ignore
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._loop = loop
+        self._configure_encryption(kwargs)
 
     @distributed_trace_async
     async def get_service_stats(self, **kwargs):
@@ -382,6 +380,6 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         return QueueClient(
             self.url, queue_name=queue_name, credential=self.credential,
             key_resolver_function=self.key_resolver_function, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, api_version=self.api_version, _pipeline=_pipeline,
-            _configuration=self._config, _location_mode=self._location_mode,
-            _hosts=self._hosts, loop=self._loop, **kwargs)
+            encryption_version=self.encryption_version, key_encryption_key=self.key_encryption_key,
+            api_version=self.api_version, _pipeline=_pipeline, _configuration=self._config,
+            _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)

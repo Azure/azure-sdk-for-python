@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AggregationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the primary aggregation type value defining how to use the values for display.
     """
 
@@ -22,7 +21,7 @@ class AggregationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MAXIMUM = "Maximum"
     TOTAL = "Total"
 
-class ConditionOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Operators allowed in the rule condition.
     """
 
@@ -31,7 +30,7 @@ class ConditionOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LESS_THAN = "LessThan"
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
 
-class TimeAggregationOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TimeAggregationOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Aggregation operators allowed in a rule.
     """
 
@@ -41,7 +40,7 @@ class TimeAggregationOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     TOTAL = "Total"
     LAST = "Last"
 
-class Unit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Unit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit of the metric.
     """
 

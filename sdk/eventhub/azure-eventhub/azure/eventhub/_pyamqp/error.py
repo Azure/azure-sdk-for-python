@@ -183,8 +183,8 @@ class RetryPolicy:
 
 AMQPError = namedtuple('error', ['condition', 'description', 'info'])
 AMQPError.__new__.__defaults__ = (None,) * len(AMQPError._fields)
-AMQPError._code = 0x0000001d
-AMQPError._definition = (
+AMQPError._code = 0x0000001d # pylint: disable=protected-access
+AMQPError._definition = ( # pylint: disable=protected-access
     FIELD('condition', AMQPTypes.symbol, True, None, False),
     FIELD('description', AMQPTypes.string, False, None, False),
     FIELD('info', FieldDefinition.fields, False, None, False),
@@ -254,8 +254,11 @@ class AMQPSessionError(AMQPException):
 
 
 class AMQPLinkError(AMQPException):
-    """
+    """Details of a Link-level error.
 
+    :param bytes condition: The error code.
+    :keyword str description: A description of the error.
+    :keyword dict info: A dictionary of additional data associated with the error.
     """
 
 
@@ -279,14 +282,20 @@ class AMQPLinkRedirect(AMQPLinkError):
 
 
 class AuthenticationException(AMQPException):
-    """
+    """Details of a Authentication error.
 
+    :param bytes condition: The error code.
+    :keyword str description: A description of the error.
+    :keyword dict info: A dictionary of additional data associated with the error.
     """
 
 
 class TokenExpired(AuthenticationException):
-    """
+    """Details of a Token expiration error.
 
+    :param bytes condition: The error code.
+    :keyword str description: A description of the error.
+    :keyword dict info: A dictionary of additional data associated with the error.
     """
 
 
@@ -308,13 +317,21 @@ class TokenAuthFailure(AuthenticationException):
 
 
 class MessageException(AMQPException):
-    """
+    """Details of a Message error.
+
+    :param bytes condition: The error code.
+    :keyword str description: A description of the error.
+    :keyword dict info: A dictionary of additional data associated with the error.
 
     """
 
 
 class MessageSendFailed(MessageException):
-    """
+    """Details of a Message send failed error.
+
+    :param bytes condition: The error code.
+    :keyword str description: A description of the error.
+    :keyword dict info: A dictionary of additional data associated with the error.
 
     """
 

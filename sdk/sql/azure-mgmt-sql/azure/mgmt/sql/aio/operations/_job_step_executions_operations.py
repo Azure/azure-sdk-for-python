@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,9 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import functools
-from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVar
-import warnings
+from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -17,6 +16,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
@@ -26,26 +26,24 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class JobStepExecutionsOperations:
-    """JobStepExecutionsOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.sql.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.sql.aio.SqlManagementClient`'s
+        :attr:`job_step_executions` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def list_by_job_execution(
@@ -63,7 +61,7 @@ class JobStepExecutionsOperations:
         skip: Optional[int] = None,
         top: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.JobExecutionListResult"]:
+    ) -> AsyncIterable[_models.JobExecutionListResult]:
         """Lists the step executions of a job execution.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -78,34 +76,43 @@ class JobStepExecutionsOperations:
         :param job_execution_id: The id of the job execution.
         :type job_execution_id: str
         :param create_time_min: If specified, only job executions created at or after the specified
-         time are included.
+         time are included. Default value is None.
         :type create_time_min: ~datetime.datetime
         :param create_time_max: If specified, only job executions created before the specified time are
-         included.
+         included. Default value is None.
         :type create_time_max: ~datetime.datetime
         :param end_time_min: If specified, only job executions completed at or after the specified time
-         are included.
+         are included. Default value is None.
         :type end_time_min: ~datetime.datetime
         :param end_time_max: If specified, only job executions completed before the specified time are
-         included.
+         included. Default value is None.
         :type end_time_max: ~datetime.datetime
         :param is_active: If specified, only active or only completed job executions are included.
+         Default value is None.
         :type is_active: bool
-        :param skip: The number of elements in the collection to skip.
+        :param skip: The number of elements in the collection to skip. Default value is None.
         :type skip: int
-        :param top: The number of elements to return from the collection.
+        :param top: The number of elements to return from the collection. Default value is None.
         :type top: int
+        :keyword api_version: Api Version. Default value is "2020-11-01-preview". Note that overriding
+         this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either JobExecutionListResult or the result of
          cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.JobExecutionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobExecutionListResult"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-11-01-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.JobExecutionListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -116,6 +123,7 @@ class JobStepExecutionsOperations:
                     job_name=job_name,
                     job_execution_id=job_execution_id,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     create_time_min=create_time_min,
                     create_time_max=create_time_max,
                     end_time_min=end_time_min,
@@ -124,9 +132,11 @@ class JobStepExecutionsOperations:
                     skip=skip,
                     top=top,
                     template_url=self.list_by_job_execution.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -137,6 +147,7 @@ class JobStepExecutionsOperations:
                     job_name=job_name,
                     job_execution_id=job_execution_id,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     create_time_min=create_time_min,
                     create_time_max=create_time_max,
                     end_time_min=end_time_min,
@@ -145,9 +156,11 @@ class JobStepExecutionsOperations:
                     skip=skip,
                     top=top,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -161,7 +174,11 @@ class JobStepExecutionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -174,7 +191,7 @@ class JobStepExecutionsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_job_execution.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}/steps'}  # type: ignore
+    list_by_job_execution.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}/steps"}  # type: ignore
 
     @distributed_trace_async
     async def get(
@@ -186,7 +203,7 @@ class JobStepExecutionsOperations:
         job_execution_id: str,
         step_name: str,
         **kwargs: Any
-    ) -> "_models.JobExecution":
+    ) -> _models.JobExecution:
         """Gets a step execution of a job execution.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -202,16 +219,24 @@ class JobStepExecutionsOperations:
         :type job_execution_id: str
         :param step_name: The name of the step.
         :type step_name: str
+        :keyword api_version: Api Version. Default value is "2020-11-01-preview". Note that overriding
+         this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JobExecution, or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.JobExecution
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobExecution"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-11-01-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.JobExecution]
 
         
         request = build_get_request(
@@ -222,12 +247,19 @@ class JobStepExecutionsOperations:
             job_execution_id=job_execution_id,
             step_name=step_name,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -241,5 +273,5 @@ class JobStepExecutionsOperations:
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}/steps/{stepName}'}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}/steps/{stepName}"}  # type: ignore
 

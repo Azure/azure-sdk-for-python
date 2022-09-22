@@ -1,0 +1,29 @@
+type: pipeline
+
+name: simplepipelinejobnopath
+description: The hello world pipeline job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+experiment_name: my_first_experiment
+
+compute: azureml:cpu-cluster
+
+inputs:
+  job_in_number: 10
+  job_in_path:
+    path: ../../data
+    mode: ro_mount
+
+settings:
+  continue_on_step_failure: True
+
+jobs:
+  hello_world_component:
+    type: command
+    component: azureml:microsoftsamplescommandcomponentbasic_non_existent@latest
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_number}}
+      component_in_path: ${{parent.inputs.job_in_path}}

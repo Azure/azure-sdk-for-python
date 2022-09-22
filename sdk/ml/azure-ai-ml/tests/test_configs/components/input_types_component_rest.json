@@ -1,0 +1,78 @@
+{
+    "id": "/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/DesignerTestRG/providers/Microsoft.MachineLearningServices/workspaces/DesignerTest-centraluseuap/components/test_820738797279/versions/1",
+    "name": null,
+    "type": null,
+    "properties": {
+        "description": null,
+        "tags": null,
+        "properties": {},
+        "isAnonymous": false,
+        "componentSpec": {
+            "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json",
+            "name": "microsoft_samples_command_component_basic_inputs",
+            "_source": "CLASS",
+            "version": "1",
+            "type": "command",
+            "display_name": "CommandComponentBasicInputs",
+            "description": "This is the basic command component with several input types",
+            "tags": {
+                "tag": "tagvalue",
+                "owner": "sdkteam"
+            },
+            "is_deterministic": "True",
+            "inputs": {
+                "component_in_string": {
+                    "name": "component_in_string",
+                    "optional": "False",
+                    "description": "A string",
+                    "type": "String"
+                },
+                "component_in_ranged_integer": {
+                    "name": "component_in_ranged_integer",
+                    "optional": "False",
+                    "description": "A ranged integer",
+                    "type": "Integer",
+                    "default": "10",
+                    "min": "1",
+                    "max": "100"
+                },
+                "component_in_enum": {
+                    "name": "component_in_enum",
+                    "optional": "False",
+                    "description": "An enum",
+                    "type": "String",
+                    "default": "hello",
+                    "enum": [
+                        "hello",
+                        "world"
+                    ]
+                },
+                "component_in_boolean": {
+                    "name": "component_in_boolean",
+                    "optional": "False",
+                    "description": "A boolean",
+                    "type": "Boolean",
+                    "default": "false"
+                },
+                "component_in_ranged_number": {
+                    "name": "component_in_ranged_number",
+                    "optional": "False",
+                    "description": "A ranged number",
+                    "type": "Number",
+                    "default": "10.0",
+                    "min": "2.0",
+                    "max": "8.0"
+                }
+            },
+            "command": "echo Hello World & echo ${{inputs.component_in_string}} & echo ${{inputs.component_in_ranged_integer}} & echo ${{inputs.component_in_enum}} & echo ${{inputs.component_in_boolean}} & echo ${{inputs.component_in_ranged_number}} &",
+            "environment": "azureml:/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/DesignerTestRG/providers/Microsoft.MachineLearningServices/workspaces/DesignerTest-centraluseuap/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu/versions/1",
+            "code": "azureml:/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/DesignerTestRG/providers/Microsoft.MachineLearningServices/workspaces/DesignerTest-centraluseuap/codes/1f12f20c-6cbe-4838-a211-82ba4288575c/versions/1"
+        }
+    },
+    "systemData": {
+        "createdAt": "2021-08-19T03:11:23.430582Z",
+        "createdBy": "Zhen Ruan",
+        "createdByType": "User",
+        "lastModifiedAt": "2021-08-19T03:11:24.2132391Z"
+    }
+}

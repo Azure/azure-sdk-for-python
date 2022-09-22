@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import AzureStackHCIClientConfiguration
@@ -25,19 +26,22 @@ class AzureStackHCIClient:
     """Azure Stack HCI management service.
 
     :ivar arc_settings: ArcSettingsOperations operations
-    :vartype arc_settings: azure_stack_hci_client.operations.ArcSettingsOperations
+    :vartype arc_settings: azure.mgmt.azurestackhci.operations.ArcSettingsOperations
     :ivar clusters: ClustersOperations operations
-    :vartype clusters: azure_stack_hci_client.operations.ClustersOperations
+    :vartype clusters: azure.mgmt.azurestackhci.operations.ClustersOperations
     :ivar extensions: ExtensionsOperations operations
-    :vartype extensions: azure_stack_hci_client.operations.ExtensionsOperations
+    :vartype extensions: azure.mgmt.azurestackhci.operations.ExtensionsOperations
     :ivar operations: Operations operations
-    :vartype operations: azure_stack_hci_client.operations.Operations
+    :vartype operations: azure.mgmt.azurestackhci.operations.Operations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-05-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -64,7 +68,7 @@ class AzureStackHCIClient:
 
     def _send_request(
         self,
-        request,  # type: HttpRequest
+        request: HttpRequest,
         **kwargs: Any
     ) -> HttpResponse:
         """Runs the network request through the client's chained policies.

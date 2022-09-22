@@ -1,0 +1,132 @@
+type: sweep
+sampling_algorithm: random
+search_space:
+  lr:
+    type: uniform
+    min_value: 0.001
+    max_value: 0.1
+  conv_size:
+    type: choice
+    values:
+      - const_val: 999
+        val1:
+          type: choice
+          values:
+            - val11:
+                type: uniform
+                min_value: 0.001
+                max_value: 0.1
+            - val12:
+                type: uniform
+                min_value: 0.001
+                max_value: 0.1
+      - val2:
+          type: choice
+          values:
+            - val21:
+                type: uniform
+                min_value: 0.001
+                max_value: 0.1
+            - val22:
+                type: uniform
+                min_value: 0.001
+                max_value: 0.1
+      - val3:
+          type: choice
+          values:
+            - value31:
+                type: choice
+                values:
+                  - value3111: hello!
+                    value3112: 123
+                    value3113:
+                      type: choice
+                      values:
+                        - 1
+                        - 2
+                        - 3
+                    val3114:
+                      type: normal
+                      mu: 0
+                      sigma: 1
+                    val3115:
+                      type: qnormal
+                      mu: 0
+                      sigma: 1
+                      q: 0.4
+                    val3116:
+                      type: uniform
+                      min_value: 0
+                      max_value: 1
+                    val3117:
+                      type: quniform
+                      min_value: 0
+                      max_value: 1
+                      q: 0.4
+                    val3118:
+                      type: randint
+                      upper: 100
+                  - value312:
+                      type: choice
+                      values:
+                        - 1
+                        - 2
+                        - 3
+                  - val313:
+                      type: normal
+                      mu: 0
+                      sigma: 1
+                  - val314:
+                      type: qnormal
+                      mu: 0
+                      sigma: 1
+                      q: 0.4
+                  - val315:
+                      type: uniform
+                      min_value: 0
+                      max_value: 1
+                  - val316:
+                      type: quniform
+                      min_value: 0
+                      max_value: 1
+                      q: 0.4
+                  - val317:
+                      type: randint
+                      upper: 100
+      - val4:
+          type: normal
+          mu: 0
+          sigma: 1
+      - val5:
+          type: qnormal
+          mu: 0
+          sigma: 1
+          q: 0.4
+      - val6:
+          type: uniform
+          min_value: 0
+          max_value: 1
+      - val7:
+          type: quniform
+          min_value: 0
+          max_value: 1
+          q: 0.4
+      - val8:
+          type: randint
+          upper: 100
+  dropout_rate:
+    type: uniform
+    min_value: 0.1
+    max_value: 0.5
+objective:
+  primary_metric: accuracy
+  goal: maximize
+trial:
+  command: python ./sweep_script.py --lr ${{search_space.lr}} --conv_size ${{search_space.conv_size}} --dropout_rate ${{search_space.dropout_rate}}
+  code: azureml:dummy_code:1
+  environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+compute: azureml:cpu-cluster
+limits:
+  max_total_trials: 2
+  max_concurrent_trials: 10
+  timeout: 3000

@@ -106,7 +106,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://test-resource.api.cognitive.microsoft.com/language/:query-text?api-version=2021-10-01
   response:
@@ -119,44 +119,45 @@ interactions:
         Battery Life - Longest Lasting Laptop Batteries  Competing laptops like the
         ZenBook S UX391UA (7:05), Surface Laptop 2 (9:22) and Notebook 9 Pro (8:53)
         outstayed the 4K Envy 13 but powered down long before the 1080p version.\",\n
-        \     \"confidenceScore\": 0.017458291724324226,\n      \"id\": \"doc3\",\n
-        \     \"answerSpan\": {\n        \"text\": \"Battery Life\",\n        \"confidenceScore\":
-        0.26247388,\n        \"offset\": 0,\n        \"length\": 12\n      },\n      \"offset\":
+        \     \"confidenceScore\": 0.047717854380607605,\n      \"id\": \"doc3\",\n
+        \     \"answerSpan\": {\n        \"text\": \"continuous web browsing over
+        Wi-Fi at 150 nits of brightness\",\n        \"confidenceScore\": 0.29168442,\n
+        \       \"offset\": 242,\n        \"length\": 61\n      },\n      \"offset\":
         1779,\n      \"length\": 555\n    },\n    {\n      \"answer\": \"Along with
         11-plus hours of battery life (on the FHD model), the Envy 13 has a sleek,
         ultraportable chassis, fast performance, and powerful speakers. Best of all,
         the Envy 13 starts at a reasonable $799, which is hundreds less than the competition.
         In many ways, the Envy 13 is what we wanted the new MacBook Air to be.\",\n
-        \     \"confidenceScore\": 0.00940172653645277,\n      \"id\": \"doc3\",\n
+        \     \"confidenceScore\": 0.039635516703128815,\n      \"id\": \"doc3\",\n
         \     \"answerSpan\": {\n        \"text\": \"battery life\",\n        \"confidenceScore\":
-        0.35305238,\n        \"offset\": 27,\n        \"length\": 13\n      },\n      \"offset\":
-        4508,\n      \"length\": 319\n    },\n    {\n      \"answer\": \"We also recommend
-        the Samsung Notebook 9 Pro, which has a similarly premium design but much
-        better battery life than the 4K Envy. The Microsoft Surface Laptop 2 is another
-        recommended alternative, though you might want to wait a few months for the
-        rumored Surface Laptop 3.   Overall, the HP Envy 13 is a fantastic laptop
-        that checks all the right boxes --- as long as you buy the 1080p model.\",\n
-        \     \"confidenceScore\": 0.007057250943034887,\n      \"id\": \"doc3\",\n
-        \     \"answerSpan\": {\n        \"text\": \"battery life\",\n        \"confidenceScore\":
-        0.59143245,\n        \"offset\": 98,\n        \"length\": 13\n      },\n      \"offset\":
-        5391,\n      \"length\": 393\n    }\n  ]\n}"
+        0.3033662,\n        \"offset\": 27,\n        \"length\": 13\n      },\n      \"offset\":
+        4508,\n      \"length\": 319\n    },\n    {\n      \"answer\": \"MORE: Laptops
+        with Best Battery Life - Longest Lasting Laptop Batteries  Competing laptops
+        like the ZenBook S UX391UA (7:05), Surface Laptop 2 (9:22) and Notebook 9
+        Pro (8:53) outstayed the 4K Envy 13 but powered down long before the 1080p
+        version.  Webcam  The 720p webcam on the Envy 13 is nothing to write home
+        about. A selfie I snapped in my dimly lit room was covered in a haze of visual
+        noise.\",\n      \"confidenceScore\": 0.010868429206311703,\n      \"id\":
+        \"doc3\",\n      \"answerSpan\": {\n        \"text\": \"Longest Last\",\n
+        \       \"confidenceScore\": 0.21728747,\n        \"offset\": 38,\n        \"length\":
+        13\n      },\n      \"offset\": 2086,\n      \"length\": 399\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 465fe43a-5e13-4ca5-ad6f-1ae62cae5af3
+      - a7a8c408-8439-4ef7-91c1-9a54034ed475
       content-length:
-      - '2147'
+      - '2203'
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=9
       date:
-      - Thu, 28 Oct 2021 17:25:07 GMT
+      - Tue, 02 Aug 2022 22:08:26 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '366'
+      - '1094'
     status:
       code: 200
       message: OK

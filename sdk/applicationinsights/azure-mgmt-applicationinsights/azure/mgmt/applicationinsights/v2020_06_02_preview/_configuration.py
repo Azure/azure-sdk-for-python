@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ApplicationInsightsManagementClientConfiguration(Configuration):
+class ApplicationInsightsManagementClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for ApplicationInsightsManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -27,6 +27,9 @@ class ApplicationInsightsManagementClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
+    :keyword api_version: Api Version. Default value is "2020-06-02-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -35,11 +38,13 @@ class ApplicationInsightsManagementClientConfiguration(Configuration):
         **kwargs: Any
     ) -> None:
         super(ApplicationInsightsManagementClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2020-06-02-preview")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
 
         self.credential = credential
-        self.api_version = "2020-06-02-preview"
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-applicationinsights/{}'.format(VERSION))
         self._configure(**kwargs)

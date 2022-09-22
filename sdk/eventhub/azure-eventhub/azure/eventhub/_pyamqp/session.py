@@ -1,17 +1,16 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 import uuid
 import logging
-from enum import Enum
 import time
 
 from .constants import (
     INCOMING_WINDOW,
-    OUTGOING_WIDNOW,
+    OUTGOING_WINDOW,
     ConnectionState,
     SessionState,
     SessionTransferState,
@@ -21,15 +20,7 @@ from .endpoints import Source, Target
 from .sender import SenderLink
 from .receiver import ReceiverLink
 from .management_link import ManagementLink
-from .performatives import (
-    BeginFrame,
-    EndFrame,
-    FlowFrame,
-    AttachFrame,
-    DetachFrame,
-    TransferFrame,
-    DispositionFrame
-)
+from .performatives import BeginFrame, EndFrame, FlowFrame, TransferFrame, DispositionFrame
 from ._encode import encode_frame
 from azure.eventhub._pyamqp.error import AMQPError, AMQPSessionError, ErrorCondition
 
@@ -49,27 +40,27 @@ class Session(object):
     """
 
     def __init__(self, connection, channel, **kwargs):
-        self.name = kwargs.pop('name', None) or str(uuid.uuid4())
+        self.name = kwargs.pop("name", None) or str(uuid.uuid4())
         self.state = SessionState.UNMAPPED
-        self.handle_max = kwargs.get('handle_max', 4294967295)
-        self.properties = kwargs.pop('properties', None)
+        self.handle_max = kwargs.get("handle_max", 4294967295)
+        self.properties = kwargs.pop("properties", None)
         self.channel = channel
         self.remote_channel = None
-        self.next_outgoing_id = kwargs.pop('next_outgoing_id', 0)
+        self.next_outgoing_id = kwargs.pop("next_outgoing_id", 0)
         self.next_incoming_id = None
-        self.incoming_window = kwargs.pop('incoming_window', 1)
-        self.outgoing_window = kwargs.pop('outgoing_window', 1)
+        self.incoming_window = kwargs.pop("incoming_window", 1)
+        self.outgoing_window = kwargs.pop("outgoing_window", 1)
         self.target_incoming_window = self.incoming_window
         self.remote_incoming_window = 0
         self.remote_outgoing_window = 0
         self.offered_capabilities = None
-        self.desired_capabilities = kwargs.pop('desired_capabilities', None)
+        self.desired_capabilities = kwargs.pop("desired_capabilities", None)
 
-        self.allow_pipelined_open = kwargs.pop('allow_pipelined_open', True)
-        self.idle_wait_time = kwargs.get('idle_wait_time', 0.1)
-        self.network_trace = kwargs['network_trace']
-        self.network_trace_params = kwargs['network_trace_params']
-        self.network_trace_params['session'] = self.name
+        self.allow_pipelined_open = kwargs.pop("allow_pipelined_open", True)
+        self.idle_wait_time = kwargs.get("idle_wait_time", 0.1)
+        self.network_trace = kwargs["network_trace"]
+        self.network_trace_params = kwargs["network_trace_params"]
+        self.network_trace_params["session"] = self.name
 
         self.links = {}
         self._connection = connection
@@ -98,7 +89,7 @@ class Session(object):
         self.state = new_state
         _LOGGER.info("Session state changed: %r -> %r", previous_state, new_state, extra=self.network_trace_params)
         for link in self.links.values():
-            link._on_session_state_change()
+            link._on_session_state_change() # pylint: disable=protected-access
 
     def _on_connection_state_change(self):
         if self._connection.state in [ConnectionState.CLOSE_RCVD, ConnectionState.END]:
@@ -117,7 +108,7 @@ class Session(object):
             raise ValueError("Maximum number of handles ({}) has been reached.".format(self.handle_max))
         next_handle = next(i for i in range(1, self.handle_max) if i not in self._output_handles)
         return next_handle
-    
+
     def _outgoing_begin(self):
         begin_frame = BeginFrame(
             remote_channel=self.remote_channel if self.state == SessionState.BEGIN_RCVD else None,
@@ -131,7 +122,7 @@ class Session(object):
         )
         if self.network_trace:
             _LOGGER.info("-> %r", begin_frame, extra=self.network_trace_params)
-        self._connection._process_outgoing_frame(self.channel, begin_frame)
+        self._connection._process_outgoing_frame(self.channel, begin_frame) # pylint: disable=protected-access
 
     def _incoming_begin(self, frame):
         if self.network_trace:
@@ -152,7 +143,7 @@ class Session(object):
         end_frame = EndFrame(error=error)
         if self.network_trace:
             _LOGGER.info("-> %r", end_frame, extra=self.network_trace_params)
-        self._connection._process_outgoing_frame(self.channel, end_frame)
+        self._connection._process_outgoing_frame(self.channel, end_frame) # pylint: disable=protected-access
 
     def _incoming_end(self, frame):
         if self.network_trace:
@@ -166,12 +157,12 @@ class Session(object):
         self._set_state(SessionState.UNMAPPED)
 
     def _outgoing_attach(self, frame):
-        self._connection._process_outgoing_frame(self.channel, frame)
+        self._connection._process_outgoing_frame(self.channel, frame) # pylint: disable=protected-access
 
     def _incoming_attach(self, frame):
         try:
-            self._input_handles[frame[1]] = self.links[frame[0].decode('utf-8')]  # name and handle
-            self._input_handles[frame[1]]._incoming_attach(frame)
+            self._input_handles[frame[1]] = self.links[frame[0].decode("utf-8")]  # name and handle
+            self._input_handles[frame[1]]._incoming_attach(frame) # pylint: disable=protected-access
         except KeyError:
             try:
                 outgoing_handle = self._get_next_output_handle()
@@ -191,26 +182,28 @@ class Session(object):
                 new_link = ReceiverLink.from_incoming_frame(self, outgoing_handle, frame)
             else:
                 new_link = SenderLink.from_incoming_frame(self, outgoing_handle, frame)
-            new_link._incoming_attach(frame)
+            new_link._incoming_attach(frame) # pylint: disable=protected-access
             self.links[frame[0]] = new_link
             self._output_handles[outgoing_handle] = new_link
             self._input_handles[frame[1]] = new_link
         except ValueError:
             # Reject Link
             self._input_handles[frame[1]].detach()
-    
+
     def _outgoing_flow(self, frame=None):
         link_flow = frame or {}
-        link_flow.update({
-            'next_incoming_id': self.next_incoming_id,
-            'incoming_window': self.incoming_window,
-            'next_outgoing_id': self.next_outgoing_id,
-            'outgoing_window': self.outgoing_window
-        })
+        link_flow.update(
+            {
+                "next_incoming_id": self.next_incoming_id,
+                "incoming_window": self.incoming_window,
+                "next_outgoing_id": self.next_outgoing_id,
+                "outgoing_window": self.outgoing_window,
+            }
+        )
         flow_frame = FlowFrame(**link_flow)
         if self.network_trace:
             _LOGGER.info("-> %r", flow_frame, extra=self.network_trace_params)
-        self._connection._process_outgoing_frame(self.channel, flow_frame)
+        self._connection._process_outgoing_frame(self.channel, flow_frame) # pylint: disable=protected-access
 
     def _incoming_flow(self, frame):
         if self.network_trace:
@@ -220,11 +213,11 @@ class Session(object):
         self.remote_incoming_window = remote_incoming_id + frame[1] - self.next_outgoing_id  # incoming_window
         self.remote_outgoing_window = frame[3]  # outgoing_window
         if frame[4] is not None:  # handle
-            self._input_handles[frame[4]]._incoming_flow(frame)
+            self._input_handles[frame[4]]._incoming_flow(frame) # pylint: disable=protected-access
         else:
             for link in self._output_handles.values():
-                if self.remote_incoming_window > 0 and not link._is_closed:
-                    link._incoming_flow(frame)
+                if self.remote_incoming_window > 0 and not link._is_closed: # pylint: disable=protected-access
+                    link._incoming_flow(frame) # pylint: disable=protected-access
 
     def _outgoing_transfer(self, delivery):
         if self.state != SessionState.MAPPED:
@@ -232,58 +225,58 @@ class Session(object):
         if self.remote_incoming_window <= 0:
             delivery.transfer_state = SessionTransferState.BUSY
         else:
-            payload = delivery.frame['payload']
+            payload = delivery.frame["payload"]
             payload_size = len(payload)
 
-            delivery.frame['delivery_id'] = self.next_outgoing_id
+            delivery.frame["delivery_id"] = self.next_outgoing_id
             # calculate the transfer frame encoding size excluding the payload
-            delivery.frame['payload'] = b""
+            delivery.frame["payload"] = b""
             # TODO: encoding a frame would be expensive, we might want to improve depending on the perf test results
             encoded_frame = encode_frame(TransferFrame(**delivery.frame))[1]
             transfer_overhead_size = len(encoded_frame)
 
             # available size for payload per frame is calculated as following:
             # remote max frame size - transfer overhead (calculated) - header (8 bytes)
-            available_frame_size = self._connection._remote_max_frame_size - transfer_overhead_size - 8
+            available_frame_size = self._connection._remote_max_frame_size - transfer_overhead_size - 8 # pylint: disable=protected-access
 
             start_idx = 0
             remaining_payload_cnt = payload_size
             # encode n-1 frames if payload_size > available_frame_size
             while remaining_payload_cnt > available_frame_size:
                 tmp_delivery_frame = {
-                    'handle': delivery.frame['handle'],
-                    'delivery_tag': delivery.frame['delivery_tag'],
-                    'message_format': delivery.frame['message_format'],
-                    'settled': delivery.frame['settled'],
-                    'more': True,
-                    'rcv_settle_mode': delivery.frame['rcv_settle_mode'],
-                    'state': delivery.frame['state'],
-                    'resume': delivery.frame['resume'],
-                    'aborted': delivery.frame['aborted'],
-                    'batchable': delivery.frame['batchable'],
-                    'payload': payload[start_idx:start_idx+available_frame_size],
-                    'delivery_id': self.next_outgoing_id
+                    "handle": delivery.frame["handle"],
+                    "delivery_tag": delivery.frame["delivery_tag"],
+                    "message_format": delivery.frame["message_format"],
+                    "settled": delivery.frame["settled"],
+                    "more": True,
+                    "rcv_settle_mode": delivery.frame["rcv_settle_mode"],
+                    "state": delivery.frame["state"],
+                    "resume": delivery.frame["resume"],
+                    "aborted": delivery.frame["aborted"],
+                    "batchable": delivery.frame["batchable"],
+                    "payload": payload[start_idx : start_idx + available_frame_size],
+                    "delivery_id": self.next_outgoing_id,
                 }
-                self._connection._process_outgoing_frame(self.channel, TransferFrame(**tmp_delivery_frame))
+                self._connection._process_outgoing_frame(self.channel, TransferFrame(**tmp_delivery_frame)) # pylint: disable=protected-access
                 start_idx += available_frame_size
                 remaining_payload_cnt -= available_frame_size
 
             # encode the last frame
             tmp_delivery_frame = {
-                'handle': delivery.frame['handle'],
-                'delivery_tag': delivery.frame['delivery_tag'],
-                'message_format': delivery.frame['message_format'],
-                'settled': delivery.frame['settled'],
-                'more': False,
-                'rcv_settle_mode': delivery.frame['rcv_settle_mode'],
-                'state': delivery.frame['state'],
-                'resume': delivery.frame['resume'],
-                'aborted': delivery.frame['aborted'],
-                'batchable': delivery.frame['batchable'],
-                'payload': payload[start_idx:],
-                'delivery_id': self.next_outgoing_id
+                "handle": delivery.frame["handle"],
+                "delivery_tag": delivery.frame["delivery_tag"],
+                "message_format": delivery.frame["message_format"],
+                "settled": delivery.frame["settled"],
+                "more": False,
+                "rcv_settle_mode": delivery.frame["rcv_settle_mode"],
+                "state": delivery.frame["state"],
+                "resume": delivery.frame["resume"],
+                "aborted": delivery.frame["aborted"],
+                "batchable": delivery.frame["batchable"],
+                "payload": payload[start_idx:],
+                "delivery_id": self.next_outgoing_id,
             }
-            self._connection._process_outgoing_frame(self.channel, TransferFrame(**tmp_delivery_frame))
+            self._connection._process_outgoing_frame(self.channel, TransferFrame(**tmp_delivery_frame)) # pylint: disable=protected-access
             self.next_outgoing_id += 1
             self.remote_incoming_window -= 1
             self.outgoing_window -= 1
@@ -295,7 +288,7 @@ class Session(object):
         self.remote_outgoing_window -= 1
         self.incoming_window -= 1
         try:
-            self._input_handles[frame[0]]._incoming_transfer(frame)  # handle
+            self._input_handles[frame[0]]._incoming_transfer(frame)  # pylint: disable=protected-access
         except KeyError:
             self._set_state(SessionState.DISCARDING)
             self.end(error=AMQPError(
@@ -306,21 +299,21 @@ class Session(object):
             self._outgoing_flow()
 
     def _outgoing_disposition(self, frame):
-        self._connection._process_outgoing_frame(self.channel, frame)
+        self._connection._process_outgoing_frame(self.channel, frame) # pylint: disable=protected-access
 
     def _incoming_disposition(self, frame):
         if self.network_trace:
             _LOGGER.info("<- %r", DispositionFrame(*frame), extra=self.network_trace_params)
         for link in self._input_handles.values():
-            link._incoming_disposition(frame)
+            link._incoming_disposition(frame) # pylint: disable=protected-access
 
     def _outgoing_detach(self, frame):
-        self._connection._process_outgoing_frame(self.channel, frame)
+        self._connection._process_outgoing_frame(self.channel, frame) # pylint: disable=protected-access
 
     def _incoming_detach(self, frame):
         try:
             link = self._input_handles[frame[0]]  # handle
-            link._incoming_detach(frame)
+            link._incoming_detach(frame) # pylint: disable=protected-access
             # if link._is_closed:  TODO
             #     self.links.pop(link.name, None)
             #     self._input_handles.pop(link.remote_handle, None)
@@ -333,7 +326,7 @@ class Session(object):
 
     def _wait_for_response(self, wait, end_state):
         # type: (Union[bool, float], SessionState) -> None
-        if wait == True:
+        if wait is True:
             self._connection.listen(wait=False)
             while self.state != end_state:
                 time.sleep(self.idle_wait_time)
@@ -375,9 +368,10 @@ class Session(object):
             self,
             handle=assigned_handle,
             source_address=source_address,
-            network_trace=kwargs.pop('network_trace', self.network_trace),
+            network_trace=kwargs.pop("network_trace", self.network_trace),
             network_trace_params=dict(self.network_trace_params),
-            **kwargs)
+            **kwargs
+        )
         self.links[link.name] = link
         self._output_handles[assigned_handle] = link
         return link
@@ -388,16 +382,13 @@ class Session(object):
             self,
             handle=assigned_handle,
             target_address=target_address,
-            network_trace=kwargs.pop('network_trace', self.network_trace),
+            network_trace=kwargs.pop("network_trace", self.network_trace),
             network_trace_params=dict(self.network_trace_params),
-            **kwargs)
+            **kwargs
+        )
         self._output_handles[assigned_handle] = link
         self.links[link.name] = link
         return link
-    
+
     def create_request_response_link_pair(self, endpoint, **kwargs):
-        return ManagementLink(
-            self,
-            endpoint,
-            network_trace=kwargs.pop('network_trace', self.network_trace),
-            **kwargs)
+        return ManagementLink(self, endpoint, network_trace=kwargs.pop("network_trace", self.network_trace), **kwargs)

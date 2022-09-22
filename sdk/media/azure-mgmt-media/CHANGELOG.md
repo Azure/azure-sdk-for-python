@@ -1,5 +1,23 @@
 # Release History
 
+## 10.0.0 (2022-07-01)
+
+**Features**
+
+  - Added operation MediaservicesOperations.begin_create_or_update
+  - Added operation MediaservicesOperations.begin_update
+  - Added operation group MediaServicesOperationResultsOperations
+  - Added operation group MediaServicesOperationStatusesOperations
+  - Model MediaService has a new parameter private_endpoint_connections
+  - Model MediaService has a new parameter provisioning_state
+  - Model MediaServiceUpdate has a new parameter private_endpoint_connections
+  - Model MediaServiceUpdate has a new parameter provisioning_state
+
+**Breaking changes**
+
+  - Removed operation MediaservicesOperations.create_or_update
+  - Removed operation MediaservicesOperations.update
+
 ## 9.0.0 (2022-03-30)
 
 **Features**

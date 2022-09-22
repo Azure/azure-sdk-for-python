@@ -1,0 +1,72 @@
+type: pipeline
+
+# not supported yet.
+
+name: simplePipelineJobWithObjectInputOutput
+description: The hello world pipeline job with input/output type of object
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: "azureml:cpu-cluster"
+
+inputs:
+  # object with explicit inline json schema annotation
+  job_in_object_with_inline_schema:
+    type: object
+    description: This is and object that must have first_name, last_name and id
+    schema:
+      $schema: https://json-schema.org/draft/2019-09/schema
+      type: object
+      properties:
+        first_name: { type: string }
+        last_name: { type: string }
+        id: { type: integer }
+      additionalProperties: false
+
+  # object with explicit referenced schema annotation
+  job_in_object_with_schema:
+    type: object
+    description: This is and object that must have first_name, last_name and id
+    schema: https://ignite6981724196.blob.core.windows.net/schemas/my_json_schema.json#/definitions/person
+
+  # object without schema annotation
+  job_in_object_without_schema:
+    type: object
+    description: This and object isn't backed by a schema
+
+outputs:
+  job_out_object_with_inline_schema:
+    type: object
+    description: This is and object that must have first_name, last_name and id
+    schema:
+      $schema: https://json-schema.org/draft/2019-09/schema
+      type: object
+      properties:
+        first_name: { type: string }
+        last_name: { type: string }
+        id: { type: integer }
+      additionalProperties: false
+
+  job_out_object_with_schema:
+    type: object
+    description: This is and object that must have first_name, last_name and id
+    schema: https://ignite6981724196.blob.core.windows.net/schemas/my_json_schema.json#/definitions/person
+
+  job_out_object_without_schema:
+    type: object
+    description: This and object isn't backed by a schema
+
+jobs:
+  hello_world_component:
+    type: command
+    component: file:../../components/type_contract/object.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_object_with_inline_schema: ${{parent.inputs.job_in_object_with_inline_schema}}
+      component_in_object_with_schema: ${{parent.inputs.job_in_object_with_schema}}
+      component_in_object_without_schema: ${{parent.inputs.job_in_object_with_schema}}
+    outputs:
+      component_out_object_with_inline_schema: ${{parent.outputs.job_out_object_with_inline_schema}}
+      component_out_object_with_schema: ${{parent.outputs.job_out_object_with_schema}}
+      component_out_object_without_schema: ${{parent.outputs.job_out_object_with_schema}}

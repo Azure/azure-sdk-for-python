@@ -7,11 +7,13 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._web_site_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AddressResponse(msrest.serialization.Model):
@@ -41,7 +43,7 @@ class AddressResponse(msrest.serialization.Model):
         service_ip_address: Optional[str] = None,
         internal_ip_address: Optional[str] = None,
         outbound_ip_addresses: Optional[List[str]] = None,
-        vip_mappings: Optional[List["VirtualIPMapping"]] = None,
+        vip_mappings: Optional[List["_models.VirtualIPMapping"]] = None,
         **kwargs
     ):
         """
@@ -113,7 +115,7 @@ class AppServiceEnvironmentCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["AppServiceEnvironmentResource"],
+        value: List["_models.AppServiceEnvironmentResource"],
         **kwargs
     ):
         """
@@ -187,11 +189,11 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
     :vartype name_properties_name: str
     :ivar location: Location of the App Service Environment, e.g. "West US".
     :vartype location: str
-    :ivar provisioning_state: Provisioning state of the App Service Environment. Possible values
-     include: "Succeeded", "Failed", "Canceled", "InProgress", "Deleting".
+    :ivar provisioning_state: Provisioning state of the App Service Environment. Known values are:
+     "Succeeded", "Failed", "Canceled", "InProgress", "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.web.v2016_09_01.models.ProvisioningState
-    :ivar status: Current status of the App Service Environment. Possible values include:
-     "Preparing", "Ready", "Scaling", "Deleting".
+    :ivar status: Current status of the App Service Environment. Known values are: "Preparing",
+     "Ready", "Scaling", "Deleting".
     :vartype status: str or ~azure.mgmt.web.v2016_09_01.models.HostingEnvironmentStatus
     :ivar vnet_name: Name of the Virtual Network for the App Service Environment.
     :vartype vnet_name: str
@@ -202,8 +204,7 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
     :ivar virtual_network: Description of the Virtual Network.
     :vartype virtual_network: ~azure.mgmt.web.v2016_09_01.models.VirtualNetworkProfile
     :ivar internal_load_balancing_mode: Specifies which endpoints to serve internally in the
-     Virtual Network for the App Service Environment. Possible values include: "None", "Web",
-     "Publishing".
+     Virtual Network for the App Service Environment. Known values are: "None", "Web", "Publishing".
     :vartype internal_load_balancing_mode: str or
      ~azure.mgmt.web.v2016_09_01.models.InternalLoadBalancingMode
     :ivar multi_size: Front-end VM size, e.g. "Medium", "Large".
@@ -354,19 +355,19 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
         vnet_name: Optional[str] = None,
         vnet_resource_group_name: Optional[str] = None,
         vnet_subnet_name: Optional[str] = None,
-        virtual_network: Optional["VirtualNetworkProfile"] = None,
-        internal_load_balancing_mode: Optional[Union[str, "InternalLoadBalancingMode"]] = None,
+        virtual_network: Optional["_models.VirtualNetworkProfile"] = None,
+        internal_load_balancing_mode: Optional[Union[str, "_models.InternalLoadBalancingMode"]] = None,
         multi_size: Optional[str] = None,
         multi_role_count: Optional[int] = None,
-        worker_pools: Optional[List["WorkerPool"]] = None,
+        worker_pools: Optional[List["_models.WorkerPool"]] = None,
         ipssl_address_count: Optional[int] = None,
         dns_suffix: Optional[str] = None,
-        network_access_control_list: Optional[List["NetworkAccessControlEntry"]] = None,
+        network_access_control_list: Optional[List["_models.NetworkAccessControlEntry"]] = None,
         front_end_scale_factor: Optional[int] = None,
         api_management_account_id: Optional[str] = None,
         suspended: Optional[bool] = None,
         dynamic_cache_enabled: Optional[bool] = None,
-        cluster_settings: Optional[List["NameValuePair"]] = None,
+        cluster_settings: Optional[List["_models.NameValuePair"]] = None,
         user_whitelisted_ip_ranges: Optional[List[str]] = None,
         **kwargs
     ):
@@ -386,8 +387,7 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
         :keyword virtual_network: Description of the Virtual Network.
         :paramtype virtual_network: ~azure.mgmt.web.v2016_09_01.models.VirtualNetworkProfile
         :keyword internal_load_balancing_mode: Specifies which endpoints to serve internally in the
-         Virtual Network for the App Service Environment. Possible values include: "None", "Web",
-         "Publishing".
+         Virtual Network for the App Service Environment. Known values are: "None", "Web", "Publishing".
         :paramtype internal_load_balancing_mode: str or
          ~azure.mgmt.web.v2016_09_01.models.InternalLoadBalancingMode
         :keyword multi_size: Front-end VM size, e.g. "Medium", "Large".
@@ -551,11 +551,11 @@ class AppServiceEnvironmentResource(Resource):
     :vartype name_properties_name: str
     :ivar location_properties_location: Location of the App Service Environment, e.g. "West US".
     :vartype location_properties_location: str
-    :ivar provisioning_state: Provisioning state of the App Service Environment. Possible values
-     include: "Succeeded", "Failed", "Canceled", "InProgress", "Deleting".
+    :ivar provisioning_state: Provisioning state of the App Service Environment. Known values are:
+     "Succeeded", "Failed", "Canceled", "InProgress", "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.web.v2016_09_01.models.ProvisioningState
-    :ivar status: Current status of the App Service Environment. Possible values include:
-     "Preparing", "Ready", "Scaling", "Deleting".
+    :ivar status: Current status of the App Service Environment. Known values are: "Preparing",
+     "Ready", "Scaling", "Deleting".
     :vartype status: str or ~azure.mgmt.web.v2016_09_01.models.HostingEnvironmentStatus
     :ivar vnet_name: Name of the Virtual Network for the App Service Environment.
     :vartype vnet_name: str
@@ -566,8 +566,7 @@ class AppServiceEnvironmentResource(Resource):
     :ivar virtual_network: Description of the Virtual Network.
     :vartype virtual_network: ~azure.mgmt.web.v2016_09_01.models.VirtualNetworkProfile
     :ivar internal_load_balancing_mode: Specifies which endpoints to serve internally in the
-     Virtual Network for the App Service Environment. Possible values include: "None", "Web",
-     "Publishing".
+     Virtual Network for the App Service Environment. Known values are: "None", "Web", "Publishing".
     :vartype internal_load_balancing_mode: str or
      ~azure.mgmt.web.v2016_09_01.models.InternalLoadBalancingMode
     :ivar multi_size: Front-end VM size, e.g. "Medium", "Large".
@@ -723,19 +722,19 @@ class AppServiceEnvironmentResource(Resource):
         vnet_name: Optional[str] = None,
         vnet_resource_group_name: Optional[str] = None,
         vnet_subnet_name: Optional[str] = None,
-        virtual_network: Optional["VirtualNetworkProfile"] = None,
-        internal_load_balancing_mode: Optional[Union[str, "InternalLoadBalancingMode"]] = None,
+        virtual_network: Optional["_models.VirtualNetworkProfile"] = None,
+        internal_load_balancing_mode: Optional[Union[str, "_models.InternalLoadBalancingMode"]] = None,
         multi_size: Optional[str] = None,
         multi_role_count: Optional[int] = None,
-        worker_pools: Optional[List["WorkerPool"]] = None,
+        worker_pools: Optional[List["_models.WorkerPool"]] = None,
         ipssl_address_count: Optional[int] = None,
         dns_suffix: Optional[str] = None,
-        network_access_control_list: Optional[List["NetworkAccessControlEntry"]] = None,
+        network_access_control_list: Optional[List["_models.NetworkAccessControlEntry"]] = None,
         front_end_scale_factor: Optional[int] = None,
         api_management_account_id: Optional[str] = None,
         suspended: Optional[bool] = None,
         dynamic_cache_enabled: Optional[bool] = None,
-        cluster_settings: Optional[List["NameValuePair"]] = None,
+        cluster_settings: Optional[List["_models.NameValuePair"]] = None,
         user_whitelisted_ip_ranges: Optional[List[str]] = None,
         **kwargs
     ):
@@ -759,8 +758,7 @@ class AppServiceEnvironmentResource(Resource):
         :keyword virtual_network: Description of the Virtual Network.
         :paramtype virtual_network: ~azure.mgmt.web.v2016_09_01.models.VirtualNetworkProfile
         :keyword internal_load_balancing_mode: Specifies which endpoints to serve internally in the
-         Virtual Network for the App Service Environment. Possible values include: "None", "Web",
-         "Publishing".
+         Virtual Network for the App Service Environment. Known values are: "None", "Web", "Publishing".
         :paramtype internal_load_balancing_mode: str or
          ~azure.mgmt.web.v2016_09_01.models.InternalLoadBalancingMode
         :keyword multi_size: Front-end VM size, e.g. "Medium", "Large".
@@ -864,7 +862,7 @@ class AppServicePlan(Resource):
     :vartype name_properties_name: str
     :ivar worker_tier_name: Target worker tier assigned to the App Service plan.
     :vartype worker_tier_name: str
-    :ivar status: App Service plan status. Possible values include: "Ready", "Pending", "Creating".
+    :ivar status: App Service plan status. Known values are: "Ready", "Pending", "Creating".
     :vartype status: str or ~azure.mgmt.web.v2016_09_01.models.StatusOptions
     :ivar subscription: App Service plan subscription.
     :vartype subscription: str
@@ -900,8 +898,8 @@ class AppServicePlan(Resource):
     :vartype target_worker_count: int
     :ivar target_worker_size_id: Scaling worker size ID.
     :vartype target_worker_size_id: int
-    :ivar provisioning_state: Provisioning state of the App Service Environment. Possible values
-     include: "Succeeded", "Failed", "Canceled", "InProgress", "Deleting".
+    :ivar provisioning_state: Provisioning state of the App Service Environment. Known values are:
+     "Succeeded", "Failed", "Canceled", "InProgress", "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.web.v2016_09_01.models.ProvisioningState
     """
 
@@ -952,11 +950,11 @@ class AppServicePlan(Resource):
         location: str,
         kind: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["SkuDescription"] = None,
+        sku: Optional["_models.SkuDescription"] = None,
         name_properties_name: Optional[str] = None,
         worker_tier_name: Optional[str] = None,
         admin_site_name: Optional[str] = None,
-        hosting_environment_profile: Optional["HostingEnvironmentProfile"] = None,
+        hosting_environment_profile: Optional["_models.HostingEnvironmentProfile"] = None,
         per_site_scaling: Optional[bool] = False,
         is_spot: Optional[bool] = None,
         spot_expiration_time: Optional[datetime.datetime] = None,
@@ -1046,7 +1044,7 @@ class AppServicePlanCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["AppServicePlan"],
+        value: List["_models.AppServicePlan"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1078,7 +1076,7 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
     :vartype name_properties_name: str
     :ivar worker_tier_name: Target worker tier assigned to the App Service plan.
     :vartype worker_tier_name: str
-    :ivar status: App Service plan status. Possible values include: "Ready", "Pending", "Creating".
+    :ivar status: App Service plan status. Known values are: "Ready", "Pending", "Creating".
     :vartype status: str or ~azure.mgmt.web.v2016_09_01.models.StatusOptions
     :ivar subscription: App Service plan subscription.
     :vartype subscription: str
@@ -1114,8 +1112,8 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
     :vartype target_worker_count: int
     :ivar target_worker_size_id: Scaling worker size ID.
     :vartype target_worker_size_id: int
-    :ivar provisioning_state: Provisioning state of the App Service Environment. Possible values
-     include: "Succeeded", "Failed", "Canceled", "InProgress", "Deleting".
+    :ivar provisioning_state: Provisioning state of the App Service Environment. Known values are:
+     "Succeeded", "Failed", "Canceled", "InProgress", "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.web.v2016_09_01.models.ProvisioningState
     """
 
@@ -1163,7 +1161,7 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
         name_properties_name: Optional[str] = None,
         worker_tier_name: Optional[str] = None,
         admin_site_name: Optional[str] = None,
-        hosting_environment_profile: Optional["HostingEnvironmentProfile"] = None,
+        hosting_environment_profile: Optional["_models.HostingEnvironmentProfile"] = None,
         per_site_scaling: Optional[bool] = False,
         is_spot: Optional[bool] = None,
         spot_expiration_time: Optional[datetime.datetime] = None,
@@ -1226,8 +1224,8 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
 class AutoHealActions(msrest.serialization.Model):
     """Actions which to take by the auto-heal module when a rule is triggered.
 
-    :ivar action_type: Predefined action to be taken. Possible values include: "Recycle",
-     "LogEvent", "CustomAction".
+    :ivar action_type: Predefined action to be taken. Known values are: "Recycle", "LogEvent",
+     "CustomAction".
     :vartype action_type: str or ~azure.mgmt.web.v2016_09_01.models.AutoHealActionType
     :ivar custom_action: Custom action to be taken.
     :vartype custom_action: ~azure.mgmt.web.v2016_09_01.models.AutoHealCustomAction
@@ -1245,14 +1243,14 @@ class AutoHealActions(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        action_type: Optional[Union[str, "AutoHealActionType"]] = None,
-        custom_action: Optional["AutoHealCustomAction"] = None,
+        action_type: Optional[Union[str, "_models.AutoHealActionType"]] = None,
+        custom_action: Optional["_models.AutoHealCustomAction"] = None,
         min_process_execution_time: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword action_type: Predefined action to be taken. Possible values include: "Recycle",
-         "LogEvent", "CustomAction".
+        :keyword action_type: Predefined action to be taken. Known values are: "Recycle", "LogEvent",
+         "CustomAction".
         :paramtype action_type: str or ~azure.mgmt.web.v2016_09_01.models.AutoHealActionType
         :keyword custom_action: Custom action to be taken.
         :paramtype custom_action: ~azure.mgmt.web.v2016_09_01.models.AutoHealCustomAction
@@ -1316,8 +1314,8 @@ class AutoHealRules(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        triggers: Optional["AutoHealTriggers"] = None,
-        actions: Optional["AutoHealActions"] = None,
+        triggers: Optional["_models.AutoHealTriggers"] = None,
+        actions: Optional["_models.AutoHealActions"] = None,
         **kwargs
     ):
         """
@@ -1354,10 +1352,10 @@ class AutoHealTriggers(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        requests: Optional["RequestsBasedTrigger"] = None,
+        requests: Optional["_models.RequestsBasedTrigger"] = None,
         private_bytes_in_kb: Optional[int] = None,
-        status_codes: Optional[List["StatusCodesBasedTrigger"]] = None,
-        slow_requests: Optional["SlowRequestsBasedTrigger"] = None,
+        status_codes: Optional[List["_models.StatusCodesBasedTrigger"]] = None,
+        slow_requests: Optional["_models.SlowRequestsBasedTrigger"] = None,
         **kwargs
     ):
         """
@@ -1558,9 +1556,8 @@ class ConnStringInfo(msrest.serialization.Model):
     :vartype name: str
     :ivar connection_string: Connection string value.
     :vartype connection_string: str
-    :ivar type: Type of database. Possible values include: "MySql", "SQLServer", "SQLAzure",
-     "Custom", "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache",
-     "PostgreSQL".
+    :ivar type: Type of database. Known values are: "MySql", "SQLServer", "SQLAzure", "Custom",
+     "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache", "PostgreSQL".
     :vartype type: str or ~azure.mgmt.web.v2016_09_01.models.ConnectionStringType
     """
 
@@ -1575,7 +1572,7 @@ class ConnStringInfo(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         connection_string: Optional[str] = None,
-        type: Optional[Union[str, "ConnectionStringType"]] = None,
+        type: Optional[Union[str, "_models.ConnectionStringType"]] = None,
         **kwargs
     ):
         """
@@ -1583,9 +1580,8 @@ class ConnStringInfo(msrest.serialization.Model):
         :paramtype name: str
         :keyword connection_string: Connection string value.
         :paramtype connection_string: str
-        :keyword type: Type of database. Possible values include: "MySql", "SQLServer", "SQLAzure",
-         "Custom", "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache",
-         "PostgreSQL".
+        :keyword type: Type of database. Known values are: "MySql", "SQLServer", "SQLAzure", "Custom",
+         "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache", "PostgreSQL".
         :paramtype type: str or ~azure.mgmt.web.v2016_09_01.models.ConnectionStringType
         """
         super(ConnStringInfo, self).__init__(**kwargs)
@@ -1653,7 +1649,7 @@ class CsmUsageQuota(msrest.serialization.Model):
         next_reset_time: Optional[datetime.datetime] = None,
         current_value: Optional[int] = None,
         limit: Optional[int] = None,
-        name: Optional["LocalizableString"] = None,
+        name: Optional["_models.LocalizableString"] = None,
         **kwargs
     ):
         """
@@ -1702,7 +1698,7 @@ class CsmUsageQuotaCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["CsmUsageQuota"],
+        value: List["_models.CsmUsageQuota"],
         **kwargs
     ):
         """
@@ -1746,7 +1742,7 @@ class ErrorEntity(msrest.serialization.Model):
         extended_code: Optional[str] = None,
         message_template: Optional[str] = None,
         parameters: Optional[List[str]] = None,
-        inner_errors: Optional[List["ErrorEntity"]] = None,
+        inner_errors: Optional[List["_models.ErrorEntity"]] = None,
         code: Optional[str] = None,
         message: Optional[str] = None,
         **kwargs
@@ -1788,7 +1784,7 @@ class Experiments(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        ramp_up_rules: Optional[List["RampUpRule"]] = None,
+        ramp_up_rules: Optional[List["_models.RampUpRule"]] = None,
         **kwargs
     ):
         """
@@ -1918,7 +1914,7 @@ class HostNameSslState(msrest.serialization.Model):
 
     :ivar name: Hostname.
     :vartype name: str
-    :ivar ssl_state: SSL type. Possible values include: "Disabled", "SniEnabled", "IpBasedEnabled".
+    :ivar ssl_state: SSL type. Known values are: "Disabled", "SniEnabled", "IpBasedEnabled".
     :vartype ssl_state: str or ~azure.mgmt.web.v2016_09_01.models.SslState
     :ivar virtual_ip: Virtual IP address assigned to the hostname if IP based SSL is enabled.
     :vartype virtual_ip: str
@@ -1926,8 +1922,8 @@ class HostNameSslState(msrest.serialization.Model):
     :vartype thumbprint: str
     :ivar to_update: Set to :code:`<code>true</code>` to update existing hostname.
     :vartype to_update: bool
-    :ivar host_type: Indicates whether the hostname is a standard or repository hostname. Possible
-     values include: "Standard", "Repository".
+    :ivar host_type: Indicates whether the hostname is a standard or repository hostname. Known
+     values are: "Standard", "Repository".
     :vartype host_type: str or ~azure.mgmt.web.v2016_09_01.models.HostType
     """
 
@@ -1944,18 +1940,17 @@ class HostNameSslState(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        ssl_state: Optional[Union[str, "SslState"]] = None,
+        ssl_state: Optional[Union[str, "_models.SslState"]] = None,
         virtual_ip: Optional[str] = None,
         thumbprint: Optional[str] = None,
         to_update: Optional[bool] = None,
-        host_type: Optional[Union[str, "HostType"]] = None,
+        host_type: Optional[Union[str, "_models.HostType"]] = None,
         **kwargs
     ):
         """
         :keyword name: Hostname.
         :paramtype name: str
-        :keyword ssl_state: SSL type. Possible values include: "Disabled", "SniEnabled",
-         "IpBasedEnabled".
+        :keyword ssl_state: SSL type. Known values are: "Disabled", "SniEnabled", "IpBasedEnabled".
         :paramtype ssl_state: str or ~azure.mgmt.web.v2016_09_01.models.SslState
         :keyword virtual_ip: Virtual IP address assigned to the hostname if IP based SSL is enabled.
         :paramtype virtual_ip: str
@@ -1963,8 +1958,8 @@ class HostNameSslState(msrest.serialization.Model):
         :paramtype thumbprint: str
         :keyword to_update: Set to :code:`<code>true</code>` to update existing hostname.
         :paramtype to_update: bool
-        :keyword host_type: Indicates whether the hostname is a standard or repository hostname.
-         Possible values include: "Standard", "Repository".
+        :keyword host_type: Indicates whether the hostname is a standard or repository hostname. Known
+         values are: "Standard", "Repository".
         :paramtype host_type: str or ~azure.mgmt.web.v2016_09_01.models.HostType
         """
         super(HostNameSslState, self).__init__(**kwargs)
@@ -2107,7 +2102,7 @@ class HybridConnectionCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["HybridConnection"],
+        value: List["_models.HybridConnection"],
         **kwargs
     ):
         """
@@ -2296,7 +2291,7 @@ class ManagedServiceIdentity(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: Type of managed service identity. Possible values include: "SystemAssigned".
+    :ivar type: Type of managed service identity. Known values are: "SystemAssigned".
     :vartype type: str or ~azure.mgmt.web.v2016_09_01.models.ManagedServiceIdentityType
     :ivar tenant_id: Tenant of managed service identity.
     :vartype tenant_id: str
@@ -2318,11 +2313,11 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ManagedServiceIdentityType"]] = None,
+        type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = None,
         **kwargs
     ):
         """
-        :keyword type: Type of managed service identity. Possible values include: "SystemAssigned".
+        :keyword type: Type of managed service identity. Known values are: "SystemAssigned".
         :paramtype type: str or ~azure.mgmt.web.v2016_09_01.models.ManagedServiceIdentityType
         """
         super(ManagedServiceIdentity, self).__init__(**kwargs)
@@ -2465,7 +2460,7 @@ class NameValuePair(msrest.serialization.Model):
 class NetworkAccessControlEntry(msrest.serialization.Model):
     """Network access control entry.
 
-    :ivar action: Action object. Possible values include: "Permit", "Deny".
+    :ivar action: Action object. Known values are: "Permit", "Deny".
     :vartype action: str or ~azure.mgmt.web.v2016_09_01.models.AccessControlEntryAction
     :ivar description: Description of network access control entry.
     :vartype description: str
@@ -2485,14 +2480,14 @@ class NetworkAccessControlEntry(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        action: Optional[Union[str, "AccessControlEntryAction"]] = None,
+        action: Optional[Union[str, "_models.AccessControlEntryAction"]] = None,
         description: Optional[str] = None,
         order: Optional[int] = None,
         remote_subnet: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword action: Action object. Possible values include: "Permit", "Deny".
+        :keyword action: Action object. Known values are: "Permit", "Deny".
         :paramtype action: str or ~azure.mgmt.web.v2016_09_01.models.AccessControlEntryAction
         :keyword description: Description of network access control entry.
         :paramtype description: str
@@ -2515,8 +2510,8 @@ class Operation(msrest.serialization.Model):
     :vartype id: str
     :ivar name: Operation name.
     :vartype name: str
-    :ivar status: The current status of the operation. Possible values include: "InProgress",
-     "Failed", "Succeeded", "TimedOut", "Created".
+    :ivar status: The current status of the operation. Known values are: "InProgress", "Failed",
+     "Succeeded", "TimedOut", "Created".
     :vartype status: str or ~azure.mgmt.web.v2016_09_01.models.OperationStatus
     :ivar errors: Any errors associate with the operation.
     :vartype errors: list[~azure.mgmt.web.v2016_09_01.models.ErrorEntity]
@@ -2546,8 +2541,8 @@ class Operation(msrest.serialization.Model):
         *,
         id: Optional[str] = None,
         name: Optional[str] = None,
-        status: Optional[Union[str, "OperationStatus"]] = None,
-        errors: Optional[List["ErrorEntity"]] = None,
+        status: Optional[Union[str, "_models.OperationStatus"]] = None,
+        errors: Optional[List["_models.ErrorEntity"]] = None,
         created_time: Optional[datetime.datetime] = None,
         modified_time: Optional[datetime.datetime] = None,
         expiration_time: Optional[datetime.datetime] = None,
@@ -2559,8 +2554,8 @@ class Operation(msrest.serialization.Model):
         :paramtype id: str
         :keyword name: Operation name.
         :paramtype name: str
-        :keyword status: The current status of the operation. Possible values include: "InProgress",
-         "Failed", "Succeeded", "TimedOut", "Created".
+        :keyword status: The current status of the operation. Known values are: "InProgress", "Failed",
+         "Succeeded", "TimedOut", "Created".
         :paramtype status: str or ~azure.mgmt.web.v2016_09_01.models.OperationStatus
         :keyword errors: Any errors associate with the operation.
         :paramtype errors: list[~azure.mgmt.web.v2016_09_01.models.ErrorEntity]
@@ -2960,7 +2955,7 @@ class ResourceMetricCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ResourceMetric"],
+        value: List["_models.ResourceMetric"],
         **kwargs
     ):
         """
@@ -3076,7 +3071,7 @@ class ResourceMetricDefinitionCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ResourceMetricDefinition"],
+        value: List["_models.ResourceMetricDefinition"],
         **kwargs
     ):
         """
@@ -3237,7 +3232,7 @@ class Site(Resource):
     :ivar repository_site_name: Name of the repository site.
     :vartype repository_site_name: str
     :ivar usage_state: State indicating whether the app has exceeded its quota usage. Read-only.
-     Possible values include: "Normal", "Exceeded".
+     Known values are: "Normal", "Exceeded".
     :vartype usage_state: str or ~azure.mgmt.web.v2016_09_01.models.UsageState
     :ivar enabled: :code:`<code>true</code>` if the app is enabled; otherwise,
      :code:`<code>false</code>`. Setting this value to false disables the app (takes the app
@@ -3247,8 +3242,8 @@ class Site(Resource):
      HostNames) AND enabled. Otherwise,
      the app is not served on those hostnames.
     :vartype enabled_host_names: list[str]
-    :ivar availability_state: Management information availability state for the app. Possible
-     values include: "Normal", "Limited", "DisasterRecoveryMode".
+    :ivar availability_state: Management information availability state for the app. Known values
+     are: "Normal", "Limited", "DisasterRecoveryMode".
     :vartype availability_state: str or ~azure.mgmt.web.v2016_09_01.models.SiteAvailabilityState
     :ivar host_name_ssl_states: Hostname SSL states are used to manage the SSL bindings for app's
      hostnames.
@@ -3394,21 +3389,21 @@ class Site(Resource):
         location: str,
         kind: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["ManagedServiceIdentity"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         enabled: Optional[bool] = None,
-        host_name_ssl_states: Optional[List["HostNameSslState"]] = None,
+        host_name_ssl_states: Optional[List["_models.HostNameSslState"]] = None,
         server_farm_id: Optional[str] = None,
         reserved: Optional[bool] = False,
-        site_config: Optional["SiteConfig"] = None,
+        site_config: Optional["_models.SiteConfig"] = None,
         scm_site_also_stopped: Optional[bool] = False,
-        hosting_environment_profile: Optional["HostingEnvironmentProfile"] = None,
+        hosting_environment_profile: Optional["_models.HostingEnvironmentProfile"] = None,
         client_affinity_enabled: Optional[bool] = None,
         client_cert_enabled: Optional[bool] = None,
         host_names_disabled: Optional[bool] = None,
         container_size: Optional[int] = None,
         daily_memory_time_quota: Optional[int] = None,
-        cloning_info: Optional["CloningInfo"] = None,
-        snapshot_info: Optional["SnapshotRecoveryRequest"] = None,
+        cloning_info: Optional["_models.CloningInfo"] = None,
+        snapshot_info: Optional["_models.SnapshotRecoveryRequest"] = None,
         https_only: Optional[bool] = None,
         **kwargs
     ):
@@ -3554,9 +3549,9 @@ class SiteConfig(msrest.serialization.Model):
     :vartype handler_mappings: list[~azure.mgmt.web.v2016_09_01.models.HandlerMapping]
     :ivar document_root: Document root.
     :vartype document_root: str
-    :ivar scm_type: SCM type. Possible values include: "None", "Dropbox", "Tfs", "LocalGit",
-     "GitHub", "CodePlexGit", "CodePlexHg", "BitbucketGit", "BitbucketHg", "ExternalGit",
-     "ExternalHg", "OneDrive", "VSO".
+    :ivar scm_type: SCM type. Known values are: "None", "Dropbox", "Tfs", "LocalGit", "GitHub",
+     "CodePlexGit", "CodePlexHg", "BitbucketGit", "BitbucketHg", "ExternalGit", "ExternalHg",
+     "OneDrive", "VSO".
     :vartype scm_type: str or ~azure.mgmt.web.v2016_09_01.models.ScmType
     :ivar use32_bit_worker_process: :code:`<code>true</code>` to use 32-bit worker process;
      otherwise, :code:`<code>false</code>`.
@@ -3575,12 +3570,11 @@ class SiteConfig(msrest.serialization.Model):
     :vartype java_container_version: str
     :ivar app_command_line: App command line to launch.
     :vartype app_command_line: str
-    :ivar managed_pipeline_mode: Managed pipeline mode. Possible values include: "Integrated",
-     "Classic".
+    :ivar managed_pipeline_mode: Managed pipeline mode. Known values are: "Integrated", "Classic".
     :vartype managed_pipeline_mode: str or ~azure.mgmt.web.v2016_09_01.models.ManagedPipelineMode
     :ivar virtual_applications: Virtual applications.
     :vartype virtual_applications: list[~azure.mgmt.web.v2016_09_01.models.VirtualApplication]
-    :ivar load_balancing: Site load balancing. Possible values include: "WeightedRoundRobin",
+    :ivar load_balancing: Site load balancing. Known values are: "WeightedRoundRobin",
      "LeastRequests", "LeastResponseTime", "WeightedTotalTraffic", "RequestHash".
     :vartype load_balancing: str or ~azure.mgmt.web.v2016_09_01.models.SiteLoadBalancing
     :ivar experiments: This is work around for polymorphic types.
@@ -3614,7 +3608,7 @@ class SiteConfig(msrest.serialization.Model):
      http2.0.
     :vartype http20_enabled: bool
     :ivar min_tls_version: MinTlsVersion: configures the minimum version of TLS required for SSL
-     requests. Possible values include: "1.0", "1.1", "1.2".
+     requests. Known values are: "1.0", "1.1", "1.2".
     :vartype min_tls_version: str or ~azure.mgmt.web.v2016_09_01.models.SupportedTlsVersions
     """
 
@@ -3688,11 +3682,11 @@ class SiteConfig(msrest.serialization.Model):
         logs_directory_size_limit: Optional[int] = None,
         detailed_error_logging_enabled: Optional[bool] = None,
         publishing_username: Optional[str] = None,
-        app_settings: Optional[List["NameValuePair"]] = None,
-        connection_strings: Optional[List["ConnStringInfo"]] = None,
-        handler_mappings: Optional[List["HandlerMapping"]] = None,
+        app_settings: Optional[List["_models.NameValuePair"]] = None,
+        connection_strings: Optional[List["_models.ConnStringInfo"]] = None,
+        handler_mappings: Optional[List["_models.HandlerMapping"]] = None,
         document_root: Optional[str] = None,
-        scm_type: Optional[Union[str, "ScmType"]] = None,
+        scm_type: Optional[Union[str, "_models.ScmType"]] = None,
         use32_bit_worker_process: Optional[bool] = None,
         web_sockets_enabled: Optional[bool] = None,
         always_on: Optional[bool] = None,
@@ -3700,23 +3694,23 @@ class SiteConfig(msrest.serialization.Model):
         java_container: Optional[str] = None,
         java_container_version: Optional[str] = None,
         app_command_line: Optional[str] = None,
-        managed_pipeline_mode: Optional[Union[str, "ManagedPipelineMode"]] = None,
-        virtual_applications: Optional[List["VirtualApplication"]] = None,
-        load_balancing: Optional[Union[str, "SiteLoadBalancing"]] = None,
-        experiments: Optional["Experiments"] = None,
-        limits: Optional["SiteLimits"] = None,
+        managed_pipeline_mode: Optional[Union[str, "_models.ManagedPipelineMode"]] = None,
+        virtual_applications: Optional[List["_models.VirtualApplication"]] = None,
+        load_balancing: Optional[Union[str, "_models.SiteLoadBalancing"]] = None,
+        experiments: Optional["_models.Experiments"] = None,
+        limits: Optional["_models.SiteLimits"] = None,
         auto_heal_enabled: Optional[bool] = None,
-        auto_heal_rules: Optional["AutoHealRules"] = None,
+        auto_heal_rules: Optional["_models.AutoHealRules"] = None,
         tracing_options: Optional[str] = None,
         vnet_name: Optional[str] = None,
-        cors: Optional["CorsSettings"] = None,
-        push: Optional["PushSettings"] = None,
-        api_definition: Optional["ApiDefinitionInfo"] = None,
+        cors: Optional["_models.CorsSettings"] = None,
+        push: Optional["_models.PushSettings"] = None,
+        api_definition: Optional["_models.ApiDefinitionInfo"] = None,
         auto_swap_slot_name: Optional[str] = None,
         local_my_sql_enabled: Optional[bool] = False,
-        ip_security_restrictions: Optional[List["IpSecurityRestriction"]] = None,
+        ip_security_restrictions: Optional[List["_models.IpSecurityRestriction"]] = None,
         http20_enabled: Optional[bool] = True,
-        min_tls_version: Optional[Union[str, "SupportedTlsVersions"]] = None,
+        min_tls_version: Optional[Union[str, "_models.SupportedTlsVersions"]] = None,
         **kwargs
     ):
         """
@@ -3762,9 +3756,9 @@ class SiteConfig(msrest.serialization.Model):
         :paramtype handler_mappings: list[~azure.mgmt.web.v2016_09_01.models.HandlerMapping]
         :keyword document_root: Document root.
         :paramtype document_root: str
-        :keyword scm_type: SCM type. Possible values include: "None", "Dropbox", "Tfs", "LocalGit",
-         "GitHub", "CodePlexGit", "CodePlexHg", "BitbucketGit", "BitbucketHg", "ExternalGit",
-         "ExternalHg", "OneDrive", "VSO".
+        :keyword scm_type: SCM type. Known values are: "None", "Dropbox", "Tfs", "LocalGit", "GitHub",
+         "CodePlexGit", "CodePlexHg", "BitbucketGit", "BitbucketHg", "ExternalGit", "ExternalHg",
+         "OneDrive", "VSO".
         :paramtype scm_type: str or ~azure.mgmt.web.v2016_09_01.models.ScmType
         :keyword use32_bit_worker_process: :code:`<code>true</code>` to use 32-bit worker process;
          otherwise, :code:`<code>false</code>`.
@@ -3783,12 +3777,12 @@ class SiteConfig(msrest.serialization.Model):
         :paramtype java_container_version: str
         :keyword app_command_line: App command line to launch.
         :paramtype app_command_line: str
-        :keyword managed_pipeline_mode: Managed pipeline mode. Possible values include: "Integrated",
+        :keyword managed_pipeline_mode: Managed pipeline mode. Known values are: "Integrated",
          "Classic".
         :paramtype managed_pipeline_mode: str or ~azure.mgmt.web.v2016_09_01.models.ManagedPipelineMode
         :keyword virtual_applications: Virtual applications.
         :paramtype virtual_applications: list[~azure.mgmt.web.v2016_09_01.models.VirtualApplication]
-        :keyword load_balancing: Site load balancing. Possible values include: "WeightedRoundRobin",
+        :keyword load_balancing: Site load balancing. Known values are: "WeightedRoundRobin",
          "LeastRequests", "LeastResponseTime", "WeightedTotalTraffic", "RequestHash".
         :paramtype load_balancing: str or ~azure.mgmt.web.v2016_09_01.models.SiteLoadBalancing
         :keyword experiments: This is work around for polymorphic types.
@@ -3822,7 +3816,7 @@ class SiteConfig(msrest.serialization.Model):
          http2.0.
         :paramtype http20_enabled: bool
         :keyword min_tls_version: MinTlsVersion: configures the minimum version of TLS required for SSL
-         requests. Possible values include: "1.0", "1.1", "1.2".
+         requests. Known values are: "1.0", "1.1", "1.2".
         :paramtype min_tls_version: str or ~azure.mgmt.web.v2016_09_01.models.SupportedTlsVersions
         """
         super(SiteConfig, self).__init__(**kwargs)
@@ -4044,9 +4038,9 @@ class SkuDescription(msrest.serialization.Model):
         size: Optional[str] = None,
         family: Optional[str] = None,
         capacity: Optional[int] = None,
-        sku_capacity: Optional["SkuCapacity"] = None,
+        sku_capacity: Optional["_models.SkuCapacity"] = None,
         locations: Optional[List[str]] = None,
-        capabilities: Optional[List["Capability"]] = None,
+        capabilities: Optional[List["_models.Capability"]] = None,
         **kwargs
     ):
         """
@@ -4099,8 +4093,8 @@ class SkuInfo(msrest.serialization.Model):
         self,
         *,
         resource_type: Optional[str] = None,
-        sku: Optional["SkuDescription"] = None,
-        capacity: Optional["SkuCapacity"] = None,
+        sku: Optional["_models.SkuDescription"] = None,
+        capacity: Optional["_models.SkuCapacity"] = None,
         **kwargs
     ):
         """
@@ -4143,7 +4137,7 @@ class SkuInfoCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["SkuInfo"],
+        value: List["_models.SkuInfo"],
         **kwargs
     ):
         """
@@ -4284,7 +4278,7 @@ class SnapshotRecoveryRequest(ProxyOnlyResource):
         *,
         kind: Optional[str] = None,
         snapshot_time: Optional[str] = None,
-        recovery_target: Optional["SnapshotRecoveryTarget"] = None,
+        recovery_target: Optional["_models.SnapshotRecoveryTarget"] = None,
         overwrite: Optional[bool] = None,
         recover_configuration: Optional[bool] = None,
         ignore_conflicting_host_names: Optional[bool] = None,
@@ -4370,10 +4364,10 @@ class StampCapacity(msrest.serialization.Model):
     :vartype total_capacity: long
     :ivar unit: Name of the unit.
     :vartype unit: str
-    :ivar compute_mode: Shared/dedicated workers. Possible values include: "Shared", "Dedicated",
+    :ivar compute_mode: Shared/dedicated workers. Known values are: "Shared", "Dedicated",
      "Dynamic".
     :vartype compute_mode: str or ~azure.mgmt.web.v2016_09_01.models.ComputeModeOptions
-    :ivar worker_size: Size of the machines. Possible values include: "Default", "Small", "Medium",
+    :ivar worker_size: Size of the machines. Known values are: "Default", "Small", "Medium",
      "Large", "D1", "D2", "D3".
     :vartype worker_size: str or ~azure.mgmt.web.v2016_09_01.models.WorkerSizeOptions
     :ivar worker_size_id: Size ID of machines:
@@ -4411,8 +4405,8 @@ class StampCapacity(msrest.serialization.Model):
         available_capacity: Optional[int] = None,
         total_capacity: Optional[int] = None,
         unit: Optional[str] = None,
-        compute_mode: Optional[Union[str, "ComputeModeOptions"]] = None,
-        worker_size: Optional[Union[str, "WorkerSizeOptions"]] = None,
+        compute_mode: Optional[Union[str, "_models.ComputeModeOptions"]] = None,
+        worker_size: Optional[Union[str, "_models.WorkerSizeOptions"]] = None,
         worker_size_id: Optional[int] = None,
         exclude_from_capacity_allocation: Optional[bool] = None,
         is_applicable_for_all_compute_modes: Optional[bool] = None,
@@ -4428,11 +4422,11 @@ class StampCapacity(msrest.serialization.Model):
         :paramtype total_capacity: long
         :keyword unit: Name of the unit.
         :paramtype unit: str
-        :keyword compute_mode: Shared/dedicated workers. Possible values include: "Shared",
-         "Dedicated", "Dynamic".
+        :keyword compute_mode: Shared/dedicated workers. Known values are: "Shared", "Dedicated",
+         "Dynamic".
         :paramtype compute_mode: str or ~azure.mgmt.web.v2016_09_01.models.ComputeModeOptions
-        :keyword worker_size: Size of the machines. Possible values include: "Default", "Small",
-         "Medium", "Large", "D1", "D2", "D3".
+        :keyword worker_size: Size of the machines. Known values are: "Default", "Small", "Medium",
+         "Large", "D1", "D2", "D3".
         :paramtype worker_size: str or ~azure.mgmt.web.v2016_09_01.models.WorkerSizeOptions
         :keyword worker_size_id: Size ID of machines:
          0 - Small
@@ -4488,7 +4482,7 @@ class StampCapacityCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["StampCapacity"],
+        value: List["_models.StampCapacity"],
         **kwargs
     ):
         """
@@ -4580,8 +4574,8 @@ class Usage(ProxyOnlyResource):
     :vartype limit: long
     :ivar next_reset_time: Next reset time for the resource counter.
     :vartype next_reset_time: ~datetime.datetime
-    :ivar compute_mode: Compute mode used for this usage. Possible values include: "Shared",
-     "Dedicated", "Dynamic".
+    :ivar compute_mode: Compute mode used for this usage. Known values are: "Shared", "Dedicated",
+     "Dynamic".
     :vartype compute_mode: str or ~azure.mgmt.web.v2016_09_01.models.ComputeModeOptions
     :ivar site_mode: Site mode used for this usage.
     :vartype site_mode: str
@@ -4666,7 +4660,7 @@ class UsageCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Usage"],
+        value: List["_models.Usage"],
         **kwargs
     ):
         """
@@ -4705,7 +4699,7 @@ class VirtualApplication(msrest.serialization.Model):
         virtual_path: Optional[str] = None,
         physical_path: Optional[str] = None,
         preload_enabled: Optional[bool] = None,
-        virtual_directories: Optional[List["VirtualDirectory"]] = None,
+        virtual_directories: Optional[List["_models.VirtualDirectory"]] = None,
         **kwargs
     ):
         """
@@ -5017,8 +5011,8 @@ class VnetRoute(ProxyOnlyResource):
      INHERITED - Routes inherited from the real Virtual Network routes
      STATIC - Static route set on the app only
     
-     These values will be used for syncing an app's routes with those from a Virtual Network.
-     Possible values include: "DEFAULT", "INHERITED", "STATIC".
+     These values will be used for syncing an app's routes with those from a Virtual Network. Known
+     values are: "DEFAULT", "INHERITED", "STATIC".
     :vartype route_type: str or ~azure.mgmt.web.v2016_09_01.models.RouteType
     """
 
@@ -5046,7 +5040,7 @@ class VnetRoute(ProxyOnlyResource):
         vnet_route_name: Optional[str] = None,
         start_address: Optional[str] = None,
         end_address: Optional[str] = None,
-        route_type: Optional[Union[str, "RouteType"]] = None,
+        route_type: Optional[Union[str, "_models.RouteType"]] = None,
         **kwargs
     ):
         """
@@ -5066,8 +5060,8 @@ class VnetRoute(ProxyOnlyResource):
          INHERITED - Routes inherited from the real Virtual Network routes
          STATIC - Static route set on the app only
         
-         These values will be used for syncing an app's routes with those from a Virtual Network.
-         Possible values include: "DEFAULT", "INHERITED", "STATIC".
+         These values will be used for syncing an app's routes with those from a Virtual Network. Known
+         values are: "DEFAULT", "INHERITED", "STATIC".
         :paramtype route_type: str or ~azure.mgmt.web.v2016_09_01.models.RouteType
         """
         super(VnetRoute, self).__init__(kind=kind, **kwargs)
@@ -5103,7 +5097,7 @@ class WebAppCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Site"],
+        value: List["_models.Site"],
         **kwargs
     ):
         """
@@ -5122,8 +5116,8 @@ class WorkerPool(msrest.serialization.Model):
 
     :ivar worker_size_id: Worker size ID for referencing this worker pool.
     :vartype worker_size_id: int
-    :ivar compute_mode: Shared or dedicated app hosting. Possible values include: "Shared",
-     "Dedicated", "Dynamic".
+    :ivar compute_mode: Shared or dedicated app hosting. Known values are: "Shared", "Dedicated",
+     "Dynamic".
     :vartype compute_mode: str or ~azure.mgmt.web.v2016_09_01.models.ComputeModeOptions
     :ivar worker_size: VM size of the worker pool instances.
     :vartype worker_size: str
@@ -5149,7 +5143,7 @@ class WorkerPool(msrest.serialization.Model):
         self,
         *,
         worker_size_id: Optional[int] = None,
-        compute_mode: Optional[Union[str, "ComputeModeOptions"]] = None,
+        compute_mode: Optional[Union[str, "_models.ComputeModeOptions"]] = None,
         worker_size: Optional[str] = None,
         worker_count: Optional[int] = None,
         **kwargs
@@ -5157,7 +5151,7 @@ class WorkerPool(msrest.serialization.Model):
         """
         :keyword worker_size_id: Worker size ID for referencing this worker pool.
         :paramtype worker_size_id: int
-        :keyword compute_mode: Shared or dedicated app hosting. Possible values include: "Shared",
+        :keyword compute_mode: Shared or dedicated app hosting. Known values are: "Shared",
          "Dedicated", "Dynamic".
         :paramtype compute_mode: str or ~azure.mgmt.web.v2016_09_01.models.ComputeModeOptions
         :keyword worker_size: VM size of the worker pool instances.
@@ -5199,7 +5193,7 @@ class WorkerPoolCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["WorkerPoolResource"],
+        value: List["_models.WorkerPoolResource"],
         **kwargs
     ):
         """
@@ -5228,8 +5222,8 @@ class WorkerPoolResource(ProxyOnlyResource):
     :vartype sku: ~azure.mgmt.web.v2016_09_01.models.SkuDescription
     :ivar worker_size_id: Worker size ID for referencing this worker pool.
     :vartype worker_size_id: int
-    :ivar compute_mode: Shared or dedicated app hosting. Possible values include: "Shared",
-     "Dedicated", "Dynamic".
+    :ivar compute_mode: Shared or dedicated app hosting. Known values are: "Shared", "Dedicated",
+     "Dynamic".
     :vartype compute_mode: str or ~azure.mgmt.web.v2016_09_01.models.ComputeModeOptions
     :ivar worker_size: VM size of the worker pool instances.
     :vartype worker_size: str
@@ -5263,9 +5257,9 @@ class WorkerPoolResource(ProxyOnlyResource):
         self,
         *,
         kind: Optional[str] = None,
-        sku: Optional["SkuDescription"] = None,
+        sku: Optional["_models.SkuDescription"] = None,
         worker_size_id: Optional[int] = None,
-        compute_mode: Optional[Union[str, "ComputeModeOptions"]] = None,
+        compute_mode: Optional[Union[str, "_models.ComputeModeOptions"]] = None,
         worker_size: Optional[str] = None,
         worker_count: Optional[int] = None,
         **kwargs
@@ -5277,7 +5271,7 @@ class WorkerPoolResource(ProxyOnlyResource):
         :paramtype sku: ~azure.mgmt.web.v2016_09_01.models.SkuDescription
         :keyword worker_size_id: Worker size ID for referencing this worker pool.
         :paramtype worker_size_id: int
-        :keyword compute_mode: Shared or dedicated app hosting. Possible values include: "Shared",
+        :keyword compute_mode: Shared or dedicated app hosting. Known values are: "Shared",
          "Dedicated", "Dynamic".
         :paramtype compute_mode: str or ~azure.mgmt.web.v2016_09_01.models.ComputeModeOptions
         :keyword worker_size: VM size of the worker pool instances.

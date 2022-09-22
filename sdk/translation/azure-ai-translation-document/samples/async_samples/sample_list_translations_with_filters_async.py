@@ -48,7 +48,6 @@ async def sample_list_translations_with_filters_async():
         end = datetime(2021, 4, 14)
         statuses = ["Canceled", "Failed"]
         order_by = ["created_on desc"]
-        results_per_page = 2
         skip = 3
 
         # list translation operations
@@ -61,7 +60,6 @@ async def sample_list_translations_with_filters_async():
             order_by=order_by,
             # paging
             skip=skip,
-            results_per_page=results_per_page
         ).by_page()
 
         # check statuses

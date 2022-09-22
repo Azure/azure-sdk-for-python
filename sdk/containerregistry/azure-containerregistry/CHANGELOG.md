@@ -1,5 +1,18 @@
 # Release History
 
+## 1.1.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+* Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+* Bumped minimum dependency on `azure-core` to `>=1.24.0`
+* Bumped minimum dependency on `msrest` to `>=0.7.1`
+
 ## 1.1.0b1 (2022-05-10)
 
 ### Features Added

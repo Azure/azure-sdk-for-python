@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModel90490aa1%3B1?includeModelDefinition=false&api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModel90490aa1%3B1?includeModelDefinition=false&api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
@@ -23,9 +23,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:09:55 GMT
+      - Thu, 26 May 2022 07:28:31 GMT
+      mise-correlation-id:
+      - 2b1aaf5b-60cf-4e80-bdff-c42744994653
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-7b9de684e225784698201ff34443290e-95dc346b266a454b-01
     status:
       code: 404
       message: Not Found
@@ -46,21 +50,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:ComponentModel90490aa1;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2020-11-24T21:09:55.8499349+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:ComponentModel90490aa1;1","description":{},"displayName":{"en-US":"Component1"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:31.3096291+00:00"}]'
     headers:
       content-length:
-      - '175'
+      - '178'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:09:55 GMT
+      - Thu, 26 May 2022 07:28:31 GMT
+      mise-correlation-id:
+      - 0f9b00d0-20c8-4a63-b0b0-1b95749aa510
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-a3ac96bdd426fa46af69ba7b8a3aae3b-1152a2479d544443-01
     status:
       code: 201
       message: Created
@@ -74,21 +82,25 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModel90490aa1%3B1?includeModelDefinition=false&api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModel90490aa1%3B1?includeModelDefinition=false&api-version=2022-05-31
   response:
     body:
-      string: '{"id":"dtmi:com:samples:ComponentModel90490aa1;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2020-11-24T21:09:55.8499349+00:00"}'
+      string: '{"id":"dtmi:com:samples:ComponentModel90490aa1;1","description":{},"displayName":{"en-US":"Component1"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:31.3096291+00:00"}'
     headers:
       content-length:
-      - '173'
+      - '176'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:09:55 GMT
+      - Thu, 26 May 2022 07:28:31 GMT
+      mise-correlation-id:
+      - 56f12455-7fde-4027-a992-a91d2ca3ca21
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-31b87450a73abc4f93dbf3a4a33851b7-c809f0ddd3e42040-01
     status:
       code: 200
       message: OK

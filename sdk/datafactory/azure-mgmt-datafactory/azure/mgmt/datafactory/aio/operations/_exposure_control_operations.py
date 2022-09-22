@@ -13,6 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
@@ -22,34 +23,32 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class ExposureControlOperations:
-    """ExposureControlOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.datafactory.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.datafactory.aio.DataFactoryManagementClient`'s
+        :attr:`exposure_control` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def get_feature_value(
         self,
         location_id: str,
-        exposure_control_request: "_models.ExposureControlRequest",
+        exposure_control_request: _models.ExposureControlRequest,
         **kwargs: Any
-    ) -> "_models.ExposureControlResponse":
+    ) -> _models.ExposureControlResponse:
         """Get exposure control feature for specific location.
 
         :param location_id: The location identifier.
@@ -61,14 +60,17 @@ class ExposureControlOperations:
         :rtype: ~azure.mgmt.datafactory.models.ExposureControlResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExposureControlResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-06-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-06-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ExposureControlResponse]
 
         _json = self._serialize.body(exposure_control_request, 'ExposureControlRequest')
 
@@ -79,11 +81,13 @@ class ExposureControlOperations:
             content_type=content_type,
             json=_json,
             template_url=self.get_feature_value.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -109,9 +113,9 @@ class ExposureControlOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        exposure_control_request: "_models.ExposureControlRequest",
+        exposure_control_request: _models.ExposureControlRequest,
         **kwargs: Any
-    ) -> "_models.ExposureControlResponse":
+    ) -> _models.ExposureControlResponse:
         """Get exposure control feature for specific factory.
 
         :param resource_group_name: The resource group name.
@@ -125,14 +129,17 @@ class ExposureControlOperations:
         :rtype: ~azure.mgmt.datafactory.models.ExposureControlResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExposureControlResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-06-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-06-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ExposureControlResponse]
 
         _json = self._serialize.body(exposure_control_request, 'ExposureControlRequest')
 
@@ -144,11 +151,13 @@ class ExposureControlOperations:
             content_type=content_type,
             json=_json,
             template_url=self.get_feature_value_by_factory.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -174,9 +183,9 @@ class ExposureControlOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        exposure_control_batch_request: "_models.ExposureControlBatchRequest",
+        exposure_control_batch_request: _models.ExposureControlBatchRequest,
         **kwargs: Any
-    ) -> "_models.ExposureControlBatchResponse":
+    ) -> _models.ExposureControlBatchResponse:
         """Get list of exposure control features for specific factory.
 
         :param resource_group_name: The resource group name.
@@ -191,14 +200,17 @@ class ExposureControlOperations:
         :rtype: ~azure.mgmt.datafactory.models.ExposureControlBatchResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExposureControlBatchResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-06-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-06-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ExposureControlBatchResponse]
 
         _json = self._serialize.body(exposure_control_batch_request, 'ExposureControlBatchRequest')
 
@@ -210,11 +222,13 @@ class ExposureControlOperations:
             content_type=content_type,
             json=_json,
             template_url=self.query_feature_values_by_factory.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs

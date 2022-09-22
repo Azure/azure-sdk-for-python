@@ -22,7 +22,6 @@ USAGE:
 import os
 import copy
 import random
-from time import sleep
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
@@ -81,6 +80,30 @@ class SampleTablesQuery(object):
                 queried_entities = table_client.query_entities(
                     query_filter=name_filter, select=[u"Brand", u"Color"], parameters=parameters
                 )
+
+                async for entity_chosen in queried_entities:
+                    print(entity_chosen)
+
+            except HttpResponseError as e:
+                pass
+            # [END query_entities]
+
+    async def sample_query_entities_without_metadata(self):
+        from azure.data.tables.aio import TableClient
+        from azure.core.exceptions import HttpResponseError
+
+        print("Entities with name: marker")
+        table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
+        # [START query_entities]
+        async with table_client:
+            try:
+                parameters = {u"name": u"marker"}
+                name_filter = u"Name eq @name"
+                headers = {"Accept" : "application/json;odata=nometadata"}
+                queried_entities = table_client.query_entities(
+                    query_filter=name_filter, select=[u"Brand", u"Color"], parameters=parameters, headers=headers
+                )
+
                 async for entity_chosen in queried_entities:
                     print(entity_chosen)
 
@@ -143,6 +166,7 @@ async def main():
     try:
         await stq.insert_random_entities()
         await stq.sample_query_entities()
+        await stq.sample_query_entities_without_metadata()
         await stq.sample_query_entities_multiple_params()
         await stq.sample_query_entities_values()
     except Exception as e:

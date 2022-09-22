@@ -7,21 +7,22 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import EventGridManagementClientConfiguration
-from .operations import ChannelsOperations, DomainEventSubscriptionsOperations, DomainTopicEventSubscriptionsOperations, DomainTopicsOperations, DomainsOperations, EventChannelsOperations, EventSubscriptionsOperations, ExtensionTopicsOperations, Operations, PartnerConfigurationsOperations, PartnerDestinationsOperations, PartnerNamespacesOperations, PartnerRegistrationsOperations, PartnerTopicEventSubscriptionsOperations, PartnerTopicsOperations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, SystemTopicEventSubscriptionsOperations, SystemTopicsOperations, TopicEventSubscriptionsOperations, TopicTypesOperations, TopicsOperations, VerifiedPartnersOperations
+from .operations import ChannelsOperations, DomainEventSubscriptionsOperations, DomainTopicEventSubscriptionsOperations, DomainTopicsOperations, DomainsOperations, EventSubscriptionsOperations, ExtensionTopicsOperations, Operations, PartnerConfigurationsOperations, PartnerNamespacesOperations, PartnerRegistrationsOperations, PartnerTopicEventSubscriptionsOperations, PartnerTopicsOperations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, SystemTopicEventSubscriptionsOperations, SystemTopicsOperations, TopicEventSubscriptionsOperations, TopicTypesOperations, TopicsOperations, VerifiedPartnersOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class EventGridManagementClient:
+class EventGridManagementClient:    # pylint: disable=too-many-instance-attributes
     """Azure EventGrid Management Client.
 
     :ivar channels: ChannelsOperations operations
@@ -30,19 +31,17 @@ class EventGridManagementClient:
     :vartype domains: azure.mgmt.eventgrid.operations.DomainsOperations
     :ivar domain_topics: DomainTopicsOperations operations
     :vartype domain_topics: azure.mgmt.eventgrid.operations.DomainTopicsOperations
-    :ivar event_channels: EventChannelsOperations operations
-    :vartype event_channels: azure.mgmt.eventgrid.operations.EventChannelsOperations
-    :ivar event_subscriptions: EventSubscriptionsOperations operations
-    :vartype event_subscriptions: azure.mgmt.eventgrid.operations.EventSubscriptionsOperations
-    :ivar domain_topic_event_subscriptions: DomainTopicEventSubscriptionsOperations operations
-    :vartype domain_topic_event_subscriptions:
-     azure.mgmt.eventgrid.operations.DomainTopicEventSubscriptionsOperations
     :ivar topic_event_subscriptions: TopicEventSubscriptionsOperations operations
     :vartype topic_event_subscriptions:
      azure.mgmt.eventgrid.operations.TopicEventSubscriptionsOperations
     :ivar domain_event_subscriptions: DomainEventSubscriptionsOperations operations
     :vartype domain_event_subscriptions:
      azure.mgmt.eventgrid.operations.DomainEventSubscriptionsOperations
+    :ivar event_subscriptions: EventSubscriptionsOperations operations
+    :vartype event_subscriptions: azure.mgmt.eventgrid.operations.EventSubscriptionsOperations
+    :ivar domain_topic_event_subscriptions: DomainTopicEventSubscriptionsOperations operations
+    :vartype domain_topic_event_subscriptions:
+     azure.mgmt.eventgrid.operations.DomainTopicEventSubscriptionsOperations
     :ivar system_topic_event_subscriptions: SystemTopicEventSubscriptionsOperations operations
     :vartype system_topic_event_subscriptions:
      azure.mgmt.eventgrid.operations.SystemTopicEventSubscriptionsOperations
@@ -51,11 +50,11 @@ class EventGridManagementClient:
      azure.mgmt.eventgrid.operations.PartnerTopicEventSubscriptionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.eventgrid.operations.Operations
+    :ivar topics: TopicsOperations operations
+    :vartype topics: azure.mgmt.eventgrid.operations.TopicsOperations
     :ivar partner_configurations: PartnerConfigurationsOperations operations
     :vartype partner_configurations:
      azure.mgmt.eventgrid.operations.PartnerConfigurationsOperations
-    :ivar partner_destinations: PartnerDestinationsOperations operations
-    :vartype partner_destinations: azure.mgmt.eventgrid.operations.PartnerDestinationsOperations
     :ivar partner_namespaces: PartnerNamespacesOperations operations
     :vartype partner_namespaces: azure.mgmt.eventgrid.operations.PartnerNamespacesOperations
     :ivar partner_registrations: PartnerRegistrationsOperations operations
@@ -69,8 +68,6 @@ class EventGridManagementClient:
     :vartype private_link_resources: azure.mgmt.eventgrid.operations.PrivateLinkResourcesOperations
     :ivar system_topics: SystemTopicsOperations operations
     :vartype system_topics: azure.mgmt.eventgrid.operations.SystemTopicsOperations
-    :ivar topics: TopicsOperations operations
-    :vartype topics: azure.mgmt.eventgrid.operations.TopicsOperations
     :ivar extension_topics: ExtensionTopicsOperations operations
     :vartype extension_topics: azure.mgmt.eventgrid.operations.ExtensionTopicsOperations
     :ivar topic_types: TopicTypesOperations operations
@@ -82,8 +79,11 @@ class EventGridManagementClient:
     :param subscription_id: Subscription credentials that uniquely identify a Microsoft Azure
      subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-06-15". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -105,23 +105,21 @@ class EventGridManagementClient:
         self.channels = ChannelsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.domains = DomainsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.domain_topics = DomainTopicsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.event_channels = EventChannelsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.event_subscriptions = EventSubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.domain_topic_event_subscriptions = DomainTopicEventSubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.topic_event_subscriptions = TopicEventSubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.domain_event_subscriptions = DomainEventSubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.event_subscriptions = EventSubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.domain_topic_event_subscriptions = DomainTopicEventSubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.system_topic_event_subscriptions = SystemTopicEventSubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.partner_topic_event_subscriptions = PartnerTopicEventSubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.topics = TopicsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.partner_configurations = PartnerConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.partner_destinations = PartnerDestinationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.partner_namespaces = PartnerNamespacesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.partner_registrations = PartnerRegistrationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.partner_topics = PartnerTopicsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.system_topics = SystemTopicsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.topics = TopicsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.extension_topics = ExtensionTopicsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.topic_types = TopicTypesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.verified_partners = VerifiedPartnersOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -129,7 +127,7 @@ class EventGridManagementClient:
 
     def _send_request(
         self,
-        request,  # type: HttpRequest
+        request: HttpRequest,
         **kwargs: Any
     ) -> HttpResponse:
         """Runs the network request through the client's chained policies.

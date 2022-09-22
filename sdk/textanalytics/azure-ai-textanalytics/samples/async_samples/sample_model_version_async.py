@@ -20,22 +20,22 @@ USAGE:
     python sample_model_version_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
-    2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
+    1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
+    2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
 import os
 import asyncio
 
 
-async def sample_model_version_async():
+async def sample_model_version_async() -> None:
     print("--------------Choosing model_version sample--------------")
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
     from azure.ai.textanalytics import RecognizeEntitiesAction
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+    endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+    key = os.environ["AZURE_LANGUAGE_KEY"]
 
     text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     documents = [
@@ -64,14 +64,14 @@ async def sample_model_version_async():
         print("...Results of Recognize Entities Action:")
         document_results = await poller.result()
         async for action_results in document_results:
-            recognize_entities_result = action_results[0]
-            if recognize_entities_result.is_error:
-                print("......Is an error with code '{}' and message '{}'".format(
-                    recognize_entities_result.code, recognize_entities_result.message
-                ))
-            else:
-                for entity in recognize_entities_result.entities:
+            action_result = action_results[0]
+            if action_result.kind == "EntityRecognition":
+                for entity in action_result.entities:
                     print(f"......Entity '{entity.text}' has category '{entity.category}'")
+            elif action_result.is_error is True:
+                print("......Is an error with code '{}' and message '{}'".format(
+                    action_result.code, action_result.message
+                ))
 
 
 async def main():

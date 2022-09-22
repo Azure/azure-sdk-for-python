@@ -1,14 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "250",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -31,74 +31,24 @@
           }
         ]
       },
-      "StatusCode": 202,
+      "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "f42eb0b8-cd73-4080-96bd-bd2f121a529a",
-        "Content-Length": "0",
-        "Date": "Tue, 26 Apr 2022 01:33:40 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ddaca149-14b8-423a-8b4b-937f58f01bb9?api-version=2022-03-01-preview",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "251"
-      },
-      "ResponseBody": null
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ddaca149-14b8-423a-8b4b-937f58f01bb9?api-version=2022-03-01-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "39577bda-8b3d-4fd6-836a-a95754db310e",
-        "Content-Length": "729",
+        "apim-request-id": "0dae30de-e002-4866-baff-51fad2f60bd9",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:33:45 GMT",
+        "Date": "Thu, 09 Jun 2022 23:12:08 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "37"
+        "x-envoy-upstream-service-time": "5"
       },
       "ResponseBody": {
-        "jobId": "ddaca149-14b8-423a-8b4b-937f58f01bb9",
-        "lastUpdateDateTime": "2022-04-26T01:33:41Z",
-        "createdDateTime": "2022-04-26T01:33:40Z",
-        "expirationDateTime": "2022-04-27T01:33:40Z",
-        "status": "succeeded",
-        "errors": [],
-        "tasks": {
-          "completed": 1,
-          "failed": 0,
-          "inProgress": 0,
-          "total": 1,
-          "items": [
-            {
-              "kind": "HealthcareLROResults",
-              "taskName": "0",
-              "lastUpdateDateTime": "2022-04-26T01:33:41.3844106Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [],
-                "errors": [
-                  {
-                    "id": "1",
-                    "error": {
-                      "code": "InvalidArgument",
-                      "message": "Invalid Language Code.",
-                      "innererror": {
-                        "code": "UnsupportedLanguageCode",
-                        "message": "Invalid language code. Supported languages: en. For additional details see https://aka.ms/text-analytics/language-support"
-                      }
-                    }
-                  }
-                ],
-                "modelVersion": "2022-03-01"
-              }
-            }
-          ]
+        "error": {
+          "code": "InvalidRequest",
+          "message": "Invalid parameter in request",
+          "innererror": {
+            "code": "InvalidParameterValue",
+            "message": "Job task parameter value bad is not supported for model-version parameter for job task type Healthcare. Supported values latest,2021-05-15."
+          }
         }
       }
     }

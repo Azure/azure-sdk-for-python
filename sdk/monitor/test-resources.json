@@ -1,0 +1,381 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "baseName": {
+        "type": "String"
+      },
+      "configurationStores_azconfig_python_name": {
+        "defaultValue": "azconfig-python",
+        "type": "String"
+      },
+      "endpointSuffix": {
+        "defaultValue": ".azconfig.io",
+        "type": "String"
+      },
+      "testApplicationOid": {
+        "type": "string",
+        "metadata": {
+          "description": "The principal to assign the role to. This is application object id."
+        }
+      },
+      "sku": {
+        "defaultValue": "Standard",
+        "type": "string",
+        "metadata": {
+          "description": "sku type defined here."
+        }
+      },
+      "appinsights_python_name": {
+        "defaultValue": "appinsights-python",
+        "type": "String"
+      },
+      "regionId": {
+        "defaultValue": "westus2",
+        "type": "string",
+        "metadata": {
+          "description": "Which Azure Region to deploy the resource to. This must be a valid Azure regionId."
+        }
+      },
+      "eventHubName": {
+        "type": "string",
+        "defaultValue": "pythoneventhub"
+      },
+      "eventHubNamespaceHostNameSuffix": {
+        "type": "string",
+        "defaultValue": "servicebus.windows.net"
+      },
+      "testApplicationId": {
+        "type": "string",
+        "metadata": {
+          "description": "The client id of the service principal used to run tests."
+        }
+      },
+      "testApplicationSecret": {
+        "type": "string",
+        "metadata": {
+          "description": "The application client secret used to run tests."
+        }
+      },
+      "tenantId": {
+        "type": "string",
+        "defaultValue": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+        "metadata": {
+          "description": "The tenant id to which the application and resources belong."
+        }
+      },
+      "dataCollectionEndpointName": {
+        "type": "string",
+        "defaultValue": "azmonitordce",
+        "metadata": {
+          "description": "Specifies the name of the Data Collection Endpoint to create."
+        }
+      },
+      "location": {
+        "type": "string",
+        "defaultValue": "westus2",
+        "allowedValues": [
+          "westus2",
+          "eastus2",
+          "eastus2euap"
+        ],
+        "metadata": {
+          "description": "Specifies the location in which to create the Data Collection Endpoint."
+        }
+      },
+      "dataCollectionRuleName": {
+        "type": "string",
+        "defaultValue": "azmonitordcr",
+        "metadata": {
+          "description": "Specifies the name of the Data Collection Rule to create."
+        }
+      },
+      "workspaceName": {
+        "type": "String",
+        "defaultValue": "azmonitorlogsws",
+        "metadata": {
+          "description": "Specifies the Log Analytics workspace name to use."
+        }
+      }
+    },
+    "variables": {
+      "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b')]",
+      "uniqueAzConfigName": "[concat(parameters('baseName'),'-' , parameters('configurationStores_azconfig_python_name'))]",
+      "uniqueAppInsightsName": "[concat(parameters('baseName'),'-' , parameters('appinsights_python_name'))]",
+      "endpointValue": "[concat('https://', parameters('baseName'), '-', parameters('configurationStores_azconfig_python_name'), parameters('endpointSuffix'))]",
+      "location": "[resourceGroup().location]",
+      "authorizationApiVersion": "2018-09-01-preview",
+      "authorizationRulesName": "[concat('authr', parameters('baseName'))]",
+      "eventHubsApiVersion": "2017-04-01",
+      "eventHubsDataOwnerRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/f526a384-b230-433a-b45c-95f59c4a2dec')]",
+      "eventHubsNamespaceKeyName": "RootManageSharedAccessKey",
+      "eventHubsNamespaceName": "[concat('eventhub', parameters('baseName'))]",
+      "dcrRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/3913510d-42f4-4e42-8a64-420c390055eb')]",
+      "dcrRoleName": "[concat('dcrrole', parameters('baseName'))]"
+    },
+    "resources": [
+      {
+        "type": "Microsoft.AppConfiguration/configurationStores",
+        "apiVersion": "2019-10-01",
+        "name": "[variables('uniqueAzConfigName')]",
+        "location":"[resourceGroup().location]",
+        "sku": {
+          "name": "[parameters('sku')]"
+        },
+        "properties": {
+          "endpoint":"[variables('endpointValue')]"
+        }
+      },
+      {
+        "type": "Microsoft.Authorization/roleAssignments",
+        "apiVersion": "2018-09-01-preview",
+        "name": "[guid(resourceGroup().id)]",
+        "properties": {
+          "roleDefinitionId": "[variables('roleDefinitionId')]",
+          "principalId": "[parameters('testApplicationOid')]"
+        }
+      },
+      {
+        "name": "[variables('uniqueAppInsightsName')]",
+        "type": "microsoft.insights/components",
+        "location": "[parameters('regionId')]",
+        "apiVersion": "2020-02-02-preview",
+        "properties": {
+          "ApplicationId": "testappinsights"
+        }
+      },
+      {
+        "type": "Microsoft.EventHub/namespaces",
+        "apiVersion": "[variables('eventHubsApiVersion')]",
+        "name": "[variables('eventHubsNamespaceName')]",
+        "location": "[variables('location')]",
+        "sku": {
+          "name": "Standard",
+          "tier": "Standard",
+          "capacity": 5
+        },
+        "properties": {
+          "zoneRedundant": false,
+          "isAutoInflateEnabled": false,
+          "maximumThroughputUnits": 0,
+          "kafkaEnabled": true
+        }
+      },
+      {
+        "type": "Microsoft.EventHub/namespaces/eventhubs",
+        "apiVersion": "[variables('eventHubsApiVersion')]",
+        "name": "[concat(variables('eventHubsNamespaceName'), '/', parameters('eventHubName'))]",
+        "location": "[variables('location')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.EventHub/namespaces', variables('eventHubsNamespaceName'))]"
+        ],
+        "properties": {
+          "messageRetentionInDays": 1,
+          "partitionCount": 5,
+          "status": "Active"
+        }
+      },
+      {
+        "type": "Microsoft.EventHub/namespaces/AuthorizationRules",
+        "apiVersion": "[variables('eventHubsApiVersion')]",
+        "name": "[concat(variables('eventHubsNamespaceName'), '/', variables('eventHubsNamespaceKeyName'))]",
+        "location": "[variables('location')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.EventHub/namespaces', variables('eventHubsNamespaceName'))]"
+        ],
+        "properties": {
+          "rights": [
+            "Send",
+            "Listen",
+            "Manage"
+          ]
+        }
+      },
+      {
+        "type": "Microsoft.Authorization/roleAssignments",
+        "apiVersion": "[variables('authorizationApiVersion')]",
+        "name": "[guid(concat('eventHubsDataOwnerRoleId', variables('eventHubsNamespaceName')))]",
+        "dependsOn": [
+          "[resourceId('Microsoft.EventHub/namespaces', variables('eventHubsNamespaceName'))]"
+        ],
+        "properties": {
+          "roleDefinitionId": "[variables('eventHubsDataOwnerRoleId')]",
+          "principalId": "[parameters('testApplicationOid')]"
+        }
+      },
+      {
+        "type": "Microsoft.Authorization/roleAssignments",
+        "apiVersion": "[variables('authorizationApiVersion')]",
+        "name": "[guid(concat('dcrRoleId', variables('dcrRoleName')))]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Insights/dataCollectionRules', parameters('dataCollectionRuleName'))]"
+        ],
+        "properties": {
+          "roleDefinitionId": "[variables('dcrRoleId')]",
+          "principalId": "[parameters('testApplicationOid')]"
+        }
+      },
+      {
+        "type": "Microsoft.Insights/dataCollectionEndpoints",
+        "name": "[parameters('dataCollectionEndpointName')]",
+        "location": "[parameters('location')]",
+        "apiVersion": "2021-04-01",
+        "properties": {
+          "networkAcls": {
+            "publicNetworkAccess": "Enabled"
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Insights/dataCollectionRules",
+        "name": "[parameters('dataCollectionRuleName')]",
+        "location": "[parameters('location')]",
+        "apiVersion": "2021-09-01-preview",
+        "dependsOn": [
+          "[resourceId('Microsoft.Insights/dataCollectionEndpoints', parameters('dataCollectionEndpointName'))]",
+          "[resourceId('microsoft.operationalinsights/workspaces', parameters('workspaceName'))]",
+          "[resourceId('Microsoft.OperationalInsights/workspaces/tables', parameters('workspaceName'), 'MyTable_CL')]"
+        ],
+        "properties": {
+          "dataCollectionEndpointId": "[resourceId('Microsoft.Insights/dataCollectionEndpoints', parameters('dataCollectionEndpointName'))]",
+          "streamDeclarations": {
+            "Custom-MyTableRawData": {
+              "columns": [
+                {
+                  "name": "Time",
+                  "type": "datetime"
+                },
+                {
+                  "name": "Computer",
+                  "type": "string"
+                },
+                {
+                  "name": "AdditionalContext",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "destinations": {
+            "logAnalytics": [
+              {
+                "workspaceResourceId": "[resourceId('microsoft.operationalinsights/workspaces', parameters('workspaceName'))]",
+                "name": "clv2ws1"
+              }
+            ]
+          },
+          "dataFlows": [
+            {
+              "streams": [
+                "Custom-MyTableRawData"
+              ],
+              "destinations": [
+                "clv2ws1"
+              ],
+              "transformKql": "source | extend jsonContext = parse_json(AdditionalContext) | project TimeGenerated = Time, Computer, AdditionalContext = jsonContext, ExtendedColumn=tostring(jsonContext.CounterName)",
+              "outputStream": "Custom-MyTable_CL"
+            }
+          ]
+        }
+      },
+      {
+        "type": "microsoft.operationalinsights/workspaces",
+        "apiVersion": "2021-12-01-preview",
+        "name": "[parameters('workspaceName')]",
+        "location": "westus2",
+        "properties": {
+          "sku": {
+            "name": "pergb2018"
+          },
+          "retentionInDays": 30,
+          "features": {
+            "enableLogAccessUsingOnlyResourcePermissions": true
+          },
+          "workspaceCapping": {
+            "dailyQuotaGb": -1
+          },
+          "publicNetworkAccessForIngestion": "Enabled",
+          "publicNetworkAccessForQuery": "Enabled"
+        }
+      },
+      {
+        "type": "Microsoft.OperationalInsights/workspaces/tables",
+        "apiVersion": "2021-12-01-preview",
+        "name": "[concat(parameters('workspaceName'), '/', 'MyTable_CL')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]"
+        ],
+        "properties": {
+          "totalRetentionInDays": 30,
+          "plan": "Analytics",
+          "schema": {
+            "name": "MyTable_CL",
+            "columns": [
+              {
+                "name": "TimeGenerated",
+                "type": "datetime",
+                "description": "The time at which the data was generated"
+              },
+              {
+                "name": "AdditionalContext",
+                "type": "dynamic",
+                "description": "Additional message properties"
+              },
+              {
+                "name": "ExtendedColumn",
+                "type": "string",
+                "description": "An additional column extended at ingestion time"
+              }
+            ]
+          },
+          "retentionInDays": 30
+        }
+      }
+    ],
+    "outputs": {
+      "AZURE_APPCONFIG_CONNECTION_STRING": {
+        "type": "string",
+        "value": "[listKeys(resourceId('Microsoft.AppConfiguration/configurationStores',variables('uniqueAzConfigName')), '2019-02-01-preview').value[0].connectionString]"
+      },
+      "roleDefinitionId": {
+        "type": "string",
+        "value": "[variables('roleDefinitionId')]"
+      },
+      "APPLICATIONINSIGHTS_CONNECTION_STRING": {
+        "value": "[reference(resourceId('Microsoft.Insights/components', variables('uniqueAppInsightsName')), '2020-02-02-preview').ConnectionString]",
+        "type": "string"
+      },
+      "AZURE_TENANT_ID": {
+        "type": "string",
+        "value": "[parameters('tenantId')]"
+      },
+      "AZURE_CLIENT_ID": {
+        "type": "string",
+        "value": "[parameters('testApplicationId')]"
+      },
+      "AZURE_CLIENT_SECRET": {
+        "type": "string",
+        "value": "[parameters('testApplicationSecret')]"
+      },
+      "AZURE_EVENTHUBS_CONNECTION_STRING": {
+        "type": "string",
+        "value": "[concat(listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('eventHubsNamespaceName'), variables('eventHubsNamespaceKeyName')), variables('eventHubsApiVersion')).primaryConnectionString, ';EntityPath=', parameters('eventHubName'))]"
+      },
+      "AZURE_EVENTHUBS_EVENT_HUB_NAME": {
+        "type": "string",
+        "value": "[parameters('eventHubName')]"
+      },
+      "AZURE_EVENTHUBS_FULLY_QUALIFIED_DOMAIN_NAME": {
+        "type": "string",
+        "value": "[concat(variables('eventHubsNamespaceName'), '.', parameters('eventHubNamespaceHostNameSuffix'))]"
+      },
+      "AZURE_MONITOR_DCE": {
+        "type": "string",
+        "value": "[reference(resourceId('Microsoft.Insights/dataCollectionEndpoints', parameters('dataCollectionEndpointName')), '2021-04-01').logsIngestion.endpoint]"
+      },
+      "AZURE_MONITOR_DCR_ID": {
+        "type": "string",
+        "value": "[reference(resourceId('Microsoft.Insights/dataCollectionRules', parameters('dataCollectionRuleName')), '2021-04-01').immutableId]"
+      }
+    }
+  }

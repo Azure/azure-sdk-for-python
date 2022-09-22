@@ -512,7 +512,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
     :type response_encoding: str
     """
     # Accept "text" because we're open minded people...
-    JSON_REGEXP = re.compile(r'^(application|text)/([0-9a-z+.]+\+)?json$')
+    JSON_REGEXP = re.compile(r'^(application|text)/([0-9a-z+.-]+\+)?json$')
 
     # Name used in context
     CONTEXT_NAME = "deserialized_data"

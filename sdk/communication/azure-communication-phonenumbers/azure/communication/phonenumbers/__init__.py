@@ -26,5 +26,5 @@ __all__ = [
     'PhoneNumberAssignmentType',
     'PhoneNumberCapabilityType',
     'PhoneNumberType',
-    'PhoneNumbersClient',
+    'PhoneNumbersClient'
 ]
