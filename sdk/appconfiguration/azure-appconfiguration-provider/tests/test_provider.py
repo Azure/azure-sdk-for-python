@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from azure.appconfiguration.provider import AzureAppConfigurationProvider
+from azure.appconfigurationprovider import AzureAppConfigurationProvider
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.appconfiguration import AzureAppConfigurationClient
 import inspect
