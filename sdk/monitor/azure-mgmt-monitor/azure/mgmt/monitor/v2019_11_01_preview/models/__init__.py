@@ -31,57 +31,55 @@ from ._models_py3 import ResourceForUpdate
 from ._models_py3 import SyslogDataSource
 from ._models_py3 import WindowsEventLogDataSource
 
-
-from ._monitor_management_client_enums import (
-    KnownDataCollectionRuleAssociationProvisioningState,
-    KnownDataCollectionRuleProvisioningState,
-    KnownDataCollectionRuleResourceKind,
-    KnownDataFlowStreams,
-    KnownExtensionDataSourceStreams,
-    KnownPerfCounterDataSourceStreams,
-    KnownSyslogDataSourceFacilityNames,
-    KnownSyslogDataSourceLogLevels,
-    KnownSyslogDataSourceStreams,
-    KnownWindowsEventLogDataSourceStreams,
-)
+from ._monitor_management_client_enums import KnownDataCollectionRuleAssociationProvisioningState
+from ._monitor_management_client_enums import KnownDataCollectionRuleProvisioningState
+from ._monitor_management_client_enums import KnownDataCollectionRuleResourceKind
+from ._monitor_management_client_enums import KnownDataFlowStreams
+from ._monitor_management_client_enums import KnownExtensionDataSourceStreams
+from ._monitor_management_client_enums import KnownPerfCounterDataSourceStreams
+from ._monitor_management_client_enums import KnownSyslogDataSourceFacilityNames
+from ._monitor_management_client_enums import KnownSyslogDataSourceLogLevels
+from ._monitor_management_client_enums import KnownSyslogDataSourceStreams
+from ._monitor_management_client_enums import KnownWindowsEventLogDataSourceStreams
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AzureMonitorMetricsDestination',
-    'DataCollectionRule',
-    'DataCollectionRuleAssociation',
-    'DataCollectionRuleAssociationProxyOnlyResource',
-    'DataCollectionRuleAssociationProxyOnlyResourceListResult',
-    'DataCollectionRuleAssociationProxyOnlyResourceProperties',
-    'DataCollectionRuleDataSources',
-    'DataCollectionRuleDestinations',
-    'DataCollectionRuleResource',
-    'DataCollectionRuleResourceListResult',
-    'DataCollectionRuleResourceProperties',
-    'DataFlow',
-    'DataSourcesSpec',
-    'DestinationsSpec',
-    'DestinationsSpecAzureMonitorMetrics',
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
-    'ExtensionDataSource',
-    'LogAnalyticsDestination',
-    'PerfCounterDataSource',
-    'ResourceForUpdate',
-    'SyslogDataSource',
-    'WindowsEventLogDataSource',
-    'KnownDataCollectionRuleAssociationProvisioningState',
-    'KnownDataCollectionRuleProvisioningState',
-    'KnownDataCollectionRuleResourceKind',
-    'KnownDataFlowStreams',
-    'KnownExtensionDataSourceStreams',
-    'KnownPerfCounterDataSourceStreams',
-    'KnownSyslogDataSourceFacilityNames',
-    'KnownSyslogDataSourceLogLevels',
-    'KnownSyslogDataSourceStreams',
-    'KnownWindowsEventLogDataSourceStreams',
+    "AzureMonitorMetricsDestination",
+    "DataCollectionRule",
+    "DataCollectionRuleAssociation",
+    "DataCollectionRuleAssociationProxyOnlyResource",
+    "DataCollectionRuleAssociationProxyOnlyResourceListResult",
+    "DataCollectionRuleAssociationProxyOnlyResourceProperties",
+    "DataCollectionRuleDataSources",
+    "DataCollectionRuleDestinations",
+    "DataCollectionRuleResource",
+    "DataCollectionRuleResourceListResult",
+    "DataCollectionRuleResourceProperties",
+    "DataFlow",
+    "DataSourcesSpec",
+    "DestinationsSpec",
+    "DestinationsSpecAzureMonitorMetrics",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "ExtensionDataSource",
+    "LogAnalyticsDestination",
+    "PerfCounterDataSource",
+    "ResourceForUpdate",
+    "SyslogDataSource",
+    "WindowsEventLogDataSource",
+    "KnownDataCollectionRuleAssociationProvisioningState",
+    "KnownDataCollectionRuleProvisioningState",
+    "KnownDataCollectionRuleResourceKind",
+    "KnownDataFlowStreams",
+    "KnownExtensionDataSourceStreams",
+    "KnownPerfCounterDataSourceStreams",
+    "KnownSyslogDataSourceFacilityNames",
+    "KnownSyslogDataSourceLogLevels",
+    "KnownSyslogDataSourceStreams",
+    "KnownWindowsEventLogDataSourceStreams",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
