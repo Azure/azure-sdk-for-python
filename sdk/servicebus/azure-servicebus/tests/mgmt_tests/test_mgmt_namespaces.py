@@ -14,12 +14,12 @@ from sb_env_loader import ServiceBusPreparer
 class TestServiceBusManagementClientNamespace(AzureMgmtRecordedTestCase):
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_namespace_get_properties(self, servicebus_connection_str,
-                                           servicebus_fully_qualified_namespace, servicebus_sas_policy,
-                                           servicebus_sas_key):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_namespace_get_properties(self, service_bus_connection_str,
+                                           service_bus_fully_qualified_namespace, service_bus_sas_policy,
+                                           service_bus_sas_key):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         properties = mgmt_service.get_namespace_properties()
         assert properties
         assert properties.messaging_sku == 'Standard'
-        # assert properties.name == servicebus_fully_qualified_namespace.name
+        # assert properties.name == service_bus_fully_qualified_namespace.name
         # This is disabled pending investigation of why it isn't getting scrubbed despite expected scrubber use.

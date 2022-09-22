@@ -36,9 +36,9 @@ _logger = get_logger(logging.DEBUG)
 class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_list_basic(self, servicebus_connection_str, servicebus_fully_qualified_namespace,
-                                    servicebus_sas_policy, servicebus_sas_key, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_queue_list_basic(self, service_bus_connection_str, service_bus_fully_qualified_namespace,
+                                    service_bus_sas_policy, service_bus_sas_key, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
 
         clear_queues(mgmt_service)
 
@@ -52,8 +52,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
         assert len(queues) == 0
 
         # mgmt_service = ServiceBusAdministrationClient(
-        #     servicebus_fully_qualified_namespace,
-        #     credential=ServiceBusSharedKeyCredential(servicebus_sas_policy, servicebus_sas_key)
+        #     service_bus_fully_qualified_namespace,
+        #     credential=ServiceBusSharedKeyCredential(service_bus_sas_policy, service_bus_sas_key)
         # )
         # queues = list(mgmt_service.list_queues())
         # assert len(queues) == 0
@@ -66,10 +66,10 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_list_with_special_chars(self, servicebus_connection_str):
+    def test_mgmt_queue_list_with_special_chars(self, service_bus_connection_str):
         # Queue names can contain letters, numbers, periods (.), hyphens (-), underscores (_), and slashes (/), up to 260 characters. Queue names are also case-insensitive.
         queue_name = 'txt/.-_123'
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         clear_queues(mgmt_service)
         queues = list(mgmt_service.list_queues())
         assert len(queues) == 0
@@ -82,22 +82,22 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_list_with_parameters(self, servicebus_connection_str):
+    def test_mgmt_queue_list_with_parameters(self, service_bus_connection_str):
         pytest.skip("start_idx and max_count are currently removed, they might come back in the future.")
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         run_test_mgmt_list_with_parameters(MgmtQueueListTestHelper(mgmt_service))
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_list_with_negative_credential(self, servicebus_fully_qualified_namespace, servicebus_sas_policy,
-                                                             servicebus_sas_key):
+    def test_mgmt_queue_list_with_negative_credential(self, service_bus_fully_qualified_namespace, service_bus_sas_policy,
+                                                             service_bus_sas_key):
         # invalid_conn_str = 'Endpoint=sb://invalid.servicebus.windows.net/;SharedAccessKeyName=invalid;SharedAccessKey=invalid'
         # mgmt_service = ServiceBusAdministrationClient.from_connection_string(invalid_conn_str)
         # with pytest.raises(ServiceRequestError):
         #     list(mgmt_service.list_queues())
         # TODO: This negative test makes replay test fail. Need more investigation. Live test has no problem.
 
-        invalid_conn_str = 'Endpoint=sb://{}/;SharedAccessKeyName=invalid;SharedAccessKey=invalid'.format(servicebus_fully_qualified_namespace)
+        invalid_conn_str = 'Endpoint=sb://{}/;SharedAccessKeyName=invalid;SharedAccessKey=invalid'.format(service_bus_fully_qualified_namespace)
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(invalid_conn_str)
         with pytest.raises(HttpResponseError):
             list(mgmt_service.list_queues())
@@ -105,13 +105,13 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
         # fully_qualified_namespace = 'invalid.servicebus.windows.net'
         # mgmt_service = ServiceBusAdministrationClient(
         #     fully_qualified_namespace,
-        #     credential=ServiceBusSharedKeyCredential(servicebus_sas_policy, servicebus_sas_key)
+        #     credential=ServiceBusSharedKeyCredential(service_bus_sas_policy, service_bus_sas_key)
         # )
         # with pytest.raises(ServiceRequestError):
         #     list(mgmt_service.list_queues())
 
         mgmt_service = ServiceBusAdministrationClient(
-            servicebus_fully_qualified_namespace,
+            service_bus_fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential("invalid", "invalid")
         )
         with pytest.raises(HttpResponseError):
@@ -119,15 +119,15 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_list_with_negative_parameters(self, servicebus_connection_str):
+    def test_mgmt_queue_list_with_negative_parameters(self, service_bus_connection_str):
         pytest.skip("start_idx and max_count are currently removed, they might come back in the future.")
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         run_test_mgmt_list_with_negative_parameters(MgmtQueueListTestHelper(mgmt_service))
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_delete_basic(self, servicebus_connection_str):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_queue_delete_basic(self, service_bus_connection_str):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         clear_queues(mgmt_service)
         mgmt_service.create_queue("test_queue")
         queues = list(mgmt_service.list_queues())
@@ -149,8 +149,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_delete_one_and_check_not_existing(self, servicebus_connection_str):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_queue_delete_one_and_check_not_existing(self, service_bus_connection_str):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         clear_queues(mgmt_service)
         for i in range(10):
             mgmt_service.create_queue("queue{}".format(i))
@@ -169,8 +169,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_delete_negtive(self, servicebus_connection_str):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_queue_delete_negtive(self, service_bus_connection_str):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         clear_queues(mgmt_service)
         mgmt_service.create_queue("test_queue")
         queues = list(mgmt_service.list_queues())
@@ -194,8 +194,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_create_by_name(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_queue_create_by_name(self, service_bus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         clear_queues(mgmt_service)
         queue_name = "queue_testaddf"
         mgmt_service.create_queue(queue_name)
@@ -211,8 +211,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_create_with_invalid_name(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_queue_create_with_invalid_name(self, service_bus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
 
         with pytest.raises(msrest.exceptions.ValidationError):
             mgmt_service.create_queue(Exception())
@@ -223,8 +223,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_create_with_queue_description(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_queue_create_with_queue_description(self, service_bus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         clear_queues(mgmt_service)
         queue_name = "iweidk"
         queue_name_2 = "vladsk"
@@ -321,8 +321,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.skip("Unkip after creating premium account in arm template")
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_premium_create_with_queue_description(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_queue_premium_create_with_queue_description(self, service_bus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         clear_queues(mgmt_service)
         queue_name = "iweidk"
         queue_name_2 = "cpqmva"
@@ -419,8 +419,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_create_duplicate(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_queue_create_duplicate(self, service_bus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         clear_queues(mgmt_service)
         queue_name = "rtofdk"
         mgmt_service.create_queue(queue_name)
@@ -432,8 +432,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_update_success(self, servicebus_connection_str, servicebus_fully_qualified_namespace, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_queue_update_success(self, service_bus_connection_str, service_bus_fully_qualified_namespace, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         clear_queues(mgmt_service)
         queue_name = "fjrui"
         topic_name = "sagho"
@@ -476,8 +476,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
             queue_description.lock_duration = datetime.timedelta(seconds=13)
             queue_description.max_delivery_count = 14
             queue_description.max_size_in_megabytes = 3072
-            queue_description.forward_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, queue_name)
-            queue_description.forward_dead_lettered_messages_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, queue_name)
+            queue_description.forward_to = "sb://{}.servicebus.windows.net/{}".format(service_bus_fully_qualified_namespace, queue_name)
+            queue_description.forward_dead_lettered_messages_to = "sb://{}.servicebus.windows.net/{}".format(service_bus_fully_qualified_namespace, queue_name)
             #queue_description.requires_duplicate_detection = True # Read only
             #queue_description.requires_session = True # Cannot be changed after creation
 
@@ -494,7 +494,7 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
             assert queue_description.lock_duration == datetime.timedelta(seconds=13)
             assert queue_description.max_delivery_count == 14
             assert queue_description.max_size_in_megabytes == 3072
-            # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
+            # Note: We endswith to avoid the fact that the service_bus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
             assert queue_description.forward_to.endswith(".servicebus.windows.net/{}".format(queue_name))
             assert queue_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(queue_name))
             #assert queue_description.requires_duplicate_detection == True
@@ -537,7 +537,7 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
             assert queue_description.lock_duration == datetime.timedelta(seconds=18)
             assert queue_description.max_delivery_count == 15
             assert queue_description.max_size_in_megabytes == 2048
-            # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
+            # Note: We endswith to avoid the fact that the service_bus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
             assert queue_description.forward_to == None
             assert queue_description.forward_dead_lettered_messages_to == None
             #assert queue_description.requires_duplicate_detection == True
@@ -550,8 +550,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_update_invalid(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_queue_update_invalid(self, service_bus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         clear_queues(mgmt_service)
         queue_name = "dfjfj"
         queue_description = mgmt_service.create_queue(queue_name)
@@ -592,8 +592,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_list_runtime_properties_basic(self, servicebus_connection_str):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_queue_list_runtime_properties_basic(self, service_bus_connection_str):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         clear_queues(mgmt_service)
         queues = list(mgmt_service.list_queues())
         queues_infos = list(mgmt_service.list_queues_runtime_properties())
@@ -628,22 +628,22 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_list_runtime_prop_w_neg_params(self, servicebus_connection_str):
+    def test_mgmt_queue_list_runtime_prop_w_neg_params(self, service_bus_connection_str):
         pytest.skip("start_idx and max_count are currently removed, they might come back in the future.")
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         run_test_mgmt_list_with_negative_parameters(MgmtQueueListRuntimeInfoTestHelper(mgmt_service))
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_list_runtime_prop_w_param(self, servicebus_connection_str):
+    def test_mgmt_queue_list_runtime_prop_w_param(self, service_bus_connection_str):
         pytest.skip("start_idx and max_count are currently removed, they might come back in the future.")
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         run_test_mgmt_list_with_parameters(MgmtQueueListRuntimeInfoTestHelper(mgmt_service))
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_get_runtime_properties_basic(self, servicebus_connection_str):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_queue_get_runtime_properties_basic(self, service_bus_connection_str):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         clear_queues(mgmt_service)
         mgmt_service.create_queue("test_queue")
         try:
@@ -667,8 +667,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_get_runtime_properties_negative(self, servicebus_connection_str):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_queue_get_runtime_properties_negative(self, service_bus_connection_str):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         with pytest.raises(TypeError):
             mgmt_service.get_queue_runtime_properties(None)
 
@@ -684,8 +684,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_update_dict_success(self, servicebus_connection_str, servicebus_fully_qualified_namespace, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_queue_update_dict_success(self, service_bus_connection_str, service_bus_fully_qualified_namespace, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         clear_queues(mgmt_service)
         queue_name = "fjruid"
         queue_description = mgmt_service.create_queue(queue_name)
@@ -710,8 +710,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
             queue_description_dict["lock_duration"] = datetime.timedelta(seconds=13)
             queue_description_dict["max_delivery_count"] = 14
             queue_description_dict["max_size_in_megabytes"] = 3072
-            queue_description_dict["forward_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, queue_name)
-            queue_description_dict["forward_dead_lettered_messages_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, queue_name)
+            queue_description_dict["forward_to"] = "sb://{}.servicebus.windows.net/{}".format(service_bus_fully_qualified_namespace, queue_name)
+            queue_description_dict["forward_dead_lettered_messages_to"] = "sb://{}.servicebus.windows.net/{}".format(service_bus_fully_qualified_namespace, queue_name)
             #queue_description_dict["requires_duplicate_detection"] = True # Read only
             #queue_description_dict["requires_session"] = True # Cannot be changed after creation
 
@@ -728,7 +728,7 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
             assert queue_description.lock_duration == datetime.timedelta(seconds=13)
             assert queue_description.max_delivery_count == 14
             assert queue_description.max_size_in_megabytes == 3072
-            # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
+            # Note: We endswith to avoid the fact that the service_bus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
             assert queue_description.forward_to.endswith(".servicebus.windows.net/{}".format(queue_name))
             assert queue_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(queue_name))
             #assert queue_description.requires_duplicate_detection == True
@@ -760,7 +760,7 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
             assert queue_description.lock_duration == datetime.timedelta(seconds=18)
             assert queue_description.max_delivery_count == 15
             assert queue_description.max_size_in_megabytes == 2048
-            # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
+            # Note: We endswith to avoid the fact that the service_bus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
             assert queue_description.forward_to == None
             assert queue_description.forward_dead_lettered_messages_to == None
             #assert queue_description.requires_duplicate_detection == True
@@ -772,8 +772,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_update_dict_error(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_queue_update_dict_error(self, service_bus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
         clear_queues(mgmt_service)
         queue_name = "dfjdfj"
         queue_description = mgmt_service.create_queue(queue_name)
@@ -787,9 +787,9 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_queue_basic_v2017_04(self, servicebus_connection_str, servicebus_fully_qualified_namespace,
-                                    servicebus_sas_policy, servicebus_sas_key):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str, api_version=ApiVersion.V2017_04)
+    def test_mgmt_queue_basic_v2017_04(self, service_bus_connection_str, service_bus_fully_qualified_namespace,
+                                    service_bus_sas_policy, service_bus_sas_key):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str, api_version=ApiVersion.V2017_04)
         clear_queues(mgmt_service)
 
         mgmt_service.create_queue("test_queue")
@@ -805,8 +805,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
             mgmt_service.create_queue("queue_can_not_be_created", max_message_size_in_kilobytes=1024)
 
         # mgmt_service = ServiceBusAdministrationClient(
-        #     servicebus_fully_qualified_namespace,
-        #     credential=ServiceBusSharedKeyCredential(servicebus_sas_policy, servicebus_sas_key),
+        #     service_bus_fully_qualified_namespace,
+        #     credential=ServiceBusSharedKeyCredential(service_bus_sas_policy, service_bus_sas_key),
         #     api_version=ApiVersion.V2017_04
         # )
         # mgmt_service.create_queue("test_queue")
