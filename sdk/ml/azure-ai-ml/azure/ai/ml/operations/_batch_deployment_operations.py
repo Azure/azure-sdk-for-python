@@ -17,7 +17,7 @@ from azure.ai.ml._utils._endpoint_utils import polling_wait, upload_dependencies
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client
-from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX, VERSIONED_RESOURCE_ID_PATTERN
+from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
 from azure.ai.ml.entities import BatchDeployment
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
