@@ -32,6 +32,17 @@ module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")
 
 
+def get_duration(start_time: float) -> None:
+    """Calculates the duration of the Long running operation took to finish
+
+    :param start_time: Start time
+    :type start_time: float
+    """
+    end_time = time.time()
+    duration = divmod(int(round(end_time - start_time)), 60)
+    module_logger.warning("(%sm %ss)\n", duration[0], duration[1])
+
+
 def polling_wait(
     poller: Union[LROPoller, Future],
     message: str = None,
@@ -67,9 +78,7 @@ def polling_wait(
         module_logger.warning("Timeout waiting for long running operation")
 
     if start_time:
-        end_time = time.time()
-        duration = divmod(int(round(end_time - start_time)), 60)
-        module_logger.warning("(%sm %ss)\n", duration[0], duration[1])
+        get_duration(start_time)
 
 
 def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) -> Any:

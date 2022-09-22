@@ -172,6 +172,8 @@ class ImageClassificationJob(AutoMLImageClassificationBase):
         from azure.ai.ml._schema.pipeline.automl_node import ImageClassificationMulticlassNodeSchema
 
         if inside_pipeline:
+            if context.get("inside_pipeline", None) is None:
+                context["inside_pipeline"] = True
             loaded_data = load_from_dict(
                 ImageClassificationMulticlassNodeSchema,
                 data,

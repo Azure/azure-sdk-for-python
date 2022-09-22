@@ -6,7 +6,7 @@ from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml._schema.registry import RegistrySchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PublicNetworkAccess
-from azure.ai.ml.constants._registry import StorageAccountType
+from azure.ai.ml.constants._registry import AcrAccountSku, StorageAccountType
 from azure.ai.ml.entities import RegistryRegionArmDetails, SystemCreatedAcrAccount, SystemCreatedStorageAccount
 from azure.ai.ml.entities._util import load_from_dict
 
@@ -46,6 +46,26 @@ class TestRegistrySchema:
             assert isinstance(storages[1], SystemCreatedStorageAccount)
             assert not storages[1].storage_account_hns
             assert storages[1].storage_account_type == StorageAccountType.STANDARD_RAGRS
+
+    def test_deserialize_from_yaml_with_system_acr(self) -> None:
+        path = Path("./tests/test_configs/registry/registry_valid_2.yaml")
+        with open(path, "r") as f:
+            target = yaml.safe_load(f)
+            context = {BASE_PATH_CONTEXT_KEY: path.parent}
+            registry = load_from_dict(RegistrySchema, target, context)
+            assert registry
+            assert isinstance(registry["container_registry"], SystemCreatedAcrAccount)
+            assert registry["container_registry"].acr_account_sku == AcrAccountSku.PREMIUM
+
+    def test_deserialize_from_yaml_with_no_acr(self) -> None:
+        path = Path("./tests/test_configs/registry/registry_valid_3.yaml")
+        with open(path, "r") as f:
+            target = yaml.safe_load(f)
+            context = {BASE_PATH_CONTEXT_KEY: path.parent}
+            registry = load_from_dict(RegistrySchema, target, context)
+            assert registry
+            assert isinstance(registry["container_registry"], SystemCreatedAcrAccount)
+            assert registry["container_registry"].acr_account_sku == AcrAccountSku.PREMIUM
 
     def test_deserialize_bad_storage_account_type(self) -> None:
         path = Path("./tests/test_configs/registry/registry_bad_storage_account_type.yaml")

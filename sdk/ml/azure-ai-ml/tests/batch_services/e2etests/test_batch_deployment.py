@@ -25,12 +25,14 @@ def deployEndpointAndDeployment(client: MLClient, endpoint: BatchEndpoint, deplo
     :param BatchDeployment deployment: _description_
     :yield _type_: _description_
     """
-    client.batch_endpoints.begin_create_or_update(endpoint)
-    client.batch_deployments.begin_create_or_update(deployment)
+    endpoint_res = client.batch_endpoints.begin_create_or_update(endpoint)
+    endpoint_res = endpoint_res.result()
+    deployment_res = client.batch_deployments.begin_create_or_update(deployment)
+    deployment_res = deployment_res.result()
 
     yield (endpoint, deployment)
 
-    client.batch_endpoints.begin_delete(name=endpoint.name, no_wait=True)
+    client.batch_endpoints.begin_delete(name=endpoint.name)
 
 
 @pytest.mark.skip(
@@ -71,7 +73,7 @@ class TestBatchDeployment(AzureRecordedTestCase):
             deployment_name=deployment.name,
             input=":".join((data_with_2_versions, "1")),
         )
-        client.batch_endpoints.begin_delete(name=endpoint.name, no_wait=True)
+        client.batch_endpoints.begin_delete(name=endpoint.name)
 
     @pytest.mark.e2etest
     def test_batch_deployment_dependency_label_resolution(self, client: MLClient, randstr: Callable[[], str]) -> None:
@@ -114,11 +116,13 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
 
         # create an endpoint
-        client.batch_endpoints.begin_create_or_update(endpoint)
+        endpoint_res = client.batch_endpoints.begin_create_or_update(endpoint)
+        endpoint_res = endpoint_res.result()
         # create a deployment
-        client.batch_deployments.begin_create_or_update(deployment)
+        deployment_res = client.batch_deployments.begin_create_or_update(deployment)
+        deployment_res = deployment_res.result()
         dep = client.batch_deployments.get(name=deployment.name, endpoint_name=endpoint.name)
-        client.batch_endpoints.begin_delete(name=endpoint.name, no_wait=True)
+        client.batch_endpoints.begin_delete(name=endpoint.name)
 
         resolved_environment = AMLVersionedArmId(dep.environment)
         resolved_model = AMLVersionedArmId(dep.model)
