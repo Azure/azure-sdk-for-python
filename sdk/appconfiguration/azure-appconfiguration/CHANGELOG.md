@@ -10,7 +10,7 @@
 
 ### Other Changes
 - Python 2.7 is no longer supported. Please use Python version 3.6 or later.
-- Bumped mininum dependency on `azure-core` to `>=1.16.0`.
+- Bumped mininum dependency on `azure-core` to `>=1.24.0`.
 
 ## 1.3.0 (2021-11-10)
 
