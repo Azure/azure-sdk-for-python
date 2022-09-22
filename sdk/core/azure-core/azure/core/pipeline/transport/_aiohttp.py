@@ -217,7 +217,7 @@ class AioHttpTransport(AsyncHttpTransport):
             verify=config.pop('connection_verify', self.connection_config.verify)
         )
         # If we know for sure there is not body, disable "auto content type"
-        # Otherwise, aiohttp will send "application/octect-stream" even for empty POST request
+        # Otherwise, aiohttp will send "application/octet-stream" even for empty POST request
         # and that break services like storage signature
         if not request.data and not request.files:
             config['skip_auto_headers'] = ['Content-Type']

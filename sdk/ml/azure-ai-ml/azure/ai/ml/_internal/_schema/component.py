@@ -1,14 +1,15 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from marshmallow import INCLUDE, fields, post_dump
-from marshmallow.error_store import ErrorStore
 
-from azure.ai.ml._schema import ArmVersionedStr, NestedField, StringTransformedEnum, UnionField
+from marshmallow import fields, post_dump
+
+from azure.ai.ml._schema import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.component.component import ComponentSchema
-from azure.ai.ml._schema.core.fields import LocalPathField, RegistryStr, SerializeValidatedUrl
-from azure.ai.ml.constants import AzureMLResourceType
+from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField
+from azure.ai.ml.constants._common import AzureMLResourceType
 
+from .environment import InternalEnvironmentSchema
 from .input_output import (
     InternalEnumParameterSchema,
     InternalInputPortSchema,
@@ -29,6 +30,7 @@ class NodeType:
     PIPELINE = "PipelineComponent"
     HEMERA = "HemeraComponent"
     AE365EXEPOOL = "AE365ExePoolComponent"
+    IPP = "IntellectualPropertyProtectedComponent"
 
     @classmethod
     def all_values(cls):
@@ -61,31 +63,30 @@ class InternalBaseComponentSchema(ComponentSchema):
     outputs = fields.Dict(keys=fields.Str(), values=NestedField(InternalOutputPortSchema))
 
     # type field is required for registration
-    type = StringTransformedEnum(allowed_values=NodeType.all_values(), casing_transform=lambda x: x)
-
-    # need to resolve as it can be a local field
-    code = UnionField(
-        [
-            SerializeValidatedUrl(),
-            LocalPathField(),
-            RegistryStr(azureml_type=AzureMLResourceType.CODE),
-            # put arm versioned string at last order as it can deserialize any string into "azureml:<origin>"
-            ArmVersionedStr(azureml_type=AzureMLResourceType.CODE),
-        ],
-        metadata={"description": "A local path or http:, https:, azureml: url pointing to a remote location."},
+    type = StringTransformedEnum(
+        allowed_values=NodeType.all_values(),
+        casing_transform=lambda x: x.rsplit("@", 1)[0],
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    # need to resolve as it can be a local field
+    code = CodeField()
 
-    def get_skip_fields(self):
+    environment = UnionField(
+        [
+            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
+            NestedField(InternalEnvironmentSchema),
+        ]
+    )
+
+    def get_skip_fields(self):  # pylint: disable=no-self-use
         return ["properties"]
 
     def _serialize(self, obj, *, many: bool = False):
+        # pylint: disable=no-member
         if many and obj is not None:
             return super(InternalBaseComponentSchema, self)._serialize(obj, many=many)
         ret = super(InternalBaseComponentSchema, self)._serialize(obj)
-        for attr_name, value_to_serialize in obj.__dict__.items():
+        for attr_name in obj.__dict__.keys():
             if (
                 not attr_name.startswith("_")
                 and attr_name not in self.get_skip_fields()
@@ -94,27 +95,8 @@ class InternalBaseComponentSchema(ComponentSchema):
                 ret[attr_name] = self.get_attribute(obj, attr_name, None)
         return ret
 
-    def _deserialize(
-        self,
-        data,
-        *,
-        error_store: ErrorStore,
-        many: bool = False,
-        partial=False,
-        unknown=INCLUDE,
-        index=None,
-    ):
-        return super(InternalBaseComponentSchema, self)._deserialize(
-            data,
-            error_store=error_store,
-            many=many,
-            partial=partial,
-            unknown=unknown,
-            index=index,
-        )
-
     @post_dump(pass_original=True)
-    def simplify_input_output_port(self, data, original, **kwargs):
+    def simplify_input_output_port(self, data, original, **kwargs):  # pylint:disable=unused-argument, no-self-use
         # remove None in input & output
         for io_ports in [data["inputs"], data["outputs"]]:
             for port_name, port_definition in io_ports.items():

@@ -10,9 +10,8 @@ from os import PathLike
 from typing import Any, Optional, Tuple, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context, _check_and_upload_path
-from azure.ai.ml._ml_exceptions import AssetException, ErrorCategory, ErrorTarget, ModelException, ValidationException
 from azure.ai.ml._restclient.v2021_10_01.models import UriReference
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._utils._arm_id_utils import (
     AMLNamedArmId,
     AMLVersionedArmId,
@@ -25,7 +24,8 @@ from azure.ai.ml._utils._arm_id_utils import (
 from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset
 from azure.ai.ml._utils._exception_utils import EmptyDirectoryError
 from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
-from azure.ai.ml.constants import (
+from azure.ai.ml._utils.utils import is_private_preview_enabled
+from azure.ai.ml.constants._common import (
     ARM_ID_PREFIX,
     AZUREML_RESOURCE_PROVIDER,
     CURATED_ENV_PREFIX,
@@ -35,7 +35,6 @@ from azure.ai.ml.constants import (
     JOB_URI_REGEX_FORMAT,
     MLFLOW_URI_REGEX_FORMAT,
     NAMED_RESOURCE_ID_FORMAT,
-    REGISTRY_ASSET_ID,
     VERSIONED_RESOURCE_ID_FORMAT,
     VERSIONED_RESOURCE_NAME,
     AzureMLResourceType,
@@ -43,15 +42,30 @@ from azure.ai.ml.constants import (
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._assets import Code, Data, Environment, Model
 from azure.ai.ml.entities._assets.asset import Asset
-from azure.core.exceptions import ResourceNotFoundError
+from azure.ai.ml.exceptions import (
+    AssetException,
+    ErrorCategory,
+    ErrorTarget,
+    MlException,
+    ModelException,
+    ValidationErrorType,
+    ValidationException,
+)
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 module_logger = logging.getLogger(__name__)
 
 
 class OperationOrchestrator(object):
-    def __init__(self, operation_container: OperationsContainer, operation_scope: OperationScope):
+    def __init__(
+        self,
+        operation_container: OperationsContainer,
+        operation_scope: OperationScope,
+        operation_config: OperationConfig,
+    ):
         self._operation_container = operation_container
         self._operation_scope = operation_scope
+        self._operation_config = operation_config
 
     @property
     def _datastore_operation(self):
@@ -118,6 +132,22 @@ class OperationOrchestrator(object):
                     asset,
                 )
             if azureml_type in AzureMLResourceType.VERSIONED_TYPES:
+                # Short form of curated env will be expanded on the backend side.
+                # CLI strips off azureml: in the schema, appending it back as required by backend
+                if (
+                    azureml_type == "environments"
+                    and asset.startswith(CURATED_ENV_PREFIX)
+                    and is_private_preview_enabled()
+                ):
+                    module_logger.warning(
+                        "This job/deployment uses curated environments. The syntax for using curated "
+                        "environments has changed to include azureml registry name: "
+                        "azureml:registries/azureml/environments//versions/ or "
+                        "azureml:registries/azureml/environments/labels/latest. "
+                        "Support for format you are using will be removed in future versions of the "
+                        "CLI and SDK. Learn more at aka.ms/curatedenv"
+                    )
+                    return f"azureml:{asset}"
                 name, version = self._resolve_name_version_from_name_label(asset, azureml_type)
                 if not version:
                     name, version = parse_prefixed_name_version(asset)
@@ -132,37 +162,26 @@ class OperationOrchestrator(object):
                         target=ErrorTarget.ASSET,
                         no_personal_data_message=msg.format("", azureml_type),
                         error_category=ErrorCategory.USER_ERROR,
+                        error_type=ValidationErrorType.MISSING_FIELD,
                     )
-
                 if self._operation_scope.registry_name:
                     # Short form for env not supported with registry flow except when it's a curated env.
-                    # Expanding the curated env in CLI till backend supports expansion.
-                    if asset.startswith(CURATED_ENV_PREFIX):
-                        module_logger.warning(
-                            "This job/deployment uses curated environments. The syntax for using curated "
-                            "environments has changed to include azureml registry name: "
-                            "azureml:registries/azureml/environments//versions/ or "
-                            "azureml:registries/azureml/environments/labels/latest. "
-                            "Support for format you are using will be removed in future versions of the "
-                            "CLI and SDK. Learn more at aka.ms/curatedenv"
+                    # Adding a graceful error message for the scenario
+                    if not asset.startswith(CURATED_ENV_PREFIX):
+                        msg = (
+                            "Use fully qualified name to reference custom environments "
+                            "when creating assets in registry. "
+                            "The syntax for fully qualified names is "
+                            "azureml:registries/azureml/environments/{{env-name}}/versions/{{version}}"
                         )
-                        return REGISTRY_ASSET_ID.format(
-                            "azureml",
-                            azureml_type,
-                            name,
-                            version,
+                        raise ValidationException(
+                            message=msg.format(asset, azureml_type),
+                            target=ErrorTarget.ASSET,
+                            no_personal_data_message=msg.format("", azureml_type),
+                            error_category=ErrorCategory.USER_ERROR,
+                            error_type=ValidationErrorType.INVALID_VALUE,
                         )
-                    msg = (
-                        "Use fully qualified name to reference custom environments when creating assets in registry. "
-                        "The syntax for fully qualified names is to "
-                        "azureml:registries/azureml/environments/{{env-name}}/versions/{{version}}"
-                    )
-                    raise ValidationException(
-                        message=msg.format(asset, azureml_type),
-                        target=ErrorTarget.ASSET,
-                        no_personal_data_message=msg.format("", azureml_type),
-                        error_category=ErrorCategory.USER_ERROR,
-                    )
+
                 return VERSIONED_RESOURCE_ID_FORMAT.format(
                     self._operation_scope.subscription_id,
                     self._operation_scope.resource_group_name,
@@ -177,8 +196,9 @@ class OperationOrchestrator(object):
                 message=msg.format(azureml_type, asset),
                 target=ErrorTarget.ASSET,
                 no_personal_data_message=msg.format(azureml_type, ""),
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
-        elif isinstance(asset, Asset):
+        if isinstance(asset, Asset):
             try:
                 # TODO: once the asset redesign is finished, this logic can be replaced with unified API
                 if azureml_type == AzureMLResourceType.CODE and isinstance(asset, Code):
@@ -198,6 +218,7 @@ class OperationOrchestrator(object):
                         target=ErrorTarget.ASSET,
                         no_personal_data_message=msg.format(azureml_type, ""),
                         error_category=ErrorCategory.USER_ERROR,
+                        error_type=ValidationErrorType.INVALID_VALUE,
                     )
             except EmptyDirectoryError as e:
                 msg = f"Error creating {azureml_type} asset : {e.message}"
@@ -209,14 +230,14 @@ class OperationOrchestrator(object):
                     error_category=ErrorCategory.SYSTEM_ERROR,
                 )
             return result
-        else:
-            msg = f"Error creating {azureml_type} asset: must be Optional[Union[str, Asset]]"
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.ASSET,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
+        msg = f"Error creating {azureml_type} asset: must be type Optional[Union[str, Asset]]"
+        raise ValidationException(
+            message=msg,
+            target=ErrorTarget.ASSET,
+            no_personal_data_message=msg,
+            error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.INVALID_VALUE,
+        )
 
     def _get_code_asset_arm_id(self, code_asset: Code, register_asset: bool = True) -> Union[Code, str]:
         try:
@@ -224,7 +245,12 @@ class OperationOrchestrator(object):
             if register_asset:
                 code_asset = self._code_assets.create_or_update(code_asset)
                 return code_asset.id
-            uploaded_code_asset, _ = _check_and_upload_path(artifact=code_asset, asset_operations=self._code_assets)
+            uploaded_code_asset, _ = _check_and_upload_path(
+                artifact=code_asset,
+                asset_operations=self._code_assets,
+                artifact_type=ErrorTarget.CODE,
+                show_progress=self._operation_config.show_progress,
+            )
             uploaded_code_asset._id = get_arm_id_with_version(
                 self._operation_scope,
                 AzureMLResourceType.CODE,
@@ -232,6 +258,8 @@ class OperationOrchestrator(object):
                 code_asset.version,
             )
             return uploaded_code_asset
+        except (MlException, HttpResponseError) as e:
+            raise e
         except Exception as e:
             raise AssetException(
                 message=f"Error with code: {e}",
@@ -245,7 +273,9 @@ class OperationOrchestrator(object):
         if register_asset:
             env_response = self._environments.create_or_update(environment)
             return env_response.id
-        environment = _check_and_upload_env_build_context(environment=environment, operations=self._environments)
+        environment = _check_and_upload_env_build_context(
+            environment=environment, operations=self._environments, show_progress=self._operation_config.show_progress
+        )
         environment._id = get_arm_id_with_version(
             self._operation_scope,
             AzureMLResourceType.ENVIRONMENT,
@@ -260,7 +290,12 @@ class OperationOrchestrator(object):
 
             if register_asset:
                 return self._model.create_or_update(model).id
-            uploaded_model, _ = _check_and_upload_path(artifact=model, asset_operations=self._model)
+            uploaded_model, _ = _check_and_upload_path(
+                artifact=model,
+                asset_operations=self._model,
+                artifact_type=ErrorTarget.MODEL,
+                show_progress=self._operation_config.show_progress,
+            )
             uploaded_model._id = get_arm_id_with_version(
                 self._operation_scope,
                 AzureMLResourceType.MODEL,
@@ -268,6 +303,8 @@ class OperationOrchestrator(object):
                 model.version,
             )
             return uploaded_model
+        except (MlException, HttpResponseError) as e:
+            raise e
         except Exception as e:
             raise ModelException(
                 message=f"Error with model: {e}",
@@ -282,7 +319,12 @@ class OperationOrchestrator(object):
 
         if register_asset:
             return self._data.create_or_update(data_asset).id
-        data_asset, _ = _check_and_upload_path(artifact=data_asset, asset_operations=self._data)
+        data_asset, _ = _check_and_upload_path(
+            artifact=data_asset,
+            asset_operations=self._data,
+            artifact_type=ErrorTarget.DATA,
+            show_progress=self._operation_config.show_progress,
+        )
         return data_asset
 
     def _get_component_arm_id(self, component: Component) -> str:
@@ -290,7 +332,9 @@ class OperationOrchestrator(object):
         via remote call, register the component if necessary, and FILL BACK the
         arm id to component to reduce remote call."""
         if not component.id:
-            component._id = self._component.create_or_update(component, is_anonymous=True).id
+            component._id = self._component.create_or_update(
+                component, is_anonymous=True, show_progress=self._operation_config.show_progress
+            ).id
         return component.id
 
     def _resolve_name_version_from_name_label(self, aml_id: str, azureml_type: str) -> Tuple[str, Optional[str]]:
@@ -336,11 +380,12 @@ class OperationOrchestrator(object):
 
         if arm_id:
             if not isinstance(arm_id, str):
-                msg = "arm_id to be resolved: str expected but get {}".format(type(arm_id))
+                msg = "arm_id cannot be resolved: str expected but got {}".format(type(arm_id))
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
                     target=ErrorTarget.GENERAL,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )
             try:
                 arm_id_obj = AMLVersionedArmId(arm_id)
@@ -404,4 +449,5 @@ class OperationOrchestrator(object):
                     target=ErrorTarget.DATASTORE,
                     no_personal_data_message=msg.format(""),
                     error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
                 )

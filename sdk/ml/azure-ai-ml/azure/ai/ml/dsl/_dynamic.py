@@ -6,8 +6,9 @@ import types
 from inspect import Parameter, Signature
 from typing import Callable, Sequence
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml.entities._job.pipeline._exceptions import UnexpectedKeywordError, UserErrorException
+from azure.ai.ml.entities import Component
+from azure.ai.ml.entities._job.pipeline._exceptions import UnexpectedKeywordError
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -63,27 +64,19 @@ def _replace_function_name(func: types.FunctionType, new_name):
             # Closure must be set to make sure free variables work.
             closure=func.__closure__,
         )
-    except BaseException:
+    except BaseException:  # pylint: disable=broad-except
         # If the dynamic replacing failed in corner cases, simply set the two fields.
         func.__name__ = func.__qualname__ = new_name
         return func
 
 
-def _assert_arg_valid(kwargs, keys, func_name):
+def _assert_arg_valid(kwargs: dict, keys: list, func_name: str):
     """Assert the arg keys are all in keys."""
-    # validate whether two input name only with case difference
-    lower2original_kwargs = {}
-    for key in kwargs:
-        lower_key = key.lower()
-        if lower_key in lower2original_kwargs:
-            raise UserErrorException(
-                f"Invalid component input names {key} and {lower2original_kwargs[lower_key]}, which are equal ignore "
-                f"case."
-            )
-        else:
-            lower2original_kwargs[lower_key] = key
+    # pylint: disable=protected-access
+    # validate component input names
+    Component._validate_io_names(io_dict=kwargs)
 
-    lower2original_parameter_names = {x.lower(): x for x in keys.keys()}
+    lower2original_parameter_names = {x.lower(): x for x in keys}
     kwargs_need_to_update = []
     for key in kwargs:
         if key not in keys:
@@ -94,7 +87,7 @@ def _assert_arg_valid(kwargs, keys, func_name):
                 if key != lower_key:
                     # raise warning if name not match sanitize version
                     module_logger.warning(
-                        f"Component input name {key}, treat it as {lower2original_parameter_names[lower_key]}"
+                        "Component input name %s, treat it as %s", key, lower2original_parameter_names[lower_key]
                     )
             else:
                 raise UnexpectedKeywordError(func_name=func_name, keyword=key, keywords=keys)
@@ -130,7 +123,7 @@ def create_kw_function_from_parameters(
 
     def f(**kwargs):
         # We need to make sure all keys of kwargs are valid.
-        _assert_arg_valid(kwargs, default_kwargs, func_name=func_name)
+        _assert_arg_valid(kwargs, list(default_kwargs.keys()), func_name=func_name)
         # We need to put the default args to the kwargs before invoking the original function.
         _update_dct_if_not_exist(kwargs, default_kwargs)
         return func(**kwargs)

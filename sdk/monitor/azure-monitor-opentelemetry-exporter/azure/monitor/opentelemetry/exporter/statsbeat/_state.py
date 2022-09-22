@@ -3,8 +3,8 @@
 import os
 import threading
 
-_REQUESTS_LOCK = threading.Lock()
 _REQUESTS_MAP = {}
+_REQUESTS_MAP_LOCK = threading.Lock()
 
 _STATSBEAT_STATE = {
     "INITIAL_FAILURE_COUNT": 0,
@@ -12,31 +12,21 @@ _STATSBEAT_STATE = {
     "SHUTDOWN": False,
 }
 _STATSBEAT_STATE_LOCK = threading.Lock()
-
-# (OpenTelemetry metric name, Statsbeat metric name)
-_ATTACH_METRIC_NAME = "Attach"
-_FEATURE_METRIC_NAME = "Feature"
-_REQ_SUCCESS_NAME = ("statsbeat_success_count", "Request Success Count")
-_REQ_FAILURE_NAME = "Request Failure Count"
-_REQ_DURATION_NAME = "Request Duration"
-_REQ_RETRY_NAME = "Retry Count"
-_REQ_THROTTLE_NAME = "Throttle Count"
-_REQ_EXCEPTION_NAME = "Exception Count"
-
-_STATSBEAT_METRIC_NAME_MAPPINGS = dict(
-    [
-        _REQ_SUCCESS_NAME,
-    ]
-)
-
+_STATSBEAT_FAILURE_COUNT_THRESHOLD = 3
 
 def is_statsbeat_enabled():
-    return not os.environ.get("APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL")
+    disabled = os.environ.get("APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL")
+    return disabled is None or disabled.lower() != "true"
 
 
 def increment_statsbeat_initial_failure_count():
     with _STATSBEAT_STATE_LOCK:
         _STATSBEAT_STATE["INITIAL_FAILURE_COUNT"] += 1
+
+
+def increment_and_check_statsbeat_failure_count():
+    increment_statsbeat_initial_failure_count()
+    return get_statsbeat_initial_failure_count() >= _STATSBEAT_FAILURE_COUNT_THRESHOLD
 
 
 def get_statsbeat_initial_failure_count():

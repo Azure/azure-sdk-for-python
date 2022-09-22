@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
 from marshmallow import fields, post_dump, post_load
 
 from azure.ai.ml._schema import StringTransformedEnum, UnionField
@@ -12,7 +13,6 @@ class InternalInputPortSchema(InputPortSchema):
     type = UnionField(
         [
             fields.Str(),
-            # TODO 1856980: support [AnyFile, AnyDirectory] for component creation
             fields.List(fields.Str()),
         ],
         required=True,
@@ -20,6 +20,12 @@ class InternalInputPortSchema(InputPortSchema):
     )
     is_resource = fields.Bool()
     datastore_mode = fields.Str()
+
+    @post_dump(pass_original=True)
+    def resolve_list_type(self, data, original_data, **kwargs):  # pylint: disable=unused-argument, no-self-use
+        if isinstance(original_data.type, list):
+            data["type"] = original_data.type
+        return data
 
 
 class InternalOutputPortSchema(OutputPortSchema):
@@ -34,24 +40,20 @@ class InternalOutputPortSchema(OutputPortSchema):
 
 class InternalParameterSchema(ParameterSchema):
     type = StringTransformedEnum(
-        allowed_values=["number", "integer", "boolean", "string", "object", "float"],
+        allowed_values=[
+            "integer",
+            "Integer",
+            "boolean",
+            "Boolean",
+            "string",
+            "String",
+            "float",
+            "Float",
+        ],
         casing_transform=lambda x: x,
         required=True,
         data_key="type",
     )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def get_skip_fields(self):
-        return []
-
-    @post_dump(pass_original=True)
-    def resolve_input_specific_field(self, data, original_data, **kwargs):
-        for attr_name, value in original_data.items():
-            if not attr_name.startswith("_") and attr_name not in self.get_skip_fields() and attr_name not in data:
-                data[attr_name] = value
-        return data
 
 
 class InternalEnumParameterSchema(ParameterSchema):
@@ -64,7 +66,7 @@ class InternalEnumParameterSchema(ParameterSchema):
 
     @post_dump
     @post_load
-    def enum_value_to_string(self, data, **kwargs):
+    def enum_value_to_string(self, data, **kwargs):  # pylint: disable=unused-argument, disable=no-self-use
         if "enum" in data:
             data["enum"] = list(map(str, data["enum"]))
         if "default" in data:

@@ -10,7 +10,7 @@ from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.core.schema import YamlFileSchema
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
 from .mltable_metadata_path_schemas import (
     MLTableMetadataPathFileSchema,

@@ -2,20 +2,20 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,arguments-renamed
 
 import logging
 from abc import abstractmethod
 from os import PathLike
-from typing import Any, Dict, Union
+from typing import IO, Any, AnyStr, Dict, Union
 
-from azure.ai.ml._ml_exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2021_10_01.models import OnlineDeploymentData
 from azure.ai.ml._restclient.v2022_02_01_preview.models import BatchDeploymentData
 from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
 
 from .code_configuration import CodeConfiguration
 
@@ -112,14 +112,27 @@ class Deployment(Resource, RestTranslatableMixin):
 
         self.code_configuration.scoring_script = value
 
-    def dump(self, path: Union[PathLike, str]) -> None:
+    def dump(
+        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
+    ) -> None:
         """Dump the deployment content into a file in yaml format.
 
-        :param path: Path to a local file as the target, new file will be created, raises exception if the file exists.
-        :type path: str
+        :param dest: The destination to receive this deployment's content.
+            Must be either a path to a local file, or an already-open file stream.
+            If dest is a file path, a new file will be created,
+            and an exception is raised if the file exists.
+            If dest is an open file, the file will be written to directly,
+            and an exception will be raised if the file is not writable.
+        :type dest: Union[PathLike, str, IO[AnyStr]]
+        :param path: Deprecated path to a local file as the target, a new file
+            will be created, raises exception if the file exists.
+            It's recommended what you change 'path=' inputs to 'dest='.
+            The first unnamed input of this function will also be treated like
+            a path input.
+        :type path: Union[str, Pathlike]
         """
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(path, yaml_serialized, default_flow_style=False)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, args=args, **kwargs)
 
     @abstractmethod
     def _to_dict(self) -> Dict:
@@ -130,18 +143,18 @@ class Deployment(Resource, RestTranslatableMixin):
         from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
         from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
 
-        if type(deployment_rest_object) is OnlineDeploymentData:
+        if isinstance(deployment_rest_object, OnlineDeploymentData):
             return OnlineDeployment._from_rest_object(deployment_rest_object)
-        elif type(deployment_rest_object) is BatchDeploymentData:
-            return BatchDeployment._from_rest_object(deployment_rest_object)  # TODO: fix the name here
-        else:
-            msg = f"Unsupported deployment type {type(deployment_rest_object)}"
-            raise DeploymentException(
-                message=msg,
-                target=ErrorTarget.DEPLOYMENT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.SYSTEM_ERROR,
-            )
+        if isinstance(deployment_rest_object, BatchDeploymentData):
+            return BatchDeployment._from_rest_object(deployment_rest_object)
+
+        msg = f"Unsupported deployment type {type(deployment_rest_object)}"
+        raise DeploymentException(
+            message=msg,
+            target=ErrorTarget.DEPLOYMENT,
+            no_personal_data_message=msg,
+            error_category=ErrorCategory.SYSTEM_ERROR,
+        )
 
     def _to_rest_object(self) -> Any:
         pass

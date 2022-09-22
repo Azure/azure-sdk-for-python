@@ -132,6 +132,7 @@ async def test_aiohttp_response_text(http_response):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
 async def test_aiohttp_response_decompression(http_response):
+    # cSpell:disable
     res = _create_aiohttp_response(
         http_response,
         b"\x1f\x8b\x08\x00\x00\x00\x00\x00\x04\x00\x8d\x8d\xb1n\xc30\x0cD"
@@ -145,6 +146,7 @@ async def test_aiohttp_response_decompression(http_response):
         b"\xf7+&$\xf6\xa9\x8a\xcb\x96\xdc\xef\xff\xaa\xa1\x1c\xf9$\x01\x00\x00",
         {'Content-Type': 'text/plain', 'Content-Encoding':"gzip"}
     )
+    # cSpell:enable
     body = res.body()
     expect = b'{"id":"e7877039-1376-4dcd-9b0a-192897cff780","createdDateTimeUtc":' \
              b'"2021-05-07T17:35:36.3121065Z","lastActionDateTimeUtc":' \
@@ -155,8 +157,9 @@ async def test_aiohttp_response_decompression(http_response):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
-async def test_aiohttp_response_decompression_negtive(http_response):
+async def test_aiohttp_response_decompression_negative(http_response):
     import zlib
+    # cSpell:disable
     res = _create_aiohttp_response(
         http_response,
         b"\xff\x85s\x14HVlY\xda\x8av.\n4\x1d\x9a\x8d\xa1\xe5D\x80m\x01\x12="
@@ -169,6 +172,7 @@ async def test_aiohttp_response_decompression_negtive(http_response):
         b"\xf7+&$\xf6\xa9\x8a\xcb\x96\xdc\xef\xff\xaa\xa1\x1c\xf9$\x01\x00\x00",
         {'Content-Type': 'text/plain', 'Content-Encoding':"gzip"}
     )
+    # cSpell:enable
     with pytest.raises(zlib.error):
         body = res.body()
 

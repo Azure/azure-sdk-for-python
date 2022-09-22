@@ -3,27 +3,33 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
-
 import itertools
-import json
 import logging
 import typing
+from functools import partial
 from pathlib import Path
 from typing import Dict, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken, JobBaseData, ManagedIdentity
-from azure.ai.ml._restclient.v2022_02_01_preview.models import PipelineJob as RestPipelineJob
-from azure.ai.ml._restclient.v2022_02_01_preview.models import UserIdentity
-from azure.ai.ml._restclient.v2022_06_01_preview.models import PipelineJob as RestPipelineJob0601
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2022_06_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml._schema.pipeline import PipelineJobSchema
+from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
-from azure.ai.ml._utils.utils import camel_to_snake, is_private_preview_enabled, transform_dict_keys
-from azure.ai.ml.constants import AZUREML_PRIVATE_FEATURES_ENV_VAR, BASE_PATH_CONTEXT_KEY, ComponentSource
+from azure.ai.ml._utils.utils import (
+    camel_to_snake,
+    is_data_binding_expression,
+    is_private_preview_enabled,
+    transform_dict_keys,
+)
+from azure.ai.ml.constants import JobType
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.constants._component import ComponentSource
+from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
 from azure.ai.ml.entities._builders import BaseNode
+from azure.ai.ml.entities._builders.control_flow_node import LoopNode
+from azure.ai.ml.entities._builders.import_node import Import
 from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._component.component import Component
@@ -35,23 +41,28 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     to_rest_data_outputs,
     to_rest_dataset_literal_inputs,
 )
-from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+from azure.ai.ml.entities._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
+from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
-from azure.ai.ml.entities._job.pipeline._io import InputsAttrDict, OutputsAttrDict, PipelineIOMixin
+from azure.ai.ml.entities._job.pipeline._io import InputsAttrDict, OutputsAttrDict, PipelineInput, PipelineIOMixin
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
+from azure.ai.ml.exceptions import ErrorTarget
 
 module_logger = logging.getLogger(__name__)
 
 
 class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatableMixin):
-    """Pipeline job. Please use @pipeline decorator to create a PipelineJob,
-    not recommended instantiating it directly.
+    """Pipeline job.
 
-    :param component: Pipeline component version. Used to validate given value against
-    :type component: PipelineComponent
+    You should not instantiate this class directly. Instead, you should
+    use @pipeline decorator to create a PipelineJob
+
+    :param component: Pipeline component version. The field is mutual exclusive with 'jobs'.
+    :type component: Union[str, PipelineComponent]
     :param inputs: Inputs to the pipeline job.
     :type inputs: dict[str, Union[Input, str, bool, int, float]]
     :param outputs: Outputs the pipeline job.
@@ -62,7 +73,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
     :type description: str
     :param display_name: Display name of the pipeline job.
     :type display_name: str
-    :param experiment_name: Name of the experiment the job will be created under, if None is provided, experiment will be set to current directory.
+    :param experiment_name: Name of the experiment the job will be created under, \
+        if None is provided, experiment will be set to current directory.
     :type experiment_name: str
     :param jobs: Pipeline component node name to component object.
     :type jobs: dict[str, BaseNode]
@@ -81,7 +93,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
     def __init__(
         self,
         *,
-        component: PipelineComponent = None,
+        component: Union[str, PipelineComponent] = None,
         inputs: Dict[str, Union[Input, str, bool, int, float]] = None,
         outputs: Dict[str, Output] = None,
         name: str = None,
@@ -97,7 +109,10 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
     ):
         # initialize io
         inputs, outputs = inputs or {}, outputs or {}
-        if isinstance(component, PipelineComponent) and component._source == ComponentSource.DSL:
+        if isinstance(component, PipelineComponent) and component._source in [
+            ComponentSource.DSL,
+            ComponentSource.YAML_COMPONENT,
+        ]:
             self._inputs = self._build_inputs_dict(component.inputs, inputs)
             # Build the outputs from entity output definition
             self._outputs = self._build_outputs_dict(component.outputs, outputs)
@@ -105,23 +120,30 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             # Build inputs/outputs dict without meta when definition not available
             self._inputs = self._build_inputs_dict_without_meta(inputs)
             self._outputs = self._build_outputs_dict_without_meta(outputs)
+        source = kwargs.pop("_source", ComponentSource.CLASS)
         if component is None:
             component = PipelineComponent(
                 jobs=jobs,
                 description=description,
                 display_name=display_name,
                 base_path=kwargs.get(BASE_PATH_CONTEXT_KEY),
-                _source=kwargs.pop("_source", ComponentSource.CLASS),
+                _source=source,
             )
+
+        # If component is Pipeline component, jobs will be component.jobs
+        self._jobs = (jobs or {}) if isinstance(component, str) else {}
 
         self.component = component
         if "type" not in kwargs.keys():
-            kwargs["type"] = "pipeline"
+            kwargs["type"] = JobType.PIPELINE
+        if isinstance(component, PipelineComponent):
+            description = component.description if description is None else description
+            display_name = component.display_name if display_name is None else display_name
         super(PipelineJob, self).__init__(
             name=name,
-            description=description or component.description,
+            description=description,
             tags=tags,
-            display_name=display_name or component.display_name,
+            display_name=display_name,
             experiment_name=experiment_name,
             compute=compute,
             **kwargs,
@@ -129,14 +151,15 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
 
         self._remove_pipeline_input()
         self.compute = compute
-        self._settings = settings if settings else PipelineJobSettings()
+        self._settings = None
+        self.settings = settings
         self.identity = identity
         # TODO: remove default code & environment?
         self._default_code = None
         self._default_environment = None
 
     @property
-    def inputs(self) -> InputsAttrDict:
+    def inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
         """Inputs of the pipeline job.
 
         :return: Inputs of the pipeline job.
@@ -145,7 +168,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         return self._inputs
 
     @property
-    def outputs(self) -> OutputsAttrDict:
+    def outputs(self) -> Dict[str, Union[str, Output]]:
         """Outputs of the pipeline job.
 
         :return: Outputs of the pipeline job.
@@ -160,7 +183,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         :return: Jobs of pipeline job.
         :rtype: dict
         """
-        return self.component.jobs
+        return self.component.jobs if isinstance(self.component, PipelineComponent) else self._jobs
 
     @property
     def settings(self) -> PipelineJobSettings:
@@ -169,10 +192,14 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         :return: Settings of the pipeline job.
         :rtype: ~azure.ai.ml.entities.PipelineJobSettings
         """
+        if self._settings is None:
+            self._settings = PipelineJobSettings()
         return self._settings
 
     @settings.setter
     def settings(self, value):
+        if value is not None and not isinstance(value, PipelineJobSettings):
+            raise TypeError("settings must be PipelineJobSettings but got {}".format(type(value)))
         self._settings = value
 
     @classmethod
@@ -187,7 +214,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
 
     def _get_skip_fields_in_schema_validation(self) -> typing.List[str]:
         # jobs validations are done in _customized_validate()
-        return ["jobs"]
+        return ["component", "jobs"]
 
     @property
     def _skip_required_compute_missing_validation(self):
@@ -200,21 +227,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         if self.settings is not None and self.settings.default_compute is not None:
             return validation_result
 
-        no_compute_nodes = []
-        for node_name, node in self.jobs.items():
-            if hasattr(node, "compute") and node.compute is None:
-                if (
-                    hasattr(node, "_skip_required_compute_missing_validation")
-                    and node._skip_required_compute_missing_validation
-                ):
-                    continue
-                no_compute_nodes.append(node_name)
-
-        for node_name in no_compute_nodes:
-            validation_result.append_error(
-                yaml_path=f"jobs.{node_name}.compute",
-                message="Compute not set",
-            )
+        validation_result.merge_with(self.component._validate_compute_is_set())
         return validation_result
 
     def _customized_validate(self) -> ValidationResult:
@@ -222,19 +235,32 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         current pipeline and components in it."""
         validation_result = super(PipelineJob, self)._customized_validate()
 
-        # Merge with pipeline component validate result for structure validation.
-        validation_result.merge_with(self.component._customized_validate())
-        # Validate compute
-        validation_result.merge_with(self._validate_compute_is_set())
+        if isinstance(self.component, PipelineComponent):
+            # Merge with pipeline component validate result for structure validation.
+            # Skip top level parameter missing type error
+            validation_result.merge_with(
+                self.component._customized_validate(),
+                condition_skip=lambda x: x.error_code == ValidationErrorCode.PARAMETER_TYPE_UNKNOWN
+                and x.yaml_path.startswith("inputs"),
+            )
+            # Validate compute
+            validation_result.merge_with(self._validate_compute_is_set())
         # Validate Input
         validation_result.merge_with(self._validate_input())
+        # Validate initialization & finalization jobs
+        validation_result.merge_with(self._validate_init_finalize_job())
 
         return validation_result
 
     def _validate_input(self):
         validation_result = self._create_empty_validation_result()
         used_pipeline_inputs = set(
-            itertools.chain(*[self.component._get_input_binding_dict(node)[0] for node in self.jobs.values()])
+            itertools.chain(
+                *[
+                    self.component._get_input_binding_dict(node if not isinstance(node, LoopNode) else node.body)[0]
+                    for node in self.jobs.values()
+                ]
+            )
         )
         # validate inputs
         if not isinstance(self.component, Component):
@@ -257,12 +283,75 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                 )
         return validation_result
 
+    def _validate_init_finalize_job(self) -> ValidationResult:
+        validation_result = self._create_empty_validation_result()
+        # subgraph (PipelineComponent) should not have on_init/on_finalize set
+        for job_name, job in self.jobs.items():
+            if job.type != "pipeline":
+                continue
+            if job.settings.on_init:
+                validation_result.append_warning(
+                    yaml_path=f"jobs.{job_name}.settings.on_init",
+                    message="On_init is not supported for subgraph.",
+                )
+            if job.settings.on_finalize:
+                validation_result.append_warning(
+                    yaml_path=f"jobs.{job_name}.settings.on_finalize",
+                    message="On_finalize is not supported for subgraph",
+                )
+
+        # quick return if neither on_init nor on_finalize is set
+        if self.settings.on_init is None and self.settings.on_finalize is None:
+            return validation_result
+
+        on_init, on_finalize = self.settings.on_init, self.settings.on_finalize
+        append_on_init_error = partial(validation_result.append_error, "settings.on_init")
+        append_on_finalize_error = partial(validation_result.append_error, "settings.on_finalize")
+        # on_init and on_finalize cannot be same
+        if on_init == on_finalize:
+            append_on_init_error(f"Invalid on_init job {on_init}, it should be different from on_finalize.")
+            append_on_finalize_error(f"Invalid on_finalize job {on_finalize}, it should be different from on_init.")
+        # pipeline should have at least one normal node
+        if len(set(self.jobs.keys()) - {on_init, on_finalize}) == 0:
+            validation_result.append_error(yaml_path="jobs", message="No other job except for on_init/on_finalize job.")
+
+        def _is_isolated_job(_validate_job_name: str) -> bool:
+            # no input to validate job
+            _validate_job = self.jobs[_validate_job_name]
+            for _input_name in _validate_job.inputs:
+                _data_binding = _validate_job.inputs[_input_name]._data._data_binding()
+                if is_data_binding_expression(_data_binding, ["parent", "jobs"]):
+                    return False
+            # no output from validate job
+            for _job_name, _job in self.jobs.items():
+                for _input_name in _job.inputs:
+                    _data_binding = _job.inputs[_input_name]._data._data_binding()
+                    if is_data_binding_expression(_data_binding, ["parent", "jobs", _validate_job_name]):
+                        return False
+            return True
+
+        # validate on_init
+        if on_init is not None:
+            if on_init not in self.jobs:
+                append_on_init_error(f"On_init job name {on_init} not exists in jobs.")
+            else:
+                if not _is_isolated_job(on_init):
+                    append_on_init_error("On_init job should not have connection to other execution node.")
+        # validate on_finalize
+        if on_finalize is not None:
+            if on_finalize not in self.jobs:
+                append_on_finalize_error(f"On_finalize job name {on_finalize} not exists in jobs.")
+            else:
+                if not _is_isolated_job(on_finalize):
+                    append_on_finalize_error("On_finalize job should not have connection to other execution node.")
+        return validation_result
+
     def _remove_pipeline_input(self):
         """Remove None pipeline input.If not remove, it will pass "None" to
         backend."""
         redundant_pipeline_inputs = []
         for pipeline_input_name, pipeline_input in self._inputs.items():
-            if pipeline_input._data is None:
+            if isinstance(pipeline_input, PipelineInput) and pipeline_input._data is None:
                 redundant_pipeline_inputs.append(pipeline_input_name)
         for redundant_pipeline_input in redundant_pipeline_inputs:
             self._inputs.pop(redundant_pipeline_input)
@@ -282,6 +371,10 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                 if isinstance(node, PipelineJob):
                     msg = error_msg.format("Pipeline job in pipeline")
                     raise UserErrorException(message=msg, no_personal_data_message=msg)
+                # TODO: Remove in PuP
+                if isinstance(node, (ImportJob, Import)):
+                    msg = error_msg.format("Import job in pipeline")
+                    raise UserErrorException(message=msg, no_personal_data_message=msg)
 
     def _to_node(self, context: Dict = None, **kwargs):
         """Translate a command job to a pipeline node when load schema.
@@ -292,7 +385,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         """
         component = self._to_component(context, **kwargs)
 
-        return Pipeline(
+        return Pipeline(  # pylint: disable=abstract-class-instantiated
             component=component,
             compute=self.compute,
             # Need to supply the inputs with double curly.
@@ -303,15 +396,10 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             display_name=self.display_name,
         )
 
-    def _to_rest_object(self, new_version=False) -> JobBaseData:
+    def _to_rest_object(self) -> JobBase:
         """Build current parameterized pipeline instance to a pipeline job object
         before submission.
 
-        :param new_version: Use new model for inputs/outputs if new_version is true, as 0501 and later version
-            change enum (like JobInputType) from camel to snake.
-            Side effect by https://msdata.visualstudio.com/Vienna/_git/vienna/pullrequest/783594.
-            TODO: Remove this after all Job and Component migrate to new version afterwards.
-        :type new_version: bool
         :return: Rest pipeline job.
         """
         # Check if there are private preview features in it
@@ -329,94 +417,69 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         # example: {"eval_output": "${{jobs.eval.outputs.eval_output}}"}
         built_outputs = self._build_outputs()
 
-        settings_dict = vars(self.settings) if self.settings else {}
-        settings_dict = {key: val for key, val in settings_dict.items() if val is not None}
+        settings_dict = self.settings._to_dict()
 
+        if isinstance(self.component, PipelineComponent):
+            source = self.component._source
+            # Build the jobs to dict
+            rest_component_jobs = self.component._build_rest_component_jobs()
+        else:
+            source = ComponentSource.REMOTE_WORKSPACE_JOB
+            rest_component_jobs = {}
         # add _source on pipeline job.settings
         if "_source" not in settings_dict:
-            settings_dict.update({"_source": self.component._source})
-
-        # Build the jobs to dict
-        rest_component_jobs = {}
-        for job_name, job in self.jobs.items():
-            if isinstance(job, BaseNode):
-                rest_node_dict = job._to_rest_object()
-            elif isinstance(job, AutoMLJob):
-                rest_node_dict = json.loads(json.dumps(job._to_dict(inside_pipeline=True)))
-            else:
-                msg = f"Non supported job type in Pipeline jobs: {type(job)}"
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    target=ErrorTarget.PIPELINE,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
-            rest_component_jobs[job_name] = rest_node_dict
+            settings_dict.update({"_source": source})
 
         # TODO: Revisit this logic when multiple types of component jobs are supported
         rest_compute = self.compute
+        # This will be resolved in job_operations _resolve_arm_id_or_upload_dependencies.
+        component_id = self.component if isinstance(self.component, str) else None
 
-        # TODO: Remove this after all Job and Component migrate to new version afterwards.
-        if new_version:
-            pipeline_job = RestPipelineJob0601(
-                compute_id=rest_compute,
-                display_name=self.display_name,
-                tags=self.tags,
-                description=self.description,
-                properties=self.properties,
-                experiment_name=self.experiment_name,
-                jobs=rest_component_jobs,
-                inputs=to_rest_dataset_literal_inputs(built_inputs, new_version=new_version),
-                outputs=to_rest_data_outputs(built_outputs, new_version=new_version),
-                settings=settings_dict,
-                identity=self.identity,
-                source_job_id=self.id,
-            )
-        else:
-            pipeline_job = RestPipelineJob(
-                compute_id=rest_compute,
-                display_name=self.display_name,
-                tags=self.tags,
-                description=self.description,
-                properties=self.properties,
-                experiment_name=self.experiment_name,
-                jobs=rest_component_jobs,
-                inputs=to_rest_dataset_literal_inputs(built_inputs, new_version=new_version),
-                outputs=to_rest_data_outputs(built_outputs, new_version=new_version),
-                settings=settings_dict,
-                identity=self.identity,
-            )
-        rest_job = JobBaseData(properties=pipeline_job)
+        pipeline_job = RestPipelineJob(
+            compute_id=rest_compute,
+            component_id=component_id,
+            display_name=self.display_name,
+            tags=self.tags,
+            description=self.description,
+            properties=self.properties,
+            experiment_name=self.experiment_name,
+            jobs=rest_component_jobs,
+            inputs=to_rest_dataset_literal_inputs(built_inputs, job_type=self.type),
+            outputs=to_rest_data_outputs(built_outputs),
+            settings=settings_dict,
+            identity=self.identity._to_rest_object() if self.identity else None,
+        )
+        rest_job = JobBase(properties=pipeline_job)
         rest_job.name = self.name
         return rest_job
 
     @classmethod
-    def _load_from_rest(cls, obj: JobBaseData, new_version=False) -> "PipelineJob":
+    def _load_from_rest(cls, obj: JobBase) -> "PipelineJob":
         """Build a pipeline instance from rest pipeline object.
 
-        :param new_version: Use new model for inputs/outputs if new_version is true, as 0501 and later version
-            change enum (like JobInputType) from camel to snake.
-            Side effect by https://msdata.visualstudio.com/Vienna/_git/vienna/pullrequest/783594.
-            TODO: Remove this after all Job and Component migrate to new version afterwards.
-        :type new_version: bool
         :return: pipeline job.
         """
         properties: RestPipelineJob = obj.properties
         # Workaround for BatchEndpoint as these fields are not filled in
         # Unpack the inputs
-        from_rest_inputs = from_rest_inputs_to_dataset_literal(properties.inputs, new_version=new_version) or {}
-        from_rest_outputs = from_rest_data_outputs(properties.outputs, new_version=new_version) or {}
+        from_rest_inputs = from_rest_inputs_to_dataset_literal(properties.inputs) or {}
+        from_rest_outputs = from_rest_data_outputs(properties.outputs) or {}
         # Unpack the component jobs
         sub_nodes = {}
         if properties.jobs:
             for node_name, node in properties.jobs.items():
-                sub_nodes[node_name] = BaseNode._from_rest_object(node)
+                if LoopNode._is_loop_node_dict(node):
+                    sub_nodes[node_name] = LoopNode._from_rest_object(node, reference_node_list=sub_nodes)
+                else:
+                    sub_nodes[node_name] = BaseNode._from_rest_object(node)
         # backend may still store Camel settings, eg: DefaultDatastore, translate them to snake when load back
         settings_dict = transform_dict_keys(properties.settings, camel_to_snake) if properties.settings else None
         settings_sdk = PipelineJobSettings(**settings_dict) if settings_dict else PipelineJobSettings()
-
-        job = PipelineJob(
-            component=PipelineComponent._load_from_rest_pipeline_job(
+        # Create component or use component id
+        if getattr(properties, "component_id", None):
+            component = properties.component_id
+        else:
+            component = PipelineComponent._load_from_rest_pipeline_job(
                 dict(
                     inputs=from_rest_inputs,
                     outputs=from_rest_outputs,
@@ -424,21 +487,25 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                     description=properties.description,
                     jobs=sub_nodes,
                 )
-            ),
+            )
+
+        job = PipelineJob(
+            component=component,
             inputs=from_rest_inputs,
             outputs=from_rest_outputs,
             name=obj.name,
             id=obj.id,
+            jobs=sub_nodes,
             display_name=properties.display_name,
             tags=properties.tags,
             properties=properties.properties,
             experiment_name=properties.experiment_name,
             status=properties.status,
-            creation_context=obj.system_data,
+            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
             services=properties.services,
             compute=get_resource_name_from_arm_id_safe(properties.compute_id),
             settings=settings_sdk,
-            identity=properties.identity,
+            identity=Identity._from_rest_object(properties.identity) if properties.identity else None,
         )
 
         return job
@@ -466,6 +533,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                 path_first_occurrence[component_path] = node_name
 
         # use this instead of azure.ai.ml.entities._util.load_from_dict to avoid parsing
+        # pylint: disable=no-member
         loaded_schema = cls._create_schema_for_validation(context=context).load(data, **kwargs)
 
         # replace repeat component with first occurrence to reduce arm id resolution
@@ -476,7 +544,9 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             job._component = loaded_schema["jobs"][first_occurrence].component
             # For Parallel job, should also align task attribute which is usually from component.task
             if isinstance(job, Parallel):
-                job.task = loaded_schema["jobs"][first_occurrence].task
+                job.task = job._component.task
+                # parallel.task.code is based on parallel._component.base_path, so need to update it
+                job._base_path = job._component.base_path
         return PipelineJob(
             base_path=context[BASE_PATH_CONTEXT_KEY],
             _source=ComponentSource.YAML_JOB,
@@ -486,12 +556,15 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
     def __str__(self):
         try:
             return self._to_yaml()
-        except BaseException:
+        except BaseException:  # pylint: disable=broad-except
             return super(PipelineJob, self).__str__()
 
     def _get_telemetry_values(self):
         telemetry_values = super()._get_telemetry_values()
-        telemetry_values.update(self.component._get_telemetry_values())
+        if isinstance(self.component, PipelineComponent):
+            telemetry_values.update(self.component._get_telemetry_values())
+        else:
+            telemetry_values.update({"source": ComponentSource.REMOTE_WORKSPACE_JOB})
         telemetry_values.pop("is_anonymous")
         return telemetry_values
 
@@ -502,14 +575,11 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         :param kwargs: Extra arguments.
         :return: Translated pipeline component.
         """
-        from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
-
         ignored_keys = PipelineComponent._check_ignored_keys(self)
         if ignored_keys:
             name = self.name or self.display_name
             name = f"{name!r} " if name else ""
-            module_logger.warning(f"{ignored_keys} ignored when translating PipelineJob {name}to PipelineComponent.")
-
+            module_logger.warning("%s ignored when translating PipelineJob %sto PipelineComponent.", ignored_keys, name)
         pipeline_job_dict = kwargs.get("pipeline_job_dict", {})
         context = context or {BASE_PATH_CONTEXT_KEY: Path("./")}
 

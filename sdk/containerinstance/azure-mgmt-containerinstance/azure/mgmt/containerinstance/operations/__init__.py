@@ -10,10 +10,18 @@ from ._container_groups_operations import ContainerGroupsOperations
 from ._operations import Operations
 from ._location_operations import LocationOperations
 from ._containers_operations import ContainersOperations
+from ._subnet_service_association_link_operations import SubnetServiceAssociationLinkOperations
+
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ContainerGroupsOperations',
-    'Operations',
-    'LocationOperations',
-    'ContainersOperations',
+    "ContainerGroupsOperations",
+    "Operations",
+    "LocationOperations",
+    "ContainersOperations",
+    "SubnetServiceAssociationLinkOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

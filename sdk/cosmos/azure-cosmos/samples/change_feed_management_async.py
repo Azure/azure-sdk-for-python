@@ -13,7 +13,7 @@ import asyncio
 import config
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites -
 #
 # 1. An Azure Cosmos account -
 #    https:#azure.microsoft.com/en-us/documentation/articles/documentdb-create-account/

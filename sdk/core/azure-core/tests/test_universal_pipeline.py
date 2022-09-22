@@ -85,11 +85,11 @@ def test_pipeline_context():
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_request_history(http_request):
-    class Non_deep_copiable(object):
+    class Non_deep_copyable(object):
         def __deepcopy__(self, memodict={}):
             raise ValueError()
 
-    body = Non_deep_copiable()
+    body = Non_deep_copyable()
     request = create_http_request(http_request, 'GET', 'http://localhost/', {'user-agent': 'test_request_history'})
     request.body = body
     request_history = RequestHistory(request)
@@ -99,11 +99,11 @@ def test_request_history(http_request):
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_request_history_type_error(http_request):
-    class Non_deep_copiable(object):
+    class Non_deep_copyable(object):
         def __deepcopy__(self, memodict={}):
             raise TypeError()
 
-    body = Non_deep_copiable()
+    body = Non_deep_copyable()
     request = create_http_request(http_request, 'GET', 'http://localhost/', {'user-agent': 'test_request_history'})
     request.body = body
     request_history = RequestHistory(request)

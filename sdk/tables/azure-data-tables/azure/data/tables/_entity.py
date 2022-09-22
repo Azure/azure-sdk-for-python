@@ -52,7 +52,7 @@ class EdmType(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-e
     """ Represents a double. This type will be inferred for Python floating point numbers. """
 
     BOOLEAN = "Edm.Boolean"
-    """ Represents a boolean. This type will be inferred for Python bools. """
+    """ Represents a boolean. This type will be inferred for Python booleans. """
 
 
 EntityProperty = NamedTuple("EntityProperty", [("value", Any), ("edm_type", Union[str, EdmType])])

@@ -52,5 +52,4 @@ async def digitaltwins_get():
         pass
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(digitaltwins_get())
+    asyncio.run(digitaltwins_get())

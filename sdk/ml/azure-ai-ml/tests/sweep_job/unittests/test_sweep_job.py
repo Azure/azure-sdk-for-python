@@ -1,27 +1,24 @@
 import pytest
-from azure.ai.ml.entities import (
-    Job,
-    CommandJob,
-    CommandJobLimits,
-)
-from azure.ai.ml.entities._inputs_outputs import Input, Output
+
+from azure.ai.ml import UserIdentity
+from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.entities import CommandJob, CommandJobLimits, Job
 from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.sweep import (
-    SweepJob,
-    SweepJobLimits,
-    Choice,
-    RandomSamplingAlgorithm,
-    GridSamplingAlgorithm,
-    BayesianSamplingAlgorithm,
-)
-from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.entities._builders.command_func import command
-from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.sweep.early_termination_policy import TruncationSelectionPolicy
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.search_space import LogUniform
-from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken, UserIdentity
-from azure.ai.ml import MpiDistribution
+from azure.ai.ml.sweep import (
+    BayesianSamplingAlgorithm,
+    Choice,
+    GridSamplingAlgorithm,
+    RandomSamplingAlgorithm,
+    SweepJob,
+    SweepJobLimits,
+)
 
 
 @pytest.mark.unittest
@@ -119,17 +116,17 @@ class TestSweepJob:
         assert rest.properties.sampling_algorithm.sampling_algorithm_type == expected_rest_type
 
     @pytest.mark.parametrize(
-        "sampling_algorithm, expected_rest_type",
+        "sampling_algorithm, expected_from_rest_type",
         [
-            ("random", "Random"),
-            ("grid", "Grid"),
-            ("bayesian", "Bayesian"),
-            (RandomSamplingAlgorithm(), "Random"),
-            (GridSamplingAlgorithm(), "Grid"),
-            (BayesianSamplingAlgorithm(), "Bayesian"),
+            ("random", "random"),
+            ("grid", "grid"),
+            ("bayesian", "bayesian"),
+            (RandomSamplingAlgorithm(), "random"),
+            (GridSamplingAlgorithm(), "grid"),
+            (BayesianSamplingAlgorithm(), "bayesian"),
         ],
     )
-    def test_sampling_algorithm_from_rest(self, sampling_algorithm, expected_rest_type):
+    def test_sampling_algorithm_from_rest(self, sampling_algorithm, expected_from_rest_type):
         command_job = CommandJob(
             code=Code(base_path="./src"),
             command="python train.py --ss {search_space.ss}",
@@ -151,7 +148,7 @@ class TestSweepJob:
 
         rest = sweep._to_rest_object()
         sweep: SweepJob = Job._from_rest_object(rest)
-        assert sweep.sampling_algorithm.sampling_algorithm_type == expected_rest_type
+        assert sweep.sampling_algorithm.type == expected_from_rest_type
 
     @pytest.mark.parametrize(
         "properties_dict",
@@ -187,7 +184,7 @@ class TestSweepJob:
         assert rest.properties.sampling_algorithm.rule == expected_rule
 
         sweep: SweepJob = Job._from_rest_object(rest)
-        assert sweep.sampling_algorithm.sampling_algorithm_type == "Random"
+        assert sweep.sampling_algorithm.type == "random"
         assert sweep.sampling_algorithm.seed == expected_seed
         assert sweep.sampling_algorithm.rule == expected_rule
 
@@ -247,7 +244,7 @@ class TestSweepJob:
             command="echo ${{inputs.uri}} ${{search_space.lr}} ${{search_space.lr2}}",
             distribution=MpiDistribution(),
             environment_variables={"EVN1": "VAR1"},
-            resources=ResourceConfiguration(instance_count=2, instance_type="STANDARD_BLA"),
+            resources=JobResourceConfiguration(instance_count=2, instance_type="STANDARD_BLA"),
             code="./",
         )
 
@@ -280,3 +277,46 @@ class TestSweepJob:
         )
 
         assert expected_job._to_dict() == sweep_node._to_job()._to_dict()
+
+    @pytest.mark.parametrize(
+        "distribution",
+        [
+            None,
+            MpiDistribution(process_count_per_instance=2),
+            PyTorchDistribution(process_count_per_instance=4),
+            TensorFlowDistribution(parameter_server_count=2, worker_count=10),
+        ],
+    )
+    def test_sweep_job_trial_distribution_to_rest(self, distribution) -> None:
+        command_job = CommandJob(
+            code="./src",
+            command="python train.py --ss {search_space.ss}",
+            distribution=distribution,
+            inputs={"input1": Input(path="trial.csv")},
+            outputs={"default": Output(path="./foo")},
+            compute="trial",
+            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            limits=CommandJobLimits(timeout=120),
+        )
+
+        sweep = SweepJob(
+            sampling_algorithm="random",
+            trial=command_job,
+            search_space={"ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])},
+            inputs={"input1": {"path": "top_level.csv", "type": "uri_file", "mode": "ro_mount"}},
+            compute="top_level",
+            limits=SweepJobLimits(trial_timeout=600),
+            identity=UserIdentity(),
+        )
+
+        rest_obj = sweep._to_rest_object()
+        rest_obj.properties.trial.distribution == distribution._to_rest_object() if distribution else None
+
+        # validate from rest scenario
+        sweep_job: SweepJob = Job._from_rest_object(rest_obj)
+        assert sweep_job.trial.distribution == sweep.trial.distribution
+        assert sweep_job.compute == sweep.compute
+        assert sweep_job.limits == sweep.limits
+        assert sweep_job.inputs == sweep.inputs
+        assert sweep_job.outputs == sweep.outputs
+        assert sweep_job.identity == sweep.identity
