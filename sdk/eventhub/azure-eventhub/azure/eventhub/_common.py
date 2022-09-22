@@ -247,9 +247,9 @@ class EventData(object):
 
     @property
     def message(self) -> LegacyMessage:
-        """
-        DEPRECATED: Get the underlying LegacyMessage.
+        """DEPRECATED: Get the underlying LegacyMessage.
          This is deprecated and will be removed in a later release.
+
         :rtype: LegacyMessage
         """
         warnings.warn("The `message` property is deprecated and will be removed in future versions.", DeprecationWarning)
@@ -262,8 +262,7 @@ class EventData(object):
 
     @message.setter
     def message(self, value: "uamqp_Message") -> None:
-        """
-        DEPRECATED: Set the underlying Message.
+        """DEPRECATED: Set the underlying Message.
          This is deprecated and will be removed in a later release.
         """
         warnings.warn("The `message` property is deprecated and will be removed in future versions.", DeprecationWarning)
@@ -592,9 +591,9 @@ class EventDataBatch(object):
 
     @property
     def message(self) -> Union["BatchMessage", LegacyBatchMessage]:
-        """
-        DEPRECATED: Get the underlying uamqp.BatchMessage or LegacyBatchMessage.
+        """DEPRECATED: Get the underlying uamqp.BatchMessage or LegacyBatchMessage.
          This is deprecated and will be removed in a later release.
+
         :rtype: uamqp.BatchMessage or LegacyBatchMessage
         """
         warnings.warn("The `message` property is deprecated and will be removed in future versions.", DeprecationWarning)
@@ -607,8 +606,7 @@ class EventDataBatch(object):
 
     @message.setter
     def message(self, value: "BatchMessage") -> None:
-        """
-        DEPRECATED: Set the underlying BatchMessage.
+        """DEPRECATED: Set the underlying BatchMessage.
          This is deprecated and will be removed in a later release.
         """
         warnings.warn("The `message` property is deprecated and will be removed in future versions.", DeprecationWarning)

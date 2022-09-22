@@ -1,12 +1,8 @@
 # Release History
 
-## 5.8.0b1 (Unreleased)
+## 5.8.0b1 (2022-09-22)
 
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
 
 ### Other Changes
 
