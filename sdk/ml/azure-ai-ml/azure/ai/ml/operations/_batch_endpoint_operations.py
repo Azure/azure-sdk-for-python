@@ -7,9 +7,8 @@
 import json
 import os
 import re
-import time
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Union
+from typing import TYPE_CHECKING, Dict, List
 
 from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
 from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
@@ -20,7 +19,7 @@ from azure.ai.ml._scope_dependent_operations import OperationsContainer, Operati
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._arm_id_utils import get_datastore_arm_id, is_ARM_id_for_resource, remove_datastore_prefix
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import polling_wait, validate_response
+from azure.ai.ml._utils._endpoint_utils import validate_response
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client
@@ -43,6 +42,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from ._operation_orchestrator import OperationOrchestrator
 
@@ -85,6 +85,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
     def _datastore_operations(self) -> "DatastoreOperations":
         return self._all_operations.all_operations[AzureMLResourceType.DATASTORE]
 
+    @distributed_trace
     @monitor_with_activity(logger, "BatchEndpoint.List", ActivityType.PUBLICAPI)
     def list(self) -> ItemPaged[BatchEndpoint]:
         """List endpoints of the workspace.
@@ -99,6 +100,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             **self._init_kwargs,
         )
 
+    @distributed_trace
     @monitor_with_activity(logger, "BatchEndpoint.Get", ActivityType.PUBLICAPI)
     def get(
         self,
@@ -121,22 +123,21 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         endpoint_data = BatchEndpoint._from_rest_object(endpoint)
         return endpoint_data
 
+    @distributed_trace
     @monitor_with_activity(logger, "BatchEndpoint.BeginDelete", ActivityType.PUBLICAPI)
-    def begin_delete(self, name: str = None, **kwargs: Any) -> Union[None, LROPoller]:
+    def begin_delete(self, name: str) -> LROPoller[None]:
         """Delete a batch Endpoint.
 
         :param name: Name of the batch endpoint.
         :type name: str
         :return: A poller to track the operation status.
-        :rtype: Optional[LROPoller]
+        :rtype: ~azure.core.polling.LROPoller[None]
         """
-        start_time = time.time()
         path_format_arguments = {
             "endpointName": name,
             "resourceGroupName": self._resource_group_name,
             "workspaceName": self._workspace_name,
         }
-        no_wait = kwargs.get("no_wait", False)
 
         delete_poller = self._batch_operation.begin_delete(
             resource_group_name=self._resource_group_name,
@@ -146,31 +147,23 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 LROConfigurations.POLL_INTERVAL,
                 path_format_arguments=path_format_arguments,
                 **self._init_kwargs,
-            )
-            if not no_wait
-            else False,
+            ),
             polling_interval=LROConfigurations.POLL_INTERVAL,
             **self._init_kwargs,
         )
-        if no_wait:
-            module_logger.info(
-                "Delete request initiated. Status can be checked using `az ml batch-endpoint show %s`\n", name
-            )
-            return delete_poller
-        message = f"Deleting batch endpoint {name} "
-        polling_wait(poller=delete_poller, start_time=start_time, message=message)
+        return delete_poller
 
+    @distributed_trace
     @monitor_with_activity(logger, "BatchEndpoint.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
-    def begin_create_or_update(self, endpoint: BatchEndpoint, **kwargs: Any) -> Union[BatchEndpoint, LROPoller]:
+    def begin_create_or_update(self, endpoint: BatchEndpoint) -> LROPoller[BatchEndpoint]:
         """Create or update a batch endpoint.
 
         :param endpoint: The endpoint entity.
-        :type endpoint: Endpoint
+        :type endpoint: ~azure.ai.ml.entities.BatchEndpoint
         :return: A poller to track the operation status.
-        :rtype: LROPoller
+        :rtype:  ~azure.core.polling.LROPoller[~azure.ai.ml.entities.BatchEndpoint]
         """
 
-        no_wait = kwargs.get("no_wait", False)
         try:
             location = self._get_workspace_location()
 
@@ -180,26 +173,20 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 workspace_name=self._workspace_name,
                 endpoint_name=endpoint.name,
                 body=endpoint_resource,
-                polling=not no_wait,
+                polling=True,
                 **self._init_kwargs,
             )
-            if no_wait:
-                module_logger.info(
-                    "Batch endpoint create/update request initiated. "
-                    "Status can be checked using"
-                    "`az ml batch-endpoint show -n %s`\n",
-                    endpoint.name,
-                )
-                return poller
-            return BatchEndpoint._from_rest_object(poller.result())
+            return poller
 
         except Exception as ex:
             raise ex
 
+    @distributed_trace
     @monitor_with_activity(logger, "BatchEndpoint.Invoke", ActivityType.PUBLICAPI)
     def invoke(
         self,
         endpoint_name: str,
+        *,
         deployment_name: str = None,
         input: Input = None,  # pylint: disable=redefined-builtin
         params_override=None,
@@ -282,15 +269,16 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         batch_job = json.loads(response.text())
         return BatchJobResource.deserialize(batch_job)
 
+    @distributed_trace
     @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
-    def list_jobs(self, endpoint_name: str) -> list:
+    def list_jobs(self, endpoint_name: str) -> List[BatchJobResource]:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.
 
         :param endpoint_name: The endpoint name
         :type endpoint_name: str
         :return: List of jobs
-        :rtype: list
+        :rtype: list[BatchJobResource]
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
