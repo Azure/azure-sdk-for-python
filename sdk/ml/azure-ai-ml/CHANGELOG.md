@@ -35,7 +35,7 @@
  - Change error returned by (begin_)create_or_update invalid input to TypeError.
  - Rename set_image_model APIs for all vision tasks to set_training_parameters
  - JobOperations.download defaults to "." instead of Path.cwd()
- - JobOperations.cancel() is renamed to JobOperations.begin_cancel() and it returns LROPoller[None]
+ - JobOperations.cancel() is renamed to JobOperations.begin_cancel() and it returns LROPoller
 
 ### Bugs Fixed
 
