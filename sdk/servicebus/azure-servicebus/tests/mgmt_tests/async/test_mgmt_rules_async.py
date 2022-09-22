@@ -28,9 +28,9 @@ _logger = get_logger(logging.DEBUG)
 class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_rule_create(self, service_bus_connection_str, **kwargs):
+    async def test_async_mgmt_rule_create(self, servicebus_connection_str, **kwargs):
         set_bodiless_matcher()
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
         subscription_name = "sub_testkkk"
@@ -101,8 +101,8 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_rule_create_duplicate(self, service_bus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
+    async def test_async_mgmt_rule_create_duplicate(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "dqkodq"
         subscription_name = 'kkaqo'
@@ -121,8 +121,8 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_rule_update_success(self, service_bus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
+    async def test_async_mgmt_rule_update_success(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
@@ -172,8 +172,8 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_rule_update_invalid(self, service_bus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
+    async def test_async_mgmt_rule_update_invalid(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
@@ -214,8 +214,8 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_rule_list_and_delete(self, service_bus_connection_str):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
+    async def test_async_mgmt_rule_list_and_delete(self, servicebus_connection_str):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
         subscription_name = "sub_testkkk"
@@ -264,8 +264,8 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_mgmt_rule_async_update_dict_success(self, service_bus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
+    async def test_mgmt_rule_async_update_dict_success(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "fjruid"
         subscription_name = "eqkovcd"
@@ -316,8 +316,8 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_mgmt_rule_async_update_dict_error(self, service_bus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
+    async def test_mgmt_rule_async_update_dict_error(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"

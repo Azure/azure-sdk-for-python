@@ -25,9 +25,9 @@ _logger = get_logger(logging.DEBUG)
 class TestServiceBusAdministrationClientRule(AzureMgmtRecordedTestCase):
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_rule_create(self, service_bus_connection_str, **kwargs):
+    def test_mgmt_rule_create(self, servicebus_connection_str, **kwargs):
         set_bodiless_matcher()
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
         subscription_name = "sub_testkkk"
@@ -117,8 +117,8 @@ class TestServiceBusAdministrationClientRule(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_rule_create_duplicate(self, service_bus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
+    def test_mgmt_rule_create_duplicate(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = "dqkodq"
         subscription_name = 'kkaqo'
@@ -137,8 +137,8 @@ class TestServiceBusAdministrationClientRule(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_rule_update_success(self, service_bus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
+    def test_mgmt_rule_update_success(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
@@ -188,8 +188,8 @@ class TestServiceBusAdministrationClientRule(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_rule_update_invalid(self, service_bus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
+    def test_mgmt_rule_update_invalid(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
@@ -230,8 +230,8 @@ class TestServiceBusAdministrationClientRule(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_rule_list_and_delete(self, service_bus_connection_str):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
+    def test_mgmt_rule_list_and_delete(self, servicebus_connection_str):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
         subscription_name = "sub_testkkk"
@@ -284,8 +284,8 @@ class TestServiceBusAdministrationClientRule(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_rule_update_dict_success(self, service_bus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
+    def test_mgmt_rule_update_dict_success(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = "fjruid"
         subscription_name = "eqkovcd"
@@ -336,8 +336,8 @@ class TestServiceBusAdministrationClientRule(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_rule_update_dict_error(self, service_bus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(service_bus_connection_str)
+    def test_mgmt_rule_update_dict_error(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = "fjruid"
         subscription_name = "eqkovcd"
