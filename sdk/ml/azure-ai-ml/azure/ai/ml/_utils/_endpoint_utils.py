@@ -173,9 +173,9 @@ def validate_scoring_script(deployment):
                 ast.parse(contents, score_script_path)
             except Exception as err:
                 err.filename = err.filename.split("/")[-1]
-                msg = f"Failed to submit deployment {deployment.name} due to syntax errrors in scoring script {err.filename}.\nError on line {err.lineno}: {err.text}\nIf you wish to bypass this validation use --skip-script-validation paramater."
+                msg = f"Failed to submit deployment {deployment.name} due to syntax errors in scoring script {err.filename}.\nError on line {err.lineno}: {err.text}\nIf you wish to bypass this validation use --skip-script-validation paramater."
 
-                np_msg = "Failed to submit deployment due to syntax errrors in deployment script.\n If you wish to bypass this validation use --skip-script-validation paramater."
+                np_msg = "Failed to submit deployment due to syntax errors in deployment script.\n If you wish to bypass this validation use --skip-script-validation paramater."
                 raise ValidationException(
                     message=msg,
                     target=ErrorTarget.ONLINE_DEPLOYMENT,
