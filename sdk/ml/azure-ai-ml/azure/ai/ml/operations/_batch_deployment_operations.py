@@ -8,7 +8,12 @@ import time
 from typing import Any, Dict, Union
 
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait, upload_dependencies
@@ -38,12 +43,13 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client_05_2022: ServiceClient052022,
         all_operations: OperationsContainer,
         credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
-        super(BatchDeploymentOperations, self).__init__(operation_scope)
+        super(BatchDeploymentOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._batch_deployment = service_client_05_2022.batch_deployments
         self._batch_job_deployment = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_deployment
@@ -74,6 +80,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         orchestrators = OperationOrchestrator(
             operation_container=self._all_operations,
             operation_scope=self._operation_scope,
+            operation_config=self._operation_config,
         )
         upload_dependencies(deployment, orchestrators)
 

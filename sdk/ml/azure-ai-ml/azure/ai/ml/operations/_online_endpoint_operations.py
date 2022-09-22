@@ -17,7 +17,12 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     KeyType,
     RegenerateEndpointKeysRequest,
 )
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import validate_response
@@ -55,13 +60,14 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client_02_2022_preview: ServiceClient022022Preview,
         all_operations: OperationsContainer,
         local_endpoint_helper: _LocalEndpointHelper,
         credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
-        super(OnlineEndpointOperations, self).__init__(operation_scope)
+        super(OnlineEndpointOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._online_operation = service_client_02_2022_preview.online_endpoints
         self._online_deployment_operation = service_client_02_2022_preview.online_deployments
@@ -217,6 +223,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                 orchestrators = OperationOrchestrator(
                     operation_container=self._all_operations,
                     operation_scope=self._operation_scope,
+                    operation_config=self._operation_config,
                 )
                 if hasattr(endpoint_resource.properties, "compute"):
                     endpoint_resource.properties.compute = orchestrators.get_asset_arm_id(
