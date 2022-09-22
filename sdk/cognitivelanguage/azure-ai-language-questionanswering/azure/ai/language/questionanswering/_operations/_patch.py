@@ -18,17 +18,13 @@ from ..models import AnswersOptions, AnswersResult, TextDocument, AnswersFromTex
 def _validate_text_records(records):
     if not records:
         raise ValueError("Input documents can not be empty or None")
-
     if isinstance(records, six.string_types):
         raise TypeError("Input documents cannot be a string.")
-
     if isinstance(records, dict):
         raise TypeError("Input documents cannot be a dict")
-
     if not all(isinstance(x, six.string_types) for x in records):
         if not all(isinstance(x, (dict, TextDocument)) for x in records):
             raise TypeError("Mixing string and dictionary/object document input unsupported.")
-
     request_batch = []
     for idx, doc in enumerate(records):
         if isinstance(doc, six.string_types):
@@ -81,7 +77,6 @@ def _handle_metadata_filter_conversion(options_input):
             raise ValueError("'metadata' must be a sequence of key-value tuples.")
     except TypeError:
         raise ValueError("'metadata' must be a sequence of key-value tuples.")
-
     metadata_modified = [{"key": m[0], "value": m[1]} for m in metadata_input]
     if in_class:
         filters.metadata_filter.metadata = metadata_modified

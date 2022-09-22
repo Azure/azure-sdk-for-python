@@ -1,5 +1,4 @@
 {
-  "name": "test_331416489861",
   "description": "Allows to download files from SearchGold to cosmos and get their revision information. 'FileList' input is a file with source depot paths, one per line.",
   "tags": {
     "category": "Component Tutorial",

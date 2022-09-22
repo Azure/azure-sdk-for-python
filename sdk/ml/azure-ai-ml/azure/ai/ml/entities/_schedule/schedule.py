@@ -24,7 +24,7 @@ from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
 
-from ..._ml_exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
+from ...exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
 from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 
 

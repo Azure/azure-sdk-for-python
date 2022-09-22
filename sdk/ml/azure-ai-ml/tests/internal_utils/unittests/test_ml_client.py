@@ -18,6 +18,7 @@ from azure.ai.ml import (
     load_model,
     load_online_deployment,
     load_online_endpoint,
+    load_registry,
     load_workspace,
     load_workspace_connection,
 )
@@ -80,6 +81,26 @@ class TestMachineLearningClient:
         assert "fake-sub-id" == client.subscription_id
         assert "fake-rg-name" == client.resource_group_name
 
+    def test_show_progress(self) -> None:
+        client = MLClient(
+            credential=DefaultAzureCredential(), subscription_id="fake-sub-id", resource_group_name="fake-rg-name"
+        )
+
+        assert client.jobs._show_progress  # By default show_progress is True
+        assert client.data._show_progress
+        assert client.models._show_progress
+
+        client = MLClient(
+            credential=DefaultAzureCredential(),
+            subscription_id="fake-sub-id",
+            resource_group_name="fake-rg-name",
+            show_progress=False,
+        )
+
+        assert not client.jobs._show_progress
+        assert not client.data._show_progress
+        assert not client.models._show_progress
+
     @patch("azure.ai.ml._ml_client._get_base_url_from_metadata")
     def test_mfe_url_overwrite(self, mock_get_mfe_url_override, mock_credential):
         mock_url = "http://localhost:65535/mferp/managementfrontend"
@@ -94,6 +115,7 @@ class TestMachineLearningClient:
         assert ml_client.jobs._operation_2022_06_preview._client._base_url == mock_url
         assert ml_client.jobs._kwargs["enforce_https"] is False
 
+    # @patch("azure.ai.ml._ml_client.RegistryOperations", Mock())
     @patch("azure.ai.ml._ml_client.ComputeOperations", Mock())
     @patch("azure.ai.ml._ml_client.DatastoreOperations", Mock())
     @patch("azure.ai.ml._ml_client.JobOperations", Mock())
@@ -186,6 +208,7 @@ class TestMachineLearningClient:
     @patch("azure.ai.ml._ml_client.DatastoreOperations", Mock())
     @patch("azure.ai.ml._ml_client.JobOperations", Mock())
     @patch("azure.ai.ml._ml_client.WorkspaceOperations", Mock())
+    @patch("azure.ai.ml._ml_client.RegistryOperations", Mock())
     @patch("azure.ai.ml._ml_client.ModelOperations", Mock())
     @patch("azure.ai.ml._ml_client.DataOperations", Mock())
     @patch("azure.ai.ml._ml_client.CodeOperations", Mock())
@@ -200,6 +223,13 @@ class TestMachineLearningClient:
         [
             ([load_compute("tests/test_configs/compute/compute-ci.yaml")], {}, "compute", 1, "begin_create_or_update"),
             ([load_workspace("tests/test_configs/workspace/workspace_full.yaml")], {}, "workspaces", 1, "begin_create"),
+            (
+                [load_registry("tests/test_configs/registry/registry_valid.yaml")],
+                {},
+                "registries",
+                1,
+                "begin_create_or_update",
+            ),
             (
                 [load_online_endpoint("tests/test_configs/endpoints/online/online_endpoint_create_k8s.yml")],
                 {},

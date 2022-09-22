@@ -19311,13 +19311,13 @@ class Registry(TrackedResource):
     :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     :ivar identity: Managed service identity (system assigned and/or user assigned identities).
     :vartype identity: ~azure.mgmt.machinelearningservices.models.ManagedServiceIdentity
     :ivar kind: Metadata used by portal/tooling/etc to render different UX experiences for
      resources of the same type.
     :vartype kind: str
-    :ivar location: Required. The geo-location where the resource lives.
-    :vartype location: str
     :ivar properties: Required. [Required] Additional attributes of the entity.
     :vartype properties: ~azure.mgmt.machinelearningservices.models.RegistryProperties
     :ivar sku: Sku details required for ARM contract for Autoscaling.
@@ -19339,9 +19339,9 @@ class Registry(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'RegistryProperties'},
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
@@ -19360,22 +19360,21 @@ class Registry(TrackedResource):
         """
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
         :keyword identity: Managed service identity (system assigned and/or user assigned identities).
         :paramtype identity: ~azure.mgmt.machinelearningservices.models.ManagedServiceIdentity
         :keyword kind: Metadata used by portal/tooling/etc to render different UX experiences for
          resources of the same type.
         :paramtype kind: str
-        :keyword location: Required. The geo-location where the resource lives.
-        :paramtype location: str
         :keyword properties: Required. [Required] Additional attributes of the entity.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.RegistryProperties
         :keyword sku: Sku details required for ARM contract for Autoscaling.
         :paramtype sku: ~azure.mgmt.machinelearningservices.models.Sku
         """
-        super(Registry, self).__init__(tags=tags, **kwargs)
+        super(Registry, self).__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.kind = kind
-        self.location = location
         self.properties = properties
         self.sku = sku
 

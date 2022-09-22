@@ -5,16 +5,13 @@
 # pylint: disable=unused-argument,no-self-use
 
 from marshmallow import fields
-from marshmallow.decorators import post_load, pre_dump
+from marshmallow.decorators import post_load
 
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
-from azure.ai.ml.entities._workspace.identity import (
-    ManagedServiceIdentity,
-    ManagedServiceIdentityType,
-    UserAssignedIdentity,
-)
+from azure.ai.ml.constants._workspace import ManagedServiceIdentityType
+from azure.ai.ml.entities._workspace.identity import ManagedServiceIdentity, UserAssignedIdentity
 
 
 class UserAssignedIdentitySchema(metaclass=PatchedSchemaMeta):

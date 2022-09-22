@@ -46,3 +46,36 @@ class AutoMLTransformerParameterKeys(Enum):
     IMPUTER = "Imputer"
     TF_IDF = "TfIdf"
     HASH_ONE_HOT_ENCODER = "HashOneHotEncoder"
+
+
+class ImageClassificationModelNames(Enum):
+    MOBILENETV2 = "mobilenetv2"
+    RESNET18 = "resnet18"
+    RESNET34 = "resnet34"
+    RESNET50 = "resnet50"
+    RESNET101 = "resnet101"
+    RESNET152 = "resnet152"
+    RESNEST50 = "resnest50"
+    RESNEST101 = "resnest101"
+    SERESNEXT = "seresnext"
+    VITS16R224 = "vits16r224"
+    VITB16R224 = "vitb16r224"
+    VITL16R224 = "vitl16r224"
+
+
+class ImageObjectDetectionModelNames(Enum):
+    YOLOV5 = "yolov5"
+    FASTERRCNN_RESNET18_FPN = "fasterrcnn_resnet18_fpn"
+    FASTERRCNN_RESNET34_FPN = "fasterrcnn_resnet34_fpn"
+    FASTERRCNN_RESNET50_FPN = "fasterrcnn_resnet50_fpn"
+    FASTERRCNN_RESNET101_FPN = "fasterrcnn_resnet101_fpn"
+    FASTERRCNN_RESNET152_FPN = "fasterrcnn_resnet152_fpn"
+    RETINANET_RESNET50_FPN = "retinanet_resnet50_fpn"
+
+
+class ImageInstanceSegmentationModelNames(Enum):
+    MASKRCNN_RESNET18_FPN = "maskrcnn_resnet18_fpn"
+    MASKRCNN_RESNET34_FPN = "maskrcnn_resnet34_fpn"
+    MASKRCNN_RESNET50_FPN = "maskrcnn_resnet50_fpn"
+    MASKRCNN_RESNET101_FPN = "maskrcnn_resnet101_fpn"
+    MASKRCNN_RESNET152_FPN = "maskrcnn_resnet152_fpn"

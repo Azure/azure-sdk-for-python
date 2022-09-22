@@ -2,20 +2,21 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-from typing import Any, Iterable, Union
+from typing import Any, Iterable
 
 from azure.ai.ml._restclient.v2022_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062022Preview
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
-from azure.ai.ml._telemetry import (
-    AML_INTERNAL_LOGGER_NAMESPACE,
-    ActivityType,
-    monitor_with_activity,
-    monitor_with_telemetry_mixin,
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
 )
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Job, JobSchedule
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import AzureMLResourceType, LROConfigurations
@@ -39,12 +40,13 @@ class ScheduleOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client_06_2022_preview: ServiceClient062022Preview,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
     ):
-        super(ScheduleOperations, self).__init__(operation_scope)
+        super(ScheduleOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self.service_client_06_2022_preview = service_client_06_2022_preview.schedules
         self._all_operations = all_operations
@@ -58,7 +60,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         self._api_base_url = None
         self._container = "azureml"
         self._credential = credential
-        self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope)
+        self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
 
         self._kwargs = kwargs
 
@@ -66,6 +68,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def _job_operations(self) -> JobOperations:
         return self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations))
 
+    @distributed_trace
     @monitor_with_activity(logger, "Schedule.List", ActivityType.PUBLICAPI)
     def list(self) -> Iterable[JobSchedule]:
         """List schedules in specified workspace.
@@ -103,19 +106,16 @@ class ScheduleOperations(_ScopeDependentOperations):
             path_format_arguments=path_format_arguments,
         )
 
+    @distributed_trace
     @monitor_with_activity(logger, "Schedule.Delete", ActivityType.PUBLICAPI)
     def begin_delete(
         self,
         name,
-        *,
-        no_wait=False,
-    ) -> None:
+    ) -> LROPoller[None]:
         """Delete schedule.
 
         :param name: Schedule name.
         :type name: str
-        :param no_wait: Wait for operation completion or not, default to False.
-        :type no_wait: bool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         poller = self.service_client_06_2022_preview.begin_delete(
@@ -125,11 +125,9 @@ class ScheduleOperations(_ScopeDependentOperations):
             polling=self._get_polling(name),
             **self._kwargs,
         )
-        if no_wait:
-            module_logger.info("Schedule %r delete request initiated.\n", name)
-            return
-        poller.result()
+        return poller
 
+    @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Schedule.Get", ActivityType.PUBLICAPI)
     def get(
         self,
@@ -151,19 +149,16 @@ class ScheduleOperations(_ScopeDependentOperations):
             **self._kwargs,
         )
 
+    @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Schedule.CreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
         schedule,
-        *,
-        no_wait=False,
-    ) -> Union[LROPoller, JobSchedule]:
+    ) -> LROPoller[JobSchedule]:
         """Create or update schedule.
 
         :param schedule: Schedule definition.
         :type schedule: JobSchedule
-        :param no_wait: Wait for operation completion or not, default to False.
-        :type no_wait: bool
         :return: An instance of LROPoller that returns JobSchedule if no_wait=True, or JobSchedule if no_wait=False
         :rtype: Union[LROPoller, JobSchedule]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -184,53 +179,38 @@ class ScheduleOperations(_ScopeDependentOperations):
             polling=self._get_polling(schedule.name),
             **self._kwargs,
         )
-        if no_wait:
-            module_logger.info(
-                "Schedule create/update request initiated. "
-                "Status can be checked using `az ml schedule show -n %s`\n",
-                schedule.name,
-            )
-            return poller
-        return poller.result()
+        return poller
 
+    @distributed_trace
     @monitor_with_activity(logger, "Schedule.Enable", ActivityType.PUBLICAPI)
     def begin_enable(
         self,
         name,
-        *,
-        no_wait=False,
-    ) -> Union[LROPoller, JobSchedule]:
+    ) -> LROPoller[JobSchedule]:
         """Enable a schedule.
 
         :param name: Schedule name.
         :type name: str
-        :return: An instance of LROPoller that returns JobSchedule if no_wait=True, or JobSchedule if no_wait=False
-        :param no_wait: Wait for operation completion or not, default to False.
-        :type no_wait: bool
-        :rtype: Union[LROPoller, JobSchedule]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An instance of LROPoller that returns JobSchedule
+        :rtype: LROPoller
         """
         schedule = self.get(name=name)
         schedule._is_enabled = True
-        return self.begin_create_or_update(schedule, no_wait=no_wait)
+        return self.begin_create_or_update(schedule)
 
+    @distributed_trace
     @monitor_with_activity(logger, "Schedule.Disable", ActivityType.PUBLICAPI)
     def begin_disable(
         self,
         name,
-        *,
-        no_wait=False,
-    ) -> Union[LROPoller, JobSchedule]:
+    ) -> LROPoller[JobSchedule]:
         """Disable a schedule.
 
         :param name: Schedule name.
         :type name: str
-        :param no_wait: Wait for operation completion or not, default to False.
-        :type no_wait: bool
         :return: An instance of LROPoller that returns JobSchedule if no_wait=True, or JobSchedule if no_wait=False
-        :rtype:  Union[LROPoller, JobSchedule]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype:  LROPoller
         """
         schedule = self.get(name=name)
         schedule._is_enabled = False
-        return self.begin_create_or_update(schedule, no_wait=no_wait)
+        return self.begin_create_or_update(schedule)

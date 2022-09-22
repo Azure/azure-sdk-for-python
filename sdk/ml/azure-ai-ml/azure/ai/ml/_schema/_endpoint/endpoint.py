@@ -36,5 +36,5 @@ class EndpointSchema(PathAwareSchema):
     )
     scoring_uri = fields.Str(metadata={"description": "The endpoint uri that can be used for scoring"})
     location = fields.Str()
-    swagger_uri = fields.Str(metadata={"description": "Endpoint Swagger URI."})
+    openapi_uri = fields.Str(metadata={"description": "Endpoint Open API URI."})
     identity = NestedField(IdentitySchema)

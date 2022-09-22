@@ -27,7 +27,6 @@ import isodate
 import pydash
 import yaml
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType, ManagedServiceIdentity
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -36,6 +35,7 @@ from azure.ai.ml.constants._common import (
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
 )
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.core.pipeline.policies import RetryPolicy
 
 module_logger = logging.getLogger(__name__)
@@ -105,8 +105,9 @@ def camel_case_transformer(key, value):
 
 
 def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retries: int = 3) -> HttpPipeline:
-    """Creates an HttpPipeline identical to the provided one, except
-       with a new override
+    """Creates an HttpPipeline that reuses the same configuration as the
+    supplied pipeline (including the transport), but overwrites the
+    retry policy
 
     Args:
         requests_pipeline (HttpPipeline): Pipeline to base new one off of.

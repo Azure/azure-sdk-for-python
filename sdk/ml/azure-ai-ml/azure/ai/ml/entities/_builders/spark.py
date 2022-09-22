@@ -11,16 +11,13 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2022_06_01_preview.models import AmlToken, IdentityConfiguration
+from azure.ai.ml._restclient.v2022_06_01_preview.models import IdentityConfiguration
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase as JobBaseData
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ManagedIdentity
 from azure.ai.ml._restclient.v2022_06_01_preview.models import SparkJob as RestSparkJob
 from azure.ai.ml._restclient.v2022_06_01_preview.models import SparkJobEntry as RestSparkJobEntry
 from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     SparkResourceConfiguration as RestSparkResourceConfiguration,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
 from azure.ai.ml._schema.job.spark_job import SparkJobSchema
@@ -36,14 +33,13 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_inputs_to_dataset_literal,
     validate_inputs_for_args,
 )
-from azure.ai.ml.entities._job.identity import Identity
+from azure.ai.ml.entities._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from azure.ai.ml.entities._job.spark_job import SparkJob
 from azure.ai.ml.entities._job.spark_resource_configuration import SparkResourceConfiguration
-from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ..._schema import NestedField, PathAwareSchema, UnionField
-from .._job.pipeline._io import PipelineInput, PipelineOutputBase
-from .._job.pipeline._pipeline_expression import PipelineExpression
+from .._job.pipeline._io import NodeOutput, PipelineInput
 from .._job.spark_helpers import (
     _validate_compute_or_resources,
     _validate_input_output_mode,
@@ -58,6 +54,9 @@ module_logger = logging.getLogger(__name__)
 
 class Spark(BaseNode, SparkJobEntryMixin):
     """Base class for spark node, used for spark component version consumption.
+
+    You should not instantiate this class directly. Instead, you should
+    create from builder function: spark.
 
     :param component: Id or instance of the spark component/job to be run for the step
     :type component: SparkComponent
@@ -123,7 +122,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
             str,
             Union[
                 PipelineInput,
-                PipelineOutputBase,
+                NodeOutput,
                 Input,
                 str,
                 bool,
@@ -198,26 +197,10 @@ class Spark(BaseNode, SparkJobEntryMixin):
         self.args = component.args if is_spark_component else args
         self.environment = component.environment if is_spark_component else None
 
-        self.identity = identity
         self.resources = resources
+        self.identity = identity
         self._swept = False
         self._init = False
-
-    @classmethod
-    def _get_supported_inputs_types(cls):
-        # when spark node is constructed inside dsl.pipeline, inputs can be PipelineInput or Output of another node
-        return (
-            PipelineInput,
-            PipelineOutputBase,
-            Input,
-            SweepDistribution,
-            str,
-            bool,
-            int,
-            float,
-            Enum,
-            PipelineExpression,
-        )
 
     @classmethod
     def _get_supported_outputs_types(cls):
@@ -244,7 +227,14 @@ class Spark(BaseNode, SparkJobEntryMixin):
         self,
     ) -> Optional[Union[ManagedIdentity, AmlToken, UserIdentity]]:
         """Identity that spark job will use while running on compute."""
-
+        # If there is no identity from CLI/SDK input: for jobs running on synapse compute (MLCompute Clusters), the
+        # managed identity is the default; for jobs running on clusterless, the user identity should be the default,
+        # otherwise use user input identity.
+        if self._identity is None:
+            if self.compute is not None:
+                return ManagedIdentity()
+            elif self.resources is not None:
+                return UserIdentity()
         return self._identity
 
     @identity.setter

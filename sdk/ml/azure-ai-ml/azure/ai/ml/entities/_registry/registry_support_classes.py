@@ -4,6 +4,9 @@
 
 from typing import List, Union
 
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AcrDetails as RestAcrDetails
+from azure.ai.ml._restclient.v2022_10_01_preview.models import RegistryRegionArmDetails as RestRegistryRegionArmDetails
+from azure.ai.ml._restclient.v2022_10_01_preview.models import StorageAccountDetails as RestStorageAccountDetails
 from azure.ai.ml.constants._registry import StorageAccountType
 
 
@@ -80,3 +83,50 @@ class RegistryRegionArmDetails:
         self.acr_config = acr_config
         self.location = location
         self.storage_config = storage_config
+
+    @classmethod
+    def _from_rest_object(cls, rest_obj: RestRegistryRegionArmDetails) -> "RegistryRegionArmDetails":
+        if not rest_obj:
+            return None
+        converted_acr_details = []
+        if rest_obj.acr_details:
+            converted_acr_details = [convert_rest_acr(acr) for acr in rest_obj.acr_details]
+        storages = []
+        if rest_obj.storage_account_details:
+            storages = [convert_rest_storage(storages) for storages in rest_obj.storage_account_details]
+        return RegistryRegionArmDetails(
+            acr_config=converted_acr_details, location=rest_obj.location, storage_config=storages
+        )
+
+
+def convert_rest_acr(rest_obj: RestAcrDetails) -> "Union[str, SystemCreatedAcrAccount]":
+    if not rest_obj:
+        return None
+    # TODO should we even bother check if both values are set and throw an error? This shouldn't be possible.
+    if rest_obj.system_created_acr_account:
+        return SystemCreatedAcrAccount(
+            acr_account_sku=rest_obj.system_created_acr_account.acr_account_sku,
+            arm_resource_id=rest_obj.system_created_acr_account.arm_resource_id,
+        )
+    elif rest_obj.user_created_acr_account:
+        return rest_obj.user_created_acr_account
+    else:
+        return None  # TODO should this throw an error instead?
+
+
+def convert_rest_storage(rest_obj: RestStorageAccountDetails) -> "Union[str, SystemCreatedStorageAccount]":
+    if not rest_obj:
+        return None
+    # TODO should we even bother check if both values are set and throw an error? This shouldn't be possible.
+    if rest_obj.system_created_storage_account:
+        return SystemCreatedStorageAccount(
+            storage_account_hns=rest_obj.system_created_storage_account.storage_account_hns_enabled,
+            storage_account_type=StorageAccountType(
+                rest_obj.system_created_storage_account.storage_account_type.lower()
+            ),  # TODO validate storage account type?
+            arm_resource_id=rest_obj.system_created_storage_account.arm_resource_id,
+        )
+    elif rest_obj.user_created_storage_account:
+        return rest_obj.user_created_storage_account
+    else:
+        return None  # TODO should this throw an error instead?

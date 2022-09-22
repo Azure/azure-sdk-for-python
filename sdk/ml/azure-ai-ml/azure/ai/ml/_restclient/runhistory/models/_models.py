@@ -10,6 +10,29 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
+class AddOrModifyRunServiceInstancesRequest(msrest.serialization.Model):
+    """AddOrModifyRunServiceInstancesRequest.
+
+    :ivar instances: Dictionary of :code:`<ServiceInstance>`.
+    :vartype instances: dict[str, ~azure.mgmt.machinelearningservices.models.ServiceInstance]
+    """
+
+    _attribute_map = {
+        'instances': {'key': 'instances', 'type': '{ServiceInstance}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword instances: Dictionary of :code:`<ServiceInstance>`.
+        :paramtype instances: dict[str, ~azure.mgmt.machinelearningservices.models.ServiceInstance]
+        """
+        super(AddOrModifyRunServiceInstancesRequest, self).__init__(**kwargs)
+        self.instances = kwargs.get('instances', None)
+
+
 class Artifact(msrest.serialization.Model):
     """Details of an Artifact.
 
@@ -3760,6 +3783,30 @@ class RunOptions(msrest.serialization.Model):
         self.generate_data_container_id_if_not_specified = kwargs.get('generate_data_container_id_if_not_specified', None)
 
 
+class RunServiceInstances(msrest.serialization.Model):
+    """RunServiceInstances.
+
+    :ivar instances: Dictionary of :code:`<ServiceInstanceResult>`.
+    :vartype instances: dict[str, ~azure.mgmt.machinelearningservices.models.ServiceInstanceResult]
+    """
+
+    _attribute_map = {
+        'instances': {'key': 'instances', 'type': '{ServiceInstanceResult}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword instances: Dictionary of :code:`<ServiceInstanceResult>`.
+        :paramtype instances: dict[str,
+         ~azure.mgmt.machinelearningservices.models.ServiceInstanceResult]
+        """
+        super(RunServiceInstances, self).__init__(**kwargs)
+        self.instances = kwargs.get('instances', None)
+
+
 class RunStatusSpans(msrest.serialization.Model):
     """RunStatusSpans.
 
@@ -3826,6 +3873,112 @@ class RunTypeV2(msrest.serialization.Model):
         self.traits = kwargs.get('traits', None)
         self.attribution = kwargs.get('attribution', None)
         self.compute_type = kwargs.get('compute_type', None)
+
+
+class ServiceInstance(msrest.serialization.Model):
+    """ServiceInstance.
+
+    :ivar is_single_node:
+    :vartype is_single_node: bool
+    :ivar error_message:
+    :vartype error_message: str
+    :ivar port:
+    :vartype port: int
+    :ivar status:
+    :vartype status: str
+    :ivar error: The error response.
+    :vartype error: ~azure.mgmt.machinelearningservices.models.ErrorResponse
+    :ivar properties: Dictionary of :code:`<string>`.
+    :vartype properties: dict[str, str]
+    """
+
+    _attribute_map = {
+        'is_single_node': {'key': 'isSingleNode', 'type': 'bool'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        'port': {'key': 'port', 'type': 'int'},
+        'status': {'key': 'status', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword is_single_node:
+        :paramtype is_single_node: bool
+        :keyword error_message:
+        :paramtype error_message: str
+        :keyword port:
+        :paramtype port: int
+        :keyword status:
+        :paramtype status: str
+        :keyword error: The error response.
+        :paramtype error: ~azure.mgmt.machinelearningservices.models.ErrorResponse
+        :keyword properties: Dictionary of :code:`<string>`.
+        :paramtype properties: dict[str, str]
+        """
+        super(ServiceInstance, self).__init__(**kwargs)
+        self.is_single_node = kwargs.get('is_single_node', None)
+        self.error_message = kwargs.get('error_message', None)
+        self.port = kwargs.get('port', None)
+        self.status = kwargs.get('status', None)
+        self.error = kwargs.get('error', None)
+        self.properties = kwargs.get('properties', None)
+
+
+class ServiceInstanceResult(msrest.serialization.Model):
+    """ServiceInstanceResult.
+
+    :ivar type:
+    :vartype type: str
+    :ivar port:
+    :vartype port: int
+    :ivar status:
+    :vartype status: str
+    :ivar error: The error response.
+    :vartype error: ~azure.mgmt.machinelearningservices.models.ErrorResponse
+    :ivar endpoint:
+    :vartype endpoint: str
+    :ivar properties: Dictionary of :code:`<string>`.
+    :vartype properties: dict[str, str]
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'port': {'key': 'port', 'type': 'int'},
+        'status': {'key': 'status', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
+        'endpoint': {'key': 'endpoint', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword type:
+        :paramtype type: str
+        :keyword port:
+        :paramtype port: int
+        :keyword status:
+        :paramtype status: str
+        :keyword error: The error response.
+        :paramtype error: ~azure.mgmt.machinelearningservices.models.ErrorResponse
+        :keyword endpoint:
+        :paramtype endpoint: str
+        :keyword properties: Dictionary of :code:`<string>`.
+        :paramtype properties: dict[str, str]
+        """
+        super(ServiceInstanceResult, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.port = kwargs.get('port', None)
+        self.status = kwargs.get('status', None)
+        self.error = kwargs.get('error', None)
+        self.endpoint = kwargs.get('endpoint', None)
+        self.properties = kwargs.get('properties', None)
 
 
 class SpanContext(msrest.serialization.Model):
