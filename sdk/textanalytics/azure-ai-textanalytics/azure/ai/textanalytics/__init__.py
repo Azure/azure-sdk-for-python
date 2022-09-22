@@ -59,7 +59,7 @@ from ._models import (
     TextAnalysisKind,
     DynamicClassificationResult
 )
-from ._generated import ClassificationType
+from ._generated.models import ClassificationType
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller, TextAnalysisLROPoller
 
 __all__ = [
