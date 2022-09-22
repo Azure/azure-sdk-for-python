@@ -8,10 +8,16 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, List, Union
 
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ManagedServiceIdentityType as RestManagedServiceIdentityType,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import Registry as RestRegistry
+from azure.ai.ml._restclient.v2022_10_01_preview.models import RegistryProperties
 from azure.ai.ml._schema.registry.registry import RegistrySchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.entities._registry.identity import ManagedServiceIdentity
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 
@@ -28,6 +34,7 @@ class Registry(Resource):
         *,
         name: str,
         location: str,
+        identity: ManagedServiceIdentity = None,
         description: str = None,
         tags: Dict[str, str] = None,
         public_network_access: str = None,
@@ -38,7 +45,6 @@ class Registry(Resource):
         region_details: List[RegistryRegionArmDetails],
         **kwargs,
     ):
-
         """Azure ML registry.
 
         :param name: Name of the registry. Must be globally unique and is immutable.
@@ -65,6 +71,7 @@ class Registry(Resource):
 
         # self.display_name = name # Do we need a top-level visible name value?
         self.location = location
+        self.identity = identity
         self.region_details = region_details
         self.public_network_access = public_network_access
         self.intellectual_property_publisher = intellectual_property_publisher
@@ -116,9 +123,13 @@ class Registry(Resource):
             region_details = [
                 RegistryRegionArmDetails._from_rest_object(details) for details in real_registry.region_details
             ]
+        identity = None
+        if rest_obj.identity and isinstance(rest_obj.identity, RestManagedServiceIdentity):
+            identity = ManagedServiceIdentity._from_rest_object(rest_obj.identity)
         return Registry(
             name=rest_obj.name,
             description=real_registry.description,
+            identity=identity,
             tags=real_registry.tags,
             location=rest_obj.location,
             public_network_access=real_registry.public_network_access,
@@ -148,3 +159,28 @@ class Registry(Resource):
             if global_acr_exists:
                 if not hasattr(region_detail, "acr_details") or len(region_detail.acr_details) == 0:
                     region_detail.acr_config = [acr_input]
+
+    def _to_rest_object(self) -> RestRegistry:
+        """Build current parameterized schedule instance to a registry object before submission.
+
+        :return: Rest registry.
+        """
+        identity = RestManagedServiceIdentity(type=RestManagedServiceIdentityType.SYSTEM_ASSIGNED)
+        region_details = []
+        if self.region_details:
+            region_details = [details._to_rest_object() for details in self.region_details]
+        return RestRegistry(
+            name=self.name,
+            location=self.location,
+            identity=identity,
+            properties=RegistryProperties(
+                description=self.description,
+                tags=self.tags,
+                public_network_access=self.public_network_access,
+                discovery_url=self.discovery_url,
+                intellectual_property_publisher=self.intellectual_property_publisher,
+                managed_resource_group=self.managed_resource_group,
+                ml_flow_registry_uri=self.mlflow_registry_uri,
+                region_details=region_details,
+            ),
+        )

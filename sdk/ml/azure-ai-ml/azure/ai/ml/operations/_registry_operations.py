@@ -7,14 +7,17 @@
 from typing import Dict, Iterable
 
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Registry as RestRegistry
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Registry
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
+from azure.mgmt.msi._managed_service_identity_client import ManagedServiceIdentityClient
+
+from .._utils._azureml_polling import AzureMLPolling
+from ..constants._common import LROConfigurations
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.logger, ops_logger.module_logger
@@ -86,11 +89,39 @@ class RegistryOperations:
             )
         return registry_name
 
+    def _get_polling(self, name):
+        """Return the polling with custom poll interval."""
+        path_format_arguments = {
+            "registryName": name,
+            "resourceGroupName": self._resource_group_name,
+        }
+        return AzureMLPolling(
+            LROConfigurations.POLL_INTERVAL,
+            path_format_arguments=path_format_arguments,
+        )
+
     @monitor_with_activity(logger, "Registry.BeginCreate", ActivityType.PUBLICAPI)
-    def begin_create_or_update(
+    def begin_create(
         self,
         registry: Registry,
-        update_dependent_resources: bool = False,
         **kwargs: Dict,
-    ) -> LROPoller[RestRegistry]:
-        raise NotImplementedError("Placeholder until implemented in subsequent task.")
+    ) -> LROPoller["_models.Registry"]:
+        """Create a new Azure Machine Learning Registry.
+
+        Returns the registry if already exists.
+
+        :param registry: Registry definition.
+        :type registry: Registry
+        :type update_dependent_resources: boolean
+        :return: A poller to track the operation status.
+        :rtype: LROPoller
+        """
+        registry_data = registry._to_rest_object()
+        poller = self._operation.begin_create_or_update(
+            resource_group_name=self._resource_group_name,  # type: str
+            registry_name=registry.name,  # type: str
+            body=registry_data,  # type: "_models.Registry"
+            polling=self._get_polling(registry.name),
+        )
+
+        return poller

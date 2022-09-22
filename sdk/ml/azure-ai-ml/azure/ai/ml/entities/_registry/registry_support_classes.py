@@ -5,8 +5,19 @@
 from typing import List, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AcrDetails as RestAcrDetails
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ArmResourceId as RestArmResourceId
 from azure.ai.ml._restclient.v2022_10_01_preview.models import RegistryRegionArmDetails as RestRegistryRegionArmDetails
+from azure.ai.ml._restclient.v2022_10_01_preview.models import SkuTier
 from azure.ai.ml._restclient.v2022_10_01_preview.models import StorageAccountDetails as RestStorageAccountDetails
+from azure.ai.ml._restclient.v2022_10_01_preview.models import StorageAccountType as RestStorageAccountType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import SystemCreatedAcrAccount as RestSystemCreatedAcrAccount
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    SystemCreatedStorageAccount as RestSystemCreatedStorageAccount,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UserCreatedAcrAccount as RestUserCreatedAcrAccount
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    UserCreatedStorageAccount as RestUserCreatedStorageAccount,
+)
 from azure.ai.ml.constants._registry import StorageAccountType
 
 
@@ -98,6 +109,37 @@ class RegistryRegionArmDetails:
             acr_config=converted_acr_details, location=rest_obj.location, storage_config=storages
         )
 
+    def _to_rest_object(self) -> RestRegistryRegionArmDetails:
+        converted_acr_details = []
+        if self.acr_config:
+            converted_acr_details = [convert_to_rest_acr(acr) for acr in self.acr_config]
+        storages = []
+        if self.storage_config:
+            storages = [convert_to_rest_storage(storage) for storage in self.storage_config]
+        return RestRegistryRegionArmDetails(
+            acr_details=converted_acr_details,
+            location=self.location,
+            storage_account_details=storages,
+        )
+
+
+def convert_to_rest_acr(acr: Union[str, RestSystemCreatedAcrAccount]) -> RestAcrDetails:
+    # if not type(acr) is str:
+    #     return RestAcrDetails(
+    #         system_created_storage_account=RestSystemCreatedAcrAccount(
+    #             acr.acr_account_sku, RestArmResourceId(resource_id=acr.arm_resource_id)
+    #         )
+    #     )
+    # else:
+    #     return RestAcrDetails(
+    #         user_created_acr_account=RestUserCreatedAcrAccount(arm_resource_id=RestArmResourceId(resource_id=acr))
+    #     )
+    acr_account = RestAcrDetails(
+        system_created_acr_account=RestSystemCreatedAcrAccount(acr_account_sku=SkuTier.PREMIUM)
+    )
+
+    return acr_account
+
 
 def convert_rest_acr(rest_obj: RestAcrDetails) -> "Union[str, SystemCreatedAcrAccount]":
     if not rest_obj:
@@ -112,6 +154,32 @@ def convert_rest_acr(rest_obj: RestAcrDetails) -> "Union[str, SystemCreatedAcrAc
         return rest_obj.user_created_acr_account
     else:
         return None  # TODO should this throw an error instead?
+
+
+def convert_to_rest_storage(storage: Union[str, SystemCreatedStorageAccount]) -> RestStorageAccountDetails:
+    # if not type(storage) is str:
+    #     storage_account_type = StorageAccountType(
+    #         storage.storage_account_type.lower())
+    #     account = RestSystemCreatedStorageAccount(
+    #         arm_resource_id=RestArmResourceId(
+    #             resource_id=storage.arm_resource_id),
+    #         storage_account_hns_enabled=storage.storage_account_hns,
+    #         storage_account_type=storage_account_type,
+    #     )
+    #     return RestStorageAccountDetails(system_created_storage_account=account)
+    # else:
+    #     return RestStorageAccountDetails(
+    #         user_created_storage_account=RestUserCreatedStorageAccount(
+    #             arm_resource_id=RestArmResourceId(resource_id=storage)
+    #         )
+    #     )
+    storage_account = RestStorageAccountDetails(
+        system_created_storage_account=RestSystemCreatedStorageAccount(
+            storage_account_hns=False, storage_account_type=RestStorageAccountType.STANDARD_LRS
+        )
+    )
+
+    return storage_account
 
 
 def convert_rest_storage(rest_obj: RestStorageAccountDetails) -> "Union[str, SystemCreatedStorageAccount]":
