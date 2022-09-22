@@ -76,7 +76,7 @@ def compute_binding_expected(mock_workspace_scope: OperationScope) -> str:
 def expected_image_limits(run_type: str) -> RestImageLimitSettings:
     return RestImageLimitSettings(
         timeout=to_iso_duration_format_mins(60),
-        max_concurrent_trials=1,
+        max_concurrent_trials=4 if run_type == "sweep" else 1,
         max_trials=2 if run_type == "automode" else 1,
     )
 
