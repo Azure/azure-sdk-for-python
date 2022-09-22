@@ -25,6 +25,7 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         endpoint.name = name
         # endpoint.properties = properties
         obj = client.batch_endpoints.begin_create_or_update(endpoint=endpoint, no_wait=False)
+        obj = obj.result()
         assert obj is not None
         assert name == obj.name
         # assert obj.properties == properties
@@ -32,7 +33,8 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         get_obj = client.batch_endpoints.get(name=name)
         assert get_obj.name == name
 
-        client.batch_endpoints.begin_delete(name=name)
+        delete_res = client.batch_endpoints.begin_delete(name=name)
+        delete_res = delete_res.result()
         try:
             client.batch_endpoints.get(name=name)
         except Exception as e:
@@ -50,14 +52,16 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         name = "be-e2e-" + uuid.uuid4().hex[:25]
         endpoint = load_batch_endpoint(endpoint_yaml)
         endpoint.name = name
-        obj = client.batch_endpoints.begin_create_or_update(endpoint=endpoint, no_wait=False)
+        obj = client.batch_endpoints.begin_create_or_update(endpoint=endpoint)
+        obj = obj.result()
         assert obj is not None
         assert name == obj.name
 
         get_obj = client.batch_endpoints.get(name=name)
         assert get_obj.name == name
 
-        client.batch_endpoints.begin_delete(name=name)
+        delete_res = client.batch_endpoints.begin_delete(name=name)
+        delete_res = delete_res.result()
         try:
             client.batch_endpoints.get(name=name)
         except Exception as e:
