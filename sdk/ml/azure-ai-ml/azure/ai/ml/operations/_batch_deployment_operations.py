@@ -6,16 +6,17 @@
 
 import time
 from typing import Any, Dict, Union
+import re
 
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import polling_wait, upload_dependencies
+from azure.ai.ml._utils._endpoint_utils import polling_wait, upload_dependencies, validate_scoring_script
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client
-from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations
+from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX, VERSIONED_RESOURCE_ID_PATTERN
 from azure.ai.ml.entities import BatchDeployment
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
@@ -55,7 +56,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
     @monitor_with_activity(logger, "BatchDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
-    def begin_create_or_update(self, deployment: BatchDeployment, **kwargs: Any) -> Union[BatchDeployment, LROPoller]:
+    def begin_create_or_update(self, deployment: BatchDeployment, skip_script_validation: bool = False, **kwargs: Any) -> Union[BatchDeployment, LROPoller]:
         """Create or update a batch deployment.
 
         :param endpoint: The deployment entity.
@@ -64,6 +65,9 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :rtype: LROPoller
         """
 
+        
+        if not skip_script_validation and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX) and not re.match(VERSIONED_RESOURCE_ID_PATTERN, deployment.code_configuration.code):
+            validate_scoring_script(deployment)
         no_wait = kwargs.get("no_wait", False)
         module_logger.debug("Checking endpoint %s exists", deployment.endpoint_name)
         self._batch_endpoint_operations.get(
