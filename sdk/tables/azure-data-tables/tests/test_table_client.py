@@ -652,3 +652,11 @@ class TestTableUnitTests(TableTestCase):
     
     def test_use_development_storage(self):
         tsc = TableServiceClient.from_connection_string("UseDevelopmentStorage=true")
+        assert tsc.account_name == "devstoreaccount1"
+        assert tsc.scheme == "http"
+        assert tsc.credential.named_key.name == "devstoreaccount1"
+        assert tsc.credential.named_key.key == "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+        assert tsc.url == "http://127.0.0.1:10002/devstoreaccount1"
+        assert tsc._primary_endpoint == "http://127.0.0.1:10002/devstoreaccount1"
+        assert tsc._secondary_endpoint == "http://127.0.0.1:10002/devstoreaccount1-secondary"
+        assert not tsc._cosmos_endpoint
