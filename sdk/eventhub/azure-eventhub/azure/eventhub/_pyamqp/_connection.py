@@ -499,9 +499,15 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             self._incoming_endpoints.pop(channel)
             self._outgoing_endpoints.pop(channel)
         except KeyError:
-            end_error = AMQPError(condition=ErrorCondition.InvalidField, description=f"Invalid channel {channel}", info=None)
-            _LOGGER.error(f"Invalid channel {channel} ")
-            self.close(error=end_error)
+            #close the connection
+            self.close(
+                error=AMQPError(
+                    condition=ErrorCondition.ConnectionCloseForced,
+                    description="Invalid channel number received"
+                ))
+            return
+        self._incoming_endpoints.pop(channel)
+        self._outgoing_endpoints.pop(channel)
 
     def _process_incoming_frame(self, channel, frame):  # pylint:disable=too-many-return-statements
         # type: (int, Optional[Union[bytes, Tuple[int, Tuple[Any, ...]]]]) -> bool
@@ -575,7 +581,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         now = time.time()
         if get_local_timeout(now, self._idle_timeout, self._last_frame_received_time) or self._get_remote_timeout(now):
             self.close(
-                # TODO: check error condition
                 error=AMQPError(
                     condition=ErrorCondition.ConnectionCloseForced,
                     description="No frame received for the idle timeout.",
@@ -648,12 +653,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         try:
             if self.state not in _CLOSING_STATES:
                 now = time.time()
-                if get_local_timeout(
-                    now, self._idle_timeout, self._last_frame_received_time
-                ) or self._get_remote_timeout(
-                    now
-                ):  # pylint:disable=line-too-long
-                    # TODO: check error condition
+                if get_local_timeout(now, self._idle_timeout, self._last_frame_received_time) or self._get_remote_timeout(now): # pylint:disable=line-too-long
                     self.close(
                         error=AMQPError(
                             condition=ErrorCondition.ConnectionCloseForced,
@@ -663,7 +663,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                     )
                     return
             if self.state == ConnectionState.END:
-                # TODO: check error condition
                 self._error = AMQPConnectionError(
                     condition=ErrorCondition.ConnectionCloseForced, description="Connection was already closed."
                 )

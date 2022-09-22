@@ -13,7 +13,14 @@ from .endpoints import Source, Target
 from .constants import DEFAULT_LINK_CREDIT, SessionState, LinkState, Role, SenderSettleMode, ReceiverSettleMode
 from .performatives import AttachFrame, DetachFrame
 
-from .error import ErrorCondition, AMQPLinkError, AMQPLinkRedirect, AMQPConnectionError
+
+from .error import (
+    AMQPError,
+    ErrorCondition,
+    AMQPLinkError,
+    AMQPLinkRedirect,
+    AMQPConnectionError
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -159,11 +166,20 @@ class Link(object):
         if self.network_trace:
             _LOGGER.info("<- %r", AttachFrame(*frame), extra=self.network_trace_params)
         if self._is_closed:
-            raise ValueError("Invalid link")
-        if not frame[5] or not frame[6]:
+            raise AMQPLinkError(
+                condition=ErrorCondition.ClientError,
+                description="Received attach frame on a link that is already closed",
+                info=None,
+            )
+        elif not frame[5] or not frame[6]:  
             _LOGGER.info("Cannot get source or target. Detaching link")
-            self._set_state(LinkState.DETACHED)
-            raise ValueError("Invalid link")
+            self.detach(
+                error=AMQPError(
+                    condition=ErrorCondition.LinkDetachForced,
+                    description="Cannot get source or target from the frame. Detaching link",
+                    info=None,
+                )
+            )
         self.remote_handle = frame[1]  # handle
         self.remote_max_message_size = frame[10]  # max_message_size
         self.offered_capabilities = frame[11]  # offered_capabilities

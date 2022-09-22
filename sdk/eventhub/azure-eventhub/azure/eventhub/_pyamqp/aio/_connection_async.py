@@ -29,7 +29,14 @@ from ..constants import (
     TransportType,
 )
 
-from ..error import ErrorCondition, AMQPConnectionError, AMQPError
+
+from ..error import (
+    AMQPException,
+    ErrorCondition,
+    AMQPConnectionError,
+    AMQPError
+)
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -338,11 +345,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             _LOGGER.info("<- %r", OpenFrame(*frame), extra=self._network_trace_params)
         if channel != 0:
             _LOGGER.error("OPEN frame received on a channel that is not 0.")
-            await self.close(
-                error=AMQPError(
-                    condition=ErrorCondition.NotAllowed, description="OPEN frame received on a channel that is not 0."
-                )
-            )
+            await self.close(error=AMQPError(
+                condition=ErrorCondition.NotAllowed, 
+                description="OPEN frame received on a channel that is not 0"))
             await self._set_state(ConnectionState.END)
         if self.state == ConnectionState.OPENED:
             _LOGGER.error("OPEN frame received in the OPENED state.")
@@ -468,9 +473,15 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             self.incoming_endpoints.pop(channel)
             self.outgoing_endpoints.pop(channel)
         except KeyError:
-            end_error = AMQPError(condition=ErrorCondition.InvalidField, description=f"Invalid channel {channel}", info=None)
-            _LOGGER.error(f"Invalid channel {channel} ")
-            await self.close(error=end_error)
+            #close the connection
+            await self.close(
+                error=AMQPError(
+                    condition=ErrorCondition.ConnectionCloseForced,
+                    description="Invalid channel number received"
+                ))
+            return
+        self._incoming_endpoints.pop(channel)
+        self._outgoing_endpoints.pop(channel)
 
     async def _process_incoming_frame(self, channel, frame):  # pylint:disable=too-many-return-statements
         # type: (int, Optional[Union[bytes, Tuple[int, Tuple[Any, ...]]]]) -> bool
@@ -546,7 +557,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             await self._get_remote_timeout(now)
         ):
             await self.close(
-                # TODO: check error condition
                 error=AMQPError(
                     condition=ErrorCondition.ConnectionCloseForced,
                     description="No frame received for the idle timeout.",
@@ -624,9 +634,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             if self.state not in _CLOSING_STATES:
                 now = time.time()
                 if get_local_timeout(now, self._idle_timeout, self._last_frame_received_time) or (
-                    await self._get_remote_timeout(now)
-                ):
-                    # TODO: check error condition
+                await self._get_remote_timeout(now)):
                     await self.close(
                         error=AMQPError(
                             condition=ErrorCondition.ConnectionCloseForced,
@@ -636,7 +644,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                     )
                     return
             if self.state == ConnectionState.END:
-                # TODO: check error condition
                 self._error = AMQPConnectionError(
                     condition=ErrorCondition.ConnectionCloseForced, description="Connection was already closed."
                 )
