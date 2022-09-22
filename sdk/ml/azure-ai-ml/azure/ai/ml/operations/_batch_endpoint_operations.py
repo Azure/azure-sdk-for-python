@@ -16,7 +16,12 @@ from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, 
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._schema._deployment.batch.batch_job import BatchJobSchema
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._arm_id_utils import get_datastore_arm_id, is_ARM_id_for_resource, remove_datastore_prefix
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
@@ -64,13 +69,14 @@ class BatchEndpointOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client_05_2022: ServiceClient052022,
         all_operations: OperationsContainer,
         credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
 
-        super(BatchEndpointOperations, self).__init__(operation_scope)
+        super(BatchEndpointOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._batch_operation = service_client_05_2022.batch_endpoints
         self._batch_deployment_operation = service_client_05_2022.batch_deployments
@@ -383,7 +389,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                     return
                 asset_type = AzureMLResourceType.DATASTORE
                 entry.path = remove_datastore_prefix(entry.path)
-                orchestrator = OperationOrchestrator(self._all_operations, self._operation_scope)
+                orchestrator = OperationOrchestrator(
+                    self._all_operations, self._operation_scope, self._operation_config
+                )
                 entry.path = orchestrator.get_asset_arm_id(entry.path, asset_type)
             else:  # relative local path, upload, transform to remote url
                 local_path = Path(base_path, entry.path).resolve()
