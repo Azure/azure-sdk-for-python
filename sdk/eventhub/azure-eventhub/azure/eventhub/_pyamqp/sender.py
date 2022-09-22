@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 import struct
 import uuid
 import logging
@@ -10,14 +10,7 @@ import time
 
 from ._encode import encode_payload
 from .link import Link
-from .constants import (
-    SessionTransferState,
-    LinkDeliverySettleReason,
-    LinkState,
-    Role,
-    SenderSettleMode,
-    SessionState
-)
+from .constants import SessionTransferState, LinkDeliverySettleReason, LinkState, Role, SenderSettleMode, SessionState
 from .performatives import (
     TransferFrame,
 )
@@ -27,33 +20,31 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class PendingDelivery(object):
-
     def __init__(self, **kwargs):
-        self.message = kwargs.get('message')
+        self.message = kwargs.get("message")
         self.sent = False
         self.frame = None
-        self.on_delivery_settled = kwargs.get('on_delivery_settled')
+        self.on_delivery_settled = kwargs.get("on_delivery_settled")
         self.start = time.time()
         self.transfer_state = None
-        self.timeout = kwargs.get('timeout')
-        self.settled = kwargs.get('settled', False)
+        self.timeout = kwargs.get("timeout")
+        self.settled = kwargs.get("settled", False)
 
     def on_settled(self, reason, state):
         if self.on_delivery_settled and not self.settled:
             try:
                 self.on_delivery_settled(reason, state)
-            except Exception as e: # pylint:disable=broad-except
+            except Exception as e:  # pylint:disable=broad-except
                 _LOGGER.warning("Message 'on_send_complete' callback failed: %r", e)
         self.settled = True
 
 
 class SenderLink(Link):
-
     def __init__(self, session, handle, target_address, **kwargs):
-        name = kwargs.pop('name', None) or str(uuid.uuid4())
+        name = kwargs.pop("name", None) or str(uuid.uuid4())
         role = Role.Sender
-        if 'source_address' not in kwargs:
-            kwargs['source_address'] = "sender-link-{}".format(name)
+        if "source_address" not in kwargs:
+            kwargs["source_address"] = "sender-link-{}".format(name)
         super(SenderLink, self).__init__(session, handle, name, role, target_address=target_address, **kwargs)
         self._pending_deliveries = []
 
@@ -90,22 +81,24 @@ class SenderLink(Link):
         encode_payload(output, delivery.message)
         delivery_count = self.delivery_count + 1
         delivery.frame = {
-            'handle': self.handle,
-            'delivery_tag': struct.pack('>I', abs(delivery_count)),
-            'message_format': delivery.message._code, # pylint:disable=protected-access
-            'settled': delivery.settled,
-            'more': False,
-            'rcv_settle_mode': None,
-            'state': None,
-            'resume': None,
-            'aborted': None,
-            'batchable': None,
-            'payload': output
+            "handle": self.handle,
+            "delivery_tag": struct.pack(">I", abs(delivery_count)),
+            "message_format": delivery.message._code,  # pylint:disable=protected-access
+            "settled": delivery.settled,
+            "more": False,
+            "rcv_settle_mode": None,
+            "state": None,
+            "resume": None,
+            "aborted": None,
+            "batchable": None,
+            "payload": output,
         }
         if self.network_trace:
-            _LOGGER.info("-> %r", TransferFrame(delivery_id='<pending>', **delivery.frame), extra=self.network_trace_params) # pylint:disable=line-to-long
+            _LOGGER.info(
+                "-> %r", TransferFrame(delivery_id="<pending>", **delivery.frame), extra=self.network_trace_params
+            )
             _LOGGER.info("   %r", delivery.message, extra=self.network_trace_params)
-        self._session._outgoing_transfer(delivery) # pylint:disable=protected-access
+        self._session._outgoing_transfer(delivery)  # pylint:disable=protected-access
         sent_and_settled = False
         if delivery.transfer_state == SessionTransferState.OKAY:
             self.delivery_count = delivery_count
@@ -125,7 +118,7 @@ class SenderLink(Link):
         settled_ids = list(range(frame[1], range_end))
         unsettled = []
         for delivery in self._pending_deliveries:
-            if delivery.sent and delivery.frame['delivery_id'] in settled_ids:
+            if delivery.sent and delivery.frame["delivery_id"] in settled_ids:
                 delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, frame[4])  # state
                 continue
             unsettled.append(delivery)
@@ -135,7 +128,7 @@ class SenderLink(Link):
         for delivery in self._pending_deliveries:
             delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)
         self._pending_deliveries = []
-    
+
     def _on_session_state_change(self):
         if self._session.state == SessionState.DISCARDING:
             self._remove_pending_deliveries()
@@ -163,14 +156,14 @@ class SenderLink(Link):
         if self.state != LinkState.ATTACHED:
             raise AMQPLinkError(  # TODO: should we introduce MessageHandler to indicate the handler is in wrong state
                 condition=ErrorCondition.ClientError,  # TODO: should this be a ClientError?
-                description="Link is not attached."
+                description="Link is not attached.",
             )
         settled = self.send_settle_mode == SenderSettleMode.Settled
         if self.send_settle_mode == SenderSettleMode.Mixed:
-            settled = kwargs.pop('settled', True)
+            settled = kwargs.pop("settled", True)
         delivery = PendingDelivery(
-            on_delivery_settled=kwargs.get('on_send_complete'),
-            timeout=kwargs.get('timeout'),
+            on_delivery_settled=kwargs.get("on_send_complete"),
+            timeout=kwargs.get("timeout"),
             message=message,
             settled=settled,
         )
@@ -191,6 +184,7 @@ class SenderLink(Link):
         if delivery.sent:
             raise MessageException(
                 ErrorCondition.ClientError,
-                message="Transfer cannot be cancelled. Message has already been sent and awaiting disposition.")
+                message="Transfer cannot be cancelled. Message has already been sent and awaiting disposition.",
+            )
         delivery.on_settled(LinkDeliverySettleReason.CANCELLED, None)
         self._pending_deliveries.pop(index)

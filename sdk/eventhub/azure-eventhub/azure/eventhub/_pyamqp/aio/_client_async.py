@@ -5,31 +5,23 @@
 #--------------------------------------------------------------------------
 # TODO: Check types of kwargs (issue exists for this)
 import asyncio
-import collections.abc
 import logging
-from typing import Any, Dict, Optional, Tuple, Union, overload
-from typing_extensions import Literal
-import uuid
 import time
 import queue
-import certifi
 from functools import partial
+from typing import Any, Dict, Optional, Tuple, Union, overload
+from typing_extensions import Literal
+import certifi
 
 from ..outcomes import Accepted, Modified, Received, Rejected, Released
 from ._connection_async import Connection
 from ._management_operation_async import ManagementOperation
-from ._receiver_async import ReceiverLink
-from ._sender_async import SenderLink
-from ._session_async import Session
 from ._cbs_async import CBSAuthenticator
 from ..client import AMQPClient as AMQPClientSync
 from ..client import ReceiveClient as ReceiveClientSync
 from ..client import SendClient as SendClientSync
 from ..message import _MessageDelivery
-from ..endpoints import Source, Target
 from ..constants import (
-    SenderSettleMode,
-    ReceiverSettleMode,
     MessageDeliveryState,
     SEND_DISPOSITION_ACCEPT,
     SEND_DISPOSITION_REJECT,
@@ -39,7 +31,6 @@ from ..constants import (
 )
 from ..error import (
     AMQPError,
-    ErrorResponse,
     ErrorCondition,
     AMQPException,
     MessageException
@@ -164,7 +155,7 @@ class AMQPClientAsync(AMQPClientSync):
         await self._connection.listen(wait=self._socket_timeout)
 
     async def _close_link_async(self, **kwargs):
-        if self._link and not self._link._is_closed:
+        if self._link and not self._link._is_closed: # pylint: disable=protected-access
             await self._link.detach(close=True)
             self._link = None
 
@@ -273,7 +264,7 @@ class AMQPClientAsync(AMQPClientSync):
 
         :rtype: bool
         """
-        if self._cbs_authenticator and not (await self._cbs_authenticator.handle_token()):
+        if self._cbs_authenticator and not await self._cbs_authenticator.handle_token():
             await self._connection.listen(wait=self._socket_timeout)
             return False
         return True

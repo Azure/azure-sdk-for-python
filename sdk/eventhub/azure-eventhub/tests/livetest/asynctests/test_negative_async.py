@@ -23,24 +23,44 @@ from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receivers):
+async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receivers, uamqp_transport):
     if sys.platform.startswith('darwin'):
         pytest.skip("Skipping on OSX - it keeps reporting 'Unable to set external certificates' "
                     "and blocking other tests")
     _, receivers = connstr_receivers
-    client = EventHubProducerClient.from_connection_string(invalid_hostname)
+    client = EventHubProducerClient.from_connection_string(invalid_hostname, uamqp_transport=uamqp_transport)
     async with client:
         with pytest.raises(ConnectError):
             batch = EventDataBatch()
             batch.add(EventData("test data"))
             await client.send_batch(batch)
 
+    # test setting callback
+    async def on_error(events, pid, err):
+        assert len(events) == 1
+        assert not pid
+        on_error.err = err
+
+    on_error.err = None
+    client = EventHubProducerClient.from_connection_string(invalid_hostname, on_error=on_error, uamqp_transport=uamqp_transport)
+    async with client:
+        batch = EventDataBatch()
+        batch.add(EventData("test data"))
+        await client.send_batch(batch)
+    assert isinstance(on_error.err, ConnectError)
+
+    on_error.err = None
+    client = EventHubProducerClient.from_connection_string(invalid_hostname, on_error=on_error, uamqp_transport=uamqp_transport)
+    async with client:
+        await client.send_event(EventData("test data"))
+    assert isinstance(on_error.err, ConnectError)
+
 
 @pytest.mark.parametrize("invalid_place",
                          ["hostname", "key_name", "access_key", "event_hub", "partition"])
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_with_invalid_param_async(live_eventhub, invalid_place):
+async def test_receive_with_invalid_param_async(live_eventhub, invalid_place, uamqp_transport):
     eventhub_config = live_eventhub.copy()
     if invalid_place != "partition":
         eventhub_config[invalid_place] = "invalid " + invalid_place
@@ -50,7 +70,7 @@ async def test_receive_with_invalid_param_async(live_eventhub, invalid_place):
         eventhub_config['access_key'],
         eventhub_config['event_hub'])
 
-    client = EventHubConsumerClient.from_connection_string(conn_str, consumer_group='$default', retry_total=0)
+    client = EventHubConsumerClient.from_connection_string(conn_str, consumer_group='$default', retry_total=0, uamqp_transport=uamqp_transport)
 
     async def on_event(partition_context, event):
         pass
@@ -69,8 +89,8 @@ async def test_receive_with_invalid_param_async(live_eventhub, invalid_place):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_send_with_invalid_key_async(invalid_key):
-    client = EventHubProducerClient.from_connection_string(invalid_key)
+async def test_send_with_invalid_key_async(invalid_key, uamqp_transport):
+    client = EventHubProducerClient.from_connection_string(invalid_key, uamqp_transport=uamqp_transport)
     async with client:
         with pytest.raises(ConnectError):
             batch = EventDataBatch()
@@ -80,8 +100,8 @@ async def test_send_with_invalid_key_async(invalid_key):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_send_with_invalid_policy_async(invalid_policy):
-    client = EventHubProducerClient.from_connection_string(invalid_policy)
+async def test_send_with_invalid_policy_async(invalid_policy, uamqp_transport):
+    client = EventHubProducerClient.from_connection_string(invalid_policy, uamqp_transport=uamqp_transport)
     async with client:
         with pytest.raises(ConnectError):
             batch = EventDataBatch()
@@ -91,8 +111,8 @@ async def test_send_with_invalid_policy_async(invalid_policy):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_non_existing_entity_sender_async(connection_str):
-    client = EventHubProducerClient.from_connection_string(connection_str, eventhub_name="nemo")
+async def test_non_existing_entity_sender_async(connection_str, uamqp_transport):
+    client = EventHubProducerClient.from_connection_string(connection_str, eventhub_name="nemo", uamqp_transport=uamqp_transport)
     async with client:
         with pytest.raises(ConnectError):
             batch = EventDataBatch()
@@ -102,10 +122,10 @@ async def test_non_existing_entity_sender_async(connection_str):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_send_to_invalid_partitions_async(connection_str):
+async def test_send_to_invalid_partitions_async(connection_str, uamqp_transport):
     partitions = ["XYZ", "-1", "1000", "-"]
     for p in partitions:
-        client = EventHubProducerClient.from_connection_string(connection_str)
+        client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
         try:
             with pytest.raises(ConnectError):
                 batch = await client.create_batch(partition_id=p)
@@ -117,10 +137,10 @@ async def test_send_to_invalid_partitions_async(connection_str):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_send_too_large_message_async(connection_str):
+async def test_send_too_large_message_async(connection_str, uamqp_transport):
     if sys.platform.startswith('darwin'):
         pytest.skip("Skipping on OSX - open issue regarding message size")
-    client = EventHubProducerClient.from_connection_string(connection_str)
+    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
     try:
         data = EventData(b"A" * 1100000)
         with pytest.raises(ValueError):
@@ -132,8 +152,8 @@ async def test_send_too_large_message_async(connection_str):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_send_null_body_async(connection_str):
-    client = EventHubProducerClient.from_connection_string(connection_str)
+async def test_send_null_body_async(connection_str, uamqp_transport):
+    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
     try:
         with pytest.raises(ValueError):
             data = EventData(None)
@@ -146,11 +166,11 @@ async def test_send_null_body_async(connection_str):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_create_batch_with_invalid_hostname_async(invalid_hostname):
+async def test_create_batch_with_invalid_hostname_async(invalid_hostname, uamqp_transport):
     if sys.platform.startswith('darwin'):
         pytest.skip("Skipping on OSX - it keeps reporting 'Unable to set external certificates' "
                     "and blocking other tests")
-    client = EventHubProducerClient.from_connection_string(invalid_hostname)
+    client = EventHubProducerClient.from_connection_string(invalid_hostname, uamqp_transport=uamqp_transport)
     async with client:
         with pytest.raises(ConnectError):
             await client.create_batch(max_size_in_bytes=300)
@@ -158,21 +178,23 @@ async def test_create_batch_with_invalid_hostname_async(invalid_hostname):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_create_batch_with_too_large_size_async(connection_str):
-    client = EventHubProducerClient.from_connection_string(connection_str)
+async def test_create_batch_with_too_large_size_async(connection_str, uamqp_transport):
+    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
     async with client:
         with pytest.raises(ValueError):
             await client.create_batch(max_size_in_bytes=5 * 1024 * 1024)
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_invalid_proxy_server(connection_str):
+async def test_invalid_proxy_server(connection_str, uamqp_transport):
+    if uamqp_transport:
+        pytest.skip()
     HTTP_PROXY = {
     'proxy_hostname': 'fakeproxy',  # proxy hostname.
     'proxy_port': 3128,  # proxy port.
     }
 
-    client = EventHubProducerClient.from_connection_string(connection_str, http_proxy=HTTP_PROXY)
+    client = EventHubProducerClient.from_connection_string(connection_str, http_proxy=HTTP_PROXY, uamqp_transport=uamqp_transport)
     async with client:
         with pytest.raises(EventHubError):
             batch = await client.create_batch()

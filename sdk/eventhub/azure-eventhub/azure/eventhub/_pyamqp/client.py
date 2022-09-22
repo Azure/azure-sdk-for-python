@@ -1,18 +1,18 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 # pylint: disable=too-many-lines
 # TODO: Check types of kwargs (issue exists for this)
 import logging
+import queue
 import time
 import uuid
-import certifi
-import queue
 from functools import partial
 from typing import Any, Dict, Optional, Tuple, Union, overload
+import certifi
 from typing_extensions import Literal
 
 from ._connection import Connection
@@ -59,7 +59,6 @@ from .constants import (
 
 from .management_operation import ManagementOperation
 from .cbs import CBSAuthenticator
-from .authentication import _CBSAuth
 
 
 _logger = logging.getLogger(__name__)
@@ -187,16 +186,16 @@ class AMQPClient(object):
         self._handle_max = kwargs.pop('handle_max', None)
 
         # Link settings
-        self._send_settle_mode = kwargs.pop('send_settle_mode', SenderSettleMode.Unsettled)
-        self._receive_settle_mode = kwargs.pop('receive_settle_mode', ReceiverSettleMode.Second)
-        self._desired_capabilities = kwargs.pop('desired_capabilities', None)
-        self._on_attach = kwargs.pop('on_attach', None)
+        self._send_settle_mode = kwargs.pop("send_settle_mode", SenderSettleMode.Unsettled)
+        self._receive_settle_mode = kwargs.pop("receive_settle_mode", ReceiverSettleMode.Second)
+        self._desired_capabilities = kwargs.pop("desired_capabilities", None)
+        self._on_attach = kwargs.pop("on_attach", None)
 
         # transport
-        if kwargs.get('transport_type') is TransportType.Amqp and kwargs.get('http_proxy') is not None:
+        if kwargs.get("transport_type") is TransportType.Amqp and kwargs.get("http_proxy") is not None:
             raise ValueError("Http proxy settings can't be passed if transport_type is explicitly set to Amqp")
-        self._transport_type = kwargs.pop('transport_type', TransportType.Amqp)
-        self._http_proxy = kwargs.pop('http_proxy', None)
+        self._transport_type = kwargs.pop("transport_type", TransportType.Amqp)
+        self._http_proxy = kwargs.pop("http_proxy", None)
 
         # Custom Endpoint
         self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
@@ -225,7 +224,7 @@ class AMQPClient(object):
         self._connection.listen(wait=self._socket_timeout)
 
     def _close_link(self, **kwargs):
-        if self._link and not self._link._is_closed:
+        if self._link and not self._link._is_closed: # pylint: disable=protected-access
             self._link.detach(close=True)
             self._link = None
 
@@ -257,8 +256,8 @@ class AMQPClient(object):
             finally:
                 end_time = time.time()
                 if absolute_timeout > 0:
-                    absolute_timeout -= (end_time - start_time)
-        raise retry_settings['history'][-1]
+                    absolute_timeout -= end_time - start_time
+        raise retry_settings["history"][-1]
 
     def open(self, connection=None):
         """Open the client. The client can create a new Connection
@@ -283,7 +282,7 @@ class AMQPClient(object):
             self._connection = Connection(
                 "amqps://" + self._hostname,
                 sasl_credential=self._auth.sasl,
-                ssl={'ca_certs':self._connection_verify or certifi.where()},
+                ssl={"ca_certs": self._connection_verify or certifi.where()},
                 container_id=self._name,
                 max_frame_size=self._max_frame_size,
                 channel_max=self._channel_max,
@@ -292,20 +291,17 @@ class AMQPClient(object):
                 network_trace=self._network_trace,
                 transport_type=self._transport_type,
                 http_proxy=self._http_proxy,
-                custom_endpoint_address=self._custom_endpoint_address
+                custom_endpoint_address=self._custom_endpoint_address,
             )
             self._connection.open()
         if not self._session:
             self._session = self._connection.create_session(
-                incoming_window=self._incoming_window,
-                outgoing_window=self._outgoing_window
+                incoming_window=self._incoming_window, outgoing_window=self._outgoing_window
             )
             self._session.begin()
         if self._auth.auth_type == AUTH_TYPE_CBS:
             self._cbs_authenticator = CBSAuthenticator(
-                session=self._session,
-                auth=self._auth,
-                auth_timeout=self._auth_timeout
+                session=self._session, auth=self._auth, auth_timeout=self._auth_timeout
             )
             self._cbs_authenticator.open()
         self._shutdown = False
@@ -401,7 +397,7 @@ class AMQPClient(object):
         operation = kwargs.pop("operation", None)
         operation_type = kwargs.pop("operation_type", None)
         node = kwargs.pop("node", "$management")
-        timeout = kwargs.pop('timeout', 0)
+        timeout = kwargs.pop("timeout", 0)
         try:
             mgmt_link = self._mgmt_links[node]
         except KeyError:
@@ -412,12 +408,9 @@ class AMQPClient(object):
             while not mgmt_link.ready():
                 self._connection.listen(wait=False)
 
-        operation_type = operation_type or b'empty'
+        operation_type = operation_type or b"empty"
         status, description, response = mgmt_link.execute(
-            message,
-            operation=operation,
-            operation_type=operation_type,
-            timeout=timeout
+            message, operation=operation, operation_type=operation_type, timeout=timeout
         )
         return status, description, response
 
@@ -538,7 +531,8 @@ class SendClient(AMQPClient):
                 send_settle_mode=self._send_settle_mode,
                 rcv_settle_mode=self._receive_settle_mode,
                 max_message_size=self._max_message_size,
-                properties=self._link_properties)
+                properties=self._link_properties,
+            )
             self._link.attach()
             return False
         if self._link.get_state().value != 3:  # ATTACHED
@@ -566,10 +560,7 @@ class SendClient(AMQPClient):
         message_delivery.state = MessageDeliveryState.WaitingForSendAck
         on_send_complete = partial(self._on_send_complete, message_delivery)
         delivery = self._link.send_transfer(
-            message_delivery.message,
-            on_send_complete=on_send_complete,
-            timeout=timeout,
-            send_async=True
+            message_delivery.message, on_send_complete=on_send_complete, timeout=timeout, send_async=True
         )
         return delivery
 
@@ -596,13 +587,10 @@ class SendClient(AMQPClient):
                         message_delivery,
                         condition=error_info[0][0],
                         description=error_info[0][1],
-                        info=error_info[0][2]
+                        info=error_info[0][2],
                     )
                 except TypeError:
-                    self._process_send_error(
-                        message_delivery,
-                        condition=ErrorCondition.UnknownError
-                    )
+                    self._process_send_error(message_delivery, condition=ErrorCondition.UnknownError)
         elif reason == LinkDeliverySettleReason.SETTLED:
             message_delivery.state = MessageDeliveryState.Ok
         elif reason == LinkDeliverySettleReason.TIMEOUT:
@@ -610,20 +598,13 @@ class SendClient(AMQPClient):
             message_delivery.error = TimeoutError("Sending message timed out.")
         else:
             # NotDelivered and other unknown errors
-            self._process_send_error(
-                message_delivery,
-                condition=ErrorCondition.UnknownError
-            )
+            self._process_send_error(message_delivery, condition=ErrorCondition.UnknownError)
 
     def _send_message_impl(self, message, **kwargs):
         timeout = kwargs.pop("timeout", 0)
         expire_time = (time.time() + timeout) if timeout else None
         self.open()
-        message_delivery = _MessageDelivery(
-            message,
-            MessageDeliveryState.WaitingToBeSent,
-            expire_time
-        )
+        message_delivery = _MessageDelivery(message, MessageDeliveryState.WaitingToBeSent, expire_time)
         while not self.client_ready():
             time.sleep(0.05)
 
@@ -631,9 +612,13 @@ class SendClient(AMQPClient):
         running = True
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             running = self.do_work()
-        if message_delivery.state in (MessageDeliveryState.Error, MessageDeliveryState.Cancelled, MessageDeliveryState.Timeout):
+        if message_delivery.state in (
+            MessageDeliveryState.Error,
+            MessageDeliveryState.Cancelled,
+            MessageDeliveryState.Timeout,
+        ):
             try:
-                raise message_delivery.error
+                raise message_delivery.error # pylint: disable=raising-bad-type
             except TypeError:
                 # This is a default handler
                 raise MessageException(condition=ErrorCondition.UnknownError, description="Send failed.")
@@ -771,7 +756,7 @@ class ReceiveClient(AMQPClient):
                 on_transfer=self._message_received,
                 properties=self._link_properties,
                 desired_capabilities=self._desired_capabilities,
-                on_attach=self._on_attach
+                on_attach=self._on_attach,
             )
             self._link.attach()
             return False
@@ -879,10 +864,7 @@ class ReceiveClient(AMQPClient):
          default is 0.
         :type timeout: float
         """
-        return self._do_retryable_operation(
-            self._receive_message_batch_impl,
-            **kwargs
-        )
+        return self._do_retryable_operation(self._receive_message_batch_impl, **kwargs)
 
     @overload
     def settle_messages(
@@ -941,16 +923,16 @@ class ReceiveClient(AMQPClient):
         ...
 
     def settle_messages(self, delivery_id: Union[int, Tuple[int, int]], outcome: str, **kwargs):
-        batchable = kwargs.pop('batchable', None)
-        if outcome.lower() == 'accepted':
+        batchable = kwargs.pop("batchable", None)
+        if outcome.lower() == "accepted":
             state = Accepted()
-        elif outcome.lower() == 'released':
+        elif outcome.lower() == "released":
             state = Released()
-        elif outcome.lower() == 'rejected':
+        elif outcome.lower() == "rejected":
             state = Rejected(**kwargs)
-        elif outcome.lower() == 'modified':
+        elif outcome.lower() == "modified":
             state = Modified(**kwargs)
-        elif outcome.lower() == 'received':
+        elif outcome.lower() == "received":
             state = Received(**kwargs)
         else:
             raise ValueError("Unrecognized message output: {}".format(outcome))
@@ -965,5 +947,5 @@ class ReceiveClient(AMQPClient):
             settled=True,
             delivery_state=state,
             batchable=batchable,
-            wait=True
+            wait=True,
         )

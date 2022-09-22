@@ -2,14 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import logging
 import six
-
-from ._constants import NO_RETRY_ERRORS
-from ._pyamqp import error as errors
-
-_LOGGER = logging.getLogger(__name__)
-
 
 class EventHubError(Exception):
     """Represents an error occurred in the client.
@@ -100,74 +93,3 @@ class OperationTimeoutError(EventHubError):
 
 class OwnershipLostError(Exception):
     """Raised when `update_checkpoint` detects the ownership to a partition has been lost."""
-
-
-def _create_eventhub_exception(exception):
-    if isinstance(exception, errors.AuthenticationException):
-        error = AuthenticationError(str(exception), exception)
-    elif isinstance(exception, errors.AMQPLinkError):
-        error = ConnectError(str(exception), exception)
-    # TODO: do we need MessageHanlderError in amqp any more
-    #  if connection/session/link error are enough?
-    # elif isinstance(exception, errors.MessageHandlerError):
-    #     error = ConnectionLostError(str(exception), exception)
-    elif isinstance(exception, errors.AMQPConnectionError):
-        error = ConnectError(str(exception), exception)
-    elif isinstance(exception, TimeoutError):
-        error = ConnectionLostError(str(exception), exception)
-    else:
-        error = EventHubError(str(exception), exception)
-    return error
-
-
-def _handle_exception(
-    exception, closable
-):  # pylint:disable=too-many-branches, too-many-statements
-    try:  # closable is a producer/consumer object
-        name = closable._name  # pylint: disable=protected-access
-    except AttributeError:  # closable is an client object
-        name = closable._container_id  # pylint: disable=protected-access
-    if isinstance(exception, KeyboardInterrupt):  # pylint:disable=no-else-raise
-        _LOGGER.info("%r stops due to keyboard interrupt", name)
-        closable._close_connection()  # pylint:disable=protected-access
-        raise exception
-    elif isinstance(exception, EventHubError):
-        closable._close_handler()  # pylint:disable=protected-access
-        raise exception
-    # TODO: The following errors seem to be useless in EH
-    # elif isinstance(
-    #     exception,
-    #     (
-    #         errors.MessageAccepted,
-    #         errors.MessageAlreadySettled,
-    #         errors.MessageModified,
-    #         errors.MessageRejected,
-    #         errors.MessageReleased,
-    #         errors.MessageContentTooLarge,
-    #     ),
-    # ):
-    #     _LOGGER.info("%r Event data error (%r)", name, exception)
-    #     error = EventDataError(str(exception), exception)
-    #     raise error
-    elif isinstance(exception, errors.MessageException):
-        _LOGGER.info("%r Event data send error (%r)", name, exception)
-        error = EventDataSendError(str(exception), exception)
-        raise error
-    else:
-        if isinstance(exception, errors.AuthenticationException):
-            if hasattr(closable, "_close_connection"):
-                closable._close_connection()  # pylint:disable=protected-access
-        elif isinstance(exception, errors.AMQPLinkError):
-            if hasattr(closable, "_close_handler"):
-                closable._close_handler()  # pylint:disable=protected-access
-        elif isinstance(exception, errors.AMQPConnectionError):
-            if hasattr(closable, "_close_connection"):
-                closable._close_connection()  # pylint:disable=protected-access
-        # TODO: add MessageHandlerError in amqp?
-        # elif isinstance(exception, errors.MessageHandlerError):
-        #     if hasattr(closable, "_close_handler"):
-        #         closable._close_handler()  # pylint:disable=protected-access
-        else:  # errors.AMQPConnectionError, compat.TimeoutException
-            if hasattr(closable, "_close_connection"):
-                closable._close_connection()  # pylint:disable=protected-access
-        return _create_eventhub_exception(exception)

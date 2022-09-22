@@ -4,18 +4,9 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import struct
-from enum import Enum
-
 from ._transport import SSLTransport, WebSocketTransport, AMQPS_PORT
-from .types import AMQPTypes, TYPE, VALUE
-from .constants import FIELD, SASLCode, SASL_HEADER_FRAME, TransportType, WEBSOCKET_PORT
-from .performatives import (
-    SASLOutcome,
-    SASLResponse,
-    SASLChallenge,
-    SASLInit
-)
+from .constants import SASLCode, SASL_HEADER_FRAME, WEBSOCKET_PORT
+from .performatives import SASLInit
 
 
 _SASL_FRAME_TYPE = b'\x01'
@@ -92,8 +83,7 @@ class SASLTransportMixin():
             raise NotImplementedError("Unsupported SASL challenge")
         if fields[0] == SASLCode.Ok:  # code
             return
-        else:
-            raise ValueError("SASL negotiation failed.\nOutcome: {}\nDetails: {}".format(*fields))
+        raise ValueError("SASL negotiation failed.\nOutcome: {}\nDetails: {}".format(*fields))
 
 
 class SASLTransport(SSLTransport, SASLTransportMixin):
