@@ -7,15 +7,13 @@
 import logging
 from typing import Any, Dict, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, JobException
-from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken, JobBaseData, ManagedIdentity
-from azure.ai.ml._restclient.v2022_02_01_preview.models import SweepJob as RestSweepJob
-from azure.ai.ml._restclient.v2022_02_01_preview.models import TrialComponent, UserIdentity
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2022_06_01_preview.models import SweepJob as RestSweepJob
+from azure.ai.ml._restclient.v2022_06_01_preview.models import TrialComponent
 from azure.ai.ml._schema._sweep.sweep_job import SweepJobSchema
 from azure.ai.ml._utils.utils import map_single_brackets_and_warn
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, TYPE, JobType
-from azure.ai.ml.entities._job.command_job import CommandJob
-from azure.ai.ml.entities._job.job import Job
+from azure.ai.ml.constants import JobType
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
@@ -26,10 +24,15 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     validate_inputs_for_command,
     validate_key_contains_allowed_characters,
 )
+from azure.ai.ml.entities._job.command_job import CommandJob
+from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
 from azure.ai.ml.entities._job.sweep.sampling_algorithm import SamplingAlgorithm
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 
+from ..identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from ..job_limits import SweepJobLimits
 from ..parameterized_command import ParameterizedCommand
 from .early_termination_policy import EarlyTerminationPolicy
@@ -53,7 +56,8 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
-    :param experiment_name:  Name of the experiment the job will be created under, if None is provided, job will be created under experiment 'Default'.
+    :param experiment_name:  Name of the experiment the job will be created under, if None is provided,
+        job will be created under experiment 'Default'.
     :type experiment_name: str
     :param identity: Identity that training job will use while running on compute.
     :type identity: Union[azure.ai.ml.ManagedIdentity, azure.ai.ml.AmlToken, azure.ai.ml.UserIdentity]
@@ -61,17 +65,21 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :type inputs: dict
     :param outputs: Mapping of output data bindings used in the job.
     :type outputs: dict[str, azure.ai.ml.Output]
-    :param sampling_algorithm: The hyperparameter sampling algorithm to use over the `search_space`. Defaults to "random".
+    :param sampling_algorithm: The hyperparameter sampling algorithm to use over the `search_space`.
+        Defaults to "random".
     :type sampling_algorithm: str
-    :param search_space: Dictionary of the hyperparameter search space. The key is the name of the hyperparameter and the value is the parameter expression.
+    :param search_space: Dictionary of the hyperparameter search space. The key is the name of the
+        hyperparameter and the value is the parameter expression.
     :type search_space: Dict
     :param objective: Metric to optimize for.
     :type objective: Objective
     :param compute: The compute target the job runs on.
     :type compute: str
-    :param trial: The job configuration for each trial. Each trial will be provided with a different combination of hyperparameter values that the system samples from the search_space.
+    :param trial: The job configuration for each trial. Each trial will be provided with a different combination
+        of hyperparameter values that the system samples from the search_space.
     :type trial: Union[azure.ai.ml.entities.CommandJob, azure.ai.ml.entities.CommandComponent]
-    :param early_termination: The early termination policy to use. A trial job is canceled when the criteria of the specified policy are met. If omitted, no early termination policy will be applied.
+    :param early_termination: The early termination policy to use.A trial job is canceled
+        when the criteria of the specified policy are met. If omitted, no early termination policy will be applied.
     :type early_termination: EarlyTerminationPolicy
     :param limits: Limits for the sweep job.
     :type limits: ~azure.ai.ml.entities.SweepJobLimits
@@ -126,9 +134,9 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         )
 
     def _to_dict(self) -> Dict:
-        return SweepJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return SweepJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
-    def _to_rest_object(self) -> JobBaseData:
+    def _to_rest_object(self) -> JobBase:
         self._override_missing_properties_from_trial()
         self.trial.command = map_single_brackets_and_warn(self.trial.command)
         search_space = {param: space._to_rest_object() for (param, space) in self.search_space.items()}
@@ -139,6 +147,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
 
         trial_component = TrialComponent(
             code_id=self.trial.code,
+            distribution=self.trial.distribution._to_rest_object() if self.trial.distribution else None,
             environment_id=self.trial.environment,
             command=self.trial.command,
             environment_variables=self.trial.environment_variables,
@@ -150,19 +159,19 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             description=self.description,
             experiment_name=self.experiment_name,
             search_space=search_space,
-            sampling_algorithm=self._get_rest_sampling_algorithm(),
+            sampling_algorithm=self._get_rest_sampling_algorithm() if self.sampling_algorithm else None,
             limits=self.limits._to_rest_object() if self.limits else None,
-            early_termination=self.early_termination,
+            early_termination=self.early_termination._to_rest_object() if self.early_termination else None,
             properties=self.properties,
             compute_id=self.compute,
-            objective=self.objective,
+            objective=self.objective._to_rest_object() if self.objective else None,
             trial=trial_component,
             tags=self.tags,
-            inputs=to_rest_dataset_literal_inputs(self.inputs),
+            inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=self.type),
             outputs=to_rest_data_outputs(self.outputs),
-            identity=self.identity,
+            identity=self.identity._to_rest_object() if self.identity else None,
         )
-        sweep_job_resource = JobBaseData(properties=sweep_job)
+        sweep_job_resource = JobBase(properties=sweep_job)
         sweep_job_resource.name = self.name
         return sweep_job_resource
 
@@ -183,7 +192,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         return sweep_job
 
     @classmethod
-    def _load_from_rest(cls, obj: JobBaseData) -> "SweepJob":
+    def _load_from_rest(cls, obj: JobBase) -> "SweepJob":
         properties: RestSweepJob = obj.properties
 
         # Unpack termination schema
@@ -206,7 +215,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             experiment_name=properties.experiment_name,
             services=properties.services,
             status=properties.status,
-            creation_context=obj.system_data,
+            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
             trial=trial,
             compute=properties.compute_id,
             sampling_algorithm=sampling_algorithm,
@@ -218,7 +227,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             objective=properties.objective,
             inputs=from_rest_inputs_to_dataset_literal(properties.inputs),
             outputs=from_rest_data_outputs(properties.outputs),
-            identity=properties.identity,
+            identity=Identity._from_rest_object(properties.identity) if properties.identity else None,
         )
 
     def _override_missing_properties_from_trial(self):

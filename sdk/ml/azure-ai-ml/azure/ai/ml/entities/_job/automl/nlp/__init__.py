@@ -8,3 +8,12 @@ from .nlp_limit_settings import NlpLimitSettings
 from .text_classification_job import TextClassificationJob
 from .text_classification_multilabel_job import TextClassificationMultilabelJob
 from .text_ner_job import TextNerJob
+
+__all__ = [
+    "AutoMLNLPJob",
+    "NlpFeaturizationSettings",
+    "NlpLimitSettings",
+    "TextClassificationJob",
+    "TextClassificationMultilabelJob",
+    "TextNerJob",
+]

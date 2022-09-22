@@ -8,9 +8,9 @@ import logging
 
 from marshmallow import ValidationError, fields, post_load, pre_dump
 
-from azure.ai.ml._schema.core.schema import PatchedSchemaMeta, PathAwareSchema
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, StringTransformedEnum, UnionField
-from azure.ai.ml.constants import AssetTypes, AzureMLResourceType, InputOutputModes, LOCAL_PATH
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta, PathAwareSchema
+from azure.ai.ml.constants._common import LOCAL_PATH, AssetTypes, AzureMLResourceType, InputOutputModes
 
 module_logger = logging.getLogger(__name__)
 
@@ -31,17 +31,18 @@ class InputSchema(metaclass=PatchedSchemaMeta):
         else:
             raise ValidationError("InputSchema needs type Input to dump")
 
-    def generate_path_property(azureml_type):
-        return UnionField(
-            [
-                ArmVersionedStr(azureml_type=azureml_type),
-                ArmVersionedStr(azureml_type=LOCAL_PATH, pattern="^file:.*"),
-                fields.Str(metadata={"pattern": "^(http(s)?):.*"}),
-                fields.Str(metadata={"pattern": "^(wasb(s)?):.*"}),
-                ArmVersionedStr(azureml_type=LOCAL_PATH, pattern="^(?!(azureml|http(s)?|wasb(s)?|file):).*"),
-            ],
-            is_strict=True,
-        )
+
+def generate_path_property(azureml_type):
+    return UnionField(
+        [
+            ArmVersionedStr(azureml_type=azureml_type),
+            ArmVersionedStr(azureml_type=LOCAL_PATH, pattern="^file:.*"),
+            fields.Str(metadata={"pattern": "^(http(s)?):.*"}),
+            fields.Str(metadata={"pattern": "^(wasb(s)?):.*"}),
+            ArmVersionedStr(azureml_type=LOCAL_PATH, pattern="^(?!(azureml|http(s)?|wasb(s)?|file):).*"),
+        ],
+        is_strict=True,
+    )
 
 
 class ModelInputSchema(InputSchema):
@@ -60,7 +61,8 @@ class ModelInputSchema(InputSchema):
             AssetTypes.TRITON_MODEL,
         ]
     )
-    path = InputSchema.generate_path_property(azureml_type=AzureMLResourceType.MODEL)
+    path = generate_path_property(azureml_type=AzureMLResourceType.MODEL)
+    datastore = fields.Str(metadata={"description": "Name of the datastore to upload local paths to."}, required=False)
 
 
 class DataInputSchema(InputSchema):
@@ -78,7 +80,8 @@ class DataInputSchema(InputSchema):
             AssetTypes.URI_FOLDER,
         ]
     )
-    path = InputSchema.generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    datastore = fields.Str(metadata={"description": "Name of the datastore to upload local paths to."}, required=False)
 
 
 class MLTableInputSchema(InputSchema):
@@ -93,7 +96,8 @@ class MLTableInputSchema(InputSchema):
         required=False,
     )
     type = StringTransformedEnum(allowed_values=[AssetTypes.MLTABLE])
-    path = InputSchema.generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    datastore = fields.Str(metadata={"description": "Name of the datastore to upload to."}, required=False)
 
 
 class InputLiteralValueSchema(metaclass=PatchedSchemaMeta):

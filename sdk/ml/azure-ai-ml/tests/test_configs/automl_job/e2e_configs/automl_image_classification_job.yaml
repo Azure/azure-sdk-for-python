@@ -31,16 +31,30 @@ sweep:
     slack_factor: 0.2
     delay_evaluation: 6
 
-image_model:
+training_parameters:
   early_stopping: true
   evaluation_frequency: 1
   optimizer: sgd
 
 search_space:
-  - model_name: "choice('vitb16r224','vits16r224')"
-    learning_rate: "uniform(0.001,0.01)"
-    number_of_epochs: "choice(15,30)"
+  - model_name:
+      type: choice
+      values: [vitb16r224, vits16r224]
+    learning_rate:
+      type: uniform
+      min_value: 0.001
+      max_value: 0.01
+    number_of_epochs:
+      type: choice
+      values: [15, 30]
 
-  - model_name: "choice('seresnext','resnest50')"
-    learning_rate: "uniform(0.001,0.01)"
-    layers_to_freeze: "choice(0,2)"
+  - model_name:
+      type: choice
+      values: [seresnext, resnest50]
+    learning_rate:
+      type: uniform
+      min_value: 0.001
+      max_value: 0.01
+    layers_to_freeze:
+      type: choice
+      values: [0, 2]

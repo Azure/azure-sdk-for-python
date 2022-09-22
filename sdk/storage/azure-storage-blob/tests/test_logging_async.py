@@ -4,37 +4,18 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import pytest
-import logging
-import asyncio
-
 import sys
 from datetime import datetime, timedelta
 
-from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
-
-from azure.storage.blob.aio import (
-    BlobServiceClient,
-    ContainerClient,
-    BlobClient,
-)
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from azure.storage.blob import (
-    ContainerSasPermissions,
-    BlobSasPermissions,
-    generate_container_sas,
-    generate_blob_sas
-)
-
+import pytest
+from azure.storage.blob import BlobSasPermissions, ContainerSasPermissions, generate_blob_sas, generate_container_sas
+from azure.storage.blob.aio import BlobClient, BlobServiceClient, ContainerClient
 from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
 
-from settings.testcase import (
-    BlobPreparer
-)
+from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage import LogCaptured
-from devtools_testutils.storage.aio import AsyncStorageTestCase
-
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import BlobPreparer
 
 if sys.version_info >= (3,):
     from urllib.parse import parse_qs, quote, urlparse
@@ -45,48 +26,43 @@ else:
 _AUTHORIZATION_HEADER_NAME = 'Authorization'
 
 
-class AiohttpTestTransport(AioHttpTransport):
-    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
-    """
-    async def send(self, request, **config):
-        response = await super(AiohttpTestTransport, self).send(request, **config)
-        if not isinstance(response.headers, CIMultiDictProxy):
-            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
-            response.content_type = response.headers.get("content-type")
-        return response
-
-
-class StorageLoggingTestAsync(AsyncStorageTestCase):
+class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
     async def _setup(self, bsc):
         self.container_name = self.get_resource_name('utcontainer')
+
+        # create source blob to be copied from
+        self.source_blob_name = self.get_resource_name('srcblob')
+        self.source_blob_data = self.get_random_bytes(4 * 1024)
+        source_blob = bsc.get_blob_client(self.container_name, self.source_blob_name)
+
         if self.is_live:
             try:
-                # create source blob to be copied from
-                self.source_blob_name = self.get_resource_name('srcblob')
-                self.source_blob_data = self.get_random_bytes(4 * 1024)
-                source_blob = bsc.get_blob_client(self.container_name, self.source_blob_name)
-
                 await bsc.create_container(self.container_name)
-                await source_blob.upload_blob(self.source_blob_data)
-
-                # generate a SAS so that it is accessible with a URL
-                sas_token = generate_blob_sas(
-                    source_blob.account_name,
-                    source_blob.container_name,
-                    source_blob.blob_name,
-                    snapshot=source_blob.snapshot,
-                    account_key=source_blob.credential.account_key,
-                    permission=BlobSasPermissions(read=True),
-                    expiry=datetime.utcnow() + timedelta(hours=1),
-                )
-                sas_source = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
-                self.source_blob_url = sas_source.url
             except:
                 pass
+            await source_blob.upload_blob(self.source_blob_data, overwrite=True)
+
+        # generate a SAS so that it is accessible with a URL
+        sas_token = self.generate_sas(
+            generate_blob_sas,
+            source_blob.account_name,
+            source_blob.container_name,
+            source_blob.blob_name,
+            snapshot=source_blob.snapshot,
+            account_key=source_blob.credential.account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        sas_source = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
+        self.source_blob_url = sas_source.url
 
     @BlobPreparer()
-    async def test_logging_request_and_response_body(self, storage_account_name, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport(), logging_enable=True)
+    @recorded_by_proxy_async
+    async def test_logging_request_and_response_body(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, logging_enable=True)
         await self._setup(bsc)
         # Arrange
         container = bsc.get_container_client(self.container_name)
@@ -98,17 +74,21 @@ class StorageLoggingTestAsync(AsyncStorageTestCase):
         with LogCaptured(self) as log_captured:
             await blob_client.download_blob()
             log_as_str = log_captured.getvalue()
-            self.assertFalse(request_body in log_as_str)
+            assert not request_body in log_as_str
 
         with LogCaptured(self) as log_captured:
             await blob_client.upload_blob(request_body, overwrite=True, logging_body=True)
             log_as_str = log_captured.getvalue()
-            self.assertTrue(request_body in log_as_str)
-            self.assertEqual(log_as_str.count(request_body), 1)
+            assert request_body in log_as_str
+            assert log_as_str.count(request_body) == 1
             
-    @BlobPreparer()         
-    async def test_authorization_is_scrubbed_off(self, storage_account_name, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_authorization_is_scrubbed_off(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         await self._setup(bsc)
         # Arrange
         container = bsc.get_container_client(self.container_name)
@@ -119,20 +99,23 @@ class StorageLoggingTestAsync(AsyncStorageTestCase):
             # Assert
             # make sure authorization header is logged, but its value is not
             # the keyword SharedKey is present in the authorization header's value
-            self.assertTrue(_AUTHORIZATION_HEADER_NAME in log_as_str)
-            self.assertFalse('SharedKey' in log_as_str)
+            assert _AUTHORIZATION_HEADER_NAME in log_as_str
+            assert not 'SharedKey' in log_as_str
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_sas_signature_is_scrubbed_off(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_sas_signature_is_scrubbed_off(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Test can only run live
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         await self._setup(bsc)
         # Arrange
         container = bsc.get_container_client(self.container_name)
-        token = generate_container_sas(
+        token = self.generate_sas(
+            generate_container_sas,
             container.account_name,
             container.container_name,
             account_key=container.credential.account_key,
@@ -152,13 +135,15 @@ class StorageLoggingTestAsync(AsyncStorageTestCase):
 
             # Assert
             # make sure the query parameter 'sig' is logged, but its value is not
-            self.assertTrue(QueryStringConstants.SIGNED_SIGNATURE in log_as_str)
-            self.assertFalse(signed_signature in log_as_str)
+            assert QueryStringConstants.SIGNED_SIGNATURE in log_as_str
+            assert not signed_signature in log_as_str
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_copy_source_sas_is_scrubbed_off(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_copy_source_sas_is_scrubbed_off(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Test can only run live
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         await self._setup(bsc)
@@ -185,10 +170,10 @@ class StorageLoggingTestAsync(AsyncStorageTestCase):
 
             # Assert
             # make sure the query parameter 'sig' is logged, but its value is not
-            self.assertTrue(QueryStringConstants.SIGNED_SIGNATURE in log_as_str)
-            self.assertFalse(signed_signature in log_as_str)
+            assert QueryStringConstants.SIGNED_SIGNATURE in log_as_str
+            assert not signed_signature in log_as_str
 
             # make sure authorization header is logged, but its value is not
             # the keyword SharedKey is present in the authorization header's value
-            self.assertTrue(_AUTHORIZATION_HEADER_NAME in log_as_str)
-            self.assertFalse('SharedKey' in log_as_str)
+            assert _AUTHORIZATION_HEADER_NAME in log_as_str
+            assert not 'SharedKey' in log_as_str

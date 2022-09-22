@@ -15,8 +15,9 @@ from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
 )
 from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
+from azure.ai.ml.entities._job.automl.search_space import SearchSpace
 
-from .._restclient.v2022_02_01_preview.models import (
+from .._restclient.v2022_06_01_preview.models import (
     ClassificationModels,
     ClassificationMultilabelPrimaryMetrics,
     ClassificationPrimaryMetrics,
@@ -82,4 +83,5 @@ __all__ = [
     "classification",
     "regression",
     "forecasting",
+    "SearchSpace",
 ]
