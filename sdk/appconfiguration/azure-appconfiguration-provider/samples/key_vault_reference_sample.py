@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from azure.appconfigurationprovider import (
+from azure.appconfiguration.provider import (
     AzureAppConfigurationProvider,
     AzureAppConfigurationKeyVaultOptions,
     SettingSelector
