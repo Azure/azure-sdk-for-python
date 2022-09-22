@@ -402,6 +402,7 @@
     }
   },
   "variables": {
+    "storageAccountApiVersion": "2019-06-01",
     "tenantId": "[subscription().tenantId]",
     "storageAccount": "[resourceId(parameters('storageAccountResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
     "keyVault": "[resourceId(parameters('keyVaultResourceGroupName'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
@@ -903,11 +904,11 @@
     },
     "ML_TEST_STORAGE_ACCOUNT_PRIMARY_KEY": {
       "type": "string",
-      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('testStorageAccountName')), parameters('storageAccountApiVersion')).keys[0].value]"
+      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('testStorageAccountName')), variables('storageAccountApiVersion')).keys[0].value]"
     },
     "ML_TEST_STORAGE_ACCOUNT_SECONDARY_KEY": {
       "type": "string",
-      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('testStorageAccountName')), parameters('storageAccountApiVersion')).keys[1].value]"
+      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('testStorageAccountName')), variables('storageAccountApiVersion')).keys[1].value]"
     }
   }
 }

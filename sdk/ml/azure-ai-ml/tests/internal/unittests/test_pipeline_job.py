@@ -359,7 +359,6 @@ class TestPipelineJob:
         scope_node._set_base_path(yaml_path.parent)
         scope_node_dict = scope_node._to_dict()
         assert scope_node_dict == {
-            "$schema": "{}",
             "priority": 800,
             "adla_account_name": "adla_account_name",
             "custom_job_name_suffix": "component_sdk_test",

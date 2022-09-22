@@ -1,5 +1,16 @@
 # Release History
 
+## 5.0.0 (2022-09-19)
+
+### Features Added
+
+  - Model Resource has a new parameter system_data
+  - Model Resource has a new parameter tags
+
+### Breaking Changes
+
+  - Model Resource has a new required parameter location
+
 ## 4.0.1 (2022-08-02)
 
 **Other Change**

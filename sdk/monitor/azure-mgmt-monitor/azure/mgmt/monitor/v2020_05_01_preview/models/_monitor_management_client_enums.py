@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AlertSeverity(float, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Severity of the alert. Should be an integer between [0-4]. Value of 0 is severest
-    """
+    """Severity of the alert. Should be an integer between [0-4]. Value of 0 is severest."""
 
     ZERO = 0
     ONE = 1
@@ -20,9 +19,9 @@ class AlertSeverity(float, Enum, metaclass=CaseInsensitiveEnumMeta):
     THREE = 3
     FOUR = 4
 
+
 class ConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The criteria operator.
-    """
+    """The criteria operator."""
 
     EQUALS = "Equals"
     GREATER_THAN = "GreaterThan"
@@ -30,16 +29,16 @@ class ConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LESS_THAN = "LessThan"
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
 
+
 class DimensionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Operator for dimension values
-    """
+    """Operator for dimension values."""
 
     INCLUDE = "Include"
     EXCLUDE = "Exclude"
 
+
 class TimeAggregation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Aggregation type
-    """
+    """Aggregation type."""
 
     COUNT = "Count"
     AVERAGE = "Average"

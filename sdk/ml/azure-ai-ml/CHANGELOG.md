@@ -3,8 +3,11 @@
 ## 0.1.0 (Unreleased)
 
 ### Features Added
+ - Added support for custom setup scripts on compute instances.
+ - Added a `show_progress` parameter to MLClient for enable/disable progress bars of long running operations.
 
 ### Breaking Changes
+- ComputeOperations.attach has been renamed to begin_attach.
 
 ### Bugs Fixed
 
@@ -33,6 +36,7 @@
  - Change error returned by (begin_)create_or_update invalid input to TypeError.
  - Rename set_image_model APIs for all vision tasks to set_training_parameters
  - JobOperations.download defaults to "." instead of Path.cwd()
+ - Workspace.list_keys renamed to Workspace.get_keys.
 
 ### Bugs Fixed
 
