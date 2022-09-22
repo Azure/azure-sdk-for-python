@@ -178,7 +178,7 @@ def validate_scoring_script(deployment):
                 np_msg = "Failed to submit deployment due to syntax errors in deployment script.\n If you wish to bypass this validation use --skip-script-validation paramater."
                 raise ValidationException(
                     message=msg,
-                    target=ErrorTarget.ONLINE_DEPLOYMENT,
+                    target=ErrorTarget.BATCH_DEPLOYMENT if isinstance(deployment, BatchDeployment) else ErrorTarget.ONLINE_DEPLOYMENT,
                     no_personal_data_message=np_msg,
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.CANNOT_PARSE,
