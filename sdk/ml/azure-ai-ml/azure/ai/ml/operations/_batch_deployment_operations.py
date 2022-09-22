@@ -12,6 +12,7 @@ from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces a
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
+from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml._utils._endpoint_utils import polling_wait, upload_dependencies, validate_scoring_script
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -56,7 +57,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
     @monitor_with_activity(logger, "BatchDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
-    def begin_create_or_update(self, deployment: BatchDeployment, skip_script_validation: bool = False, **kwargs: Any) -> Union[BatchDeployment, LROPoller]:
+    def begin_create_or_update(self, deployment: BatchDeployment,*, skip_script_validation: bool = False, **kwargs: Any) -> Union[BatchDeployment, LROPoller]:
         """Create or update a batch deployment.
 
         :param endpoint: The deployment entity.
@@ -66,7 +67,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         """
 
         
-        if not skip_script_validation and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX) and not re.match(VERSIONED_RESOURCE_ID_PATTERN, deployment.code_configuration.code):
+        if not skip_script_validation and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX) and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code):
             validate_scoring_script(deployment)
         no_wait = kwargs.get("no_wait", False)
         module_logger.debug("Checking endpoint %s exists", deployment.endpoint_name)

@@ -18,6 +18,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import DeploymentLogsReq
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
+from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml._utils._endpoint_utils import upload_dependencies,validate_scoring_script
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX, VERSIONED_RESOURCE_ID_PATTERN
@@ -93,7 +94,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                     deployment=deployment,
                     local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug),
                 )
-            if not skip_script_validation and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX) and not re.match(VERSIONED_RESOURCE_ID_PATTERN, deployment.code_configuration.code):
+            if not skip_script_validation and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX) and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code):
                 validate_scoring_script(deployment)
 
             path_format_arguments = {
