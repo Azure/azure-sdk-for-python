@@ -36,6 +36,7 @@
  - Rename set_image_model APIs for all vision tasks to set_training_parameters
  - JobOperations.download defaults to "." instead of Path.cwd()
  - JobOperations.cancel() is renamed to JobOperations.begin_cancel() and it returns LROPoller
+ - Workspace.list_keys renamed to Workspace.get_keys.
 
 ### Bugs Fixed
 

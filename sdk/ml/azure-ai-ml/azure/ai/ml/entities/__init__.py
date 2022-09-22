@@ -90,6 +90,7 @@ from ._workspace.identity import ManagedServiceIdentity
 from ._workspace.identity import UserAssignedIdentity as WorkspaceUserAssignedIdentity
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
+from ._workspace.workspace_keys import WorkspaceKeys
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
@@ -138,6 +139,7 @@ __all__ = [
     "BuildContext",
     "Model",
     "Workspace",
+    "WorkspaceKeys",
     "WorkspaceConnection",
     "ManagedServiceIdentity",
     "WorkspaceUserAssignedIdentity",
