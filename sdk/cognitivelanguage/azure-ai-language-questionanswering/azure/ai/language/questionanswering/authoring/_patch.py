@@ -11,6 +11,8 @@ from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 from ._client import QuestionAnsweringAuthoringClient as QuestionAnsweringAuthoringClientGenerated
 
+POLLING_INTERVAL_DEFAULT = 5
+
 
 def _authentication_policy(credential, **kwargs):
     if credential is None:
@@ -61,6 +63,7 @@ class QuestionAnsweringAuthoringClient(QuestionAnsweringAuthoringClientGenerated
             endpoint=endpoint,
             credential=credential,  # type: ignore
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential, **kwargs)),
+            polling_interval=kwargs.pop("polling_interval", POLLING_INTERVAL_DEFAULT),
             **kwargs
         )
 
