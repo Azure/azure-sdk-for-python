@@ -57,8 +57,9 @@ from ._models import (
     ClassificationCategory,
     AnalyzeHealthcareEntitiesAction,
     TextAnalysisKind,
+    DynamicClassificationResult
 )
-
+from ._generated import ClassificationType
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller, TextAnalysisLROPoller
 
 __all__ = [
@@ -117,6 +118,8 @@ __all__ = [
     "AnalyzeHealthcareEntitiesAction",
     "TextAnalysisLROPoller",
     "TextAnalysisKind",
+    "ClassificationType",
+    "DynamicClassificationResult",
 ]
 
 __version__ = VERSION

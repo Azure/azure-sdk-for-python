@@ -3,6 +3,7 @@
 ## 5.3.0b1 (Unreleased)
 
 ### Features Added
+- Added `dynamically_classify` client method to dynamically classify documents without needing to train a model.
 
 ### Breaking Changes
 

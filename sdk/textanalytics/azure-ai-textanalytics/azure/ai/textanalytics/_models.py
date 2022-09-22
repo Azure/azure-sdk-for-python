@@ -2480,7 +2480,7 @@ class SingleLabelClassifyAction(DictMixin):
 class ClassificationCategory(DictMixin):
     """ClassificationCategory represents a classification of the input document.
 
-    :ivar str category: Custom classification category for the document.
+    :ivar str category: Classification category for the document.
     :ivar float confidence_score: Confidence score between 0 and 1 of the recognized classification.
     """
 
@@ -2566,4 +2566,63 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
                 string_index_type=string_index_type_compatibility(self.string_index_type),
                 logging_opt_out=self.disable_service_logs,
             )
+        )
+
+class DynamicClassificationResult(DictMixin):
+    """DynamicClassificationResult is a result object which contains
+    the classifications for a particular document.
+
+    :ivar str id: Unique, non-empty document identifier.
+    :ivar classifications: Recognized classification results in the document.
+    :vartype classifications: list[~azure.ai.textanalytics.ClassificationCategory]
+    :ivar warnings: Warnings encountered while processing document.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: If `show_stats=True` was specified in the request this
+        field will contain information about the document payload.
+    :vartype statistics: Optional[~azure.ai.textanalytics.TextDocumentStatistics]
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of a DynamicClassificationResult.
+    :ivar str kind: The text analysis kind - "DynamicClassification".
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.id = kwargs.get('id', None)
+        self.classifications = kwargs.get('classifications', None)
+        self.warnings = kwargs.get('warnings', [])
+        self.statistics = kwargs.get('statistics', None)
+        self.is_error: Literal[False] = False
+        self.kind: Literal["DynamicClassification"] = "DynamicClassification"
+
+    def __repr__(self):
+        return "DynamicClassificationResult(id={}, classifications={}, warnings={}, statistics={}, " \
+               "is_error={})".format(
+                self.id,
+                repr(self.classifications),
+                repr(self.warnings),
+                repr(self.statistics),
+                self.is_error,
+            )[
+                :1024
+            ]
+
+    @classmethod
+    def _from_generated(cls, result):
+        return cls(
+            id=result.id,
+            classifications=[
+                ClassificationCategory._from_generated(e)  # pylint: disable=protected-access
+                for e in result.class_property
+            ],
+            warnings=[
+                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
+                    w
+                )
+                for w in result.warnings
+            ],
+            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
+                result.statistics
+            ),
         )
