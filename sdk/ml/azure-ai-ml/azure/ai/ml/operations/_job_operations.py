@@ -199,7 +199,7 @@ class JobOperations(_ScopeDependentOperations):
                 self._credential, base_url=self._api_url, **self._service_client_kwargs
             )
             self._model_dataplane_operations_client = ModelDataplaneOperations(
-                self._operation_scope, service_client_model_dataplane
+                self._operation_scope, self._operation_config, service_client_model_dataplane
             )
         return self._model_dataplane_operations_client
 
