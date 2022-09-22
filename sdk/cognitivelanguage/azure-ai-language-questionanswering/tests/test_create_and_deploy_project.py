@@ -82,7 +82,9 @@ class TestCreateAndDeploy(QuestionAnsweringTestCase):
             deployment_name=deployment_name,
             **self.kwargs_for_polling
         )
-        deployment_poller.result()
+        project = deployment_poller.result()
+        assert project["lastDeployedDateTime"]
+        assert project["deploymentName"] == "production"
 
         # assert
         deployments = client.list_deployments(
