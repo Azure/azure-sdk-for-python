@@ -449,7 +449,7 @@ class TestDataOperations:
             "azure.ai.ml.operations._data_operations.Data._from_rest_object",
             return_value=None,
         ):
-            data = load_data(path=data_path)
+            data = load_data(data_path)
             path = Path(data._base_path, data.path).resolve()
             mock_data_operations.create_or_update(data)
             mock_thing.assert_called_once_with(
