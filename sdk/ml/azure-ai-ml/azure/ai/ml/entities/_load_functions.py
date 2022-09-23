@@ -645,4 +645,4 @@ def load_schedule(
     :return: Constructed schedule object.
     :rtype: JobSchedule
     """
-    load_common(JobSchedule, source, relative_origin, **kwargs)
+    return load_common(JobSchedule, source, relative_origin, **kwargs)
