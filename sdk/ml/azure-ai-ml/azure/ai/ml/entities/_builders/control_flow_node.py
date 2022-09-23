@@ -7,7 +7,7 @@ import uuid
 from abc import ABC
 from typing import Dict, Union
 
-from azure.ai.ml._utils.utils import is_data_binding_expression
+from azure.ai.ml._utils.utils import is_data_binding_expression, is_internal_components_enabled
 from azure.ai.ml.constants._common import CommonYamlFields
 from azure.ai.ml.constants._component import ControlFlowType
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
@@ -101,8 +101,15 @@ class LoopNode(ControlFlowNode, ABC):
         from .command import Command
         from .pipeline import Pipeline
 
+        enable_body_type = (Command, Pipeline)
+        if is_internal_components_enabled():
+            from azure.ai.ml._internal.entities import Command as InternalCommand
+            from azure.ai.ml._internal.entities import Pipeline as InternalPipeline
+
+            enable_body_type = enable_body_type + (InternalCommand, InternalPipeline)
+
         validation_result = self._create_empty_validation_result()
-        if not isinstance(self.body, (Command, Pipeline)):
+        if not isinstance(self.body, enable_body_type):
             validation_result.append_error(
                 yaml_path="body", message="Only command or pipeline job is supported as the body of control flow."
             )

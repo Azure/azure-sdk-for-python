@@ -414,6 +414,9 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             meta=self._meta,
         )
 
+    def __hash__(self):
+        return id(self)
+
 
 class PipelineInput(NodeInput, PipelineExpressionMixin):
     """Define one input of a Pipeline."""

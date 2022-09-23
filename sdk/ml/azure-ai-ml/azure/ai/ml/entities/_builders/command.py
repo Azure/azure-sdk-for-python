@@ -46,7 +46,13 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 from ..._schema import PathAwareSchema
 from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
 from .._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
-from .._util import convert_ordered_dict_to_dict, get_rest_dict, load_from_dict, validate_attribute_type
+from .._util import (
+    convert_ordered_dict_to_dict,
+    from_rest_dict_to_dummy_rest_object,
+    get_rest_dict_for_node_attrs,
+    load_from_dict,
+    validate_attribute_type,
+)
 from .base_node import BaseNode
 from .sweep import Sweep
 
@@ -432,24 +438,16 @@ class Command(BaseNode):
 
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
-        distribution = self.distribution._to_rest_object() if self.distribution else None
-        limits = self.limits._to_rest_object() if self.limits else None
-        services = {k: v._to_rest_object() for k, v in self.services.items()} if self.services else None
-        rest_obj.update(
-            convert_ordered_dict_to_dict(
-                dict(
-                    componentId=self._get_component_id(),
-                    distribution=get_rest_dict(distribution),
-                    limits=get_rest_dict(limits),
-                    resources=get_rest_dict(self.resources, clear_empty_value=True),
-                    services=services,
-                )
-            )
-        )
-        # TODO 1951540: Refactor: avoid send None field to server, for other fields like limits, resources etc.
-        if rest_obj["services"] is None:
-            del rest_obj["services"]
-        return rest_obj
+        for key, value in {
+            "componentId": self._get_component_id(),
+            "distribution": get_rest_dict_for_node_attrs(self.distribution, clear_empty_value=True),
+            "limits": get_rest_dict_for_node_attrs(self.limits, clear_empty_value=True),
+            "resources": get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
+            "services": get_rest_dict_for_node_attrs(self.services),
+        }.items():
+            if value is not None:
+                rest_obj[key] = value
+        return convert_ordered_dict_to_dict(rest_obj)
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Command":
@@ -486,7 +484,15 @@ class Command(BaseNode):
 
         # services, sweep won't have services
         if "services" in obj and obj["services"]:
-            obj["services"] = JobService._from_rest_job_services(obj["services"])
+            # pipeline node rest object are dicts while _from_rest_job_services expect RestJobService
+            services = {}
+            for service_name, service in obj["services"].items():
+                # in rest object of a pipeline job, service will be transferred to a dict as
+                # it's attributes of a node, but JobService._from_rest_object expect a
+                # RestJobService, so we need to convert it back. Here we convert the dict to a
+                # dummy rest object which may work as a RestJobService instead.
+                services[service_name] = from_rest_dict_to_dummy_rest_object(service)
+            obj["services"] = JobService._from_rest_job_services(services)
 
         # handle limits
         if "limits" in obj and obj["limits"]:

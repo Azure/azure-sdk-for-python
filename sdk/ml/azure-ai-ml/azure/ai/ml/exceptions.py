@@ -36,6 +36,7 @@ class ValidationErrorType(Enum):
     CANNOT_PARSE = "CANNOT PARSE"
     RESOURCE_NOT_FOUND = "RESOURCE NOT FOUND"
     GENERIC = "GENERIC"
+    MISSING_VALUE = "MISSING VALUE"
 
 
 class ErrorCategory:
