@@ -16,14 +16,6 @@ collect_ignore_glob = []
 if sys.version_info < (3, 6):
     collect_ignore_glob.append("*_async.py")
 
-@pytest.hookimpl(hookwrapper=True)
-def skip_flaky_test_hook(session):
-    try:
-        yield
-    except HttpResponseError as error:
-        if "Invalid request" in error.message:
-            pytest.mark.skip("flaky test")
-
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     add_remove_header_sanitizer(headers="Ocp-Apim-Subscription-Key")
@@ -67,3 +59,11 @@ def add_sanitizers(test_proxy):
         value="redacted",
         regex="([0-9a-f-]{36})",
     )
+
+@pytest.hookimpl(trylast=True)
+def skip_flaky_test_hook(session):
+    try:
+        yield
+    except HttpResponseError as error:
+        if "Invalid request".casefold() in error.message.casefold():
+            pytest.mark.skip("flaky test")
