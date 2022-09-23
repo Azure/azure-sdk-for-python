@@ -6,15 +6,19 @@
 
 from typing import Dict, Iterable
 
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
+from azure.ai.ml._restclient.v2022_10_01_preview import \
+    AzureMachineLearningWorkspaces as ServiceClient102022
+from azure.ai.ml._scope_dependent_operations import (OperationsContainer,
+                                                     OperationScope)
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Registry
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import (ErrorCategory, ErrorTarget,
+                                    ValidationException)
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
-from azure.mgmt.msi._managed_service_identity_client import ManagedServiceIdentityClient
+from azure.mgmt.msi._managed_service_identity_client import \
+    ManagedServiceIdentityClient
 
 from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import LROConfigurations
@@ -116,6 +120,17 @@ class RegistryOperations:
         :return: A poller to track the operation status.
         :rtype: LROPoller
         """
+        existing_registry = None
+        resource_group = self._resource_group_name
+        try:
+            existing_registry = self.get(name=registry.name)
+        except Exception:  # pylint: disable=broad-except
+            pass
+
+        if existing_registry:
+            # for now return existing registries until UPDATE is implemented
+            return existing_registry
+
         registry_data = registry._to_rest_object()
         poller = self._operation.begin_create_or_update(
             resource_group_name=self._resource_group_name,  # type: str
