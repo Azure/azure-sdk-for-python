@@ -3,7 +3,6 @@ import os
 from functools import partial
 from io import StringIO
 from pathlib import Path
-from typing import Callable
 from unittest import mock
 from unittest.mock import patch
 
@@ -14,7 +13,6 @@ from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated
 
 from azure.ai.ml import Input, MLClient, MpiDistribution, Output, command, dsl, load_component, load_job, spark
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerData, ComponentContainerDetails, SystemData
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
 from azure.ai.ml.automl import classification, regression
 from azure.ai.ml.constants._common import (
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
@@ -2428,7 +2426,7 @@ class TestDSLPipeline:
                 in std_out.getvalue()
             )
 
-    def test_multi_parallel_components_with_file_input_pipeline_output(self, randstr: Callable[[], str]) -> None:
+    def test_multi_parallel_components_with_file_input_pipeline_output(self) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
         batch_inference1 = load_component(source=str(components_dir / "score.yml"))
         batch_inference2 = load_component(source=str(components_dir / "score.yml"))
