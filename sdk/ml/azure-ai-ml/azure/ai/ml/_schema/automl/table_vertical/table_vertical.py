@@ -10,7 +10,7 @@ from azure.ai.ml._schema.automl.featurization_settings import TableFeaturization
 from azure.ai.ml._schema.automl.table_vertical.table_vertical_limit_settings import AutoMLTableLimitsSchema
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField, fields
 from azure.ai.ml._schema.job.input_output_entry import MLTableInputSchema
-from azure.ai.ml.constants import AutoMLConstants
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 
 
 class AutoMLTableVerticalSchema(AutoMLVerticalSchema):
