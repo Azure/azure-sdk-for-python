@@ -8,7 +8,7 @@ from marshmallow import fields, post_load
 
 from azure.ai.ml._restclient.v2022_06_01_preview.models import ImageSweepLimitSettings
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
-from azure.ai.ml.constants import AutoMLConstants
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 
 
 class ImageLimitsSchema(metaclass=PatchedSchemaMeta):

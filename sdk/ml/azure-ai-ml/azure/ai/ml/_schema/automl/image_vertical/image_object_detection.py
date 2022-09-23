@@ -24,7 +24,7 @@ from azure.ai.ml._schema.automl.image_vertical.image_model_settings import (
 from azure.ai.ml._schema.automl.image_vertical.image_vertical import ImageVerticalSchema
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants import AutoMLConstants
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 
 
 class ImageObjectDetectionSchema(ImageVerticalSchema):
