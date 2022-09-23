@@ -16,7 +16,6 @@ from pathlib import Path
 from platform import system
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Union, cast
 
-import pathspec
 from colorama import Fore
 from tqdm import TqdmWarning, tqdm
 
@@ -49,6 +48,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: 
     ModelVersionsOperations,
 )
 from azure.ai.ml._utils._exception_utils import EmptyDirectoryError
+from azure.ai.ml._utils._pathspec import GitWildMatchPattern
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry
 from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, OrderString
 from azure.ai.ml.entities._assets.asset import Asset
@@ -77,12 +77,12 @@ class IgnoreFile(object):
         self._path = path
         self._path_spec = None
 
-    def _create_pathspec(self) -> Optional[pathspec.PathSpec]:
+    def _create_pathspec(self) -> Optional[List[GitWildMatchPattern]]:
         """Creates path specification based on ignore file contents."""
         if not self.exists():
             return None
         with open(self._path, "r") as fh:
-            return pathspec.PathSpec.from_lines("gitwildmatch", fh)
+            return [GitWildMatchPattern(line) for line in fh]
 
     def exists(self) -> bool:
         """Checks if ignore file exists."""
@@ -104,7 +104,11 @@ class IgnoreFile(object):
                 return True
             file_path = os.path.relpath(file_path, ignore_dirname)
 
-        return self._path_spec.match_file(str(file_path))
+        file_path = str(file_path)
+        for pattern in self._path_spec:
+            if file_path in pattern.match((file_path,)) and bool(pattern.include):
+                return True
+        return False
 
     @property
     def path(self) -> Union[Path, str]:
