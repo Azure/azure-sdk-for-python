@@ -916,7 +916,7 @@ class TestCommandFunction:
         assert hash(node1) == hash(node2)
         assert node1 == node2
 
-        component_func = load_component(path="./tests/test_configs/components/helloworld_component_no_paths.yml")
+        component_func = load_component("./tests/test_configs/components/helloworld_component_no_paths.yml")
         node3 = component_func()
         node4 = component_func()
         assert hash(node3) == hash(node4)
