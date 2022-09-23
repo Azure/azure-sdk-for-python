@@ -276,12 +276,15 @@ def dump_yaml_to_file(
     dest: Union[AnyStr, PathLike, IO, None],
     data_dict: Union[OrderedDict, dict],
     default_flow_style=False,
+    path: Union[AnyStr, PathLike] = None,  # deprecated input
+    args=None,  # deprecated* input
     **kwargs,
 ) -> None:
-    path = kwargs.pop("path", None)
     # Check for deprecated path input, either named or as first unnamed input
     if dest is None:
-        if path is not None:
+        if args is not None and len(args) > 0:
+            dest = args[0]
+        elif path is not None:
             dest = path
             warnings.warn(
                 "the 'path' input for dump functions is deprecated. Please use 'dest' instead.", DeprecationWarning
