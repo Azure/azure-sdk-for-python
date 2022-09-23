@@ -162,7 +162,7 @@ class TestWorkspace(AzureRecordedTestCase):
             },
             {"primary_user_assigned_identity": user_assigned_identity.id},
         ]
-        wps = load_workspace(path="./tests/test_configs/workspace/workspace_min.yaml", params_override=params_override)
+        wps = load_workspace("./tests/test_configs/workspace/workspace_min.yaml", params_override=params_override)
         workspace = client.workspaces.begin_create(workspace=wps)
         assert workspace.name == wps_name
         assert workspace.location == location

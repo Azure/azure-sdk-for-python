@@ -133,7 +133,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         # todo: run failed
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
-            path=pipeline_job_path,
+            pipeline_job_path,
             params_override=params_override,
         )
         created_job = client.jobs.create_or_update(pipeline_job)
@@ -1346,7 +1346,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_without_setting_binding_node(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
-            path="./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_without_setting_binding_node.yml",
+            "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_without_setting_binding_node.yml",
             params_override=params_override,
         )
         created_job = client.jobs.create_or_update(pipeline_job)
@@ -1366,7 +1366,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_with_only_setting_pipeline_level(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
-            path="./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_only_setting_pipeline_level.yml",
+            "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_only_setting_pipeline_level.yml",
             params_override=params_override,
         )
         created_job = client.jobs.create_or_update(pipeline_job)
@@ -1386,7 +1386,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_with_only_setting_binding_node(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
-            path="./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_only_setting_binding_node.yml",
+            "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_only_setting_binding_node.yml",
             params_override=params_override,
         )
         created_job = client.jobs.create_or_update(pipeline_job)
@@ -1408,7 +1408,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     ) -> None:
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
-            path="./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_setting_binding_node_and_pipeline_level.yml",
+            "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_setting_binding_node_and_pipeline_level.yml",
             params_override=params_override,
         )
         created_job = client.jobs.create_or_update(pipeline_job)
@@ -1430,7 +1430,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     ) -> None:
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
-            path="./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_inline_job_setting_binding_node_and_pipeline_level.yml",
+            "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_inline_job_setting_binding_node_and_pipeline_level.yml",
             params_override=params_override,
         )
         created_job = client.jobs.create_or_update(pipeline_job)
@@ -1450,7 +1450,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_with_pipeline_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
-            path="./tests/test_configs/dsl_pipeline/pipeline_with_pipeline_component/pipeline.yml",
+            "./tests/test_configs/dsl_pipeline/pipeline_with_pipeline_component/pipeline.yml",
             params_override=params_override,
         )
         created_pipeline = assert_job_cancel(pipeline_job, client)
@@ -1470,7 +1470,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[], str]) -> None:
         params_override = [{"name": randstr()}]
         pipeline_job = load_job(
-            path="./tests/test_configs/dsl_pipeline/pipeline_with_do_while/pipeline.yml",
+            "./tests/test_configs/dsl_pipeline/pipeline_with_do_while/pipeline.yml",
             params_override=params_override,
         )
         created_pipeline = assert_job_cancel(pipeline_job, client)
@@ -1486,7 +1486,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         params_override = [{"name": randstr()}]
         with pytest.raises(ValidationError) as exception:
             load_job(
-                path="./tests/test_configs/dsl_pipeline/pipeline_with_do_while/invalid_pipeline.yml",
+                "./tests/test_configs/dsl_pipeline/pipeline_with_do_while/invalid_pipeline.yml",
                 params_override=params_override,
             )
         error_message_str = re.findall(r"(\{.*\})", exception.value.args[0].replace("\n", ""))[0]
@@ -1552,7 +1552,7 @@ class TestPipelineJobReuse(AzureRecordedTestCase):
         # submit a new job that will reuse previous job
         new_job_name = randstr("new_job_name")
         new_job = client.jobs.create_or_update(
-            load_job(path=pipeline_spec_path, params_override=[{"name": new_job_name}]),
+            load_job(pipeline_spec_path, params_override=[{"name": new_job_name}]),
         )
         print(f"new submitted job name: {new_job_name}")
         wait_until_done(client, new_job)

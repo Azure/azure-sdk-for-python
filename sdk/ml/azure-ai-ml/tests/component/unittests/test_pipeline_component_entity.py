@@ -332,7 +332,7 @@ class TestPipelineComponentEntity:
 
     def test_pipeline_component_with_group(self) -> None:
         component_path = "./tests/test_configs/components/pipeline_component_with_group.yml"
-        component: PipelineComponent = load_component(path=component_path)
+        component: PipelineComponent = load_component(component_path)
         assert len(component.inputs) == 2
         assert isinstance(component.inputs["group"], GroupInput)
         component_dict = component._to_dict()
@@ -362,7 +362,7 @@ class TestPipelineComponentEntity:
 
     def test_nested_pipeline_component_with_group(self) -> None:
         component_path = "./tests/test_configs/components/nested_pipeline_component_with_group.yml"
-        component: PipelineComponent = load_component(path=component_path)
+        component: PipelineComponent = load_component(component_path)
         assert len(component.inputs) == 2
         assert isinstance(component.inputs["top_group"], GroupInput)
         nested_pipeline_component = component.jobs["component_a_job"]
@@ -408,7 +408,7 @@ class TestPipelineComponentEntity:
     def test_invalid_nested_pipeline_component_with_group(self) -> None:
         component_path = "./tests/test_configs/components/invalid/invalid_nested_pipeline_component_with_group.yml"
         with pytest.raises(Exception) as e:
-            load_component(path=component_path)
+            load_component(component_path)
         assert (
             "'group' is defined as a parameter group but got input '${{parent.inputs.top_group}}' with type '<class 'str'>'"
             in str(e.value)

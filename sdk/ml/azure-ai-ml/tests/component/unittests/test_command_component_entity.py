@@ -353,10 +353,10 @@ class TestCommandComponentEntity:
         yaml_path = "./tests/test_configs/components/invalid/helloworld_component_conflict_input_names.yml"
         # directly load illegal YAML component will get validation exception to prevent user init entity
         with pytest.raises(ValidationException) as e:
-            load_component(path=yaml_path)
+            load_component(yaml_path)
         assert "Invalid component input names 'COMPONENT_IN_NUMBER' and 'component_in_number'" in str(e.value)
         component = load_component(
-            path=yaml_path,
+            yaml_path,
             params_override=[
                 {"inputs": {"component_in_number": {"description": "1", "type": "number"}}},
             ],
@@ -393,7 +393,7 @@ class TestCommandComponentEntity:
 
         # from YAML
         yaml_path = "./tests/test_configs/components/helloworld_component_primitive_outputs.yml"
-        component1 = load_component(path=yaml_path)
+        component1 = load_component(yaml_path)
         actual_component_dict1 = pydash.omit(
             component1._to_rest_object().as_dict()["properties"]["component_spec"], *omits
         )
