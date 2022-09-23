@@ -506,7 +506,6 @@
         "Date": "Fri, 23 Sep 2022 15:19:09 GMT",
         "Expires": "-1",
         "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/CliV2AnonymousEnvironment/versions/65a57bb8969551bd51f7d3e2f734e76e?api-version=2022-05-01",
-        "Log-URL": "https://eus2managed147.blob.core.windows.net/5e03a1ece3374708813fe6b25b4ed3af-q9cvtrkmmo/logs/ch1/rawtext.log?sv=2018-03-28\u0026sr=b\u0026sig=m58daznN1noXZEbFg1%2BcxpdPmFxtQ0aI3CqawpR9Ia4%3D\u0026se=2022-09-23T16%3A59%3A01Z\u0026sp=r",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Server-Timing": "traceparent;desc=\u002200-d3cf705e7d504d04bae416588b9fe242-25dd7767d88a5e93-01\u0022",
