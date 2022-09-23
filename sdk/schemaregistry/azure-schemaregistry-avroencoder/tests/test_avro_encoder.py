@@ -434,7 +434,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
             sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_invalid_name_in_fullname) 
 
         schema_invalid_name_reserved_type = """{
-            "name":"record",
+            "name":"long",
             "type":"record",
             "fields":[{"name":"name","type":"string"}]
         }"""
