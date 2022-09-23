@@ -458,13 +458,11 @@
               "log_verbosity": "info",
               "training_data": "${{parent.inputs.image_instance_segmentation_train_data}}",
               "limits": {
-                "timeout_minutes": 60
+                "timeout_minutes": 60,
+                "max_concurrent_trials": 4,
+                "max_trials": 20
               },
               "sweep": {
-                "limits": {
-                  "max_concurrent_trials": 4,
-                  "max_trials": 20
-                },
                 "sampling_algorithm": "random",
                 "early_termination": {
                   "evaluation_interval": 10,
