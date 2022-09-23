@@ -1256,16 +1256,16 @@ class EvaluationsOperations:
 
     @distributed_trace
     def list(
-        self, *, filter: Optional[str] = None, top: Optional[int] = None, skip: int = 0, **kwargs: Any
+        self, *, filter_expression: Optional[str] = None, top: Optional[int] = None, skip: int = 0, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """All Offline Evaluations.
 
         List of all Offline Evaluations.
 
-        :keyword filter: An expression to filter the evaluations against evaluation metadata. Only
-         evaluations where the expression evaluates to true are included in the response.
+        :keyword filter_expression: An expression to filter the evaluations against evaluation
+         metadata. Only evaluations where the expression evaluates to true are included in the response.
          Here is an example, metadata=evaluationType eq 'Manual'. Default value is None.
-        :paramtype filter: str
+        :paramtype filter_expression: str
         :keyword top: The maximum number of resources to return from the collection. Defaults to
          maximum value of integer. Default value is None.
         :paramtype top: int
@@ -1313,7 +1313,7 @@ class EvaluationsOperations:
             if not next_link:
 
                 request = build_evaluations_list_request(
-                    filter=filter,
+                    filter_expression=filter_expression,
                     top=top,
                     skip=skip,
                     api_version=self._config.api_version,

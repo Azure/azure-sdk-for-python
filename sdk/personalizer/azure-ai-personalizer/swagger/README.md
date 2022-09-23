@@ -43,3 +43,11 @@ input-file: https://github.com/Azure/azure-rest-api-specs/blob/e24bbf6a66cb0a19c
 output-folder: ../azure/ai/personalizer
 title: PersonalizerClient
 ```
+
+```yaml
+directive:
+  - where-operation: Evaluations_List
+    transform: >
+        $.parameters[1]["x-ms-client-name"] = "filter_expression";
+```
+
