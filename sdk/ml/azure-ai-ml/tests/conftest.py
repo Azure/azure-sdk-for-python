@@ -59,7 +59,7 @@ def fake_datastore_key() -> str:
 
 @pytest.fixture(autouse=True)
 def add_sanitizers(test_proxy, fake_datastore_key):
-    add_remove_header_sanitizer(headers="x-azureml-token")
+    add_remove_header_sanitizer(headers="x-azureml-token,Log-URL")
     set_custom_default_matcher(excluded_headers="x-ms-meta-name,x-ms-meta-version")
     add_body_key_sanitizer(json_path="$.key", value=fake_datastore_key)
     add_body_key_sanitizer(json_path="$....key", value=fake_datastore_key)
