@@ -3,6 +3,7 @@ import os
 from functools import partial
 from io import StringIO
 from pathlib import Path
+from typing import Callable
 from unittest import mock
 from unittest.mock import patch
 
@@ -13,6 +14,7 @@ from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated
 
 from azure.ai.ml import Input, MLClient, MpiDistribution, Output, command, dsl, load_component, load_job, spark
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerData, ComponentContainerDetails, SystemData
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobService
 from azure.ai.ml.automl import classification, regression
 from azure.ai.ml.constants._common import (
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
@@ -37,7 +39,6 @@ from azure.ai.ml.entities import (
 from azure.ai.ml.entities._builders import Command, Parallel, Spark, Sweep
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob
-from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
@@ -3696,11 +3697,10 @@ class TestDSLPipeline:
         assert len(node_services) == 3
         for name, service in node_services.items():
             assert isinstance(service, JobService)
-            assert service._to_rest_object().as_dict() == services[name]
+            assert service.as_dict() == services[name]
 
         job_rest_obj = pipeline._to_rest_object()
-        for name, service in job_rest_obj.properties.jobs["node"]["services"].items():
-            assert service.as_dict() == services[name]
+        assert job_rest_obj.properties.jobs["node"]["services"] == services
 
         recovered_obj = PipelineJob._from_rest_object(job_rest_obj)
         node_services = recovered_obj.jobs["node"].services
@@ -3708,7 +3708,7 @@ class TestDSLPipeline:
         assert len(node_services) == 3
         for name, service in node_services.items():
             assert isinstance(service, JobService)
-            assert service._to_rest_object().as_dict() == services[name]
+            assert service.as_dict() == services[name]
 
         # test set services in pipeline
         new_services = {"my_jupyter": {"job_service_type": "Jupyter"}}
@@ -3724,11 +3724,10 @@ class TestDSLPipeline:
         assert len(node_services) == 1
         for name, service in node_services.items():
             assert isinstance(service, JobService)
-            assert service._to_rest_object().as_dict() == new_services[name]
+            assert service.as_dict() == new_services[name]
 
         job_rest_obj = pipeline._to_rest_object()
-        for name, service in job_rest_obj.properties.jobs["node"]["services"].items():
-            assert service.as_dict() == new_services[name]
+        assert job_rest_obj.properties.jobs["node"]["services"] == new_services
 
     def test_pipeline_decorator_without_brackets(self):
         path = "./tests/test_configs/components/helloworld_component.yml"

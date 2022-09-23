@@ -15,9 +15,9 @@ from azure.ai.ml import (
     load_job,
     spark,
 )
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobService
 from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._builders import Command
-from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.exceptions import JobException, ValidationException
 
@@ -871,8 +871,7 @@ class TestCommandFunction:
             assert isinstance(service, JobService)
 
         node_rest_obj = node._to_rest_object()
-        for name, service in node_rest_obj["services"].items():
-            assert service.as_dict() == services[name]
+        assert node_rest_obj["services"] == services
 
         # test invalid services
         invalid_services_0 = "jupyter"
