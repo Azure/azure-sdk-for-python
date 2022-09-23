@@ -50,6 +50,7 @@ common_omit_fields = [
     "jobs.*.componentId",
     "inputs.*.uri",
     "jobs.*._source",
+    "jobs.*.properties",
     "settings._source",
     "source_job_id",
 ]
@@ -197,7 +198,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         component_job_dict = component_node._to_rest_object()
         assert is_ARM_id_for_resource(component_job_dict["componentId"])
-        omit_fields = ["componentId", "_source"]
+        omit_fields = ["componentId", "_source", "properties"]
         component_job_dict = pydash.omit(component_job_dict, *omit_fields)
         assert component_job_dict == {
             "computeId": None,
