@@ -48,7 +48,7 @@ batch:
 These settings apply only when `--tag=release_runtime_1_1_preview` is specified on the command line.
 
 ```yaml $(tag) == 'release_runtime_1_1_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/34a2c0723155d134311419fd997925ce96b85bec/specification/cognitiveservices/data-plane/Language/stable/2021-10-01/questionanswering.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/59ad2b7dd63e952822aa51e11a26a0af5724f996/specification/cognitiveservices/data-plane/Language/stable/2021-10-01/questionanswering.json
 output-folder: ../azure/ai/language/questionanswering
 models-mode: msrest
 title: QuestionAnsweringClient
@@ -67,6 +67,64 @@ title: QuestionAnsweringAuthoringClient
 
 
 ## Customizations
+
+### General customizations
+
+```yaml
+# Define HTTP 200 responses for LROs to document result model.
+directive:
+- where-operation: QuestionAnsweringProjects_DeleteProject
+  transform: |
+    $.responses["200"] = {
+      description: "Project delete job status.",
+      schema: {
+        "$ref": "#/definitions/JobState"
+      }
+    };
+- where-operation: QuestionAnsweringProjects_DeployProject
+  transform: |
+    $.responses["200"] = {
+      description: "Project deployment details.",
+      schema: {
+        "$ref": "#/definitions/ProjectDeployment"
+      }
+    };
+- where-operation: QuestionAnsweringProjects_Import
+  transform: |
+    $.responses["200"] = {
+      description: "Gets the status of an Import job.",
+      schema: {
+        "$ref": "#/definitions/JobState"
+      }
+    };
+- where-operation: QuestionAnsweringProjects_UpdateQnas
+  transform: |
+    $["x-ms-pageable"] = {
+      "nextLinkName": "nextLink",
+      "itemName": "value"
+    };
+    $.responses["200"] = {
+      description: "All the QnAs of a project.",
+      schema: {
+        "$ref": "#/definitions/QnaAssets"
+      }
+    };
+- where-operation: QuestionAnsweringProjects_UpdateSources
+  transform: |
+    $["x-ms-pageable"] = {
+      "nextLinkName": "nextLink",
+      "itemName": "value"
+    };
+    $.responses["200"] = {
+      description: "All the sources of a project.",
+      schema: {
+        "$ref": "#/definitions/QnaSources"
+      }
+    };
+```
+
+
+### Python Customizations
 
 ### Runtime
 

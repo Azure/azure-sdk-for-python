@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-kwdb283407?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-kwdb283407?api-version=7.3",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -26,7 +26,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-kwdb283407?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-kwdb283407?api-version=7.3",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -76,13 +76,13 @@
             "unwrapKey",
             "wrapKey"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-kwdb283407/62184ccdf5d748b6b24565dc24593be7",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-kwdb283407/62184ccdf5d748b6b24565dc24593be7",
           "kty": "oct-HSM"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-kwdb283407/62184ccdf5d748b6b24565dc24593be7?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-kwdb283407/62184ccdf5d748b6b24565dc24593be7?api-version=7.3",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -120,7 +120,7 @@
             "wrapKey",
             "unwrapKey"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-kwdb283407/62184ccdf5d748b6b24565dc24593be7",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-kwdb283407/62184ccdf5d748b6b24565dc24593be7",
           "kty": "oct-HSM"
         }
       }

@@ -39,7 +39,9 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringTestCase):
             }],
             **self.kwargs_for_polling
         )
-        await sources_poller.result() # wait until done
+        sources = await sources_poller.result() # wait until done
+        async for source in sources:
+            assert source["sourceKind"]
 
         # assert
         sources = client.list_sources(
@@ -75,7 +77,10 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringTestCase):
             }],
             **self.kwargs_for_polling
         )
-        await qna_poller.result()
+        qnas = await qna_poller.result()
+        async for qna in qnas:
+            assert qna["questions"]
+            assert qna["answer"]
 
         # assert
         qnas = client.list_qnas(

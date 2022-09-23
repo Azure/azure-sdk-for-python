@@ -4,17 +4,18 @@ from unittest.mock import Mock, patch
 import pytest
 
 from azure.ai.ml import load_datastore
-from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.operations import DatastoreOperations
 
 
 @pytest.fixture
 def mock_datastore_operation(
-    mock_workspace_scope: OperationScope, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_05_01: Mock
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         serviceclient_2022_05_01=mock_aml_services_2022_05_01,
     )
 
