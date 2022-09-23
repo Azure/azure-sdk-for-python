@@ -85,6 +85,9 @@ class Registry(Resource):
         # pylint: disable=no-member
         schema = RegistrySchema(context={BASE_PATH_CONTEXT_KEY: "./"})
         self.replication_locations = self.region_details
+        #if self.replication_locations and len(self.replication_locations) > 0:
+        #    if self.replication_locations[0].acr_config and len(self.replication_locations[0].acr_config) > 0:
+        #        self.container_registry = self.replication_locations[0].acr_config[0]
         return schema.dump(self)
 
     @classmethod
