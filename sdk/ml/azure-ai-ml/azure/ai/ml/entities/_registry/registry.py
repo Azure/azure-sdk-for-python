@@ -83,7 +83,9 @@ class Registry(Resource):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return RegistrySchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        schema = RegistrySchema(context={BASE_PATH_CONTEXT_KEY: "./"})
+        self.replication_locations = self.region_details
+        return schema.dump(self)
 
     @classmethod
     def _load(
@@ -116,10 +118,10 @@ class Registry(Resource):
             region_details = [
                 RegistryRegionArmDetails._from_rest_object(details) for details in real_registry.region_details
             ]
-        return Registry(
+        result = Registry(
             name=rest_obj.name,
             description=real_registry.description,
-            tags=real_registry.tags,
+            tags=rest_obj.tags,
             location=rest_obj.location,
             public_network_access=real_registry.public_network_access,
             discovery_url=real_registry.discovery_url,
@@ -128,6 +130,7 @@ class Registry(Resource):
             mlflow_registry_uri=real_registry.ml_flow_registry_uri,
             region_details=region_details,
         )
+        return result
 
     # There are differences between what our registry validation schema
     # accepts, and how we actually represent things internally.
