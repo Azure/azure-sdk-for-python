@@ -362,10 +362,10 @@ class TestDSLPipeline:
 
     def test_dsl_pipeline_with_spark(self) -> None:
         add_greeting_column_func = load_component(
-            path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
+            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
         )
         count_by_row_func = load_component(
-            path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/count_by_row_component.yml"
+            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/count_by_row_component.yml"
         )
         synapse_compute_name = "spark31"
 
@@ -3963,10 +3963,10 @@ class TestInitFinalizeJob:
 
     def test_dsl_pipeline_with_spark_hobo(self) -> None:
         add_greeting_column_func = load_component(
-            path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
+            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
         )
         count_by_row_func = load_component(
-            path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/count_by_row_component.yml"
+            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/count_by_row_component.yml"
         )
 
         @dsl.pipeline(description="submit a pipeline with spark job")
