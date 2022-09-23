@@ -6,7 +6,7 @@ import logging
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobService
+from azure.ai.ml.entities._job.job_service import JobService
 
 from ..core.schema import PathAwareSchema
 
@@ -22,5 +22,5 @@ class JobServiceSchema(PathAwareSchema):
     properties = fields.Dict()
 
     @post_load
-    def make(self, data, **kwargs):
+    def make(self, data, **kwargs):  # pylint: disable=unused-argument,no-self-use
         return JobService(**data)
