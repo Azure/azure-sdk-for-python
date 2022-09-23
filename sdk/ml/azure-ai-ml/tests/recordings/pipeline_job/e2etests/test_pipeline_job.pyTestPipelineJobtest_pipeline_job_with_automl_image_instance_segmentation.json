@@ -15,24 +15,24 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Sep 2022 15:59:21 GMT",
+        "Date": "Fri, 23 Sep 2022 14:56:35 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
-        "Server-Timing": "traceparent;desc=\u002200-21d5eafc54bf55bfe9c1ad275bcd8aac-8ddaf21e5a22da79-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-6b944ad2fd87ed48200c9bdbb56b1539-2ced2efbb775fd21-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
-        "x-aml-cluster": "vienna-eastus2euap-02",
+        "x-aml-cluster": "vienna-eastus2euap-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "19909b35-0180-4d8d-94b1-bde07c2169de",
+        "x-ms-correlation-request-id": "cd449d9f-ee0a-407f-987d-d848f1996a9c",
         "x-ms-ratelimit-remaining-subscription-reads": "11999",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "CANADACENTRAL:20220922T155922Z:19909b35-0180-4d8d-94b1-bde07c2169de",
-        "x-request-time": "0.044"
+        "x-ms-routing-request-id": "CANADACENTRAL:20220923T145636Z:cd449d9f-ee0a-407f-987d-d848f1996a9c",
+        "x-request-time": "0.041"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/gpu-cluster",
@@ -60,18 +60,18 @@
               "nodeIdleTimeBeforeScaleDown": "PT2M"
             },
             "subnet": null,
-            "currentNodeCount": 4,
-            "targetNodeCount": 4,
+            "currentNodeCount": 0,
+            "targetNodeCount": 0,
             "nodeStateCounts": {
               "preparingNodeCount": 0,
-              "runningNodeCount": 4,
+              "runningNodeCount": 0,
               "idleNodeCount": 0,
               "unusableNodeCount": 0,
               "leavingNodeCount": 0,
               "preemptedNodeCount": 0
             },
             "allocationState": "Steady",
-            "allocationStateTransitionTime": "2022-09-22T15:56:21.333\u002B00:00",
+            "allocationStateTransitionTime": "2022-09-23T14:40:59.64\u002B00:00",
             "errors": null,
             "remoteLoginPortPublicAccess": "Enabled",
             "osType": "Linux",
@@ -97,24 +97,24 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Sep 2022 15:59:23 GMT",
+        "Date": "Fri, 23 Sep 2022 14:56:36 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
-        "Server-Timing": "traceparent;desc=\u002200-1a7f8e8ef0f8c2d40fd7d5b236d96017-ea33d8f85d1c309c-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-8d0ebe2e012efa33961e716927312058-77a32b958c61058a-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
-        "x-aml-cluster": "vienna-eastus2euap-02",
+        "x-aml-cluster": "vienna-eastus2euap-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "112efacf-b7df-43b1-8717-488e8100fdcb",
+        "x-ms-correlation-request-id": "9a52d346-b6be-494d-95ee-342e186badc8",
         "x-ms-ratelimit-remaining-subscription-reads": "11998",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "CANADACENTRAL:20220922T155924Z:112efacf-b7df-43b1-8717-488e8100fdcb",
-        "x-request-time": "0.123"
+        "x-ms-routing-request-id": "CANADACENTRAL:20220923T145637Z:9a52d346-b6be-494d-95ee-342e186badc8",
+        "x-request-time": "0.105"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/datastores/workspaceblobstore",
@@ -161,21 +161,21 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Sep 2022 15:59:23 GMT",
+        "Date": "Fri, 23 Sep 2022 14:56:37 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
-        "Server-Timing": "traceparent;desc=\u002200-8016b92af8417562643319861a3b6d94-d05199419b2220ab-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-3a3e3e1f4d35edef3079d47045414b6d-1e92c88c1920a980-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
-        "x-aml-cluster": "vienna-eastus2euap-02",
+        "x-aml-cluster": "vienna-eastus2euap-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "b03d4e84-1f38-4e26-af09-cd394b1c035a",
+        "x-ms-correlation-request-id": "e748436d-7ef4-41e9-a96c-ff9158b9371a",
         "x-ms-ratelimit-remaining-subscription-writes": "1199",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "CANADACENTRAL:20220922T155924Z:b03d4e84-1f38-4e26-af09-cd394b1c035a",
-        "x-request-time": "0.121"
+        "x-ms-routing-request-id": "CANADACENTRAL:20220923T145638Z:e748436d-7ef4-41e9-a96c-ff9158b9371a",
+        "x-request-time": "0.099"
       },
       "ResponseBody": {
         "secretsType": "AccountKey",
@@ -190,7 +190,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-storage-blob/12.12.0 Python/3.8.6 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Thu, 22 Sep 2022 15:59:25 GMT",
+        "x-ms-date": "Fri, 23 Sep 2022 14:56:38 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
@@ -200,7 +200,7 @@
         "Content-Length": "264",
         "Content-MD5": "bxQgDk/2/IhOiVcx8\u002BLMhg==",
         "Content-Type": "application/octet-stream",
-        "Date": "Thu, 22 Sep 2022 15:59:24 GMT",
+        "Date": "Fri, 23 Sep 2022 14:56:38 GMT",
         "ETag": "\u00220x8DA9CB0311A8D12\u0022",
         "Last-Modified": "Thu, 22 Sep 2022 15:36:17 GMT",
         "Server": [
@@ -230,13 +230,13 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-storage-blob/12.12.0 Python/3.8.6 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Thu, 22 Sep 2022 15:59:25 GMT",
+        "x-ms-date": "Fri, 23 Sep 2022 14:56:38 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
-        "Date": "Thu, 22 Sep 2022 15:59:24 GMT",
+        "Date": "Fri, 23 Sep 2022 14:56:38 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -263,24 +263,24 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Sep 2022 15:59:24 GMT",
+        "Date": "Fri, 23 Sep 2022 14:56:37 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
-        "Server-Timing": "traceparent;desc=\u002200-c116a5c76878b730bd53450497e72b36-3de1ff8f37164720-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-6d1ea3b07efc953b29a7872ceddc46e1-bd646997aa4e9152-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
-        "x-aml-cluster": "vienna-eastus2euap-02",
+        "x-aml-cluster": "vienna-eastus2euap-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "cd5339ae-cb52-43e7-9527-3ee4dbf1d1a1",
+        "x-ms-correlation-request-id": "7b16b611-d529-4b71-a698-2c575f49f7bc",
         "x-ms-ratelimit-remaining-subscription-reads": "11997",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "CANADACENTRAL:20220922T155925Z:cd5339ae-cb52-43e7-9527-3ee4dbf1d1a1",
-        "x-request-time": "0.142"
+        "x-ms-routing-request-id": "CANADACENTRAL:20220923T145638Z:7b16b611-d529-4b71-a698-2c575f49f7bc",
+        "x-request-time": "0.090"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/datastores/workspaceblobstore",
@@ -327,20 +327,20 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Sep 2022 15:59:24 GMT",
+        "Date": "Fri, 23 Sep 2022 14:56:38 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
-        "Server-Timing": "traceparent;desc=\u002200-b6e02ac0048364e5ae4ee5d1a55f93a4-4ff40c551b63aba0-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-9890bf669e994bba729478a75e002f7d-9b78bfc0c0393f62-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
-        "x-aml-cluster": "vienna-eastus2euap-02",
+        "x-aml-cluster": "vienna-eastus2euap-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "20ef77e1-a5c4-4663-a85f-da16817dbf90",
+        "x-ms-correlation-request-id": "7934364f-2318-41ea-839f-6280b64a5be7",
         "x-ms-ratelimit-remaining-subscription-writes": "1198",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "CANADACENTRAL:20220922T155925Z:20ef77e1-a5c4-4663-a85f-da16817dbf90",
+        "x-ms-routing-request-id": "CANADACENTRAL:20220923T145638Z:7934364f-2318-41ea-839f-6280b64a5be7",
         "x-request-time": "0.098"
       },
       "ResponseBody": {
@@ -356,7 +356,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-storage-blob/12.12.0 Python/3.8.6 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Thu, 22 Sep 2022 15:59:26 GMT",
+        "x-ms-date": "Fri, 23 Sep 2022 14:56:39 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
@@ -366,7 +366,7 @@
         "Content-Length": "269",
         "Content-MD5": "WaHfrrWZTI6RIAay8\u002BmxMg==",
         "Content-Type": "application/octet-stream",
-        "Date": "Thu, 22 Sep 2022 15:59:25 GMT",
+        "Date": "Fri, 23 Sep 2022 14:56:38 GMT",
         "ETag": "\u00220x8DA9CB031787EA8\u0022",
         "Last-Modified": "Thu, 22 Sep 2022 15:36:18 GMT",
         "Server": [
@@ -396,13 +396,13 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-storage-blob/12.12.0 Python/3.8.6 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Thu, 22 Sep 2022 15:59:26 GMT",
+        "x-ms-date": "Fri, 23 Sep 2022 14:56:39 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
-        "Date": "Thu, 22 Sep 2022 15:59:25 GMT",
+        "Date": "Fri, 23 Sep 2022 14:56:38 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -415,13 +415,13 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_276096278194?api-version=2022-06-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_715330647514?api-version=2022-06-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "2039",
+        "Content-Length": "2027",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/0.0.139 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.6 (Windows-10-10.0.22000-SP0)"
       },
@@ -434,7 +434,7 @@
             "owner": "sdkteam"
           },
           "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/gpu-cluster",
-          "displayName": "test_276096278194",
+          "displayName": "test_715330647514",
           "experimentName": "my_first_experiment_image_instance_segmentation",
           "isArchived": false,
           "jobType": "Pipeline",
@@ -458,13 +458,11 @@
               "log_verbosity": "info",
               "training_data": "${{parent.inputs.image_instance_segmentation_train_data}}",
               "limits": {
+                "max_concurrent_trials": 4,
+                "max_trials": 20,
                 "timeout_minutes": 60
               },
               "sweep": {
-                "limits": {
-                  "max_concurrent_trials": 4,
-                  "max_trials": 20
-                },
                 "sampling_algorithm": "random",
                 "early_termination": {
                   "evaluation_interval": 10,
@@ -506,26 +504,26 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "4446",
+        "Content-Length": "4408",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Sep 2022 15:59:30 GMT",
+        "Date": "Fri, 23 Sep 2022 14:56:44 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_276096278194?api-version=2022-06-01-preview",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_715330647514?api-version=2022-06-01-preview",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
-        "Server-Timing": "traceparent;desc=\u002200-dac03ab64a3a30710395ba364c1fea66-68f971a6d7370a29-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-7909a24b0aee94bb67216c43ad6c6d77-3310c08f50422459-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-eastus2euap-02",
+        "x-aml-cluster": "vienna-eastus2euap-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "d46b2d17-0fa5-459f-a840-9564f1acc43d",
+        "x-ms-correlation-request-id": "c97fa4ac-dde7-4c85-8bc2-09c8599f615b",
         "x-ms-ratelimit-remaining-subscription-writes": "1199",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "CANADACENTRAL:20220922T155931Z:d46b2d17-0fa5-459f-a840-9564f1acc43d",
-        "x-request-time": "3.461"
+        "x-ms-routing-request-id": "CANADACENTRAL:20220923T145645Z:c97fa4ac-dde7-4c85-8bc2-09c8599f615b",
+        "x-request-time": "3.062"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_276096278194",
-        "name": "test_276096278194",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_715330647514",
+        "name": "test_715330647514",
         "type": "Microsoft.MachineLearningServices/workspaces/jobs",
         "properties": {
           "description": "The hello world pipeline job",
@@ -545,7 +543,7 @@
             "azureml.defaultDataStoreName": "workspaceblobstore",
             "azureml.pipelineComponent": "pipelinerun"
           },
-          "displayName": "test_276096278194",
+          "displayName": "test_715330647514",
           "status": "Preparing",
           "experimentName": "my_first_experiment_image_instance_segmentation",
           "services": {
@@ -560,7 +558,7 @@
             "Studio": {
               "jobServiceType": "Studio",
               "port": null,
-              "endpoint": "https://ml.azure.com/runs/test_276096278194?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
+              "endpoint": "https://ml.azure.com/runs/test_715330647514?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
               "status": null,
               "errorMessage": null,
               "properties": null
@@ -585,13 +583,11 @@
               "log_verbosity": "info",
               "training_data": "${{parent.inputs.image_instance_segmentation_train_data}}",
               "limits": {
+                "max_concurrent_trials": 4,
+                "max_trials": 20,
                 "timeout_minutes": 60
               },
               "sweep": {
-                "limits": {
-                  "max_concurrent_trials": 4,
-                  "max_trials": 20
-                },
                 "sampling_algorithm": "random",
                 "early_termination": {
                   "evaluation_interval": 10,
@@ -641,14 +637,14 @@
           "sourceJobId": null
         },
         "systemData": {
-          "createdAt": "2022-09-22T15:59:31.3395236\u002B00:00",
+          "createdAt": "2022-09-23T14:56:44.6986211\u002B00:00",
           "createdBy": "Neehar Duvvuri",
           "createdByType": "User"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_276096278194/cancel?api-version=2022-06-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_715330647514/cancel?api-version=2022-06-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -663,25 +659,25 @@
         "Cache-Control": "no-cache",
         "Content-Length": "4",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Sep 2022 15:59:32 GMT",
+        "Date": "Fri, 23 Sep 2022 14:56:47 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2euap/mfeOperationResults/jc:e17a3673-0df1-4734-b827-58bdbe7ad5bc:test_276096278194?api-version=2022-06-01-preview",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2euap/mfeOperationResults/jc:e17a3673-0df1-4734-b827-58bdbe7ad5bc:test_715330647514?api-version=2022-06-01-preview",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-eastus2euap-02",
+        "x-aml-cluster": "vienna-eastus2euap-01",
         "X-Content-Type-Options": "nosniff",
         "x-ms-async-operation-timeout": "PT1H",
-        "x-ms-correlation-request-id": "6d33caf5-7433-44f5-b115-39e8f6ce7cb3",
+        "x-ms-correlation-request-id": "57da9a2a-066a-4428-a5f1-140e59f29330",
         "x-ms-ratelimit-remaining-subscription-writes": "1197",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "CANADACENTRAL:20220922T155933Z:6d33caf5-7433-44f5-b115-39e8f6ce7cb3",
-        "x-request-time": "0.597"
+        "x-ms-routing-request-id": "CANADACENTRAL:20220923T145648Z:57da9a2a-066a-4428-a5f1-140e59f29330",
+        "x-request-time": "0.794"
       },
       "ResponseBody": "null"
     }
   ],
   "Variables": {
-    "name": "test_276096278194"
+    "name": "test_715330647514"
   }
 }
