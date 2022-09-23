@@ -27,6 +27,8 @@ from azure.ai.ml.entities._credentials import IdentityConfiguration
 
 from ._schedule import ComputeSchedules
 from ._setup_scripts import SetupScripts
+from azure.ai.ml._utils._experimental import experimental
+
 
 
 class ComputeInstanceSshSettings:
@@ -85,6 +87,25 @@ class AssignedUserConfiguration(DictMixin):
         self.user_tenant_id = user_tenant_id
         self.user_object_id = user_object_id
 
+@experimental
+class OsImageMetadata:
+
+    def __init__(self, *, is_latest_os_version: bool, current_os_version: str, latest_os_version: str):
+        self.is_latest_os_version = is_latest_os_version
+        self.current_os_version = current_os_version
+        self.latest_os_version = latest_os_version
+
+    @property
+    def is_latest_os_version(self) -> bool:
+        return self.is_latest_os_version
+
+    @property
+    def current_os_version(self) -> bool:
+        return self.current_os_version
+
+    @property
+    def latest_os_version(self) -> bool:
+        return self.latest_os_version
 
 class ComputeInstance(Compute):
     """Compute Instance resource.
@@ -143,6 +164,7 @@ class ComputeInstance(Compute):
         identity: IdentityConfiguration = None,
         idle_time_before_shutdown: Optional[str] = None,
         setup_scripts: Optional[SetupScripts] = None,
+        os_image_metadata: Optional[OsImageMetadata] = None,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
@@ -166,6 +188,7 @@ class ComputeInstance(Compute):
         self.idle_time_before_shutdown = idle_time_before_shutdown
         self.setup_scripts = setup_scripts
         self.subnet = None
+        self.os_image_metadata = os_image_metadata
 
     @property
     def services(self) -> List[Dict[str, str]]:
@@ -231,6 +254,7 @@ class ComputeInstance(Compute):
             ssh_settings=ssh_settings,
             personal_compute_instance_settings=personal_compute_instance_settings,
             idle_time_before_shutdown=self.idle_time_before_shutdown,
+            os_image_metadata=self.os_image_metadata
         )
         compute_instance_prop.schedules = self.schedules._to_rest_object() if self.schedules else None
         compute_instance_prop.setup_scripts = self.setup_scripts._to_rest_object() if self.setup_scripts else None
@@ -295,6 +319,8 @@ class ComputeInstance(Compute):
                 if prop.properties.connectivity_endpoints and prop.properties.connectivity_endpoints.private_ip_address
                 else None,
             )
+        if prop.properties and prop.properties.os_image_metadata:
+            os_image_metadata = OsImageMetadata(is_latest_os_version=prop.properties.os_image_metadata.is_latest_os_version, current_os_version=prop.properties.os_image_metadata.current_os_version, latest_os_version=prop.properties.os_image_metadata.latest_os_version)
 
         response = ComputeInstance(
             name=rest_obj.name,
@@ -328,6 +354,7 @@ class ComputeInstance(Compute):
             setup_scripts=SetupScripts._from_rest_object(prop.properties.setup_scripts)
             if prop.properties and prop.properties.setup_scripts
             else None,
+            os_image_metadata=os_image_metadata
         )
         return response
 

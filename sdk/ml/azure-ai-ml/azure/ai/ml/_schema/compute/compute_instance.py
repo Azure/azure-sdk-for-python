@@ -37,6 +37,17 @@ class CreateOnBehalfOfSchema(PathAwareSchema):
 
         return AssignedUserConfiguration(**data)
 
+class OsImageMetadataSchema(PathAwareSchema):
+    is_latest_os_version = fields.Bool(dump_only=True)
+    current_os_version = fields.Str(dump_only=True)
+    latest_os_version = fields.Str(dump_only=True)
+    
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities import OsImageMetadata
+
+        return OsImageMetadata(**data)
+
 
 class ComputeInstanceSchema(ComputeSchema):
     type = StringTransformedEnum(allowed_values=[ComputeType.COMPUTEINSTANCE], required=True)
@@ -52,3 +63,4 @@ class ComputeInstanceSchema(ComputeSchema):
     identity = ExperimentalField(NestedField(IdentitySchema))
     idle_time_before_shutdown = ExperimentalField(fields.Str())
     setup_scripts = ExperimentalField(NestedField(SetupScriptsSchema))
+    os_image_metadata = ExperimentalField(NestedField(OsImageMetadataSchema, dump_only=True))
