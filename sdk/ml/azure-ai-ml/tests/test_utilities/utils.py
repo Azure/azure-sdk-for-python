@@ -211,7 +211,7 @@ def verify_entity_load_and_dump(
     first_input_entity = load_function(test_load_file_path, **load_kwargs)
     assert first_input_entity is not None
 
-    old_path_entity = load_function(path=test_load_file_path, **load_kwargs)
+    old_path_entity = load_function(test_load_file_path, **load_kwargs)
     assert old_path_entity is not None
 
     # Run entity-specific validation on both loaded entities
@@ -247,7 +247,7 @@ def verify_entity_load_and_dump(
         # test path-based dump using deprecated input name
         with tempfile.TemporaryDirectory() as tmpdirname:
             tmpfilename = f"{tmpdirname}/{test_dump_file_path}"
-            first_input_entity.dump(path=tmpfilename)
+            first_input_entity.dump(tmpfilename)
             assert get_file_contents(tmpfilename) != ""
             delete_file_if_exists(tmpfilename)
 
