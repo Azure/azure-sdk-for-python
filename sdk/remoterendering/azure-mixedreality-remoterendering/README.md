@@ -18,7 +18,7 @@ This SDK supports version "2021-01-01" of the [Remote Rendering REST API](https:
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 # Getting started
 
@@ -69,7 +69,7 @@ Use the `AzureKeyCredential` object to use an account identifier and account key
 from azure.core.credentials import AzureKeyCredential
 from azure.mixedreality.remoterendering import RemoteRenderingClient
 
-account_id = "<ACCOUNTD ID>"
+account_id = "<ACCOUNT_ID>"
 account_domain = "<ACCOUNT_DOMAIN>"
 account_key = "<ACCOUNT_KEY>"
 arr_endpoint = "<ARR_ENDPOINT>"
@@ -92,7 +92,7 @@ to be used with a Mixed Reality client library:
 ```python
 from azure.mixedreality.authentication import MixedRealityStsClient
 from azure.mixedreality.remoterendering import RemoteRenderingClient
-account_id = "<ACCOUNTD ID>"
+account_id = "<ACCOUNT_ID>"
 account_domain = "<ACCOUNT_DOMAIN>"
 account_key = "<ACCOUNT_KEY>"
 
@@ -124,7 +124,7 @@ by assigning the appropriate role for your Mixed Reality service to your service
 from azure.identity import DefaultAzureCredential
 from azure.mixedreality.remoterendering import RemoteRenderingClient
 
-account_id = "<ACCOUNTD ID>"
+account_id = "<ACCOUNT_ID>"
 account_domain = "<ACCOUNT_DOMAIN>"
 default_credential = DefaultAzureCredential()
 
@@ -254,7 +254,7 @@ The following snippet describes how to request that a new rendering session be s
 
 ### Extend the lease time of a session
 
-If a session is approaching its maximum lease time, but you want to keep it alive, you will need to make a call to 
+If a session is approaching its maximum lease time, but you want to keep it alive, you will need to make a call to
 increase its maximum lease time.
 This example shows how to query the current properties and then extend the lease if it will expire soon.
 
@@ -336,7 +336,7 @@ The Remote Rendering client library will raise exceptions defined in [Azure Core
 
 ### Async APIs
 
-This library also includes a complete async API supported on Python 3.5+. To use it, you must
+This library also includes a complete async API supported on Python 3.7+. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). Async clients
 are found under the `azure.mixedreality.remoterendering.aio` namespace.
 

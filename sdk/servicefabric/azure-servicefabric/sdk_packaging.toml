@@ -6,3 +6,4 @@ package_doc_id = "servicefabric"
 is_stable = true
 is_arm = false
 need_msrestazure = false
+auto_update = false

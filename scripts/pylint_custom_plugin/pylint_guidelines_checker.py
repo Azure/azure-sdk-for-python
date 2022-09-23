@@ -22,13 +22,13 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
     msgs = {
         "C4717": (
             "Client constructor is missing a credential parameter. See details:"
-            " https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
+            " https://azure.github.io/azure-sdk/python_design.html#client-configuration",
             "missing-client-constructor-parameter-credential",
             "All client types should accept a credential parameter.",
         ),
         "C4718": (
             "Client constructor is missing a **kwargs parameter. See details:"
-            " https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
+            " https://azure.github.io/azure-sdk/python_design.html#client-configuration",
             "missing-client-constructor-parameter-kwargs",
             "All client types should accept a **kwargs parameter.",
         )
@@ -91,7 +91,7 @@ class ClientHasKwargsInPoliciesForCreateConfigurationMethod(BaseChecker):
     msgs = {
         "C4719": (
             "A policy in the create_configuration() function is missing a **kwargs argument. See details:"
-            " https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
+            " https://azure.github.io/azure-sdk/python_design.html#client-configuration",
             "config-missing-kwargs-in-policy",
             "All policies should take a **kwargs parameter.",
         )
@@ -205,7 +205,7 @@ class ClientMethodsUseKwargsWithMultipleParameters(BaseChecker):
     msgs = {
         "C4721": (
             "Client has too many positional arguments. Use keyword-only arguments."
-            " See details: https://azure.github.io/azure-sdk/python_introduction.html#method-signatures",
+            " See details: https://azure.github.io/azure-sdk/python_implementation.html#method-signatures",
             "client-method-has-more-than-5-positional-arguments",
             "Client method should use keyword-only arguments for some parameters.",
         )
@@ -260,7 +260,7 @@ class ClientMethodsHaveTypeAnnotations(BaseChecker):
         "C4722": (
             "Client method is missing type annotations/comments, return type annotations/comments, or "
             "mixing type annotations and comments. See details: "
-            " https://azure.github.io/azure-sdk/python_introduction.html#types-or-not",
+            " https://azure.github.io/azure-sdk/python_implementation.html#types-or-not",
             "client-method-missing-type-annotations",
             "Client method should use type annotations.",
         )
@@ -412,7 +412,7 @@ class ClientsDoNotUseStaticMethods(BaseChecker):
     msgs = {
         "C4725": (
             "Client should not use static methods (staticmethod). See details:"
-            " https://azure.github.io/azure-sdk/python_introduction.html#method-signatures",
+            " https://azure.github.io/azure-sdk/python_implementation.html#method-signatures",
             "client-method-should-not-use-static-method",
             "Client method should not use staticmethod.",
         ),
@@ -463,7 +463,7 @@ class FileHasCopyrightHeader(BaseChecker):
     msgs = {
         "C4726": (
             "File is missing a copyright header. See details:"
-            " https://azure.github.io/azure-sdk/policies_opensource.html",
+            " https://azure.github.io/azure-sdk/policies_opensource.html#",
             "file-needs-copyright-header",
             "Every source file should have a copyright header.",
         ),
@@ -510,7 +510,7 @@ class ClientUsesCorrectNamingConventions(BaseChecker):
     msgs = {
         "C4727": (
             "Client is using an incorrect naming convention. See details:"
-            " https://azure.github.io/azure-sdk/python_introduction.html#naming-conventions",
+            " https://azure.github.io/azure-sdk/python_implementation.html#naming-conventions",
             "client-incorrect-naming-convention",
             "Client method should use correct naming conventions.",
         )
@@ -636,7 +636,7 @@ class ClientMethodNamesDoNotUseDoubleUnderscorePrefix(BaseChecker):
     msgs = {
         "C4729": (
             "Client method name should not use a double underscore prefix. See details:"
-            " https://azure.github.io/azure-sdk/python_introduction.html#public-vs-private",
+            " https://azure.github.io/azure-sdk/python_implementation.html#public-vs-private",
             "client-method-name-no-double-underscore",
             "Client method names should not use a leading double underscore prefix.",
         ),
@@ -804,7 +804,7 @@ class SpecifyParameterNamesInCall(BaseChecker):
     msgs = {
         "C4732": (
             "Specify the parameter names when calling methods with more than 2 required positional parameters."
-            " See details: https://azure.github.io/azure-sdk/python_introduction.html#method-signatures",
+            " See details: https://azure.github.io/azure-sdk/python_implementation.html#python-codestyle-positional-params",
             "specify-parameter-names-in-call",
             "You should specify the parameter names when the method has more than two positional arguments.",
         )
@@ -1023,7 +1023,7 @@ class ClientConstructorDoesNotHaveConnectionStringParam(BaseChecker):
     msgs = {
         "C4736": (
             "The constructor must not take a connection string. See details: "
-            "https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
+            "https://azure.github.io/azure-sdk/python_design.html#python-client-connection-string",
             "connection-string-should-not-be-constructor-param",
             "Client should have a method to create the client with a connection string.",
         ),
@@ -1074,7 +1074,7 @@ class PackageNameDoesNotUseUnderscoreOrPeriod(BaseChecker):
     msgs = {
         "C4737": (
             "Package name should not use an underscore or period. Replace with dash (-). See details: "
-            "https://azure.github.io/azure-sdk/python_implementation.html#packaging",
+            "https://azure.github.io/azure-sdk/python_design.html#packaging",
             "package-name-incorrect",
             "Package name should use dashes instead of underscore or period.",
         ),
@@ -1124,7 +1124,7 @@ class ServiceClientUsesNameWithClientSuffix(BaseChecker):
     msgs = {
         "C4738": (
             "Service client types should use a `Client` suffix. See details: "
-            "https://azure.github.io/azure-sdk/python_design.html#clients",
+            "https://azure.github.io/azure-sdk/python_design.html#service-client",
             "client-suffix-needed",
             "Client should use the correct suffix.",
         ),
@@ -1706,6 +1706,217 @@ class CheckDocstringAdmonitionNewline(BaseChecker):
     visit_asyncfunctiondef = visit_functiondef
 
 
+class CheckEnum(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "check-enum"
+    priority = -1
+    msgs = {
+        "C4746": (
+            "The enum must use uppercase naming. "
+            "https://azure.github.io/azure-sdk/python_design.html#enumerations",
+            "enum-must-be-uppercase",
+            "Capitalize enum name.",
+        ),
+        "C4747":(
+            "The enum must inherit from CaseInsensitiveEnumMeta. "
+            "https://azure.github.io/azure-sdk/python_implementation.html#extensible-enumerations",
+            "enum-must-inherit-case-insensitive-enum-meta",
+            "Inherit CaseInsensitiveEnumMeta.",
+        ),
+    }
+    options = (
+        (
+            "ignore-enum-must-be-uppercase",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow an enum to not be capitalized.",
+            },
+        ),
+        (
+            "ignore-enum-must-inherit-case-insensitive-enum-meta",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow an enum to not inherit CaseInsensitiveEnumMeta.",
+            },
+        ),
+    )
+
+    def __init__(self, linter=None):
+        super(CheckEnum, self).__init__(linter)
+
+    def visit_classdef(self, node):
+        """Visits every enum class.
+
+        :param node: ast.ClassDef
+        :return: None
+        """
+        try:
+            
+            # If it has a metaclass, and is an enum class, check the capitalization
+            if node.declared_metaclass():
+                if node.declared_metaclass().name == "CaseInsensitiveEnumMeta":
+                    self._enum_uppercase(node)   
+            # Else if it does not have a metaclass, but it is an enum class
+            # Check both capitalization and throw pylint error for metaclass
+            elif node.bases[0].name == "str" and node.bases[1].name == "Enum":
+                self.add_message(
+                    "enum-must-inherit-case-insensitive-enum-meta", node=node, confidence=None
+                )
+                self._enum_uppercase(node)  
+
+        except Exception:
+            logger.debug("Pylint custom checker failed to check enum.")
+            pass
+    
+    def _enum_uppercase(self, node):
+        """Visits every enum within the class.
+        Checks if the enum is uppercase, if it isn't it
+        adds a pylint error message.
+
+        :param node: ast.ClassDef
+        :return: None
+        """
+
+        # Check capitalization of enums assigned in the class
+        for nod in node.body:
+            if isinstance(nod, astroid.Assign):
+                if not nod.targets[0].name.isupper():
+                    self.add_message(
+                        "enum-must-be-uppercase", node=nod.targets[0], confidence=None
+                    )
+
+
+class CheckAPIVersion(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "check-api-version-kwarg"
+    priority = -1
+    msgs = {
+        "C4748": (
+            "The client constructor needs to take in an optional keyword-only api_version argument. "
+            "https://azure.github.io/azure-sdk/python_design.html#specifying-the-service-version",
+            "client-accepts-api-version-keyword",
+            "Accept a keyword argument called api_version.",
+        ),
+    }
+    options = (
+        (
+            "ignore-client-accepts-api-version-keyword",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow for no keyword api version.",
+            },
+        ),
+    )
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
+
+    def __init__(self, linter=None):
+        super(CheckAPIVersion, self).__init__(linter)             
+
+    def visit_classdef(self, node):
+        """Visits every class in file and checks if it is a client.
+        If it is a client, it checks that there is an api_version keyword.
+
+        :param node: class node
+        :type node: ast.ClassDef
+        :return: None
+        """
+
+        try:
+            api_version = False
+            
+            if node.name.endswith("Client") and node.name not in self.ignore_clients:
+                if node.doc:
+                    if ":keyword api_version:" in node.doc or ":keyword str api_version:" in node.doc:
+                        api_version = True
+                if not api_version:    
+                    for func in node.body:
+                        if isinstance(func, astroid.FunctionDef):
+                            if func.name == '__init__':
+                                if func.doc: 
+                                    if ":keyword api_version:" in func.doc or ":keyword str api_version:" in func.doc:
+                                        api_version = True
+                                if not api_version:
+                                    self.add_message(
+                                        msgid="client-accepts-api-version-keyword", node=node, confidence=None
+                                    )   
+    
+      
+        except AttributeError:
+            logger.debug("Pylint custom checker failed to check if client takes in an optional keyword-only api_version argument.")
+            pass                                                                                    
+
+
+class CheckNamingMismatchGeneratedCode(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "check-naming-mismatch"
+    priority = -1
+    msgs = {
+        "C4745": (
+            "Do not alias generated code. "
+            "This messes up sphinx, intellisense, and apiview, so please modify the name of the generated code through"
+            " the swagger / directives, or code customizations. See Details: "
+            "https://github.com/Azure/autorest/blob/main/docs/generate/built-in-directives.md",
+            "naming-mismatch",
+            "Do not alias models imported from the generated code.",
+        ),
+    }
+    options = (
+        (
+            "ignore-naming-mismatch",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow generated code to be aliased.",
+            },
+        ),
+    )
+
+    def __init__(self, linter=None):
+        super(CheckNamingMismatchGeneratedCode, self).__init__(linter)
+
+    def visit_module(self, node):
+        """Visits __init__.py and checks that there are not aliased models.
+
+        :param node: module node
+        :type node: ast.Module
+        :return: None
+        """
+        try:
+            if node.file.endswith("__init__.py"):
+                aliased = []
+            
+                for nod in node.body:
+                    if isinstance(nod, astroid.ImportFrom) or isinstance(nod, astroid.Import):
+                        # If the model has been aliased
+                        for name in nod.names:
+                            if name[1] is not None:
+                                aliased.append(name[1])
+
+                for nod in node.body:
+                    if isinstance(nod, astroid.Assign):
+                        if nod.targets[0].as_string() == "__all__":
+                            for models in nod.assigned_stmts():
+                                for model_name in models.elts:
+                                    if model_name.value in aliased:
+                                        self.add_message(
+                                            msgid="naming-mismatch", node=model_name, confidence=None
+                                        )
+    
+        except Exception:
+                logger.debug("Pylint custom checker failed to check if model is aliased.")
+                pass
+
+
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
     linter.register_checker(ClientsDoNotUseStaticMethods(linter))
@@ -1723,6 +1934,10 @@ def register(linter):
     linter.register_checker(PackageNameDoesNotUseUnderscoreOrPeriod(linter))
     linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
     linter.register_checker(CheckDocstringAdmonitionNewline(linter))
+    linter.register_checker(CheckNamingMismatchGeneratedCode(linter))
+    linter.register_checker(CheckAPIVersion(linter))
+    linter.register_checker(CheckEnum(linter))
+
 
     # disabled by default, use pylint --enable=check-docstrings if you want to use it
     linter.register_checker(CheckDocstringParameters(linter))
@@ -1735,3 +1950,5 @@ def register(linter):
     # linter.register_checker(ClientListMethodsUseCorePaging(linter))
     # linter.register_checker(ClientLROMethodsUseCorePolling(linter))
     # linter.register_checker(ClientLROMethodsUseCorrectNaming(linter))
+
+

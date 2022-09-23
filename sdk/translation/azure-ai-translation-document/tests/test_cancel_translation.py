@@ -7,6 +7,7 @@ import functools
 from testcase import Document
 from testcase import DocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
+from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import HttpResponseError
 from azure.ai.translation.document import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
@@ -16,7 +17,8 @@ class TestCancelTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_cancel_translation(self, client):
+    @recorded_by_proxy
+    def test_cancel_translation(self, **kwargs):
         '''
             some notes (test sporadically failing):
             1. use a large number of translations
@@ -25,19 +27,22 @@ class TestCancelTranslation(DocumentTranslationTest):
             2. wait sometime after calling 'cancel' and before calling 'get status'
                 - in order for the cancel status to propagate
         '''
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
+
+        # submit translation operation
+        docs_count = 8 # large number of docs
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, wait=False, variables=variables)
+
+        # cancel translation
+        client.cancel_translation(poller.id)
+
+        # check translation status
+        translation_details = client.get_translation_status(poller.id)
+        assert translation_details.status in ["Canceled", "Canceling"]
+        self._validate_translations(translation_details)
         try:
-            # submit translation operation
-            docs_count = 8 # large number of docs
-            poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, wait=False)
-
-            # cancel translation
-            client.cancel_translation(poller.id)
-
-            # check translation status
-            translation_details = client.get_translation_status(poller.id)
-            assert translation_details.status in ["Canceled", "Canceling"]
-            self._validate_translations(translation_details)
-
             poller.wait()
         except HttpResponseError:
             pass  # expected if the operation was already in a terminal state.
+        return variables

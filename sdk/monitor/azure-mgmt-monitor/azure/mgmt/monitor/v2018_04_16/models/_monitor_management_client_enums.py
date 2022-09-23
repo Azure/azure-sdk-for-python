@@ -6,29 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AlertSeverity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Severity Level of Alert
-    """
+class AlertSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Severity Level of Alert."""
 
     ZERO = "0"
     ONE = "1"
@@ -36,10 +19,9 @@ class AlertSeverity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     THREE = "3"
     FOUR = "4"
 
-class ConditionalOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Result Condition Evaluation criteria. Supported Values - 'GreaterThan' or 'LessThan' or
-    'Equal'.
-    """
+
+class ConditionalOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Result Condition Evaluation criteria."""
 
     GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
@@ -47,37 +29,37 @@ class ConditionalOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LESS_THAN = "LessThan"
     EQUAL = "Equal"
 
-class Enabled(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The flag which indicates whether the Log Search rule is enabled. Value should be true or false
-    """
+
+class Enabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The flag which indicates whether the Log Search rule is enabled. Value should be true or false."""
 
     TRUE = "true"
     FALSE = "false"
 
-class MetricTriggerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Metric Trigger Evaluation Type
-    """
+
+class MetricTriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Metric Trigger Evaluation Type."""
 
     CONSECUTIVE = "Consecutive"
     TOTAL = "Total"
 
-class Operator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Operator for dimension values
-    """
+
+class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operator for dimension values."""
 
     INCLUDE = "Include"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the scheduled query rule
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the scheduled query rule."""
 
     SUCCEEDED = "Succeeded"
     DEPLOYING = "Deploying"
     CANCELED = "Canceled"
     FAILED = "Failed"
 
-class QueryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Set value to 'ResultAccount'
-    """
+
+class QueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Set value to 'ResultAccount'."""
 
     RESULT_COUNT = "ResultCount"

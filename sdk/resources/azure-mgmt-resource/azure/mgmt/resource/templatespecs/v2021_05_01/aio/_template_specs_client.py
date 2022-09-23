@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import TemplateSpecsClientConfiguration
@@ -22,7 +23,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 class TemplateSpecsClient:
-    """The APIs listed in this specification can be used to manage Template Spec resources through the Azure Resource Manager.
+    """The APIs listed in this specification can be used to manage Template Spec resources through the
+    Azure Resource Manager.
 
     :ivar template_specs: TemplateSpecsOperations operations
     :vartype template_specs:
@@ -34,8 +36,11 @@ class TemplateSpecsClient:
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Subscription Id which forms part of the URI for every service call.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2021-05-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(

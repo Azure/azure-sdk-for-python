@@ -1,3 +1,8 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See LICENSE.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
@@ -6,7 +11,7 @@ import datetime
 import config
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites -
 #
 # 1. An Azure Cosmos account -
 #    https:#azure.microsoft.com/en-us/documentation/articles/documentdb-create-account/
@@ -41,7 +46,7 @@ def create_items(container):
 def read_item(container, doc_id):
     print('\n1.2 Reading Item by Id\n')
 
-    # Note that Reads require a partition key to be spcified.
+    # Note that Reads require a partition key to be specified.
     response = container.read_item(item=doc_id, partition_key=doc_id)
 
     print('Item read by Id {0}'.format(doc_id))
@@ -146,7 +151,7 @@ def get_sales_order_v2(item_id):
                     'product_code' : 'A-123',      # notice how in item details we no longer reference a ProductId
                     'product_name' : 'Product 1',  # instead we have decided to denormalise our schema and include
                     'currency_symbol' : '$',       # the Product details relevant to the Order on to the Order directly
-                    'currecny_code' : 'USD',       # this is a typical refactor that happens in the course of an application
+                    'currency_code' : 'USD',       # this is a typical refactor that happens in the course of an application
                     'unit_price' : 17.1,           # that would have previously required schema changes and data migrations etc.
                     'line_price' : 5.7
                 }

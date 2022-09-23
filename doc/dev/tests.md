@@ -135,9 +135,9 @@ A quick description of the five commands above:
 
 The Azure SDK team has created some in house tools to make testing easier. These additional tools are located in the
 `devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package is the
-[AzureRecordedTestCase](https://github.com/Azure/azure-sdk-for-python/blob/7e66e3877519a15c1d4304eb69abf0a2281773detools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L44)
-class that every service test class should inherit from. AzureRecordedTestCase provides a number of utility functions
-for authenticating clients during tests, naming test resources, and sanitizing credentials in recordings.
+[AzureRecordedTestCase][azure_recorded_test_case] class that every service test class should inherit from.
+AzureRecordedTestCase provides a number of utility functions for authenticating clients during tests, naming test
+resources, and sanitizing credentials in recordings.
 
 The `devtools_testutils` package also has other classes and functions to provide test utility, which are documented in
 the
@@ -633,6 +633,7 @@ Tests that use the Shared Access Signature (SAS) to authenticate a client should
 [azure_cli_service_principal]: https://docs.microsoft.com/cli/azure/ad/sp?view=azure-cli-latest#az-ad-sp-create-for-rbac
 [azure_devtools]: https://pypi.org/project/azure-devtools/
 [azure_portal]: https://portal.azure.com/
+[azure_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/7e66e3877519a15c1d4304eb69abf0a2281773/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L44
 
 [docker_install]: https://docs.docker.com/get-docker/
 

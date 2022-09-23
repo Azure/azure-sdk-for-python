@@ -2,23 +2,24 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import pytest
 from azure.keyvault.keys.crypto.aio import CryptographyClient
+from devtools_testutils import set_bodiless_matcher
+from devtools_testutils.aio import recorded_by_proxy_async
 
+from _async_test_case import AsyncKeysClientPreparer, get_decorator
 from _shared.test_case_async import KeyVaultTestCase
-from _test_case import client_setup, get_decorator, KeysTestCase
-
 
 all_api_versions = get_decorator(is_async=True, only_vault=True)
 
 
-class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
-    def __init__(self, *args, **kwargs):
-        kwargs["match_body"] = False
-        super(TestCryptoExamples, self).__init__(*args, **kwargs)
-
-    @all_api_versions()
-    @client_setup
+class TestCryptoExamples(KeyVaultTestCase):
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
     async def test_encrypt_decrypt_async(self, key_client, **kwargs):
+        set_bodiless_matcher()
         credential = self.get_credential(CryptographyClient, is_async=True)
         key_name = self.get_resource_name("crypto-test-encrypt-key")
         await key_client.create_rsa_key(key_name)
@@ -57,9 +58,12 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
         print(result.plaintext)
         # [END decrypt]
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
     async def test_wrap_unwrap_async(self, key_client, **kwargs):
+        set_bodiless_matcher()
         credential = self.get_credential(CryptographyClient, is_async=True)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = await key_client.create_rsa_key(key_name)
@@ -83,8 +87,10 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
         result = await client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, encrypted_key)
         # [END unwrap_key]
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
     async def test_sign_verify_async(self, key_client, **kwargs):
         credential = self.get_credential(CryptographyClient, is_async=True)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
@@ -93,6 +99,7 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
 
         # [START sign]
         import hashlib
+
         from azure.keyvault.keys.crypto import SignatureAlgorithm
 
         digest = hashlib.sha256(b"plaintext").digest()

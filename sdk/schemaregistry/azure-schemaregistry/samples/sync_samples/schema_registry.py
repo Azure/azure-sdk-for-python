@@ -27,8 +27,9 @@
 FILE: schema_registry.py
 DESCRIPTION:
     This sample demonstrates authenticating the SchemaRegistryClient and basic usage, including:
-        - registering a schema
-        - getting a schema by its ID
+        - registering a schema.
+        - getting a schema by its ID.
+        - getting a schema by its version.
         - getting schema id.
 USAGE:
     python schema_registry.py
@@ -63,7 +64,18 @@ SCHEMA_JSON = {
         {"name": "favorite_color", "type": ["string", "null"]},
     ],
 }
+NEW_SCHEMA_JSON = {
+    "namespace": "example.avro",
+    "type": "record",
+    "name": "User2",
+    "fields": [
+        {"name": "name", "type": "string"},
+        {"name": "favorite_number", "type": ["int", "null"]},
+        {"name": "favorite_color", "type": ["string", "null"]},
+    ],
+}
 DEFINITION = json.dumps(SCHEMA_JSON, separators=(",", ":"))
+NEW_DEFINITION = json.dumps(NEW_SCHEMA_JSON, separators=(",", ":"))
 
 
 def register_schema(client, group_name, name, definition, format):
@@ -71,28 +83,46 @@ def register_schema(client, group_name, name, definition, format):
     schema_properties = client.register_schema(
         group_name, name, definition, format
     )
-    print("Schema registered, returned schema id is {}".format(schema_properties.id))
-    print("Schema properties are {}".format(schema_properties))
-    return schema_properties.id
+    print(f"Schema registered, returned schema id is {schema_properties.id}")
+    print(f"Schema properties are {schema_properties}")
+    return schema_properties
 
 
 def get_schema_by_id(client, schema_id):
     print("Getting schema by id...")
     schema = client.get_schema(schema_id)
     print(
-        "The schema string of schema id: {} string is {}".format(id, schema.definition)
+        f"The schema string of schema id: {schema_id} is {schema.definition}"
     )
-    print("Schema properties are {}".format(schema_id))
+    print(f"Schema properties are {schema.properties}")
     return schema.definition
 
+def get_schema_by_version(client, group_name, name, version):
+    print("Getting schema by version...")
+    schema = client.get_schema_by_version(group_name, name, version)
+    print(
+        f"The schema string of schema id: {schema.properties.id} is {schema.definition}"
+    )
+    print(f"Schema properties are {schema.properties}")
+    return schema.definition
+
+def get_old_schema_by_version(client, group_name, name, new_definition):
+    updated_schema_properties = client.register_schema(
+        group_name, name, new_definition, FORMAT
+    )
+    print(f"Registered new schema of version: {updated_schema_properties.version}")
+    old_version = updated_schema_properties.version - 1
+    schema = client.get_schema_by_version(group_name, name, old_version)
+    print(f"Retrieving old schema v{schema.properties.version}: {schema.definition}")
+    return schema.definition
 
 def get_schema_id(client, group_name, name, definition, format):
     print("Getting schema id...")
     schema_properties = client.get_schema_properties(
         group_name, name, definition, format
     )
-    print("The schema id is: {}".format(schema_properties.id))
-    print("Schema properties are {}".format(schema_properties))
+    print(f"The schema id is: {schema_properties.id}")
+    print(f"Schema properties are {schema_properties}")
     return schema_properties.id
 
 
@@ -102,10 +132,12 @@ if __name__ == "__main__":
         fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential
     )
     with schema_registry_client:
-        schema_id = register_schema(
+        schema_properties = register_schema(
             schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT
         )
-        schema_str = get_schema_by_id(schema_registry_client, schema_id)
+        schema_str = get_schema_by_id(schema_registry_client, schema_properties.id)
+        schema_str = get_schema_by_version(schema_registry_client, GROUP_NAME, NAME, schema_properties.version)
+        schema_str = get_old_schema_by_version(schema_registry_client, GROUP_NAME, NAME, NEW_DEFINITION)
         schema_id = get_schema_id(
             schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT
         )

@@ -32,14 +32,17 @@ from .._shared.exceptions import error_map as _error_map
 class CertificateClient(AsyncKeyVaultClientBase):
     """A high-level asynchronous interface for managing a vault's certificates.
 
-    :param str vault_url: URL of the vault the client will access
+    :param str vault_url: URL of the vault the client will access. This is also called the vault's "DNS Name".
+        You should validate that this URL references a valid Key Vault resource. See https://aka.ms/azsdk/blog/vault-uri
+        for details.
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
-    :keyword api_version: version of the Key Vault API to use. Defaults to the most recent.
+    :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
+
+    :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.certificates.ApiVersion
-    :keyword transport: transport to use. Defaults to
-     :class:`~azure.core.pipeline.transport.AioHttpTransport`.
-    :paramtype transport: ~azure.core.pipeline.transport.AsyncHttpTransport
+    :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
+        Vault domain. Defaults to True.
 
     Example:
         .. literalinclude:: ../tests/test_examples_certificates_async.py
@@ -390,7 +393,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
     async def update_certificate_policy(
         self, certificate_name: str, policy: CertificatePolicy, **kwargs: "Any"
     ) -> CertificatePolicy:
-        """Updates the policy for a certificate. Requires certificiates/update permission.
+        """Updates the policy for a certificate. Requires certificates/update permission.
 
         Set specified members in the certificate policy. Leaves others as null.
 
@@ -652,7 +655,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
     async def get_contacts(self, **kwargs: "Any") -> List[CertificateContact]:
         # pylint:disable=unsubscriptable-object
 
-        # disabled unsubscruptable-object because of pylint bug referenced here:
+        # disabled unsubscriptable-object because of pylint bug referenced here:
         # https://github.com/PyCQA/pylint/issues/2377
         """Gets the certificate contacts for the key vault. Requires the certificates/managecontacts permission.
 
@@ -677,7 +680,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
     async def delete_contacts(self, **kwargs: "Any") -> List[CertificateContact]:
         # pylint:disable=unsubscriptable-object
 
-        # disabled unsubscruptable-object because of pylint bug referenced here:
+        # disabled unsubscriptable-object because of pylint bug referenced here:
         # https://github.com/PyCQA/pylint/issues/2377
         """Deletes the certificate contacts for the key vault. Requires the certificates/managecontacts permission.
 

@@ -1,0 +1,20 @@
+name: blue
+endpoint_name: myBatchEndpoint
+model: azureml:sklearn_regression_model:1 # required
+code_configuration:
+  code: ../endpoint
+  scoring_script: ./main.py
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+retry_settings: #optional
+  max_retries: 3
+  timeout: 30
+mini_batch_size: 5
+logging_level: info  #optional, default is info
+output_action: append_row #optional, Allowed Values: append_row, summary_only
+output_file_name: append_row.txt #optional
+max_concurrency_per_instance: 5
+compute: "azureml:cpucluster"
+resources:
+  instance_count: 2
+environment_variables:
+  AZUREML_BE: bla

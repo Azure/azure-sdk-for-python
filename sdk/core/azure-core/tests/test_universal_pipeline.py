@@ -85,11 +85,11 @@ def test_pipeline_context():
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_request_history(http_request):
-    class Non_deep_copiable(object):
+    class Non_deep_copyable(object):
         def __deepcopy__(self, memodict={}):
             raise ValueError()
 
-    body = Non_deep_copiable()
+    body = Non_deep_copyable()
     request = create_http_request(http_request, 'GET', 'http://localhost/', {'user-agent': 'test_request_history'})
     request.body = body
     request_history = RequestHistory(request)
@@ -99,11 +99,11 @@ def test_request_history(http_request):
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_request_history_type_error(http_request):
-    class Non_deep_copiable(object):
+    class Non_deep_copyable(object):
         def __deepcopy__(self, memodict={}):
             raise TypeError()
 
-    body = Non_deep_copiable()
+    body = Non_deep_copyable()
     request = create_http_request(http_request, 'GET', 'http://localhost/', {'user-agent': 'test_request_history'})
     request.body = body
     request_history = RequestHistory(request)
@@ -347,3 +347,18 @@ def test_raw_deserializer(http_request, http_response, requests_transport_respon
     assert result == u"é"
     assert response.context["response_encoding"] == "utf-8-sig"
     del request.context['response_encoding']
+
+def test_json_merge_patch():
+    assert ContentDecodePolicy.deserialize_from_text('{"hello": "world"}', mime_type="application/merge-patch+json") == {"hello": "world"}
+
+def test_json_regex():
+    assert not ContentDecodePolicy.JSON_REGEXP.match("text/plain")
+    assert ContentDecodePolicy.JSON_REGEXP.match("application/json")
+    assert ContentDecodePolicy.JSON_REGEXP.match("text/json")
+    assert ContentDecodePolicy.JSON_REGEXP.match("application/merge-patch+json")
+    assert ContentDecodePolicy.JSON_REGEXP.match("application/ld+json")
+    assert ContentDecodePolicy.JSON_REGEXP.match("application/vnd.microsoft.appconfig.kv+json")
+    assert not ContentDecodePolicy.JSON_REGEXP.match("application/+json")
+    assert not ContentDecodePolicy.JSON_REGEXP.match("application/not-json")
+    assert not ContentDecodePolicy.JSON_REGEXP.match("application/iamjson")
+    assert not ContentDecodePolicy.JSON_REGEXP.match("fake/json")

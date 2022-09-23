@@ -3,90 +3,107 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 import pytest
 
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.core.credentials import AzureKeyCredential
-
-from testcase import (
-    ConversationTest,
-    GlobalConversationAccountPreparer
-)
-
 from azure.ai.language.conversations import ConversationAnalysisClient
-from azure.ai.language.conversations.models import (
-    ConversationAnalysisOptions,
-    AnalyzeConversationResult,
-    ConversationPrediction
-)
+from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import AzureRecordedTestCase
 
 
-class ConversationAppTests(ConversationTest):
+class TestConversationApp(AzureRecordedTestCase):
 
-    @GlobalConversationAccountPreparer()
-    def test_conversation_app(self, conv_account, conv_key, conv_project):
+    def test_conversation_app(self, recorded_test, conversation_creds):
 
-        # prepare data
-        query = "One california maki please."
-        input = ConversationAnalysisOptions(
-            query=query,
+        # analyze query
+        client = ConversationAnalysisClient(
+            conversation_creds["endpoint"],
+            AzureKeyCredential(conversation_creds["key"])
         )
-
-        # analyze quey
-        client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
         with client:
-            result = client.analyze_conversations(
-                input,
-                project_name=conv_project,
-                deployment_name='production'
+            query = "Send an email to Carol about the tomorrow's demo"
+            result = client.analyze_conversation(
+                task={
+                    "kind": "Conversation",
+                    "analysisInput": {
+                        "conversationItem": {
+                            "participantId": "1",
+                            "id": "1",
+                            "modality": "text",
+                            "language": "en",
+                            "text": query
+                        },
+                        "isLoggingEnabled": False
+                    },
+                    "parameters": {
+                        "projectName": conversation_creds["conv_project_name"],
+                        "deploymentName": conversation_creds["conv_deployment_name"],
+                        "verbose": True
+                    }
+                }
             )
-        
-        # assert
-        assert isinstance(result, AnalyzeConversationResult)
-        assert result.query == query
-        assert isinstance(result.prediction, ConversationPrediction)
-        assert result.prediction.project_kind == 'conversation'
-        assert result.prediction.top_intent == 'Order'
-        assert len(result.prediction.entities) > 0
-        assert len(result.prediction.intents) > 0
-        assert result.prediction.intents[0].category == 'Order'
-        assert result.prediction.intents[0].confidence_score > 0
-        assert result.prediction.entities[0].category == 'OrderItem'
-        assert result.prediction.entities[0].text == 'california maki'
-        assert result.prediction.entities[0].confidence_score > 0
-        
 
-    @GlobalConversationAccountPreparer()
-    def test_conversation_app_with_dictparams(self, conv_account, conv_key, conv_project):
-        
-        # prepare data
-        query = "One california maki please."
-        params = {
-            "query": query,
-            "api_version": "2021-11-01-preview"
-        }
+            # assert - main object
+            assert not result is None
+            assert result["kind"] == "ConversationResult"
 
-        # analyze quey
-        client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
+            # assert - prediction type
+            assert result["result"]["query"] == query
+            assert result["result"]["prediction"]["projectKind"] == 'Conversation'
+
+            # assert - top intent
+            assert result["result"]["prediction"]["topIntent"] == 'Send'
+            assert len(result["result"]["prediction"]["intents"]) > 0
+            assert result["result"]["prediction"]["intents"][0]["category"] == 'Send'
+            assert result["result"]["prediction"]["intents"][0]["confidenceScore"] > 0
+
+            # assert - entities
+            assert len(result["result"]["prediction"]["entities"]) > 0
+            assert result["result"]["prediction"]["entities"][0]["category"] == 'Contact'
+            assert result["result"]["prediction"]["entities"][0]["text"] == 'Carol'
+            assert result["result"]["prediction"]["entities"][0]["confidenceScore"] > 0
+
+    def test_conversation_app_aad_auth(self, recorded_test, conversation_creds):
+        token = self.get_credential(ConversationAnalysisClient)
+        client = ConversationAnalysisClient(conversation_creds["endpoint"], token, api_version="2022-05-01")
         with client:
-            result = client.analyze_conversations(
-                params,
-                project_name=conv_project,
-                deployment_name='production'
+            query = "Send an email to Carol about the tomorrow's demo"
+            result = client.analyze_conversation(
+                task={
+                    "kind": "Conversation",
+                    "analysisInput": {
+                        "conversationItem": {
+                            "participantId": "1",
+                            "id": "1",
+                            "modality": "text",
+                            "language": "en",
+                            "text": query
+                        },
+                        "isLoggingEnabled": False
+                    },
+                    "parameters": {
+                        "projectName": conversation_creds["conv_project_name"],
+                        "deploymentName": conversation_creds["conv_deployment_name"],
+                        "verbose": True
+                    }
+                }
             )
-        
-        # assert
-        assert isinstance(result, AnalyzeConversationResult)
-        assert result.query == query
-        assert isinstance(result.prediction, ConversationPrediction)
-        assert result.prediction.project_kind == 'conversation'
-        assert result.prediction.top_intent == 'Order'
-        assert len(result.prediction.entities) > 0
-        assert len(result.prediction.intents) > 0
-        assert result.prediction.intents[0].category == 'Order'
-        assert result.prediction.intents[0].confidence_score > 0
-        assert result.prediction.entities[0].category == 'OrderItem'
-        assert result.prediction.entities[0].text == 'california maki'
-        assert result.prediction.entities[0].confidence_score > 0
- 
+
+            # assert - main object
+            assert not result is None
+            assert result["kind"] == "ConversationResult"
+
+            # assert - prediction type
+            assert result["result"]["query"] == query
+            assert result["result"]["prediction"]["projectKind"] == 'Conversation'
+
+            # assert - top intent
+            assert result["result"]["prediction"]["topIntent"] == 'Send'
+            assert len(result["result"]["prediction"]["intents"]) > 0
+            assert result["result"]["prediction"]["intents"][0]["category"] == 'Send'
+            assert result["result"]["prediction"]["intents"][0]["confidenceScore"] > 0
+
+            # assert - entities
+            assert len(result["result"]["prediction"]["entities"]) > 0
+            assert result["result"]["prediction"]["entities"][0]["category"] == 'Contact'
+            assert result["result"]["prediction"]["entities"][0]["text"] == 'Carol'
+            assert result["result"]["prediction"]["entities"][0]["confidenceScore"] > 0

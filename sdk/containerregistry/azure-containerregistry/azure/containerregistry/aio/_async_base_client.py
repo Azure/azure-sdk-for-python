@@ -15,13 +15,13 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ContainerRegistryApiVersion(str, Enum):
+class ContainerRegistryApiVersion(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
     """Container Registry API version supported by this package"""
 
     V0_PREVIEW = ""
 
 
-class ContainerRegistryBaseClient(object):
+class ContainerRegistryBaseClient(object): # pylint: disable=client-accepts-api-version-keyword
     """Base class for ContainerRegistryClient
 
     :param endpoint: Azure Container Registry endpoint
@@ -59,7 +59,7 @@ class ContainerRegistryBaseClient(object):
 
     def _is_tag(self, tag_or_digest: str) -> bool:  # pylint: disable=no-self-use
         tag = tag_or_digest.split(":")
-        return not (len(tag) == 2 and tag[0].startswith(u"sha"))
+        return not (len(tag) == 2 and tag[0].startswith("sha"))
 
 
 class AsyncTransportWrapper(AsyncHttpTransport):

@@ -5,14 +5,11 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 from azure.iot.deviceupdate import DeviceUpdateClient
 
 
-class DeviceUpdateTest(AzureTestCase):
-    def __init__(self, method_name, **kwargs):
-        super(DeviceUpdateTest, self).__init__(method_name, **kwargs)
-
+class DeviceUpdateTest(AzureRecordedTestCase):
     def create_client(self, endpoint, instance_id):
         credential = self.get_credential(DeviceUpdateClient)
         return self.create_client_from_credential(
@@ -26,6 +23,10 @@ class DeviceUpdateTest(AzureTestCase):
 DeviceUpdatePowerShellPreparer = functools.partial(
     PowerShellPreparer,
     "deviceupdate",
-    deviceupdate_endpoint="https://fake_account.account.purview.azure.com",
-    deviceupdate_instance_id="instance"
+    deviceupdate_endpoint="foo.api.adu.microsoft.com",
+    deviceupdate_instance_id="bar",
+    deviceupdate_update_provider="foo",
+    deviceupdate_update_name="bar",
+    deviceupdate_update_version="1.2",
+    deviceupdate_device_group="foo"
 )

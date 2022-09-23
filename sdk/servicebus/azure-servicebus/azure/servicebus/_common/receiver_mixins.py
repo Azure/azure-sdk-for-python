@@ -55,7 +55,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
             max_retries=self._config.retry_total, is_session=bool(self._session_id)
         )
 
-        self._name = "SBReceiver-{}".format(uuid.uuid4())
+        self._name = kwargs.get("client_identifier", "SBReceiver-{}".format(uuid.uuid4()))
         self._last_received_sequenced_number = None
         self._message_iter = None
         self._connection = kwargs.get("connection")
@@ -176,3 +176,11 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _populate_message_properties(self, message):
         if self._session:
             message[MGMT_REQUEST_SESSION_ID] = self._session_id
+
+    def _enhanced_message_received(self, message):
+        # pylint: disable=protected-access
+        self._handler._was_message_received = True
+        if self._receive_context.is_set():
+            self._handler._received_messages.put(message)
+        else:
+            message.release()

@@ -6,40 +6,27 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AADBasedSecurityPrincipal
-    from ._models_py3 import CertBasedSecurityPrincipal
-    from ._models_py3 import ConfidentialLedger
-    from ._models_py3 import ConfidentialLedgerList
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import LedgerProperties
-    from ._models_py3 import Location
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceProviderOperationDefinition
-    from ._models_py3 import ResourceProviderOperationDisplay
-    from ._models_py3 import ResourceProviderOperationList
-    from ._models_py3 import SystemData
-    from ._models_py3 import Tags
-except (SyntaxError, ImportError):
-    from ._models import AADBasedSecurityPrincipal  # type: ignore
-    from ._models import CertBasedSecurityPrincipal  # type: ignore
-    from ._models import ConfidentialLedger  # type: ignore
-    from ._models import ConfidentialLedgerList  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import LedgerProperties  # type: ignore
-    from ._models import Location  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceProviderOperationDefinition  # type: ignore
-    from ._models import ResourceProviderOperationDisplay  # type: ignore
-    from ._models import ResourceProviderOperationList  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import Tags  # type: ignore
+from ._models_py3 import AADBasedSecurityPrincipal
+from ._models_py3 import CertBasedSecurityPrincipal
+from ._models_py3 import CheckNameAvailabilityRequest
+from ._models_py3 import CheckNameAvailabilityResponse
+from ._models_py3 import ConfidentialLedger
+from ._models_py3 import ConfidentialLedgerList
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import LedgerProperties
+from ._models_py3 import Resource
+from ._models_py3 import ResourceLocation
+from ._models_py3 import ResourceProviderOperationDefinition
+from ._models_py3 import ResourceProviderOperationDisplay
+from ._models_py3 import ResourceProviderOperationList
+from ._models_py3 import SystemData
+from ._models_py3 import Tags
+
 
 from ._confidential_ledger_enums import (
+    CheckNameAvailabilityReason,
     CreatedByType,
     LedgerRoleName,
     LedgerType,
@@ -49,19 +36,22 @@ from ._confidential_ledger_enums import (
 __all__ = [
     'AADBasedSecurityPrincipal',
     'CertBasedSecurityPrincipal',
+    'CheckNameAvailabilityRequest',
+    'CheckNameAvailabilityResponse',
     'ConfidentialLedger',
     'ConfidentialLedgerList',
     'ErrorAdditionalInfo',
     'ErrorDetail',
     'ErrorResponse',
     'LedgerProperties',
-    'Location',
     'Resource',
+    'ResourceLocation',
     'ResourceProviderOperationDefinition',
     'ResourceProviderOperationDisplay',
     'ResourceProviderOperationList',
     'SystemData',
     'Tags',
+    'CheckNameAvailabilityReason',
     'CreatedByType',
     'LedgerRoleName',
     'LedgerType',

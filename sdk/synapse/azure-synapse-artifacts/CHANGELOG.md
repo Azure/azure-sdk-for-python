@@ -1,6 +1,6 @@
 # Release History
 
-## 0.12.0 (Unreleased)
+## 0.14.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,28 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 0.14.0 (2022-09-19)
+
+### Features Added
+
+  - Upgraded api-version for some operation group
+
+### Other Changes
+  
+  - Drop support for python3.6
+
+## 0.13.0 (2022-04-21)
+
+### Features
+
+  - Added operation group LinkConnectionOperations
+
+## 0.12.0 (2022-03-07)
+
+### Features Added
+
+- re-generated based on tag package-artifacts-composite-v3
 
 ## 0.11.0 (2022-01-11)
 

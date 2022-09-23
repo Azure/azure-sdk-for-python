@@ -13,7 +13,7 @@ from ..._credentials.certificate import get_client_credential
 from ..._internal import AadClientCertificate, validate_tenant_id
 
 if TYPE_CHECKING:
-    from typing import Any, Optional, Union
+    from typing import Any, Optional, Union, List
     from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)
@@ -29,7 +29,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
     description of the on-behalf-of flow.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.
-    :param str client_id: the service principal's client ID
+    :param str client_id: The service principal's client ID
     :keyword str client_secret: Optional. A client secret to authenticate the service principal.
         Either **client_secret** or **client_certificate** must be provided.
     :keyword bytes client_certificate: Optional. The bytes of a certificate in PEM or PKCS12 format including
@@ -41,10 +41,13 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword password: a certificate password. Used only when **client_certificate** is provided. If this value
+    :keyword password: A certificate password. Used only when **client_certificate** is provided. If this value
         is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass
         appropriately encoded bytes instead.
     :paramtype password: str or bytes
+    :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
+        for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
+        acquire tokens for any tenant the application can access.
     """
 
     def __init__(
@@ -101,7 +104,8 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         if len(refresh_tokens) == 1:  # there should be only one
             try:
                 refresh_token = refresh_tokens[0]["secret"]
-                return await self._client.obtain_token_by_refresh_token(scopes, refresh_token, **kwargs)
+                return await self._client.obtain_token_by_refresh_token_on_behalf_of(
+                    scopes, self._client_credential, refresh_token, **kwargs)
             except ClientAuthenticationError as ex:
                 _LOGGER.debug("silent authentication failed: %s", ex, exc_info=True)
             except (IndexError, KeyError, TypeError) as ex:

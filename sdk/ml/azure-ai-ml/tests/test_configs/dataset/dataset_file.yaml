@@ -1,0 +1,4 @@
+name: testFileData
+version: 1
+description: "this is a test dataset"
+local_path: ../python/simple_train.py

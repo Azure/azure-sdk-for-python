@@ -6,29 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AlertSeverity(with_metaclass(_CaseInsensitiveEnumMeta, float, Enum)):
-    """Severity of the alert. Should be an integer between [0-4]. Value of 0 is severest
-    """
+class AlertSeverity(float, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Severity of the alert. Should be an integer between [0-4]. Value of 0 is severest."""
 
     ZERO = 0
     ONE = 1
@@ -36,9 +19,9 @@ class AlertSeverity(with_metaclass(_CaseInsensitiveEnumMeta, float, Enum)):
     THREE = 3
     FOUR = 4
 
-class ConditionOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The criteria operator.
-    """
+
+class ConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The criteria operator."""
 
     EQUALS = "Equals"
     GREATER_THAN = "GreaterThan"
@@ -46,16 +29,16 @@ class ConditionOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LESS_THAN = "LessThan"
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
 
-class DimensionOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Operator for dimension values
-    """
+
+class DimensionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operator for dimension values."""
 
     INCLUDE = "Include"
     EXCLUDE = "Exclude"
 
-class TimeAggregation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Aggregation type
-    """
+
+class TimeAggregation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Aggregation type."""
 
     COUNT = "Count"
     AVERAGE = "Average"

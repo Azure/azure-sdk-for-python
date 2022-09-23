@@ -33,7 +33,7 @@ except ImportError:
     from mock import Mock
 
 # module under test
-from azure.core.exceptions import HttpResponseError, ODataV4Error, ODataV4Format
+from azure.core.exceptions import HttpResponseError, ODataV4Error, ODataV4Format, SerializationError, DeserializationError
 from azure.core.pipeline.transport import RequestsTransportResponse
 from azure.core.pipeline.transport._base import _HttpResponseBase as PipelineTransportHttpResponseBase
 from azure.core.rest._http_response_impl import _HttpResponseBaseImpl as RestHttpResponseBase
@@ -320,3 +320,25 @@ class TestExceptions(object):
         with pytest.raises(HttpResponseError) as ex:
             response.raise_for_status()
         assert "Content: {\"" not in str(ex.value)
+
+def test_serialization_error():
+    message = "Oopsy bad input passed for serialization"
+    error = SerializationError(message)
+    with pytest.raises(SerializationError) as ex:
+        raise error
+    assert str(ex.value) == message
+
+    with pytest.raises(ValueError) as ex:
+        raise error
+    assert str(ex.value) == message
+
+def test_deserialization_error():
+    message = "Oopsy bad input passed for serialization"
+    error = DeserializationError(message)
+    with pytest.raises(DeserializationError) as ex:
+        raise error
+    assert str(ex.value) == message
+
+    with pytest.raises(ValueError) as ex:
+        raise error
+    assert str(ex.value) == message

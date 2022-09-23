@@ -1,17 +1,17 @@
 {
     "chosen_version": "",
-    "total_api_version_list": ["2020-10-01-preview", "2020-10-25"],
+    "total_api_version_list": ["2020-10-25", "2022-03-01"],
     "client": {
         "name": "AzureReservationAPI",
         "filename": "_azure_reservation_api",
         "description": "This API describe Azure Reservation.",
-        "base_url": "\u0027https://management.azure.com\u0027",
-        "custom_base_url": null,
+        "host_value": "\"https://management.azure.com\"",
+        "parameterized_host_template": null,
         "azure_arm": true,
         "has_lro_operations": true,
         "client_side_validation": false,
-        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"AzureReservationAPIConfiguration\"], \"._operations_mixin\": [\"AzureReservationAPIOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
-        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"AzureReservationAPIConfiguration\"], \"._operations_mixin\": [\"AzureReservationAPIOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"AzureReservationAPIConfiguration\"], \"._operations_mixin\": [\"AzureReservationAPIOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"AzureReservationAPIConfiguration\"], \"._operations_mixin\": [\"AzureReservationAPIOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -42,7 +42,7 @@
                     "required": false
                 },
                 "base_url": {
-                    "signature": "base_url=None,  # type: Optional[str]",
+                    "signature": "base_url=\"https://management.azure.com\",  # type: str",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false
@@ -62,7 +62,7 @@
                     "required": false
                 },
                 "base_url": {
-                    "signature": "base_url: Optional[str] = None,",
+                    "signature": "base_url: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false
@@ -79,11 +79,10 @@
     "config": {
         "credential": true,
         "credential_scopes": ["https://management.azure.com/.default"],
-        "credential_default_policy_type": "BearerTokenCredentialPolicy",
-        "credential_default_policy_type_has_async_version": true,
-        "credential_key_header_name": null,
-        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
-        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+        "credential_call_sync": "ARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "credential_call_async": "AsyncARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMChallengeAuthenticationPolicy\", \"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
         "reservation": "ReservationOperations",
@@ -95,30 +94,30 @@
         "quota_request_status": "QuotaRequestStatusOperations"
     },
     "operation_mixins": {
-        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"List\", \"Optional\", \"TypeVar\"]}}}",
-        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"List\", \"Optional\", \"TypeVar\"]}}}",
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"List\", \"Optional\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"List\", \"Optional\"]}}}",
         "operations": {
             "get_catalog" : {
                 "sync": {
-                    "signature": "def get_catalog(\n    self,\n    subscription_id,  # type: str\n    reserved_resource_type,  # type: str\n    location=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n",
-                    "doc": "\"\"\"Get the regions and skus that are available for RI purchase for the specified Azure subscription.\n\nGet the regions and skus that are available for RI purchase for the specified Azure\nsubscription.\n\n:param subscription_id: Id of the subscription.\n:type subscription_id: str\n:param reserved_resource_type: The type of the resource for which the skus should be provided.\n:type reserved_resource_type: str\n:param location: Filters the skus based on the location specified in this parameter. This can\n be an azure region or global.\n:type location: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: list of Catalog, or the result of cls(response)\n:rtype: list[~azure.mgmt.reservations.models.Catalog]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def get_catalog(\n    self,\n    subscription_id,  # type: str\n    reserved_resource_type=None,  # type: Optional[str]\n    location=None,  # type: Optional[str]\n    publisher_id=None,  # type: Optional[str]\n    offer_id=None,  # type: Optional[str]\n    plan_id=None,  # type: Optional[str]\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e List[\"_models.Catalog\"]\n",
+                    "doc": "\"\"\"Get the regions and skus that are available for RI purchase for the specified Azure\nsubscription.\n\nGet the regions and skus that are available for RI purchase for the specified Azure\nsubscription.\n\n:param subscription_id: Id of the subscription.\n:type subscription_id: str\n:param reserved_resource_type: The type of the resource for which the skus should be provided.\n Default value is None.\n:type reserved_resource_type: str\n:param location: Filters the skus based on the location specified in this parameter. This can\n be an azure region or global. Default value is None.\n:type location: str\n:param publisher_id: Publisher id used to get the third party products. Default value is None.\n:type publisher_id: str\n:param offer_id: Offer id used to get the third party products. Default value is None.\n:type offer_id: str\n:param plan_id: Plan id used to get the third party products. Default value is None.\n:type plan_id: str\n:keyword api_version: Api Version. Default value is \"2022-03-01\". Note that overriding this\n default value may result in unsupported behavior.\n:paramtype api_version: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: list of Catalog, or the result of cls(response)\n:rtype: list[~azure.mgmt.reservations.models.Catalog]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def get_catalog(\n    self,\n    subscription_id: str,\n    reserved_resource_type: str,\n    location: Optional[str] = None,\n    **kwargs: Any\n) -\u003e List[\"_models.Catalog\"]:\n",
-                    "doc": "\"\"\"Get the regions and skus that are available for RI purchase for the specified Azure subscription.\n\nGet the regions and skus that are available for RI purchase for the specified Azure\nsubscription.\n\n:param subscription_id: Id of the subscription.\n:type subscription_id: str\n:param reserved_resource_type: The type of the resource for which the skus should be provided.\n:type reserved_resource_type: str\n:param location: Filters the skus based on the location specified in this parameter. This can\n be an azure region or global.\n:type location: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: list of Catalog, or the result of cls(response)\n:rtype: list[~azure.mgmt.reservations.models.Catalog]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "async def get_catalog(\n    self,\n    subscription_id: str,\n    reserved_resource_type: Optional[str] = None,\n    location: Optional[str] = None,\n    publisher_id: Optional[str] = None,\n    offer_id: Optional[str] = None,\n    plan_id: Optional[str] = None,\n    **kwargs: Any\n) -\u003e List[\"_models.Catalog\"]:\n",
+                    "doc": "\"\"\"Get the regions and skus that are available for RI purchase for the specified Azure\nsubscription.\n\nGet the regions and skus that are available for RI purchase for the specified Azure\nsubscription.\n\n:param subscription_id: Id of the subscription.\n:type subscription_id: str\n:param reserved_resource_type: The type of the resource for which the skus should be provided.\n Default value is None.\n:type reserved_resource_type: str\n:param location: Filters the skus based on the location specified in this parameter. This can\n be an azure region or global. Default value is None.\n:type location: str\n:param publisher_id: Publisher id used to get the third party products. Default value is None.\n:type publisher_id: str\n:param offer_id: Offer id used to get the third party products. Default value is None.\n:type offer_id: str\n:param plan_id: Plan id used to get the third party products. Default value is None.\n:type plan_id: str\n:keyword api_version: Api Version. Default value is \"2022-03-01\". Note that overriding this\n default value may result in unsupported behavior.\n:paramtype api_version: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: list of Catalog, or the result of cls(response)\n:rtype: list[~azure.mgmt.reservations.models.Catalog]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
-                "call": "subscription_id, reserved_resource_type, location"
+                "call": "subscription_id, reserved_resource_type, location, publisher_id, offer_id, plan_id"
             },
             "get_applied_reservation_list" : {
                 "sync": {
-                    "signature": "def get_applied_reservation_list(\n    self,\n    subscription_id,  # type: str\n    **kwargs  # type: Any\n):\n",
-                    "doc": "\"\"\"Get list of applicable ``Reservation``\\ s.\n\nGet applicable ``Reservation``\\ s that are applied to this subscription or a resource group\nunder this subscription.\n\n:param subscription_id: Id of the subscription.\n:type subscription_id: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AppliedReservations, or the result of cls(response)\n:rtype: ~azure.mgmt.reservations.models.AppliedReservations\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def get_applied_reservation_list(\n    self,\n    subscription_id,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.AppliedReservations\"\n",
+                    "doc": "\"\"\"Get list of applicable ``Reservation``\\ s.\n\nGet applicable ``Reservation``\\ s that are applied to this subscription or a resource group\nunder this subscription.\n\n:param subscription_id: Id of the subscription.\n:type subscription_id: str\n:keyword api_version: Api Version. Default value is \"2022-03-01\". Note that overriding this\n default value may result in unsupported behavior.\n:paramtype api_version: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AppliedReservations, or the result of cls(response)\n:rtype: ~azure.mgmt.reservations.models.AppliedReservations\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "async": {
                     "coroutine": true,
                     "signature": "async def get_applied_reservation_list(\n    self,\n    subscription_id: str,\n    **kwargs: Any\n) -\u003e \"_models.AppliedReservations\":\n",
-                    "doc": "\"\"\"Get list of applicable ``Reservation``\\ s.\n\nGet applicable ``Reservation``\\ s that are applied to this subscription or a resource group\nunder this subscription.\n\n:param subscription_id: Id of the subscription.\n:type subscription_id: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AppliedReservations, or the result of cls(response)\n:rtype: ~azure.mgmt.reservations.models.AppliedReservations\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "doc": "\"\"\"Get list of applicable ``Reservation``\\ s.\n\nGet applicable ``Reservation``\\ s that are applied to this subscription or a resource group\nunder this subscription.\n\n:param subscription_id: Id of the subscription.\n:type subscription_id: str\n:keyword api_version: Api Version. Default value is \"2022-03-01\". Note that overriding this\n default value may result in unsupported behavior.\n:paramtype api_version: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AppliedReservations, or the result of cls(response)\n:rtype: ~azure.mgmt.reservations.models.AppliedReservations\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "call": "subscription_id"
             }

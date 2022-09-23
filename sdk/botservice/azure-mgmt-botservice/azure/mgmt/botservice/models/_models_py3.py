@@ -54,7 +54,7 @@ class Channel(msrest.serialization.Model):
         self,
         *,
         etag: Optional[str] = None,
-        location: Optional[str] = None,
+        location: Optional[str] = "global",
         **kwargs
     ):
         """
@@ -106,7 +106,7 @@ class AlexaChannel(Channel):
         self,
         *,
         etag: Optional[str] = None,
-        location: Optional[str] = None,
+        location: Optional[str] = "global",
         properties: Optional["AlexaChannelProperties"] = None,
         **kwargs
     ):
@@ -501,6 +501,8 @@ class BotProperties(msrest.serialization.Model):
         'msa_app_id': {'required': True},
         'configured_channels': {'readonly': True},
         'enabled_channels': {'readonly': True},
+        'cmek_encryption_status': {'readonly': True},
+        'is_developer_app_insights_api_key_set': {'readonly': True},
         'migration_token': {'readonly': True},
         'private_endpoint_connections': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -564,10 +566,8 @@ class BotProperties(msrest.serialization.Model):
         luis_key: Optional[str] = None,
         is_cmek_enabled: Optional[bool] = None,
         cmek_key_vault_url: Optional[str] = None,
-        cmek_encryption_status: Optional[str] = None,
         public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = "Enabled",
-        is_streaming_supported: Optional[bool] = None,
-        is_developer_app_insights_api_key_set: Optional[bool] = None,
+        is_streaming_supported: Optional[bool] = False,
         disable_local_auth: Optional[bool] = None,
         schema_transformation_version: Optional[str] = None,
         storage_resource_id: Optional[str] = None,
@@ -614,16 +614,11 @@ class BotProperties(msrest.serialization.Model):
         :paramtype is_cmek_enabled: bool
         :keyword cmek_key_vault_url: The CMK Url.
         :paramtype cmek_key_vault_url: str
-        :keyword cmek_encryption_status: The CMK encryption status.
-        :paramtype cmek_encryption_status: str
         :keyword public_network_access: Whether the bot is in an isolated network. Possible values
          include: "Enabled", "Disabled". Default value: "Enabled".
         :paramtype public_network_access: str or ~azure.mgmt.botservice.models.PublicNetworkAccess
         :keyword is_streaming_supported: Whether the bot is streaming supported.
         :paramtype is_streaming_supported: bool
-        :keyword is_developer_app_insights_api_key_set: Whether the bot is developerAppInsightsApiKey
-         set.
-        :paramtype is_developer_app_insights_api_key_set: bool
         :keyword disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
          used exclusively for authentication.
         :paramtype disable_local_auth: bool
@@ -662,10 +657,10 @@ class BotProperties(msrest.serialization.Model):
         self.luis_key = luis_key
         self.is_cmek_enabled = is_cmek_enabled
         self.cmek_key_vault_url = cmek_key_vault_url
-        self.cmek_encryption_status = cmek_encryption_status
+        self.cmek_encryption_status = None
         self.public_network_access = public_network_access
         self.is_streaming_supported = is_streaming_supported
-        self.is_developer_app_insights_api_key_set = is_developer_app_insights_api_key_set
+        self.is_developer_app_insights_api_key_set = None
         self.migration_token = None
         self.disable_local_auth = disable_local_auth
         self.schema_transformation_version = schema_transformation_version
@@ -1199,7 +1194,7 @@ class DirectLineChannel(Channel):
         self,
         *,
         etag: Optional[str] = None,
-        location: Optional[str] = None,
+        location: Optional[str] = "global",
         properties: Optional["DirectLineChannelProperties"] = None,
         **kwargs
     ):
@@ -1383,7 +1378,7 @@ class DirectLineSpeechChannel(Channel):
         self,
         *,
         etag: Optional[str] = None,
-        location: Optional[str] = None,
+        location: Optional[str] = "global",
         properties: Optional["DirectLineSpeechChannelProperties"] = None,
         **kwargs
     ):
@@ -1509,7 +1504,7 @@ class EmailChannel(Channel):
         self,
         *,
         etag: Optional[str] = None,
-        location: Optional[str] = None,
+        location: Optional[str] = "global",
         properties: Optional["EmailChannelProperties"] = None,
         **kwargs
     ):
@@ -1674,7 +1669,7 @@ class FacebookChannel(Channel):
         self,
         *,
         etag: Optional[str] = None,
-        location: Optional[str] = None,
+        location: Optional[str] = "global",
         properties: Optional["FacebookChannelProperties"] = None,
         **kwargs
     ):
@@ -1913,7 +1908,7 @@ class KikChannel(Channel):
         self,
         *,
         etag: Optional[str] = None,
-        location: Optional[str] = None,
+        location: Optional[str] = "global",
         properties: Optional["KikChannelProperties"] = None,
         **kwargs
     ):
@@ -2021,7 +2016,7 @@ class LineChannel(Channel):
         self,
         *,
         etag: Optional[str] = None,
-        location: Optional[str] = None,
+        location: Optional[str] = "global",
         properties: Optional["LineChannelProperties"] = None,
         **kwargs
     ):
@@ -2153,6 +2148,12 @@ class ListChannelWithKeysResponse(BotChannel):
     :vartype resource: ~azure.mgmt.botservice.models.Channel
     :ivar setting: Channel settings.
     :vartype setting: ~azure.mgmt.botservice.models.ChannelSettings
+    :ivar provisioning_state: Provisioning state of the resource.
+    :vartype provisioning_state: str
+    :ivar entity_tag: Entity tag of the resource.
+    :vartype entity_tag: str
+    :ivar changed_time: Changed time of the resource.
+    :vartype changed_time: str
     """
 
     _validation = {
@@ -2175,6 +2176,9 @@ class ListChannelWithKeysResponse(BotChannel):
         'properties': {'key': 'properties', 'type': 'Channel'},
         'resource': {'key': 'resource', 'type': 'Channel'},
         'setting': {'key': 'setting', 'type': 'ChannelSettings'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'entity_tag': {'key': 'entityTag', 'type': 'str'},
+        'changed_time': {'key': 'changedTime', 'type': 'str'},
     }
 
     def __init__(
@@ -2188,6 +2192,9 @@ class ListChannelWithKeysResponse(BotChannel):
         properties: Optional["Channel"] = None,
         resource: Optional["Channel"] = None,
         setting: Optional["ChannelSettings"] = None,
+        provisioning_state: Optional[str] = None,
+        entity_tag: Optional[str] = None,
+        changed_time: Optional[str] = None,
         **kwargs
     ):
         """
@@ -2208,10 +2215,19 @@ class ListChannelWithKeysResponse(BotChannel):
         :paramtype resource: ~azure.mgmt.botservice.models.Channel
         :keyword setting: Channel settings.
         :paramtype setting: ~azure.mgmt.botservice.models.ChannelSettings
+        :keyword provisioning_state: Provisioning state of the resource.
+        :paramtype provisioning_state: str
+        :keyword entity_tag: Entity tag of the resource.
+        :paramtype entity_tag: str
+        :keyword changed_time: Changed time of the resource.
+        :paramtype changed_time: str
         """
         super(ListChannelWithKeysResponse, self).__init__(location=location, tags=tags, sku=sku, kind=kind, etag=etag, properties=properties, **kwargs)
         self.resource = resource
         self.setting = setting
+        self.provisioning_state = provisioning_state
+        self.entity_tag = entity_tag
+        self.changed_time = changed_time
 
 
 class MsTeamsChannel(Channel):
@@ -2250,7 +2266,7 @@ class MsTeamsChannel(Channel):
         self,
         *,
         etag: Optional[str] = None,
-        location: Optional[str] = None,
+        location: Optional[str] = "global",
         properties: Optional["MsTeamsChannelProperties"] = None,
         **kwargs
     ):
@@ -3307,7 +3323,7 @@ class SkypeChannel(Channel):
         self,
         *,
         etag: Optional[str] = None,
-        location: Optional[str] = None,
+        location: Optional[str] = "global",
         properties: Optional["SkypeChannelProperties"] = None,
         **kwargs
     ):
@@ -3454,7 +3470,7 @@ class SlackChannel(Channel):
         self,
         *,
         etag: Optional[str] = None,
-        location: Optional[str] = None,
+        location: Optional[str] = "global",
         properties: Optional["SlackChannelProperties"] = None,
         **kwargs
     ):
@@ -3607,7 +3623,7 @@ class SmsChannel(Channel):
         self,
         *,
         etag: Optional[str] = None,
-        location: Optional[str] = None,
+        location: Optional[str] = "global",
         properties: Optional["SmsChannelProperties"] = None,
         **kwargs
     ):
@@ -3725,7 +3741,7 @@ class TelegramChannel(Channel):
         self,
         *,
         etag: Optional[str] = None,
-        location: Optional[str] = None,
+        location: Optional[str] = "global",
         properties: Optional["TelegramChannelProperties"] = None,
         **kwargs
     ):
@@ -3825,7 +3841,7 @@ class WebChatChannel(Channel):
         self,
         *,
         etag: Optional[str] = None,
-        location: Optional[str] = None,
+        location: Optional[str] = "global",
         properties: Optional["WebChatChannelProperties"] = None,
         **kwargs
     ):

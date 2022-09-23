@@ -477,3 +477,102 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         # time.sleep() in _backoff will take AT LEAST time 'exp' for retry_mode='exponential'
         # check that fixed is less than 'exp'
         assert sleep_time_fixed < backoff * (2 ** 1)
+
+    def test_custom_client_id_queue_sender(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+        queue_name = "queue_name"
+        custom_id = "my_custom_id"
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        with servicebus_client:
+            queue_sender = servicebus_client.get_queue_sender(queue_name=queue_name, client_identifier=custom_id)
+            assert queue_sender.client_identifier is not None
+            assert queue_sender.client_identifier == custom_id
+
+    def test_default_client_id_queue_sender(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+        queue_name = "queue_name"
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        with servicebus_client:
+            queue_sender = servicebus_client.get_queue_sender(queue_name=queue_name)
+            assert queue_sender.client_identifier is not None
+            assert "SBSender" in queue_sender.client_identifier
+
+    def test_custom_client_id_queue_receiver(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+        queue_name = "queue_name"
+        custom_id = "my_custom_id"
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        with servicebus_client:
+            queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name, client_identifier=custom_id)
+            assert queue_receiver.client_identifier is not None
+            assert queue_receiver.client_identifier == custom_id
+
+    def test_default_client_id_queue_receiver(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+        queue_name = "queue_name"
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        with servicebus_client:
+            queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name)
+            assert queue_receiver.client_identifier is not None
+            assert "SBReceiver" in queue_receiver.client_identifier
+
+    def test_custom_client_id_topic_sender(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+        custom_id = "my_custom_id"
+        topic_name = "topic_name"
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        with servicebus_client:
+            topic_sender = servicebus_client.get_topic_sender(topic_name=topic_name, client_identifier=custom_id)
+            assert topic_sender.client_identifier is not None
+            assert topic_sender.client_identifier == custom_id
+
+    def test_default_client_id_topic_sender(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+        topic_name = "topic_name"
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        with servicebus_client:
+            topic_sender = servicebus_client.get_topic_sender(topic_name=topic_name)
+            assert topic_sender.client_identifier is not None
+            assert "SBSender" in topic_sender.client_identifier
+
+    def test_default_client_id_subscription_receiver(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+        topic_name = "topic_name"
+        sub_name = "sub_name"
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        with servicebus_client:
+            subscription_receiver = servicebus_client.get_subscription_receiver(topic_name, sub_name)
+            assert subscription_receiver.client_identifier is not None
+            assert "SBReceiver" in subscription_receiver.client_identifier
+
+    def test_custom_client_id_subscription_receiver(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+        custom_id = "my_custom_id"
+        topic_name = "topic_name"
+        sub_name = "sub_name"
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        with servicebus_client:
+            subscription_receiver = servicebus_client.get_subscription_receiver(topic_name, sub_name, client_identifier=custom_id)
+            assert subscription_receiver.client_identifier is not None
+            assert subscription_receiver.client_identifier == custom_id
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer()
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_connection_verify_exception(self,
+                                   servicebus_queue,
+                                   servicebus_namespace,
+                                   servicebus_namespace_key_name,
+                                   servicebus_namespace_primary_key,
+                                   servicebus_namespace_connection_string,
+                                   **kwargs):
+        hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
+        credential = AzureNamedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
+
+        client = ServiceBusClient(hostname, credential, connection_verify="cacert.pem")
+        with client:
+            with pytest.raises(ServiceBusError):
+                with client.get_queue_sender(servicebus_queue.name) as sender:
+                    sender.send_messages(ServiceBusMessage("foo"))

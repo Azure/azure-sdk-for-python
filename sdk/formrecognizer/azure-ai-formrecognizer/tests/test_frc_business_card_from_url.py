@@ -6,7 +6,7 @@
 
 import pytest
 import functools
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
+from devtools_testutils import recorded_by_proxy
 from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersion
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -22,7 +22,6 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_business_card_jpg_include_field_elements(self, client):
-        set_bodiless_matcher()
         poller = client.begin_recognize_business_cards_from_url(self.business_card_url_jpg, include_field_elements=True)
 
         result = poller.result()

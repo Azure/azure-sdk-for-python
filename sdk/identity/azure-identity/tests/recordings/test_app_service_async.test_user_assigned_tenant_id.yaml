@@ -1,0 +1,25 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-identity/1.6.0b4 Python/3.8.6 (Linux-4.15.0-135-generic-x86_64-with-glibc2.2.5)
+      secret:
+      - redacted
+    method: GET
+    uri: https://msi-endpoint/token?api-version=2019-08-01&resource=https://management.azure.com&client_id=client-id
+  response:
+    body:
+      string: '{"access_token": "redacted", "expires_on": "1646265298",
+        "resource": "https://management.azure.com", "token_type": "Bearer", "client_id":
+        "client-id"}'
+    headers:
+      content-type: application/json; charset=utf-8
+      date: Fri, 21 May 2021 17:18:35 GMT
+      server: Kestrel
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: http://172.16.7.2:8081/msi/token?api-version=2017-09-01&resource=https://management.azure.com&clientid=b48ae5dc-70d0-488a-8ef5-f30d905cd5ec
+version: 1

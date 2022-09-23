@@ -1,5 +1,47 @@
 # Release History
 
+## 3.0.0 (2022-09-15)
+
+### Features Added
+
+  - Model AttachedDatabaseConfiguration has a new parameter database_name_override
+  - Model AttachedDatabaseConfiguration has a new parameter database_name_prefix
+  - Model EventHubDataConnection has a new parameter retrieval_start_date
+  - Model FollowerDatabaseDefinition has a new parameter database_share_origin
+  - Model FollowerDatabaseDefinition has a new parameter table_level_sharing_properties
+  - Model IotHubDataConnection has a new parameter retrieval_start_date
+  - Model ReadOnlyFollowingDatabase has a new parameter database_share_origin
+  - Model ReadOnlyFollowingDatabase has a new parameter original_database_name
+  - Model ReadOnlyFollowingDatabase has a new parameter table_level_sharing_properties
+
+### Breaking Changes
+
+  - Operation DatabasesOperations.begin_create_or_update has a new parameter caller_role
+  - Operation DatabasesOperations.begin_update has a new parameter caller_role
+
+## 2.2.0 (2022-02-22)
+
+**Features**
+
+  - Added operation group OperationsResultsLocationOperations
+  - Model Cluster has a new parameter private_endpoint_connections
+  - Model Cluster has a new parameter public_ip_type
+  - Model Cluster has a new parameter virtual_cluster_graduation_properties
+  - Model ClusterPrincipalAssignment has a new parameter aad_object_id
+  - Model ClusterUpdate has a new parameter private_endpoint_connections
+  - Model ClusterUpdate has a new parameter public_ip_type
+  - Model ClusterUpdate has a new parameter virtual_cluster_graduation_properties
+  - Model DatabasePrincipalAssignment has a new parameter aad_object_id
+  - Model EventGridDataConnection has a new parameter database_routing
+  - Model EventGridDataConnection has a new parameter event_grid_resource_id
+  - Model EventGridDataConnection has a new parameter managed_identity_object_id
+  - Model EventGridDataConnection has a new parameter managed_identity_resource_id
+  - Model EventHubDataConnection has a new parameter database_routing
+  - Model EventHubDataConnection has a new parameter managed_identity_object_id
+  - Model IotHubDataConnection has a new parameter database_routing
+  - Model OperationResult has a new parameter provisioning_state
+  - Model Script has a new parameter script_content
+
 ## 2.1.0 (2021-09-22)
 
 **Features**

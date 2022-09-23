@@ -6,10 +6,27 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Examples to show receiving events from EventHub with AvroEncoder integrated for data decoding.
-"""
+FILE: eventhub_receive_integration.py
+DESCRIPTION:
+    Examples to show receiving events synchronously from EventHub with AvroEncoder integrated for content decoding.
+USAGE:
+    python eventhub_receive_integration.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_TENANT_ID - Required for use of the credential. The ID of the service principal's tenant.
+     Also called its 'directory' ID.
+    2) AZURE_CLIENT_ID - Required for use of the credential. The service principal's client ID.
+     Also called its 'application' ID.
+    3) AZURE_CLIENT_SECRET - Required for use of the credential. One of the service principal's client secrets.
+    4) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
+     which should follow the format: `<your-namespace>.servicebus.windows.net`
+    5) SCHEMAREGISTRY_GROUP - The name of the schema group.
+    6) EVENT_HUB_CONN_STR - The connection string of the Event Hubs namespace to receive events from.
+    7) EVENT_HUB_NAME - The name of the Event Hub in the Event Hubs namespace to receive events from.
 
-# pylint: disable=C0111
+This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
+For more information on DefaultAzureCredential, see
+ https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
+"""
 import os
 from azure.eventhub import EventHubConsumerClient
 from azure.identity import DefaultAzureCredential
@@ -32,8 +49,8 @@ def on_event(partition_context, event):
     # Use the decode method to decode the payload of the event.
     # The decode method will extract the schema id from the content_type, and automatically retrieve the Avro Schema
     # from the Schema Registry Service. The schema will be cached locally for future usage.
-    decoded_data = avro_encoder.decode(event)
-    print(f'The dict data after decoding is {decoded_data}')
+    decoded_content = avro_encoder.decode(event)
+    print(f'The dict content after decoding is {decoded_content}')
 
 
 # create an EventHubConsumerClient instance
@@ -51,7 +68,7 @@ avro_encoder = AvroEncoder(
         credential=DefaultAzureCredential()
     ),
     group_name=GROUP_NAME,
-    auto_register_schemas=True
+    auto_register=True
 )
 
 

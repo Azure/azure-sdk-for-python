@@ -7,7 +7,7 @@
     "errors": [
         {
             "code": "InternalServerError",
-            "message": "1 out of 1 job tasks failed. Failed job tasks : v3.2-preview.2/custom/entities/general."
+            "message": "1 out of 1 job tasks failed. Failed job tasks : v3.1/entities/general."
         }
     ],
     "tasks": {
@@ -15,12 +15,12 @@
         "failed": 1,
         "inProgress": 0,
         "total": 1,
-        "customEntityRecognitionTasks": [
-            {
-                "lastUpdateDateTime": "2021-10-21T23:02:34.3218701Z",
-                "taskName": "0",
-                "state": "failed"
-            }
+        "entityRecognitionTasks": [
+          {
+            "lastUpdateDateTime": "2021-03-03T22:39:37.1716697Z",
+            "taskName": "0",
+            "state": "failed"
+          }
         ]
     }
 }

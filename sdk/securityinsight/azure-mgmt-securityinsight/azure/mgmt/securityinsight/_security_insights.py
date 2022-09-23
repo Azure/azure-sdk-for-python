@@ -6,88 +6,163 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from copy import deepcopy
+from typing import Any, TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
+
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.mgmt.core import ARMPipelineClient
+
+from . import models
+from ._configuration import SecurityInsightsConfiguration
+from .operations import ActionsOperations, AlertRuleTemplatesOperations, AlertRulesOperations, AutomationRulesOperations, BookmarksOperations, DataConnectorsOperations, IncidentCommentsOperations, IncidentRelationsOperations, IncidentsOperations, Operations, SentinelOnboardingStatesOperations, ThreatIntelligenceIndicatorMetricsOperations, ThreatIntelligenceIndicatorOperations, ThreatIntelligenceIndicatorsOperations, WatchlistItemsOperations, WatchlistsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
 
-from ._configuration import SecurityInsightsConfiguration
-from .operations import Operations
-from .operations import AlertRulesOperations
-from .operations import ActionsOperations
-from .operations import AlertRuleTemplatesOperations
-from .operations import BookmarksOperations
-from .operations import DataConnectorsOperations
-from .operations import IncidentsOperations
-from .operations import IncidentCommentsOperations
-from . import models
-
-
-class SecurityInsights(object):
+class SecurityInsights:    # pylint: disable=too-many-instance-attributes
     """API spec for Microsoft.SecurityInsights (Azure Security Insights) resource provider.
 
+    :ivar incidents: IncidentsOperations operations
+    :vartype incidents: azure.mgmt.securityinsight.operations.IncidentsOperations
+    :ivar incident_comments: IncidentCommentsOperations operations
+    :vartype incident_comments: azure.mgmt.securityinsight.operations.IncidentCommentsOperations
+    :ivar incident_relations: IncidentRelationsOperations operations
+    :vartype incident_relations: azure.mgmt.securityinsight.operations.IncidentRelationsOperations
+    :ivar threat_intelligence_indicator: ThreatIntelligenceIndicatorOperations operations
+    :vartype threat_intelligence_indicator:
+     azure.mgmt.securityinsight.operations.ThreatIntelligenceIndicatorOperations
+    :ivar threat_intelligence_indicators: ThreatIntelligenceIndicatorsOperations operations
+    :vartype threat_intelligence_indicators:
+     azure.mgmt.securityinsight.operations.ThreatIntelligenceIndicatorsOperations
+    :ivar threat_intelligence_indicator_metrics: ThreatIntelligenceIndicatorMetricsOperations
+     operations
+    :vartype threat_intelligence_indicator_metrics:
+     azure.mgmt.securityinsight.operations.ThreatIntelligenceIndicatorMetricsOperations
+    :ivar watchlists: WatchlistsOperations operations
+    :vartype watchlists: azure.mgmt.securityinsight.operations.WatchlistsOperations
+    :ivar watchlist_items: WatchlistItemsOperations operations
+    :vartype watchlist_items: azure.mgmt.securityinsight.operations.WatchlistItemsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.securityinsight.operations.Operations
+    :ivar sentinel_onboarding_states: SentinelOnboardingStatesOperations operations
+    :vartype sentinel_onboarding_states:
+     azure.mgmt.securityinsight.operations.SentinelOnboardingStatesOperations
     :ivar alert_rules: AlertRulesOperations operations
     :vartype alert_rules: azure.mgmt.securityinsight.operations.AlertRulesOperations
     :ivar actions: ActionsOperations operations
     :vartype actions: azure.mgmt.securityinsight.operations.ActionsOperations
     :ivar alert_rule_templates: AlertRuleTemplatesOperations operations
-    :vartype alert_rule_templates: azure.mgmt.securityinsight.operations.AlertRuleTemplatesOperations
+    :vartype alert_rule_templates:
+     azure.mgmt.securityinsight.operations.AlertRuleTemplatesOperations
     :ivar bookmarks: BookmarksOperations operations
     :vartype bookmarks: azure.mgmt.securityinsight.operations.BookmarksOperations
     :ivar data_connectors: DataConnectorsOperations operations
     :vartype data_connectors: azure.mgmt.securityinsight.operations.DataConnectorsOperations
-    :ivar incidents: IncidentsOperations operations
-    :vartype incidents: azure.mgmt.securityinsight.operations.IncidentsOperations
-    :ivar incident_comments: IncidentCommentsOperations operations
-    :vartype incident_comments: azure.mgmt.securityinsight.operations.IncidentCommentsOperations
+    :ivar automation_rules: AutomationRulesOperations operations
+    :vartype automation_rules: azure.mgmt.securityinsight.operations.AutomationRulesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Azure subscription ID.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param str base_url: Service URL
+    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :type base_url: str
+    :keyword api_version: Api Version. Default value is "2021-10-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = SecurityInsightsConfiguration(credential, subscription_id, **kwargs)
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
+    ) -> None:
+        self._config = SecurityInsightsConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
-
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.alert_rules = AlertRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.actions = ActionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.alert_rule_templates = AlertRuleTemplatesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.bookmarks = BookmarksOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.data_connectors = DataConnectorsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+        self._serialize.client_side_validation = False
         self.incidents = IncidentsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.incident_comments = IncidentCommentsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.incident_relations = IncidentRelationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.threat_intelligence_indicator = ThreatIntelligenceIndicatorOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.threat_intelligence_indicators = ThreatIntelligenceIndicatorsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.threat_intelligence_indicator_metrics = ThreatIntelligenceIndicatorMetricsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.watchlists = WatchlistsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.watchlist_items = WatchlistItemsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sentinel_onboarding_states = SentinelOnboardingStatesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.alert_rules = AlertRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.actions = ActionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.alert_rule_templates = AlertRuleTemplatesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.bookmarks = BookmarksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.data_connectors = DataConnectorsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.automation_rules = AutomationRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+
+
+    def _send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> HttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

@@ -40,7 +40,6 @@ from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
     DistributedTracingPolicy,
-    HttpLoggingPolicy,
     ProxyPolicy)
 
 from .. import _base as base
@@ -58,9 +57,12 @@ from ._retry_utility_async import _ConnectionRetryPolicy
 from .. import _session
 from .. import _utils
 from ..partition_key import _Undefined, _Empty
+from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
+from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 
 ClassType = TypeVar("ClassType")
 # pylint: disable=protected-access
+
 
 class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """Represents a document client.
@@ -113,9 +115,11 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         self.master_key = None
         self.resource_tokens = None
+        self.aad_credentials = None
         if auth is not None:
             self.master_key = auth.get("masterKey")
             self.resource_tokens = auth.get("resourceTokens")
+            self.aad_credentials = auth.get("clientSecretCredential")
 
             if auth.get("permissionFeed"):
                 self.resource_tokens = {}
@@ -141,7 +145,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if consistency_level is not None:
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
-        # Keeps the latest response headers from server.
+        # Keeps the latest response headers from the server.
         self.last_response_headers = None
 
         self._useMultipleWriteLocations = False
@@ -164,7 +168,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 retry_backoff_factor=self.connection_policy.ConnectionRetryConfiguration.backoff_factor
             )
         else:
-            TypeError("Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry")
+            raise TypeError(
+                "Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry")
 
         proxies = kwargs.pop('proxies', {})
         if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
@@ -175,16 +180,22 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         self._user_agent = _utils.get_user_agent_async()
 
+        credentials_policy = None
+        if self.aad_credentials:
+            scopes = base.create_scope_from_url(self.url_connection)
+            credentials_policy = AsyncCosmosBearerTokenCredentialPolicy(self.aad_credentials, scopes)
+
         policies = [
             HeadersPolicy(**kwargs),
             ProxyPolicy(proxies=proxies),
             UserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
             ContentDecodePolicy(),
             retry_policy,
+            credentials_policy,
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
+            CosmosHttpLoggingPolicy(**kwargs),
             ]
 
         transport = kwargs.pop("transport", None)
@@ -214,13 +225,13 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
     @property
     def _WriteEndpoint(self):
-        """Gets the curent write endpoint for a geo-replicated database account.
+        """Gets the current write endpoint for a geo-replicated database account.
         """
         return self._global_endpoint_manager.get_write_endpoint()
 
     @property
     def _ReadEndpoint(self):
-        """Gets the curent read endpoint for a geo-replicated database account.
+        """Gets the current read endpoint for a geo-replicated database account.
         """
         return self._global_endpoint_manager.get_read_endpoint()
 
@@ -1785,7 +1796,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         resource_key_map = {"Documents": "docs"}
 
-        # For now, change feed only supports Documents and Partition Key Range resouce type
+        # For now, change feed only supports Documents and Partition Key Range resource type
         if resource_type not in resource_key_map:
             raise NotImplementedError(resource_type + " change feed query is not supported.")
 
@@ -2224,7 +2235,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             Specifies partition key range id.
         :param function response_hook:
         :param bool is_query_plan:
-            Specififes if the call is to fetch query plan
+            Specifies if the call is to fetch query plan
 
         :rtype:
             list
@@ -2435,7 +2446,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
         if partitionKeyDefinition:
-            # If the user has passed in the partitionKey in options use that elase extract it from the document
+            # If the user has passed in the partitionKey in options use that else extract it from the document
             if "partitionKey" not in options:
                 partitionKeyValue = self._ExtractPartitionKey(partitionKeyDefinition, document)
                 options["partitionKey"] = partitionKeyValue

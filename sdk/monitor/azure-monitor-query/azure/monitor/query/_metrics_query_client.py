@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
 
 
-class MetricsQueryClient(object):
+class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-keyword
     """MetricsQueryClient should be used to collect numeric data from monitored resources into a
     time series database. Metrics are numerical values that are collected at regular intervals and
     describe some aspect of a system at a particular time. Metrics are lightweight and capable of
@@ -125,6 +125,7 @@ class MetricsQueryClient(object):
         kwargs.setdefault("top", kwargs.pop("max_results", None))
         kwargs.setdefault("interval", kwargs.pop("granularity", None))
         kwargs.setdefault("orderby", kwargs.pop("order_by", None))
+        kwargs.setdefault("metricnamespace", kwargs.pop("metric_namespace", None))
         generated = self._metrics_op.list(
             resource_uri, connection_verify=False, **kwargs
         )

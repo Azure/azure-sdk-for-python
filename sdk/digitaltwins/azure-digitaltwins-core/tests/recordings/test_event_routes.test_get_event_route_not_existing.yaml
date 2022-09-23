@@ -9,23 +9,27 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes/eventRoute-2a081559?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes/eventRoute-2a081559?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"EventRouteNotFound","message":"There is no route
         available that matches the provided input. Check for all valid event routes
-        by calling EventRoute_List. See Swagger example (http://aka.ms/RouteSwSmpl)."}}'
+        by calling EventRoute_List. See Swagger example (https://aka.ms/RouteSwSmpl)."}}'
     headers:
       content-length:
-      - '222'
+      - '223'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:08:56 GMT
+      - Thu, 26 May 2022 07:28:20 GMT
+      mise-correlation-id:
+      - b5017839-33bc-4321-ad4d-8b3ee9369c58
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-8377cb75ee498c4f975778bbf1eb9816-a116d07c1fdb0b4b-01
     status:
       code: 404
       message: Not Found

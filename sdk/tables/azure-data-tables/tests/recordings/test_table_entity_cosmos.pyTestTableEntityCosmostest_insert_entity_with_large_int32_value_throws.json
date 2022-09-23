@@ -6,26 +6,25 @@
       "RequestHeaders": {
         "Accept": "application/json;odata=minimalmetadata",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "32",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Thu, 09 Dec 2021 02:17:05 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1a47e1ca-5896-11ec-b632-c8348e51ab51",
-        "x-ms-date": "Thu, 09 Dec 2021 02:17:05 GMT",
+        "Date": "Fri, 06 May 2022 00:47:59 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 06 May 2022 00:47:59 GMT",
         "x-ms-version": "2019-02-02"
       },
-      "RequestBody": "{\u0022TableName\u0022: \u0022uttable8dc037a4\u0022}",
+      "RequestBody": {
+        "TableName": "uttable8dc037a4"
+      },
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Thu, 09 Dec 2021 02:17:05 GMT",
-        "ETag": "W/\u0022datetime\u00272021-12-09T02%3A17%3A04.9151495Z\u0027\u0022",
+        "Date": "Fri, 06 May 2022 00:47:58 GMT",
+        "ETag": "W/\u0022datetime\u00272022-05-06T00%3A47%3A58.8810760Z\u0027\u0022",
         "Location": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027uttable8dc037a4\u0027)",
-        "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "49e3e653-f97d-467a-889f-cb56b38cc291"
+        "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
         "TableName": "uttable8dc037a4",
@@ -38,22 +37,19 @@
       "RequestHeaders": {
         "Accept": "application/json;odata=minimalmetadata",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "DataServiceVersion": "3.0",
-        "Date": "Thu, 09 Dec 2021 02:17:06 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1afb010d-5896-11ec-880f-c8348e51ab51",
-        "x-ms-date": "Thu, 09 Dec 2021 02:17:06 GMT",
+        "Date": "Fri, 06 May 2022 00:47:59 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 06 May 2022 00:47:59 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Thu, 09 Dec 2021 02:17:05 GMT",
-        "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "e2af16eb-a80e-4754-9bcc-622b4311e44f"
+        "Date": "Fri, 06 May 2022 00:47:58 GMT",
+        "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
         "value": [
@@ -70,20 +66,18 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Thu, 09 Dec 2021 02:17:06 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1b01b81a-5896-11ec-985b-c8348e51ab51",
-        "x-ms-date": "Thu, 09 Dec 2021 02:17:06 GMT",
+        "Date": "Fri, 06 May 2022 00:47:59 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 06 May 2022 00:47:59 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "Date": "Thu, 09 Dec 2021 02:17:05 GMT",
-        "x-ms-request-id": "2121ca58-cf8b-413d-ac45-97dd1811f170"
+        "Content-Type": "application/json",
+        "Date": "Fri, 06 May 2022 00:47:58 GMT"
       },
       "ResponseBody": null
     }

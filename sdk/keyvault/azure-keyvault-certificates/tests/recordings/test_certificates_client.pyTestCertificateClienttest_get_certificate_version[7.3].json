@@ -1,0 +1,2333 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "97",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:35:52 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "WWW-Authenticate": "Bearer authorization=\u0022https://login.windows.net/00000000-0000-0000-0000-000000000000\u0022, resource=\u0022https://vault.azure.net\u0022",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "Unauthorized",
+          "message": "AKV10000: Request is missing a Bearer or PoP token."
+        }
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.11.0b1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1753",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:35:53 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=ArMF824AVABEi-4lBSDAFMJXM9ksCAAAAKj7_dkOAAAA; expires=Sun, 29-May-2022 15:35:53 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12707.9 - EUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+        "tenant_region_scope": "WW",
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Cookie": "fpc=ArMF824AVABEi-4lBSDAFMJXM9ksCAAAAKj7_dkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.11.0b1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "945",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:35:53 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=ArMF824AVABEi-4lBSDAFMJXM9ksCAAAAKj7_dkOAAAA; expires=Sun, 29-May-2022 15:35:53 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12707.9 - WUS2 ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+        "api-version": "1.1",
+        "metadata": [
+          {
+            "preferred_network": "login.microsoftonline.com",
+            "preferred_cache": "login.windows.net",
+            "aliases": [
+              "login.microsoftonline.com",
+              "login.windows.net",
+              "login.microsoft.com",
+              "sts.windows.net"
+            ]
+          },
+          {
+            "preferred_network": "login.partner.microsoftonline.cn",
+            "preferred_cache": "login.partner.microsoftonline.cn",
+            "aliases": [
+              "login.partner.microsoftonline.cn",
+              "login.chinacloudapi.cn"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.de",
+            "preferred_cache": "login.microsoftonline.de",
+            "aliases": [
+              "login.microsoftonline.de"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.us",
+            "preferred_cache": "login.microsoftonline.us",
+            "aliases": [
+              "login.microsoftonline.us",
+              "login.usgovcloudapi.net"
+            ]
+          },
+          {
+            "preferred_network": "login-us.microsoftonline.com",
+            "preferred_cache": "login-us.microsoftonline.com",
+            "aliases": [
+              "login-us.microsoftonline.com"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "99",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "policy": {
+          "x509_props": {
+            "subject": "CN=DefaultPolicy",
+            "sans": {}
+          },
+          "issuer": {
+            "name": "Self"
+          }
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1296",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:35:53 GMT",
+        "Expires": "-1",
+        "Location": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3\u0026request_id=494c2ea67cb74ff0b887064b0d830e98",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3004;da_age=3004;rd_age=3004;brd_age=2291;ra_notif_age=4623;dec_lev=1;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALdnqg9dCiNw1jQ9cJgk6eQ6fo277vRnwKPjwxlQaFPJWPclMWhcKPOuqfWYbGXjEzSqbv7cgdLWkdZSlPeZMOrW\u002BJYsFmuRylrgxXs/ZWqCHq2JfRgGEYHrxDnvC1xsezhTVJUHicitNkKGirXwhCa\u002BTIDJRZiESfhJ22cEDvJMr2xHeqcEG6vMyAzKQ6pqSfkZdkK0t6bgF3ckPXkinwcTEWsLaLw2MdY3laKvPOebxLq5L1qQ9SCAbYlrFnHNwjwCaaN6e9\u002BWlIkckf0iYwv4PsQMVq1hCKxqEKCOD4CiGwHTrnhs3eHrn9deDda4uArsWlipGoxE\u002BA30n7Cbyg0CAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQA8RUBgabmgSmQ8EtJyn3al/GASdrZBa7c7K00dypYci2SULBi/HNHjRwrA/j92/g5j0vgJ364rTnh\u002Bt65hoRzEm3b\u002BKXHQYtnr0VY4pj\u002B7gKlZCknL8mncaclmyyZMYOPYDso2G1he3VlkD/FA61dXAGVmL5YXNcbM2yKl/D34miZr294RbBDA6QUXGxXKLukNkYWpxpO8zGQslkkO1WVgAEj1KknWV3wY7vfV4yPWsr32fix0t7BK2mDhN7fEuA\u002B8ZXAJhszw6i7O7\u002BiNyMhpF8q9LE/1WCWMUCYqgDqj1r9G959PcW2\u002BwTeFtqgMtsLSMf75uOUu68RJ4Hu7szfZ",
+        "cancellation_requested": false,
+        "status": "inProgress",
+        "status_details": "Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.",
+        "request_id": "494c2ea67cb74ff0b887064b0d830e98"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1296",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:35:53 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3004;da_age=3004;rd_age=3004;brd_age=2291;ra_notif_age=4623;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALdnqg9dCiNw1jQ9cJgk6eQ6fo277vRnwKPjwxlQaFPJWPclMWhcKPOuqfWYbGXjEzSqbv7cgdLWkdZSlPeZMOrW\u002BJYsFmuRylrgxXs/ZWqCHq2JfRgGEYHrxDnvC1xsezhTVJUHicitNkKGirXwhCa\u002BTIDJRZiESfhJ22cEDvJMr2xHeqcEG6vMyAzKQ6pqSfkZdkK0t6bgF3ckPXkinwcTEWsLaLw2MdY3laKvPOebxLq5L1qQ9SCAbYlrFnHNwjwCaaN6e9\u002BWlIkckf0iYwv4PsQMVq1hCKxqEKCOD4CiGwHTrnhs3eHrn9deDda4uArsWlipGoxE\u002BA30n7Cbyg0CAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQA8RUBgabmgSmQ8EtJyn3al/GASdrZBa7c7K00dypYci2SULBi/HNHjRwrA/j92/g5j0vgJ364rTnh\u002Bt65hoRzEm3b\u002BKXHQYtnr0VY4pj\u002B7gKlZCknL8mncaclmyyZMYOPYDso2G1he3VlkD/FA61dXAGVmL5YXNcbM2yKl/D34miZr294RbBDA6QUXGxXKLukNkYWpxpO8zGQslkkO1WVgAEj1KknWV3wY7vfV4yPWsr32fix0t7BK2mDhN7fEuA\u002B8ZXAJhszw6i7O7\u002BiNyMhpF8q9LE/1WCWMUCYqgDqj1r9G959PcW2\u002BwTeFtqgMtsLSMf75uOUu68RJ4Hu7szfZ",
+        "cancellation_requested": false,
+        "status": "inProgress",
+        "status_details": "Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.",
+        "request_id": "494c2ea67cb74ff0b887064b0d830e98"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1211",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:35:58 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3010;da_age=3010;rd_age=3010;brd_age=2296;ra_notif_age=4628;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALdnqg9dCiNw1jQ9cJgk6eQ6fo277vRnwKPjwxlQaFPJWPclMWhcKPOuqfWYbGXjEzSqbv7cgdLWkdZSlPeZMOrW\u002BJYsFmuRylrgxXs/ZWqCHq2JfRgGEYHrxDnvC1xsezhTVJUHicitNkKGirXwhCa\u002BTIDJRZiESfhJ22cEDvJMr2xHeqcEG6vMyAzKQ6pqSfkZdkK0t6bgF3ckPXkinwcTEWsLaLw2MdY3laKvPOebxLq5L1qQ9SCAbYlrFnHNwjwCaaN6e9\u002BWlIkckf0iYwv4PsQMVq1hCKxqEKCOD4CiGwHTrnhs3eHrn9deDda4uArsWlipGoxE\u002BA30n7Cbyg0CAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQA8RUBgabmgSmQ8EtJyn3al/GASdrZBa7c7K00dypYci2SULBi/HNHjRwrA/j92/g5j0vgJ364rTnh\u002Bt65hoRzEm3b\u002BKXHQYtnr0VY4pj\u002B7gKlZCknL8mncaclmyyZMYOPYDso2G1he3VlkD/FA61dXAGVmL5YXNcbM2yKl/D34miZr294RbBDA6QUXGxXKLukNkYWpxpO8zGQslkkO1WVgAEj1KknWV3wY7vfV4yPWsr32fix0t7BK2mDhN7fEuA\u002B8ZXAJhszw6i7O7\u002BiNyMhpF8q9LE/1WCWMUCYqgDqj1r9G959PcW2\u002BwTeFtqgMtsLSMf75uOUu68RJ4Hu7szfZ",
+        "cancellation_requested": false,
+        "status": "completed",
+        "target": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea",
+        "request_id": "494c2ea67cb74ff0b887064b0d830e98"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "2366",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:35:58 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3010;da_age=3010;rd_age=3010;brd_age=2296;ra_notif_age=4629;dec_lev=1;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/a850a678ca524e33bcc27ca0be928d43",
+        "kid": "https://vaultname.vault.azure.net/keys/livekvtestcertc3235ea/a850a678ca524e33bcc27ca0be928d43",
+        "sid": "https://vaultname.vault.azure.net/secrets/livekvtestcertc3235ea/a850a678ca524e33bcc27ca0be928d43",
+        "x5t": "6Zi2iku91zhzmDippkYYognvY88",
+        "cer": "MIIDNjCCAh6gAwIBAgIQbU7l2SQ0QP604GTtb0m3ezANBgkqhkiG9w0BAQsFADAYMRYwFAYDVQQDEw1EZWZhdWx0UG9saWN5MB4XDTIyMDQyOTE1MjU1N1oXDTIzMDQyOTE1MzU1N1owGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALdnqg9dCiNw1jQ9cJgk6eQ6fo277vRnwKPjwxlQaFPJWPclMWhcKPOuqfWYbGXjEzSqbv7cgdLWkdZSlPeZMOrW\u002BJYsFmuRylrgxXs/ZWqCHq2JfRgGEYHrxDnvC1xsezhTVJUHicitNkKGirXwhCa\u002BTIDJRZiESfhJ22cEDvJMr2xHeqcEG6vMyAzKQ6pqSfkZdkK0t6bgF3ckPXkinwcTEWsLaLw2MdY3laKvPOebxLq5L1qQ9SCAbYlrFnHNwjwCaaN6e9\u002BWlIkckf0iYwv4PsQMVq1hCKxqEKCOD4CiGwHTrnhs3eHrn9deDda4uArsWlipGoxE\u002BA30n7Cbyg0CAwEAAaN8MHowDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMB8GA1UdIwQYMBaAFIXKCnXGfBytnsGIc6HjijZM2r5jMB0GA1UdDgQWBBSFygp1xnwcrZ7BiHOh44o2TNq\u002BYzANBgkqhkiG9w0BAQsFAAOCAQEAdNLe1c4B161zdIrY6ahXpsGqoP6RS98KM8vfjV9qiOu65KVAtSpCE4QiNrpZWfGxexGkIgZA\u002BAKWh9FQrPOVSFbEniLsV6kbIf0jABBa/AGaW1L0F3rq2MQh\u002BnwLxD5o1aUFa2csbMY9dBg1v5I1jUjgB0BxvcWTls7GwdPWRg8lhmUIL2A9WVCS6Hc6\u002BbZsntxaeYlhsiogI3ZjvAC7lm0AFqwRR5mOfIV8w8L0ePk0O5GLYmxQVhgQxx3gCdhwxh85lyKMUlF4CJe0Th9Js4saIFjNqmwhZNrbwP3AlVD97tNDcXHrUKYbyuz7r9oRlKsQIGWz6mgo2iFBZPR6rg==",
+        "attributes": {
+          "enabled": true,
+          "nbf": 1651245957,
+          "exp": 1682782557,
+          "created": 1651246558,
+          "updated": 1651246558,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "recoverableDays": 7
+        },
+        "policy": {
+          "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/policy",
+          "key_props": {
+            "exportable": true,
+            "kty": "RSA",
+            "key_size": 2048,
+            "reuse_key": false
+          },
+          "secret_props": {
+            "contentType": "application/x-pkcs12"
+          },
+          "x509_props": {
+            "subject": "CN=DefaultPolicy",
+            "sans": {},
+            "ekus": [
+              "1.3.6.1.5.5.7.3.1",
+              "1.3.6.1.5.5.7.3.2"
+            ],
+            "key_usage": [
+              "digitalSignature",
+              "keyEncipherment"
+            ],
+            "validity_months": 12,
+            "basic_constraints": {
+              "ca": false
+            }
+          },
+          "lifetime_actions": [
+            {
+              "trigger": {
+                "lifetime_percentage": 80
+              },
+              "action": {
+                "action_type": "AutoRenew"
+              }
+            }
+          ],
+          "issuer": {
+            "name": "Self"
+          },
+          "attributes": {
+            "enabled": true,
+            "created": 1651246554,
+            "updated": 1651246554
+          }
+        },
+        "pending": {
+          "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "99",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "policy": {
+          "x509_props": {
+            "subject": "CN=DefaultPolicy",
+            "sans": {}
+          },
+          "issuer": {
+            "name": "Self"
+          }
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1296",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:35:59 GMT",
+        "Expires": "-1",
+        "Location": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3\u0026request_id=b6c17dc25f6846d18efc50085938419a",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3010;da_age=3010;rd_age=3010;brd_age=2296;ra_notif_age=4629;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANlmq59UZDOhevVg9dXog\u002BvbBhqdpX9MK/D5uE/jgekPHziGgf6GllRgUAGL8a\u002BsREhznMNsKqBjHI8VsVAuqLMbyfJD\u002BhStCYyIR3E42Apl3aUqyf1lsD2UJcqJt9Pt1fFbVGaIqcxY4J5dvgPzjF46qQyD\u002BtkP\u002BFxzjiKhTylSCe90S11rg1NeBontOdqb8oBGPlUjLP6yJBykGOjjK/yuL3ydO3e352xsj3oFGwIlSHXu7hrmws4IBB9BQCbPFg2Dv7ELjkRNfo\u002ByNFCO5rEam2/q8yKWrPXKlEJfvGCQJuO/JaKKCUvx5yVTw7grYXXuqpVM7GjtPnK63awoYJECAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQCb\u002BZ\u002BB1NoXXzl1/qqSIBqo5i2unaha/6vuvlQPD4qgPPgAO6\u002BIN7le8dIsXrPn0QFbEwDZEjzdF8Y7lC9PqZI7AXD3yo4MDqQeIyEvb0RlzJ0tafTiX174TFIF0ob07eR7ZE6Z6gZOHCh2RPLn6Y5inmbEjtMpSoR5AXS66Opd7u9Gys6PFqFbyQZ2KzwYWhq4gtYwcH6e2IWPc/ez2reIjL39nWieJi0z9W08BTB/X1i88pwLCtQUc/Jw6ukj\u002BBFSNu/BVc2EFAqwG4XQ2sUNurvEwrq1Kqkz6VbDPFQLcLz5SDD91CbTStlypAse2zqbLGPZB1cTdMfF\u002BawqbT7c",
+        "cancellation_requested": false,
+        "status": "inProgress",
+        "status_details": "Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.",
+        "request_id": "b6c17dc25f6846d18efc50085938419a"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1296",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:35:59 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3010;da_age=3010;rd_age=3010;brd_age=2297;ra_notif_age=4629;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANlmq59UZDOhevVg9dXog\u002BvbBhqdpX9MK/D5uE/jgekPHziGgf6GllRgUAGL8a\u002BsREhznMNsKqBjHI8VsVAuqLMbyfJD\u002BhStCYyIR3E42Apl3aUqyf1lsD2UJcqJt9Pt1fFbVGaIqcxY4J5dvgPzjF46qQyD\u002BtkP\u002BFxzjiKhTylSCe90S11rg1NeBontOdqb8oBGPlUjLP6yJBykGOjjK/yuL3ydO3e352xsj3oFGwIlSHXu7hrmws4IBB9BQCbPFg2Dv7ELjkRNfo\u002ByNFCO5rEam2/q8yKWrPXKlEJfvGCQJuO/JaKKCUvx5yVTw7grYXXuqpVM7GjtPnK63awoYJECAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQCb\u002BZ\u002BB1NoXXzl1/qqSIBqo5i2unaha/6vuvlQPD4qgPPgAO6\u002BIN7le8dIsXrPn0QFbEwDZEjzdF8Y7lC9PqZI7AXD3yo4MDqQeIyEvb0RlzJ0tafTiX174TFIF0ob07eR7ZE6Z6gZOHCh2RPLn6Y5inmbEjtMpSoR5AXS66Opd7u9Gys6PFqFbyQZ2KzwYWhq4gtYwcH6e2IWPc/ez2reIjL39nWieJi0z9W08BTB/X1i88pwLCtQUc/Jw6ukj\u002BBFSNu/BVc2EFAqwG4XQ2sUNurvEwrq1Kqkz6VbDPFQLcLz5SDD91CbTStlypAse2zqbLGPZB1cTdMfF\u002BawqbT7c",
+        "cancellation_requested": false,
+        "status": "inProgress",
+        "status_details": "Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.",
+        "request_id": "b6c17dc25f6846d18efc50085938419a"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1296",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:04 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3015;da_age=3015;rd_age=3015;brd_age=2302;ra_notif_age=4634;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANlmq59UZDOhevVg9dXog\u002BvbBhqdpX9MK/D5uE/jgekPHziGgf6GllRgUAGL8a\u002BsREhznMNsKqBjHI8VsVAuqLMbyfJD\u002BhStCYyIR3E42Apl3aUqyf1lsD2UJcqJt9Pt1fFbVGaIqcxY4J5dvgPzjF46qQyD\u002BtkP\u002BFxzjiKhTylSCe90S11rg1NeBontOdqb8oBGPlUjLP6yJBykGOjjK/yuL3ydO3e352xsj3oFGwIlSHXu7hrmws4IBB9BQCbPFg2Dv7ELjkRNfo\u002ByNFCO5rEam2/q8yKWrPXKlEJfvGCQJuO/JaKKCUvx5yVTw7grYXXuqpVM7GjtPnK63awoYJECAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQCb\u002BZ\u002BB1NoXXzl1/qqSIBqo5i2unaha/6vuvlQPD4qgPPgAO6\u002BIN7le8dIsXrPn0QFbEwDZEjzdF8Y7lC9PqZI7AXD3yo4MDqQeIyEvb0RlzJ0tafTiX174TFIF0ob07eR7ZE6Z6gZOHCh2RPLn6Y5inmbEjtMpSoR5AXS66Opd7u9Gys6PFqFbyQZ2KzwYWhq4gtYwcH6e2IWPc/ez2reIjL39nWieJi0z9W08BTB/X1i88pwLCtQUc/Jw6ukj\u002BBFSNu/BVc2EFAqwG4XQ2sUNurvEwrq1Kqkz6VbDPFQLcLz5SDD91CbTStlypAse2zqbLGPZB1cTdMfF\u002BawqbT7c",
+        "cancellation_requested": false,
+        "status": "inProgress",
+        "status_details": "Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.",
+        "request_id": "b6c17dc25f6846d18efc50085938419a"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1211",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:09 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3020;da_age=3020;rd_age=3020;brd_age=2307;ra_notif_age=4639;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANlmq59UZDOhevVg9dXog\u002BvbBhqdpX9MK/D5uE/jgekPHziGgf6GllRgUAGL8a\u002BsREhznMNsKqBjHI8VsVAuqLMbyfJD\u002BhStCYyIR3E42Apl3aUqyf1lsD2UJcqJt9Pt1fFbVGaIqcxY4J5dvgPzjF46qQyD\u002BtkP\u002BFxzjiKhTylSCe90S11rg1NeBontOdqb8oBGPlUjLP6yJBykGOjjK/yuL3ydO3e352xsj3oFGwIlSHXu7hrmws4IBB9BQCbPFg2Dv7ELjkRNfo\u002ByNFCO5rEam2/q8yKWrPXKlEJfvGCQJuO/JaKKCUvx5yVTw7grYXXuqpVM7GjtPnK63awoYJECAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQCb\u002BZ\u002BB1NoXXzl1/qqSIBqo5i2unaha/6vuvlQPD4qgPPgAO6\u002BIN7le8dIsXrPn0QFbEwDZEjzdF8Y7lC9PqZI7AXD3yo4MDqQeIyEvb0RlzJ0tafTiX174TFIF0ob07eR7ZE6Z6gZOHCh2RPLn6Y5inmbEjtMpSoR5AXS66Opd7u9Gys6PFqFbyQZ2KzwYWhq4gtYwcH6e2IWPc/ez2reIjL39nWieJi0z9W08BTB/X1i88pwLCtQUc/Jw6ukj\u002BBFSNu/BVc2EFAqwG4XQ2sUNurvEwrq1Kqkz6VbDPFQLcLz5SDD91CbTStlypAse2zqbLGPZB1cTdMfF\u002BawqbT7c",
+        "cancellation_requested": false,
+        "status": "completed",
+        "target": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea",
+        "request_id": "b6c17dc25f6846d18efc50085938419a"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "2366",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:09 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3021;da_age=3021;rd_age=3021;brd_age=2307;ra_notif_age=4639;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/ec78cb1b29244000a407c2e85e41161d",
+        "kid": "https://vaultname.vault.azure.net/keys/livekvtestcertc3235ea/ec78cb1b29244000a407c2e85e41161d",
+        "sid": "https://vaultname.vault.azure.net/secrets/livekvtestcertc3235ea/ec78cb1b29244000a407c2e85e41161d",
+        "x5t": "DlySTJYpyelXl9oWErdYGu9oCrU",
+        "cer": "MIIDNjCCAh6gAwIBAgIQSSDBUvKsTcSqlxvf4lrRDTANBgkqhkiG9w0BAQsFADAYMRYwFAYDVQQDEw1EZWZhdWx0UG9saWN5MB4XDTIyMDQyOTE1MjYwOFoXDTIzMDQyOTE1MzYwOFowGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANlmq59UZDOhevVg9dXog\u002BvbBhqdpX9MK/D5uE/jgekPHziGgf6GllRgUAGL8a\u002BsREhznMNsKqBjHI8VsVAuqLMbyfJD\u002BhStCYyIR3E42Apl3aUqyf1lsD2UJcqJt9Pt1fFbVGaIqcxY4J5dvgPzjF46qQyD\u002BtkP\u002BFxzjiKhTylSCe90S11rg1NeBontOdqb8oBGPlUjLP6yJBykGOjjK/yuL3ydO3e352xsj3oFGwIlSHXu7hrmws4IBB9BQCbPFg2Dv7ELjkRNfo\u002ByNFCO5rEam2/q8yKWrPXKlEJfvGCQJuO/JaKKCUvx5yVTw7grYXXuqpVM7GjtPnK63awoYJECAwEAAaN8MHowDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMB8GA1UdIwQYMBaAFAYJAKo47CbB5YCHFrZnq67XighrMB0GA1UdDgQWBBQGCQCqOOwmweWAhxa2Z6uu14oIazANBgkqhkiG9w0BAQsFAAOCAQEAnP\u002BTcLkfaJHTTyzaesi\u002BvKW/asSOVkxKLS2XOlZQqgasj/w5E5YR\u002Bxui7Sqobcig3A7UcpPyUdiABajtl3KE3iQ4\u002Bt0QMKTv1Lnp8eplKn8jLXk6JlHnOYo2tNo3GFe7Yc5q\u002BemZgOYksj7ARTp2FN0eN30qiQwX4YaSHw1M\u002Buo9aXTMc9PZIleJVU1u8msPHYfOkaq\u002BkifU6UZdCD3Q7skjzN36p5OetTkzPzqb8e9kUj3HGfagdBOd5VcB7IdPYo97a7Teeuhsdt72n7\u002BOAnd0p6RvoctBpeljurmX3QmVR3ssjLP8AwfWVrHxfAWpZVtMETEg2vj28qS0TbhaQw==",
+        "attributes": {
+          "enabled": true,
+          "nbf": 1651245968,
+          "exp": 1682782568,
+          "created": 1651246568,
+          "updated": 1651246568,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "recoverableDays": 7
+        },
+        "policy": {
+          "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/policy",
+          "key_props": {
+            "exportable": true,
+            "kty": "RSA",
+            "key_size": 2048,
+            "reuse_key": false
+          },
+          "secret_props": {
+            "contentType": "application/x-pkcs12"
+          },
+          "x509_props": {
+            "subject": "CN=DefaultPolicy",
+            "sans": {},
+            "ekus": [
+              "1.3.6.1.5.5.7.3.1",
+              "1.3.6.1.5.5.7.3.2"
+            ],
+            "key_usage": [
+              "digitalSignature",
+              "keyEncipherment"
+            ],
+            "validity_months": 12,
+            "basic_constraints": {
+              "ca": false
+            }
+          },
+          "lifetime_actions": [
+            {
+              "trigger": {
+                "lifetime_percentage": 80
+              },
+              "action": {
+                "action_type": "AutoRenew"
+              }
+            }
+          ],
+          "issuer": {
+            "name": "Self"
+          },
+          "attributes": {
+            "enabled": true,
+            "created": 1651246554,
+            "updated": 1651246559
+          }
+        },
+        "pending": {
+          "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "99",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "policy": {
+          "x509_props": {
+            "subject": "CN=DefaultPolicy",
+            "sans": {}
+          },
+          "issuer": {
+            "name": "Self"
+          }
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1296",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:10 GMT",
+        "Expires": "-1",
+        "Location": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3\u0026request_id=1e1d7607a11d4ac1b857438489b6dc87",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3021;da_age=3021;rd_age=3021;brd_age=2307;ra_notif_age=4640;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK8vkswIuuOwweA6cyakogEyUBu7caQQqcssiHjxrnilWxj9A4fivJHaDcKRng1s7uQ52WjRaYJk4glZnfsU5PuJ4oCZG9xWqAy4VKNbQ0Cu/GsI2FXFEtOXmZv5vTda25mieTupxaSeiZSoLFaAP5UYdgIo9VtO3IOMKWUg9LwAgJ1151KJXX\u002BK6lM3JRHINLLZyaHwgD3ZBpyvysIORc1vTcWlnsEaRsD4U9l2FqRcKupILY/1g//oqC6KDhJL8PAyOtPI4KKNvpUWO8IkcTf8UjNAkYcmi0XMdtZkEwmfoJJJTh4sBPy56DJ/whyWApOUeFYWYnjtbfX2D2DY4HkCAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQBfmDBDKRGtwIpp46OAvyNkrUm7edbv0F0vM3S9sH5qRLCR1h9HkVnM3OUW1vt5onErNsdZFJfdD9tefAWXjWpGCNc2RcqCHOY3IAi\u002BgQKUt4p83FgFrQJrL15Fb8cit5iOQKFjTvpFnc\u002Bb0w5qj4dtboU7\u002BJF3VZwM79anrANg5uvlbYt1c/Qbxhak8UG8jEGWRzIAda5QlP1Tx/ZM1\u002BcpNsyCw9LTErFmDtB76dMq41jESW67pBEpmiqP6Gq4zLzf8spFs2NMfsEF/ex/8UjgKbFRvaQVrqspPY6FFPERjI0gVlaG/HTnXXu1bZHITyJMukzwf6hFM5mUjimzQjEj",
+        "cancellation_requested": false,
+        "status": "inProgress",
+        "status_details": "Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.",
+        "request_id": "1e1d7607a11d4ac1b857438489b6dc87"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1296",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:10 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3021;da_age=3021;rd_age=3021;brd_age=2308;ra_notif_age=4640;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK8vkswIuuOwweA6cyakogEyUBu7caQQqcssiHjxrnilWxj9A4fivJHaDcKRng1s7uQ52WjRaYJk4glZnfsU5PuJ4oCZG9xWqAy4VKNbQ0Cu/GsI2FXFEtOXmZv5vTda25mieTupxaSeiZSoLFaAP5UYdgIo9VtO3IOMKWUg9LwAgJ1151KJXX\u002BK6lM3JRHINLLZyaHwgD3ZBpyvysIORc1vTcWlnsEaRsD4U9l2FqRcKupILY/1g//oqC6KDhJL8PAyOtPI4KKNvpUWO8IkcTf8UjNAkYcmi0XMdtZkEwmfoJJJTh4sBPy56DJ/whyWApOUeFYWYnjtbfX2D2DY4HkCAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQBfmDBDKRGtwIpp46OAvyNkrUm7edbv0F0vM3S9sH5qRLCR1h9HkVnM3OUW1vt5onErNsdZFJfdD9tefAWXjWpGCNc2RcqCHOY3IAi\u002BgQKUt4p83FgFrQJrL15Fb8cit5iOQKFjTvpFnc\u002Bb0w5qj4dtboU7\u002BJF3VZwM79anrANg5uvlbYt1c/Qbxhak8UG8jEGWRzIAda5QlP1Tx/ZM1\u002BcpNsyCw9LTErFmDtB76dMq41jESW67pBEpmiqP6Gq4zLzf8spFs2NMfsEF/ex/8UjgKbFRvaQVrqspPY6FFPERjI0gVlaG/HTnXXu1bZHITyJMukzwf6hFM5mUjimzQjEj",
+        "cancellation_requested": false,
+        "status": "inProgress",
+        "status_details": "Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.",
+        "request_id": "1e1d7607a11d4ac1b857438489b6dc87"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1296",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:15 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3026;da_age=3026;rd_age=3026;brd_age=2313;ra_notif_age=4645;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK8vkswIuuOwweA6cyakogEyUBu7caQQqcssiHjxrnilWxj9A4fivJHaDcKRng1s7uQ52WjRaYJk4glZnfsU5PuJ4oCZG9xWqAy4VKNbQ0Cu/GsI2FXFEtOXmZv5vTda25mieTupxaSeiZSoLFaAP5UYdgIo9VtO3IOMKWUg9LwAgJ1151KJXX\u002BK6lM3JRHINLLZyaHwgD3ZBpyvysIORc1vTcWlnsEaRsD4U9l2FqRcKupILY/1g//oqC6KDhJL8PAyOtPI4KKNvpUWO8IkcTf8UjNAkYcmi0XMdtZkEwmfoJJJTh4sBPy56DJ/whyWApOUeFYWYnjtbfX2D2DY4HkCAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQBfmDBDKRGtwIpp46OAvyNkrUm7edbv0F0vM3S9sH5qRLCR1h9HkVnM3OUW1vt5onErNsdZFJfdD9tefAWXjWpGCNc2RcqCHOY3IAi\u002BgQKUt4p83FgFrQJrL15Fb8cit5iOQKFjTvpFnc\u002Bb0w5qj4dtboU7\u002BJF3VZwM79anrANg5uvlbYt1c/Qbxhak8UG8jEGWRzIAda5QlP1Tx/ZM1\u002BcpNsyCw9LTErFmDtB76dMq41jESW67pBEpmiqP6Gq4zLzf8spFs2NMfsEF/ex/8UjgKbFRvaQVrqspPY6FFPERjI0gVlaG/HTnXXu1bZHITyJMukzwf6hFM5mUjimzQjEj",
+        "cancellation_requested": false,
+        "status": "inProgress",
+        "status_details": "Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.",
+        "request_id": "1e1d7607a11d4ac1b857438489b6dc87"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1211",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:20 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3031;da_age=3031;rd_age=3031;brd_age=2318;ra_notif_age=4650;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK8vkswIuuOwweA6cyakogEyUBu7caQQqcssiHjxrnilWxj9A4fivJHaDcKRng1s7uQ52WjRaYJk4glZnfsU5PuJ4oCZG9xWqAy4VKNbQ0Cu/GsI2FXFEtOXmZv5vTda25mieTupxaSeiZSoLFaAP5UYdgIo9VtO3IOMKWUg9LwAgJ1151KJXX\u002BK6lM3JRHINLLZyaHwgD3ZBpyvysIORc1vTcWlnsEaRsD4U9l2FqRcKupILY/1g//oqC6KDhJL8PAyOtPI4KKNvpUWO8IkcTf8UjNAkYcmi0XMdtZkEwmfoJJJTh4sBPy56DJ/whyWApOUeFYWYnjtbfX2D2DY4HkCAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQBfmDBDKRGtwIpp46OAvyNkrUm7edbv0F0vM3S9sH5qRLCR1h9HkVnM3OUW1vt5onErNsdZFJfdD9tefAWXjWpGCNc2RcqCHOY3IAi\u002BgQKUt4p83FgFrQJrL15Fb8cit5iOQKFjTvpFnc\u002Bb0w5qj4dtboU7\u002BJF3VZwM79anrANg5uvlbYt1c/Qbxhak8UG8jEGWRzIAda5QlP1Tx/ZM1\u002BcpNsyCw9LTErFmDtB76dMq41jESW67pBEpmiqP6Gq4zLzf8spFs2NMfsEF/ex/8UjgKbFRvaQVrqspPY6FFPERjI0gVlaG/HTnXXu1bZHITyJMukzwf6hFM5mUjimzQjEj",
+        "cancellation_requested": false,
+        "status": "completed",
+        "target": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea",
+        "request_id": "1e1d7607a11d4ac1b857438489b6dc87"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "2366",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:20 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3031;da_age=3031;rd_age=3031;brd_age=2318;ra_notif_age=4650;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/8f45cccc58c24d51b5b8b4018f839071",
+        "kid": "https://vaultname.vault.azure.net/keys/livekvtestcertc3235ea/8f45cccc58c24d51b5b8b4018f839071",
+        "sid": "https://vaultname.vault.azure.net/secrets/livekvtestcertc3235ea/8f45cccc58c24d51b5b8b4018f839071",
+        "x5t": "DtCel6v-zRIwGgEyIHttofABbhI",
+        "cer": "MIIDNjCCAh6gAwIBAgIQZPZdSp\u002BlQ5OZ\u002BTLe1TyNKDANBgkqhkiG9w0BAQsFADAYMRYwFAYDVQQDEw1EZWZhdWx0UG9saWN5MB4XDTIyMDQyOTE1MjYxN1oXDTIzMDQyOTE1MzYxN1owGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK8vkswIuuOwweA6cyakogEyUBu7caQQqcssiHjxrnilWxj9A4fivJHaDcKRng1s7uQ52WjRaYJk4glZnfsU5PuJ4oCZG9xWqAy4VKNbQ0Cu/GsI2FXFEtOXmZv5vTda25mieTupxaSeiZSoLFaAP5UYdgIo9VtO3IOMKWUg9LwAgJ1151KJXX\u002BK6lM3JRHINLLZyaHwgD3ZBpyvysIORc1vTcWlnsEaRsD4U9l2FqRcKupILY/1g//oqC6KDhJL8PAyOtPI4KKNvpUWO8IkcTf8UjNAkYcmi0XMdtZkEwmfoJJJTh4sBPy56DJ/whyWApOUeFYWYnjtbfX2D2DY4HkCAwEAAaN8MHowDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMB8GA1UdIwQYMBaAFCZNRhcNVi9vSa6ugBBTgZQHxZnVMB0GA1UdDgQWBBQmTUYXDVYvb0muroAQU4GUB8WZ1TANBgkqhkiG9w0BAQsFAAOCAQEAPAiRmjqL6CcWUndUZOqOGIwLozOUjjLyloikCepkGUveSJWV\u002Bg7nm5xJdHYOwL3/qCnq\u002BPQG8ga3eg0JOq3vxAiEZh9Q5M9ClooQicOHF/8PFE7BLmbFDGvmPJz27QaFPGlV7XUpnaTn0vZD5qlEH6R1K5zkdoG9H1ntWBZOIrIQ/HclU\u002Bc1qkTJiC1luawuYc5wHTEem7fUMgQHyNG6IxnFDKSWYK22MxT4owiSJyNkxh2uZHgE3BTBo\u002B2gIfrskSECPhvKEQXcykjLJHDjr3Ayv5LKdypVfI1BxmhxoQLBdcZ1DsXuoioRVnAhJ7SCd5kIGiaOK\u002BVvraS5kbjDAA==",
+        "attributes": {
+          "enabled": true,
+          "nbf": 1651245977,
+          "exp": 1682782577,
+          "created": 1651246577,
+          "updated": 1651246577,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "recoverableDays": 7
+        },
+        "policy": {
+          "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/policy",
+          "key_props": {
+            "exportable": true,
+            "kty": "RSA",
+            "key_size": 2048,
+            "reuse_key": false
+          },
+          "secret_props": {
+            "contentType": "application/x-pkcs12"
+          },
+          "x509_props": {
+            "subject": "CN=DefaultPolicy",
+            "sans": {},
+            "ekus": [
+              "1.3.6.1.5.5.7.3.1",
+              "1.3.6.1.5.5.7.3.2"
+            ],
+            "key_usage": [
+              "digitalSignature",
+              "keyEncipherment"
+            ],
+            "validity_months": 12,
+            "basic_constraints": {
+              "ca": false
+            }
+          },
+          "lifetime_actions": [
+            {
+              "trigger": {
+                "lifetime_percentage": 80
+              },
+              "action": {
+                "action_type": "AutoRenew"
+              }
+            }
+          ],
+          "issuer": {
+            "name": "Self"
+          },
+          "attributes": {
+            "enabled": true,
+            "created": 1651246554,
+            "updated": 1651246570
+          }
+        },
+        "pending": {
+          "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "99",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "policy": {
+          "x509_props": {
+            "subject": "CN=DefaultPolicy",
+            "sans": {}
+          },
+          "issuer": {
+            "name": "Self"
+          }
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1296",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:20 GMT",
+        "Expires": "-1",
+        "Location": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3\u0026request_id=bc0a33ffaf384c598953216188fd7760",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3032;da_age=3032;rd_age=3032;brd_age=2318;ra_notif_age=4650;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKm8ROSJXzOadF7L\u002B/8dZBsA//BvXfCquP67AdH9oRtjtmT8gvaTHzSsOD/0wbcXbW0090\u002BIA8Ycqb48Irto8onfgdcvhxuuI\u002B6\u002BDYVzj1w\u002BWeaoikTFhw73JEAsK55zvQKQxwXKdoOxtA6PlJxbRK2WLheK/H51z2Ef0yh\u002BTVlQu64OMlQTwHkzva5jX\u002B83oWI/4MlxbK8ie896WQxwOKqj43StDqBVhFpb7uetn\u002BflVCzTMONqjvOPw\u002BgstYCDrD\u002BmIWrfVTAyqvsNiquWE2THotsDq6h4CUWffs7yJ0CNDm2ZTjbAikI20UV9ZYUoFHnekkDq4u808qsFMqG/OhkCAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQBR9L/AFllAu2Lq1ewPO8b6azZ\u002BF0NNuJJlyN1uXsqwmBDUP64tOds4S0dwfTZaQq0joflvH2MtijQg1pyqwBHgcAmDbsgMw\u002BgilKRm61jW6DUB3jnCu\u002BBXNxlvydBeWyVY9/p0eofI0AMF\u002BSkgamBP9P/AxQBzOK39Rjsfauop9MOstTA5048MfT15Zcb/NRY9ohTWEXfoJi4oX004OqyP9HYn9OncR4zFRp/dEnSg9oyphwf/D7GhveL6C5S9Umem7vIxEbNOoFD1AAX1pkQr6cj4bKcuAgwF4YSLC9GUu3rhDi6reVYCq7QMKGQStKbPqGr9jqEoNojkbvOYzjYm",
+        "cancellation_requested": false,
+        "status": "inProgress",
+        "status_details": "Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.",
+        "request_id": "bc0a33ffaf384c598953216188fd7760"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1296",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:21 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3032;da_age=3032;rd_age=3032;brd_age=2319;ra_notif_age=4651;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKm8ROSJXzOadF7L\u002B/8dZBsA//BvXfCquP67AdH9oRtjtmT8gvaTHzSsOD/0wbcXbW0090\u002BIA8Ycqb48Irto8onfgdcvhxuuI\u002B6\u002BDYVzj1w\u002BWeaoikTFhw73JEAsK55zvQKQxwXKdoOxtA6PlJxbRK2WLheK/H51z2Ef0yh\u002BTVlQu64OMlQTwHkzva5jX\u002B83oWI/4MlxbK8ie896WQxwOKqj43StDqBVhFpb7uetn\u002BflVCzTMONqjvOPw\u002BgstYCDrD\u002BmIWrfVTAyqvsNiquWE2THotsDq6h4CUWffs7yJ0CNDm2ZTjbAikI20UV9ZYUoFHnekkDq4u808qsFMqG/OhkCAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQBR9L/AFllAu2Lq1ewPO8b6azZ\u002BF0NNuJJlyN1uXsqwmBDUP64tOds4S0dwfTZaQq0joflvH2MtijQg1pyqwBHgcAmDbsgMw\u002BgilKRm61jW6DUB3jnCu\u002BBXNxlvydBeWyVY9/p0eofI0AMF\u002BSkgamBP9P/AxQBzOK39Rjsfauop9MOstTA5048MfT15Zcb/NRY9ohTWEXfoJi4oX004OqyP9HYn9OncR4zFRp/dEnSg9oyphwf/D7GhveL6C5S9Umem7vIxEbNOoFD1AAX1pkQr6cj4bKcuAgwF4YSLC9GUu3rhDi6reVYCq7QMKGQStKbPqGr9jqEoNojkbvOYzjYm",
+        "cancellation_requested": false,
+        "status": "inProgress",
+        "status_details": "Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.",
+        "request_id": "bc0a33ffaf384c598953216188fd7760"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1296",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:26 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3037;da_age=3037;rd_age=3037;brd_age=2324;ra_notif_age=4656;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKm8ROSJXzOadF7L\u002B/8dZBsA//BvXfCquP67AdH9oRtjtmT8gvaTHzSsOD/0wbcXbW0090\u002BIA8Ycqb48Irto8onfgdcvhxuuI\u002B6\u002BDYVzj1w\u002BWeaoikTFhw73JEAsK55zvQKQxwXKdoOxtA6PlJxbRK2WLheK/H51z2Ef0yh\u002BTVlQu64OMlQTwHkzva5jX\u002B83oWI/4MlxbK8ie896WQxwOKqj43StDqBVhFpb7uetn\u002BflVCzTMONqjvOPw\u002BgstYCDrD\u002BmIWrfVTAyqvsNiquWE2THotsDq6h4CUWffs7yJ0CNDm2ZTjbAikI20UV9ZYUoFHnekkDq4u808qsFMqG/OhkCAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQBR9L/AFllAu2Lq1ewPO8b6azZ\u002BF0NNuJJlyN1uXsqwmBDUP64tOds4S0dwfTZaQq0joflvH2MtijQg1pyqwBHgcAmDbsgMw\u002BgilKRm61jW6DUB3jnCu\u002BBXNxlvydBeWyVY9/p0eofI0AMF\u002BSkgamBP9P/AxQBzOK39Rjsfauop9MOstTA5048MfT15Zcb/NRY9ohTWEXfoJi4oX004OqyP9HYn9OncR4zFRp/dEnSg9oyphwf/D7GhveL6C5S9Umem7vIxEbNOoFD1AAX1pkQr6cj4bKcuAgwF4YSLC9GUu3rhDi6reVYCq7QMKGQStKbPqGr9jqEoNojkbvOYzjYm",
+        "cancellation_requested": false,
+        "status": "inProgress",
+        "status_details": "Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.",
+        "request_id": "bc0a33ffaf384c598953216188fd7760"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1211",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:31 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3042;da_age=3042;rd_age=3042;brd_age=2329;ra_notif_age=4661;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKm8ROSJXzOadF7L\u002B/8dZBsA//BvXfCquP67AdH9oRtjtmT8gvaTHzSsOD/0wbcXbW0090\u002BIA8Ycqb48Irto8onfgdcvhxuuI\u002B6\u002BDYVzj1w\u002BWeaoikTFhw73JEAsK55zvQKQxwXKdoOxtA6PlJxbRK2WLheK/H51z2Ef0yh\u002BTVlQu64OMlQTwHkzva5jX\u002B83oWI/4MlxbK8ie896WQxwOKqj43StDqBVhFpb7uetn\u002BflVCzTMONqjvOPw\u002BgstYCDrD\u002BmIWrfVTAyqvsNiquWE2THotsDq6h4CUWffs7yJ0CNDm2ZTjbAikI20UV9ZYUoFHnekkDq4u808qsFMqG/OhkCAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQBR9L/AFllAu2Lq1ewPO8b6azZ\u002BF0NNuJJlyN1uXsqwmBDUP64tOds4S0dwfTZaQq0joflvH2MtijQg1pyqwBHgcAmDbsgMw\u002BgilKRm61jW6DUB3jnCu\u002BBXNxlvydBeWyVY9/p0eofI0AMF\u002BSkgamBP9P/AxQBzOK39Rjsfauop9MOstTA5048MfT15Zcb/NRY9ohTWEXfoJi4oX004OqyP9HYn9OncR4zFRp/dEnSg9oyphwf/D7GhveL6C5S9Umem7vIxEbNOoFD1AAX1pkQr6cj4bKcuAgwF4YSLC9GUu3rhDi6reVYCq7QMKGQStKbPqGr9jqEoNojkbvOYzjYm",
+        "cancellation_requested": false,
+        "status": "completed",
+        "target": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea",
+        "request_id": "bc0a33ffaf384c598953216188fd7760"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "2366",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:31 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3042;da_age=3042;rd_age=3042;brd_age=2329;ra_notif_age=4661;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/ad9a8bfec71e477f865a96376e263336",
+        "kid": "https://vaultname.vault.azure.net/keys/livekvtestcertc3235ea/ad9a8bfec71e477f865a96376e263336",
+        "sid": "https://vaultname.vault.azure.net/secrets/livekvtestcertc3235ea/ad9a8bfec71e477f865a96376e263336",
+        "x5t": "cn_QdZYjzytf0rjnQXDm8K9R_9U",
+        "cer": "MIIDNjCCAh6gAwIBAgIQY7pPBDIeSnyKjy\u002BFfDk7jjANBgkqhkiG9w0BAQsFADAYMRYwFAYDVQQDEw1EZWZhdWx0UG9saWN5MB4XDTIyMDQyOTE1MjYyNloXDTIzMDQyOTE1MzYyNlowGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKm8ROSJXzOadF7L\u002B/8dZBsA//BvXfCquP67AdH9oRtjtmT8gvaTHzSsOD/0wbcXbW0090\u002BIA8Ycqb48Irto8onfgdcvhxuuI\u002B6\u002BDYVzj1w\u002BWeaoikTFhw73JEAsK55zvQKQxwXKdoOxtA6PlJxbRK2WLheK/H51z2Ef0yh\u002BTVlQu64OMlQTwHkzva5jX\u002B83oWI/4MlxbK8ie896WQxwOKqj43StDqBVhFpb7uetn\u002BflVCzTMONqjvOPw\u002BgstYCDrD\u002BmIWrfVTAyqvsNiquWE2THotsDq6h4CUWffs7yJ0CNDm2ZTjbAikI20UV9ZYUoFHnekkDq4u808qsFMqG/OhkCAwEAAaN8MHowDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMB8GA1UdIwQYMBaAFIKUMzCVDnttxRtSSQgAZ3JpX8BPMB0GA1UdDgQWBBSClDMwlQ57bcUbUkkIAGdyaV/ATzANBgkqhkiG9w0BAQsFAAOCAQEAPAuSsRUV9cQ5oFEDLfuINMzeNOJ5TAYz9YtrGjIp/p7dDnBgHFQ\u002BBWbyjsxeVaODG2oR9yp1QErkJiwof/ETegAc4ATzdao\u002BEioluixlWyAPgs6ERHsqevMfSMBX840PAun1c6Ne6D6n1aDF7ONiF7MAgg2iahje8vopw0m5wl2XhdwWmqmUgfA6vmIEjq9PeYIG6ib2n5e\u002BEGlI4JUKuEA25fNYtp9wIWcjqkbXF3YX74ynAlaLnhYUQPzKKDt3Y55Ieq28vF52VPpjyf\u002BOLaHXR9efYaeTZvkfNmOYOqy3ZPELcgaAsJ5g1NCT\u002Bx48KrhXyAa4Jikxu6lEACzZOA==",
+        "attributes": {
+          "enabled": true,
+          "nbf": 1651245986,
+          "exp": 1682782586,
+          "created": 1651246586,
+          "updated": 1651246586,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "recoverableDays": 7
+        },
+        "policy": {
+          "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/policy",
+          "key_props": {
+            "exportable": true,
+            "kty": "RSA",
+            "key_size": 2048,
+            "reuse_key": false
+          },
+          "secret_props": {
+            "contentType": "application/x-pkcs12"
+          },
+          "x509_props": {
+            "subject": "CN=DefaultPolicy",
+            "sans": {},
+            "ekus": [
+              "1.3.6.1.5.5.7.3.1",
+              "1.3.6.1.5.5.7.3.2"
+            ],
+            "key_usage": [
+              "digitalSignature",
+              "keyEncipherment"
+            ],
+            "validity_months": 12,
+            "basic_constraints": {
+              "ca": false
+            }
+          },
+          "lifetime_actions": [
+            {
+              "trigger": {
+                "lifetime_percentage": 80
+              },
+              "action": {
+                "action_type": "AutoRenew"
+              }
+            }
+          ],
+          "issuer": {
+            "name": "Self"
+          },
+          "attributes": {
+            "enabled": true,
+            "created": 1651246554,
+            "updated": 1651246581
+          }
+        },
+        "pending": {
+          "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "99",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "policy": {
+          "x509_props": {
+            "subject": "CN=DefaultPolicy",
+            "sans": {}
+          },
+          "issuer": {
+            "name": "Self"
+          }
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1296",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:31 GMT",
+        "Expires": "-1",
+        "Location": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3\u0026request_id=56c7b222931f4ebcaaa57a90989ee4c2",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3042;da_age=3042;rd_age=3042;brd_age=2329;ra_notif_age=4661;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALngRAxUb8XSgtHAOs\u002BJdxOlBx4gxSf83QB1GDs4WGIwsJ4R6alzYmHd1/UIUcC7ZHRD1e48X6ZwRsmAQEvikh5fiAm4/tB5saARAR7VUxglD\u002BYM3cl5lZjen8IghTLWVl8O\u002BEoLEbG2duNfhfMX0Aew/rfKJkdL5MbFTMKbihrMFmNrYAIQxoBFIljg28wxXI84S2q94W391aWii2v5EI\u002Bxx45bi1krC9ERWwUeU95FnZEAVCyGJhK5ly\u002B2ro/zOyYts1Sa\u002BgVjBYo7bTOXLC66IAXKDoxBZJZ89sZcNyLyA6PfhlRzZPH04rsTdksNVGk6h0ZuhZFU0jJP1\u002BRTnuECAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQBqrrAePAm35cu8JRV4dLTm06fhzQ4JfBRuPM97LrmNsDKwBIRKqOvuHaLEBsFWMg8fMOXuKP5wYuu3GuY2mXFLhFLlfL1bd\u002BWLfet9\u002BuykxolDf4uVr88ZDU5IPXo/Uu6mVLj2JRc64KJQ02LOIWsZFVnE1w/5QmLbkoMCLhCBEZV0foH1e3H15YnAkVbFJ9gzMfp9G2k/KCAhYfpPSPZh8AXKsp0y8gVxWB6O9rdBe3Ox77LszzyegVy1ue43YO26MK8myPmYrcWDKrxsnxdEoBd1ph/3pBJEBjIFNWrvWGHSfS5iCpKWzsNN4t\u002BbWuJMVFQqzLzUPgPVfKSAj2AJ",
+        "cancellation_requested": false,
+        "status": "inProgress",
+        "status_details": "Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.",
+        "request_id": "56c7b222931f4ebcaaa57a90989ee4c2"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1296",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:31 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3043;da_age=3043;rd_age=3043;brd_age=2329;ra_notif_age=4662;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALngRAxUb8XSgtHAOs\u002BJdxOlBx4gxSf83QB1GDs4WGIwsJ4R6alzYmHd1/UIUcC7ZHRD1e48X6ZwRsmAQEvikh5fiAm4/tB5saARAR7VUxglD\u002BYM3cl5lZjen8IghTLWVl8O\u002BEoLEbG2duNfhfMX0Aew/rfKJkdL5MbFTMKbihrMFmNrYAIQxoBFIljg28wxXI84S2q94W391aWii2v5EI\u002Bxx45bi1krC9ERWwUeU95FnZEAVCyGJhK5ly\u002B2ro/zOyYts1Sa\u002BgVjBYo7bTOXLC66IAXKDoxBZJZ89sZcNyLyA6PfhlRzZPH04rsTdksNVGk6h0ZuhZFU0jJP1\u002BRTnuECAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQBqrrAePAm35cu8JRV4dLTm06fhzQ4JfBRuPM97LrmNsDKwBIRKqOvuHaLEBsFWMg8fMOXuKP5wYuu3GuY2mXFLhFLlfL1bd\u002BWLfet9\u002BuykxolDf4uVr88ZDU5IPXo/Uu6mVLj2JRc64KJQ02LOIWsZFVnE1w/5QmLbkoMCLhCBEZV0foH1e3H15YnAkVbFJ9gzMfp9G2k/KCAhYfpPSPZh8AXKsp0y8gVxWB6O9rdBe3Ox77LszzyegVy1ue43YO26MK8myPmYrcWDKrxsnxdEoBd1ph/3pBJEBjIFNWrvWGHSfS5iCpKWzsNN4t\u002BbWuJMVFQqzLzUPgPVfKSAj2AJ",
+        "cancellation_requested": false,
+        "status": "inProgress",
+        "status_details": "Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.",
+        "request_id": "56c7b222931f4ebcaaa57a90989ee4c2"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1296",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:37 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3048;da_age=3048;rd_age=3048;brd_age=2335;ra_notif_age=4667;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALngRAxUb8XSgtHAOs\u002BJdxOlBx4gxSf83QB1GDs4WGIwsJ4R6alzYmHd1/UIUcC7ZHRD1e48X6ZwRsmAQEvikh5fiAm4/tB5saARAR7VUxglD\u002BYM3cl5lZjen8IghTLWVl8O\u002BEoLEbG2duNfhfMX0Aew/rfKJkdL5MbFTMKbihrMFmNrYAIQxoBFIljg28wxXI84S2q94W391aWii2v5EI\u002Bxx45bi1krC9ERWwUeU95FnZEAVCyGJhK5ly\u002B2ro/zOyYts1Sa\u002BgVjBYo7bTOXLC66IAXKDoxBZJZ89sZcNyLyA6PfhlRzZPH04rsTdksNVGk6h0ZuhZFU0jJP1\u002BRTnuECAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQBqrrAePAm35cu8JRV4dLTm06fhzQ4JfBRuPM97LrmNsDKwBIRKqOvuHaLEBsFWMg8fMOXuKP5wYuu3GuY2mXFLhFLlfL1bd\u002BWLfet9\u002BuykxolDf4uVr88ZDU5IPXo/Uu6mVLj2JRc64KJQ02LOIWsZFVnE1w/5QmLbkoMCLhCBEZV0foH1e3H15YnAkVbFJ9gzMfp9G2k/KCAhYfpPSPZh8AXKsp0y8gVxWB6O9rdBe3Ox77LszzyegVy1ue43YO26MK8myPmYrcWDKrxsnxdEoBd1ph/3pBJEBjIFNWrvWGHSfS5iCpKWzsNN4t\u002BbWuJMVFQqzLzUPgPVfKSAj2AJ",
+        "cancellation_requested": false,
+        "status": "inProgress",
+        "status_details": "Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.",
+        "request_id": "56c7b222931f4ebcaaa57a90989ee4c2"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1211",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:42 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3053;da_age=3053;rd_age=3053;brd_age=2340;ra_notif_age=4672;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALngRAxUb8XSgtHAOs\u002BJdxOlBx4gxSf83QB1GDs4WGIwsJ4R6alzYmHd1/UIUcC7ZHRD1e48X6ZwRsmAQEvikh5fiAm4/tB5saARAR7VUxglD\u002BYM3cl5lZjen8IghTLWVl8O\u002BEoLEbG2duNfhfMX0Aew/rfKJkdL5MbFTMKbihrMFmNrYAIQxoBFIljg28wxXI84S2q94W391aWii2v5EI\u002Bxx45bi1krC9ERWwUeU95FnZEAVCyGJhK5ly\u002B2ro/zOyYts1Sa\u002BgVjBYo7bTOXLC66IAXKDoxBZJZ89sZcNyLyA6PfhlRzZPH04rsTdksNVGk6h0ZuhZFU0jJP1\u002BRTnuECAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQBqrrAePAm35cu8JRV4dLTm06fhzQ4JfBRuPM97LrmNsDKwBIRKqOvuHaLEBsFWMg8fMOXuKP5wYuu3GuY2mXFLhFLlfL1bd\u002BWLfet9\u002BuykxolDf4uVr88ZDU5IPXo/Uu6mVLj2JRc64KJQ02LOIWsZFVnE1w/5QmLbkoMCLhCBEZV0foH1e3H15YnAkVbFJ9gzMfp9G2k/KCAhYfpPSPZh8AXKsp0y8gVxWB6O9rdBe3Ox77LszzyegVy1ue43YO26MK8myPmYrcWDKrxsnxdEoBd1ph/3pBJEBjIFNWrvWGHSfS5iCpKWzsNN4t\u002BbWuJMVFQqzLzUPgPVfKSAj2AJ",
+        "cancellation_requested": false,
+        "status": "completed",
+        "target": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea",
+        "request_id": "56c7b222931f4ebcaaa57a90989ee4c2"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "2366",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:42 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3053;da_age=3053;rd_age=3053;brd_age=2340;ra_notif_age=4672;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/438c80238a504f4b87cd3fdd9c804f94",
+        "kid": "https://vaultname.vault.azure.net/keys/livekvtestcertc3235ea/438c80238a504f4b87cd3fdd9c804f94",
+        "sid": "https://vaultname.vault.azure.net/secrets/livekvtestcertc3235ea/438c80238a504f4b87cd3fdd9c804f94",
+        "x5t": "0lw-fo-uTANLp5KMeKVFmF8MKy4",
+        "cer": "MIIDNjCCAh6gAwIBAgIQEnnOCzARQaCzTtk7VTy1SzANBgkqhkiG9w0BAQsFADAYMRYwFAYDVQQDEw1EZWZhdWx0UG9saWN5MB4XDTIyMDQyOTE1MjYzOVoXDTIzMDQyOTE1MzYzOVowGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALngRAxUb8XSgtHAOs\u002BJdxOlBx4gxSf83QB1GDs4WGIwsJ4R6alzYmHd1/UIUcC7ZHRD1e48X6ZwRsmAQEvikh5fiAm4/tB5saARAR7VUxglD\u002BYM3cl5lZjen8IghTLWVl8O\u002BEoLEbG2duNfhfMX0Aew/rfKJkdL5MbFTMKbihrMFmNrYAIQxoBFIljg28wxXI84S2q94W391aWii2v5EI\u002Bxx45bi1krC9ERWwUeU95FnZEAVCyGJhK5ly\u002B2ro/zOyYts1Sa\u002BgVjBYo7bTOXLC66IAXKDoxBZJZ89sZcNyLyA6PfhlRzZPH04rsTdksNVGk6h0ZuhZFU0jJP1\u002BRTnuECAwEAAaN8MHowDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMB8GA1UdIwQYMBaAFDbAeUuGwYvPghKzD3GWg9fdqiQuMB0GA1UdDgQWBBQ2wHlLhsGLz4ISsw9xloPX3aokLjANBgkqhkiG9w0BAQsFAAOCAQEAgyQlzRx1IEJamrq7Rt5QVYFkUKwbdU\u002BnT4aeMmpfadmCL4zzLcEriLoMdnhNNif/ijJRorVtWN6rw5aiGLJ20kaAd24Kt5tRlPka7TRH2U7QpMSwQDX69CskmToEAmSR4m0b2Rm\u002B2q5SeW\u002Bji8G7wy0\u002B47G5Ck0QFZYXE4AnEDEuTsPHLH3g45RHi8UPma70D6QGwSnb2aKhXdI9VVJ1VwTkXy2ZbSLGcqF/dHy4\u002B7ZsUaT8iDSQyuXp15IrZG/o4Uwo6kIh16IO4\u002B8H0eF0hRBlxfh9F/Db8Y2mI7KYmce88BfdXm2NNWymnj7jLtG0NzsP1BDDPn8E55w52sYfpQ==",
+        "attributes": {
+          "enabled": true,
+          "nbf": 1651245999,
+          "exp": 1682782599,
+          "created": 1651246599,
+          "updated": 1651246599,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "recoverableDays": 7
+        },
+        "policy": {
+          "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/policy",
+          "key_props": {
+            "exportable": true,
+            "kty": "RSA",
+            "key_size": 2048,
+            "reuse_key": false
+          },
+          "secret_props": {
+            "contentType": "application/x-pkcs12"
+          },
+          "x509_props": {
+            "subject": "CN=DefaultPolicy",
+            "sans": {},
+            "ekus": [
+              "1.3.6.1.5.5.7.3.1",
+              "1.3.6.1.5.5.7.3.2"
+            ],
+            "key_usage": [
+              "digitalSignature",
+              "keyEncipherment"
+            ],
+            "validity_months": 12,
+            "basic_constraints": {
+              "ca": false
+            }
+          },
+          "lifetime_actions": [
+            {
+              "trigger": {
+                "lifetime_percentage": 80
+              },
+              "action": {
+                "action_type": "AutoRenew"
+              }
+            }
+          ],
+          "issuer": {
+            "name": "Self"
+          },
+          "attributes": {
+            "enabled": true,
+            "created": 1651246554,
+            "updated": 1651246592
+          }
+        },
+        "pending": {
+          "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "99",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "policy": {
+          "x509_props": {
+            "subject": "CN=DefaultPolicy",
+            "sans": {}
+          },
+          "issuer": {
+            "name": "Self"
+          }
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1296",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:42 GMT",
+        "Expires": "-1",
+        "Location": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3\u0026request_id=67811f9fcaaa4b8ab9f01c45c5b3c4f2",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3053;da_age=3053;rd_age=3053;brd_age=2340;ra_notif_age=4672;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKkAyzFlVcoI5IWhOhC2VYCKUURF0YYPLruru4jxxe0FYvDH4HSjxPJIwxbAOydcpiXM5B8GoTntm6rmJE6VAYto4c3YXZPySXuRLNfBKO6FrotffMo\u002BjzCmrssDzIZdylnqaICNsTKm8uCrCOVDXZ\u002BG6cIJk5x5Lr7ZHQbFSfdmvTNZcv3aG1\u002BDdwha5nrvawfvB66mZJfLwuB1tmo9pZKy4w8WaSuUS5TN4xB1g6VTTTmjOqnAerV9Mj0ph/5NOmpcdLQUri1DDH4u3l5Ds\u002By6wXYItr6lCcNYQPyLmEbBNz2N7SyRFTttpaersIhMVJ/Xi8HY2PygLucLsQvKDgkCAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQAwkiL2OLwYkAzEq1UD0Y0zBU0dy4gIvjghcRNI1K9SmVFqOgMOtJp2VZk6U9XhAKo\u002BGGzSVwL8Mv7WA5ZzpECd4vBShTDaRFtlx4AolmvSg7PtlNVfqamqkhYpUXViPfoKoViA113zTrRGqwNJVjsEGD2I\u002BkFP912Ai86YFRipvuQ8sgxdclmyYXOqa8caSqh7BG3epi7JGTNxvTr5qMOUPIM/lNVF54Ecj/uLHxAqru6kPAl4LG6wIV0RjeF9PWCD8lWZHD9THLpGZtgWYutbrwf/uc9cG7KRgNSnM9Y2xAmfjCpnPG7\u002BuewnbaF9aTr/bdCYjzBdz67TNdWage2x",
+        "cancellation_requested": false,
+        "status": "inProgress",
+        "status_details": "Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.",
+        "request_id": "67811f9fcaaa4b8ab9f01c45c5b3c4f2"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1296",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:42 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3054;da_age=3054;rd_age=3054;brd_age=2340;ra_notif_age=4673;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKkAyzFlVcoI5IWhOhC2VYCKUURF0YYPLruru4jxxe0FYvDH4HSjxPJIwxbAOydcpiXM5B8GoTntm6rmJE6VAYto4c3YXZPySXuRLNfBKO6FrotffMo\u002BjzCmrssDzIZdylnqaICNsTKm8uCrCOVDXZ\u002BG6cIJk5x5Lr7ZHQbFSfdmvTNZcv3aG1\u002BDdwha5nrvawfvB66mZJfLwuB1tmo9pZKy4w8WaSuUS5TN4xB1g6VTTTmjOqnAerV9Mj0ph/5NOmpcdLQUri1DDH4u3l5Ds\u002By6wXYItr6lCcNYQPyLmEbBNz2N7SyRFTttpaersIhMVJ/Xi8HY2PygLucLsQvKDgkCAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQAwkiL2OLwYkAzEq1UD0Y0zBU0dy4gIvjghcRNI1K9SmVFqOgMOtJp2VZk6U9XhAKo\u002BGGzSVwL8Mv7WA5ZzpECd4vBShTDaRFtlx4AolmvSg7PtlNVfqamqkhYpUXViPfoKoViA113zTrRGqwNJVjsEGD2I\u002BkFP912Ai86YFRipvuQ8sgxdclmyYXOqa8caSqh7BG3epi7JGTNxvTr5qMOUPIM/lNVF54Ecj/uLHxAqru6kPAl4LG6wIV0RjeF9PWCD8lWZHD9THLpGZtgWYutbrwf/uc9cG7KRgNSnM9Y2xAmfjCpnPG7\u002BuewnbaF9aTr/bdCYjzBdz67TNdWage2x",
+        "cancellation_requested": false,
+        "status": "inProgress",
+        "status_details": "Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.",
+        "request_id": "67811f9fcaaa4b8ab9f01c45c5b3c4f2"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1211",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:47 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3059;da_age=3059;rd_age=3059;brd_age=2345;ra_notif_age=4678;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKkAyzFlVcoI5IWhOhC2VYCKUURF0YYPLruru4jxxe0FYvDH4HSjxPJIwxbAOydcpiXM5B8GoTntm6rmJE6VAYto4c3YXZPySXuRLNfBKO6FrotffMo\u002BjzCmrssDzIZdylnqaICNsTKm8uCrCOVDXZ\u002BG6cIJk5x5Lr7ZHQbFSfdmvTNZcv3aG1\u002BDdwha5nrvawfvB66mZJfLwuB1tmo9pZKy4w8WaSuUS5TN4xB1g6VTTTmjOqnAerV9Mj0ph/5NOmpcdLQUri1DDH4u3l5Ds\u002By6wXYItr6lCcNYQPyLmEbBNz2N7SyRFTttpaersIhMVJ/Xi8HY2PygLucLsQvKDgkCAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQAwkiL2OLwYkAzEq1UD0Y0zBU0dy4gIvjghcRNI1K9SmVFqOgMOtJp2VZk6U9XhAKo\u002BGGzSVwL8Mv7WA5ZzpECd4vBShTDaRFtlx4AolmvSg7PtlNVfqamqkhYpUXViPfoKoViA113zTrRGqwNJVjsEGD2I\u002BkFP912Ai86YFRipvuQ8sgxdclmyYXOqa8caSqh7BG3epi7JGTNxvTr5qMOUPIM/lNVF54Ecj/uLHxAqru6kPAl4LG6wIV0RjeF9PWCD8lWZHD9THLpGZtgWYutbrwf/uc9cG7KRgNSnM9Y2xAmfjCpnPG7\u002BuewnbaF9aTr/bdCYjzBdz67TNdWage2x",
+        "cancellation_requested": false,
+        "status": "completed",
+        "target": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea",
+        "request_id": "67811f9fcaaa4b8ab9f01c45c5b3c4f2"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "2366",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:47 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3059;da_age=3059;rd_age=3059;brd_age=2345;ra_notif_age=4678;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/66f4dd330863424a9a728d6128b34fef",
+        "kid": "https://vaultname.vault.azure.net/keys/livekvtestcertc3235ea/66f4dd330863424a9a728d6128b34fef",
+        "sid": "https://vaultname.vault.azure.net/secrets/livekvtestcertc3235ea/66f4dd330863424a9a728d6128b34fef",
+        "x5t": "LUMx70NQ3exckvzQyYVrevYKgfw",
+        "cer": "MIIDNjCCAh6gAwIBAgIQNVSHARRETquu0nXiOaqGnDANBgkqhkiG9w0BAQsFADAYMRYwFAYDVQQDEw1EZWZhdWx0UG9saWN5MB4XDTIyMDQyOTE1MjY0N1oXDTIzMDQyOTE1MzY0N1owGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKkAyzFlVcoI5IWhOhC2VYCKUURF0YYPLruru4jxxe0FYvDH4HSjxPJIwxbAOydcpiXM5B8GoTntm6rmJE6VAYto4c3YXZPySXuRLNfBKO6FrotffMo\u002BjzCmrssDzIZdylnqaICNsTKm8uCrCOVDXZ\u002BG6cIJk5x5Lr7ZHQbFSfdmvTNZcv3aG1\u002BDdwha5nrvawfvB66mZJfLwuB1tmo9pZKy4w8WaSuUS5TN4xB1g6VTTTmjOqnAerV9Mj0ph/5NOmpcdLQUri1DDH4u3l5Ds\u002By6wXYItr6lCcNYQPyLmEbBNz2N7SyRFTttpaersIhMVJ/Xi8HY2PygLucLsQvKDgkCAwEAAaN8MHowDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMB8GA1UdIwQYMBaAFCSAK6CUwg5AYj6gYKkQq5l\u002BSMC/MB0GA1UdDgQWBBQkgCuglMIOQGI\u002BoGCpEKuZfkjAvzANBgkqhkiG9w0BAQsFAAOCAQEAa8PR3IomxHuveTIryqJVe5yOmXABSS1qM4Exiw2Q6WeTcp1ch8qPaYEZ9gmCG\u002BHMB4uIIcPqI75Nm5/Nov5m6s/8QIIYXCW3fEnt5IgJoTkZAzBe9N3X4mjd6nFo5T1Msv92NRbeU4wnOZcFQYbtVwmOD133Ztz5QQ8hrjZzZQbN4E2mxF/oxkeF/lsKnUIwk6mhmLP8yroRY/lVWt5VqU5/0GgX2fXs9x/QYhwMoyL/\u002B8ML7nY3AWwVWPfqFa35PheAMKWeHSGha71RABxV0emCXxkhiMqgLqo2SQu7Hvw30Q2wu7TV9BO4MMk7f4IWVe62iA\u002BkwYfgsNLu1FIWfg==",
+        "attributes": {
+          "enabled": true,
+          "nbf": 1651246007,
+          "exp": 1682782607,
+          "created": 1651246608,
+          "updated": 1651246608,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "recoverableDays": 7
+        },
+        "policy": {
+          "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/policy",
+          "key_props": {
+            "exportable": true,
+            "kty": "RSA",
+            "key_size": 2048,
+            "reuse_key": false
+          },
+          "secret_props": {
+            "contentType": "application/x-pkcs12"
+          },
+          "x509_props": {
+            "subject": "CN=DefaultPolicy",
+            "sans": {},
+            "ekus": [
+              "1.3.6.1.5.5.7.3.1",
+              "1.3.6.1.5.5.7.3.2"
+            ],
+            "key_usage": [
+              "digitalSignature",
+              "keyEncipherment"
+            ],
+            "validity_months": 12,
+            "basic_constraints": {
+              "ca": false
+            }
+          },
+          "lifetime_actions": [
+            {
+              "trigger": {
+                "lifetime_percentage": 80
+              },
+              "action": {
+                "action_type": "AutoRenew"
+              }
+            }
+          ],
+          "issuer": {
+            "name": "Self"
+          },
+          "attributes": {
+            "enabled": true,
+            "created": 1651246554,
+            "updated": 1651246603
+          }
+        },
+        "pending": {
+          "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "99",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "policy": {
+          "x509_props": {
+            "subject": "CN=DefaultPolicy",
+            "sans": {}
+          },
+          "issuer": {
+            "name": "Self"
+          }
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1296",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:48 GMT",
+        "Expires": "-1",
+        "Location": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3\u0026request_id=17ba643fa1b641709a2151653deabcb2",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3059;da_age=3059;rd_age=3059;brd_age=2346;ra_notif_age=4678;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAM7q/uY/ktn5o2ZKji8/i1g8\u002BcgXHTs6j9g5u4hBCFJdZA9tQrqpsW60g6GpZTvof1foV6FEaViQtW0\u002BBKoZ4pIkP07hs9Avr/DHlBO5LCLpRYHXHzioL10gaK5vs4EBQHUKEA9jXEwssjILrxAhCo4NvDzrmtA/\u002B3\u002Bh7i0OlEXYSX717BfJ8sUFVHGgRMRuMJOOZ/tJrwSpyBiXUKXnTjGUlVe30/1ulqCiRV/v3DmiScrObyAB9UaL\u002BCKdbRYsdECPZlAPhcnHk4f7WTgz5rBAMjlMPz6L0HL7Vl/L/gjKrHPpXIelRA0C1MwQbwBLKVJcTrrQmB3a9ql8vlV7IoUCAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQDLBpdXXjTAi81/s/2Uqp61OqkpCUeNI/D3Pyywd0hjMyVi81TPFpDJcXaaYP9NAt/ClWGHuz1C6KkkhUEcqSjQVjBfhe\u002B9tjR895NI\u002B/HpTylVznlDWx7F3ybFg8BmKCRHHc3c\u002BpMREZlmqGdiKRzSMwc91TbyxcyCT5ehztCdsovvrxYf2B/ctRkgzkUFk4IiOt/NnjDGGNAmPQGXotyp/JFMiAYk2gcWESN4V5n6fPPkbgXBPyIyp2Zhl\u002BA5yJKHVs/Gt9ESaEnbmxEegj\u002Bpg2b1LL7ymHK\u002BZVODYjP5vuXK9LmAmiNbjVcrt2PHY\u002BuMkLwQKCkdB2HuHHSl5809",
+        "cancellation_requested": false,
+        "status": "inProgress",
+        "status_details": "Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.",
+        "request_id": "17ba643fa1b641709a2151653deabcb2"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1296",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:48 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3059;da_age=3059;rd_age=3059;brd_age=2346;ra_notif_age=4678;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAM7q/uY/ktn5o2ZKji8/i1g8\u002BcgXHTs6j9g5u4hBCFJdZA9tQrqpsW60g6GpZTvof1foV6FEaViQtW0\u002BBKoZ4pIkP07hs9Avr/DHlBO5LCLpRYHXHzioL10gaK5vs4EBQHUKEA9jXEwssjILrxAhCo4NvDzrmtA/\u002B3\u002Bh7i0OlEXYSX717BfJ8sUFVHGgRMRuMJOOZ/tJrwSpyBiXUKXnTjGUlVe30/1ulqCiRV/v3DmiScrObyAB9UaL\u002BCKdbRYsdECPZlAPhcnHk4f7WTgz5rBAMjlMPz6L0HL7Vl/L/gjKrHPpXIelRA0C1MwQbwBLKVJcTrrQmB3a9ql8vlV7IoUCAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQDLBpdXXjTAi81/s/2Uqp61OqkpCUeNI/D3Pyywd0hjMyVi81TPFpDJcXaaYP9NAt/ClWGHuz1C6KkkhUEcqSjQVjBfhe\u002B9tjR895NI\u002B/HpTylVznlDWx7F3ybFg8BmKCRHHc3c\u002BpMREZlmqGdiKRzSMwc91TbyxcyCT5ehztCdsovvrxYf2B/ctRkgzkUFk4IiOt/NnjDGGNAmPQGXotyp/JFMiAYk2gcWESN4V5n6fPPkbgXBPyIyp2Zhl\u002BA5yJKHVs/Gt9ESaEnbmxEegj\u002Bpg2b1LL7ymHK\u002BZVODYjP5vuXK9LmAmiNbjVcrt2PHY\u002BuMkLwQKCkdB2HuHHSl5809",
+        "cancellation_requested": false,
+        "status": "inProgress",
+        "status_details": "Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.",
+        "request_id": "17ba643fa1b641709a2151653deabcb2"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1211",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:54 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3064;da_age=3064;rd_age=3064;brd_age=2351;ra_notif_age=4683;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending",
+        "issuer": {
+          "name": "Self"
+        },
+        "csr": "MIICqDCCAZACAQAwGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAM7q/uY/ktn5o2ZKji8/i1g8\u002BcgXHTs6j9g5u4hBCFJdZA9tQrqpsW60g6GpZTvof1foV6FEaViQtW0\u002BBKoZ4pIkP07hs9Avr/DHlBO5LCLpRYHXHzioL10gaK5vs4EBQHUKEA9jXEwssjILrxAhCo4NvDzrmtA/\u002B3\u002Bh7i0OlEXYSX717BfJ8sUFVHGgRMRuMJOOZ/tJrwSpyBiXUKXnTjGUlVe30/1ulqCiRV/v3DmiScrObyAB9UaL\u002BCKdbRYsdECPZlAPhcnHk4f7WTgz5rBAMjlMPz6L0HL7Vl/L/gjKrHPpXIelRA0C1MwQbwBLKVJcTrrQmB3a9ql8vlV7IoUCAwEAAaBLMEkGCSqGSIb3DQEJDjE8MDowDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAJBgNVHRMEAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQDLBpdXXjTAi81/s/2Uqp61OqkpCUeNI/D3Pyywd0hjMyVi81TPFpDJcXaaYP9NAt/ClWGHuz1C6KkkhUEcqSjQVjBfhe\u002B9tjR895NI\u002B/HpTylVznlDWx7F3ybFg8BmKCRHHc3c\u002BpMREZlmqGdiKRzSMwc91TbyxcyCT5ehztCdsovvrxYf2B/ctRkgzkUFk4IiOt/NnjDGGNAmPQGXotyp/JFMiAYk2gcWESN4V5n6fPPkbgXBPyIyp2Zhl\u002BA5yJKHVs/Gt9ESaEnbmxEegj\u002Bpg2b1LL7ymHK\u002BZVODYjP5vuXK9LmAmiNbjVcrt2PHY\u002BuMkLwQKCkdB2HuHHSl5809",
+        "cancellation_requested": false,
+        "status": "completed",
+        "target": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea",
+        "request_id": "17ba643fa1b641709a2151653deabcb2"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "2366",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:54 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3065;da_age=3065;rd_age=3065;brd_age=2351;ra_notif_age=4683;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/c3279ff80bc34f7eadf2f15e849f742f",
+        "kid": "https://vaultname.vault.azure.net/keys/livekvtestcertc3235ea/c3279ff80bc34f7eadf2f15e849f742f",
+        "sid": "https://vaultname.vault.azure.net/secrets/livekvtestcertc3235ea/c3279ff80bc34f7eadf2f15e849f742f",
+        "x5t": "AiSbTrXAUZbeoIGfaaaGTySiT6k",
+        "cer": "MIIDNjCCAh6gAwIBAgIQdmGeNLHLRR\u002BlgkdAnpuyojANBgkqhkiG9w0BAQsFADAYMRYwFAYDVQQDEw1EZWZhdWx0UG9saWN5MB4XDTIyMDQyOTE1MjY1MloXDTIzMDQyOTE1MzY1MlowGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAM7q/uY/ktn5o2ZKji8/i1g8\u002BcgXHTs6j9g5u4hBCFJdZA9tQrqpsW60g6GpZTvof1foV6FEaViQtW0\u002BBKoZ4pIkP07hs9Avr/DHlBO5LCLpRYHXHzioL10gaK5vs4EBQHUKEA9jXEwssjILrxAhCo4NvDzrmtA/\u002B3\u002Bh7i0OlEXYSX717BfJ8sUFVHGgRMRuMJOOZ/tJrwSpyBiXUKXnTjGUlVe30/1ulqCiRV/v3DmiScrObyAB9UaL\u002BCKdbRYsdECPZlAPhcnHk4f7WTgz5rBAMjlMPz6L0HL7Vl/L/gjKrHPpXIelRA0C1MwQbwBLKVJcTrrQmB3a9ql8vlV7IoUCAwEAAaN8MHowDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMB8GA1UdIwQYMBaAFBvcMmp72bSsBwRafS8eZBgWQVBTMB0GA1UdDgQWBBQb3DJqe9m0rAcEWn0vHmQYFkFQUzANBgkqhkiG9w0BAQsFAAOCAQEAIPhicx/sBEw2avkZ2X48wZneuoyoDE9lHEF6x/Qo6fMYQmdYkjovWTHCSkxZWEJVo\u002Bg1RNkWavRdZibJWbTWgALVh5FGZ0UPUI\u002BNUx8amGyzzAP6q5cjy9flu3UJOHaYN4Gs6DfoO2VYQ0\u002BsSRn80\u002B545NxGyfzk86br8LN0CCiXj2NkW\u002BK62d7aP8GTj1sdSIu19FCZUVN6uFlGXbvPo\u002B2J9rVkR\u002BIJlAJJLL\u002BO2NGZKrPgLQ4mBF0I7izc9toj\u002BpYxV5uCwm4XSIQF1qMcNLBgfwaCte3WrR4Ztu1N8\u002B\u002BySO6e/7zSWQ5HDjKotkBB0pdfFDBJpi90utfhF0r5cw==",
+        "attributes": {
+          "enabled": true,
+          "nbf": 1651246012,
+          "exp": 1682782612,
+          "created": 1651246612,
+          "updated": 1651246612,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "recoverableDays": 7
+        },
+        "policy": {
+          "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/policy",
+          "key_props": {
+            "exportable": true,
+            "kty": "RSA",
+            "key_size": 2048,
+            "reuse_key": false
+          },
+          "secret_props": {
+            "contentType": "application/x-pkcs12"
+          },
+          "x509_props": {
+            "subject": "CN=DefaultPolicy",
+            "sans": {},
+            "ekus": [
+              "1.3.6.1.5.5.7.3.1",
+              "1.3.6.1.5.5.7.3.2"
+            ],
+            "key_usage": [
+              "digitalSignature",
+              "keyEncipherment"
+            ],
+            "validity_months": 12,
+            "basic_constraints": {
+              "ca": false
+            }
+          },
+          "lifetime_actions": [
+            {
+              "trigger": {
+                "lifetime_percentage": 80
+              },
+              "action": {
+                "action_type": "AutoRenew"
+              }
+            }
+          ],
+          "issuer": {
+            "name": "Self"
+          },
+          "attributes": {
+            "enabled": true,
+            "created": 1651246554,
+            "updated": 1651246608
+          }
+        },
+        "pending": {
+          "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/pending"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/versions?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1889",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:54 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3065;da_age=3065;rd_age=3065;brd_age=2351;ra_notif_age=4684;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/438c80238a504f4b87cd3fdd9c804f94",
+            "x5t": "0lw-fo-uTANLp5KMeKVFmF8MKy4",
+            "attributes": {
+              "enabled": true,
+              "nbf": 1651245999,
+              "exp": 1682782599,
+              "created": 1651246599,
+              "updated": 1651246599
+            },
+            "subject": ""
+          },
+          {
+            "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/66f4dd330863424a9a728d6128b34fef",
+            "x5t": "LUMx70NQ3exckvzQyYVrevYKgfw",
+            "attributes": {
+              "enabled": true,
+              "nbf": 1651246007,
+              "exp": 1682782607,
+              "created": 1651246608,
+              "updated": 1651246608
+            },
+            "subject": ""
+          },
+          {
+            "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/8f45cccc58c24d51b5b8b4018f839071",
+            "x5t": "DtCel6v-zRIwGgEyIHttofABbhI",
+            "attributes": {
+              "enabled": true,
+              "nbf": 1651245977,
+              "exp": 1682782577,
+              "created": 1651246577,
+              "updated": 1651246577
+            },
+            "subject": ""
+          },
+          {
+            "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/a850a678ca524e33bcc27ca0be928d43",
+            "x5t": "6Zi2iku91zhzmDippkYYognvY88",
+            "attributes": {
+              "enabled": true,
+              "nbf": 1651245957,
+              "exp": 1682782557,
+              "created": 1651246558,
+              "updated": 1651246558
+            },
+            "subject": ""
+          },
+          {
+            "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/ad9a8bfec71e477f865a96376e263336",
+            "x5t": "cn_QdZYjzytf0rjnQXDm8K9R_9U",
+            "attributes": {
+              "enabled": true,
+              "nbf": 1651245986,
+              "exp": 1682782586,
+              "created": 1651246586,
+              "updated": 1651246586
+            },
+            "subject": ""
+          },
+          {
+            "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/c3279ff80bc34f7eadf2f15e849f742f",
+            "x5t": "AiSbTrXAUZbeoIGfaaaGTySiT6k",
+            "attributes": {
+              "enabled": true,
+              "nbf": 1651246012,
+              "exp": 1682782612,
+              "created": 1651246612,
+              "updated": 1651246612
+            },
+            "subject": ""
+          },
+          {
+            "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/ec78cb1b29244000a407c2e85e41161d",
+            "x5t": "DlySTJYpyelXl9oWErdYGu9oCrU",
+            "attributes": {
+              "enabled": true,
+              "nbf": 1651245968,
+              "exp": 1682782568,
+              "created": 1651246568,
+              "updated": 1651246568
+            },
+            "subject": ""
+          }
+        ],
+        "nextLink": null
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/438c80238a504f4b87cd3fdd9c804f94?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1642",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:54 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3065;da_age=3065;rd_age=3065;brd_age=2351;ra_notif_age=4684;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/438c80238a504f4b87cd3fdd9c804f94",
+        "kid": "https://vaultname.vault.azure.net/keys/livekvtestcertc3235ea/438c80238a504f4b87cd3fdd9c804f94",
+        "sid": "https://vaultname.vault.azure.net/secrets/livekvtestcertc3235ea/438c80238a504f4b87cd3fdd9c804f94",
+        "x5t": "0lw-fo-uTANLp5KMeKVFmF8MKy4",
+        "cer": "MIIDNjCCAh6gAwIBAgIQEnnOCzARQaCzTtk7VTy1SzANBgkqhkiG9w0BAQsFADAYMRYwFAYDVQQDEw1EZWZhdWx0UG9saWN5MB4XDTIyMDQyOTE1MjYzOVoXDTIzMDQyOTE1MzYzOVowGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALngRAxUb8XSgtHAOs\u002BJdxOlBx4gxSf83QB1GDs4WGIwsJ4R6alzYmHd1/UIUcC7ZHRD1e48X6ZwRsmAQEvikh5fiAm4/tB5saARAR7VUxglD\u002BYM3cl5lZjen8IghTLWVl8O\u002BEoLEbG2duNfhfMX0Aew/rfKJkdL5MbFTMKbihrMFmNrYAIQxoBFIljg28wxXI84S2q94W391aWii2v5EI\u002Bxx45bi1krC9ERWwUeU95FnZEAVCyGJhK5ly\u002B2ro/zOyYts1Sa\u002BgVjBYo7bTOXLC66IAXKDoxBZJZ89sZcNyLyA6PfhlRzZPH04rsTdksNVGk6h0ZuhZFU0jJP1\u002BRTnuECAwEAAaN8MHowDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMB8GA1UdIwQYMBaAFDbAeUuGwYvPghKzD3GWg9fdqiQuMB0GA1UdDgQWBBQ2wHlLhsGLz4ISsw9xloPX3aokLjANBgkqhkiG9w0BAQsFAAOCAQEAgyQlzRx1IEJamrq7Rt5QVYFkUKwbdU\u002BnT4aeMmpfadmCL4zzLcEriLoMdnhNNif/ijJRorVtWN6rw5aiGLJ20kaAd24Kt5tRlPka7TRH2U7QpMSwQDX69CskmToEAmSR4m0b2Rm\u002B2q5SeW\u002Bji8G7wy0\u002B47G5Ck0QFZYXE4AnEDEuTsPHLH3g45RHi8UPma70D6QGwSnb2aKhXdI9VVJ1VwTkXy2ZbSLGcqF/dHy4\u002B7ZsUaT8iDSQyuXp15IrZG/o4Uwo6kIh16IO4\u002B8H0eF0hRBlxfh9F/Db8Y2mI7KYmce88BfdXm2NNWymnj7jLtG0NzsP1BDDPn8E55w52sYfpQ==",
+        "attributes": {
+          "enabled": true,
+          "nbf": 1651245999,
+          "exp": 1682782599,
+          "created": 1651246599,
+          "updated": 1651246599,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "recoverableDays": 7
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/66f4dd330863424a9a728d6128b34fef?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1642",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:54 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3065;da_age=3065;rd_age=3065;brd_age=2351;ra_notif_age=4684;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/66f4dd330863424a9a728d6128b34fef",
+        "kid": "https://vaultname.vault.azure.net/keys/livekvtestcertc3235ea/66f4dd330863424a9a728d6128b34fef",
+        "sid": "https://vaultname.vault.azure.net/secrets/livekvtestcertc3235ea/66f4dd330863424a9a728d6128b34fef",
+        "x5t": "LUMx70NQ3exckvzQyYVrevYKgfw",
+        "cer": "MIIDNjCCAh6gAwIBAgIQNVSHARRETquu0nXiOaqGnDANBgkqhkiG9w0BAQsFADAYMRYwFAYDVQQDEw1EZWZhdWx0UG9saWN5MB4XDTIyMDQyOTE1MjY0N1oXDTIzMDQyOTE1MzY0N1owGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKkAyzFlVcoI5IWhOhC2VYCKUURF0YYPLruru4jxxe0FYvDH4HSjxPJIwxbAOydcpiXM5B8GoTntm6rmJE6VAYto4c3YXZPySXuRLNfBKO6FrotffMo\u002BjzCmrssDzIZdylnqaICNsTKm8uCrCOVDXZ\u002BG6cIJk5x5Lr7ZHQbFSfdmvTNZcv3aG1\u002BDdwha5nrvawfvB66mZJfLwuB1tmo9pZKy4w8WaSuUS5TN4xB1g6VTTTmjOqnAerV9Mj0ph/5NOmpcdLQUri1DDH4u3l5Ds\u002By6wXYItr6lCcNYQPyLmEbBNz2N7SyRFTttpaersIhMVJ/Xi8HY2PygLucLsQvKDgkCAwEAAaN8MHowDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMB8GA1UdIwQYMBaAFCSAK6CUwg5AYj6gYKkQq5l\u002BSMC/MB0GA1UdDgQWBBQkgCuglMIOQGI\u002BoGCpEKuZfkjAvzANBgkqhkiG9w0BAQsFAAOCAQEAa8PR3IomxHuveTIryqJVe5yOmXABSS1qM4Exiw2Q6WeTcp1ch8qPaYEZ9gmCG\u002BHMB4uIIcPqI75Nm5/Nov5m6s/8QIIYXCW3fEnt5IgJoTkZAzBe9N3X4mjd6nFo5T1Msv92NRbeU4wnOZcFQYbtVwmOD133Ztz5QQ8hrjZzZQbN4E2mxF/oxkeF/lsKnUIwk6mhmLP8yroRY/lVWt5VqU5/0GgX2fXs9x/QYhwMoyL/\u002B8ML7nY3AWwVWPfqFa35PheAMKWeHSGha71RABxV0emCXxkhiMqgLqo2SQu7Hvw30Q2wu7TV9BO4MMk7f4IWVe62iA\u002BkwYfgsNLu1FIWfg==",
+        "attributes": {
+          "enabled": true,
+          "nbf": 1651246007,
+          "exp": 1682782607,
+          "created": 1651246608,
+          "updated": 1651246608,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "recoverableDays": 7
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/8f45cccc58c24d51b5b8b4018f839071?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1642",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:54 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3065;da_age=3065;rd_age=3065;brd_age=2352;ra_notif_age=4684;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/8f45cccc58c24d51b5b8b4018f839071",
+        "kid": "https://vaultname.vault.azure.net/keys/livekvtestcertc3235ea/8f45cccc58c24d51b5b8b4018f839071",
+        "sid": "https://vaultname.vault.azure.net/secrets/livekvtestcertc3235ea/8f45cccc58c24d51b5b8b4018f839071",
+        "x5t": "DtCel6v-zRIwGgEyIHttofABbhI",
+        "cer": "MIIDNjCCAh6gAwIBAgIQZPZdSp\u002BlQ5OZ\u002BTLe1TyNKDANBgkqhkiG9w0BAQsFADAYMRYwFAYDVQQDEw1EZWZhdWx0UG9saWN5MB4XDTIyMDQyOTE1MjYxN1oXDTIzMDQyOTE1MzYxN1owGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK8vkswIuuOwweA6cyakogEyUBu7caQQqcssiHjxrnilWxj9A4fivJHaDcKRng1s7uQ52WjRaYJk4glZnfsU5PuJ4oCZG9xWqAy4VKNbQ0Cu/GsI2FXFEtOXmZv5vTda25mieTupxaSeiZSoLFaAP5UYdgIo9VtO3IOMKWUg9LwAgJ1151KJXX\u002BK6lM3JRHINLLZyaHwgD3ZBpyvysIORc1vTcWlnsEaRsD4U9l2FqRcKupILY/1g//oqC6KDhJL8PAyOtPI4KKNvpUWO8IkcTf8UjNAkYcmi0XMdtZkEwmfoJJJTh4sBPy56DJ/whyWApOUeFYWYnjtbfX2D2DY4HkCAwEAAaN8MHowDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMB8GA1UdIwQYMBaAFCZNRhcNVi9vSa6ugBBTgZQHxZnVMB0GA1UdDgQWBBQmTUYXDVYvb0muroAQU4GUB8WZ1TANBgkqhkiG9w0BAQsFAAOCAQEAPAiRmjqL6CcWUndUZOqOGIwLozOUjjLyloikCepkGUveSJWV\u002Bg7nm5xJdHYOwL3/qCnq\u002BPQG8ga3eg0JOq3vxAiEZh9Q5M9ClooQicOHF/8PFE7BLmbFDGvmPJz27QaFPGlV7XUpnaTn0vZD5qlEH6R1K5zkdoG9H1ntWBZOIrIQ/HclU\u002Bc1qkTJiC1luawuYc5wHTEem7fUMgQHyNG6IxnFDKSWYK22MxT4owiSJyNkxh2uZHgE3BTBo\u002B2gIfrskSECPhvKEQXcykjLJHDjr3Ayv5LKdypVfI1BxmhxoQLBdcZ1DsXuoioRVnAhJ7SCd5kIGiaOK\u002BVvraS5kbjDAA==",
+        "attributes": {
+          "enabled": true,
+          "nbf": 1651245977,
+          "exp": 1682782577,
+          "created": 1651246577,
+          "updated": 1651246577,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "recoverableDays": 7
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/a850a678ca524e33bcc27ca0be928d43?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1642",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:55 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3065;da_age=3065;rd_age=3065;brd_age=2352;ra_notif_age=4684;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/a850a678ca524e33bcc27ca0be928d43",
+        "kid": "https://vaultname.vault.azure.net/keys/livekvtestcertc3235ea/a850a678ca524e33bcc27ca0be928d43",
+        "sid": "https://vaultname.vault.azure.net/secrets/livekvtestcertc3235ea/a850a678ca524e33bcc27ca0be928d43",
+        "x5t": "6Zi2iku91zhzmDippkYYognvY88",
+        "cer": "MIIDNjCCAh6gAwIBAgIQbU7l2SQ0QP604GTtb0m3ezANBgkqhkiG9w0BAQsFADAYMRYwFAYDVQQDEw1EZWZhdWx0UG9saWN5MB4XDTIyMDQyOTE1MjU1N1oXDTIzMDQyOTE1MzU1N1owGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALdnqg9dCiNw1jQ9cJgk6eQ6fo277vRnwKPjwxlQaFPJWPclMWhcKPOuqfWYbGXjEzSqbv7cgdLWkdZSlPeZMOrW\u002BJYsFmuRylrgxXs/ZWqCHq2JfRgGEYHrxDnvC1xsezhTVJUHicitNkKGirXwhCa\u002BTIDJRZiESfhJ22cEDvJMr2xHeqcEG6vMyAzKQ6pqSfkZdkK0t6bgF3ckPXkinwcTEWsLaLw2MdY3laKvPOebxLq5L1qQ9SCAbYlrFnHNwjwCaaN6e9\u002BWlIkckf0iYwv4PsQMVq1hCKxqEKCOD4CiGwHTrnhs3eHrn9deDda4uArsWlipGoxE\u002BA30n7Cbyg0CAwEAAaN8MHowDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMB8GA1UdIwQYMBaAFIXKCnXGfBytnsGIc6HjijZM2r5jMB0GA1UdDgQWBBSFygp1xnwcrZ7BiHOh44o2TNq\u002BYzANBgkqhkiG9w0BAQsFAAOCAQEAdNLe1c4B161zdIrY6ahXpsGqoP6RS98KM8vfjV9qiOu65KVAtSpCE4QiNrpZWfGxexGkIgZA\u002BAKWh9FQrPOVSFbEniLsV6kbIf0jABBa/AGaW1L0F3rq2MQh\u002BnwLxD5o1aUFa2csbMY9dBg1v5I1jUjgB0BxvcWTls7GwdPWRg8lhmUIL2A9WVCS6Hc6\u002BbZsntxaeYlhsiogI3ZjvAC7lm0AFqwRR5mOfIV8w8L0ePk0O5GLYmxQVhgQxx3gCdhwxh85lyKMUlF4CJe0Th9Js4saIFjNqmwhZNrbwP3AlVD97tNDcXHrUKYbyuz7r9oRlKsQIGWz6mgo2iFBZPR6rg==",
+        "attributes": {
+          "enabled": true,
+          "nbf": 1651245957,
+          "exp": 1682782557,
+          "created": 1651246558,
+          "updated": 1651246558,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "recoverableDays": 7
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/ad9a8bfec71e477f865a96376e263336?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1642",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:55 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3065;da_age=3065;rd_age=3065;brd_age=2352;ra_notif_age=4684;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/ad9a8bfec71e477f865a96376e263336",
+        "kid": "https://vaultname.vault.azure.net/keys/livekvtestcertc3235ea/ad9a8bfec71e477f865a96376e263336",
+        "sid": "https://vaultname.vault.azure.net/secrets/livekvtestcertc3235ea/ad9a8bfec71e477f865a96376e263336",
+        "x5t": "cn_QdZYjzytf0rjnQXDm8K9R_9U",
+        "cer": "MIIDNjCCAh6gAwIBAgIQY7pPBDIeSnyKjy\u002BFfDk7jjANBgkqhkiG9w0BAQsFADAYMRYwFAYDVQQDEw1EZWZhdWx0UG9saWN5MB4XDTIyMDQyOTE1MjYyNloXDTIzMDQyOTE1MzYyNlowGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKm8ROSJXzOadF7L\u002B/8dZBsA//BvXfCquP67AdH9oRtjtmT8gvaTHzSsOD/0wbcXbW0090\u002BIA8Ycqb48Irto8onfgdcvhxuuI\u002B6\u002BDYVzj1w\u002BWeaoikTFhw73JEAsK55zvQKQxwXKdoOxtA6PlJxbRK2WLheK/H51z2Ef0yh\u002BTVlQu64OMlQTwHkzva5jX\u002B83oWI/4MlxbK8ie896WQxwOKqj43StDqBVhFpb7uetn\u002BflVCzTMONqjvOPw\u002BgstYCDrD\u002BmIWrfVTAyqvsNiquWE2THotsDq6h4CUWffs7yJ0CNDm2ZTjbAikI20UV9ZYUoFHnekkDq4u808qsFMqG/OhkCAwEAAaN8MHowDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMB8GA1UdIwQYMBaAFIKUMzCVDnttxRtSSQgAZ3JpX8BPMB0GA1UdDgQWBBSClDMwlQ57bcUbUkkIAGdyaV/ATzANBgkqhkiG9w0BAQsFAAOCAQEAPAuSsRUV9cQ5oFEDLfuINMzeNOJ5TAYz9YtrGjIp/p7dDnBgHFQ\u002BBWbyjsxeVaODG2oR9yp1QErkJiwof/ETegAc4ATzdao\u002BEioluixlWyAPgs6ERHsqevMfSMBX840PAun1c6Ne6D6n1aDF7ONiF7MAgg2iahje8vopw0m5wl2XhdwWmqmUgfA6vmIEjq9PeYIG6ib2n5e\u002BEGlI4JUKuEA25fNYtp9wIWcjqkbXF3YX74ynAlaLnhYUQPzKKDt3Y55Ieq28vF52VPpjyf\u002BOLaHXR9efYaeTZvkfNmOYOqy3ZPELcgaAsJ5g1NCT\u002Bx48KrhXyAa4Jikxu6lEACzZOA==",
+        "attributes": {
+          "enabled": true,
+          "nbf": 1651245986,
+          "exp": 1682782586,
+          "created": 1651246586,
+          "updated": 1651246586,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "recoverableDays": 7
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/c3279ff80bc34f7eadf2f15e849f742f?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1642",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:55 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3065;da_age=3065;rd_age=3065;brd_age=2352;ra_notif_age=4684;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/c3279ff80bc34f7eadf2f15e849f742f",
+        "kid": "https://vaultname.vault.azure.net/keys/livekvtestcertc3235ea/c3279ff80bc34f7eadf2f15e849f742f",
+        "sid": "https://vaultname.vault.azure.net/secrets/livekvtestcertc3235ea/c3279ff80bc34f7eadf2f15e849f742f",
+        "x5t": "AiSbTrXAUZbeoIGfaaaGTySiT6k",
+        "cer": "MIIDNjCCAh6gAwIBAgIQdmGeNLHLRR\u002BlgkdAnpuyojANBgkqhkiG9w0BAQsFADAYMRYwFAYDVQQDEw1EZWZhdWx0UG9saWN5MB4XDTIyMDQyOTE1MjY1MloXDTIzMDQyOTE1MzY1MlowGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAM7q/uY/ktn5o2ZKji8/i1g8\u002BcgXHTs6j9g5u4hBCFJdZA9tQrqpsW60g6GpZTvof1foV6FEaViQtW0\u002BBKoZ4pIkP07hs9Avr/DHlBO5LCLpRYHXHzioL10gaK5vs4EBQHUKEA9jXEwssjILrxAhCo4NvDzrmtA/\u002B3\u002Bh7i0OlEXYSX717BfJ8sUFVHGgRMRuMJOOZ/tJrwSpyBiXUKXnTjGUlVe30/1ulqCiRV/v3DmiScrObyAB9UaL\u002BCKdbRYsdECPZlAPhcnHk4f7WTgz5rBAMjlMPz6L0HL7Vl/L/gjKrHPpXIelRA0C1MwQbwBLKVJcTrrQmB3a9ql8vlV7IoUCAwEAAaN8MHowDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMB8GA1UdIwQYMBaAFBvcMmp72bSsBwRafS8eZBgWQVBTMB0GA1UdDgQWBBQb3DJqe9m0rAcEWn0vHmQYFkFQUzANBgkqhkiG9w0BAQsFAAOCAQEAIPhicx/sBEw2avkZ2X48wZneuoyoDE9lHEF6x/Qo6fMYQmdYkjovWTHCSkxZWEJVo\u002Bg1RNkWavRdZibJWbTWgALVh5FGZ0UPUI\u002BNUx8amGyzzAP6q5cjy9flu3UJOHaYN4Gs6DfoO2VYQ0\u002BsSRn80\u002B545NxGyfzk86br8LN0CCiXj2NkW\u002BK62d7aP8GTj1sdSIu19FCZUVN6uFlGXbvPo\u002B2J9rVkR\u002BIJlAJJLL\u002BO2NGZKrPgLQ4mBF0I7izc9toj\u002BpYxV5uCwm4XSIQF1qMcNLBgfwaCte3WrR4Ztu1N8\u002B\u002BySO6e/7zSWQ5HDjKotkBB0pdfFDBJpi90utfhF0r5cw==",
+        "attributes": {
+          "enabled": true,
+          "nbf": 1651246012,
+          "exp": 1682782612,
+          "created": 1651246612,
+          "updated": 1651246612,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "recoverableDays": 7
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/ec78cb1b29244000a407c2e85e41161d?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-certificates/4.4.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1642",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 15:36:55 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "3a9ee1da-16f6-5f7b-8523-1824aa7bf129",
+        "x-ms-keyvault-rbac-cache": "ra_age=3065;da_age=3065;rd_age=3065;brd_age=2352;ra_notif_age=4684;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.378.1"
+      },
+      "ResponseBody": {
+        "id": "https://vaultname.vault.azure.net/certificates/livekvtestcertc3235ea/ec78cb1b29244000a407c2e85e41161d",
+        "kid": "https://vaultname.vault.azure.net/keys/livekvtestcertc3235ea/ec78cb1b29244000a407c2e85e41161d",
+        "sid": "https://vaultname.vault.azure.net/secrets/livekvtestcertc3235ea/ec78cb1b29244000a407c2e85e41161d",
+        "x5t": "DlySTJYpyelXl9oWErdYGu9oCrU",
+        "cer": "MIIDNjCCAh6gAwIBAgIQSSDBUvKsTcSqlxvf4lrRDTANBgkqhkiG9w0BAQsFADAYMRYwFAYDVQQDEw1EZWZhdWx0UG9saWN5MB4XDTIyMDQyOTE1MjYwOFoXDTIzMDQyOTE1MzYwOFowGDEWMBQGA1UEAxMNRGVmYXVsdFBvbGljeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANlmq59UZDOhevVg9dXog\u002BvbBhqdpX9MK/D5uE/jgekPHziGgf6GllRgUAGL8a\u002BsREhznMNsKqBjHI8VsVAuqLMbyfJD\u002BhStCYyIR3E42Apl3aUqyf1lsD2UJcqJt9Pt1fFbVGaIqcxY4J5dvgPzjF46qQyD\u002BtkP\u002BFxzjiKhTylSCe90S11rg1NeBontOdqb8oBGPlUjLP6yJBykGOjjK/yuL3ydO3e352xsj3oFGwIlSHXu7hrmws4IBB9BQCbPFg2Dv7ELjkRNfo\u002ByNFCO5rEam2/q8yKWrPXKlEJfvGCQJuO/JaKKCUvx5yVTw7grYXXuqpVM7GjtPnK63awoYJECAwEAAaN8MHowDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMB8GA1UdIwQYMBaAFAYJAKo47CbB5YCHFrZnq67XighrMB0GA1UdDgQWBBQGCQCqOOwmweWAhxa2Z6uu14oIazANBgkqhkiG9w0BAQsFAAOCAQEAnP\u002BTcLkfaJHTTyzaesi\u002BvKW/asSOVkxKLS2XOlZQqgasj/w5E5YR\u002Bxui7Sqobcig3A7UcpPyUdiABajtl3KE3iQ4\u002Bt0QMKTv1Lnp8eplKn8jLXk6JlHnOYo2tNo3GFe7Yc5q\u002BemZgOYksj7ARTp2FN0eN30qiQwX4YaSHw1M\u002Buo9aXTMc9PZIleJVU1u8msPHYfOkaq\u002BkifU6UZdCD3Q7skjzN36p5OetTkzPzqb8e9kUj3HGfagdBOd5VcB7IdPYo97a7Teeuhsdt72n7\u002BOAnd0p6RvoctBpeljurmX3QmVR3ssjLP8AwfWVrHxfAWpZVtMETEg2vj28qS0TbhaQw==",
+        "attributes": {
+          "enabled": true,
+          "nbf": 1651245968,
+          "exp": 1682782568,
+          "created": 1651246568,
+          "updated": 1651246568,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "recoverableDays": 7
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

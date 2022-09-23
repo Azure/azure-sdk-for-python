@@ -55,21 +55,21 @@ setup(
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub',
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
         "azure-core<2.0.0,>=1.14.0",
-        "uamqp>=1.5.1,<2.0.0",
+        "uamqp>=1.6.0,<2.0.0",
+        "typing-extensions>=4.0.1",
     ]
 )

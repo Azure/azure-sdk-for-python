@@ -77,8 +77,10 @@ class StorageQueueEncodingTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_message_text_xml(self, storage_account_name, storage_account_key):
         # Arrange.
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
-        message = u'<message1>'
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
+        message = '<message1>'
         queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
         # Asserts
@@ -88,8 +90,10 @@ class StorageQueueEncodingTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_message_text_xml_whitespace(self, storage_account_name, storage_account_key):
         # Arrange.
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
-        message = u'  mess\t age1\n'
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
+        message = '  mess\t age1\n'
         queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
         # Asserts
@@ -99,9 +103,11 @@ class StorageQueueEncodingTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_message_text_xml_invalid_chars(self, storage_account_name, storage_account_key):
         # Action.
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         queue = self._get_queue_reference(qsc)
-        message = u'\u0001'
+        message = '\u0001'
 
         # Asserts
         with self.assertRaises(HttpResponseError):
@@ -111,7 +117,9 @@ class StorageQueueEncodingTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_message_text_base64(self, storage_account_name, storage_account_key):
         # Arrange.
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         queue = QueueClient(
             account_url=self.account_url(storage_account_name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
@@ -129,7 +137,9 @@ class StorageQueueEncodingTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_message_bytes_base64(self, storage_account_name, storage_account_key):
         # Arrange.
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         queue = QueueClient(
             account_url=self.account_url(storage_account_name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
@@ -147,7 +157,9 @@ class StorageQueueEncodingTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_message_bytes_fails(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         queue = self._get_queue_reference(qsc)
         # Action.
         with self.assertRaises(TypeError) as e:
@@ -155,13 +167,17 @@ class StorageQueueEncodingTestAsync(AsyncStorageTestCase):
             await queue.send_message(message)
 
             # Asserts
-            self.assertTrue(str(e.exception).startswith('Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes.'))
+            self.assertTrue(str(e.exception).startswith(
+                'Message content must not be bytes. '
+                'Use the BinaryBase64EncodePolicy to send bytes.'))
 
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_message_text_fails(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         queue = QueueClient(
             account_url=self.account_url(storage_account_name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
@@ -172,7 +188,7 @@ class StorageQueueEncodingTestAsync(AsyncStorageTestCase):
 
         # Action.
         with self.assertRaises(TypeError) as e:
-            message = u'xyz'
+            message = 'xyz'
             await queue.send_message(message)
 
         # Asserts
@@ -182,7 +198,9 @@ class StorageQueueEncodingTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_message_base64_decode_fails(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         queue = QueueClient(
             account_url=self.account_url(storage_account_name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
@@ -194,7 +212,7 @@ class StorageQueueEncodingTestAsync(AsyncStorageTestCase):
             await queue.create_queue()
         except ResourceExistsError:
             pass
-        message = u'xyz'
+        message = 'xyz'
         await queue.send_message(message)
 
         # Action.

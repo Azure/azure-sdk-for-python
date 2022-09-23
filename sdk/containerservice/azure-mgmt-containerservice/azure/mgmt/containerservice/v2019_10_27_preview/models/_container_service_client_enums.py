@@ -6,36 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class OpenShiftAgentPoolProfileRole(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """OpenShiftAgentPoolProfileRole represents the role of the AgentPoolProfile.
-    """
+class OpenShiftAgentPoolProfileRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """OpenShiftAgentPoolProfileRole represents the role of the AgentPoolProfile."""
 
     COMPUTE = "compute"
     INFRA = "infra"
 
-class OpenShiftContainerServiceVMSize(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Size of OpenShift VMs.
-    """
+
+class OpenShiftContainerServiceVMSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Size of OpenShift VMs."""
 
     STANDARD_D2_S_V3 = "Standard_D2s_v3"
     STANDARD_D4_S_V3 = "Standard_D4s_v3"
@@ -71,9 +54,9 @@ class OpenShiftContainerServiceVMSize(with_metaclass(_CaseInsensitiveEnumMeta, s
     STANDARD_L16_S = "Standard_L16s"
     STANDARD_L32_S = "Standard_L32s"
 
-class OSType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """OsType to be used to specify os type. Choose from Linux and Windows. Default to Linux.
-    """
+
+class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """OsType to be used to specify os type. Choose from Linux and Windows. Default to Linux."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"

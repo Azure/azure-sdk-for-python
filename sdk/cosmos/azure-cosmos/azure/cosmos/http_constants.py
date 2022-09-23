@@ -166,6 +166,7 @@ class HttpHeaders(object):
     # Offer type.
     OfferType = "x-ms-offer-type"
     OfferThroughput = "x-ms-offer-throughput"
+    AutoscaleSettings = "x-ms-cosmos-offer-autopilot-settings"
 
     # Custom RUs/minute headers
     DisableRUPerMinuteUsage = "x-ms-documentdb-disable-ru-per-minute-usage"
@@ -198,6 +199,10 @@ class HttpHeaders(object):
 
     # For Using Multiple Write Locations
     AllowTentativeWrites = "x-ms-cosmos-allow-tentative-writes"
+
+    # Dedicated Gateway headers
+    DedicatedGatewayCacheStaleness = "x-ms-dedicatedgateway-max-age"
+    IntegratedCacheHit = "x-ms-cosmos-cachehit"
 
 
 class HttpHeaderPreferenceTokens(object):
@@ -375,6 +380,7 @@ class SubStatusCodes(object):
     REDUNDANT_COLLECTION_PUT = 1009
     SHARED_THROUGHPUT_DATABASE_QUOTA_EXCEEDED = 1010
     SHARED_THROUGHPUT_OFFER_GROW_NOT_NEEDED = 1011
+    AAD_REQUEST_NOT_AUTHORIZED = 5300
 
     # 404: LSN in session token is higher
     READ_SESSION_NOTAVAILABLE = 1002

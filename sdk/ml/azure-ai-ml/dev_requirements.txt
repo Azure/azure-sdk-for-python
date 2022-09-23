@@ -1,0 +1,18 @@
+-e ../../../tools/azure-sdk-tools
+../../core/azure-core
+-e ../../../tools/azure-devtools
+../../identity/azure-identity
+marshmallow-jsonschema==0.10.0
+mock
+pytest-cov
+pytest-forked
+pytest-xdist
+pytest-timeout
+pytest-mock
+pytest
+pydash
+azure-mgmt-msi
+pywin32==304 ; sys_platform == 'win32'
+numpy;platform.python_implementation!="PyPy"
+scikit-image;platform.python_implementation!="PyPy"
+simplification;platform.python_implementation!="PyPy"

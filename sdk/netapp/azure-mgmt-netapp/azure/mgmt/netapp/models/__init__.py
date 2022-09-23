@@ -28,6 +28,8 @@ from ._models_py3 import Dimension
 from ._models_py3 import ExportPolicyRule
 from ._models_py3 import FilePathAvailabilityRequest
 from ._models_py3 import HourlySchedule
+from ._models_py3 import LdapSearchScopeOpt
+from ._models_py3 import ListReplications
 from ._models_py3 import LogSpecification
 from ._models_py3 import MetricSpecification
 from ._models_py3 import MonthlySchedule
@@ -43,6 +45,8 @@ from ._models_py3 import PlacementKeyValuePairs
 from ._models_py3 import PoolChangeRequest
 from ._models_py3 import ProxyResource
 from ._models_py3 import QuotaAvailabilityRequest
+from ._models_py3 import ReestablishReplicationRequest
+from ._models_py3 import Replication
 from ._models_py3 import ReplicationObject
 from ._models_py3 import ReplicationStatus
 from ._models_py3 import Resource
@@ -56,10 +60,16 @@ from ._models_py3 import SnapshotPolicy
 from ._models_py3 import SnapshotPolicyDetails
 from ._models_py3 import SnapshotPolicyPatch
 from ._models_py3 import SnapshotPolicyVolumeList
+from ._models_py3 import SnapshotRestoreFiles
 from ._models_py3 import SnapshotsList
 from ._models_py3 import SubscriptionQuotaItem
 from ._models_py3 import SubscriptionQuotaItemList
+from ._models_py3 import SubvolumeInfo
+from ._models_py3 import SubvolumeModel
+from ._models_py3 import SubvolumePatchRequest
+from ._models_py3 import SubvolumesList
 from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
 from ._models_py3 import Vault
 from ._models_py3 import VaultList
 from ._models_py3 import Volume
@@ -76,6 +86,10 @@ from ._models_py3 import VolumePatchPropertiesDataProtection
 from ._models_py3 import VolumePatchPropertiesExportPolicy
 from ._models_py3 import VolumePropertiesDataProtection
 from ._models_py3 import VolumePropertiesExportPolicy
+from ._models_py3 import VolumeQuotaRule
+from ._models_py3 import VolumeQuotaRulePatch
+from ._models_py3 import VolumeQuotaRulesList
+from ._models_py3 import VolumeRelocationProperties
 from ._models_py3 import VolumeRevert
 from ._models_py3 import VolumeSnapshotProperties
 from ._models_py3 import WeeklySchedule
@@ -90,20 +104,26 @@ from ._net_app_management_client_enums import (
     CheckQuotaNameResourceTypes,
     ChownMode,
     CreatedByType,
+    EnableSubvolumes,
+    EncryptionKeySource,
     EncryptionType,
     EndpointType,
     InAvailabilityReasonType,
     MetricAggregationType,
     MirrorState,
     NetworkFeatures,
+    ProvisioningState,
     QosType,
     RelationshipStatus,
     ReplicationSchedule,
     SecurityStyle,
     ServiceLevel,
+    Type,
     VolumeStorageToNetworkProximity,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AccountEncryption',
     'ActiveDirectory',
@@ -127,6 +147,8 @@ __all__ = [
     'ExportPolicyRule',
     'FilePathAvailabilityRequest',
     'HourlySchedule',
+    'LdapSearchScopeOpt',
+    'ListReplications',
     'LogSpecification',
     'MetricSpecification',
     'MonthlySchedule',
@@ -142,6 +164,8 @@ __all__ = [
     'PoolChangeRequest',
     'ProxyResource',
     'QuotaAvailabilityRequest',
+    'ReestablishReplicationRequest',
+    'Replication',
     'ReplicationObject',
     'ReplicationStatus',
     'Resource',
@@ -155,10 +179,16 @@ __all__ = [
     'SnapshotPolicyDetails',
     'SnapshotPolicyPatch',
     'SnapshotPolicyVolumeList',
+    'SnapshotRestoreFiles',
     'SnapshotsList',
     'SubscriptionQuotaItem',
     'SubscriptionQuotaItemList',
+    'SubvolumeInfo',
+    'SubvolumeModel',
+    'SubvolumePatchRequest',
+    'SubvolumesList',
     'SystemData',
+    'TrackedResource',
     'Vault',
     'VaultList',
     'Volume',
@@ -175,6 +205,10 @@ __all__ = [
     'VolumePatchPropertiesExportPolicy',
     'VolumePropertiesDataProtection',
     'VolumePropertiesExportPolicy',
+    'VolumeQuotaRule',
+    'VolumeQuotaRulePatch',
+    'VolumeQuotaRulesList',
+    'VolumeRelocationProperties',
     'VolumeRevert',
     'VolumeSnapshotProperties',
     'WeeklySchedule',
@@ -186,16 +220,22 @@ __all__ = [
     'CheckQuotaNameResourceTypes',
     'ChownMode',
     'CreatedByType',
+    'EnableSubvolumes',
+    'EncryptionKeySource',
     'EncryptionType',
     'EndpointType',
     'InAvailabilityReasonType',
     'MetricAggregationType',
     'MirrorState',
     'NetworkFeatures',
+    'ProvisioningState',
     'QosType',
     'RelationshipStatus',
     'ReplicationSchedule',
     'SecurityStyle',
     'ServiceLevel',
+    'Type',
     'VolumeStorageToNetworkProximity',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

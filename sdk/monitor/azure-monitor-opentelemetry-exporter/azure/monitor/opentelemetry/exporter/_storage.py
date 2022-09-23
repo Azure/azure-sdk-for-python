@@ -84,7 +84,9 @@ class LocalFileStorage:
         max_size=50 * 1024 * 1024,  # 50MiB
         maintenance_period=60,  # 1 minute
         retention_period=7 * 24 * 60 * 60,  # 7 days
-        write_timeout=60,  # 1 minute
+        write_timeout=60,  # 1 minute,
+        name=None,
+        lease_period=60,  # 1 minute
     ):
         self._path = os.path.abspath(path)
         self._max_size = max_size
@@ -94,7 +96,9 @@ class LocalFileStorage:
         self._maintenance_task = PeriodicTask(
             interval=maintenance_period,
             function=self._maintenance_routine,
+            name=name,
         )
+        self._lease_period = lease_period
         self._maintenance_task.daemon = True
         self._maintenance_task.start()
 
@@ -162,7 +166,7 @@ class LocalFileStorage:
             pass
         return None
 
-    def put(self, data, lease_period=0):
+    def put(self, data, lease_period=None):
         # Create path if it doesn't exist
         try:
             if not os.path.isdir(self._path):
@@ -182,6 +186,8 @@ class LocalFileStorage:
                 ),
             )
         )
+        if lease_period is None:
+            lease_period = self._lease_period
         return blob.put(data, lease_period=lease_period)
 
     def _check_storage_size(self):

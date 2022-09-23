@@ -35,11 +35,10 @@ setup(
     license="MIT License",
     # ensure that the development status reflects the status of your package
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
@@ -53,10 +52,10 @@ setup(
             "azure",
         ]
     ),
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     install_requires=[
-        "azure-core>=1.20.0,<2.0.0",
-        "msrest>=0.6.21",
+        "azure-core>=1.24.0,<2.0.0",
+        "msrest>=0.7.1",
     ],
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",

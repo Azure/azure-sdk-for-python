@@ -11,10 +11,11 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
+from msrest import Deserializer, Serializer
+
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from msrest import Deserializer, Serializer
 
 from ._configuration import FeatureClientConfiguration
 from ._operations_mixin import FeatureClientOperationsMixin

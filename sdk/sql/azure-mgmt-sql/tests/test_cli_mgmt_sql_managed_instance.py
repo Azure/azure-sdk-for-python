@@ -10,31 +10,30 @@
 #   ManagedInstances: 6/8
 #   ManagedInstanceOperations: 1/3
 
-import unittest
+import pytest
 
 import azure.mgmt.sql
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, ResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtSqlTest(AzureMgmtTestCase):
+class TestMgmtSql(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtSqlTest, self).setUp()
-        self.mgmt_client = self.create_mgmt_client(
+    def setup_method(self, method):
+        self.client = self.create_mgmt_client(
             azure.mgmt.sql.SqlManagementClient
         )
-        self.mgmt_client180601 = self.create_mgmt_client(
-            azure.mgmt.sql.SqlManagementClient,
-            api_version="2018-06-01-preview"
-        )
+        # self.mgmt_client180601 = self.create_mgmt_client(
+        #     azure.mgmt.sql.SqlManagementClient,
+        #     api_version="2018-06-01-preview"
+        # )
 
-        if self.is_live:
-            from azure.mgmt.network import NetworkManagementClient
-            self.network_client = self.create_mgmt_client(
-                NetworkManagementClient
-            )
+        # if self.is_live:
+        #     from azure.mgmt.network import NetworkManagementClient
+        #     self.network_client = self.create_mgmt_client(
+        #         NetworkManagementClient
+        #     )
 
     def create_virtual_network(self, group_name, location, security_group_name, route_table_name, network_name, subnet_name):
 
@@ -158,6 +157,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
 
         return subnet_info
 
+    @recorded_by_proxy
     def test_instance_operation(self):
 
         RESOURCE_GROUP = "testManagedInstance"
@@ -166,7 +166,9 @@ class MgmtSqlTest(AzureMgmtTestCase):
 #--------------------------------------------------------------------------
         # /ManagedInstanceOperations/get/List the managed instance management operations[get]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.managed_instance_operations.list_by_managed_instance(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME)
+        # result = self.client.managed_instance_operations.list_by_managed_instance(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME)
+        result = self.client.managed_instances.list()
+        page_result = [item for item in result]
 
 #--------------------------------------------------------------------------
         # /ManagedInstanceOperations/get/Gets the managed instance management operation[get]
@@ -178,7 +180,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
 #--------------------------------------------------------------------------
         # result = self.mgmt_client.managed_instance_operations.cancel(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, operation_id=OPERATION_ID)
 
-    @unittest.skip("it will take a long time.")
+    @pytest.mark.skip("it will take a long time.")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_managed_instances(self, resource_group):
 

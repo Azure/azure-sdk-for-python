@@ -9,68 +9,68 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0b2 Python/3.7.4 (Windows-10-10.0.22523-SP0)
+      - azsdk-python-communication-identity/1.2.0 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Thu, 03 Feb 2022 18:48:53 GMT
+      - Wed, 23 Mar 2022 18:20:55 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities?api-version=2021-10-31-preview
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
   response:
     body:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
-        2021-03-31-preview1, 2021-10-31-preview, 2021-11-01, 2022-06-01
+        2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Thu, 03 Feb 2022 18:48:52 GMT
-      ms-cv: kOGruAYNnU6ZbLZhNUoUFA.0
+      date: Wed, 23 Mar 2022 18:20:54 GMT
+      ms-cv: YyJTnZqGS0+GCsBPWelYQw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 50ms
+      x-processing-time: 25ms
     status:
       code: 201
       message: Created
-    url: https://smstestapp.communication.azure.com/identities?api-version=2021-10-31-preview
+    url: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
 - request:
-    body: '{"id": "sanitized"}'
+    body: '{"id": "sanitized", "ttl": 172800}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '89'
+      - '104'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-networktraversal/1.0.0 Python/3.7.4 (Windows-10-10.0.22523-SP0)
+      - azsdk-python-communication-networktraversal/1.1.0b1 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Thu, 03 Feb 2022 18:48:53 GMT
+      - Wed, 23 Mar 2022 18:20:55 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/networkTraversal/:issueRelayConfiguration?api-version=2022-02-01
+    uri: https://sanitized.communication.azure.com/networkTraversal/:issueRelayConfiguration?api-version=2022-03-01-preview
   response:
     body:
       string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:turn.azure.com:3478"],
         "username": "sanitized", "credential": "sanitized"}, {"routeType": "nearest",
         "urls": ["stun:13.107.17.41:3478", "turn:13.107.17.41:3478"], "username":
-        "BQAANgXq6bcB2BrBt5f14jsG/lyJbl6efa38r47pVPsAAAAMARCsgNlqhd5IsZldo6P6NifI5VKqIv9QRHddKT/0AL0VmCUA4yg=",
-        "credential": "gPqFWLs+JTtu0j+w8ccmjxYejfo="}], "expiresOn": "2022-02-05T18:48:53.773773+00:00"}'
+        "BQAANhGES1cB2EB1sej1t5SenRObg/d087AUx18BmsAAAAAMARCsgNlqhd5IsZldo6P6NifIv18HzVC+BishpmfVSVaND7hzxz8=",
+        "credential": "EZkSKp4wjPHNhNbAkknoEa2GIYE="}], "expiresOn": "2022-03-25T18:20:55.6700202+00:00"}'
     headers:
       api-supported-versions: 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview,
-        2022-02-01
-      content-length: '545'
+        2022-03-01-preview
+      content-length: '546'
       content-type: application/json; charset=utf-8
-      date: Thu, 03 Feb 2022 18:48:53 GMT
-      ms-cv: AZ7+TGWb3E2e792YF8PRJQ.0
+      date: Wed, 23 Mar 2022 18:20:55 GMT
+      ms-cv: sRi3DrgT+Um8ENnuncXK8Q.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 51ms
+      x-processing-time: 41ms
     status:
       code: 200
       message: OK
-    url: https://smstestapp.communication.azure.com/networkTraversal/:issueRelayConfiguration?api-version=2022-02-01
+    url: https://smstestapp.communication.azure.com/networkTraversal/:issueRelayConfiguration?api-version=2022-03-01-preview
 version: 1

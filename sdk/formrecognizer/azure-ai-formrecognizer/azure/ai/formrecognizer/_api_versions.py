@@ -4,16 +4,17 @@
 # ------------------------------------
 
 from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class DocumentAnalysisApiVersion(str, Enum):
+class DocumentAnalysisApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Form Recognizer API versions supported by DocumentAnalysisClient and DocumentModelAdministrationClient."""
 
     #: This is the default version
-    V2022_01_30_PREVIEW = "2022-01-30-preview"
+    V2022_08_31 = "2022-08-31"
 
 
-class FormRecognizerApiVersion(str, Enum):
+class FormRecognizerApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Form Recognizer API versions supported by FormRecognizerClient and FormTrainingClient."""
 
     #: This is the default version
@@ -21,9 +22,8 @@ class FormRecognizerApiVersion(str, Enum):
     V2_0 = "2.0"
 
 
-def validate_api_version(api_version, client_kind):
-    # type: (str, str) -> None
-    """Raise ValueError if api_version is invalid """
+def validate_api_version(api_version: str, client_kind: str) -> None:
+    """Raise ValueError if api_version is invalid"""
 
     if client_kind == "form":
         try:
@@ -36,9 +36,7 @@ def validate_api_version(api_version, client_kind):
                 api_version = DocumentAnalysisApiVersion(api_version)
                 err_message += (
                     "\nAPI version '{}' is only available for "
-                    "DocumentAnalysisClient and DocumentModelAdministrationClient.".format(
-                        api_version
-                    )
+                    "DocumentAnalysisClient and DocumentModelAdministrationClient.".format(api_version)
                 )
             except ValueError:
                 pass

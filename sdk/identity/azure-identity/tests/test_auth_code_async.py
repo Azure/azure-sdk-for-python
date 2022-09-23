@@ -78,6 +78,17 @@ async def test_user_agent():
 
     await credential.get_token("scope")
 
+async def test_tenant_id():
+    transport = async_validating_transport(
+        requests=[Request(required_headers={"User-Agent": USER_AGENT})],
+        responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
+
+    credential = AuthorizationCodeCredential(
+        "tenant-id", "client-id", "auth-code", "http://localhost", transport=transport, additionally_allowed_tenants=['*']
+    )
+
+    await credential.get_token("scope", tenant_id="tenant_id")
 
 async def test_auth_code_credential():
     client_id = "client id"
@@ -161,6 +172,7 @@ async def test_multitenant_authentication():
         "authcode",
         "https://localhost",
         transport=Mock(send=send),
+        additionally_allowed_tenants=['*']
     )
     token = await credential.get_token("scope")
     assert token.token == first_token
@@ -186,7 +198,7 @@ async def test_multitenant_authentication_not_allowed():
         return mock_response(json_payload=build_aad_response(access_token=token, refresh_token="**"))
 
     credential = AuthorizationCodeCredential(
-        expected_tenant, "client-id", "authcode", "https://localhost", transport=Mock(send=send)
+        expected_tenant, "client-id", "authcode", "https://localhost", transport=Mock(send=send), additionally_allowed_tenants=['*']
     )
 
     token = await credential.get_token("scope")

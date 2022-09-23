@@ -7,29 +7,32 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from azure.core import PipelineClient
-from msrest import Deserializer, Serializer
+from azure.core.rest import HttpRequest, HttpResponse
 
 from . import models
+from .._serialization import Deserializer, Serializer
 from ._configuration import TextAnalyticsClientConfiguration
 from .operations import TextAnalyticsClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
-
     from azure.core.credentials import TokenCredential
-    from azure.core.rest import HttpRequest, HttpResponse
 
-class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
-    """The Text Analytics API is a suite of natural language processing (NLP) services built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction and language detection. Functionality for analysis of text specific to the healthcare domain and personal information are also available in the API. Further documentation can be found in :code:`<a href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
+class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+    """The Text Analytics API is a suite of natural language processing (NLP) services built with
+    best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
+    unstructured text for tasks such as sentiment analysis, key phrase extraction and language
+    detection. Functionality for analysis of text specific to the healthcare domain and personal
+    information are also available in the API. Further documentation can be found in :code:`<a
+    href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
-     https://westus.api.cognitive.microsoft.com).
+     https://westus.api.cognitive.microsoft.com). Required.
     :type endpoint: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -37,14 +40,13 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        endpoint,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        _base_url = '{Endpoint}/text/analytics/v3.1'
-        self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
-        self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
+        credential: "TokenCredential",
+        endpoint: str,
+        **kwargs: Any
+    ) -> None:
+        _endpoint = '{Endpoint}/text/analytics/v3.1'
+        self._config = TextAnalyticsClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
+        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -54,10 +56,9 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
 
     def _send_request(
         self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -66,7 +67,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

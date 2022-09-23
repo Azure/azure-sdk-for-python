@@ -51,6 +51,7 @@ from ._workspace_managed_sql_server_vulnerability_assessments_operations import 
 from ._workspace_managed_sql_server_encryption_protector_operations import WorkspaceManagedSqlServerEncryptionProtectorOperations
 from ._workspace_managed_sql_server_usages_operations import WorkspaceManagedSqlServerUsagesOperations
 from ._workspace_managed_sql_server_recoverable_sql_pools_operations import WorkspaceManagedSqlServerRecoverableSqlPoolsOperations
+from ._workspace_managed_sql_server_dedicated_sql_minimal_tls_settings_operations import WorkspaceManagedSqlServerDedicatedSQLMinimalTlsSettingsOperations
 from ._workspaces_operations import WorkspacesOperations
 from ._workspace_aad_admins_operations import WorkspaceAadAdminsOperations
 from ._workspace_sql_aad_admins_operations import WorkspaceSqlAadAdminsOperations
@@ -125,6 +126,7 @@ __all__ = [
     'WorkspaceManagedSqlServerEncryptionProtectorOperations',
     'WorkspaceManagedSqlServerUsagesOperations',
     'WorkspaceManagedSqlServerRecoverableSqlPoolsOperations',
+    'WorkspaceManagedSqlServerDedicatedSQLMinimalTlsSettingsOperations',
     'WorkspacesOperations',
     'WorkspaceAadAdminsOperations',
     'WorkspaceSqlAadAdminsOperations',

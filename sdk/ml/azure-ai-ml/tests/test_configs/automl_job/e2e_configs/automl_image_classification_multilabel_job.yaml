@@ -1,0 +1,66 @@
+$schema: https://azuremlschemas.azureedge.net/latest/autoMLJob.schema.json
+type: automl
+
+experiment_name: automl-image-classification-multilabel-e2e-cli-test
+compute: azureml:gpu-cluster
+
+log_verbosity: debug
+task: image_classification_multilabel
+primary_metric: iou
+
+limits:
+  timeout_minutes: 60
+  max_trials: 10
+  max_concurrent_trials: 2
+
+target_column_name: label
+training_data:
+  path: src/azure-ai-ml/tests/test_configs/automl_job/test_datasets/image_classification_multilabel/train
+  type: mltable
+validation_data:
+  path: src/azure-ai-ml/tests/test_configs/automl_job/test_datasets/image_classification_multilabel/valid
+  type: mltable
+
+sweep:
+  sampling_algorithm: random
+  early_termination:
+    type: bandit
+    evaluation_interval: 2
+    slack_factor: 0.2
+    delay_evaluation: 6
+
+training_parameters:
+  early_stopping: true
+  evaluation_frequency: 1
+
+search_space:
+  - model_name:
+      type: choice
+      values: [vitb16r224, vits16r224]
+    learning_rate:
+      type: uniform
+      min_value: 0.005
+      max_value: 0.05
+    number_of_epochs:
+      type: choice
+      values: [15, 30]
+    gradient_accumulation_step:
+      type: choice
+      values: [1, 2]
+
+  - model_name:
+      type: choice
+      values: [seresnext]
+    learning_rate:
+      type: uniform
+      min_value: 0.005
+      max_value: 0.05
+    validation_resize_size:
+      type: choice
+      values: [288, 320, 352]
+    validation_crop_size:
+      type: choice
+      values: [224, 256]
+    training_crop_size:
+      type: choice
+      values: [224, 256]

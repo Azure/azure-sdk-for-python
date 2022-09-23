@@ -5,30 +5,29 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
 import time
-import unittest
 from datetime import datetime, timedelta
-import asyncio
+
 import pytest
 import requests
 from azure.core.pipeline.transport import AioHttpTransport
-from azure.core.pipeline.transport import AsyncioRequestsTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from azure.core.exceptions import (
-    HttpResponseError,
-    ResourceNotFoundError,
-    ResourceExistsError)
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from azure.storage.fileshare import (
     AccessPolicy,
-    ShareSasPermissions,
+    AccountSasPermissions,
+    ResourceTypes,
     ShareAccessTier,
+    ShareProtocols,
+    ShareRootSquash,
+    ShareSasPermissions,
+    generate_account_sas,
     generate_share_sas,
-    ShareRootSquash, ShareProtocols
 )
 from azure.storage.fileshare.aio import (
     ShareServiceClient,
-    ShareDirectoryClient,
     ShareFileClient,
     ShareClient,
 )
@@ -37,8 +36,6 @@ from devtools_testutils.storage.aio import AsyncStorageTestCase
 from devtools_testutils.storage import LogCaptured
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
-
-
 # ------------------------------------------------------------------------------
 
 
@@ -262,7 +259,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.sleep(5)
         with self.assertRaises(HttpResponseError):
             await share_client.delete_share()
-        self.sleep(10)
+        self.sleep(12)
         await share_client.delete_share()
 
     @FileSharePreparer()
@@ -277,7 +274,7 @@ class StorageShareTest(AsyncStorageTestCase):
         # Assert
         with self.assertRaises(HttpResponseError):
             await share_client.acquire_lease()
-        self.sleep(15)
+        self.sleep(17)
         await share_client.acquire_lease()
 
     @FileSharePreparer()
@@ -806,6 +803,33 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(shares2, share_names[2])
         self.assertNamedItemInContainer(shares2, share_names[3])
         await self._delete_shares(prefix)
+
+    @pytest.mark.live_test_only
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_shares_account_sas(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share = await self._create_share()
+        sas_token = generate_account_sas(
+            storage_account_name,
+            storage_account_key,
+            ResourceTypes(service=True),
+            AccountSasPermissions(list=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        fsc = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=sas_token)
+        shares = []
+        async for s in fsc.list_shares():
+            shares.append(s)
+
+        # Assert
+        self.assertIsNotNone(shares)
+        self.assertGreaterEqual(len(shares), 1)
+        self.assertIsNotNone(shares[0])
+        self.assertNamedItemInContainer(shares, share.share_name)
+        await self._delete_shares()
 
 
     @FileSharePreparer()

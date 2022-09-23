@@ -6,33 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessPolicyUpdateKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccessPolicyUpdateKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ADD = "add"
     REPLACE = "replace"
     REMOVE = "remove"
 
-class CertificatePermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CertificatePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     GET = "get"
     LIST = "list"
@@ -51,14 +35,14 @@ class CertificatePermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     BACKUP = "backup"
     RESTORE = "restore"
 
-class CreateMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The vault's create mode to indicate whether the vault need to be recovered or not.
     """
 
     RECOVER = "recover"
     DEFAULT = "default"
 
-class KeyPermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class KeyPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENCRYPT = "encrypt"
     DECRYPT = "decrypt"
@@ -77,7 +61,7 @@ class KeyPermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RECOVER = "recover"
     PURGE = "purge"
 
-class NetworkRuleAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NetworkRuleAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default action when no rule from ipRules and from virtualNetworkRules match. This is only
     used after the bypass property has been evaluated.
     """
@@ -85,7 +69,7 @@ class NetworkRuleAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ALLOW = "Allow"
     DENY = "Deny"
 
-class NetworkRuleBypassOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NetworkRuleBypassOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tells what traffic can bypass network rules. This can be 'AzureServices' or 'None'.  If not
     specified the default is 'AzureServices'.
     """
@@ -93,7 +77,7 @@ class NetworkRuleBypassOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     AZURE_SERVICES = "AzureServices"
     NONE = "None"
 
-class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current provisioning state.
     """
 
@@ -104,7 +88,7 @@ class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitive
     FAILED = "Failed"
     DISCONNECTED = "Disconnected"
 
-class PrivateEndpointServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The private endpoint connection status.
     """
 
@@ -113,7 +97,7 @@ class PrivateEndpointServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnum
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
-class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason that a vault name could not be used. The Reason element is only returned if
     NameAvailable is false.
     """
@@ -121,7 +105,7 @@ class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ACCOUNT_NAME_INVALID = "AccountNameInvalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class SecretPermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SecretPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     GET = "get"
     LIST = "list"
@@ -132,20 +116,20 @@ class SecretPermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RECOVER = "recover"
     PURGE = "purge"
 
-class SkuFamily(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SKU family name
     """
 
     A = "A"
 
-class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SKU name to specify whether the key vault is a standard vault or a premium vault.
     """
 
     STANDARD = "standard"
     PREMIUM = "premium"
 
-class StoragePermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StoragePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     GET = "get"
     LIST = "list"

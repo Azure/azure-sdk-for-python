@@ -1,0 +1,24 @@
+{
+    "expected_rest_overrides": {
+        "resources": {
+            "instance_count": 2,
+            "properties": {
+                "prop1": "a_prop",
+                "prop2": "another_prop"
+            }
+        },
+        "distribution": {
+            "distribution_type": "Mpi",
+            "process_count_per_instance": 2
+        },
+        "environment_variables": {
+            "FOO": "bar"
+        },
+        "additional_override": {
+            "nested_override": 5
+        }
+    },
+    "expected_rest_settings": {
+        "continue_on_step_failure": true
+    }
+}

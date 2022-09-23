@@ -1,16 +1,80 @@
 ## Release History
 
-### 4.3.0b3 (Unreleased)
+### 4.3.1b2 (Unreleased)
 
 #### Features Added
-- Added support for split-proof queries for the async client
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
+### 4.3.1b1 (2022-09-19)
+
+#### Features Added
+- GA release of integrated cache functionality. For more information on integrated cache please see [Azure Cosmos DB integrated cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache).
+- Added ability to replace analytical ttl on containers. For more information on analytical ttl please see [Azure Cosmos DB analytical store](https://docs.microsoft.com/azure/cosmos-db/analytical-store-introduction).
+- Added `CosmosHttpLoggingPolicy` to replace `HttpLoggingPolicy` for logging HTTP sessions.
+- Added the ability to create containers and databases with autoscale properties for the sync and async clients.
+- Added the ability to update autoscale throughput properties.
+
+#### Bugs Fixed
+- Fixed parsing of args for overloaded `container.read()` method.
+- Fixed `validate_cache_staleness_value()` method to allow max_integrated_cache_staleness to be an integer greater than or equal to 0.
+- Fixed `__aiter__()` method by removing the async keyword.
+
+### 4.3.0 (2022-05-23)
+#### Features Added
+- GA release of Async I/O APIs, including all changes from 4.3.0b1 to 4.3.0b4.
+
+#### Breaking Changes
+- Method signatures have been updated to use keyword arguments instead of positional arguments for most method options in the async client.
+- Bugfix: Automatic Id generation for items was turned on for `upsert_items()` method when no 'id' value was present in document body.
+Method call will now require an 'id' field to be present in the document body.
+
+#### Other Changes
+- Deprecated offer-named methods in favor of their new throughput-named counterparts (`read_offer` -> `get_throughput`).
+- Marked the GetAuthorizationHeader method for deprecation since it will no longer be public in a future release.
+- Added samples showing how to configure retry options for both the sync and async clients.
+- Deprecated the `connection_retry_policy` and `retry_options` options in the sync client.
+- Added user warning to non-query methods trying to use `populate_query_metrics` options.
+
+### 4.3.0b4 (2022-04-07)
+
+#### Features Added
+- Added support for AAD authentication for the async client.
+- Added support for AAD authentication for the sync client.
+
+#### Other Changes
+- Changed `_set_partition_key` return typehint in async client.
+
+### 4.3.0b3 (2022-03-10)
+
+>[WARNING]
+>The default `Session` consistency bugfix will impact customers whose database accounts have a `Bounded Staleness` or `Strong`
+> consistency level, and were previously not sending `Session` as a consistency_level parameter when initializing
+> their clients.
+> Default consistency level for the sync and async clients is no longer "Session" and will instead be set to the 
+  consistency level of the user's cosmos account setting on initialization if not passed during client initialization. 
+> Please see [Consistency Levels in Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/consistency-levels) 
+> for more details on consistency levels, or the README section on this change [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos#note-on-client-consistency-levels).
+
+#### Features Added
+- Added new **provisional** `max_integrated_cache_staleness_in_ms` parameter to read item and query items APIs in order
+  to make use of the **preview** CosmosDB integrated cache functionality [See PR #22946](https://github.com/Azure/azure-sdk-for-python/pull/22946).
+  Please see [Azure Cosmos DB integrated cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache) for more details.
+- Added support for split-proof queries for the async client.
 
 ### Bugs fixed
-- Default consistency level for the sync and async clients is no longer "Session" and will instead be set to the 
+- Default consistency level for the sync and async clients is no longer `Session` and will instead be set to the 
   consistency level of the user's cosmos account setting on initialization if not passed during client initialization. 
-  This change will impact client application in terms of RUs and latency. Users relying on default `Session` consistency will need to pass it explicitly if their account consistency is different than `Session`.
-  Please see [Consistency Levels in Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/consistency-levels) for more details.
+  This change will impact client application in terms of RUs and latency. Users relying on default `Session` consistency
+  will need to pass it explicitly if their account consistency is different than `Session`.
+  Please see [Consistency Levels in Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/consistency-levels) for more details.  
 - Fixed invalid request body being sent when passing in `serverScript` body parameter to replace operations for trigger, sproc and udf resources.
+- Moved `is_system_key` logic in async client.
+- Fixed TypeErrors not being thrown when passing in invalid connection retry policies to the client.
 
 ### 4.3.0b2 (2022-01-25)
 
@@ -18,15 +82,15 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
 We will also be removing support for Python 3.6 and will only support Python 3.7+ starting December 2022.
 
 #### Features Added
-- Added support for split-proof queries for the sync client
+- Added support for split-proof queries for the sync client.
 
 #### Other Changes
-- Added async user agent for async client
+- Added async user agent for async client.
 
 ### 4.3.0b1 (2021-12-14)
 
 #### Features Added
-- Added language native async i/o client
+- Added language native async i/o client.
 
 ### 4.2.0 (2020-10-08)
 
@@ -130,7 +194,7 @@ Version 4.0.0b2 is the second iteration in our efforts to build a more Pythonic 
     - `Database.read_all_users` -> `DatabaseProxy.list_users`
     - `User.read_all_permissions` -> `UserProxy.list_permissions`
 - All operations that take `request_options` or `feed_options` parameters, these have been moved to keyword only parameters. In addition, while these options dictionaries are still supported, each of the individual options within the dictionary are now supported as explicit keyword arguments.
-- The error heirarchy is now inherited from `azure.core.AzureError` instead of `CosmosError` which has been removed.
+- The error hierarchy is now inherited from `azure.core.AzureError` instead of `CosmosError` which has been removed.
     - `HTTPFailure` has been renamed to `CosmosHttpResponseError`
     - `JSONParseFailure` has been removed and replaced by `azure.core.DecodeError`
     - Added additional errors for specific response codes:
@@ -148,7 +212,7 @@ Version 4.0.0b1 is the first preview of our efforts to create a user-friendly an
 
 - Operations are now scoped to a particular client:
     - `CosmosClient`: This client handles account-level operations. This includes managing service properties and listing the databases within an account.
-    - `Database`: This client handles database-level operations. This includes creating and deleting containers, users and stored procedurs. It can be accessed from a `CosmosClient` instance by name.
+    - `Database`: This client handles database-level operations. This includes creating and deleting containers, users and stored procedures. It can be accessed from a `CosmosClient` instance by name.
     - `Container`: This client handles operations for a particular container. This includes querying and inserting items and managing properties.
     - `User`: This client handles operations for a particular user. This includes adding and deleting permissions and managing user properties.
     
@@ -237,10 +301,10 @@ Version 4.0.0b1 is the first preview of our efforts to create a user-friendly an
   By default, DocumentDB retries nine times for each request when error code 429 is encountered, honoring the retryAfter time in the response header.
   A fixed retry interval time can now be set as part of the RetryOptions property on the ConnectionPolicy object if you want to ignore the retryAfter time returned by server between the retries.
   DocumentDB now waits for a maximum of 30 seconds for each request that is being throttled (irrespective of retry count) and returns the response with error code 429.
-  This time can also be overriden in the RetryOptions property on ConnectionPolicy object.
+  This time can also be overridden in the RetryOptions property on ConnectionPolicy object.
 
 - DocumentDB now returns x-ms-throttle-retry-count and x-ms-throttle-retry-wait-time-ms as the response headers in every request to denote the throttle retry count
-  and the cummulative time the request waited between the retries.
+  and the cumulative time the request waited between the retries.
 
 - Removed the RetryPolicy class and the corresponding property (retry_policy) exposed on the document_client class and instead introduced a RetryOptions class
   exposing the RetryOptions property on ConnectionPolicy class that can be used to override some of the default retry options.

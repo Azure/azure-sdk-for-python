@@ -11,11 +11,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.7.0 Python/3.10.1 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 27 Jan 2022 18:27:53 GMT
+      - Wed, 09 Mar 2022 22:46:24 GMT
       x-ms-version:
-      - '2021-04-10'
+      - '2021-06-08'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare2579153b?restype=share
   response:
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 27 Jan 2022 18:27:53 GMT
+      - Wed, 09 Mar 2022 22:46:24 GMT
       etag:
-      - '"0x8D9E1C2BBBEAB01"'
+      - '"0x8DA021EA3ED8514"'
       last-modified:
-      - Thu, 27 Jan 2022 18:27:53 GMT
+      - Wed, 09 Mar 2022 22:46:24 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2021-04-10'
+      - '2021-06-08'
     status:
       code: 201
       message: Created
@@ -49,9 +49,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.7.0 Python/3.10.1 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 27 Jan 2022 18:27:53 GMT
+      - Wed, 09 Mar 2022 22:46:24 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -59,9 +59,9 @@ interactions:
       x-ms-file-last-write-time:
       - now
       x-ms-file-permission:
-      - inherit
+      - Inherit
       x-ms-version:
-      - '2021-04-10'
+      - '2021-06-08'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare2579153b/dir1?restype=directory
   response:
@@ -71,23 +71,23 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 27 Jan 2022 18:27:53 GMT
+      - Wed, 09 Mar 2022 22:46:24 GMT
       etag:
-      - '"0x8D9E1C2BBCEA3FF"'
+      - '"0x8DA021EA3FAEB59"'
       last-modified:
-      - Thu, 27 Jan 2022 18:27:54 GMT
+      - Wed, 09 Mar 2022 22:46:24 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes:
       - Directory
       x-ms-file-change-time:
-      - '2022-01-27T18:27:54.0422655Z'
+      - '2022-03-09T22:46:24.9751385Z'
       x-ms-file-creation-time:
-      - '2022-01-27T18:27:54.0422655Z'
+      - '2022-03-09T22:46:24.9751385Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2022-01-27T18:27:54.0422655Z'
+      - '2022-03-09T22:46:24.9751385Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
@@ -95,7 +95,7 @@ interactions:
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2021-04-10'
+      - '2021-06-08'
     status:
       code: 201
       message: Created
@@ -111,11 +111,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.7.0 Python/3.10.1 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 27 Jan 2022 18:27:54 GMT
+      - Wed, 09 Mar 2022 22:46:25 GMT
       x-ms-file-attributes:
       - ReadOnly|Directory
+      x-ms-file-change-time:
+      - '2022-03-07T10:14:30.5000000Z'
       x-ms-file-creation-time:
       - '2022-01-26T10:09:30.5000000Z'
       x-ms-file-last-write-time:
@@ -123,7 +125,7 @@ interactions:
       x-ms-file-rename-source:
       - https://storagename.file.core.windows.net/utshare2579153b/dir1
       x-ms-version:
-      - '2021-04-10'
+      - '2021-06-08'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare2579153b/dir2?restype=directory&comp=rename
   response:
@@ -133,17 +135,17 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 27 Jan 2022 18:27:53 GMT
+      - Wed, 09 Mar 2022 22:46:25 GMT
       etag:
-      - '"0x8D9E1C2BBE6E36D"'
+      - '"0x8DA021EA4461A2D"'
       last-modified:
-      - Thu, 27 Jan 2022 18:27:54 GMT
+      - Wed, 09 Mar 2022 22:46:25 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes:
       - ReadOnly | Directory
       x-ms-file-change-time:
-      - '2022-01-27T18:27:54.2011757Z'
+      - '2022-03-07T10:14:30.5000000Z'
       x-ms-file-creation-time:
       - '2022-01-26T10:09:30.5000000Z'
       x-ms-file-id:
@@ -157,7 +159,7 @@ interactions:
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2021-04-10'
+      - '2021-06-08'
     status:
       code: 200
       message: OK
@@ -171,11 +173,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.7.0 Python/3.10.1 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 27 Jan 2022 18:27:54 GMT
+      - Wed, 09 Mar 2022 22:46:25 GMT
       x-ms-version:
-      - '2021-04-10'
+      - '2021-06-08'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare2579153b/dir2?restype=directory
   response:
@@ -185,17 +187,17 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 27 Jan 2022 18:27:54 GMT
+      - Wed, 09 Mar 2022 22:46:25 GMT
       etag:
-      - '"0x8D9E1C2BBE6E36D"'
+      - '"0x8DA021EA4461A2D"'
       last-modified:
-      - Thu, 27 Jan 2022 18:27:54 GMT
+      - Wed, 09 Mar 2022 22:46:25 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes:
       - ReadOnly | Directory
       x-ms-file-change-time:
-      - '2022-01-27T18:27:54.2011757Z'
+      - '2022-03-07T10:14:30.5000000Z'
       x-ms-file-creation-time:
       - '2022-01-26T10:09:30.5000000Z'
       x-ms-file-id:
@@ -209,7 +211,7 @@ interactions:
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2021-04-10'
+      - '2021-06-08'
     status:
       code: 200
       message: OK

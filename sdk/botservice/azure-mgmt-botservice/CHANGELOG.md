@@ -1,5 +1,19 @@
 # Release History
 
+## 2.0.0b3 (2022-06-27)
+
+**Bugfixes**
+
+  - Fix multi inheritance problem for Model `Site`
+ 
+## 2.0.0b2 (2022-04-15)
+
+**Features**
+
+  - Model ListChannelWithKeysResponse has a new parameter changed_time
+  - Model ListChannelWithKeysResponse has a new parameter entity_tag
+  - Model ListChannelWithKeysResponse has a new parameter provisioning_state
+
 ## 2.0.0b1 (2022-01-10)
 
 **Features**

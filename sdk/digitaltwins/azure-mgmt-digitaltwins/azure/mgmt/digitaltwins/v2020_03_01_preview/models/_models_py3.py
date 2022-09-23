@@ -21,11 +21,10 @@ class CheckNameRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Resource name.
-    :type name: str
-    :ivar type: Required. The type of resource, for instance
-     Microsoft.DigitalTwins/digitalTwinsInstances. Default value:
-     "Microsoft.DigitalTwins/digitalTwinsInstances".
+    :ivar name: Required. Resource name.
+    :vartype name: str
+    :ivar type: The type of resource, for instance Microsoft.DigitalTwins/digitalTwinsInstances.
+     Has constant value: "Microsoft.DigitalTwins/digitalTwinsInstances".
     :vartype type: str
     """
 
@@ -47,6 +46,10 @@ class CheckNameRequest(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. Resource name.
+        :paramtype name: str
+        """
         super(CheckNameRequest, self).__init__(**kwargs)
         self.name = name
 
@@ -54,16 +57,16 @@ class CheckNameRequest(msrest.serialization.Model):
 class CheckNameResult(msrest.serialization.Model):
     """The result returned from a check name availability request.
 
-    :param name_available: Specifies a Boolean value that indicates if the name is available.
-    :type name_available: bool
-    :param name: The name that was checked.
-    :type name: str
-    :param message: Message indicating an unavailable name due to a conflict, or a description of
+    :ivar name_available: Specifies a Boolean value that indicates if the name is available.
+    :vartype name_available: bool
+    :ivar name: The name that was checked.
+    :vartype name: str
+    :ivar message: Message indicating an unavailable name due to a conflict, or a description of
      the naming rules that are violated.
-    :type message: str
-    :param reason: Message providing the reason why the given name is invalid. Possible values
+    :vartype message: str
+    :ivar reason: Message providing the reason why the given name is invalid. Possible values
      include: "Invalid", "AlreadyExists".
-    :type reason: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.Reason
+    :vartype reason: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.Reason
     """
 
     _attribute_map = {
@@ -82,6 +85,18 @@ class CheckNameResult(msrest.serialization.Model):
         reason: Optional[Union[str, "Reason"]] = None,
         **kwargs
     ):
+        """
+        :keyword name_available: Specifies a Boolean value that indicates if the name is available.
+        :paramtype name_available: bool
+        :keyword name: The name that was checked.
+        :paramtype name: str
+        :keyword message: Message indicating an unavailable name due to a conflict, or a description of
+         the naming rules that are violated.
+        :paramtype message: str
+        :keyword reason: Message providing the reason why the given name is invalid. Possible values
+         include: "Invalid", "AlreadyExists".
+        :paramtype reason: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.Reason
+        """
         super(CheckNameResult, self).__init__(**kwargs)
         self.name_available = name_available
         self.name = name
@@ -102,12 +117,12 @@ class DigitalTwinsResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :param location: Required. The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param sku: This property is reserved for future use, and will be ignored/omitted.
-    :type sku: ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsSkuInfo
+    :ivar location: Required. The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: This property is reserved for future use, and will be ignored/omitted.
+    :vartype sku: ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsSkuInfo
     """
 
     _validation = {
@@ -134,6 +149,14 @@ class DigitalTwinsResource(msrest.serialization.Model):
         sku: Optional["DigitalTwinsSkuInfo"] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: This property is reserved for future use, and will be ignored/omitted.
+        :paramtype sku: ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsSkuInfo
+        """
         super(DigitalTwinsResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -156,12 +179,12 @@ class DigitalTwinsDescription(DigitalTwinsResource):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :param location: Required. The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param sku: This property is reserved for future use, and will be ignored/omitted.
-    :type sku: ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsSkuInfo
+    :ivar location: Required. The resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: This property is reserved for future use, and will be ignored/omitted.
+    :vartype sku: ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsSkuInfo
     :ivar created_time: Time when DigitalTwinsInstance was created.
     :vartype created_time: ~datetime.datetime
     :ivar last_updated_time: Time when DigitalTwinsInstance was created.
@@ -206,6 +229,14 @@ class DigitalTwinsDescription(DigitalTwinsResource):
         sku: Optional["DigitalTwinsSkuInfo"] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: This property is reserved for future use, and will be ignored/omitted.
+        :paramtype sku: ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsSkuInfo
+        """
         super(DigitalTwinsDescription, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.created_time = None
         self.last_updated_time = None
@@ -216,10 +247,11 @@ class DigitalTwinsDescription(DigitalTwinsResource):
 class DigitalTwinsDescriptionListResult(msrest.serialization.Model):
     """A list of DigitalTwins description objects with a next link.
 
-    :param next_link: The link used to get the next page of DigitalTwins description objects.
-    :type next_link: str
-    :param value: A list of DigitalTwins description objects.
-    :type value: list[~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsDescription]
+    :ivar next_link: The link used to get the next page of DigitalTwins description objects.
+    :vartype next_link: str
+    :ivar value: A list of DigitalTwins description objects.
+    :vartype value:
+     list[~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsDescription]
     """
 
     _attribute_map = {
@@ -234,6 +266,13 @@ class DigitalTwinsDescriptionListResult(msrest.serialization.Model):
         value: Optional[List["DigitalTwinsDescription"]] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: The link used to get the next page of DigitalTwins description objects.
+        :paramtype next_link: str
+        :keyword value: A list of DigitalTwins description objects.
+        :paramtype value:
+         list[~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsDescription]
+        """
         super(DigitalTwinsDescriptionListResult, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = value
@@ -268,6 +307,8 @@ class ExternalResource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ExternalResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -285,8 +326,8 @@ class DigitalTwinsEndpointResource(ExternalResource):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :param properties: DigitalTwinsInstance endpoint resource properties.
-    :type properties:
+    :ivar properties: DigitalTwinsInstance endpoint resource properties.
+    :vartype properties:
      ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsEndpointResourceProperties
     """
 
@@ -309,6 +350,11 @@ class DigitalTwinsEndpointResource(ExternalResource):
         properties: Optional["DigitalTwinsEndpointResourceProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: DigitalTwinsInstance endpoint resource properties.
+        :paramtype properties:
+         ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsEndpointResourceProperties
+        """
         super(DigitalTwinsEndpointResource, self).__init__(**kwargs)
         self.properties = properties
 
@@ -316,10 +362,10 @@ class DigitalTwinsEndpointResource(ExternalResource):
 class DigitalTwinsEndpointResourceListResult(msrest.serialization.Model):
     """A list of DigitalTwinsInstance Endpoints with a next link.
 
-    :param next_link: The link used to get the next page of DigitalTwinsInstance Endpoints.
-    :type next_link: str
-    :param value: A list of DigitalTwinsInstance Endpoints.
-    :type value:
+    :ivar next_link: The link used to get the next page of DigitalTwinsInstance Endpoints.
+    :vartype next_link: str
+    :ivar value: A list of DigitalTwinsInstance Endpoints.
+    :vartype value:
      list[~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsEndpointResource]
     """
 
@@ -335,6 +381,13 @@ class DigitalTwinsEndpointResourceListResult(msrest.serialization.Model):
         value: Optional[List["DigitalTwinsEndpointResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: The link used to get the next page of DigitalTwinsInstance Endpoints.
+        :paramtype next_link: str
+        :keyword value: A list of DigitalTwinsInstance Endpoints.
+        :paramtype value:
+         list[~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsEndpointResource]
+        """
         super(DigitalTwinsEndpointResourceListResult, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = value
@@ -350,17 +403,17 @@ class DigitalTwinsEndpointResourceProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param endpoint_type: Required. The type of Digital Twins endpoint.Constant filled by server.
+    :ivar endpoint_type: Required. The type of Digital Twins endpoint.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "ServiceBus".
-    :type endpoint_type: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointType
+    :vartype endpoint_type: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointType
     :ivar provisioning_state: The provisioning state. Possible values include: "Provisioning",
      "Deleting", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointProvisioningState
     :ivar created_time: Time when the Endpoint was added to DigitalTwinsInstance.
     :vartype created_time: ~datetime.datetime
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -386,6 +439,10 @@ class DigitalTwinsEndpointResourceProperties(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(DigitalTwinsEndpointResourceProperties, self).__init__(**kwargs)
         self.endpoint_type = None  # type: Optional[str]
         self.provisioning_state = None
@@ -396,8 +453,8 @@ class DigitalTwinsEndpointResourceProperties(msrest.serialization.Model):
 class DigitalTwinsPatchDescription(msrest.serialization.Model):
     """The description of the DigitalTwins service.
 
-    :param tags: A set of tags. Instance tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Instance tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -410,6 +467,10 @@ class DigitalTwinsPatchDescription(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Instance tags.
+        :paramtype tags: dict[str, str]
+        """
         super(DigitalTwinsPatchDescription, self).__init__(**kwargs)
         self.tags = tags
 
@@ -419,8 +480,8 @@ class DigitalTwinsSkuInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the SKU. Possible values include: "F1".
-    :type name: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsSku
+    :ivar name: Required. The name of the SKU. Possible values include: "F1".
+    :vartype name: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsSku
     """
 
     _validation = {
@@ -437,6 +498,10 @@ class DigitalTwinsSkuInfo(msrest.serialization.Model):
         name: Union[str, "DigitalTwinsSku"],
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the SKU. Possible values include: "F1".
+        :paramtype name: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsSku
+        """
         super(DigitalTwinsSkuInfo, self).__init__(**kwargs)
         self.name = name
 
@@ -470,6 +535,8 @@ class ErrorDefinition(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDefinition, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -479,8 +546,8 @@ class ErrorDefinition(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Error response.
 
-    :param error: Error description.
-    :type error: ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.ErrorDefinition
+    :ivar error: Error description.
+    :vartype error: ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.ErrorDefinition
     """
 
     _attribute_map = {
@@ -493,6 +560,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDefinition"] = None,
         **kwargs
     ):
+        """
+        :keyword error: Error description.
+        :paramtype error: ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.ErrorDefinition
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -504,23 +575,23 @@ class EventGrid(DigitalTwinsEndpointResourceProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param endpoint_type: Required. The type of Digital Twins endpoint.Constant filled by server.
+    :ivar endpoint_type: Required. The type of Digital Twins endpoint.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "ServiceBus".
-    :type endpoint_type: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointType
+    :vartype endpoint_type: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointType
     :ivar provisioning_state: The provisioning state. Possible values include: "Provisioning",
      "Deleting", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointProvisioningState
     :ivar created_time: Time when the Endpoint was added to DigitalTwinsInstance.
     :vartype created_time: ~datetime.datetime
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param topic_endpoint: EventGrid Topic Endpoint.
-    :type topic_endpoint: str
-    :param access_key1: Required. EventGrid secondary accesskey. Will be obfuscated during read.
-    :type access_key1: str
-    :param access_key2: Required. EventGrid secondary accesskey. Will be obfuscated during read.
-    :type access_key2: str
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar topic_endpoint: EventGrid Topic Endpoint.
+    :vartype topic_endpoint: str
+    :ivar access_key1: Required. EventGrid secondary accesskey. Will be obfuscated during read.
+    :vartype access_key1: str
+    :ivar access_key2: Required. EventGrid secondary accesskey. Will be obfuscated during read.
+    :vartype access_key2: str
     """
 
     _validation = {
@@ -550,6 +621,16 @@ class EventGrid(DigitalTwinsEndpointResourceProperties):
         topic_endpoint: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword topic_endpoint: EventGrid Topic Endpoint.
+        :paramtype topic_endpoint: str
+        :keyword access_key1: Required. EventGrid secondary accesskey. Will be obfuscated during read.
+        :paramtype access_key1: str
+        :keyword access_key2: Required. EventGrid secondary accesskey. Will be obfuscated during read.
+        :paramtype access_key2: str
+        """
         super(EventGrid, self).__init__(tags=tags, **kwargs)
         self.endpoint_type = 'EventGrid'  # type: str
         self.topic_endpoint = topic_endpoint
@@ -564,23 +645,23 @@ class EventHub(DigitalTwinsEndpointResourceProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param endpoint_type: Required. The type of Digital Twins endpoint.Constant filled by server.
+    :ivar endpoint_type: Required. The type of Digital Twins endpoint.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "ServiceBus".
-    :type endpoint_type: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointType
+    :vartype endpoint_type: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointType
     :ivar provisioning_state: The provisioning state. Possible values include: "Provisioning",
      "Deleting", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointProvisioningState
     :ivar created_time: Time when the Endpoint was added to DigitalTwinsInstance.
     :vartype created_time: ~datetime.datetime
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param connection_string_primary_key: Required. PrimaryConnectionString of the endpoint. Will
-     be obfuscated during read.
-    :type connection_string_primary_key: str
-    :param connection_string_secondary_key: Required. SecondaryConnectionString of the endpoint.
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar connection_string_primary_key: Required. PrimaryConnectionString of the endpoint. Will be
+     obfuscated during read.
+    :vartype connection_string_primary_key: str
+    :ivar connection_string_secondary_key: Required. SecondaryConnectionString of the endpoint.
      Will be obfuscated during read.
-    :type connection_string_secondary_key: str
+    :vartype connection_string_secondary_key: str
     """
 
     _validation = {
@@ -608,6 +689,16 @@ class EventHub(DigitalTwinsEndpointResourceProperties):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword connection_string_primary_key: Required. PrimaryConnectionString of the endpoint. Will
+         be obfuscated during read.
+        :paramtype connection_string_primary_key: str
+        :keyword connection_string_secondary_key: Required. SecondaryConnectionString of the endpoint.
+         Will be obfuscated during read.
+        :paramtype connection_string_secondary_key: str
+        """
         super(EventHub, self).__init__(tags=tags, **kwargs)
         self.endpoint_type = 'EventHub'  # type: str
         self.connection_string_primary_key = connection_string_primary_key
@@ -621,8 +712,8 @@ class Operation(msrest.serialization.Model):
 
     :ivar name: Operation name: {provider}/{resource}/{read | write | action | delete}.
     :vartype name: str
-    :param display: Operation properties display.
-    :type display: ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.OperationDisplay
+    :ivar display: Operation properties display.
+    :vartype display: ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.OperationDisplay
     """
 
     _validation = {
@@ -640,6 +731,10 @@ class Operation(msrest.serialization.Model):
         display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword display: Operation properties display.
+        :paramtype display: ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = display
@@ -678,6 +773,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -690,8 +787,8 @@ class OperationListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param next_link: The link used to get the next page of DigitalTwins description objects.
-    :type next_link: str
+    :ivar next_link: The link used to get the next page of DigitalTwins description objects.
+    :vartype next_link: str
     :ivar value: A list of DigitalTwins operations supported by the Microsoft.DigitalTwins resource
      provider.
     :vartype value: list[~azure.mgmt.digitaltwins.v2020_03_01_preview.models.Operation]
@@ -712,6 +809,10 @@ class OperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: The link used to get the next page of DigitalTwins description objects.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = None
@@ -724,23 +825,23 @@ class ServiceBus(DigitalTwinsEndpointResourceProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param endpoint_type: Required. The type of Digital Twins endpoint.Constant filled by server.
+    :ivar endpoint_type: Required. The type of Digital Twins endpoint.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "ServiceBus".
-    :type endpoint_type: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointType
+    :vartype endpoint_type: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointType
     :ivar provisioning_state: The provisioning state. Possible values include: "Provisioning",
      "Deleting", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointProvisioningState
     :ivar created_time: Time when the Endpoint was added to DigitalTwinsInstance.
     :vartype created_time: ~datetime.datetime
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param primary_connection_string: Required. PrimaryConnectionString of the endpoint. Will be
+    :ivar tags: A set of tags. The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar primary_connection_string: Required. PrimaryConnectionString of the endpoint. Will be
      obfuscated during read.
-    :type primary_connection_string: str
-    :param secondary_connection_string: Required. SecondaryConnectionString of the endpoint. Will
-     be obfuscated during read.
-    :type secondary_connection_string: str
+    :vartype primary_connection_string: str
+    :ivar secondary_connection_string: Required. SecondaryConnectionString of the endpoint. Will be
+     obfuscated during read.
+    :vartype secondary_connection_string: str
     """
 
     _validation = {
@@ -768,6 +869,16 @@ class ServiceBus(DigitalTwinsEndpointResourceProperties):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword primary_connection_string: Required. PrimaryConnectionString of the endpoint. Will be
+         obfuscated during read.
+        :paramtype primary_connection_string: str
+        :keyword secondary_connection_string: Required. SecondaryConnectionString of the endpoint. Will
+         be obfuscated during read.
+        :paramtype secondary_connection_string: str
+        """
         super(ServiceBus, self).__init__(tags=tags, **kwargs)
         self.endpoint_type = 'ServiceBus'  # type: str
         self.primary_connection_string = primary_connection_string

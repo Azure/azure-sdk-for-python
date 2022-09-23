@@ -266,34 +266,54 @@ class CommunicationIdentityCreateRequest(msrest.serialization.Model):
         self.create_token_with_scopes = create_token_with_scopes
 
 
-class TeamsUserAccessTokenRequest(msrest.serialization.Model):
-    """TeamsUserAccessTokenRequest.
+class TeamsUserExchangeTokenRequest(msrest.serialization.Model):
+    """TeamsUserExchangeTokenRequest.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar token: Required. AAD access token of a Teams User to acquire a new Communication Identity
-     access token.
+    :ivar token: Required. Azure AD access token of a Teams User to acquire a new Communication
+     Identity access token.
     :vartype token: str
+    :ivar app_id: Required. Client ID of an Azure AD application to be verified against the appid
+     claim in the Azure AD access token.
+    :vartype app_id: str
+    :ivar user_id: Required. Object ID of an Azure AD user (Teams User) to be verified against the
+     oid claim in the Azure AD access token.
+    :vartype user_id: str
     """
 
     _validation = {
         'token': {'required': True},
+        'app_id': {'required': True},
+        'user_id': {'required': True},
     }
 
     _attribute_map = {
         'token': {'key': 'token', 'type': 'str'},
+        'app_id': {'key': 'appId', 'type': 'str'},
+        'user_id': {'key': 'userId', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
         token: str,
+        app_id: str,
+        user_id: str,
         **kwargs
     ):
         """
-        :keyword token: Required. AAD access token of a Teams User to acquire a new Communication
+        :keyword token: Required. Azure AD access token of a Teams User to acquire a new Communication
          Identity access token.
         :paramtype token: str
+        :keyword app_id: Required. Client ID of an Azure AD application to be verified against the
+         appid claim in the Azure AD access token.
+        :paramtype app_id: str
+        :keyword user_id: Required. Object ID of an Azure AD user (Teams User) to be verified against
+         the oid claim in the Azure AD access token.
+        :paramtype user_id: str
         """
-        super(TeamsUserAccessTokenRequest, self).__init__(**kwargs)
+        super(TeamsUserExchangeTokenRequest, self).__init__(**kwargs)
         self.token = token
+        self.app_id = app_id
+        self.user_id = user_id

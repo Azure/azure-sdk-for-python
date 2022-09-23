@@ -1,92 +1,79 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "632",
+        "Content-Length": "363",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "b8ad797c-5d0e-11ec-aaf2-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [], \u0022entityRecognitionPiiTasks\u0022: [], \u0022keyPhraseExtractionTasks\u0022: [], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [{\u0022parameters\u0022: {\u0022opinionMining\u0022: true, \u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00220\u0022}], \u0022extractiveSummarizationTasks\u0022: [], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022It has a sleek premium aluminum design that makes it beautiful to look at.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022The food and service is not good\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "It has a sleek premium aluminum design that makes it beautiful to look at.",
+              "language": "en"
+            },
+            {
+              "id": "1",
+              "text": "The food and service is not good",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "SentimentAnalysis",
+            "parameters": {
+              "opinionMining": true,
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          }
+        ]
+      },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "aa8d4741-ca95-4601-84c9-9b2b226a3cc8",
-        "Date": "Tue, 14 Dec 2021 18:50:35 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c9c645de-8948-4ba0-9ec7-33695da7f97c",
+        "apim-request-id": "c2bd702c-08f2-429d-bac8-a1f4b60c4f67",
+        "Content-Length": "0",
+        "Date": "Fri, 17 Jun 2022 17:35:22 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/1aa27aa6-4933-47e4-8e6e-848dde499244?api-version=2022-05-01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "222"
+        "x-envoy-upstream-service-time": "117"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c9c645de-8948-4ba0-9ec7-33695da7f97c?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/1aa27aa6-4933-47e4-8e6e-848dde499244?api-version=2022-05-01\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "b8ad797c-5d0e-11ec-aaf2-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "0ff52233-288f-4cef-9351-a2ded137879e",
+        "apim-request-id": "54835c6b-b5dd-4f72-b2c4-789ddbbb13d8",
+        "Content-Length": "2461",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:50:40 GMT",
+        "Date": "Fri, 17 Jun 2022 17:35:27 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "8"
+        "x-envoy-upstream-service-time": "34"
       },
       "ResponseBody": {
-        "jobId": "c9c645de-8948-4ba0-9ec7-33695da7f97c",
-        "lastUpdateDateTime": "2021-12-14T18:50:35Z",
-        "createdDateTime": "2021-12-14T18:50:35Z",
-        "expirationDateTime": "2021-12-15T18:50:35Z",
-        "status": "running",
-        "errors": [],
-        "tasks": {
-          "completed": 0,
-          "failed": 0,
-          "inProgress": 1,
-          "total": 1
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c9c645de-8948-4ba0-9ec7-33695da7f97c?showStats=True",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "b8ad797c-5d0e-11ec-aaf2-b831b58100e8"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "ff00a9d1-8070-4b6f-8bee-81729b7c76b8",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:50:45 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "149"
-      },
-      "ResponseBody": {
-        "jobId": "c9c645de-8948-4ba0-9ec7-33695da7f97c",
-        "lastUpdateDateTime": "2021-12-14T18:50:43Z",
-        "createdDateTime": "2021-12-14T18:50:35Z",
-        "expirationDateTime": "2021-12-15T18:50:35Z",
+        "jobId": "1aa27aa6-4933-47e4-8e6e-848dde499244",
+        "lastUpdatedDateTime": "2022-06-17T17:35:25Z",
+        "createdDateTime": "2022-06-17T17:35:22Z",
+        "expirationDateTime": "2022-06-18T17:35:22Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -94,11 +81,12 @@
           "failed": 0,
           "inProgress": 0,
           "total": 1,
-          "sentimentAnalysisTasks": [
+          "items": [
             {
-              "lastUpdateDateTime": "2021-12-14T18:50:43.6706207Z",
+              "kind": "SentimentAnalysisLROResults",
               "taskName": "0",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-06-17T17:35:25.933235Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 2,
@@ -115,16 +103,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.98,
-                      "neutral": 0.02,
+                      "positive": 0.99,
+                      "neutral": 0.01,
                       "negative": 0.0
                     },
                     "sentences": [
                       {
                         "sentiment": "positive",
                         "confidenceScores": {
-                          "positive": 0.98,
-                          "neutral": 0.02,
+                          "positive": 0.99,
+                          "neutral": 0.01,
                           "negative": 0.0
                         },
                         "offset": 0,
@@ -170,9 +158,9 @@
                               "positive": 1.0,
                               "negative": 0.0
                             },
-                            "offset": 15,
-                            "length": 7,
-                            "text": "premium",
+                            "offset": 53,
+                            "length": 9,
+                            "text": "beautiful",
                             "isNegated": false
                           }
                         ]
@@ -188,17 +176,17 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.0,
+                      "positive": 0.01,
                       "neutral": 0.0,
-                      "negative": 1.0
+                      "negative": 0.99
                     },
                     "sentences": [
                       {
                         "sentiment": "negative",
                         "confidenceScores": {
-                          "positive": 0.0,
+                          "positive": 0.01,
                           "neutral": 0.0,
-                          "negative": 1.0
+                          "negative": 0.99
                         },
                         "offset": 0,
                         "length": 32,
@@ -221,10 +209,10 @@
                             ]
                           },
                           {
-                            "sentiment": "negative",
+                            "sentiment": "positive",
                             "confidenceScores": {
-                              "positive": 0.0,
-                              "negative": 1.0
+                              "positive": 1.0,
+                              "negative": 0.0
                             },
                             "offset": 13,
                             "length": 7,
@@ -256,7 +244,7 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2020-04-01"
+                "modelVersion": "2021-10-01"
               }
             }
           ]

@@ -6,43 +6,49 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AppliedScopeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the Applied Scope.
-    """
+class AppliedScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the Applied Scope."""
 
     SINGLE = "Single"
     SHARED = "Shared"
 
-class CalculateExchangeOperationResultStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of the operation.
-    """
+
+class CalculateExchangeOperationResultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the operation."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELLED = "Cancelled"
     PENDING = "Pending"
 
-class ErrorResponseCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+
+class DisplayProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represent the current display state of the Reservation."""
+
+    SUCCEEDED = "Succeeded"
+    EXPIRING = "Expiring"
+    EXPIRED = "Expired"
+    PENDING = "Pending"
+    PROCESSING = "Processing"
+    CANCELLED = "Cancelled"
+    FAILED = "Failed"
+
+
+class ErrorResponseCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ErrorResponseCode."""
 
     NOT_SPECIFIED = "NotSpecified"
     INTERNAL_SERVER_ERROR = "InternalServerError"
@@ -99,10 +105,13 @@ class ErrorResponseCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FULFILLMENT_TRANSIENT_ERROR = "FulfillmentTransientError"
     FULFILLMENT_ERROR = "FulfillmentError"
     CALCULATE_PRICE_FAILED = "CalculatePriceFailed"
+    APPLIED_SCOPES_SAME_AS_EXISTING = "AppliedScopesSameAsExisting"
+    SELF_SERVICE_REFUND_NOT_SUPPORTED = "SelfServiceRefundNotSupported"
+    REFUND_LIMIT_EXCEEDED = "RefundLimitExceeded"
 
-class ExchangeOperationResultStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of the operation.
-    """
+
+class ExchangeOperationResultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the operation."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
@@ -110,7 +119,8 @@ class ExchangeOperationResultStatus(with_metaclass(_CaseInsensitiveEnumMeta, str
     PENDING_REFUNDS = "PendingRefunds"
     PENDING_PURCHASES = "PendingPurchases"
 
-class InstanceFlexibility(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class InstanceFlexibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Turning this on will apply the reservation discount to other VMs in the same VM size group.
     Only specify for VirtualMachines reserved resource type.
     """
@@ -118,27 +128,76 @@ class InstanceFlexibility(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ON = "On"
     OFF = "Off"
 
-class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of the individual operation.
+
+class Location(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Location in which the Resources needs to be reserved. It cannot be changed after the resource
+    has been created.
     """
+
+    WESTUS = "westus"
+    EASTUS = "eastus"
+    EASTUS2 = "eastus2"
+    NORTHCENTRALUS = "northcentralus"
+    WESTUS2 = "westus2"
+    SOUTHCENTRALUS = "southcentralus"
+    CENTRALUS = "centralus"
+    WESTEUROPE = "westeurope"
+    NORTHEUROPE = "northeurope"
+    EASTASIA = "eastasia"
+    SOUTHEASTASIA = "southeastasia"
+    JAPANEAST = "japaneast"
+    JAPANWEST = "japanwest"
+    BRAZILSOUTH = "brazilsouth"
+    AUSTRALIAEAST = "australiaeast"
+    AUSTRALIASOUTHEAST = "australiasoutheast"
+    SOUTHINDIA = "southindia"
+    WESTINDIA = "westindia"
+    CENTRALINDIA = "centralindia"
+    CANADACENTRAL = "canadacentral"
+    CANADAEAST = "canadaeast"
+    UKSOUTH = "uksouth"
+    WESTCENTRALUS = "westcentralus"
+    UKWEST = "ukwest"
+
+
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the individual operation."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELLED = "Cancelled"
     PENDING = "Pending"
 
-class PaymentStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Describes whether the payment is completed, failed, cancelled or scheduled in the future.
-    """
+
+class PaymentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes whether the payment is completed, failed, cancelled or scheduled in the future."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     SCHEDULED = "Scheduled"
     CANCELLED = "Cancelled"
 
-class QuotaRequestState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The quota request status.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represent the current state of the Reservation."""
+
+    CREATING = "Creating"
+    PENDING_RESOURCE_HOLD = "PendingResourceHold"
+    CONFIRMED_RESOURCE_HOLD = "ConfirmedResourceHold"
+    PENDING_BILLING = "PendingBilling"
+    CONFIRMED_BILLING = "ConfirmedBilling"
+    CREATED = "Created"
+    SUCCEEDED = "Succeeded"
+    CANCELLED = "Cancelled"
+    EXPIRED = "Expired"
+    BILLING_FAILED = "BillingFailed"
+    FAILED = "Failed"
+    SPLIT = "Split"
+    MERGED = "Merged"
+
+
+class QuotaRequestState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The quota request status."""
 
     ACCEPTED = "Accepted"
     INVALID = "Invalid"
@@ -146,17 +205,20 @@ class QuotaRequestState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     IN_PROGRESS = "InProgress"
 
-class ReservationBillingPlan(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Represent the billing plans.
-    """
+
+class ReservationBillingPlan(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represent the billing plans."""
 
     UPFRONT = "Upfront"
     MONTHLY = "Monthly"
 
-class ReservationStatusCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class ReservationStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ReservationStatusCode."""
 
     NONE = "None"
     PENDING = "Pending"
+    PROCESSING = "Processing"
     ACTIVE = "Active"
     PURCHASE_ERROR = "PurchaseError"
     PAYMENT_INSTRUMENT_ERROR = "PaymentInstrumentError"
@@ -165,16 +227,17 @@ class ReservationStatusCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     EXPIRED = "Expired"
     SUCCEEDED = "Succeeded"
 
-class ReservationTerm(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Represent the term of Reservation.
-    """
+
+class ReservationTerm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represent the term of Reservation."""
 
     P1_Y = "P1Y"
     P3_Y = "P3Y"
+    P5_Y = "P5Y"
 
-class ReservedResourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the resource that is being reserved.
-    """
+
+class ReservedResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the resource that is being reserved."""
 
     VIRTUAL_MACHINES = "VirtualMachines"
     SQL_DATABASES = "SqlDatabases"
@@ -196,13 +259,39 @@ class ReservedResourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DEDICATED_HOST = "DedicatedHost"
     SAP_HANA = "SapHana"
     SQL_AZURE_HYBRID_BENEFIT = "SqlAzureHybridBenefit"
+    AVS = "AVS"
+    DATA_FACTORY = "DataFactory"
+    NET_APP_STORAGE = "NetAppStorage"
+    AZURE_FILES = "AzureFiles"
+    SQL_EDGE = "SqlEdge"
+    VIRTUAL_MACHINE_SOFTWARE = "VirtualMachineSoftware"
 
-class ResourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The resource types.
-    """
+
+class ResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The resource types."""
 
     STANDARD = "standard"
     DEDICATED = "dedicated"
     LOW_PRIORITY = "lowPriority"
     SHARED = "shared"
     SERVICE_SPECIFIC = "serviceSpecific"
+
+
+class UserFriendlyAppliedScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The applied scope type."""
+
+    NONE = "None"
+    SHARED = "Shared"
+    SINGLE = "Single"
+    RESOURCE_GROUP = "ResourceGroup"
+    MANAGEMENT_GROUP = "ManagementGroup"
+
+
+class UserFriendlyRenewState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The renew state of the reservation."""
+
+    ON = "On"
+    OFF = "Off"
+    RENEWED = "Renewed"
+    NOT_RENEWED = "NotRenewed"
+    NOT_APPLICABLE = "NotApplicable"

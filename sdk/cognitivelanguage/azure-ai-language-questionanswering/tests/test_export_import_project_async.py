@@ -5,45 +5,46 @@
 # ------------------------------------
 import pytest
 
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
+from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
 from azure.core.credentials import AzureKeyCredential
 
-from testcase import (
-    GlobalQuestionAnsweringAccountPreparer,
-)
-from asynctestcase import (
-    AsyncQuestionAnsweringTest,
-    QnaAuthoringAsyncHelper
-)
-from azure.ai.language.questionanswering.projects.aio import QuestionAnsweringProjectsClient
+from helpers import QnaAuthoringAsyncHelper
+from testcase import QuestionAnsweringTestCase
 
-class ExportAndImportTests(AsyncQuestionAnsweringTest):
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    async def test_export_project(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+class TestExportAndImportAsync(QuestionAnsweringTestCase):
+
+    @pytest.mark.asyncio
+    async def test_export_project(self, recorded_test, qna_creds):
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
-        await QnaAuthoringAsyncHelper.create_test_project(client, project_name=project_name)
+        await QnaAuthoringAsyncHelper.create_test_project(client, project_name=project_name, **self.kwargs_for_polling)
 
         # export project
         export_poller = await client.begin_export(
             project_name=project_name,
-            format="json"
+            format="json",
+            **self.kwargs_for_polling
         )
         result = await export_poller.result()
         assert result["status"] == "succeeded"
         assert result["resultUrl"] is not None
 
-
-    @GlobalQuestionAnsweringAccountPreparer()
-    async def test_import_project(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+    @pytest.mark.asyncio
+    async def test_import_project(self, recorded_test, qna_creds):
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
-        export_url = await QnaAuthoringAsyncHelper.create_test_project(client, project_name=project_name, get_export_url=True, delete_old_project=True)
+        export_url = await QnaAuthoringAsyncHelper.create_test_project(
+            client,
+            project_name=project_name,
+            get_export_url=True,
+            delete_old_project=True,
+            **self.kwargs_for_polling
+        )
 
         # import project
         project = {
@@ -59,9 +60,11 @@ class ExportAndImportTests(AsyncQuestionAnsweringTest):
         }
         import_poller = await client.begin_import_assets(
             project_name=project_name,
-            options=project
+            options=project,
+            **self.kwargs_for_polling
         )
-        await import_poller.result()
+        job_state = await import_poller.result()
+        assert job_state["jobId"]
 
         # assert
         project_found = False

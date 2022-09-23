@@ -1,6 +1,6 @@
 # Release History
 
-## 1.22.2 (Unreleased)
+## 1.25.2 (Unreleased)
 
 ### Features Added
 
@@ -10,7 +10,64 @@
 
 ### Other Changes
 
+- LRO polling will not wait anymore before doing the first status check  #26376
+
+## 1.25.1 (2022-09-01)
+
+### Bugs Fixed
+
+- Added @runtime_checkable to `TokenCredential` protocol definitions  #25187
+
+## 1.25.0 (2022-08-04)
+
+Azure-core is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+
+### Features Added
+
+- Added `CaseInsensitiveDict` implementation in `azure.core.utils` removing dependency on `requests` and `aiohttp`
+
+## 1.24.2 (2022-06-30)
+
+### Bugs Fixed
+
+- Fixed the bug that azure-core could not be imported under Python 3.11.0b3  #24928
+- `ContentDecodePolicy` can now correctly deserialize more JSON bodies with different mime types #22410
+
+## 1.24.1 (2022-06-01)
+
+### Bugs Fixed
+
+- Declare method level span as INTERNAL by default  #24492
+- Fixed type hints for `azure.core.paging.ItemPaged` #24548
+
+## 1.24.0 (2022-05-06)
+
+### Features Added
+
+- Add `SerializationError` and `DeserializationError` in `azure.core.exceptions` for errors raised during serialization / deserialization  #24312
+
+## 1.23.1 (2022-03-31)
+
+### Bugs Fixed
+
+- Allow stream inputs to the `content` kwarg of `azure.core.rest.HttpRequest` from objects with a `read` method  #23578
+
+## 1.23.0 (2022-03-03)
+
+### Features Added
+
+- Improve intellisense type hinting for service client methods. #22891
+
+- Add a case insensitive dict `case_insensitive_dict` in `azure.core.utils`.  #23206
+
+### Bugs Fixed
+
+- Use "\n" rather than "/n" for new line in log.     #23261
+
+### Other Changes
+
 - Log "WWW-Authenticate" header in `HttpLoggingPolicy`  #22990
+- Added dependency on `typing-extensions` >= 4.0.1
 
 ## 1.22.1 (2022-02-09)
 
@@ -415,7 +472,7 @@ set the http logging policy of the config  #12218
 - Tracing: `azure.core.tracing.context.tracing_context.with_current_context` renamed to `azure.core.tracing.common.with_current_context`  #7252
 - Tracing: `link` renamed `link_from_headers`  and `link` takes now a string
 - Tracing: opencensus implementation has been moved to the package `azure-core-tracing-opencensus`
-- Some modules and classes that were importables from several differente places have been removed:
+- Some modules and classes that were importables from several different places have been removed:
 
    - `azure.core.HttpResponseError` is now only `azure.core.exceptions.HttpResponseError`
    - `azure.core.Configuration` is now only `azure.core.configuration.Configuration`

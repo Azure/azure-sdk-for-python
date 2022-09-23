@@ -1,0 +1,18 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+experiment_name: classification-pipeline-dev2
+compute: azureml:cpu-cluster
+inputs:
+  job_in_number: 10
+
+jobs:
+  hello_world_component:
+    type: command
+    command: >-
+      python main.py  --component_in_number ${{inputs.component_in_number}}
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_number}}
+    environment:
+      build:
+        path: ./docker
+    code: .

@@ -4,38 +4,44 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
+
 import functools
 import warnings
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List,
+    Any, Dict, List, Optional, Union,
     TYPE_CHECKING
 )
 
-from azure.core.exceptions import HttpResponseError
-from azure.core.tracing.decorator import distributed_trace
-from azure.core.pipeline import AsyncPipeline
-from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline import AsyncPipeline
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .._shared.models import LocationMode
-from .._shared.policies_async import ExponentialRetry
+
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
-from .._shared.response_handlers import return_response_headers, process_storage_error
+from .._shared.response_handlers import (
+    parse_to_internal_user_delegation_key,
+    process_storage_error,
+    return_response_headers,
+)
+from .._shared.models import LocationMode
 from .._shared.parser import _to_utc_datetime
-from .._shared.response_handlers import parse_to_internal_user_delegation_key
+from .._shared.policies_async import ExponentialRetry
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import StorageServiceProperties, KeyInfo
 from .._blob_service_client import BlobServiceClient as BlobServiceClientBase
-from ._container_client_async import ContainerClient
-from ._blob_client_async import BlobClient
-from .._models import ContainerProperties
 from .._deserialize import service_stats_deserialize, service_properties_deserialize
+from .._encryption import StorageEncryptionMixin
+from .._models import ContainerProperties
 from .._serialize import get_api_version
+from ._blob_client_async import BlobClient
+from ._container_client_async import ContainerClient
 from ._models import ContainerPropertiesPaged, FilteredBlobPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from .._shared.models import AccountSasPermissions, ResourceTypes, UserDelegationKey
+    from .._shared.models import UserDelegationKey
     from ._lease_async import BlobLeaseClient
     from .._models import (
         BlobProperties,
@@ -48,7 +54,7 @@ if TYPE_CHECKING:
     )
 
 
-class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
+class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, StorageEncryptionMixin):
     """A client to interact with the Blob Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -63,10 +69,12 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -108,7 +116,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
     def __init__(
             self, account_url,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -117,8 +125,9 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             account_url,
             credential=credential,
             **kwargs)
-        self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
+        self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._configure_encryption(kwargs)
 
     @distributed_trace_async
     async def get_user_delegation_key(self, key_start_time,  # type: datetime
@@ -623,8 +632,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             self.url, container_name=container_name,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            require_encryption=self.require_encryption, encryption_version=self.encryption_version,
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
 
     def get_blob_client(
             self, container,  # type: Union[ContainerProperties, str]
@@ -678,5 +687,5 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            require_encryption=self.require_encryption, encryption_version=self.encryption_version,
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)

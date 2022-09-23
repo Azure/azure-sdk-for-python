@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://azuremlsdk2.blob.core.windows.net/latest/sweepJob.schema.json
+type: sweep
+trial:
+  command: python foo.py --lr ${{search_space.lr}}
+  environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+compute: "azureml:testCompute"
+sampling_algorithm: random
+limits:
+  max_total_trials: 5
+objective:
+  primary_metric: accuracy
+  goal: maximize
+name: "test1"
+experiment_name: mfe-test1
+properties:
+  _azureml.ComputeTargetType: amlcompute
+search_space:
+  lr:
+    type: uniform
+    min_value: 0.001
+    max_value: 0.1
+inputs:
+  "test_dataset":
+    path: "/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/data/fake-dataset/versions/2"
+  "test_url":
+    mode: ro_mount
+    type: uri_file
+    path: "azureml://fake/url.json"
+  "test_string_literal": "literal string"
+  "test_literal_valued_int":
+    value: 42

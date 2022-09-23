@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,75 +7,89 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, Union
+from typing import List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
-from ._monitor_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Describes the format of Error response.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Error message indicating why the operation failed.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class MetricNamespace(msrest.serialization.Model):
+class MetricNamespace(_serialization.Model):
     """Metric namespace class specifies the metadata for a metric namespace.
 
-    :param id: The ID of the metric namespace.
-    :type id: str
-    :param type: The type of the namespace.
-    :type type: str
-    :param name: The escaped name of the namespace.
-    :type name: str
-    :param classification: Kind of namespace. Possible values include: "Platform", "Custom", "Qos".
-    :type classification: str or
+    :ivar id: The ID of the metric namespace.
+    :vartype id: str
+    :ivar type: The type of the namespace.
+    :vartype type: str
+    :ivar name: The escaped name of the namespace.
+    :vartype name: str
+    :ivar classification: Kind of namespace. Known values are: "Platform", "Custom", and "Qos".
+    :vartype classification: str or
      ~$(python-base-namespace).v2017_12_01_preview.models.NamespaceClassification
-    :param properties: Properties which include the fully qualified namespace name.
-    :type properties: ~$(python-base-namespace).v2017_12_01_preview.models.MetricNamespaceName
+    :ivar properties: Properties which include the fully qualified namespace name.
+    :vartype properties: ~$(python-base-namespace).v2017_12_01_preview.models.MetricNamespaceName
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'classification': {'key': 'classification', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'MetricNamespaceName'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "classification": {"key": "classification", "type": "str"},
+        "properties": {"key": "properties", "type": "MetricNamespaceName"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         type: Optional[str] = None,
         name: Optional[str] = None,
-        classification: Optional[Union[str, "NamespaceClassification"]] = None,
-        properties: Optional["MetricNamespaceName"] = None,
+        classification: Optional[Union[str, "_models.NamespaceClassification"]] = None,
+        properties: Optional["_models.MetricNamespaceName"] = None,
         **kwargs
     ):
-        super(MetricNamespace, self).__init__(**kwargs)
+        """
+        :keyword id: The ID of the metric namespace.
+        :paramtype id: str
+        :keyword type: The type of the namespace.
+        :paramtype type: str
+        :keyword name: The escaped name of the namespace.
+        :paramtype name: str
+        :keyword classification: Kind of namespace. Known values are: "Platform", "Custom", and "Qos".
+        :paramtype classification: str or
+         ~$(python-base-namespace).v2017_12_01_preview.models.NamespaceClassification
+        :keyword properties: Properties which include the fully qualified namespace name.
+        :paramtype properties: ~$(python-base-namespace).v2017_12_01_preview.models.MetricNamespaceName
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.type = type
         self.name = name
@@ -82,49 +97,47 @@ class MetricNamespace(msrest.serialization.Model):
         self.properties = properties
 
 
-class MetricNamespaceCollection(msrest.serialization.Model):
+class MetricNamespaceCollection(_serialization.Model):
     """Represents collection of metric namespaces.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The values for the metric namespaces.
-    :type value: list[~$(python-base-namespace).v2017_12_01_preview.models.MetricNamespace]
+    :ivar value: The values for the metric namespaces. Required.
+    :vartype value: list[~$(python-base-namespace).v2017_12_01_preview.models.MetricNamespace]
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MetricNamespace]'},
+        "value": {"key": "value", "type": "[MetricNamespace]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["MetricNamespace"],
-        **kwargs
-    ):
-        super(MetricNamespaceCollection, self).__init__(**kwargs)
+    def __init__(self, *, value: List["_models.MetricNamespace"], **kwargs):
+        """
+        :keyword value: The values for the metric namespaces. Required.
+        :paramtype value: list[~$(python-base-namespace).v2017_12_01_preview.models.MetricNamespace]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class MetricNamespaceName(msrest.serialization.Model):
+class MetricNamespaceName(_serialization.Model):
     """The fully qualified metric namespace name.
 
-    :param metric_namespace_name: The metric namespace name.
-    :type metric_namespace_name: str
+    :ivar metric_namespace_name: The metric namespace name.
+    :vartype metric_namespace_name: str
     """
 
     _attribute_map = {
-        'metric_namespace_name': {'key': 'metricNamespaceName', 'type': 'str'},
+        "metric_namespace_name": {"key": "metricNamespaceName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        metric_namespace_name: Optional[str] = None,
-        **kwargs
-    ):
-        super(MetricNamespaceName, self).__init__(**kwargs)
+    def __init__(self, *, metric_namespace_name: Optional[str] = None, **kwargs):
+        """
+        :keyword metric_namespace_name: The metric namespace name.
+        :paramtype metric_namespace_name: str
+        """
+        super().__init__(**kwargs)
         self.metric_namespace_name = metric_namespace_name

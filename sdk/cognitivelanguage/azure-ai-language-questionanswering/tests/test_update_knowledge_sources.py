@@ -3,28 +3,21 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import pytest
-
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
+from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
 from azure.core.credentials import AzureKeyCredential
 
-from testcase import (
-    QuestionAnsweringTest,
-    GlobalQuestionAnsweringAccountPreparer,
-    QnaAuthoringHelper
-)
+from helpers import QnaAuthoringHelper
+from testcase import QuestionAnsweringTestCase
 
-from azure.ai.language.questionanswering.projects import QuestionAnsweringProjectsClient
 
-class SourcesQnasSynonymsTests(QuestionAnsweringTest):
+class TestSourcesQnasSynonyms(QuestionAnsweringTestCase):
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    def test_add_source(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+    def test_add_source(self, recorded_test, qna_creds):
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
-        QnaAuthoringHelper.create_test_project(client, project_name=project_name)
+        QnaAuthoringHelper.create_test_project(client, project_name=project_name, **self.kwargs_for_polling)
 
         # add sources
         source_display_name = "MicrosoftFAQ"
@@ -40,9 +33,12 @@ class SourcesQnasSynonymsTests(QuestionAnsweringTest):
                     "contentStructureKind": "unstructured",
                     "refresh": False
                 }
-            }]
+            }],
+            **self.kwargs_for_polling
         )
-        sources_poller.result() # wait until done
+        sources = sources_poller.result() # wait until done
+        for source in sources:
+            assert source["sourceKind"]
 
         # assert
         sources = client.list_sources(
@@ -54,13 +50,12 @@ class SourcesQnasSynonymsTests(QuestionAnsweringTest):
                 source_added = True
         assert source_added
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    def test_add_qna(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+    def test_add_qna(self, recorded_test, qna_creds):
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
-        QnaAuthoringHelper.create_test_project(client, project_name=project_name)
+        QnaAuthoringHelper.create_test_project(client, project_name=project_name, **self.kwargs_for_polling)
 
         # add qnas
         question = "What is the easiest way to use azure services in my .NET project?"
@@ -75,9 +70,13 @@ class SourcesQnasSynonymsTests(QuestionAnsweringTest):
                     ],
                     "answer": answer
                 }
-            }]
+            }],
+            **self.kwargs_for_polling
         )
-        qna_poller.result()
+        qnas = qna_poller.result()
+        for qna in qnas:
+            assert qna["questions"]
+            assert qna["answer"]
 
         # assert
         qnas = client.list_qnas(
@@ -89,13 +88,12 @@ class SourcesQnasSynonymsTests(QuestionAnsweringTest):
                 qna_added = True
         assert qna_added
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    def test_add_synonym(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+    def test_add_synonym(self, recorded_test, qna_creds):
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
-        QnaAuthoringHelper.create_test_project(client, project_name=project_name)
+        QnaAuthoringHelper.create_test_project(client, project_name=project_name, **self.kwargs_for_polling)
 
         # add synonyms
         client.update_synonyms(

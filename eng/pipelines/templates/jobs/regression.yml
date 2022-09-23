@@ -1,0 +1,121 @@
+parameters:
+  - name: ServiceDirectory
+    type: string
+    default: ''
+  - name: Matrix
+    type: string
+  - name: DependsOn
+    type: string
+    default: ''
+  - name: BuildStagingDirectory
+    type: string
+    default: '$(Build.ArtifactStagingDirectory)'
+  - name: DevFeedName
+    type: string
+    default: 'public/azure-sdk-for-python'
+  - name: UsePlatformContainer
+    type: boolean
+    default: false
+  - name: CloudConfig
+    type: object
+    default: {}
+  - name: TestTimeoutInMinutes
+    type: number
+    default: 60
+  - name: BuildTargetingString
+    type: string
+    default: 'azure-*'
+
+# The variable $(DependentService) is set from the matrix configuration.
+
+jobs:
+  - job:
+    displayName: 'RegressTest'
+    condition: |
+      and(
+        succeededOrFailed(),
+        ne(${{ parameters.Matrix }}, '{}'),
+        or(
+          eq(variables['Run.Regression'], 'true'),
+          and(
+            eq(variables['System.TeamProject'], 'internal'),
+            eq(variables['Build.Reason'], 'Schedule')
+          )
+        )
+      )
+    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+
+    dependsOn:
+      - ${{ parameters.DependsOn }}
+
+    strategy:
+      matrix: $[ ${{ parameters.Matrix }} ]
+
+    pool:
+      name: $(Pool)
+      vmImage: $(OSVmImage)
+
+    ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
+      # Add a default so the job doesn't fail when the matrix is empty
+      container: $[ variables['Container'] ]
+
+    variables:
+    - template: ../variables/globals.yml
+    - name: PROXY_URL
+      value: "http://localhost:5000"
+
+    # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
+    steps:
+      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+        parameters:
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
+      - task: UsePythonVersion@0
+        displayName: 'Use Python 3.9'
+        inputs:
+          versionSpec: '3.9'
+
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifactName: 'packages'
+          targetPath: $(Build.ArtifactStagingDirectory)
+
+      - script: |
+          pip install -r eng/regression_tools.txt
+        displayName: 'Prep Environment'
+
+      - template: /eng/common/testproxy/test-proxy-tool.yml
+        parameters:
+          runProxy: false
+
+      - template: ../steps/set-dev-build.yml
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+
+      - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+        - template: ../steps/auth-dev-feed.yml
+          parameters:
+            DevFeedName: ${{ parameters.DevFeedName }}
+
+      - task: PythonScript@0
+        displayName: 'Test Latest Released Dependents'
+        inputs:
+          scriptPath: 'scripts/devops_tasks/test_regression.py'
+          arguments: >-
+            "$(TargetingString)"
+            --service="${{ parameters.ServiceDirectory }}"
+            --dependent-service="$(DependentService)"
+            --whl-dir="${{ parameters.BuildStagingDirectory }}"
+            --mark-arg="not cosmosEmulator"
+
+      - task: PythonScript@0
+        displayName: 'Test Oldest Released Dependents'
+        inputs:
+          scriptPath: 'scripts/devops_tasks/test_regression.py'
+          arguments: >-
+            "$(TargetingString)"
+            --service="${{ parameters.ServiceDirectory }}"
+            --dependent-service="$(DependentService)"
+            --whl-dir="${{ parameters.BuildStagingDirectory }}"
+            --verify-latest=False
+            --mark-arg="not cosmosEmulator"

@@ -1,15 +1,37 @@
 # Azure SDK for Python - Engineering System
 
-* [Target a specific package](#targeting-a-specific-package-at-build-time)
-* [Skip a tox test environment](#skipping-a-tox-test-environment-at-queue-time)
-* [Analyze Checks](#analyze-checks)
-* [PR Validation Checks](#pr-validation-checks)
-* [Nightly CI Checks](#nightly-ci-checks)
-* [Nightly Live Checks](#nightly-live-checks)
+- [Azure SDK for Python - Engineering System](#azure-sdk-for-python---engineering-system)
+  - [Targeting a specific package at build queue time](#targeting-a-specific-package-at-build-queue-time)
+  - [Skipping a tox test environment at build queue time](#skipping-a-tox-test-environment-at-build-queue-time)
+  - [Skipping entire sections of builds](#skipping-entire-sections-of-builds)
+  - [Environment variables important to CI](#environment-variables-important-to-ci)
+  - [Analyze Checks](#analyze-checks)
+    - [MyPy](#mypy)
+    - [Pylint](#pylint)
+    - [Bandit](#bandit)
+    - [ApiStubGen](#apistubgen)
+    - [black](#black)
+      - [Opt-in to formatting validation](#opt-in-to-formatting-validation)
+      - [Running locally](#running-locally)
+    - [Change log verification](#change-log-verification)
+  - [PR Validation Checks](#pr-validation-checks)
+    - [PR validation tox test environments](#pr-validation-tox-test-environments)
+      - [whl](#whl)
+      - [sdist](#sdist)
+      - [depends](#depends)
+  - [Nightly CI Checks](#nightly-ci-checks)
+      - [Latest Dependency Test](#latest-dependency-test)
+      - [Minimum Dependency Test](#minimum-dependency-test)
+      - [Regression Test](#regression-test)
+      - [Autorest Automation](#autorest-automation)
+        - [Opt-in to autorest automation](#opt-in-to-autorest-automation)
+        - [Running locally](#running-locally-1)
+  - [Nightly Live Checks](#nightly-live-checks)
+    - [Running Samples](#running-samples)
 
 There are various tests currently enabled in Azure pipeline for Python SDK and some of them are enabled only for nightly CI checks. We also run some static analysis tool to verify code completeness, security and lint check.
 
-Check the [contributing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md#building-and-testing) for an intro to `tox`.
+Check the [contributing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md#building-and-testing) for an intro to `tox`. For a deeper dive into the tooling that enables the CI checks below and additional detail on reproducing builds locally please refer to the azure-sdk-tools README.md.
 
 As a contributor, you will see the build jobs run in two modes: `Nightly Scheduled` and `Pull Request`.
 
@@ -22,7 +44,7 @@ Example PR build:
 * `Analyze` tox envs run during the `Analyze job.
 * `Test <platform>_<pyversion>` runs PR/Nightly tox envs, depending on context.
 
-## Targeting a specific package at build time
+## Targeting a specific package at build queue time
 
 In both `public` and `internal` projects, all builds allow a filter to be introduced at build time to narrow the set of packages build/tested.
 
@@ -31,7 +53,7 @@ In both `public` and `internal` projects, all builds allow a filter to be introd
    1. For example, setting filter string `azure-mgmt-*` will filter a build to only management packages. A value of `azure-keyvault-secrets` will result in only building THAT specific package.
 3. Once it's set, run the build!
 
-## Skipping a tox test environment at queue time
+## Skipping a tox test environment at build queue time
 
 All build definitions allow choice at queue time as to which `tox` environments actually run during the test phase.
 
@@ -45,6 +67,40 @@ This is an example setting of that narrows the default set from `whl, sdist, dep
 ![res/queue_time_variable.png](res/queue_time_variable.png)
 
 Any combination of valid valid tox environments will work. Reference either this document or the file present at `eng/tox/tox.ini` to find what options are available.
+
+## Skipping entire sections of builds
+
+In certain cases,release engineers may want to disable `APIView` checks prior to releasing. Engineers who need this capability should first clear it with their lead, then set the following build time variable.
+
+- Create variable named `Skip.CreateApiReview`
+  - Set variable value to `true`
+
+This is the most useful skip, but the following skip variables are also supported. Setting the variable value to `true` should be used for all of the below.
+
+- `Skip.Analyze`
+  - Skip the `analyze` job entirely.
+- `Skip.Test`
+  - Skip the `test` jobs entirely.
+- `Skip.TestConda`
+  - Skip the `conda test` jobs entirely.
+- `Skip.ApiStubGen`
+  - Entirely omits API stub generation within `build` job.
+- `Skip.VerifySdist`
+  - Omit `twine check` of source distributions in `build` job.
+- `Skip.VerifyWhl`
+  - Omit `twine check` of wheels in `build` job.
+- `Skip.Bandit`
+  - Omit `bandit` checks in `analyze` job.
+- `Skip.Pylint`
+  - Omit linting checks in `analyze` job.
+- `Skip.BreakingChanges`
+  - Don't verify if a changeset includes breaking changes.
+- `Skip.MyPy`
+  - Omit `mypy` checks in `analyze` job.
+- `Skip.AnalyzeDependencies`
+  - Omit 'Analyze Dependencies' step in `analyze` job.
+- `Skip.VerifyDependencies`
+  - Omit checking that a package's dependencies are on PyPI before releasing.
 
 ## Environment variables important to CI
 
@@ -290,7 +346,7 @@ extends:
 To run autorest automation locally run the following command from the home of `azure-sdk-for-python`
 
 ```bash
-azure-sdk-for-python> python scripts/devop_tasks/verify_autorest.py --service_directory <your_service_directory>
+azure-sdk-for-python> python scripts/devops_tasks/verify_autorest.py --service_directory <your_service_directory>
 ```
 
 ## Nightly Live Checks

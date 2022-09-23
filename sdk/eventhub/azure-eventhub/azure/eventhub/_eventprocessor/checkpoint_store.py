@@ -14,7 +14,9 @@ class CheckpointStore(object):
     """
 
     @abstractmethod
-    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
+    def list_ownership(
+        self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs
+    ):
         # type: (str, str, str, Any) -> Iterable[Dict[str, Any]]
         """Retrieves a complete ownership list from the chosen storage service.
 

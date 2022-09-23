@@ -21,6 +21,8 @@ class ChangeLog:
         self.optional_features = []
         self._old_report = old_report
         self._new_report = new_report
+        self.removed_operations = []
+        self.added_operations = []
 
     def sort(self):
         self.features.sort()
@@ -28,14 +30,19 @@ class ChangeLog:
         self.optional_features.sort()
 
     def build_md(self):
+        self.compare_operation()
         self.sort()
         buffer = []
         if self.features:
-            _build_md(self.features, "**Features**", buffer)
+            _build_md(sorted(set(self.features), key=self.features.index), "### Features Added", buffer)
         if self.breaking_changes:
-            _build_md(self.breaking_changes, "**Breaking changes**", buffer)
+            _build_md(
+                sorted(set(self.breaking_changes), key=self.breaking_changes.index), "### Breaking Changes", buffer
+            )
         if not (self.features or self.breaking_changes) and self.optional_features:
-            _build_md(self.optional_features, "**Features**", buffer)
+            _build_md(
+                sorted(set(self.optional_features), key=self.optional_features.index), "### Features Added", buffer
+            )
 
         return "\n".join(buffer).strip()
 
@@ -69,18 +76,47 @@ class ChangeLog:
         # Is this a new operation, inside a known operation group?
         function_name, *remaining_path = remaining_path
         if not remaining_path:
+            # Simplify renaming func to begin_func change, put it into the compare_operation() for processing
             if is_deletion:
-                self.breaking_changes.append(_REMOVE_OPERATION.format(operation_name, function_name))
+                self.removed_operations.append(f'{operation_name}.{function_name}')
             else:
-                self.features.append(_ADD_OPERATION.format(operation_name, function_name))
+                self.added_operations.append(f'{operation_name}.{function_name}')
             return
 
         if remaining_path[0] == "metadata":
             # Ignore change in metadata for now, they have no impact
             return
 
-        # So method signaure changed. Be vague for now
-        self.breaking_changes.append(_SIGNATURE_CHANGE.format(operation_name, function_name))
+        if remaining_path[0] == "parameters":
+            old_parameters_list = self._old_report["operations"][operation_name]["functions"][function_name][
+                "parameters"
+            ]
+            new_parameters_list = self._new_report["operations"][operation_name]["functions"][function_name][
+                "parameters"
+            ]
+            old_parameters = {param_name["name"]: param_name for param_name in old_parameters_list}
+            new_parameters = {param_name["name"]: param_name for param_name in new_parameters_list}
+            old_parameters_set = set(old_parameters.keys())
+            new_parameters_set = set(new_parameters.keys())
+            # The new parameter is optional or not. Be breaking change for now.
+            for removed_parameter in old_parameters_set - new_parameters_set:
+                self.breaking_changes.append(
+                    _REMOVE_OPERATION_PARAM.format(operation_name, function_name, removed_parameter)
+                )
+            for added_parameter in new_parameters_set - old_parameters_set:
+                if (
+                    new_parameters[added_parameter]["type"] == "KEYWORD_ONLY"
+                    and new_parameters[added_parameter]["has_default_value"]
+                ):
+                    self.features.append(
+                        _ADD_OPERATION_PARAM_FEATURE.format(operation_name, function_name, added_parameter)
+                    )
+                else:
+                    self.breaking_changes.append(
+                        _ADD_OPERATION_PARAM.format(operation_name, function_name, added_parameter)
+                    )
+            return
+        raise NotImplementedError(f"Other situations. Be err for now: {str(remaining_path)}")
 
     def models(self, diff_entry):
         path, is_deletion = self._unpack_diff_entry(diff_entry)
@@ -134,21 +170,52 @@ class ChangeLog:
             self.breaking_changes.append(_MODEL_PARAM_CHANGE_REQUIRED.format(parameter_name, model_name))
             return
 
+    def client(self, old_report, new_report):
+        if new_report.get('client'):
+            if old_report.get('client'):
+                msg = _CLIENT_SIGNATURE_CHANGE.format(old_report['client'][0], new_report['client'][0])
+            else:
+                msg = _CLIENT_SIGNATURE_CHANGE_WITHOUT_OLD.format(new_report['client'][0])
+            self.breaking_changes.append(msg)
+        return
+
+    def compare_operation(self):
+        '''
+        Record changelog like "rename operation.delete to operation.begin_delete"
+        instead of "remove operation.delete or add operation.begin_delete"
+        '''
+        while self.removed_operations:
+            op, old_function  = self.removed_operations.pop().split('.')
+            new_function = f'begin_{old_function}'
+            if f'{op}.{new_function}' in self.added_operations:
+                self.added_operations.remove(f'{op}.{new_function}')
+                self.breaking_changes.append(_RENAME_OPERATION.format(op, old_function, op, new_function))
+            else:
+                self.breaking_changes.append(_REMOVE_OPERATION.format(op, old_function))
+        for op_function in self.added_operations:
+            operation_name, function_name = op_function.split('.')
+            self.features.append(_ADD_OPERATION.format(operation_name, function_name))
+
 
 ## Features
 _ADD_OPERATION_GROUP = "Added operation group {}"
 _ADD_OPERATION = "Added operation {}.{}"
+_ADD_OPERATION_PARAM_FEATURE = "Operation {}.{} has a new optional and keyword-only parameter {}"
 _MODEL_PARAM_ADD = "Model {} has a new parameter {}"
 _MODEL_ADD = "Added model {}"
 
 ## Breaking Changes
 _REMOVE_OPERATION_GROUP = "Removed operation group {}"
 _REMOVE_OPERATION = "Removed operation {}.{}"
-_SIGNATURE_CHANGE = "Operation {}.{} has a new signature"
+_RENAME_OPERATION = "Renamed operation {}.{} to {}.{}"
+_REMOVE_OPERATION_PARAM = "Operation {}.{} no longer has parameter {}"
+_CLIENT_SIGNATURE_CHANGE = "Client name is changed from `{}` to `{}`"
+_CLIENT_SIGNATURE_CHANGE_WITHOUT_OLD = "Client name is changed to `{}`"
 _MODEL_SIGNATURE_CHANGE = "Model {} has a new signature"
 _MODEL_PARAM_DELETE = "Model {} no longer has parameter {}"
 _MODEL_PARAM_ADD_REQUIRED = "Model {} has a new required parameter {}"
 _MODEL_PARAM_CHANGE_REQUIRED = "Parameter {} of model {} is now required"
+_ADD_OPERATION_PARAM = "Operation {}.{} has a new parameter {}"
 
 
 def build_change_log(old_report, new_report):
@@ -161,19 +228,25 @@ def build_change_log(old_report, new_report):
         # Operations
         if diff_line[0][0] == "operations":
             change_log.operation(diff_line)
-        else:
+        elif diff_line[0][0] == "models":
             change_log.models(diff_line)
+        elif diff_line[0][0] == "client":
+            change_log.client(old_report, new_report)
 
     return change_log
 
 
-def get_report_from_parameter(input_parameter):
+def get_report_from_parameter(input_parameter, tag_is_stable: bool = False):
     if ":" in input_parameter:
         package_name, version = input_parameter.split(":")
         from .code_report import main
 
+        # if tag is preview, just find last version on pypi to create report
         result = main(
-            package_name, version=version if version not in ["pypi", "latest"] else None, last_pypi=version == "pypi"
+            package_name,
+            version=version if version not in ["pypi", "latest"] else None,
+            last_pypi=version == "pypi",
+            last_pypi_stable=tag_is_stable,
         )
         if not result:
             raise ValueError("Was not able to build a report")
@@ -187,8 +260,8 @@ def get_report_from_parameter(input_parameter):
         return json.load(fd)
 
 
-def main(base, latest):
-    old_report = get_report_from_parameter(base)
+def main(base, latest, tag_is_stable: bool = False):
+    old_report = get_report_from_parameter(base, tag_is_stable)
     new_report = get_report_from_parameter(latest)
 
     # result = diff(old_report, new_report)

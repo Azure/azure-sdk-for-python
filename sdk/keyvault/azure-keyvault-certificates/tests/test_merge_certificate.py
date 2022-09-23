@@ -5,26 +5,23 @@
 import base64
 import os
 
+import pytest
 from azure.keyvault.certificates import CertificatePolicy, WellKnownIssuerNames
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from OpenSSL import crypto
 
-from _shared.json_attribute_matcher import json_attribute_matcher
 from _shared.test_case import KeyVaultTestCase
-from _test_case import client_setup, get_decorator, CertificatesTestCase
-
+from _test_case import CertificatesClientPreparer, get_decorator
 
 all_api_versions = get_decorator()
 
 
-class MergeCertificateTest(CertificatesTestCase, KeyVaultTestCase):
-    def __init__(self, *args, **kwargs):
-        kwargs["match_body"] = False
-        kwargs["custom_request_matchers"] = [json_attribute_matcher]
-        super(MergeCertificateTest, self).__init__(*args, **kwargs)
-
-    @all_api_versions()
-    @client_setup
+class TestMergeCertificate(KeyVaultTestCase):
+    @pytest.mark.parametrize("api_version", all_api_versions)
+    @CertificatesClientPreparer()
+    @recorded_by_proxy
     def test_merge_certificate(self, client, **kwargs):
+        set_bodiless_matcher()
         cert_name = self.get_resource_name("mergeCertificate")
         cert_policy = CertificatePolicy(
             issuer_name=WellKnownIssuerNames.unknown, subject="CN=MyCert", certificate_transparency=False

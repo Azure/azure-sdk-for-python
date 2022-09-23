@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import FeatureClientConfiguration
@@ -22,7 +23,10 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 class FeatureClient(FeatureClientOperationsMixin):
-    """Azure Feature Exposure Control (AFEC) provides a mechanism for the resource providers to control feature exposure to users. Resource providers typically use this mechanism to provide public/private preview for new features prior to making them generally available. Users need to explicitly register for AFEC features to get access to such functionality.
+    """Azure Feature Exposure Control (AFEC) provides a mechanism for the resource providers to
+    control feature exposure to users. Resource providers typically use this mechanism to provide
+    public/private preview for new features prior to making them generally available. Users need to
+    explicitly register for AFEC features to get access to such functionality.
 
     :ivar features: FeaturesOperations operations
     :vartype features: azure.mgmt.resource.features.v2021_07_01.aio.operations.FeaturesOperations
@@ -33,8 +37,11 @@ class FeatureClient(FeatureClientOperationsMixin):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Azure subscription ID.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2021-07-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(

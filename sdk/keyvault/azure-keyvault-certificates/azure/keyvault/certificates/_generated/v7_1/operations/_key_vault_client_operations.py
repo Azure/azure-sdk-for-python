@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,24 +7,933 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
-import warnings
+
+from msrest import Serializer
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
-
+    from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class KeyVaultClientOperationsMixin(object):
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
+# fmt: off
 
+def build_get_certificates_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+    maxresults = kwargs.pop('maxresults', None)  # type: Optional[int]
+    include_pending = kwargs.pop('include_pending', None)  # type: Optional[bool]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates")
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if maxresults is not None:
+        _query_parameters['maxresults'] = _SERIALIZER.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
+    if include_pending is not None:
+        _query_parameters['includePending'] = _SERIALIZER.query("include_pending", include_pending, 'bool')
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_delete_certificate_request(
+    certificate_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/{certificate-name}")
+    path_format_arguments = {
+        "certificate-name": _SERIALIZER.url("certificate_name", certificate_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_set_certificate_contacts_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/contacts")
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PUT",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_get_certificate_contacts_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/contacts")
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_delete_certificate_contacts_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/contacts")
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_get_certificate_issuers_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+    maxresults = kwargs.pop('maxresults', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/issuers")
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if maxresults is not None:
+        _query_parameters['maxresults'] = _SERIALIZER.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_set_certificate_issuer_request(
+    issuer_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/issuers/{issuer-name}")
+    path_format_arguments = {
+        "issuer-name": _SERIALIZER.url("issuer_name", issuer_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PUT",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_update_certificate_issuer_request(
+    issuer_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/issuers/{issuer-name}")
+    path_format_arguments = {
+        "issuer-name": _SERIALIZER.url("issuer_name", issuer_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PATCH",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_get_certificate_issuer_request(
+    issuer_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/issuers/{issuer-name}")
+    path_format_arguments = {
+        "issuer-name": _SERIALIZER.url("issuer_name", issuer_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_delete_certificate_issuer_request(
+    issuer_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/issuers/{issuer-name}")
+    path_format_arguments = {
+        "issuer-name": _SERIALIZER.url("issuer_name", issuer_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_create_certificate_request(
+    certificate_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/{certificate-name}/create")
+    path_format_arguments = {
+        "certificate-name": _SERIALIZER.url("certificate_name", certificate_name, 'str', pattern=r'^[0-9a-zA-Z-]+$'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_import_certificate_request(
+    certificate_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/{certificate-name}/import")
+    path_format_arguments = {
+        "certificate-name": _SERIALIZER.url("certificate_name", certificate_name, 'str', pattern=r'^[0-9a-zA-Z-]+$'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_get_certificate_versions_request(
+    certificate_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+    maxresults = kwargs.pop('maxresults', None)  # type: Optional[int]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/{certificate-name}/versions")
+    path_format_arguments = {
+        "certificate-name": _SERIALIZER.url("certificate_name", certificate_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if maxresults is not None:
+        _query_parameters['maxresults'] = _SERIALIZER.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_get_certificate_policy_request(
+    certificate_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/{certificate-name}/policy")
+    path_format_arguments = {
+        "certificate-name": _SERIALIZER.url("certificate_name", certificate_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_update_certificate_policy_request(
+    certificate_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/{certificate-name}/policy")
+    path_format_arguments = {
+        "certificate-name": _SERIALIZER.url("certificate_name", certificate_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PATCH",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_update_certificate_request(
+    certificate_name,  # type: str
+    certificate_version,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/{certificate-name}/{certificate-version}")
+    path_format_arguments = {
+        "certificate-name": _SERIALIZER.url("certificate_name", certificate_name, 'str'),
+        "certificate-version": _SERIALIZER.url("certificate_version", certificate_version, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PATCH",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_get_certificate_request(
+    certificate_name,  # type: str
+    certificate_version,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/{certificate-name}/{certificate-version}")
+    path_format_arguments = {
+        "certificate-name": _SERIALIZER.url("certificate_name", certificate_name, 'str'),
+        "certificate-version": _SERIALIZER.url("certificate_version", certificate_version, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_update_certificate_operation_request(
+    certificate_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/{certificate-name}/pending")
+    path_format_arguments = {
+        "certificate-name": _SERIALIZER.url("certificate_name", certificate_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PATCH",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_get_certificate_operation_request(
+    certificate_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/{certificate-name}/pending")
+    path_format_arguments = {
+        "certificate-name": _SERIALIZER.url("certificate_name", certificate_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_delete_certificate_operation_request(
+    certificate_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/{certificate-name}/pending")
+    path_format_arguments = {
+        "certificate-name": _SERIALIZER.url("certificate_name", certificate_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_merge_certificate_request(
+    certificate_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/{certificate-name}/pending/merge")
+    path_format_arguments = {
+        "certificate-name": _SERIALIZER.url("certificate_name", certificate_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_backup_certificate_request(
+    certificate_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/{certificate-name}/backup")
+    path_format_arguments = {
+        "certificate-name": _SERIALIZER.url("certificate_name", certificate_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_restore_certificate_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/certificates/restore")
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_get_deleted_certificates_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+    maxresults = kwargs.pop('maxresults', None)  # type: Optional[int]
+    include_pending = kwargs.pop('include_pending', None)  # type: Optional[bool]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/deletedcertificates")
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if maxresults is not None:
+        _query_parameters['maxresults'] = _SERIALIZER.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
+    if include_pending is not None:
+        _query_parameters['includePending'] = _SERIALIZER.query("include_pending", include_pending, 'bool')
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_get_deleted_certificate_request(
+    certificate_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/deletedcertificates/{certificate-name}")
+    path_format_arguments = {
+        "certificate-name": _SERIALIZER.url("certificate_name", certificate_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_purge_deleted_certificate_request(
+    certificate_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/deletedcertificates/{certificate-name}")
+    path_format_arguments = {
+        "certificate-name": _SERIALIZER.url("certificate_name", certificate_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_recover_deleted_certificate_request(
+    certificate_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/deletedcertificates/{certificate-name}/recover")
+    path_format_arguments = {
+        "certificate-name": _SERIALIZER.url("certificate_name", certificate_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+# fmt: on
+class KeyVaultClientOperationsMixin(object):  # pylint: disable=too-many-public-methods
+
+    @distributed_trace
     def get_certificates(
         self,
         vault_base_url,  # type: str
@@ -40,57 +950,61 @@ class KeyVaultClientOperationsMixin(object):
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results.
+         will return up to 25 results. Default value is None.
         :type maxresults: int
         :param include_pending: Specifies whether to include certificates which are not completely
-         provisioned.
+         provisioned. Default value is None.
         :type include_pending: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CertificateListResult or the result of cls(response)
+        :return: An iterator like instance of either CertificateListResult or the result of
+         cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_1.models.CertificateListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.get_certificates.metadata['url']  # type: ignore
+                
+                request = build_get_certificates_request(
+                    api_version=api_version,
+                    maxresults=maxresults,
+                    include_pending=include_pending,
+                    template_url=self.get_certificates.metadata['url'],
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
-                    'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+                    "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
                 }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                if maxresults is not None:
-                    query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
-                if include_pending is not None:
-                    query_parameters['includePending'] = self._serialize.query("include_pending", include_pending, 'bool')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
+                
+                request = build_get_certificates_request(
+                    api_version=api_version,
+                    maxresults=maxresults,
+                    include_pending=include_pending,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
-                    'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+                    "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
                 }
-                url = self._client.format_url(url, **path_format_arguments)
-                request = self._client.get(url, query_parameters, header_parameters)
+                request.url = self._client.format_url(request.url, **path_format_arguments)
+
+                path_format_arguments = {
+                    "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+                }
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('CertificateListResult', pipeline_response)
+            deserialized = self._deserialize("CertificateListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -99,21 +1013,27 @@ class KeyVaultClientOperationsMixin(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
-    get_certificates.metadata = {'url': '/certificates'}  # type: ignore
+    get_certificates.metadata = {'url': "/certificates"}  # type: ignore
 
+    @distributed_trace
     def delete_certificate(
         self,
         vault_base_url,  # type: str
@@ -141,32 +1061,31 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.delete_certificate.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+        
+        request = build_delete_certificate_request(
+            certificate_name=certificate_name,
+            api_version=api_version,
+            template_url=self.delete_certificate.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('DeletedCertificateBundle', pipeline_response)
@@ -175,8 +1094,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    delete_certificate.metadata = {'url': '/certificates/{certificate-name}'}  # type: ignore
 
+    delete_certificate.metadata = {'url': "/certificates/{certificate-name}"}  # type: ignore
+
+
+    @distributed_trace
     def set_certificate_contacts(
         self,
         vault_base_url,  # type: str
@@ -203,36 +1125,34 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
-        # Construct URL
-        url = self.set_certificate_contacts.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(contacts, 'Contacts')
+
+        request = build_set_certificate_contacts_request(
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.set_certificate_contacts.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(contacts, 'Contacts')
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('Contacts', pipeline_response)
@@ -241,8 +1161,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    set_certificate_contacts.metadata = {'url': '/certificates/contacts'}  # type: ignore
 
+    set_certificate_contacts.metadata = {'url': "/certificates/contacts"}  # type: ignore
+
+
+    @distributed_trace
     def get_certificate_contacts(
         self,
         vault_base_url,  # type: str
@@ -266,31 +1189,30 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_certificate_contacts.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+        
+        request = build_get_certificate_contacts_request(
+            api_version=api_version,
+            template_url=self.get_certificate_contacts.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('Contacts', pipeline_response)
@@ -299,8 +1221,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_certificate_contacts.metadata = {'url': '/certificates/contacts'}  # type: ignore
 
+    get_certificate_contacts.metadata = {'url': "/certificates/contacts"}  # type: ignore
+
+
+    @distributed_trace
     def delete_certificate_contacts(
         self,
         vault_base_url,  # type: str
@@ -324,31 +1249,30 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.delete_certificate_contacts.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+        
+        request = build_delete_certificate_contacts_request(
+            api_version=api_version,
+            template_url=self.delete_certificate_contacts.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('Contacts', pipeline_response)
@@ -357,8 +1281,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    delete_certificate_contacts.metadata = {'url': '/certificates/contacts'}  # type: ignore
 
+    delete_certificate_contacts.metadata = {'url': "/certificates/contacts"}  # type: ignore
+
+
+    @distributed_trace
     def get_certificate_issuers(
         self,
         vault_base_url,  # type: str
@@ -375,52 +1302,56 @@ class KeyVaultClientOperationsMixin(object):
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results.
+         will return up to 25 results. Default value is None.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CertificateIssuerListResult or the result of cls(response)
+        :return: An iterator like instance of either CertificateIssuerListResult or the result of
+         cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_1.models.CertificateIssuerListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateIssuerListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.get_certificate_issuers.metadata['url']  # type: ignore
+                
+                request = build_get_certificate_issuers_request(
+                    api_version=api_version,
+                    maxresults=maxresults,
+                    template_url=self.get_certificate_issuers.metadata['url'],
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
-                    'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+                    "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
                 }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                if maxresults is not None:
-                    query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
+                
+                request = build_get_certificate_issuers_request(
+                    api_version=api_version,
+                    maxresults=maxresults,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
-                    'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+                    "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
                 }
-                url = self._client.format_url(url, **path_format_arguments)
-                request = self._client.get(url, query_parameters, header_parameters)
+                request.url = self._client.format_url(request.url, **path_format_arguments)
+
+                path_format_arguments = {
+                    "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+                }
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('CertificateIssuerListResult', pipeline_response)
+            deserialized = self._deserialize("CertificateIssuerListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -429,21 +1360,27 @@ class KeyVaultClientOperationsMixin(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
-    get_certificate_issuers.metadata = {'url': '/certificates/issuers'}  # type: ignore
+    get_certificate_issuers.metadata = {'url': "/certificates/issuers"}  # type: ignore
 
+    @distributed_trace
     def set_certificate_issuer(
         self,
         vault_base_url,  # type: str
@@ -473,37 +1410,35 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
-        # Construct URL
-        url = self.set_certificate_issuer.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(parameter, 'CertificateIssuerSetParameters')
+
+        request = build_set_certificate_issuer_request(
+            issuer_name=issuer_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.set_certificate_issuer.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'issuer-name': self._serialize.url("issuer_name", issuer_name, 'str'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameter, 'CertificateIssuerSetParameters')
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('IssuerBundle', pipeline_response)
@@ -512,8 +1447,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    set_certificate_issuer.metadata = {'url': '/certificates/issuers/{issuer-name}'}  # type: ignore
 
+    set_certificate_issuer.metadata = {'url': "/certificates/issuers/{issuer-name}"}  # type: ignore
+
+
+    @distributed_trace
     def update_certificate_issuer(
         self,
         vault_base_url,  # type: str
@@ -543,37 +1481,35 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
-        # Construct URL
-        url = self.update_certificate_issuer.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(parameter, 'CertificateIssuerUpdateParameters')
+
+        request = build_update_certificate_issuer_request(
+            issuer_name=issuer_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.update_certificate_issuer.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'issuer-name': self._serialize.url("issuer_name", issuer_name, 'str'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameter, 'CertificateIssuerUpdateParameters')
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('IssuerBundle', pipeline_response)
@@ -582,8 +1518,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    update_certificate_issuer.metadata = {'url': '/certificates/issuers/{issuer-name}'}  # type: ignore
 
+    update_certificate_issuer.metadata = {'url': "/certificates/issuers/{issuer-name}"}  # type: ignore
+
+
+    @distributed_trace
     def get_certificate_issuer(
         self,
         vault_base_url,  # type: str
@@ -611,32 +1550,31 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_certificate_issuer.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+        
+        request = build_get_certificate_issuer_request(
+            issuer_name=issuer_name,
+            api_version=api_version,
+            template_url=self.get_certificate_issuer.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'issuer-name': self._serialize.url("issuer_name", issuer_name, 'str'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('IssuerBundle', pipeline_response)
@@ -645,8 +1583,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_certificate_issuer.metadata = {'url': '/certificates/issuers/{issuer-name}'}  # type: ignore
 
+    get_certificate_issuer.metadata = {'url': "/certificates/issuers/{issuer-name}"}  # type: ignore
+
+
+    @distributed_trace
     def delete_certificate_issuer(
         self,
         vault_base_url,  # type: str
@@ -673,32 +1614,31 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.delete_certificate_issuer.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+        
+        request = build_delete_certificate_issuer_request(
+            issuer_name=issuer_name,
+            api_version=api_version,
+            template_url=self.delete_certificate_issuer.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'issuer-name': self._serialize.url("issuer_name", issuer_name, 'str'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('IssuerBundle', pipeline_response)
@@ -707,8 +1647,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    delete_certificate_issuer.metadata = {'url': '/certificates/issuers/{issuer-name}'}  # type: ignore
 
+    delete_certificate_issuer.metadata = {'url': "/certificates/issuers/{issuer-name}"}  # type: ignore
+
+
+    @distributed_trace
     def create_certificate(
         self,
         vault_base_url,  # type: str
@@ -738,37 +1681,35 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
-        # Construct URL
-        url = self.create_certificate.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(parameters, 'CertificateCreateParameters')
+
+        request = build_create_certificate_request(
+            certificate_name=certificate_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.create_certificate.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str', pattern=r'^[0-9a-zA-Z-]+$'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'CertificateCreateParameters')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateOperation', pipeline_response)
@@ -777,8 +1718,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_certificate.metadata = {'url': '/certificates/{certificate-name}/create'}  # type: ignore
 
+    create_certificate.metadata = {'url': "/certificates/{certificate-name}/create"}  # type: ignore
+
+
+    @distributed_trace
     def import_certificate(
         self,
         vault_base_url,  # type: str
@@ -810,37 +1754,35 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
-        # Construct URL
-        url = self.import_certificate.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(parameters, 'CertificateImportParameters')
+
+        request = build_import_certificate_request(
+            certificate_name=certificate_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.import_certificate.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str', pattern=r'^[0-9a-zA-Z-]+$'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'CertificateImportParameters')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateBundle', pipeline_response)
@@ -849,8 +1791,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    import_certificate.metadata = {'url': '/certificates/{certificate-name}/import'}  # type: ignore
 
+    import_certificate.metadata = {'url': "/certificates/{certificate-name}/import"}  # type: ignore
+
+
+    @distributed_trace
     def get_certificate_versions(
         self,
         vault_base_url,  # type: str
@@ -869,54 +1814,58 @@ class KeyVaultClientOperationsMixin(object):
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results.
+         will return up to 25 results. Default value is None.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CertificateListResult or the result of cls(response)
+        :return: An iterator like instance of either CertificateListResult or the result of
+         cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_1.models.CertificateListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.get_certificate_versions.metadata['url']  # type: ignore
+                
+                request = build_get_certificate_versions_request(
+                    certificate_name=certificate_name,
+                    api_version=api_version,
+                    maxresults=maxresults,
+                    template_url=self.get_certificate_versions.metadata['url'],
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
-                    'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-                    'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
+                    "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
                 }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                if maxresults is not None:
-                    query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
+                
+                request = build_get_certificate_versions_request(
+                    certificate_name=certificate_name,
+                    api_version=api_version,
+                    maxresults=maxresults,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
-                    'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-                    'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
+                    "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
                 }
-                url = self._client.format_url(url, **path_format_arguments)
-                request = self._client.get(url, query_parameters, header_parameters)
+                request.url = self._client.format_url(request.url, **path_format_arguments)
+
+                path_format_arguments = {
+                    "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+                }
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('CertificateListResult', pipeline_response)
+            deserialized = self._deserialize("CertificateListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -925,21 +1874,27 @@ class KeyVaultClientOperationsMixin(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
-    get_certificate_versions.metadata = {'url': '/certificates/{certificate-name}/versions'}  # type: ignore
+    get_certificate_versions.metadata = {'url': "/certificates/{certificate-name}/versions"}  # type: ignore
 
+    @distributed_trace
     def get_certificate_policy(
         self,
         vault_base_url,  # type: str
@@ -966,32 +1921,31 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_certificate_policy.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+        
+        request = build_get_certificate_policy_request(
+            certificate_name=certificate_name,
+            api_version=api_version,
+            template_url=self.get_certificate_policy.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificatePolicy', pipeline_response)
@@ -1000,8 +1954,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_certificate_policy.metadata = {'url': '/certificates/{certificate-name}/policy'}  # type: ignore
 
+    get_certificate_policy.metadata = {'url': "/certificates/{certificate-name}/policy"}  # type: ignore
+
+
+    @distributed_trace
     def update_certificate_policy(
         self,
         vault_base_url,  # type: str
@@ -1031,37 +1988,35 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
-        # Construct URL
-        url = self.update_certificate_policy.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(certificate_policy, 'CertificatePolicy')
+
+        request = build_update_certificate_policy_request(
+            certificate_name=certificate_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.update_certificate_policy.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(certificate_policy, 'CertificatePolicy')
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificatePolicy', pipeline_response)
@@ -1070,8 +2025,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    update_certificate_policy.metadata = {'url': '/certificates/{certificate-name}/policy'}  # type: ignore
 
+    update_certificate_policy.metadata = {'url': "/certificates/{certificate-name}/policy"}  # type: ignore
+
+
+    @distributed_trace
     def update_certificate(
         self,
         vault_base_url,  # type: str
@@ -1105,38 +2063,36 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
-        # Construct URL
-        url = self.update_certificate.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(parameters, 'CertificateUpdateParameters')
+
+        request = build_update_certificate_request(
+            certificate_name=certificate_name,
+            certificate_version=certificate_version,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.update_certificate.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
-            'certificate-version': self._serialize.url("certificate_version", certificate_version, 'str'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'CertificateUpdateParameters')
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateBundle', pipeline_response)
@@ -1145,8 +2101,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    update_certificate.metadata = {'url': '/certificates/{certificate-name}/{certificate-version}'}  # type: ignore
 
+    update_certificate.metadata = {'url': "/certificates/{certificate-name}/{certificate-version}"}  # type: ignore
+
+
+    @distributed_trace
     def get_certificate(
         self,
         vault_base_url,  # type: str
@@ -1177,33 +2136,32 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_certificate.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+        
+        request = build_get_certificate_request(
+            certificate_name=certificate_name,
+            certificate_version=certificate_version,
+            api_version=api_version,
+            template_url=self.get_certificate.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
-            'certificate-version': self._serialize.url("certificate_version", certificate_version, 'str'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateBundle', pipeline_response)
@@ -1212,8 +2170,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_certificate.metadata = {'url': '/certificates/{certificate-name}/{certificate-version}'}  # type: ignore
 
+    get_certificate.metadata = {'url': "/certificates/{certificate-name}/{certificate-version}"}  # type: ignore
+
+
+    @distributed_trace
     def update_certificate_operation(
         self,
         vault_base_url,  # type: str
@@ -1243,37 +2204,35 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
-        # Construct URL
-        url = self.update_certificate_operation.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(certificate_operation, 'CertificateOperationUpdateParameter')
+
+        request = build_update_certificate_operation_request(
+            certificate_name=certificate_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.update_certificate_operation.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(certificate_operation, 'CertificateOperationUpdateParameter')
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateOperation', pipeline_response)
@@ -1282,8 +2241,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    update_certificate_operation.metadata = {'url': '/certificates/{certificate-name}/pending'}  # type: ignore
 
+    update_certificate_operation.metadata = {'url': "/certificates/{certificate-name}/pending"}  # type: ignore
+
+
+    @distributed_trace
     def get_certificate_operation(
         self,
         vault_base_url,  # type: str
@@ -1310,32 +2272,31 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_certificate_operation.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+        
+        request = build_get_certificate_operation_request(
+            certificate_name=certificate_name,
+            api_version=api_version,
+            template_url=self.get_certificate_operation.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateOperation', pipeline_response)
@@ -1344,8 +2305,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_certificate_operation.metadata = {'url': '/certificates/{certificate-name}/pending'}  # type: ignore
 
+    get_certificate_operation.metadata = {'url': "/certificates/{certificate-name}/pending"}  # type: ignore
+
+
+    @distributed_trace
     def delete_certificate_operation(
         self,
         vault_base_url,  # type: str
@@ -1373,32 +2337,31 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.delete_certificate_operation.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+        
+        request = build_delete_certificate_operation_request(
+            certificate_name=certificate_name,
+            api_version=api_version,
+            template_url=self.delete_certificate_operation.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateOperation', pipeline_response)
@@ -1407,8 +2370,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    delete_certificate_operation.metadata = {'url': '/certificates/{certificate-name}/pending'}  # type: ignore
 
+    delete_certificate_operation.metadata = {'url': "/certificates/{certificate-name}/pending"}  # type: ignore
+
+
+    @distributed_trace
     def merge_certificate(
         self,
         vault_base_url,  # type: str
@@ -1439,37 +2405,35 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
-        # Construct URL
-        url = self.merge_certificate.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(parameters, 'CertificateMergeParameters')
+
+        request = build_merge_certificate_request(
+            certificate_name=certificate_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.merge_certificate.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'CertificateMergeParameters')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateBundle', pipeline_response)
@@ -1478,8 +2442,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    merge_certificate.metadata = {'url': '/certificates/{certificate-name}/pending/merge'}  # type: ignore
 
+    merge_certificate.metadata = {'url': "/certificates/{certificate-name}/pending/merge"}  # type: ignore
+
+
+    @distributed_trace
     def backup_certificate(
         self,
         vault_base_url,  # type: str
@@ -1507,32 +2474,31 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.backup_certificate.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+        
+        request = build_backup_certificate_request(
+            certificate_name=certificate_name,
+            api_version=api_version,
+            template_url=self.backup_certificate.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('BackupCertificateResult', pipeline_response)
@@ -1541,8 +2507,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    backup_certificate.metadata = {'url': '/certificates/{certificate-name}/backup'}  # type: ignore
 
+    backup_certificate.metadata = {'url': "/certificates/{certificate-name}/backup"}  # type: ignore
+
+
+    @distributed_trace
     def restore_certificate(
         self,
         vault_base_url,  # type: str
@@ -1569,36 +2538,34 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
-        # Construct URL
-        url = self.restore_certificate.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(parameters, 'CertificateRestoreParameters')
+
+        request = build_restore_certificate_request(
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.restore_certificate.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'CertificateRestoreParameters')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateBundle', pipeline_response)
@@ -1607,8 +2574,11 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    restore_certificate.metadata = {'url': '/certificates/restore'}  # type: ignore
 
+    restore_certificate.metadata = {'url': "/certificates/restore"}  # type: ignore
+
+
+    @distributed_trace
     def get_deleted_certificates(
         self,
         vault_base_url,  # type: str
@@ -1627,57 +2597,61 @@ class KeyVaultClientOperationsMixin(object):
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results.
+         will return up to 25 results. Default value is None.
         :type maxresults: int
         :param include_pending: Specifies whether to include certificates which are not completely
-         provisioned.
+         provisioned. Default value is None.
         :type include_pending: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DeletedCertificateListResult or the result of cls(response)
+        :return: An iterator like instance of either DeletedCertificateListResult or the result of
+         cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_1.models.DeletedCertificateListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedCertificateListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.get_deleted_certificates.metadata['url']  # type: ignore
+                
+                request = build_get_deleted_certificates_request(
+                    api_version=api_version,
+                    maxresults=maxresults,
+                    include_pending=include_pending,
+                    template_url=self.get_deleted_certificates.metadata['url'],
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
-                    'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+                    "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
                 }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                if maxresults is not None:
-                    query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
-                if include_pending is not None:
-                    query_parameters['includePending'] = self._serialize.query("include_pending", include_pending, 'bool')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
+                
+                request = build_get_deleted_certificates_request(
+                    api_version=api_version,
+                    maxresults=maxresults,
+                    include_pending=include_pending,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
                 path_format_arguments = {
-                    'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+                    "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
                 }
-                url = self._client.format_url(url, **path_format_arguments)
-                request = self._client.get(url, query_parameters, header_parameters)
+                request.url = self._client.format_url(request.url, **path_format_arguments)
+
+                path_format_arguments = {
+                    "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+                }
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('DeletedCertificateListResult', pipeline_response)
+            deserialized = self._deserialize("DeletedCertificateListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1686,21 +2660,27 @@ class KeyVaultClientOperationsMixin(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
-    get_deleted_certificates.metadata = {'url': '/deletedcertificates'}  # type: ignore
+    get_deleted_certificates.metadata = {'url': "/deletedcertificates"}  # type: ignore
 
+    @distributed_trace
     def get_deleted_certificate(
         self,
         vault_base_url,  # type: str
@@ -1728,32 +2708,31 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_deleted_certificate.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+        
+        request = build_get_deleted_certificate_request(
+            certificate_name=certificate_name,
+            api_version=api_version,
+            template_url=self.get_deleted_certificate.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('DeletedCertificateBundle', pipeline_response)
@@ -1762,9 +2741,12 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_deleted_certificate.metadata = {'url': '/deletedcertificates/{certificate-name}'}  # type: ignore
 
-    def purge_deleted_certificate(
+    get_deleted_certificate.metadata = {'url': "/deletedcertificates/{certificate-name}"}  # type: ignore
+
+
+    @distributed_trace
+    def purge_deleted_certificate(  # pylint: disable=inconsistent-return-statements
         self,
         vault_base_url,  # type: str
         certificate_name,  # type: str
@@ -1791,39 +2773,40 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.purge_deleted_certificate.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+        
+        request = build_purge_deleted_certificate_request(
+            certificate_name=certificate_name,
+            api_version=api_version,
+            template_url=self.purge_deleted_certificate.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    purge_deleted_certificate.metadata = {'url': '/deletedcertificates/{certificate-name}'}  # type: ignore
+    purge_deleted_certificate.metadata = {'url': "/deletedcertificates/{certificate-name}"}  # type: ignore
 
+
+    @distributed_trace
     def recover_deleted_certificate(
         self,
         vault_base_url,  # type: str
@@ -1852,32 +2835,31 @@ class KeyVaultClientOperationsMixin(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.recover_deleted_certificate.metadata['url']  # type: ignore
+        api_version = kwargs.pop('api_version', "7.1")  # type: str
+
+        
+        request = build_recover_deleted_certificate_request(
+            certificate_name=certificate_name,
+            api_version=api_version,
+            template_url=self.recover_deleted_certificate.metadata['url'],
+        )
+        request = _convert_request(request)
         path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateBundle', pipeline_response)
@@ -1886,4 +2868,6 @@ class KeyVaultClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    recover_deleted_certificate.metadata = {'url': '/deletedcertificates/{certificate-name}/recover'}  # type: ignore
+
+    recover_deleted_certificate.metadata = {'url': "/deletedcertificates/{certificate-name}/recover"}  # type: ignore
+

@@ -45,7 +45,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureAppConfigurationClient:
+class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-keyword
     # pylint:disable=line-too-long
     """Represents a client that calls restful API of Azure App Configuration service.
 
@@ -77,7 +77,7 @@ class AzureAppConfigurationClient:
         self._credential_scopes = base_url.strip("/") + "/.default"
 
         self._config = AzureAppConfigurationConfiguration(
-            credential, base_url, credential_scopes=self._credential_scopes, **kwargs  # type: ignore
+            base_url, credential_scopes=self._credential_scopes, **kwargs
         )
         self._config.user_agent_policy = UserAgentPolicy(
             base_user_agent=USER_AGENT, **kwargs
@@ -93,7 +93,7 @@ class AzureAppConfigurationClient:
             )
 
         self._impl = AzureAppConfiguration(
-            credential, base_url, credential_scopes=self._credential_scopes, pipeline=pipeline  # type: ignore
+            base_url, credential_scopes=self._credential_scopes, pipeline=pipeline
         )
 
     @classmethod

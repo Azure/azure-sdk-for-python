@@ -11,19 +11,46 @@ from typing import Any, Awaitable, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
-from msrest import Deserializer, Serializer
 
 from .. import models
+from .._serialization import Deserializer, Serializer
 from ._configuration import ArtifactsClientConfiguration
-from .operations import BigDataPoolsOperations, DataFlowDebugSessionOperations, DataFlowOperations, DatasetOperations, IntegrationRuntimesOperations, KqlScriptOperations, KqlScriptsOperations, LibraryOperations, LinkedServiceOperations, MetastoreOperations, NotebookOperationResultOperations, NotebookOperations, PipelineOperations, PipelineRunOperations, SparkConfigurationOperations, SparkJobDefinitionOperations, SqlPoolsOperations, SqlScriptOperations, TriggerOperations, TriggerRunOperations, WorkspaceGitRepoManagementOperations, WorkspaceOperations
+from .operations import (
+    BigDataPoolsOperations,
+    DataFlowDebugSessionOperations,
+    DataFlowOperations,
+    DatasetOperations,
+    IntegrationRuntimesOperations,
+    KqlScriptOperations,
+    KqlScriptsOperations,
+    LibraryOperations,
+    LinkConnectionOperations,
+    LinkedServiceOperations,
+    MetastoreOperations,
+    NotebookOperationResultOperations,
+    NotebookOperations,
+    PipelineOperations,
+    PipelineRunOperations,
+    SparkConfigurationOperations,
+    SparkJobDefinitionOperations,
+    SqlPoolsOperations,
+    SqlScriptOperations,
+    TriggerOperations,
+    TriggerRunOperations,
+    WorkspaceGitRepoManagementOperations,
+    WorkspaceOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class ArtifactsClient:
+
+class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """ArtifactsClient.
 
+    :ivar link_connection: LinkConnectionOperations operations
+    :vartype link_connection: azure.synapse.artifacts.aio.operations.LinkConnectionOperations
     :ivar kql_scripts: KqlScriptsOperations operations
     :vartype kql_scripts: azure.synapse.artifacts.aio.operations.KqlScriptsOperations
     :ivar kql_script: KqlScriptOperations operations
@@ -74,58 +101,61 @@ class ArtifactsClient:
     :vartype trigger_run: azure.synapse.artifacts.aio.operations.TriggerRunOperations
     :ivar workspace: WorkspaceOperations operations
     :vartype workspace: azure.synapse.artifacts.aio.operations.WorkspaceOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: The workspace development endpoint, for example
-     https://myworkspace.dev.azuresynapse.net.
+     https://myworkspace.dev.azuresynapse.net. Required.
     :type endpoint: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
-    def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        endpoint: str,
-        **kwargs: Any
-    ) -> None:
-        _base_url = '{endpoint}'
+    def __init__(self, credential: "AsyncTokenCredential", endpoint: str, **kwargs: Any) -> None:
+        _endpoint = "{endpoint}"
         self._config = ArtifactsClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
+        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.link_connection = LinkConnectionOperations(self._client, self._config, self._serialize, self._deserialize)
         self.kql_scripts = KqlScriptsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.kql_script = KqlScriptOperations(self._client, self._config, self._serialize, self._deserialize)
         self.metastore = MetastoreOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.spark_configuration = SparkConfigurationOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.spark_configuration = SparkConfigurationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.big_data_pools = BigDataPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.data_flow = DataFlowOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.data_flow_debug_session = DataFlowDebugSessionOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.data_flow_debug_session = DataFlowDebugSessionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.dataset = DatasetOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workspace_git_repo_management = WorkspaceGitRepoManagementOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_runtimes = IntegrationRuntimesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.workspace_git_repo_management = WorkspaceGitRepoManagementOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_runtimes = IntegrationRuntimesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.library = LibraryOperations(self._client, self._config, self._serialize, self._deserialize)
         self.linked_service = LinkedServiceOperations(self._client, self._config, self._serialize, self._deserialize)
         self.notebook = NotebookOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.notebook_operation_result = NotebookOperationResultOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.notebook_operation_result = NotebookOperationResultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.pipeline = PipelineOperations(self._client, self._config, self._serialize, self._deserialize)
         self.pipeline_run = PipelineRunOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.spark_job_definition = SparkJobDefinitionOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.spark_job_definition = SparkJobDefinitionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.sql_pools = SqlPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sql_script = SqlScriptOperations(self._client, self._config, self._serialize, self._deserialize)
         self.trigger = TriggerOperations(self._client, self._config, self._serialize, self._deserialize)
         self.trigger_run = TriggerRunOperations(self._client, self._config, self._serialize, self._deserialize)
         self.workspace = WorkspaceOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -134,7 +164,7 @@ class ArtifactsClient:
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -145,7 +175,7 @@ class ArtifactsClient:
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

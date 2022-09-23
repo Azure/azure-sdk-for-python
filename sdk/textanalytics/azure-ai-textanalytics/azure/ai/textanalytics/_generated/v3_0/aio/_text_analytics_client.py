@@ -11,9 +11,9 @@ from typing import Any, Awaitable, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
-from msrest import Deserializer, Serializer
 
 from .. import models
+from ..._serialization import Deserializer, Serializer
 from ._configuration import TextAnalyticsClientConfiguration
 from .operations import TextAnalyticsClientOperationsMixin
 
@@ -21,13 +21,18 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
-    """The Text Analytics API is a suite of text analytics web services built with best-in-class Microsoft machine learning algorithms. The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction and language detection. No training data is needed to use this API; just bring your text data. This API uses advanced natural language processing techniques to deliver best in class predictions. Further documentation can be found in https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview.
+class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+    """The Text Analytics API is a suite of text analytics web services built with best-in-class
+    Microsoft machine learning algorithms. The API can be used to analyze unstructured text for
+    tasks such as sentiment analysis, key phrase extraction and language detection. No training
+    data is needed to use this API; just bring your text data. This API uses advanced natural
+    language processing techniques to deliver best in class predictions. Further documentation can
+    be found in https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
-     https://westus.api.cognitive.microsoft.com).
+     https://westus.api.cognitive.microsoft.com). Required.
     :type endpoint: str
     """
 
@@ -37,9 +42,9 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
         endpoint: str,
         **kwargs: Any
     ) -> None:
-        _base_url = '{Endpoint}/text/analytics/v3.0'
-        self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
+        _endpoint = '{Endpoint}/text/analytics/v3.0'
+        self._config = TextAnalyticsClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
+        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -60,7 +65,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

@@ -10,6 +10,7 @@
 import io
 import pytest
 import sys
+import os
 try:
     import collections.abc as collections
 except ImportError:
@@ -320,7 +321,7 @@ def test_use_custom_json_encoder():
     # since json can't serialize bytes by default but AzureJSONEncoder can,
     # we pass in bytes and check that they are serialized
     request = HttpRequest("GET", "/headers", json=bytearray("mybytes", "utf-8"))
-    assert request.content == '"bXlieXRlcw=="'
+    assert request.content == '"bXlieXRlcw=="' # cspell:disable-line
 
 def test_request_policies_raw_request_hook(port):
     # test that the request all the way through the pipeline is a new request
@@ -384,7 +385,7 @@ def test_request_policies_chain(port):
     with pytest.raises(ValueError) as ex:
         client.send_request(
             request,
-            content="I should be overriden",
+            content="I should be overridden",
         )
     assert "Passed through the policies!" in str(ex.value)
 
@@ -454,6 +455,45 @@ def test_json_file_content_type_input():
         assert request.content == json_file
         assert not request.content.closed
         assert request.content.read() == b'{"more": "cowbell"}'
+
+class NonSeekableStream:
+    def __init__(self, wrapped_stream):
+        self.wrapped_stream = wrapped_stream
+
+    def write(self, data):
+        self.wrapped_stream.write(data)
+
+    def read(self, count):
+        raise ValueError("Request should not read me!")
+
+    def seek(self, *args, **kwargs):
+        raise ValueError("Can't seek!")
+
+    def tell(self):
+        return self.wrapped_stream.tell()
+
+def test_non_seekable_stream_input():
+    data = b"a" * 4 * 1024
+    data_stream = NonSeekableStream(io.BytesIO(data))
+    HttpRequest(method="PUT", url="http://www.example.com", content=data_stream) # ensure we can make this HttpRequest
+
+class Stream:
+    def __init__(self, length, initial_buffer_length=4*1024):
+        self._base_data = os.urandom(initial_buffer_length)
+        self._base_data_length = initial_buffer_length
+        self._position = 0
+        self._remaining = length
+
+    def read(self, size=None):
+        raise ValueError("Request should not read me!")
+
+    def remaining(self):
+        return self._remaining
+
+def test_stream_input():
+    data_stream = Stream(length=4)
+    HttpRequest(method="PUT", url="http://www.example.com", content=data_stream) # ensure we can make this HttpRequest
+
 
 # NOTE: For files, we don't allow list of tuples yet, just dict. Will uncomment when we add this capability
 # def test_multipart_multiple_files_single_input_content():

@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,41 +8,48 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._azure_reservation_api_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class AppliedReservationList(msrest.serialization.Model):
+class AppliedReservationList(_serialization.Model):
     """AppliedReservationList.
 
-    :param value:
-    :type value: list[str]
-    :param next_link: Url to get the next page of reservations.
-    :type next_link: str
+    :ivar value:
+    :vartype value: list[str]
+    :ivar next_link: Url to get the next page of reservations.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[str]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[str]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List[str]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(AppliedReservationList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List[str]] = None, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword value:
+        :paramtype value: list[str]
+        :keyword next_link: Url to get the next page of reservations.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class AppliedReservations(msrest.serialization.Model):
+class AppliedReservations(_serialization.Model):
     """AppliedReservations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -52,166 +60,188 @@ class AppliedReservations(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Type of resource. "Microsoft.Capacity/AppliedReservations".
     :vartype type: str
-    :param reservation_order_ids:
-    :type reservation_order_ids: ~azure.mgmt.reservations.models.AppliedReservationList
+    :ivar reservation_order_ids:
+    :vartype reservation_order_ids: ~azure.mgmt.reservations.models.AppliedReservationList
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'reservation_order_ids': {'key': 'properties.reservationOrderIds', 'type': 'AppliedReservationList'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "reservation_order_ids": {"key": "properties.reservationOrderIds", "type": "AppliedReservationList"},
     }
 
-    def __init__(
-        self,
-        *,
-        reservation_order_ids: Optional["AppliedReservationList"] = None,
-        **kwargs
-    ):
-        super(AppliedReservations, self).__init__(**kwargs)
+    def __init__(self, *, reservation_order_ids: Optional["_models.AppliedReservationList"] = None, **kwargs):
+        """
+        :keyword reservation_order_ids:
+        :paramtype reservation_order_ids: ~azure.mgmt.reservations.models.AppliedReservationList
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.reservation_order_ids = reservation_order_ids
 
 
-class AvailableScopeProperties(msrest.serialization.Model):
+class AvailableScopeProperties(_serialization.Model):
     """AvailableScopeProperties.
 
-    :param properties:
-    :type properties: ~azure.mgmt.reservations.models.SubscriptionScopeProperties
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.reservations.models.SubscriptionScopeProperties
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'SubscriptionScopeProperties'},
+        "properties": {"key": "properties", "type": "SubscriptionScopeProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["SubscriptionScopeProperties"] = None,
-        **kwargs
-    ):
-        super(AvailableScopeProperties, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.SubscriptionScopeProperties"] = None, **kwargs):
+        """
+        :keyword properties:
+        :paramtype properties: ~azure.mgmt.reservations.models.SubscriptionScopeProperties
+        """
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class AvailableScopeRequest(msrest.serialization.Model):
+class AvailableScopeRequest(_serialization.Model):
     """Available scope.
 
-    :param properties: Available scope request properties.
-    :type properties: ~azure.mgmt.reservations.models.AvailableScopeRequestProperties
+    :ivar properties: Available scope request properties.
+    :vartype properties: ~azure.mgmt.reservations.models.AvailableScopeRequestProperties
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'AvailableScopeRequestProperties'},
+        "properties": {"key": "properties", "type": "AvailableScopeRequestProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["AvailableScopeRequestProperties"] = None,
-        **kwargs
-    ):
-        super(AvailableScopeRequest, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.AvailableScopeRequestProperties"] = None, **kwargs):
+        """
+        :keyword properties: Available scope request properties.
+        :paramtype properties: ~azure.mgmt.reservations.models.AvailableScopeRequestProperties
+        """
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class AvailableScopeRequestProperties(msrest.serialization.Model):
+class AvailableScopeRequestProperties(_serialization.Model):
     """Available scope request properties.
 
-    :param scopes:
-    :type scopes: list[str]
+    :ivar scopes:
+    :vartype scopes: list[str]
     """
 
     _attribute_map = {
-        'scopes': {'key': 'scopes', 'type': '[str]'},
+        "scopes": {"key": "scopes", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        scopes: Optional[List[str]] = None,
-        **kwargs
-    ):
-        super(AvailableScopeRequestProperties, self).__init__(**kwargs)
+    def __init__(self, *, scopes: Optional[List[str]] = None, **kwargs):
+        """
+        :keyword scopes:
+        :paramtype scopes: list[str]
+        """
+        super().__init__(**kwargs)
         self.scopes = scopes
 
 
-class BillingInformation(msrest.serialization.Model):
+class BillingInformation(_serialization.Model):
     """billing information.
 
-    :param billing_currency_total_paid_amount:
-    :type billing_currency_total_paid_amount: ~azure.mgmt.reservations.models.Price
-    :param billing_currency_prorated_amount:
-    :type billing_currency_prorated_amount: ~azure.mgmt.reservations.models.Price
-    :param billing_currency_remaining_commitment_amount:
-    :type billing_currency_remaining_commitment_amount: ~azure.mgmt.reservations.models.Price
+    :ivar billing_currency_total_paid_amount:
+    :vartype billing_currency_total_paid_amount: ~azure.mgmt.reservations.models.Price
+    :ivar billing_currency_prorated_amount:
+    :vartype billing_currency_prorated_amount: ~azure.mgmt.reservations.models.Price
+    :ivar billing_currency_remaining_commitment_amount:
+    :vartype billing_currency_remaining_commitment_amount: ~azure.mgmt.reservations.models.Price
     """
 
     _attribute_map = {
-        'billing_currency_total_paid_amount': {'key': 'billingCurrencyTotalPaidAmount', 'type': 'Price'},
-        'billing_currency_prorated_amount': {'key': 'billingCurrencyProratedAmount', 'type': 'Price'},
-        'billing_currency_remaining_commitment_amount': {'key': 'billingCurrencyRemainingCommitmentAmount', 'type': 'Price'},
+        "billing_currency_total_paid_amount": {"key": "billingCurrencyTotalPaidAmount", "type": "Price"},
+        "billing_currency_prorated_amount": {"key": "billingCurrencyProratedAmount", "type": "Price"},
+        "billing_currency_remaining_commitment_amount": {
+            "key": "billingCurrencyRemainingCommitmentAmount",
+            "type": "Price",
+        },
     }
 
     def __init__(
         self,
         *,
-        billing_currency_total_paid_amount: Optional["Price"] = None,
-        billing_currency_prorated_amount: Optional["Price"] = None,
-        billing_currency_remaining_commitment_amount: Optional["Price"] = None,
+        billing_currency_total_paid_amount: Optional["_models.Price"] = None,
+        billing_currency_prorated_amount: Optional["_models.Price"] = None,
+        billing_currency_remaining_commitment_amount: Optional["_models.Price"] = None,
         **kwargs
     ):
-        super(BillingInformation, self).__init__(**kwargs)
+        """
+        :keyword billing_currency_total_paid_amount:
+        :paramtype billing_currency_total_paid_amount: ~azure.mgmt.reservations.models.Price
+        :keyword billing_currency_prorated_amount:
+        :paramtype billing_currency_prorated_amount: ~azure.mgmt.reservations.models.Price
+        :keyword billing_currency_remaining_commitment_amount:
+        :paramtype billing_currency_remaining_commitment_amount: ~azure.mgmt.reservations.models.Price
+        """
+        super().__init__(**kwargs)
         self.billing_currency_total_paid_amount = billing_currency_total_paid_amount
         self.billing_currency_prorated_amount = billing_currency_prorated_amount
         self.billing_currency_remaining_commitment_amount = billing_currency_remaining_commitment_amount
 
 
-class CalculateExchangeOperationResultResponse(msrest.serialization.Model):
+class CalculateExchangeOperationResultResponse(_serialization.Model):
     """CalculateExchange operation result.
 
-    :param id: It should match what is used to GET the operation result.
-    :type id: str
-    :param name: It must match the last segment of the id field, and will typically be a GUID /
+    :ivar id: It should match what is used to GET the operation result.
+    :vartype id: str
+    :ivar name: It must match the last segment of the id field, and will typically be a GUID /
      system generated value.
-    :type name: str
-    :param status: Status of the operation. Possible values include: "Succeeded", "Failed",
-     "Cancelled", "Pending".
-    :type status: str or ~azure.mgmt.reservations.models.CalculateExchangeOperationResultStatus
-    :param properties: CalculateExchange response properties.
-    :type properties: ~azure.mgmt.reservations.models.CalculateExchangeResponseProperties
-    :param error: Required if status == failed or status == canceled.
-    :type error: ~azure.mgmt.reservations.models.OperationResultError
+    :vartype name: str
+    :ivar status: Status of the operation. Known values are: "Succeeded", "Failed", "Cancelled",
+     and "Pending".
+    :vartype status: str or ~azure.mgmt.reservations.models.CalculateExchangeOperationResultStatus
+    :ivar properties: CalculateExchange response properties.
+    :vartype properties: ~azure.mgmt.reservations.models.CalculateExchangeResponseProperties
+    :ivar error: Required if status == failed or status == canceled.
+    :vartype error: ~azure.mgmt.reservations.models.OperationResultError
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'CalculateExchangeResponseProperties'},
-        'error': {'key': 'error', 'type': 'OperationResultError'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "properties": {"key": "properties", "type": "CalculateExchangeResponseProperties"},
+        "error": {"key": "error", "type": "OperationResultError"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
-        status: Optional[Union[str, "CalculateExchangeOperationResultStatus"]] = None,
-        properties: Optional["CalculateExchangeResponseProperties"] = None,
-        error: Optional["OperationResultError"] = None,
+        status: Optional[Union[str, "_models.CalculateExchangeOperationResultStatus"]] = None,
+        properties: Optional["_models.CalculateExchangeResponseProperties"] = None,
+        error: Optional["_models.OperationResultError"] = None,
         **kwargs
     ):
-        super(CalculateExchangeOperationResultResponse, self).__init__(**kwargs)
+        """
+        :keyword id: It should match what is used to GET the operation result.
+        :paramtype id: str
+        :keyword name: It must match the last segment of the id field, and will typically be a GUID /
+         system generated value.
+        :paramtype name: str
+        :keyword status: Status of the operation. Known values are: "Succeeded", "Failed", "Cancelled",
+         and "Pending".
+        :paramtype status: str or
+         ~azure.mgmt.reservations.models.CalculateExchangeOperationResultStatus
+        :keyword properties: CalculateExchange response properties.
+        :paramtype properties: ~azure.mgmt.reservations.models.CalculateExchangeResponseProperties
+        :keyword error: Required if status == failed or status == canceled.
+        :paramtype error: ~azure.mgmt.reservations.models.OperationResultError
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.status = status
@@ -219,97 +249,124 @@ class CalculateExchangeOperationResultResponse(msrest.serialization.Model):
         self.error = error
 
 
-class CalculateExchangeRequest(msrest.serialization.Model):
+class CalculateExchangeRequest(_serialization.Model):
     """Calculate exchange request.
 
-    :param properties: Calculate exchange request properties.
-    :type properties: ~azure.mgmt.reservations.models.CalculateExchangeRequestProperties
+    :ivar properties: Calculate exchange request properties.
+    :vartype properties: ~azure.mgmt.reservations.models.CalculateExchangeRequestProperties
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'CalculateExchangeRequestProperties'},
+        "properties": {"key": "properties", "type": "CalculateExchangeRequestProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["CalculateExchangeRequestProperties"] = None,
-        **kwargs
-    ):
-        super(CalculateExchangeRequest, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.CalculateExchangeRequestProperties"] = None, **kwargs):
+        """
+        :keyword properties: Calculate exchange request properties.
+        :paramtype properties: ~azure.mgmt.reservations.models.CalculateExchangeRequestProperties
+        """
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class CalculateExchangeRequestProperties(msrest.serialization.Model):
+class CalculateExchangeRequestProperties(_serialization.Model):
     """Calculate exchange request properties.
 
-    :param reservations_to_purchase: List of reservations that are being purchased in this
-     exchange.
-    :type reservations_to_purchase: list[~azure.mgmt.reservations.models.PurchaseRequest]
-    :param reservations_to_exchange: List of reservations that are being returned in this exchange.
-    :type reservations_to_exchange: list[~azure.mgmt.reservations.models.ReservationToReturn]
+    :ivar reservations_to_purchase: List of reservations that are being purchased in this exchange.
+    :vartype reservations_to_purchase: list[~azure.mgmt.reservations.models.PurchaseRequest]
+    :ivar reservations_to_exchange: List of reservations that are being returned in this exchange.
+    :vartype reservations_to_exchange: list[~azure.mgmt.reservations.models.ReservationToReturn]
     """
 
     _attribute_map = {
-        'reservations_to_purchase': {'key': 'reservationsToPurchase', 'type': '[PurchaseRequest]'},
-        'reservations_to_exchange': {'key': 'reservationsToExchange', 'type': '[ReservationToReturn]'},
+        "reservations_to_purchase": {"key": "reservationsToPurchase", "type": "[PurchaseRequest]"},
+        "reservations_to_exchange": {"key": "reservationsToExchange", "type": "[ReservationToReturn]"},
     }
 
     def __init__(
         self,
         *,
-        reservations_to_purchase: Optional[List["PurchaseRequest"]] = None,
-        reservations_to_exchange: Optional[List["ReservationToReturn"]] = None,
+        reservations_to_purchase: Optional[List["_models.PurchaseRequest"]] = None,
+        reservations_to_exchange: Optional[List["_models.ReservationToReturn"]] = None,
         **kwargs
     ):
-        super(CalculateExchangeRequestProperties, self).__init__(**kwargs)
+        """
+        :keyword reservations_to_purchase: List of reservations that are being purchased in this
+         exchange.
+        :paramtype reservations_to_purchase: list[~azure.mgmt.reservations.models.PurchaseRequest]
+        :keyword reservations_to_exchange: List of reservations that are being returned in this
+         exchange.
+        :paramtype reservations_to_exchange: list[~azure.mgmt.reservations.models.ReservationToReturn]
+        """
+        super().__init__(**kwargs)
         self.reservations_to_purchase = reservations_to_purchase
         self.reservations_to_exchange = reservations_to_exchange
 
 
-class CalculateExchangeResponseProperties(msrest.serialization.Model):
+class CalculateExchangeResponseProperties(_serialization.Model):
     """CalculateExchange response properties.
 
-    :param session_id: Exchange session identifier.
-    :type session_id: str
-    :param net_payable:
-    :type net_payable: ~azure.mgmt.reservations.models.Price
-    :param refunds_total:
-    :type refunds_total: ~azure.mgmt.reservations.models.Price
-    :param purchases_total:
-    :type purchases_total: ~azure.mgmt.reservations.models.Price
-    :param reservations_to_purchase: Details of the reservations being purchased.
-    :type reservations_to_purchase:
+    :ivar session_id: Exchange session identifier.
+    :vartype session_id: str
+    :ivar net_payable:
+    :vartype net_payable: ~azure.mgmt.reservations.models.Price
+    :ivar refunds_total:
+    :vartype refunds_total: ~azure.mgmt.reservations.models.Price
+    :ivar purchases_total:
+    :vartype purchases_total: ~azure.mgmt.reservations.models.Price
+    :ivar reservations_to_purchase: Details of the reservations being purchased.
+    :vartype reservations_to_purchase:
      list[~azure.mgmt.reservations.models.ReservationToPurchaseCalculateExchange]
-    :param reservations_to_exchange: Details of the reservations being returned.
-    :type reservations_to_exchange: list[~azure.mgmt.reservations.models.ReservationToExchange]
-    :param policy_result: Exchange policy errors.
-    :type policy_result: ~azure.mgmt.reservations.models.ExchangePolicyErrors
+    :ivar reservations_to_exchange: Details of the reservations being returned.
+    :vartype reservations_to_exchange: list[~azure.mgmt.reservations.models.ReservationToExchange]
+    :ivar policy_result: Exchange policy errors.
+    :vartype policy_result: ~azure.mgmt.reservations.models.ExchangePolicyErrors
     """
 
     _attribute_map = {
-        'session_id': {'key': 'sessionId', 'type': 'str'},
-        'net_payable': {'key': 'netPayable', 'type': 'Price'},
-        'refunds_total': {'key': 'refundsTotal', 'type': 'Price'},
-        'purchases_total': {'key': 'purchasesTotal', 'type': 'Price'},
-        'reservations_to_purchase': {'key': 'reservationsToPurchase', 'type': '[ReservationToPurchaseCalculateExchange]'},
-        'reservations_to_exchange': {'key': 'reservationsToExchange', 'type': '[ReservationToExchange]'},
-        'policy_result': {'key': 'policyResult', 'type': 'ExchangePolicyErrors'},
+        "session_id": {"key": "sessionId", "type": "str"},
+        "net_payable": {"key": "netPayable", "type": "Price"},
+        "refunds_total": {"key": "refundsTotal", "type": "Price"},
+        "purchases_total": {"key": "purchasesTotal", "type": "Price"},
+        "reservations_to_purchase": {
+            "key": "reservationsToPurchase",
+            "type": "[ReservationToPurchaseCalculateExchange]",
+        },
+        "reservations_to_exchange": {"key": "reservationsToExchange", "type": "[ReservationToExchange]"},
+        "policy_result": {"key": "policyResult", "type": "ExchangePolicyErrors"},
     }
 
     def __init__(
         self,
         *,
         session_id: Optional[str] = None,
-        net_payable: Optional["Price"] = None,
-        refunds_total: Optional["Price"] = None,
-        purchases_total: Optional["Price"] = None,
-        reservations_to_purchase: Optional[List["ReservationToPurchaseCalculateExchange"]] = None,
-        reservations_to_exchange: Optional[List["ReservationToExchange"]] = None,
-        policy_result: Optional["ExchangePolicyErrors"] = None,
+        net_payable: Optional["_models.Price"] = None,
+        refunds_total: Optional["_models.Price"] = None,
+        purchases_total: Optional["_models.Price"] = None,
+        reservations_to_purchase: Optional[List["_models.ReservationToPurchaseCalculateExchange"]] = None,
+        reservations_to_exchange: Optional[List["_models.ReservationToExchange"]] = None,
+        policy_result: Optional["_models.ExchangePolicyErrors"] = None,
         **kwargs
     ):
-        super(CalculateExchangeResponseProperties, self).__init__(**kwargs)
+        """
+        :keyword session_id: Exchange session identifier.
+        :paramtype session_id: str
+        :keyword net_payable:
+        :paramtype net_payable: ~azure.mgmt.reservations.models.Price
+        :keyword refunds_total:
+        :paramtype refunds_total: ~azure.mgmt.reservations.models.Price
+        :keyword purchases_total:
+        :paramtype purchases_total: ~azure.mgmt.reservations.models.Price
+        :keyword reservations_to_purchase: Details of the reservations being purchased.
+        :paramtype reservations_to_purchase:
+         list[~azure.mgmt.reservations.models.ReservationToPurchaseCalculateExchange]
+        :keyword reservations_to_exchange: Details of the reservations being returned.
+        :paramtype reservations_to_exchange:
+         list[~azure.mgmt.reservations.models.ReservationToExchange]
+        :keyword policy_result: Exchange policy errors.
+        :paramtype policy_result: ~azure.mgmt.reservations.models.ExchangePolicyErrors
+        """
+        super().__init__(**kwargs)
         self.session_id = session_id
         self.net_payable = net_payable
         self.refunds_total = refunds_total
@@ -319,76 +376,131 @@ class CalculateExchangeResponseProperties(msrest.serialization.Model):
         self.policy_result = policy_result
 
 
-class CalculatePriceResponse(msrest.serialization.Model):
+class CalculatePriceResponse(_serialization.Model):
     """CalculatePriceResponse.
 
-    :param properties:
-    :type properties: ~azure.mgmt.reservations.models.CalculatePriceResponseProperties
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.reservations.models.CalculatePriceResponseProperties
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'CalculatePriceResponseProperties'},
+        "properties": {"key": "properties", "type": "CalculatePriceResponseProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["CalculatePriceResponseProperties"] = None,
-        **kwargs
-    ):
-        super(CalculatePriceResponse, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.CalculatePriceResponseProperties"] = None, **kwargs):
+        """
+        :keyword properties:
+        :paramtype properties: ~azure.mgmt.reservations.models.CalculatePriceResponseProperties
+        """
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class CalculatePriceResponseProperties(msrest.serialization.Model):
+class CalculatePriceResponseProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """CalculatePriceResponseProperties.
 
-    :param billing_currency_total: Currency and amount that customer will be charged in customer's
+    :ivar billing_currency_total: Currency and amount that customer will be charged in customer's
      local currency. Tax is not included.
-    :type billing_currency_total:
+    :vartype billing_currency_total:
      ~azure.mgmt.reservations.models.CalculatePriceResponsePropertiesBillingCurrencyTotal
-    :param is_billing_partner_managed: True if billing is managed by Microsoft Partner. Used only
+    :ivar net_total: Net total amount in pricing currency.
+    :vartype net_total: float
+    :ivar tax_total: Tax amount in pricing currency.
+    :vartype tax_total: float
+    :ivar grand_total: Total amount in pricing currency.
+    :vartype grand_total: float
+    :ivar is_tax_included: Whether or not tax is included in grand total.
+    :vartype is_tax_included: bool
+    :ivar is_billing_partner_managed: True if billing is managed by Microsoft Partner. Used only
      for CSP accounts.
-    :type is_billing_partner_managed: bool
-    :param reservation_order_id: GUID that represents reservation order that can be placed after
+    :vartype is_billing_partner_managed: bool
+    :ivar reservation_order_id: GUID that represents reservation order that can be placed after
      calculating price.
-    :type reservation_order_id: str
-    :param sku_title: Title of SKU that is being purchased.
-    :type sku_title: str
-    :param sku_description: Description of SKU that is being purchased.
-    :type sku_description: str
-    :param pricing_currency_total: Amount that Microsoft uses for record. Used during refund for
+    :vartype reservation_order_id: str
+    :ivar sku_title: Title of SKU that is being purchased.
+    :vartype sku_title: str
+    :ivar sku_description: Description of SKU that is being purchased.
+    :vartype sku_description: str
+    :ivar pricing_currency_total: Amount that Microsoft uses for record. Used during refund for
      calculating refund limit. Tax is not included.
-    :type pricing_currency_total:
+    :vartype pricing_currency_total:
      ~azure.mgmt.reservations.models.CalculatePriceResponsePropertiesPricingCurrencyTotal
-    :param payment_schedule:
-    :type payment_schedule: list[~azure.mgmt.reservations.models.PaymentDetail]
+    :ivar payment_schedule:
+    :vartype payment_schedule: list[~azure.mgmt.reservations.models.PaymentDetail]
     """
 
     _attribute_map = {
-        'billing_currency_total': {'key': 'billingCurrencyTotal', 'type': 'CalculatePriceResponsePropertiesBillingCurrencyTotal'},
-        'is_billing_partner_managed': {'key': 'isBillingPartnerManaged', 'type': 'bool'},
-        'reservation_order_id': {'key': 'reservationOrderId', 'type': 'str'},
-        'sku_title': {'key': 'skuTitle', 'type': 'str'},
-        'sku_description': {'key': 'skuDescription', 'type': 'str'},
-        'pricing_currency_total': {'key': 'pricingCurrencyTotal', 'type': 'CalculatePriceResponsePropertiesPricingCurrencyTotal'},
-        'payment_schedule': {'key': 'paymentSchedule', 'type': '[PaymentDetail]'},
+        "billing_currency_total": {
+            "key": "billingCurrencyTotal",
+            "type": "CalculatePriceResponsePropertiesBillingCurrencyTotal",
+        },
+        "net_total": {"key": "netTotal", "type": "float"},
+        "tax_total": {"key": "taxTotal", "type": "float"},
+        "grand_total": {"key": "grandTotal", "type": "float"},
+        "is_tax_included": {"key": "isTaxIncluded", "type": "bool"},
+        "is_billing_partner_managed": {"key": "isBillingPartnerManaged", "type": "bool"},
+        "reservation_order_id": {"key": "reservationOrderId", "type": "str"},
+        "sku_title": {"key": "skuTitle", "type": "str"},
+        "sku_description": {"key": "skuDescription", "type": "str"},
+        "pricing_currency_total": {
+            "key": "pricingCurrencyTotal",
+            "type": "CalculatePriceResponsePropertiesPricingCurrencyTotal",
+        },
+        "payment_schedule": {"key": "paymentSchedule", "type": "[PaymentDetail]"},
     }
 
     def __init__(
         self,
         *,
-        billing_currency_total: Optional["CalculatePriceResponsePropertiesBillingCurrencyTotal"] = None,
+        billing_currency_total: Optional["_models.CalculatePriceResponsePropertiesBillingCurrencyTotal"] = None,
+        net_total: Optional[float] = None,
+        tax_total: Optional[float] = None,
+        grand_total: Optional[float] = None,
+        is_tax_included: Optional[bool] = None,
         is_billing_partner_managed: Optional[bool] = None,
         reservation_order_id: Optional[str] = None,
         sku_title: Optional[str] = None,
         sku_description: Optional[str] = None,
-        pricing_currency_total: Optional["CalculatePriceResponsePropertiesPricingCurrencyTotal"] = None,
-        payment_schedule: Optional[List["PaymentDetail"]] = None,
+        pricing_currency_total: Optional["_models.CalculatePriceResponsePropertiesPricingCurrencyTotal"] = None,
+        payment_schedule: Optional[List["_models.PaymentDetail"]] = None,
         **kwargs
     ):
-        super(CalculatePriceResponseProperties, self).__init__(**kwargs)
+        """
+        :keyword billing_currency_total: Currency and amount that customer will be charged in
+         customer's local currency. Tax is not included.
+        :paramtype billing_currency_total:
+         ~azure.mgmt.reservations.models.CalculatePriceResponsePropertiesBillingCurrencyTotal
+        :keyword net_total: Net total amount in pricing currency.
+        :paramtype net_total: float
+        :keyword tax_total: Tax amount in pricing currency.
+        :paramtype tax_total: float
+        :keyword grand_total: Total amount in pricing currency.
+        :paramtype grand_total: float
+        :keyword is_tax_included: Whether or not tax is included in grand total.
+        :paramtype is_tax_included: bool
+        :keyword is_billing_partner_managed: True if billing is managed by Microsoft Partner. Used only
+         for CSP accounts.
+        :paramtype is_billing_partner_managed: bool
+        :keyword reservation_order_id: GUID that represents reservation order that can be placed after
+         calculating price.
+        :paramtype reservation_order_id: str
+        :keyword sku_title: Title of SKU that is being purchased.
+        :paramtype sku_title: str
+        :keyword sku_description: Description of SKU that is being purchased.
+        :paramtype sku_description: str
+        :keyword pricing_currency_total: Amount that Microsoft uses for record. Used during refund for
+         calculating refund limit. Tax is not included.
+        :paramtype pricing_currency_total:
+         ~azure.mgmt.reservations.models.CalculatePriceResponsePropertiesPricingCurrencyTotal
+        :keyword payment_schedule:
+        :paramtype payment_schedule: list[~azure.mgmt.reservations.models.PaymentDetail]
+        """
+        super().__init__(**kwargs)
         self.billing_currency_total = billing_currency_total
+        self.net_total = net_total
+        self.tax_total = tax_total
+        self.grand_total = grand_total
+        self.is_tax_included = is_tax_included
         self.is_billing_partner_managed = is_billing_partner_managed
         self.reservation_order_id = reservation_order_id
         self.sku_title = sku_title
@@ -397,59 +509,159 @@ class CalculatePriceResponseProperties(msrest.serialization.Model):
         self.payment_schedule = payment_schedule
 
 
-class CalculatePriceResponsePropertiesBillingCurrencyTotal(msrest.serialization.Model):
+class CalculatePriceResponsePropertiesBillingCurrencyTotal(_serialization.Model):
     """Currency and amount that customer will be charged in customer's local currency. Tax is not included.
 
-    :param currency_code:
-    :type currency_code: str
-    :param amount:
-    :type amount: float
+    :ivar currency_code: The ISO 4217 3-letter currency code for the currency used by this purchase
+     record.
+    :vartype currency_code: str
+    :ivar amount: Amount in pricing currency. Tax is not included.
+    :vartype amount: float
     """
 
     _attribute_map = {
-        'currency_code': {'key': 'currencyCode', 'type': 'str'},
-        'amount': {'key': 'amount', 'type': 'float'},
+        "currency_code": {"key": "currencyCode", "type": "str"},
+        "amount": {"key": "amount", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        currency_code: Optional[str] = None,
-        amount: Optional[float] = None,
-        **kwargs
-    ):
-        super(CalculatePriceResponsePropertiesBillingCurrencyTotal, self).__init__(**kwargs)
+    def __init__(self, *, currency_code: Optional[str] = None, amount: Optional[float] = None, **kwargs):
+        """
+        :keyword currency_code: The ISO 4217 3-letter currency code for the currency used by this
+         purchase record.
+        :paramtype currency_code: str
+        :keyword amount: Amount in pricing currency. Tax is not included.
+        :paramtype amount: float
+        """
+        super().__init__(**kwargs)
         self.currency_code = currency_code
         self.amount = amount
 
 
-class CalculatePriceResponsePropertiesPricingCurrencyTotal(msrest.serialization.Model):
+class CalculatePriceResponsePropertiesPricingCurrencyTotal(_serialization.Model):
     """Amount that Microsoft uses for record. Used during refund for calculating refund limit. Tax is not included.
 
-    :param currency_code:
-    :type currency_code: str
-    :param amount:
-    :type amount: float
+    :ivar currency_code: The ISO 4217 3-letter currency code for the currency used by this purchase
+     record.
+    :vartype currency_code: str
+    :ivar amount:
+    :vartype amount: float
     """
 
     _attribute_map = {
-        'currency_code': {'key': 'currencyCode', 'type': 'str'},
-        'amount': {'key': 'amount', 'type': 'float'},
+        "currency_code": {"key": "currencyCode", "type": "str"},
+        "amount": {"key": "amount", "type": "float"},
+    }
+
+    def __init__(self, *, currency_code: Optional[str] = None, amount: Optional[float] = None, **kwargs):
+        """
+        :keyword currency_code: The ISO 4217 3-letter currency code for the currency used by this
+         purchase record.
+        :paramtype currency_code: str
+        :keyword amount:
+        :paramtype amount: float
+        """
+        super().__init__(**kwargs)
+        self.currency_code = currency_code
+        self.amount = amount
+
+
+class CalculateRefundRequest(_serialization.Model):
+    """CalculateRefundRequest.
+
+    :ivar id: Fully qualified identifier of the reservation order being returned.
+    :vartype id: str
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.reservations.models.CalculateRefundRequestProperties
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "properties": {"key": "properties", "type": "CalculateRefundRequestProperties"},
     }
 
     def __init__(
         self,
         *,
-        currency_code: Optional[str] = None,
-        amount: Optional[float] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        properties: Optional["_models.CalculateRefundRequestProperties"] = None,
         **kwargs
     ):
-        super(CalculatePriceResponsePropertiesPricingCurrencyTotal, self).__init__(**kwargs)
-        self.currency_code = currency_code
-        self.amount = amount
+        """
+        :keyword id: Fully qualified identifier of the reservation order being returned.
+        :paramtype id: str
+        :keyword properties:
+        :paramtype properties: ~azure.mgmt.reservations.models.CalculateRefundRequestProperties
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.properties = properties
 
 
-class Catalog(msrest.serialization.Model):
+class CalculateRefundRequestProperties(_serialization.Model):
+    """CalculateRefundRequestProperties.
+
+    :ivar scope: The scope of the refund, e.g. Reservation.
+    :vartype scope: str
+    :ivar reservation_to_return: Reservation to return.
+    :vartype reservation_to_return: ~azure.mgmt.reservations.models.ReservationToReturn
+    """
+
+    _attribute_map = {
+        "scope": {"key": "scope", "type": "str"},
+        "reservation_to_return": {"key": "reservationToReturn", "type": "ReservationToReturn"},
+    }
+
+    def __init__(
+        self,
+        *,
+        scope: Optional[str] = None,
+        reservation_to_return: Optional["_models.ReservationToReturn"] = None,
+        **kwargs
+    ):
+        """
+        :keyword scope: The scope of the refund, e.g. Reservation.
+        :paramtype scope: str
+        :keyword reservation_to_return: Reservation to return.
+        :paramtype reservation_to_return: ~azure.mgmt.reservations.models.ReservationToReturn
+        """
+        super().__init__(**kwargs)
+        self.scope = scope
+        self.reservation_to_return = reservation_to_return
+
+
+class CalculateRefundResponse(_serialization.Model):
+    """CalculateRefundResponse.
+
+    :ivar id: Fully qualified identifier of the reservation being returned.
+    :vartype id: str
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.reservations.models.RefundResponseProperties
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "properties": {"key": "properties", "type": "RefundResponseProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        properties: Optional["_models.RefundResponseProperties"] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: Fully qualified identifier of the reservation being returned.
+        :paramtype id: str
+        :keyword properties:
+        :paramtype properties: ~azure.mgmt.reservations.models.RefundResponseProperties
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.properties = properties
+
+
+class Catalog(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Catalog.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -458,8 +670,8 @@ class Catalog(msrest.serialization.Model):
     :vartype resource_type: str
     :ivar name: The name of SKU.
     :vartype name: str
-    :param billing_plans: The billing plan options available for this SKU.
-    :type billing_plans: dict[str, list[str or
+    :ivar billing_plans: The billing plan options available for this SKU.
+    :vartype billing_plans: dict[str, list[str or
      ~azure.mgmt.reservations.models.ReservationBillingPlan]]
     :ivar terms: Available reservation terms for this resource.
     :vartype terms: list[str or ~azure.mgmt.reservations.models.ReservationTerm]
@@ -467,202 +679,441 @@ class Catalog(msrest.serialization.Model):
     :vartype locations: list[str]
     :ivar sku_properties:
     :vartype sku_properties: list[~azure.mgmt.reservations.models.SkuProperty]
+    :ivar msrp: Pricing information about the SKU.
+    :vartype msrp: ~azure.mgmt.reservations.models.CatalogMsrp
     :ivar restrictions:
     :vartype restrictions: list[~azure.mgmt.reservations.models.SkuRestriction]
+    :ivar tier: The tier of this SKU.
+    :vartype tier: str
+    :ivar size: The size of this SKU.
+    :vartype size: str
+    :ivar capabilities:
+    :vartype capabilities: list[~azure.mgmt.reservations.models.SkuCapability]
     """
 
     _validation = {
-        'resource_type': {'readonly': True},
-        'name': {'readonly': True},
-        'terms': {'readonly': True},
-        'locations': {'readonly': True},
-        'sku_properties': {'readonly': True},
-        'restrictions': {'readonly': True},
+        "resource_type": {"readonly": True},
+        "name": {"readonly": True},
+        "terms": {"readonly": True},
+        "locations": {"readonly": True},
+        "sku_properties": {"readonly": True},
+        "msrp": {"readonly": True},
+        "restrictions": {"readonly": True},
+        "tier": {"readonly": True},
+        "size": {"readonly": True},
+        "capabilities": {"readonly": True},
     }
 
     _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'billing_plans': {'key': 'billingPlans', 'type': '{[str]}'},
-        'terms': {'key': 'terms', 'type': '[str]'},
-        'locations': {'key': 'locations', 'type': '[str]'},
-        'sku_properties': {'key': 'skuProperties', 'type': '[SkuProperty]'},
-        'restrictions': {'key': 'restrictions', 'type': '[SkuRestriction]'},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "billing_plans": {"key": "billingPlans", "type": "{[str]}"},
+        "terms": {"key": "terms", "type": "[str]"},
+        "locations": {"key": "locations", "type": "[str]"},
+        "sku_properties": {"key": "skuProperties", "type": "[SkuProperty]"},
+        "msrp": {"key": "msrp", "type": "CatalogMsrp"},
+        "restrictions": {"key": "restrictions", "type": "[SkuRestriction]"},
+        "tier": {"key": "tier", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+        "capabilities": {"key": "capabilities", "type": "[SkuCapability]"},
     }
 
     def __init__(
-        self,
-        *,
-        billing_plans: Optional[Dict[str, List[Union[str, "ReservationBillingPlan"]]]] = None,
-        **kwargs
+        self, *, billing_plans: Optional[Dict[str, List[Union[str, "_models.ReservationBillingPlan"]]]] = None, **kwargs
     ):
-        super(Catalog, self).__init__(**kwargs)
+        """
+        :keyword billing_plans: The billing plan options available for this SKU.
+        :paramtype billing_plans: dict[str, list[str or
+         ~azure.mgmt.reservations.models.ReservationBillingPlan]]
+        """
+        super().__init__(**kwargs)
         self.resource_type = None
         self.name = None
         self.billing_plans = billing_plans
         self.terms = None
         self.locations = None
         self.sku_properties = None
+        self.msrp = None
         self.restrictions = None
+        self.tier = None
+        self.size = None
+        self.capabilities = None
 
 
-class CreateGenericQuotaRequestParameters(msrest.serialization.Model):
-    """Quota change requests information.
+class CatalogMsrp(_serialization.Model):
+    """Pricing information about the SKU.
 
-    :param value: Quota change requests.
-    :type value: list[~azure.mgmt.reservations.models.CurrentQuotaLimitBase]
+    :ivar p1_y: Amount in pricing currency. Tax not included.
+    :vartype p1_y: ~azure.mgmt.reservations.models.Price
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CurrentQuotaLimitBase]'},
+        "p1_y": {"key": "p1Y", "type": "Price"},
+    }
+
+    def __init__(self, *, p1_y: Optional["_models.Price"] = None, **kwargs):
+        """
+        :keyword p1_y: Amount in pricing currency. Tax not included.
+        :paramtype p1_y: ~azure.mgmt.reservations.models.Price
+        """
+        super().__init__(**kwargs)
+        self.p1_y = p1_y
+
+
+class ChangeDirectoryRequest(_serialization.Model):
+    """ChangeDirectoryRequest.
+
+    :ivar destination_tenant_id: Tenant id GUID that reservation order is to be transferred to.
+    :vartype destination_tenant_id: str
+    """
+
+    _attribute_map = {
+        "destination_tenant_id": {"key": "destinationTenantId", "type": "str"},
+    }
+
+    def __init__(self, *, destination_tenant_id: Optional[str] = None, **kwargs):
+        """
+        :keyword destination_tenant_id: Tenant id GUID that reservation order is to be transferred to.
+        :paramtype destination_tenant_id: str
+        """
+        super().__init__(**kwargs)
+        self.destination_tenant_id = destination_tenant_id
+
+
+class ChangeDirectoryResponse(_serialization.Model):
+    """Change directory response.
+
+    :ivar reservation_order: Change directory result for reservation order or reservation.
+    :vartype reservation_order: ~azure.mgmt.reservations.models.ChangeDirectoryResult
+    :ivar reservations:
+    :vartype reservations: list[~azure.mgmt.reservations.models.ChangeDirectoryResult]
+    """
+
+    _attribute_map = {
+        "reservation_order": {"key": "reservationOrder", "type": "ChangeDirectoryResult"},
+        "reservations": {"key": "reservations", "type": "[ChangeDirectoryResult]"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["CurrentQuotaLimitBase"]] = None,
+        reservation_order: Optional["_models.ChangeDirectoryResult"] = None,
+        reservations: Optional[List["_models.ChangeDirectoryResult"]] = None,
         **kwargs
     ):
-        super(CreateGenericQuotaRequestParameters, self).__init__(**kwargs)
+        """
+        :keyword reservation_order: Change directory result for reservation order or reservation.
+        :paramtype reservation_order: ~azure.mgmt.reservations.models.ChangeDirectoryResult
+        :keyword reservations:
+        :paramtype reservations: list[~azure.mgmt.reservations.models.ChangeDirectoryResult]
+        """
+        super().__init__(**kwargs)
+        self.reservation_order = reservation_order
+        self.reservations = reservations
+
+
+class ChangeDirectoryResult(_serialization.Model):
+    """Change directory result for reservation order or reservation.
+
+    :ivar id: Identifier of the reservation order or reservation.
+    :vartype id: str
+    :ivar name: Name of the reservation order or reservation.
+    :vartype name: str
+    :ivar is_succeeded: True if change directory operation succeeded on this reservation order or
+     reservation.
+    :vartype is_succeeded: bool
+    :ivar error: Error reason if operation failed. Null otherwise.
+    :vartype error: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "is_succeeded": {"key": "isSucceeded", "type": "bool"},
+        "error": {"key": "error", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        is_succeeded: Optional[bool] = None,
+        error: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: Identifier of the reservation order or reservation.
+        :paramtype id: str
+        :keyword name: Name of the reservation order or reservation.
+        :paramtype name: str
+        :keyword is_succeeded: True if change directory operation succeeded on this reservation order
+         or reservation.
+        :paramtype is_succeeded: bool
+        :keyword error: Error reason if operation failed. Null otherwise.
+        :paramtype error: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.is_succeeded = is_succeeded
+        self.error = error
+
+
+class CreateGenericQuotaRequestParameters(_serialization.Model):
+    """Quota change requests information.
+
+    :ivar value: Quota change requests.
+    :vartype value: list[~azure.mgmt.reservations.models.CurrentQuotaLimitBase]
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[CurrentQuotaLimitBase]"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.CurrentQuotaLimitBase"]] = None, **kwargs):
+        """
+        :keyword value: Quota change requests.
+        :paramtype value: list[~azure.mgmt.reservations.models.CurrentQuotaLimitBase]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class CurrentQuotaLimit(msrest.serialization.Model):
+class CurrentQuotaLimit(_serialization.Model):
     """Current quota limits.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar provisioning_state: The details of the quota request status. Possible values include:
-     "Accepted", "Invalid", "Succeeded", "Failed", "InProgress".
+    :ivar provisioning_state: The details of the quota request status. Known values are:
+     "Accepted", "Invalid", "Succeeded", "Failed", and "InProgress".
     :vartype provisioning_state: str or ~azure.mgmt.reservations.models.QuotaRequestState
     :ivar message: A user friendly message.
     :vartype message: str
-    :param properties: Quota properties for the resource.
-    :type properties: ~azure.mgmt.reservations.models.QuotaProperties
+    :ivar id: The quota request ID.
+    :vartype id: str
+    :ivar name: The name of the quota request.
+    :vartype name: str
+    :ivar type: Type of resource. "Microsoft.Capacity/ServiceLimits".
+    :vartype type: str
+    :ivar properties: Quota properties for the resource.
+    :vartype properties: ~azure.mgmt.reservations.models.QuotaProperties
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'message': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "message": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'message': {'key': 'properties.message', 'type': 'str'},
-        'properties': {'key': 'quotaInformation.properties', 'type': 'QuotaProperties'},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "message": {"key": "properties.message", "type": "str"},
+        "id": {"key": "quotaInformation.id", "type": "str"},
+        "name": {"key": "quotaInformation.name", "type": "str"},
+        "type": {"key": "quotaInformation.type", "type": "str"},
+        "properties": {"key": "quotaInformation.properties", "type": "QuotaProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["QuotaProperties"] = None,
-        **kwargs
-    ):
-        super(CurrentQuotaLimit, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.QuotaProperties"] = None, **kwargs):
+        """
+        :keyword properties: Quota properties for the resource.
+        :paramtype properties: ~azure.mgmt.reservations.models.QuotaProperties
+        """
+        super().__init__(**kwargs)
         self.provisioning_state = None
         self.message = None
+        self.id = None
+        self.name = None
+        self.type = None
         self.properties = properties
 
 
-class CurrentQuotaLimitBase(msrest.serialization.Model):
+class CurrentQuotaLimitBase(_serialization.Model):
     """Quota properties.
 
-    :param properties: Quota properties for the resource.
-    :type properties: ~azure.mgmt.reservations.models.QuotaProperties
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The quota request ID.
+    :vartype id: str
+    :ivar name: The name of the quota request.
+    :vartype name: str
+    :ivar type: Type of resource. "Microsoft.Capacity/ServiceLimits".
+    :vartype type: str
+    :ivar properties: Quota properties for the resource.
+    :vartype properties: ~azure.mgmt.reservations.models.QuotaProperties
     """
 
-    _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'QuotaProperties'},
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["QuotaProperties"] = None,
-        **kwargs
-    ):
-        super(CurrentQuotaLimitBase, self).__init__(**kwargs)
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "QuotaProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.QuotaProperties"] = None, **kwargs):
+        """
+        :keyword properties: Quota properties for the resource.
+        :paramtype properties: ~azure.mgmt.reservations.models.QuotaProperties
+        """
+        super().__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
         self.properties = properties
 
 
-class Error(msrest.serialization.Model):
+class Error(_serialization.Model):
     """Error.
 
-    :param error:
-    :type error: ~azure.mgmt.reservations.models.ExtendedErrorInfo
+    :ivar error:
+    :vartype error: ~azure.mgmt.reservations.models.ExtendedErrorInfo
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ExtendedErrorInfo'},
+        "error": {"key": "error", "type": "ExtendedErrorInfo"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ExtendedErrorInfo"] = None,
-        **kwargs
-    ):
-        super(Error, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.ExtendedErrorInfo"] = None, **kwargs):
+        """
+        :keyword error:
+        :paramtype error: ~azure.mgmt.reservations.models.ExtendedErrorInfo
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
-class ExceptionResponse(msrest.serialization.Model):
+class ErrorDetails(_serialization.Model):
+    """The details of the error.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
+    :ivar target: The target of the particular error.
+    :vartype target: str
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+
+
+class ErrorResponse(_serialization.Model):
+    """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
+
+    :ivar error: The details of the error.
+    :vartype error: ~azure.mgmt.reservations.models.ErrorDetails
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetails"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetails"] = None, **kwargs):
+        """
+        :keyword error: The details of the error.
+        :paramtype error: ~azure.mgmt.reservations.models.ErrorDetails
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
+class ExceptionResponse(_serialization.Model):
     """The API error.
 
-    :param error: The API error details.
-    :type error: ~azure.mgmt.reservations.models.ServiceError
+    :ivar error: The API error details.
+    :vartype error: ~azure.mgmt.reservations.models.ServiceError
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ServiceError'},
+        "error": {"key": "error", "type": "ServiceError"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ServiceError"] = None,
-        **kwargs
-    ):
-        super(ExceptionResponse, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.ServiceError"] = None, **kwargs):
+        """
+        :keyword error: The API error details.
+        :paramtype error: ~azure.mgmt.reservations.models.ServiceError
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
-class ExchangeOperationResultResponse(msrest.serialization.Model):
+class ExchangeOperationResultResponse(_serialization.Model):
     """Exchange operation result.
 
-    :param id: It should match what is used to GET the operation result.
-    :type id: str
-    :param name: It must match the last segment of the id field, and will typically be a GUID /
+    :ivar id: It should match what is used to GET the operation result.
+    :vartype id: str
+    :ivar name: It must match the last segment of the id field, and will typically be a GUID /
      system generated value.
-    :type name: str
-    :param status: Status of the operation. Possible values include: "Succeeded", "Failed",
-     "Cancelled", "PendingRefunds", "PendingPurchases".
-    :type status: str or ~azure.mgmt.reservations.models.ExchangeOperationResultStatus
-    :param properties: Exchange response properties.
-    :type properties: ~azure.mgmt.reservations.models.ExchangeResponseProperties
-    :param error: Required if status == failed or status == canceled.
-    :type error: ~azure.mgmt.reservations.models.OperationResultError
+    :vartype name: str
+    :ivar status: Status of the operation. Known values are: "Succeeded", "Failed", "Cancelled",
+     "PendingRefunds", and "PendingPurchases".
+    :vartype status: str or ~azure.mgmt.reservations.models.ExchangeOperationResultStatus
+    :ivar properties: Exchange response properties.
+    :vartype properties: ~azure.mgmt.reservations.models.ExchangeResponseProperties
+    :ivar error: Required if status == failed or status == canceled.
+    :vartype error: ~azure.mgmt.reservations.models.OperationResultError
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ExchangeResponseProperties'},
-        'error': {'key': 'error', 'type': 'OperationResultError'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "properties": {"key": "properties", "type": "ExchangeResponseProperties"},
+        "error": {"key": "error", "type": "OperationResultError"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
-        status: Optional[Union[str, "ExchangeOperationResultStatus"]] = None,
-        properties: Optional["ExchangeResponseProperties"] = None,
-        error: Optional["OperationResultError"] = None,
+        status: Optional[Union[str, "_models.ExchangeOperationResultStatus"]] = None,
+        properties: Optional["_models.ExchangeResponseProperties"] = None,
+        error: Optional["_models.OperationResultError"] = None,
         **kwargs
     ):
-        super(ExchangeOperationResultResponse, self).__init__(**kwargs)
+        """
+        :keyword id: It should match what is used to GET the operation result.
+        :paramtype id: str
+        :keyword name: It must match the last segment of the id field, and will typically be a GUID /
+         system generated value.
+        :paramtype name: str
+        :keyword status: Status of the operation. Known values are: "Succeeded", "Failed", "Cancelled",
+         "PendingRefunds", and "PendingPurchases".
+        :paramtype status: str or ~azure.mgmt.reservations.models.ExchangeOperationResultStatus
+        :keyword properties: Exchange response properties.
+        :paramtype properties: ~azure.mgmt.reservations.models.ExchangeResponseProperties
+        :keyword error: Required if status == failed or status == canceled.
+        :paramtype error: ~azure.mgmt.reservations.models.OperationResultError
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.status = status
@@ -670,139 +1121,154 @@ class ExchangeOperationResultResponse(msrest.serialization.Model):
         self.error = error
 
 
-class ExchangePolicyError(msrest.serialization.Model):
+class ExchangePolicyError(_serialization.Model):
     """error details.
 
-    :param code:
-    :type code: str
-    :param message:
-    :type message: str
+    :ivar code:
+    :vartype code: str
+    :ivar message:
+    :vartype message: str
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super(ExchangePolicyError, self).__init__(**kwargs)
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+        """
+        :keyword code:
+        :paramtype code: str
+        :keyword message:
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class ExchangePolicyErrors(msrest.serialization.Model):
+class ExchangePolicyErrors(_serialization.Model):
     """Exchange policy errors.
 
-    :param policy_errors: Exchange Policy errors.
-    :type policy_errors: list[~azure.mgmt.reservations.models.ExchangePolicyError]
+    :ivar policy_errors: Exchange Policy errors.
+    :vartype policy_errors: list[~azure.mgmt.reservations.models.ExchangePolicyError]
     """
 
     _attribute_map = {
-        'policy_errors': {'key': 'policyErrors', 'type': '[ExchangePolicyError]'},
+        "policy_errors": {"key": "policyErrors", "type": "[ExchangePolicyError]"},
     }
 
-    def __init__(
-        self,
-        *,
-        policy_errors: Optional[List["ExchangePolicyError"]] = None,
-        **kwargs
-    ):
-        super(ExchangePolicyErrors, self).__init__(**kwargs)
+    def __init__(self, *, policy_errors: Optional[List["_models.ExchangePolicyError"]] = None, **kwargs):
+        """
+        :keyword policy_errors: Exchange Policy errors.
+        :paramtype policy_errors: list[~azure.mgmt.reservations.models.ExchangePolicyError]
+        """
+        super().__init__(**kwargs)
         self.policy_errors = policy_errors
 
 
-class ExchangeRequest(msrest.serialization.Model):
+class ExchangeRequest(_serialization.Model):
     """Exchange request.
 
-    :param properties: Exchange request properties.
-    :type properties: ~azure.mgmt.reservations.models.ExchangeRequestProperties
+    :ivar properties: Exchange request properties.
+    :vartype properties: ~azure.mgmt.reservations.models.ExchangeRequestProperties
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'ExchangeRequestProperties'},
+        "properties": {"key": "properties", "type": "ExchangeRequestProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["ExchangeRequestProperties"] = None,
-        **kwargs
-    ):
-        super(ExchangeRequest, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.ExchangeRequestProperties"] = None, **kwargs):
+        """
+        :keyword properties: Exchange request properties.
+        :paramtype properties: ~azure.mgmt.reservations.models.ExchangeRequestProperties
+        """
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class ExchangeRequestProperties(msrest.serialization.Model):
+class ExchangeRequestProperties(_serialization.Model):
     """Exchange request properties.
 
-    :param session_id: SessionId that was returned by CalculateExchange API.
-    :type session_id: str
+    :ivar session_id: SessionId that was returned by CalculateExchange API.
+    :vartype session_id: str
     """
 
     _attribute_map = {
-        'session_id': {'key': 'sessionId', 'type': 'str'},
+        "session_id": {"key": "sessionId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        session_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(ExchangeRequestProperties, self).__init__(**kwargs)
+    def __init__(self, *, session_id: Optional[str] = None, **kwargs):
+        """
+        :keyword session_id: SessionId that was returned by CalculateExchange API.
+        :paramtype session_id: str
+        """
+        super().__init__(**kwargs)
         self.session_id = session_id
 
 
-class ExchangeResponseProperties(msrest.serialization.Model):
+class ExchangeResponseProperties(_serialization.Model):
     """Exchange response properties.
 
-    :param session_id: Exchange session identifier.
-    :type session_id: str
-    :param net_payable:
-    :type net_payable: ~azure.mgmt.reservations.models.Price
-    :param refunds_total:
-    :type refunds_total: ~azure.mgmt.reservations.models.Price
-    :param purchases_total:
-    :type purchases_total: ~azure.mgmt.reservations.models.Price
-    :param reservations_to_purchase: Details of the reservations being purchased.
-    :type reservations_to_purchase:
+    :ivar session_id: Exchange session identifier.
+    :vartype session_id: str
+    :ivar net_payable:
+    :vartype net_payable: ~azure.mgmt.reservations.models.Price
+    :ivar refunds_total:
+    :vartype refunds_total: ~azure.mgmt.reservations.models.Price
+    :ivar purchases_total:
+    :vartype purchases_total: ~azure.mgmt.reservations.models.Price
+    :ivar reservations_to_purchase: Details of the reservations being purchased.
+    :vartype reservations_to_purchase:
      list[~azure.mgmt.reservations.models.ReservationToPurchaseExchange]
-    :param reservations_to_exchange: Details of the reservations being returned.
-    :type reservations_to_exchange:
+    :ivar reservations_to_exchange: Details of the reservations being returned.
+    :vartype reservations_to_exchange:
      list[~azure.mgmt.reservations.models.ReservationToReturnForExchange]
-    :param policy_result: Exchange policy errors.
-    :type policy_result: ~azure.mgmt.reservations.models.ExchangePolicyErrors
+    :ivar policy_result: Exchange policy errors.
+    :vartype policy_result: ~azure.mgmt.reservations.models.ExchangePolicyErrors
     """
 
     _attribute_map = {
-        'session_id': {'key': 'sessionId', 'type': 'str'},
-        'net_payable': {'key': 'netPayable', 'type': 'Price'},
-        'refunds_total': {'key': 'refundsTotal', 'type': 'Price'},
-        'purchases_total': {'key': 'purchasesTotal', 'type': 'Price'},
-        'reservations_to_purchase': {'key': 'reservationsToPurchase', 'type': '[ReservationToPurchaseExchange]'},
-        'reservations_to_exchange': {'key': 'reservationsToExchange', 'type': '[ReservationToReturnForExchange]'},
-        'policy_result': {'key': 'policyResult', 'type': 'ExchangePolicyErrors'},
+        "session_id": {"key": "sessionId", "type": "str"},
+        "net_payable": {"key": "netPayable", "type": "Price"},
+        "refunds_total": {"key": "refundsTotal", "type": "Price"},
+        "purchases_total": {"key": "purchasesTotal", "type": "Price"},
+        "reservations_to_purchase": {"key": "reservationsToPurchase", "type": "[ReservationToPurchaseExchange]"},
+        "reservations_to_exchange": {"key": "reservationsToExchange", "type": "[ReservationToReturnForExchange]"},
+        "policy_result": {"key": "policyResult", "type": "ExchangePolicyErrors"},
     }
 
     def __init__(
         self,
         *,
         session_id: Optional[str] = None,
-        net_payable: Optional["Price"] = None,
-        refunds_total: Optional["Price"] = None,
-        purchases_total: Optional["Price"] = None,
-        reservations_to_purchase: Optional[List["ReservationToPurchaseExchange"]] = None,
-        reservations_to_exchange: Optional[List["ReservationToReturnForExchange"]] = None,
-        policy_result: Optional["ExchangePolicyErrors"] = None,
+        net_payable: Optional["_models.Price"] = None,
+        refunds_total: Optional["_models.Price"] = None,
+        purchases_total: Optional["_models.Price"] = None,
+        reservations_to_purchase: Optional[List["_models.ReservationToPurchaseExchange"]] = None,
+        reservations_to_exchange: Optional[List["_models.ReservationToReturnForExchange"]] = None,
+        policy_result: Optional["_models.ExchangePolicyErrors"] = None,
         **kwargs
     ):
-        super(ExchangeResponseProperties, self).__init__(**kwargs)
+        """
+        :keyword session_id: Exchange session identifier.
+        :paramtype session_id: str
+        :keyword net_payable:
+        :paramtype net_payable: ~azure.mgmt.reservations.models.Price
+        :keyword refunds_total:
+        :paramtype refunds_total: ~azure.mgmt.reservations.models.Price
+        :keyword purchases_total:
+        :paramtype purchases_total: ~azure.mgmt.reservations.models.Price
+        :keyword reservations_to_purchase: Details of the reservations being purchased.
+        :paramtype reservations_to_purchase:
+         list[~azure.mgmt.reservations.models.ReservationToPurchaseExchange]
+        :keyword reservations_to_exchange: Details of the reservations being returned.
+        :paramtype reservations_to_exchange:
+         list[~azure.mgmt.reservations.models.ReservationToReturnForExchange]
+        :keyword policy_result: Exchange policy errors.
+        :paramtype policy_result: ~azure.mgmt.reservations.models.ExchangePolicyErrors
+        """
+        super().__init__(**kwargs)
         self.session_id = session_id
         self.net_payable = net_payable
         self.refunds_total = refunds_total
@@ -812,10 +1278,10 @@ class ExchangeResponseProperties(msrest.serialization.Model):
         self.policy_result = policy_result
 
 
-class ExtendedErrorInfo(msrest.serialization.Model):
+class ExtendedErrorInfo(_serialization.Model):
     """ExtendedErrorInfo.
 
-    :param code:  Possible values include: "NotSpecified", "InternalServerError", "ServerTimeout",
+    :ivar code: Known values are: "NotSpecified", "InternalServerError", "ServerTimeout",
      "AuthorizationFailed", "BadRequest", "ClientCertificateThumbprintNotSet",
      "InvalidRequestContent", "OperationFailed", "HttpMethodNotSupported", "InvalidRequestUri",
      "MissingTenantId", "InvalidTenantId", "InvalidReservationOrderId", "InvalidReservationId",
@@ -833,96 +1299,125 @@ class ExtendedErrorInfo(msrest.serialization.Model):
      "BillingPaymentInstrumentSoftError", "BillingPaymentInstrumentHardError",
      "BillingTransientError", "BillingError", "FulfillmentConfigurationError",
      "FulfillmentOutOfStockError", "FulfillmentTransientError", "FulfillmentError",
-     "CalculatePriceFailed".
-    :type code: str or ~azure.mgmt.reservations.models.ErrorResponseCode
-    :param message:
-    :type message: str
+     "CalculatePriceFailed", "AppliedScopesSameAsExisting", "SelfServiceRefundNotSupported", and
+     "RefundLimitExceeded".
+    :vartype code: str or ~azure.mgmt.reservations.models.ErrorResponseCode
+    :ivar message:
+    :vartype message: str
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        code: Optional[Union[str, "ErrorResponseCode"]] = None,
-        message: Optional[str] = None,
-        **kwargs
+        self, *, code: Optional[Union[str, "_models.ErrorResponseCode"]] = None, message: Optional[str] = None, **kwargs
     ):
-        super(ExtendedErrorInfo, self).__init__(**kwargs)
+        """
+        :keyword code: Known values are: "NotSpecified", "InternalServerError", "ServerTimeout",
+         "AuthorizationFailed", "BadRequest", "ClientCertificateThumbprintNotSet",
+         "InvalidRequestContent", "OperationFailed", "HttpMethodNotSupported", "InvalidRequestUri",
+         "MissingTenantId", "InvalidTenantId", "InvalidReservationOrderId", "InvalidReservationId",
+         "ReservationIdNotInReservationOrder", "ReservationOrderNotFound", "InvalidSubscriptionId",
+         "InvalidAccessToken", "InvalidLocationId", "UnauthenticatedRequestsThrottled",
+         "InvalidHealthCheckType", "Forbidden", "BillingScopeIdCannotBeChanged",
+         "AppliedScopesNotAssociatedWithCommerceAccount", "PatchValuesSameAsExisting",
+         "RoleAssignmentCreationFailed", "ReservationOrderCreationFailed", "ReservationOrderNotEnabled",
+         "CapacityUpdateScopesFailed", "UnsupportedReservationTerm", "ReservationOrderIdAlreadyExists",
+         "RiskCheckFailed", "CreateQuoteFailed", "ActivateQuoteFailed", "NonsupportedAccountId",
+         "PaymentInstrumentNotFound", "MissingAppliedScopesForSingle", "NoValidReservationsToReRate",
+         "ReRateOnlyAllowedForEA", "OperationCannotBePerformedInCurrentState",
+         "InvalidSingleAppliedScopesCount", "InvalidFulfillmentRequestParameters",
+         "NotSupportedCountry", "InvalidRefundQuantity", "PurchaseError", "BillingCustomerInputError",
+         "BillingPaymentInstrumentSoftError", "BillingPaymentInstrumentHardError",
+         "BillingTransientError", "BillingError", "FulfillmentConfigurationError",
+         "FulfillmentOutOfStockError", "FulfillmentTransientError", "FulfillmentError",
+         "CalculatePriceFailed", "AppliedScopesSameAsExisting", "SelfServiceRefundNotSupported", and
+         "RefundLimitExceeded".
+        :paramtype code: str or ~azure.mgmt.reservations.models.ErrorResponseCode
+        :keyword message:
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class ExtendedStatusInfo(msrest.serialization.Model):
+class ExtendedStatusInfo(_serialization.Model):
     """ExtendedStatusInfo.
 
-    :param status_code:  Possible values include: "None", "Pending", "Active", "PurchaseError",
-     "PaymentInstrumentError", "Split", "Merged", "Expired", "Succeeded".
-    :type status_code: str or ~azure.mgmt.reservations.models.ReservationStatusCode
-    :param message: The message giving detailed information about the status code.
-    :type message: str
+    :ivar status_code: Known values are: "None", "Pending", "Processing", "Active",
+     "PurchaseError", "PaymentInstrumentError", "Split", "Merged", "Expired", and "Succeeded".
+    :vartype status_code: str or ~azure.mgmt.reservations.models.ReservationStatusCode
+    :ivar message: The message giving detailed information about the status code.
+    :vartype message: str
     """
 
     _attribute_map = {
-        'status_code': {'key': 'statusCode', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "status_code": {"key": "statusCode", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        status_code: Optional[Union[str, "ReservationStatusCode"]] = None,
+        status_code: Optional[Union[str, "_models.ReservationStatusCode"]] = None,
         message: Optional[str] = None,
         **kwargs
     ):
-        super(ExtendedStatusInfo, self).__init__(**kwargs)
+        """
+        :keyword status_code: Known values are: "None", "Pending", "Processing", "Active",
+         "PurchaseError", "PaymentInstrumentError", "Split", "Merged", "Expired", and "Succeeded".
+        :paramtype status_code: str or ~azure.mgmt.reservations.models.ReservationStatusCode
+        :keyword message: The message giving detailed information about the status code.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.status_code = status_code
         self.message = message
 
 
-class MergeRequest(msrest.serialization.Model):
+class MergeRequest(_serialization.Model):
     """MergeRequest.
 
-    :param sources: Format of the resource id should be
+    :ivar sources: Format of the resource id should be
      /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
-    :type sources: list[str]
+    :vartype sources: list[str]
     """
 
     _attribute_map = {
-        'sources': {'key': 'properties.sources', 'type': '[str]'},
+        "sources": {"key": "properties.sources", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        sources: Optional[List[str]] = None,
-        **kwargs
-    ):
-        super(MergeRequest, self).__init__(**kwargs)
+    def __init__(self, *, sources: Optional[List[str]] = None, **kwargs):
+        """
+        :keyword sources: Format of the resource id should be
+         /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+        :paramtype sources: list[str]
+        """
+        super().__init__(**kwargs)
         self.sources = sources
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """OperationDisplay.
 
-    :param provider:
-    :type provider: str
-    :param resource:
-    :type resource: str
-    :param operation:
-    :type operation: str
-    :param description:
-    :type description: str
+    :ivar provider:
+    :vartype provider: str
+    :ivar resource:
+    :vartype resource: str
+    :ivar operation:
+    :vartype operation: str
+    :ivar description:
+    :vartype description: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -934,142 +1429,197 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
-        super(OperationDisplay, self).__init__(**kwargs)
+        """
+        :keyword provider:
+        :paramtype provider: str
+        :keyword resource:
+        :paramtype resource: str
+        :keyword operation:
+        :paramtype operation: str
+        :keyword description:
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OperationList(msrest.serialization.Model):
+class OperationList(_serialization.Model):
     """OperationList.
 
-    :param value:
-    :type value: list[~azure.mgmt.reservations.models.OperationResponse]
-    :param next_link: Url to get the next page of items.
-    :type next_link: str
+    :ivar value:
+    :vartype value: list[~azure.mgmt.reservations.models.OperationResponse]
+    :ivar next_link: Url to get the next page of items.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationResponse]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OperationResponse]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["OperationResponse"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.OperationResponse"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(OperationList, self).__init__(**kwargs)
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.reservations.models.OperationResponse]
+        :keyword next_link: Url to get the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class OperationResponse(msrest.serialization.Model):
+class OperationResponse(_serialization.Model):
     """OperationResponse.
 
-    :param name:
-    :type name: str
-    :param display:
-    :type display: ~azure.mgmt.reservations.models.OperationDisplay
-    :param origin:
-    :type origin: str
+    :ivar name: Name of the operation.
+    :vartype name: str
+    :ivar is_data_action: Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
+    :ivar display: Display of the operation.
+    :vartype display: ~azure.mgmt.reservations.models.OperationDisplay
+    :ivar origin: Origin of the operation.
+    :vartype origin: str
+    :ivar properties: Properties of the operation.
+    :vartype properties: JSON
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "properties": {"key": "properties", "type": "object"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
+        is_data_action: Optional[bool] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
+        properties: Optional[JSON] = None,
         **kwargs
     ):
-        super(OperationResponse, self).__init__(**kwargs)
+        """
+        :keyword name: Name of the operation.
+        :paramtype name: str
+        :keyword is_data_action: Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
+        :keyword display: Display of the operation.
+        :paramtype display: ~azure.mgmt.reservations.models.OperationDisplay
+        :keyword origin: Origin of the operation.
+        :paramtype origin: str
+        :keyword properties: Properties of the operation.
+        :paramtype properties: JSON
+        """
+        super().__init__(**kwargs)
         self.name = name
+        self.is_data_action = is_data_action
         self.display = display
         self.origin = origin
+        self.properties = properties
 
 
-class OperationResultError(msrest.serialization.Model):
+class OperationResultError(_serialization.Model):
     """Required if status == failed or status == canceled.
 
-    :param code: Required if status == failed or status == cancelled. If status == failed, provide
+    :ivar code: Required if status == failed or status == cancelled. If status == failed, provide
      an invariant error code used for error troubleshooting, aggregation, and analysis.
-    :type code: str
-    :param message: Required if status == failed. Localized. If status == failed, provide an
+    :vartype code: str
+    :ivar message: Required if status == failed. Localized. If status == failed, provide an
      actionable error message indicating what error occurred, and what the user can do to address
      the issue.
-    :type message: str
+    :vartype message: str
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super(OperationResultError, self).__init__(**kwargs)
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+        """
+        :keyword code: Required if status == failed or status == cancelled. If status == failed,
+         provide an invariant error code used for error troubleshooting, aggregation, and analysis.
+        :paramtype code: str
+        :keyword message: Required if status == failed. Localized. If status == failed, provide an
+         actionable error message indicating what error occurred, and what the user can do to address
+         the issue.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class Patch(msrest.serialization.Model):
+class Patch(_serialization.Model):
     """Patch.
 
-    :param applied_scope_type: Type of the Applied Scope. Possible values include: "Single",
-     "Shared".
-    :type applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
-    :param applied_scopes: List of the subscriptions that the benefit will be applied. Do not
+    :ivar applied_scope_type: Type of the Applied Scope. Known values are: "Single" and "Shared".
+    :vartype applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
+    :ivar applied_scopes: List of the subscriptions that the benefit will be applied. Do not
      specify if AppliedScopeType is Shared.
-    :type applied_scopes: list[str]
-    :param instance_flexibility: Turning this on will apply the reservation discount to other VMs
-     in the same VM size group. Only specify for VirtualMachines reserved resource type. Possible
-     values include: "On", "Off".
-    :type instance_flexibility: str or ~azure.mgmt.reservations.models.InstanceFlexibility
-    :param name: Name of the Reservation.
-    :type name: str
-    :param renew: Setting this to true will automatically purchase a new reservation on the
+    :vartype applied_scopes: list[str]
+    :ivar instance_flexibility: Turning this on will apply the reservation discount to other VMs in
+     the same VM size group. Only specify for VirtualMachines reserved resource type. Known values
+     are: "On" and "Off".
+    :vartype instance_flexibility: str or ~azure.mgmt.reservations.models.InstanceFlexibility
+    :ivar name: Name of the Reservation.
+    :vartype name: str
+    :ivar renew: Setting this to true will automatically purchase a new reservation on the
      expiration date time.
-    :type renew: bool
-    :param renew_properties:
-    :type renew_properties: ~azure.mgmt.reservations.models.PatchPropertiesRenewProperties
+    :vartype renew: bool
+    :ivar renew_properties:
+    :vartype renew_properties: ~azure.mgmt.reservations.models.PatchPropertiesRenewProperties
     """
 
     _attribute_map = {
-        'applied_scope_type': {'key': 'properties.appliedScopeType', 'type': 'str'},
-        'applied_scopes': {'key': 'properties.appliedScopes', 'type': '[str]'},
-        'instance_flexibility': {'key': 'properties.instanceFlexibility', 'type': 'str'},
-        'name': {'key': 'properties.name', 'type': 'str'},
-        'renew': {'key': 'properties.renew', 'type': 'bool'},
-        'renew_properties': {'key': 'properties.renewProperties', 'type': 'PatchPropertiesRenewProperties'},
+        "applied_scope_type": {"key": "properties.appliedScopeType", "type": "str"},
+        "applied_scopes": {"key": "properties.appliedScopes", "type": "[str]"},
+        "instance_flexibility": {"key": "properties.instanceFlexibility", "type": "str"},
+        "name": {"key": "properties.name", "type": "str"},
+        "renew": {"key": "properties.renew", "type": "bool"},
+        "renew_properties": {"key": "properties.renewProperties", "type": "PatchPropertiesRenewProperties"},
     }
 
     def __init__(
         self,
         *,
-        applied_scope_type: Optional[Union[str, "AppliedScopeType"]] = None,
+        applied_scope_type: Optional[Union[str, "_models.AppliedScopeType"]] = None,
         applied_scopes: Optional[List[str]] = None,
-        instance_flexibility: Optional[Union[str, "InstanceFlexibility"]] = None,
+        instance_flexibility: Optional[Union[str, "_models.InstanceFlexibility"]] = None,
         name: Optional[str] = None,
-        renew: Optional[bool] = False,
-        renew_properties: Optional["PatchPropertiesRenewProperties"] = None,
+        renew: bool = False,
+        renew_properties: Optional["_models.PatchPropertiesRenewProperties"] = None,
         **kwargs
     ):
-        super(Patch, self).__init__(**kwargs)
+        """
+        :keyword applied_scope_type: Type of the Applied Scope. Known values are: "Single" and
+         "Shared".
+        :paramtype applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
+        :keyword applied_scopes: List of the subscriptions that the benefit will be applied. Do not
+         specify if AppliedScopeType is Shared.
+        :paramtype applied_scopes: list[str]
+        :keyword instance_flexibility: Turning this on will apply the reservation discount to other VMs
+         in the same VM size group. Only specify for VirtualMachines reserved resource type. Known
+         values are: "On" and "Off".
+        :paramtype instance_flexibility: str or ~azure.mgmt.reservations.models.InstanceFlexibility
+        :keyword name: Name of the Reservation.
+        :paramtype name: str
+        :keyword renew: Setting this to true will automatically purchase a new reservation on the
+         expiration date time.
+        :paramtype renew: bool
+        :keyword renew_properties:
+        :paramtype renew_properties: ~azure.mgmt.reservations.models.PatchPropertiesRenewProperties
+        """
+        super().__init__(**kwargs)
         self.applied_scope_type = applied_scope_type
         self.applied_scopes = applied_scopes
         self.instance_flexibility = instance_flexibility
@@ -1078,56 +1628,55 @@ class Patch(msrest.serialization.Model):
         self.renew_properties = renew_properties
 
 
-class PatchPropertiesRenewProperties(msrest.serialization.Model):
+class PatchPropertiesRenewProperties(_serialization.Model):
     """PatchPropertiesRenewProperties.
 
-    :param purchase_properties:
-    :type purchase_properties: ~azure.mgmt.reservations.models.PurchaseRequest
+    :ivar purchase_properties:
+    :vartype purchase_properties: ~azure.mgmt.reservations.models.PurchaseRequest
     """
 
     _attribute_map = {
-        'purchase_properties': {'key': 'purchaseProperties', 'type': 'PurchaseRequest'},
+        "purchase_properties": {"key": "purchaseProperties", "type": "PurchaseRequest"},
     }
 
-    def __init__(
-        self,
-        *,
-        purchase_properties: Optional["PurchaseRequest"] = None,
-        **kwargs
-    ):
-        super(PatchPropertiesRenewProperties, self).__init__(**kwargs)
+    def __init__(self, *, purchase_properties: Optional["_models.PurchaseRequest"] = None, **kwargs):
+        """
+        :keyword purchase_properties:
+        :paramtype purchase_properties: ~azure.mgmt.reservations.models.PurchaseRequest
+        """
+        super().__init__(**kwargs)
         self.purchase_properties = purchase_properties
 
 
-class PaymentDetail(msrest.serialization.Model):
+class PaymentDetail(_serialization.Model):
     """Information about payment related to a reservation order.
 
-    :param due_date: Date when the payment needs to be done.
-    :type due_date: ~datetime.date
-    :param payment_date: Date when the transaction is completed. Is null when it is scheduled.
-    :type payment_date: ~datetime.date
-    :param pricing_currency_total: Amount in pricing currency. Tax not included.
-    :type pricing_currency_total: ~azure.mgmt.reservations.models.Price
-    :param billing_currency_total: Amount charged in Billing currency. Tax not included. Is null
-     for future payments.
-    :type billing_currency_total: ~azure.mgmt.reservations.models.Price
-    :param billing_account: Shows the Account that is charged for this payment.
-    :type billing_account: str
-    :param status: Describes whether the payment is completed, failed, cancelled or scheduled in
-     the future. Possible values include: "Succeeded", "Failed", "Scheduled", "Cancelled".
-    :type status: str or ~azure.mgmt.reservations.models.PaymentStatus
-    :param extended_status_info:
-    :type extended_status_info: ~azure.mgmt.reservations.models.ExtendedStatusInfo
+    :ivar due_date: Date when the payment needs to be done.
+    :vartype due_date: ~datetime.date
+    :ivar payment_date: Date when the transaction is completed. Is null when it is scheduled.
+    :vartype payment_date: ~datetime.date
+    :ivar pricing_currency_total: Amount in pricing currency. Tax not included.
+    :vartype pricing_currency_total: ~azure.mgmt.reservations.models.Price
+    :ivar billing_currency_total: Amount charged in Billing currency. Tax not included. Is null for
+     future payments.
+    :vartype billing_currency_total: ~azure.mgmt.reservations.models.Price
+    :ivar billing_account: Shows the Account that is charged for this payment.
+    :vartype billing_account: str
+    :ivar status: Describes whether the payment is completed, failed, cancelled or scheduled in the
+     future. Known values are: "Succeeded", "Failed", "Scheduled", and "Cancelled".
+    :vartype status: str or ~azure.mgmt.reservations.models.PaymentStatus
+    :ivar extended_status_info:
+    :vartype extended_status_info: ~azure.mgmt.reservations.models.ExtendedStatusInfo
     """
 
     _attribute_map = {
-        'due_date': {'key': 'dueDate', 'type': 'date'},
-        'payment_date': {'key': 'paymentDate', 'type': 'date'},
-        'pricing_currency_total': {'key': 'pricingCurrencyTotal', 'type': 'Price'},
-        'billing_currency_total': {'key': 'billingCurrencyTotal', 'type': 'Price'},
-        'billing_account': {'key': 'billingAccount', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'extended_status_info': {'key': 'extendedStatusInfo', 'type': 'ExtendedStatusInfo'},
+        "due_date": {"key": "dueDate", "type": "date"},
+        "payment_date": {"key": "paymentDate", "type": "date"},
+        "pricing_currency_total": {"key": "pricingCurrencyTotal", "type": "Price"},
+        "billing_currency_total": {"key": "billingCurrencyTotal", "type": "Price"},
+        "billing_account": {"key": "billingAccount", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "extended_status_info": {"key": "extendedStatusInfo", "type": "ExtendedStatusInfo"},
     }
 
     def __init__(
@@ -1135,14 +1684,32 @@ class PaymentDetail(msrest.serialization.Model):
         *,
         due_date: Optional[datetime.date] = None,
         payment_date: Optional[datetime.date] = None,
-        pricing_currency_total: Optional["Price"] = None,
-        billing_currency_total: Optional["Price"] = None,
+        pricing_currency_total: Optional["_models.Price"] = None,
+        billing_currency_total: Optional["_models.Price"] = None,
         billing_account: Optional[str] = None,
-        status: Optional[Union[str, "PaymentStatus"]] = None,
-        extended_status_info: Optional["ExtendedStatusInfo"] = None,
+        status: Optional[Union[str, "_models.PaymentStatus"]] = None,
+        extended_status_info: Optional["_models.ExtendedStatusInfo"] = None,
         **kwargs
     ):
-        super(PaymentDetail, self).__init__(**kwargs)
+        """
+        :keyword due_date: Date when the payment needs to be done.
+        :paramtype due_date: ~datetime.date
+        :keyword payment_date: Date when the transaction is completed. Is null when it is scheduled.
+        :paramtype payment_date: ~datetime.date
+        :keyword pricing_currency_total: Amount in pricing currency. Tax not included.
+        :paramtype pricing_currency_total: ~azure.mgmt.reservations.models.Price
+        :keyword billing_currency_total: Amount charged in Billing currency. Tax not included. Is null
+         for future payments.
+        :paramtype billing_currency_total: ~azure.mgmt.reservations.models.Price
+        :keyword billing_account: Shows the Account that is charged for this payment.
+        :paramtype billing_account: str
+        :keyword status: Describes whether the payment is completed, failed, cancelled or scheduled in
+         the future. Known values are: "Succeeded", "Failed", "Scheduled", and "Cancelled".
+        :paramtype status: str or ~azure.mgmt.reservations.models.PaymentStatus
+        :keyword extended_status_info:
+        :paramtype extended_status_info: ~azure.mgmt.reservations.models.ExtendedStatusInfo
+        """
+        super().__init__(**kwargs)
         self.due_date = due_date
         self.payment_date = payment_date
         self.pricing_currency_total = pricing_currency_total
@@ -1152,106 +1719,144 @@ class PaymentDetail(msrest.serialization.Model):
         self.extended_status_info = extended_status_info
 
 
-class Price(msrest.serialization.Model):
+class Price(_serialization.Model):
     """Price.
 
-    :param currency_code: The ISO 4217 3-letter currency code for the currency used by this
-     purchase record.
-    :type currency_code: str
-    :param amount:
-    :type amount: float
+    :ivar currency_code: The ISO 4217 3-letter currency code for the currency used by this purchase
+     record.
+    :vartype currency_code: str
+    :ivar amount:
+    :vartype amount: float
     """
 
     _attribute_map = {
-        'currency_code': {'key': 'currencyCode', 'type': 'str'},
-        'amount': {'key': 'amount', 'type': 'float'},
+        "currency_code": {"key": "currencyCode", "type": "str"},
+        "amount": {"key": "amount", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        currency_code: Optional[str] = None,
-        amount: Optional[float] = None,
-        **kwargs
-    ):
-        super(Price, self).__init__(**kwargs)
+    def __init__(self, *, currency_code: Optional[str] = None, amount: Optional[float] = None, **kwargs):
+        """
+        :keyword currency_code: The ISO 4217 3-letter currency code for the currency used by this
+         purchase record.
+        :paramtype currency_code: str
+        :keyword amount:
+        :paramtype amount: float
+        """
+        super().__init__(**kwargs)
         self.currency_code = currency_code
         self.amount = amount
 
 
-class PurchaseRequest(msrest.serialization.Model):
+class PurchaseRequest(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """PurchaseRequest.
 
-    :param sku:
-    :type sku: ~azure.mgmt.reservations.models.SkuName
-    :param location: The Azure Region where the reserved resource lives.
-    :type location: str
-    :param reserved_resource_type: The type of the resource that is being reserved. Possible values
-     include: "VirtualMachines", "SqlDatabases", "SuseLinux", "CosmosDb", "RedHat",
-     "SqlDataWarehouse", "VMwareCloudSimple", "RedHatOsa", "Databricks", "AppService",
-     "ManagedDisk", "BlockBlob", "RedisCache", "AzureDataExplorer", "MySql", "MariaDb",
-     "PostgreSql", "DedicatedHost", "SapHana", "SqlAzureHybridBenefit".
-    :type reserved_resource_type: str or ~azure.mgmt.reservations.models.ReservedResourceType
-    :param billing_scope_id: Subscription that will be charged for purchasing Reservation.
-    :type billing_scope_id: str
-    :param term: Represent the term of Reservation. Possible values include: "P1Y", "P3Y".
-    :type term: str or ~azure.mgmt.reservations.models.ReservationTerm
-    :param billing_plan: Represent the billing plans. Possible values include: "Upfront",
-     "Monthly".
-    :type billing_plan: str or ~azure.mgmt.reservations.models.ReservationBillingPlan
-    :param quantity: Quantity of the SKUs that are part of the Reservation. Must be greater than
-     zero.
-    :type quantity: int
-    :param display_name: Friendly name of the Reservation.
-    :type display_name: str
-    :param applied_scope_type: Type of the Applied Scope. Possible values include: "Single",
-     "Shared".
-    :type applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
-    :param applied_scopes: List of the subscriptions that the benefit will be applied. Do not
+    :ivar sku:
+    :vartype sku: ~azure.mgmt.reservations.models.SkuName
+    :ivar location: The Azure Region where the reserved resource lives.
+    :vartype location: str
+    :ivar reserved_resource_type: The type of the resource that is being reserved. Known values
+     are: "VirtualMachines", "SqlDatabases", "SuseLinux", "CosmosDb", "RedHat", "SqlDataWarehouse",
+     "VMwareCloudSimple", "RedHatOsa", "Databricks", "AppService", "ManagedDisk", "BlockBlob",
+     "RedisCache", "AzureDataExplorer", "MySql", "MariaDb", "PostgreSql", "DedicatedHost",
+     "SapHana", "SqlAzureHybridBenefit", "AVS", "DataFactory", "NetAppStorage", "AzureFiles",
+     "SqlEdge", and "VirtualMachineSoftware".
+    :vartype reserved_resource_type: str or ~azure.mgmt.reservations.models.ReservedResourceType
+    :ivar billing_scope_id: Subscription that will be charged for purchasing Reservation.
+    :vartype billing_scope_id: str
+    :ivar term: Represent the term of Reservation. Known values are: "P1Y", "P3Y", and "P5Y".
+    :vartype term: str or ~azure.mgmt.reservations.models.ReservationTerm
+    :ivar billing_plan: Represent the billing plans. Known values are: "Upfront" and "Monthly".
+    :vartype billing_plan: str or ~azure.mgmt.reservations.models.ReservationBillingPlan
+    :ivar quantity: Quantity of the SKUs that are part of the Reservation.
+    :vartype quantity: int
+    :ivar display_name: Friendly name of the Reservation.
+    :vartype display_name: str
+    :ivar applied_scope_type: Type of the Applied Scope. Known values are: "Single" and "Shared".
+    :vartype applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
+    :ivar applied_scopes: List of the subscriptions that the benefit will be applied. Do not
      specify if AppliedScopeType is Shared.
-    :type applied_scopes: list[str]
-    :param renew: Setting this to true will automatically purchase a new reservation on the
+    :vartype applied_scopes: list[str]
+    :ivar renew: Setting this to true will automatically purchase a new reservation on the
      expiration date time.
-    :type renew: bool
-    :param reserved_resource_properties: Properties specific to each reserved resource type. Not
+    :vartype renew: bool
+    :ivar reserved_resource_properties: Properties specific to each reserved resource type. Not
      required if not applicable.
-    :type reserved_resource_properties:
+    :vartype reserved_resource_properties:
      ~azure.mgmt.reservations.models.PurchaseRequestPropertiesReservedResourceProperties
     """
 
     _attribute_map = {
-        'sku': {'key': 'sku', 'type': 'SkuName'},
-        'location': {'key': 'location', 'type': 'str'},
-        'reserved_resource_type': {'key': 'properties.reservedResourceType', 'type': 'str'},
-        'billing_scope_id': {'key': 'properties.billingScopeId', 'type': 'str'},
-        'term': {'key': 'properties.term', 'type': 'str'},
-        'billing_plan': {'key': 'properties.billingPlan', 'type': 'str'},
-        'quantity': {'key': 'properties.quantity', 'type': 'int'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'applied_scope_type': {'key': 'properties.appliedScopeType', 'type': 'str'},
-        'applied_scopes': {'key': 'properties.appliedScopes', 'type': '[str]'},
-        'renew': {'key': 'properties.renew', 'type': 'bool'},
-        'reserved_resource_properties': {'key': 'properties.reservedResourceProperties', 'type': 'PurchaseRequestPropertiesReservedResourceProperties'},
+        "sku": {"key": "sku", "type": "SkuName"},
+        "location": {"key": "location", "type": "str"},
+        "reserved_resource_type": {"key": "properties.reservedResourceType", "type": "str"},
+        "billing_scope_id": {"key": "properties.billingScopeId", "type": "str"},
+        "term": {"key": "properties.term", "type": "str"},
+        "billing_plan": {"key": "properties.billingPlan", "type": "str"},
+        "quantity": {"key": "properties.quantity", "type": "int"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "applied_scope_type": {"key": "properties.appliedScopeType", "type": "str"},
+        "applied_scopes": {"key": "properties.appliedScopes", "type": "[str]"},
+        "renew": {"key": "properties.renew", "type": "bool"},
+        "reserved_resource_properties": {
+            "key": "properties.reservedResourceProperties",
+            "type": "PurchaseRequestPropertiesReservedResourceProperties",
+        },
     }
 
     def __init__(
         self,
         *,
-        sku: Optional["SkuName"] = None,
+        sku: Optional["_models.SkuName"] = None,
         location: Optional[str] = None,
-        reserved_resource_type: Optional[Union[str, "ReservedResourceType"]] = None,
+        reserved_resource_type: Optional[Union[str, "_models.ReservedResourceType"]] = None,
         billing_scope_id: Optional[str] = None,
-        term: Optional[Union[str, "ReservationTerm"]] = None,
-        billing_plan: Optional[Union[str, "ReservationBillingPlan"]] = None,
+        term: Optional[Union[str, "_models.ReservationTerm"]] = None,
+        billing_plan: Optional[Union[str, "_models.ReservationBillingPlan"]] = None,
         quantity: Optional[int] = None,
         display_name: Optional[str] = None,
-        applied_scope_type: Optional[Union[str, "AppliedScopeType"]] = None,
+        applied_scope_type: Optional[Union[str, "_models.AppliedScopeType"]] = None,
         applied_scopes: Optional[List[str]] = None,
-        renew: Optional[bool] = False,
-        reserved_resource_properties: Optional["PurchaseRequestPropertiesReservedResourceProperties"] = None,
+        renew: bool = False,
+        reserved_resource_properties: Optional["_models.PurchaseRequestPropertiesReservedResourceProperties"] = None,
         **kwargs
     ):
-        super(PurchaseRequest, self).__init__(**kwargs)
+        """
+        :keyword sku:
+        :paramtype sku: ~azure.mgmt.reservations.models.SkuName
+        :keyword location: The Azure Region where the reserved resource lives.
+        :paramtype location: str
+        :keyword reserved_resource_type: The type of the resource that is being reserved. Known values
+         are: "VirtualMachines", "SqlDatabases", "SuseLinux", "CosmosDb", "RedHat", "SqlDataWarehouse",
+         "VMwareCloudSimple", "RedHatOsa", "Databricks", "AppService", "ManagedDisk", "BlockBlob",
+         "RedisCache", "AzureDataExplorer", "MySql", "MariaDb", "PostgreSql", "DedicatedHost",
+         "SapHana", "SqlAzureHybridBenefit", "AVS", "DataFactory", "NetAppStorage", "AzureFiles",
+         "SqlEdge", and "VirtualMachineSoftware".
+        :paramtype reserved_resource_type: str or ~azure.mgmt.reservations.models.ReservedResourceType
+        :keyword billing_scope_id: Subscription that will be charged for purchasing Reservation.
+        :paramtype billing_scope_id: str
+        :keyword term: Represent the term of Reservation. Known values are: "P1Y", "P3Y", and "P5Y".
+        :paramtype term: str or ~azure.mgmt.reservations.models.ReservationTerm
+        :keyword billing_plan: Represent the billing plans. Known values are: "Upfront" and "Monthly".
+        :paramtype billing_plan: str or ~azure.mgmt.reservations.models.ReservationBillingPlan
+        :keyword quantity: Quantity of the SKUs that are part of the Reservation.
+        :paramtype quantity: int
+        :keyword display_name: Friendly name of the Reservation.
+        :paramtype display_name: str
+        :keyword applied_scope_type: Type of the Applied Scope. Known values are: "Single" and
+         "Shared".
+        :paramtype applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
+        :keyword applied_scopes: List of the subscriptions that the benefit will be applied. Do not
+         specify if AppliedScopeType is Shared.
+        :paramtype applied_scopes: list[str]
+        :keyword renew: Setting this to true will automatically purchase a new reservation on the
+         expiration date time.
+        :paramtype renew: bool
+        :keyword reserved_resource_properties: Properties specific to each reserved resource type. Not
+         required if not applicable.
+        :paramtype reserved_resource_properties:
+         ~azure.mgmt.reservations.models.PurchaseRequestPropertiesReservedResourceProperties
+        """
+        super().__init__(**kwargs)
         self.sku = sku
         self.location = location
         self.reserved_resource_type = reserved_resource_type
@@ -1266,122 +1871,133 @@ class PurchaseRequest(msrest.serialization.Model):
         self.reserved_resource_properties = reserved_resource_properties
 
 
-class PurchaseRequestPropertiesReservedResourceProperties(msrest.serialization.Model):
+class PurchaseRequestPropertiesReservedResourceProperties(_serialization.Model):
     """Properties specific to each reserved resource type. Not required if not applicable.
 
-    :param instance_flexibility: Turning this on will apply the reservation discount to other VMs
-     in the same VM size group. Only specify for VirtualMachines reserved resource type. Possible
-     values include: "On", "Off".
-    :type instance_flexibility: str or ~azure.mgmt.reservations.models.InstanceFlexibility
+    :ivar instance_flexibility: Turning this on will apply the reservation discount to other VMs in
+     the same VM size group. Only specify for VirtualMachines reserved resource type. Known values
+     are: "On" and "Off".
+    :vartype instance_flexibility: str or ~azure.mgmt.reservations.models.InstanceFlexibility
     """
 
     _attribute_map = {
-        'instance_flexibility': {'key': 'instanceFlexibility', 'type': 'str'},
+        "instance_flexibility": {"key": "instanceFlexibility", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        instance_flexibility: Optional[Union[str, "InstanceFlexibility"]] = None,
-        **kwargs
-    ):
-        super(PurchaseRequestPropertiesReservedResourceProperties, self).__init__(**kwargs)
+    def __init__(self, *, instance_flexibility: Optional[Union[str, "_models.InstanceFlexibility"]] = None, **kwargs):
+        """
+        :keyword instance_flexibility: Turning this on will apply the reservation discount to other VMs
+         in the same VM size group. Only specify for VirtualMachines reserved resource type. Known
+         values are: "On" and "Off".
+        :paramtype instance_flexibility: str or ~azure.mgmt.reservations.models.InstanceFlexibility
+        """
+        super().__init__(**kwargs)
         self.instance_flexibility = instance_flexibility
 
 
-class QuotaLimits(msrest.serialization.Model):
+class QuotaLimits(_serialization.Model):
     """Quota limits.
 
-    :param value: List of quotas (service limits).
-    :type value: list[~azure.mgmt.reservations.models.CurrentQuotaLimitBase]
-    :param next_link: The URI for fetching the next page of quotas (service limits). When no more
+    :ivar value: List of quotas (service limits).
+    :vartype value: list[~azure.mgmt.reservations.models.CurrentQuotaLimitBase]
+    :ivar next_link: The URI for fetching the next page of quotas (service limits). When no more
      pages exist, the value is null.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CurrentQuotaLimitBase]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CurrentQuotaLimitBase]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["CurrentQuotaLimitBase"]] = None,
+        value: Optional[List["_models.CurrentQuotaLimitBase"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
-        super(QuotaLimits, self).__init__(**kwargs)
+        """
+        :keyword value: List of quotas (service limits).
+        :paramtype value: list[~azure.mgmt.reservations.models.CurrentQuotaLimitBase]
+        :keyword next_link: The URI for fetching the next page of quotas (service limits). When no more
+         pages exist, the value is null.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class QuotaLimitsResponse(msrest.serialization.Model):
+class QuotaLimitsResponse(_serialization.Model):
     """Quotas (service limits) in the request response.
 
-    :param value: List of quotas with the quota request status.
-    :type value: list[~azure.mgmt.reservations.models.CurrentQuotaLimit]
-    :param next_link: The URI for fetching the next page of quota limits. When no more pages exist,
+    :ivar value: List of quotas with the quota request status.
+    :vartype value: list[~azure.mgmt.reservations.models.CurrentQuotaLimit]
+    :ivar next_link: The URI for fetching the next page of quota limits. When no more pages exist,
      the value is null.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CurrentQuotaLimit]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CurrentQuotaLimit]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["CurrentQuotaLimit"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.CurrentQuotaLimit"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(QuotaLimitsResponse, self).__init__(**kwargs)
+        """
+        :keyword value: List of quotas with the quota request status.
+        :paramtype value: list[~azure.mgmt.reservations.models.CurrentQuotaLimit]
+        :keyword next_link: The URI for fetching the next page of quota limits. When no more pages
+         exist, the value is null.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class QuotaProperties(msrest.serialization.Model):
+class QuotaProperties(_serialization.Model):
     """Quota properties for the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param limit: Quota properties.
-    :type limit: int
+    :ivar limit: Quota properties.
+    :vartype limit: int
     :ivar current_value: Current usage value for the resource.
     :vartype current_value: int
-    :param unit: The limit units, such as **count** and **bytes**. Use the unit field provided in
+    :ivar unit: The limit units, such as **count** and **bytes**. Use the unit field provided in
      the response of the GET quota operation.
-    :type unit: str
-    :param name: Name of the resource provide by the resource provider. Use this property for
+    :vartype unit: str
+    :ivar name: Name of the resource provide by the resource provider. Use this property for
      quotaRequests resource operations.
-    :type name: ~azure.mgmt.reservations.models.ResourceName
-    :param resource_type: The name of the resource type. Possible values include: "standard",
-     "dedicated", "lowPriority", "shared", "serviceSpecific".
-    :type resource_type: str or ~azure.mgmt.reservations.models.ResourceType
+    :vartype name: ~azure.mgmt.reservations.models.ResourceName
+    :ivar resource_type: The name of the resource type. Known values are: "standard", "dedicated",
+     "lowPriority", "shared", and "serviceSpecific".
+    :vartype resource_type: str or ~azure.mgmt.reservations.models.ResourceType
     :ivar quota_period: The time period over which the quota usage values are summarized. For
      example, P1D (per one day), PT1M (per one minute), and PT1S (per one second). This parameter is
      optional because, for some resources such as compute, the time period is irrelevant.
     :vartype quota_period: str
-    :param properties: Additional properties for the specified resource provider.
-    :type properties: any
+    :ivar properties: Additional properties for the specified resource provider.
+    :vartype properties: JSON
     """
 
     _validation = {
-        'current_value': {'readonly': True},
-        'quota_period': {'readonly': True},
+        "current_value": {"readonly": True},
+        "quota_period": {"readonly": True},
     }
 
     _attribute_map = {
-        'limit': {'key': 'limit', 'type': 'int'},
-        'current_value': {'key': 'currentValue', 'type': 'int'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'ResourceName'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'quota_period': {'key': 'quotaPeriod', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        "limit": {"key": "limit", "type": "int"},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "unit": {"key": "unit", "type": "str"},
+        "name": {"key": "name", "type": "ResourceName"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "quota_period": {"key": "quotaPeriod", "type": "str"},
+        "properties": {"key": "properties", "type": "object"},
     }
 
     def __init__(
@@ -1389,12 +2005,27 @@ class QuotaProperties(msrest.serialization.Model):
         *,
         limit: Optional[int] = None,
         unit: Optional[str] = None,
-        name: Optional["ResourceName"] = None,
-        resource_type: Optional[Union[str, "ResourceType"]] = None,
-        properties: Optional[Any] = None,
+        name: Optional["_models.ResourceName"] = None,
+        resource_type: Optional[Union[str, "_models.ResourceType"]] = None,
+        properties: Optional[JSON] = None,
         **kwargs
     ):
-        super(QuotaProperties, self).__init__(**kwargs)
+        """
+        :keyword limit: Quota properties.
+        :paramtype limit: int
+        :keyword unit: The limit units, such as **count** and **bytes**. Use the unit field provided in
+         the response of the GET quota operation.
+        :paramtype unit: str
+        :keyword name: Name of the resource provide by the resource provider. Use this property for
+         quotaRequests resource operations.
+        :paramtype name: ~azure.mgmt.reservations.models.ResourceName
+        :keyword resource_type: The name of the resource type. Known values are: "standard",
+         "dedicated", "lowPriority", "shared", and "serviceSpecific".
+        :paramtype resource_type: str or ~azure.mgmt.reservations.models.ResourceType
+        :keyword properties: Additional properties for the specified resource provider.
+        :paramtype properties: JSON
+        """
+        super().__init__(**kwargs)
         self.limit = limit
         self.current_value = None
         self.unit = unit
@@ -1404,7 +2035,7 @@ class QuotaProperties(msrest.serialization.Model):
         self.properties = properties
 
 
-class QuotaRequestDetails(msrest.serialization.Model):
+class QuotaRequestDetails(_serialization.Model):
     """Quota request details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1415,44 +2046,51 @@ class QuotaRequestDetails(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param provisioning_state: The quota request status. Possible values include: "Accepted",
-     "Invalid", "Succeeded", "Failed", "InProgress".
-    :type provisioning_state: str or ~azure.mgmt.reservations.models.QuotaRequestState
+    :ivar provisioning_state: The quota request status. Known values are: "Accepted", "Invalid",
+     "Succeeded", "Failed", and "InProgress".
+    :vartype provisioning_state: str or ~azure.mgmt.reservations.models.QuotaRequestState
     :ivar message: User friendly status message.
     :vartype message: str
     :ivar request_submit_time: The time when the quota request was submitted using format:
      yyyy-MM-ddTHH:mm:ssZ as specified by the ISO 8601 standard.
     :vartype request_submit_time: ~datetime.datetime
-    :param value: The quotaRequests.
-    :type value: list[~azure.mgmt.reservations.models.SubRequest]
+    :ivar value: The quotaRequests.
+    :vartype value: list[~azure.mgmt.reservations.models.SubRequest]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'message': {'readonly': True},
-        'request_submit_time': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "message": {"readonly": True},
+        "request_submit_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'message': {'key': 'properties.message', 'type': 'str'},
-        'request_submit_time': {'key': 'properties.requestSubmitTime', 'type': 'iso-8601'},
-        'value': {'key': 'properties.value', 'type': '[SubRequest]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "message": {"key": "properties.message", "type": "str"},
+        "request_submit_time": {"key": "properties.requestSubmitTime", "type": "iso-8601"},
+        "value": {"key": "properties.value", "type": "[SubRequest]"},
     }
 
     def __init__(
         self,
         *,
-        provisioning_state: Optional[Union[str, "QuotaRequestState"]] = None,
-        value: Optional[List["SubRequest"]] = None,
+        provisioning_state: Optional[Union[str, "_models.QuotaRequestState"]] = None,
+        value: Optional[List["_models.SubRequest"]] = None,
         **kwargs
     ):
-        super(QuotaRequestDetails, self).__init__(**kwargs)
+        """
+        :keyword provisioning_state: The quota request status. Known values are: "Accepted", "Invalid",
+         "Succeeded", "Failed", and "InProgress".
+        :paramtype provisioning_state: str or ~azure.mgmt.reservations.models.QuotaRequestState
+        :keyword value: The quotaRequests.
+        :paramtype value: list[~azure.mgmt.reservations.models.SubRequest]
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1462,34 +2100,37 @@ class QuotaRequestDetails(msrest.serialization.Model):
         self.value = value
 
 
-class QuotaRequestDetailsList(msrest.serialization.Model):
+class QuotaRequestDetailsList(_serialization.Model):
     """Quota request details.
 
-    :param value: The quota requests.
-    :type value: list[~azure.mgmt.reservations.models.QuotaRequestDetails]
-    :param next_link: The URI to fetch the next page of quota limits. When there are no more pages,
+    :ivar value: The quota requests.
+    :vartype value: list[~azure.mgmt.reservations.models.QuotaRequestDetails]
+    :ivar next_link: The URI to fetch the next page of quota limits. When there are no more pages,
      this is null.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[QuotaRequestDetails]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[QuotaRequestDetails]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["QuotaRequestDetails"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.QuotaRequestDetails"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(QuotaRequestDetailsList, self).__init__(**kwargs)
+        """
+        :keyword value: The quota requests.
+        :paramtype value: list[~azure.mgmt.reservations.models.QuotaRequestDetails]
+        :keyword next_link: The URI to fetch the next page of quota limits. When there are no more
+         pages, this is null.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class QuotaRequestOneResourceSubmitResponse(msrest.serialization.Model):
+class QuotaRequestOneResourceSubmitResponse(_serialization.Model):
     """Response for the quota submission request.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1500,97 +2141,118 @@ class QuotaRequestOneResourceSubmitResponse(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Type of resource. "Microsoft.Capacity/ServiceLimits".
     :vartype type: str
-    :ivar provisioning_state: The quota request status. Possible values include: "Accepted",
-     "Invalid", "Succeeded", "Failed", "InProgress".
+    :ivar provisioning_state: The quota request status. Known values are: "Accepted", "Invalid",
+     "Succeeded", "Failed", and "InProgress".
     :vartype provisioning_state: str or ~azure.mgmt.reservations.models.QuotaRequestState
     :ivar message: User friendly status message.
     :vartype message: str
     :ivar request_submit_time: The time when the quota request was submitted using format:
      yyyy-MM-ddTHH:mm:ssZ as specified by the ISO 8601 standard.
     :vartype request_submit_time: ~datetime.datetime
-    :param properties: Quota properties for the resource.
-    :type properties: ~azure.mgmt.reservations.models.QuotaProperties
+    :ivar id_properties_id: The quota request ID.
+    :vartype id_properties_id: str
+    :ivar name_properties_name: The name of the quota request.
+    :vartype name_properties_name: str
+    :ivar type_properties_type: Type of resource. "Microsoft.Capacity/ServiceLimits".
+    :vartype type_properties_type: str
+    :ivar properties: Quota properties for the resource.
+    :vartype properties: ~azure.mgmt.reservations.models.QuotaProperties
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'message': {'readonly': True},
-        'request_submit_time': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "message": {"readonly": True},
+        "request_submit_time": {"readonly": True},
+        "id_properties_id": {"readonly": True},
+        "name_properties_name": {"readonly": True},
+        "type_properties_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'message': {'key': 'properties.message', 'type': 'str'},
-        'request_submit_time': {'key': 'properties.requestSubmitTime', 'type': 'iso-8601'},
-        'properties': {'key': 'properties.properties.properties', 'type': 'QuotaProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "message": {"key": "properties.message", "type": "str"},
+        "request_submit_time": {"key": "properties.requestSubmitTime", "type": "iso-8601"},
+        "id_properties_id": {"key": "properties.properties.id", "type": "str"},
+        "name_properties_name": {"key": "properties.properties.name", "type": "str"},
+        "type_properties_type": {"key": "properties.properties.type", "type": "str"},
+        "properties": {"key": "properties.properties.properties", "type": "QuotaProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["QuotaProperties"] = None,
-        **kwargs
-    ):
-        super(QuotaRequestOneResourceSubmitResponse, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.QuotaProperties"] = None, **kwargs):
+        """
+        :keyword properties: Quota properties for the resource.
+        :paramtype properties: ~azure.mgmt.reservations.models.QuotaProperties
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.provisioning_state = None
         self.message = None
         self.request_submit_time = None
+        self.id_properties_id = None
+        self.name_properties_name = None
+        self.type_properties_type = None
         self.properties = properties
 
 
-class QuotaRequestProperties(msrest.serialization.Model):
+class QuotaRequestProperties(_serialization.Model):
     """The details of quota request.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param provisioning_state: The quota request status. Possible values include: "Accepted",
-     "Invalid", "Succeeded", "Failed", "InProgress".
-    :type provisioning_state: str or ~azure.mgmt.reservations.models.QuotaRequestState
+    :ivar provisioning_state: The quota request status. Known values are: "Accepted", "Invalid",
+     "Succeeded", "Failed", and "InProgress".
+    :vartype provisioning_state: str or ~azure.mgmt.reservations.models.QuotaRequestState
     :ivar message: User friendly status message.
     :vartype message: str
     :ivar request_submit_time: The time when the quota request was submitted using format:
      yyyy-MM-ddTHH:mm:ssZ as specified by the ISO 8601 standard.
     :vartype request_submit_time: ~datetime.datetime
-    :param value: The quotaRequests.
-    :type value: list[~azure.mgmt.reservations.models.SubRequest]
+    :ivar value: The quotaRequests.
+    :vartype value: list[~azure.mgmt.reservations.models.SubRequest]
     """
 
     _validation = {
-        'message': {'readonly': True},
-        'request_submit_time': {'readonly': True},
+        "message": {"readonly": True},
+        "request_submit_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'request_submit_time': {'key': 'requestSubmitTime', 'type': 'iso-8601'},
-        'value': {'key': 'value', 'type': '[SubRequest]'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "request_submit_time": {"key": "requestSubmitTime", "type": "iso-8601"},
+        "value": {"key": "value", "type": "[SubRequest]"},
     }
 
     def __init__(
         self,
         *,
-        provisioning_state: Optional[Union[str, "QuotaRequestState"]] = None,
-        value: Optional[List["SubRequest"]] = None,
+        provisioning_state: Optional[Union[str, "_models.QuotaRequestState"]] = None,
+        value: Optional[List["_models.SubRequest"]] = None,
         **kwargs
     ):
-        super(QuotaRequestProperties, self).__init__(**kwargs)
+        """
+        :keyword provisioning_state: The quota request status. Known values are: "Accepted", "Invalid",
+         "Succeeded", "Failed", and "InProgress".
+        :paramtype provisioning_state: str or ~azure.mgmt.reservations.models.QuotaRequestState
+        :keyword value: The quotaRequests.
+        :paramtype value: list[~azure.mgmt.reservations.models.SubRequest]
+        """
+        super().__init__(**kwargs)
         self.provisioning_state = provisioning_state
         self.message = None
         self.request_submit_time = None
         self.value = value
 
 
-class QuotaRequestSubmitResponse(msrest.serialization.Model):
+class QuotaRequestSubmitResponse(_serialization.Model):
     """Response for the quota submission request.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1599,39 +2261,38 @@ class QuotaRequestSubmitResponse(msrest.serialization.Model):
     :vartype id: str
     :ivar name: The name of the quota request.
     :vartype name: str
-    :param properties: The quota request details.
-    :type properties: ~azure.mgmt.reservations.models.QuotaRequestProperties
+    :ivar properties: The quota request details.
+    :vartype properties: ~azure.mgmt.reservations.models.QuotaRequestProperties
     :ivar type: Type of resource. "Microsoft.Capacity/serviceLimits".
     :vartype type: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'QuotaRequestProperties'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "QuotaRequestProperties"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["QuotaRequestProperties"] = None,
-        **kwargs
-    ):
-        super(QuotaRequestSubmitResponse, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.QuotaRequestProperties"] = None, **kwargs):
+        """
+        :keyword properties: The quota request details.
+        :paramtype properties: ~azure.mgmt.reservations.models.QuotaRequestProperties
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.properties = properties
         self.type = None
 
 
-class QuotaRequestSubmitResponse201(msrest.serialization.Model):
+class QuotaRequestSubmitResponse201(_serialization.Model):
     """Response with request ID that the quota request was accepted.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1642,34 +2303,32 @@ class QuotaRequestSubmitResponse201(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar provisioning_state: The details of the quota request status. Possible values include:
-     "Accepted", "Invalid", "Succeeded", "Failed", "InProgress".
+    :ivar provisioning_state: The details of the quota request status. Known values are:
+     "Accepted", "Invalid", "Succeeded", "Failed", and "InProgress".
     :vartype provisioning_state: str or ~azure.mgmt.reservations.models.QuotaRequestState
     :ivar message: A user friendly message.
     :vartype message: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'message': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'message': {'key': 'properties.message', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "message": {"key": "properties.message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(QuotaRequestSubmitResponse201, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1677,271 +2336,673 @@ class QuotaRequestSubmitResponse201(msrest.serialization.Model):
         self.message = None
 
 
-class RenewPropertiesResponse(msrest.serialization.Model):
-    """RenewPropertiesResponse.
+class RefundBillingInformation(_serialization.Model):
+    """billing information.
 
-    :param purchase_properties:
-    :type purchase_properties: ~azure.mgmt.reservations.models.PurchaseRequest
-    :param pricing_currency_total: Amount that Microsoft uses for record. Used during refund for
-     calculating refund limit. Tax is not included. This is locked price 30 days before expiry.
-    :type pricing_currency_total:
-     ~azure.mgmt.reservations.models.RenewPropertiesResponsePricingCurrencyTotal
-    :param billing_currency_total: Currency and amount that customer will be charged in customer's
-     local currency for renewal purchase. Tax is not included.
-    :type billing_currency_total:
-     ~azure.mgmt.reservations.models.RenewPropertiesResponseBillingCurrencyTotal
+    :ivar billing_plan: Represent the billing plans. Known values are: "Upfront" and "Monthly".
+    :vartype billing_plan: str or ~azure.mgmt.reservations.models.ReservationBillingPlan
+    :ivar completed_transactions: The number of completed transactions in this reservation's
+     payment.
+    :vartype completed_transactions: int
+    :ivar total_transactions: The number of total transactions in this reservation's payment.
+    :vartype total_transactions: int
+    :ivar billing_currency_total_paid_amount:
+    :vartype billing_currency_total_paid_amount: ~azure.mgmt.reservations.models.Price
+    :ivar billing_currency_prorated_amount:
+    :vartype billing_currency_prorated_amount: ~azure.mgmt.reservations.models.Price
+    :ivar billing_currency_remaining_commitment_amount:
+    :vartype billing_currency_remaining_commitment_amount: ~azure.mgmt.reservations.models.Price
     """
 
     _attribute_map = {
-        'purchase_properties': {'key': 'purchaseProperties', 'type': 'PurchaseRequest'},
-        'pricing_currency_total': {'key': 'pricingCurrencyTotal', 'type': 'RenewPropertiesResponsePricingCurrencyTotal'},
-        'billing_currency_total': {'key': 'billingCurrencyTotal', 'type': 'RenewPropertiesResponseBillingCurrencyTotal'},
+        "billing_plan": {"key": "billingPlan", "type": "str"},
+        "completed_transactions": {"key": "completedTransactions", "type": "int"},
+        "total_transactions": {"key": "totalTransactions", "type": "int"},
+        "billing_currency_total_paid_amount": {"key": "billingCurrencyTotalPaidAmount", "type": "Price"},
+        "billing_currency_prorated_amount": {"key": "billingCurrencyProratedAmount", "type": "Price"},
+        "billing_currency_remaining_commitment_amount": {
+            "key": "billingCurrencyRemainingCommitmentAmount",
+            "type": "Price",
+        },
     }
 
     def __init__(
         self,
         *,
-        purchase_properties: Optional["PurchaseRequest"] = None,
-        pricing_currency_total: Optional["RenewPropertiesResponsePricingCurrencyTotal"] = None,
-        billing_currency_total: Optional["RenewPropertiesResponseBillingCurrencyTotal"] = None,
+        billing_plan: Optional[Union[str, "_models.ReservationBillingPlan"]] = None,
+        completed_transactions: Optional[int] = None,
+        total_transactions: Optional[int] = None,
+        billing_currency_total_paid_amount: Optional["_models.Price"] = None,
+        billing_currency_prorated_amount: Optional["_models.Price"] = None,
+        billing_currency_remaining_commitment_amount: Optional["_models.Price"] = None,
         **kwargs
     ):
-        super(RenewPropertiesResponse, self).__init__(**kwargs)
+        """
+        :keyword billing_plan: Represent the billing plans. Known values are: "Upfront" and "Monthly".
+        :paramtype billing_plan: str or ~azure.mgmt.reservations.models.ReservationBillingPlan
+        :keyword completed_transactions: The number of completed transactions in this reservation's
+         payment.
+        :paramtype completed_transactions: int
+        :keyword total_transactions: The number of total transactions in this reservation's payment.
+        :paramtype total_transactions: int
+        :keyword billing_currency_total_paid_amount:
+        :paramtype billing_currency_total_paid_amount: ~azure.mgmt.reservations.models.Price
+        :keyword billing_currency_prorated_amount:
+        :paramtype billing_currency_prorated_amount: ~azure.mgmt.reservations.models.Price
+        :keyword billing_currency_remaining_commitment_amount:
+        :paramtype billing_currency_remaining_commitment_amount: ~azure.mgmt.reservations.models.Price
+        """
+        super().__init__(**kwargs)
+        self.billing_plan = billing_plan
+        self.completed_transactions = completed_transactions
+        self.total_transactions = total_transactions
+        self.billing_currency_total_paid_amount = billing_currency_total_paid_amount
+        self.billing_currency_prorated_amount = billing_currency_prorated_amount
+        self.billing_currency_remaining_commitment_amount = billing_currency_remaining_commitment_amount
+
+
+class RefundPolicyError(_serialization.Model):
+    """error details.
+
+    :ivar code: Known values are: "NotSpecified", "InternalServerError", "ServerTimeout",
+     "AuthorizationFailed", "BadRequest", "ClientCertificateThumbprintNotSet",
+     "InvalidRequestContent", "OperationFailed", "HttpMethodNotSupported", "InvalidRequestUri",
+     "MissingTenantId", "InvalidTenantId", "InvalidReservationOrderId", "InvalidReservationId",
+     "ReservationIdNotInReservationOrder", "ReservationOrderNotFound", "InvalidSubscriptionId",
+     "InvalidAccessToken", "InvalidLocationId", "UnauthenticatedRequestsThrottled",
+     "InvalidHealthCheckType", "Forbidden", "BillingScopeIdCannotBeChanged",
+     "AppliedScopesNotAssociatedWithCommerceAccount", "PatchValuesSameAsExisting",
+     "RoleAssignmentCreationFailed", "ReservationOrderCreationFailed", "ReservationOrderNotEnabled",
+     "CapacityUpdateScopesFailed", "UnsupportedReservationTerm", "ReservationOrderIdAlreadyExists",
+     "RiskCheckFailed", "CreateQuoteFailed", "ActivateQuoteFailed", "NonsupportedAccountId",
+     "PaymentInstrumentNotFound", "MissingAppliedScopesForSingle", "NoValidReservationsToReRate",
+     "ReRateOnlyAllowedForEA", "OperationCannotBePerformedInCurrentState",
+     "InvalidSingleAppliedScopesCount", "InvalidFulfillmentRequestParameters",
+     "NotSupportedCountry", "InvalidRefundQuantity", "PurchaseError", "BillingCustomerInputError",
+     "BillingPaymentInstrumentSoftError", "BillingPaymentInstrumentHardError",
+     "BillingTransientError", "BillingError", "FulfillmentConfigurationError",
+     "FulfillmentOutOfStockError", "FulfillmentTransientError", "FulfillmentError",
+     "CalculatePriceFailed", "AppliedScopesSameAsExisting", "SelfServiceRefundNotSupported", and
+     "RefundLimitExceeded".
+    :vartype code: str or ~azure.mgmt.reservations.models.ErrorResponseCode
+    :ivar message:
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(
+        self, *, code: Optional[Union[str, "_models.ErrorResponseCode"]] = None, message: Optional[str] = None, **kwargs
+    ):
+        """
+        :keyword code: Known values are: "NotSpecified", "InternalServerError", "ServerTimeout",
+         "AuthorizationFailed", "BadRequest", "ClientCertificateThumbprintNotSet",
+         "InvalidRequestContent", "OperationFailed", "HttpMethodNotSupported", "InvalidRequestUri",
+         "MissingTenantId", "InvalidTenantId", "InvalidReservationOrderId", "InvalidReservationId",
+         "ReservationIdNotInReservationOrder", "ReservationOrderNotFound", "InvalidSubscriptionId",
+         "InvalidAccessToken", "InvalidLocationId", "UnauthenticatedRequestsThrottled",
+         "InvalidHealthCheckType", "Forbidden", "BillingScopeIdCannotBeChanged",
+         "AppliedScopesNotAssociatedWithCommerceAccount", "PatchValuesSameAsExisting",
+         "RoleAssignmentCreationFailed", "ReservationOrderCreationFailed", "ReservationOrderNotEnabled",
+         "CapacityUpdateScopesFailed", "UnsupportedReservationTerm", "ReservationOrderIdAlreadyExists",
+         "RiskCheckFailed", "CreateQuoteFailed", "ActivateQuoteFailed", "NonsupportedAccountId",
+         "PaymentInstrumentNotFound", "MissingAppliedScopesForSingle", "NoValidReservationsToReRate",
+         "ReRateOnlyAllowedForEA", "OperationCannotBePerformedInCurrentState",
+         "InvalidSingleAppliedScopesCount", "InvalidFulfillmentRequestParameters",
+         "NotSupportedCountry", "InvalidRefundQuantity", "PurchaseError", "BillingCustomerInputError",
+         "BillingPaymentInstrumentSoftError", "BillingPaymentInstrumentHardError",
+         "BillingTransientError", "BillingError", "FulfillmentConfigurationError",
+         "FulfillmentOutOfStockError", "FulfillmentTransientError", "FulfillmentError",
+         "CalculatePriceFailed", "AppliedScopesSameAsExisting", "SelfServiceRefundNotSupported", and
+         "RefundLimitExceeded".
+        :paramtype code: str or ~azure.mgmt.reservations.models.ErrorResponseCode
+        :keyword message:
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.code = code
+        self.message = message
+
+
+class RefundPolicyResult(_serialization.Model):
+    """Refund policy result.
+
+    :ivar properties: Refund policy result property.
+    :vartype properties: ~azure.mgmt.reservations.models.RefundPolicyResultProperty
+    """
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "RefundPolicyResultProperty"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.RefundPolicyResultProperty"] = None, **kwargs):
+        """
+        :keyword properties: Refund policy result property.
+        :paramtype properties: ~azure.mgmt.reservations.models.RefundPolicyResultProperty
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class RefundPolicyResultProperty(_serialization.Model):
+    """Refund policy result property.
+
+    :ivar consumed_refunds_total:
+    :vartype consumed_refunds_total: ~azure.mgmt.reservations.models.Price
+    :ivar max_refund_limit:
+    :vartype max_refund_limit: ~azure.mgmt.reservations.models.Price
+    :ivar policy_errors: Refund Policy errors.
+    :vartype policy_errors: list[~azure.mgmt.reservations.models.RefundPolicyError]
+    """
+
+    _attribute_map = {
+        "consumed_refunds_total": {"key": "consumedRefundsTotal", "type": "Price"},
+        "max_refund_limit": {"key": "maxRefundLimit", "type": "Price"},
+        "policy_errors": {"key": "policyErrors", "type": "[RefundPolicyError]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        consumed_refunds_total: Optional["_models.Price"] = None,
+        max_refund_limit: Optional["_models.Price"] = None,
+        policy_errors: Optional[List["_models.RefundPolicyError"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword consumed_refunds_total:
+        :paramtype consumed_refunds_total: ~azure.mgmt.reservations.models.Price
+        :keyword max_refund_limit:
+        :paramtype max_refund_limit: ~azure.mgmt.reservations.models.Price
+        :keyword policy_errors: Refund Policy errors.
+        :paramtype policy_errors: list[~azure.mgmt.reservations.models.RefundPolicyError]
+        """
+        super().__init__(**kwargs)
+        self.consumed_refunds_total = consumed_refunds_total
+        self.max_refund_limit = max_refund_limit
+        self.policy_errors = policy_errors
+
+
+class RefundRequest(_serialization.Model):
+    """RefundRequest.
+
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.reservations.models.RefundRequestProperties
+    """
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "RefundRequestProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.RefundRequestProperties"] = None, **kwargs):
+        """
+        :keyword properties:
+        :paramtype properties: ~azure.mgmt.reservations.models.RefundRequestProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class RefundRequestProperties(_serialization.Model):
+    """RefundRequestProperties.
+
+    :ivar session_id: SessionId that was returned by CalculateRefund API.
+    :vartype session_id: str
+    :ivar scope: The scope of the refund, e.g. Reservation.
+    :vartype scope: str
+    :ivar reservation_to_return: Reservation to return.
+    :vartype reservation_to_return: ~azure.mgmt.reservations.models.ReservationToReturn
+    :ivar return_reason: The reason of returning the reservation.
+    :vartype return_reason: str
+    """
+
+    _attribute_map = {
+        "session_id": {"key": "sessionId", "type": "str"},
+        "scope": {"key": "scope", "type": "str"},
+        "reservation_to_return": {"key": "reservationToReturn", "type": "ReservationToReturn"},
+        "return_reason": {"key": "returnReason", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        session_id: Optional[str] = None,
+        scope: Optional[str] = None,
+        reservation_to_return: Optional["_models.ReservationToReturn"] = None,
+        return_reason: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword session_id: SessionId that was returned by CalculateRefund API.
+        :paramtype session_id: str
+        :keyword scope: The scope of the refund, e.g. Reservation.
+        :paramtype scope: str
+        :keyword reservation_to_return: Reservation to return.
+        :paramtype reservation_to_return: ~azure.mgmt.reservations.models.ReservationToReturn
+        :keyword return_reason: The reason of returning the reservation.
+        :paramtype return_reason: str
+        """
+        super().__init__(**kwargs)
+        self.session_id = session_id
+        self.scope = scope
+        self.reservation_to_return = reservation_to_return
+        self.return_reason = return_reason
+
+
+class RefundResponse(_serialization.Model):
+    """RefundResponse.
+
+    :ivar id: Fully qualified identifier of the reservation being returned.
+    :vartype id: str
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.reservations.models.RefundResponseProperties
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "properties": {"key": "properties", "type": "RefundResponseProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        properties: Optional["_models.RefundResponseProperties"] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: Fully qualified identifier of the reservation being returned.
+        :paramtype id: str
+        :keyword properties:
+        :paramtype properties: ~azure.mgmt.reservations.models.RefundResponseProperties
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.properties = properties
+
+
+class RefundResponseProperties(_serialization.Model):
+    """RefundResponseProperties.
+
+    :ivar session_id: Refund session identifier.
+    :vartype session_id: str
+    :ivar quantity: Quantity to be returned.
+    :vartype quantity: int
+    :ivar billing_refund_amount:
+    :vartype billing_refund_amount: ~azure.mgmt.reservations.models.Price
+    :ivar pricing_refund_amount:
+    :vartype pricing_refund_amount: ~azure.mgmt.reservations.models.Price
+    :ivar policy_result: Refund policy result.
+    :vartype policy_result: ~azure.mgmt.reservations.models.RefundPolicyResult
+    :ivar billing_information: billing information.
+    :vartype billing_information: ~azure.mgmt.reservations.models.RefundBillingInformation
+    """
+
+    _attribute_map = {
+        "session_id": {"key": "sessionId", "type": "str"},
+        "quantity": {"key": "quantity", "type": "int"},
+        "billing_refund_amount": {"key": "billingRefundAmount", "type": "Price"},
+        "pricing_refund_amount": {"key": "pricingRefundAmount", "type": "Price"},
+        "policy_result": {"key": "policyResult", "type": "RefundPolicyResult"},
+        "billing_information": {"key": "billingInformation", "type": "RefundBillingInformation"},
+    }
+
+    def __init__(
+        self,
+        *,
+        session_id: Optional[str] = None,
+        quantity: Optional[int] = None,
+        billing_refund_amount: Optional["_models.Price"] = None,
+        pricing_refund_amount: Optional["_models.Price"] = None,
+        policy_result: Optional["_models.RefundPolicyResult"] = None,
+        billing_information: Optional["_models.RefundBillingInformation"] = None,
+        **kwargs
+    ):
+        """
+        :keyword session_id: Refund session identifier.
+        :paramtype session_id: str
+        :keyword quantity: Quantity to be returned.
+        :paramtype quantity: int
+        :keyword billing_refund_amount:
+        :paramtype billing_refund_amount: ~azure.mgmt.reservations.models.Price
+        :keyword pricing_refund_amount:
+        :paramtype pricing_refund_amount: ~azure.mgmt.reservations.models.Price
+        :keyword policy_result: Refund policy result.
+        :paramtype policy_result: ~azure.mgmt.reservations.models.RefundPolicyResult
+        :keyword billing_information: billing information.
+        :paramtype billing_information: ~azure.mgmt.reservations.models.RefundBillingInformation
+        """
+        super().__init__(**kwargs)
+        self.session_id = session_id
+        self.quantity = quantity
+        self.billing_refund_amount = billing_refund_amount
+        self.pricing_refund_amount = pricing_refund_amount
+        self.policy_result = policy_result
+        self.billing_information = billing_information
+
+
+class RenewPropertiesResponse(_serialization.Model):
+    """RenewPropertiesResponse.
+
+    :ivar purchase_properties:
+    :vartype purchase_properties: ~azure.mgmt.reservations.models.PurchaseRequest
+    :ivar pricing_currency_total: Amount that Microsoft uses for record. Used during refund for
+     calculating refund limit. Tax is not included. This is locked price 30 days before expiry.
+    :vartype pricing_currency_total:
+     ~azure.mgmt.reservations.models.RenewPropertiesResponsePricingCurrencyTotal
+    :ivar billing_currency_total: Currency and amount that customer will be charged in customer's
+     local currency for renewal purchase. Tax is not included.
+    :vartype billing_currency_total:
+     ~azure.mgmt.reservations.models.RenewPropertiesResponseBillingCurrencyTotal
+    """
+
+    _attribute_map = {
+        "purchase_properties": {"key": "purchaseProperties", "type": "PurchaseRequest"},
+        "pricing_currency_total": {
+            "key": "pricingCurrencyTotal",
+            "type": "RenewPropertiesResponsePricingCurrencyTotal",
+        },
+        "billing_currency_total": {
+            "key": "billingCurrencyTotal",
+            "type": "RenewPropertiesResponseBillingCurrencyTotal",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        purchase_properties: Optional["_models.PurchaseRequest"] = None,
+        pricing_currency_total: Optional["_models.RenewPropertiesResponsePricingCurrencyTotal"] = None,
+        billing_currency_total: Optional["_models.RenewPropertiesResponseBillingCurrencyTotal"] = None,
+        **kwargs
+    ):
+        """
+        :keyword purchase_properties:
+        :paramtype purchase_properties: ~azure.mgmt.reservations.models.PurchaseRequest
+        :keyword pricing_currency_total: Amount that Microsoft uses for record. Used during refund for
+         calculating refund limit. Tax is not included. This is locked price 30 days before expiry.
+        :paramtype pricing_currency_total:
+         ~azure.mgmt.reservations.models.RenewPropertiesResponsePricingCurrencyTotal
+        :keyword billing_currency_total: Currency and amount that customer will be charged in
+         customer's local currency for renewal purchase. Tax is not included.
+        :paramtype billing_currency_total:
+         ~azure.mgmt.reservations.models.RenewPropertiesResponseBillingCurrencyTotal
+        """
+        super().__init__(**kwargs)
         self.purchase_properties = purchase_properties
         self.pricing_currency_total = pricing_currency_total
         self.billing_currency_total = billing_currency_total
 
 
-class RenewPropertiesResponseBillingCurrencyTotal(msrest.serialization.Model):
+class RenewPropertiesResponseBillingCurrencyTotal(_serialization.Model):
     """Currency and amount that customer will be charged in customer's local currency for renewal purchase. Tax is not included.
 
-    :param currency_code:
-    :type currency_code: str
-    :param amount:
-    :type amount: float
+    :ivar currency_code: The ISO 4217 3-letter currency code for the currency used by this purchase
+     record.
+    :vartype currency_code: str
+    :ivar amount:
+    :vartype amount: float
     """
 
     _attribute_map = {
-        'currency_code': {'key': 'currencyCode', 'type': 'str'},
-        'amount': {'key': 'amount', 'type': 'float'},
+        "currency_code": {"key": "currencyCode", "type": "str"},
+        "amount": {"key": "amount", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        currency_code: Optional[str] = None,
-        amount: Optional[float] = None,
-        **kwargs
-    ):
-        super(RenewPropertiesResponseBillingCurrencyTotal, self).__init__(**kwargs)
+    def __init__(self, *, currency_code: Optional[str] = None, amount: Optional[float] = None, **kwargs):
+        """
+        :keyword currency_code: The ISO 4217 3-letter currency code for the currency used by this
+         purchase record.
+        :paramtype currency_code: str
+        :keyword amount:
+        :paramtype amount: float
+        """
+        super().__init__(**kwargs)
         self.currency_code = currency_code
         self.amount = amount
 
 
-class RenewPropertiesResponsePricingCurrencyTotal(msrest.serialization.Model):
+class RenewPropertiesResponsePricingCurrencyTotal(_serialization.Model):
     """Amount that Microsoft uses for record. Used during refund for calculating refund limit. Tax is not included. This is locked price 30 days before expiry.
 
-    :param currency_code:
-    :type currency_code: str
-    :param amount:
-    :type amount: float
+    :ivar currency_code: The ISO 4217 3-letter currency code for the currency used by this purchase
+     record.
+    :vartype currency_code: str
+    :ivar amount:
+    :vartype amount: float
     """
 
     _attribute_map = {
-        'currency_code': {'key': 'currencyCode', 'type': 'str'},
-        'amount': {'key': 'amount', 'type': 'float'},
+        "currency_code": {"key": "currencyCode", "type": "str"},
+        "amount": {"key": "amount", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        currency_code: Optional[str] = None,
-        amount: Optional[float] = None,
-        **kwargs
-    ):
-        super(RenewPropertiesResponsePricingCurrencyTotal, self).__init__(**kwargs)
+    def __init__(self, *, currency_code: Optional[str] = None, amount: Optional[float] = None, **kwargs):
+        """
+        :keyword currency_code: The ISO 4217 3-letter currency code for the currency used by this
+         purchase record.
+        :paramtype currency_code: str
+        :keyword amount:
+        :paramtype amount: float
+        """
+        super().__init__(**kwargs)
         self.currency_code = currency_code
         self.amount = amount
 
 
-class ReservationList(msrest.serialization.Model):
+class ReservationList(_serialization.Model):
     """ReservationList.
 
-    :param value:
-    :type value: list[~azure.mgmt.reservations.models.ReservationResponse]
-    :param next_link: Url to get the next page of reservations.
-    :type next_link: str
+    :ivar value:
+    :vartype value: list[~azure.mgmt.reservations.models.ReservationResponse]
+    :ivar next_link: Url to get the next page of reservations.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ReservationResponse]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ReservationResponse]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["ReservationResponse"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.ReservationResponse"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(ReservationList, self).__init__(**kwargs)
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.reservations.models.ReservationResponse]
+        :keyword next_link: Url to get the next page of reservations.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ReservationMergeProperties(msrest.serialization.Model):
+class ReservationMergeProperties(_serialization.Model):
     """ReservationMergeProperties.
 
-    :param merge_destination: Reservation Resource Id Created due to the merge. Format of the
+    :ivar merge_destination: Reservation Resource Id Created due to the merge. Format of the
      resource Id is
      /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
-    :type merge_destination: str
-    :param merge_sources: Resource Ids of the Source Reservation's merged to form this Reservation.
+    :vartype merge_destination: str
+    :ivar merge_sources: Resource Ids of the Source Reservation's merged to form this Reservation.
      Format of the resource Id is
      /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
-    :type merge_sources: list[str]
+    :vartype merge_sources: list[str]
     """
 
     _attribute_map = {
-        'merge_destination': {'key': 'mergeDestination', 'type': 'str'},
-        'merge_sources': {'key': 'mergeSources', 'type': '[str]'},
+        "merge_destination": {"key": "mergeDestination", "type": "str"},
+        "merge_sources": {"key": "mergeSources", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        merge_destination: Optional[str] = None,
-        merge_sources: Optional[List[str]] = None,
-        **kwargs
-    ):
-        super(ReservationMergeProperties, self).__init__(**kwargs)
+    def __init__(self, *, merge_destination: Optional[str] = None, merge_sources: Optional[List[str]] = None, **kwargs):
+        """
+        :keyword merge_destination: Reservation Resource Id Created due to the merge. Format of the
+         resource Id is
+         /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+        :paramtype merge_destination: str
+        :keyword merge_sources: Resource Ids of the Source Reservation's merged to form this
+         Reservation. Format of the resource Id is
+         /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+        :paramtype merge_sources: list[str]
+        """
+        super().__init__(**kwargs)
         self.merge_destination = merge_destination
         self.merge_sources = merge_sources
 
 
-class ReservationOrderBillingPlanInformation(msrest.serialization.Model):
+class ReservationOrderBillingPlanInformation(_serialization.Model):
     """Information describing the type of billing plan for this reservation.
 
-    :param pricing_currency_total: Amount of money to be paid for the Order. Tax is not included.
-    :type pricing_currency_total: ~azure.mgmt.reservations.models.Price
-    :param start_date: Date when the billing plan has started.
-    :type start_date: ~datetime.date
-    :param next_payment_due_date: For recurring billing plans, indicates the date when next payment
+    :ivar pricing_currency_total: Amount of money to be paid for the Order. Tax is not included.
+    :vartype pricing_currency_total: ~azure.mgmt.reservations.models.Price
+    :ivar start_date: Date when the billing plan has started.
+    :vartype start_date: ~datetime.date
+    :ivar next_payment_due_date: For recurring billing plans, indicates the date when next payment
      will be processed. Null when total is paid off.
-    :type next_payment_due_date: ~datetime.date
-    :param transactions:
-    :type transactions: list[~azure.mgmt.reservations.models.PaymentDetail]
+    :vartype next_payment_due_date: ~datetime.date
+    :ivar transactions:
+    :vartype transactions: list[~azure.mgmt.reservations.models.PaymentDetail]
     """
 
     _attribute_map = {
-        'pricing_currency_total': {'key': 'pricingCurrencyTotal', 'type': 'Price'},
-        'start_date': {'key': 'startDate', 'type': 'date'},
-        'next_payment_due_date': {'key': 'nextPaymentDueDate', 'type': 'date'},
-        'transactions': {'key': 'transactions', 'type': '[PaymentDetail]'},
+        "pricing_currency_total": {"key": "pricingCurrencyTotal", "type": "Price"},
+        "start_date": {"key": "startDate", "type": "date"},
+        "next_payment_due_date": {"key": "nextPaymentDueDate", "type": "date"},
+        "transactions": {"key": "transactions", "type": "[PaymentDetail]"},
     }
 
     def __init__(
         self,
         *,
-        pricing_currency_total: Optional["Price"] = None,
+        pricing_currency_total: Optional["_models.Price"] = None,
         start_date: Optional[datetime.date] = None,
         next_payment_due_date: Optional[datetime.date] = None,
-        transactions: Optional[List["PaymentDetail"]] = None,
+        transactions: Optional[List["_models.PaymentDetail"]] = None,
         **kwargs
     ):
-        super(ReservationOrderBillingPlanInformation, self).__init__(**kwargs)
+        """
+        :keyword pricing_currency_total: Amount of money to be paid for the Order. Tax is not included.
+        :paramtype pricing_currency_total: ~azure.mgmt.reservations.models.Price
+        :keyword start_date: Date when the billing plan has started.
+        :paramtype start_date: ~datetime.date
+        :keyword next_payment_due_date: For recurring billing plans, indicates the date when next
+         payment will be processed. Null when total is paid off.
+        :paramtype next_payment_due_date: ~datetime.date
+        :keyword transactions:
+        :paramtype transactions: list[~azure.mgmt.reservations.models.PaymentDetail]
+        """
+        super().__init__(**kwargs)
         self.pricing_currency_total = pricing_currency_total
         self.start_date = start_date
         self.next_payment_due_date = next_payment_due_date
         self.transactions = transactions
 
 
-class ReservationOrderList(msrest.serialization.Model):
+class ReservationOrderList(_serialization.Model):
     """ReservationOrderList.
 
-    :param value:
-    :type value: list[~azure.mgmt.reservations.models.ReservationOrderResponse]
-    :param next_link: Url to get the next page of reservationOrders.
-    :type next_link: str
+    :ivar value:
+    :vartype value: list[~azure.mgmt.reservations.models.ReservationOrderResponse]
+    :ivar next_link: Url to get the next page of reservationOrders.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ReservationOrderResponse]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ReservationOrderResponse]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["ReservationOrderResponse"]] = None,
+        value: Optional[List["_models.ReservationOrderResponse"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
-        super(ReservationOrderList, self).__init__(**kwargs)
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.reservations.models.ReservationOrderResponse]
+        :keyword next_link: Url to get the next page of reservationOrders.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ReservationOrderResponse(msrest.serialization.Model):
+class ReservationOrderResponse(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """ReservationOrderResponse.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param etag:
-    :type etag: int
+    :ivar etag:
+    :vartype etag: int
     :ivar id: Identifier of the reservation.
     :vartype id: str
     :ivar name: Name of the reservation.
     :vartype name: str
     :ivar type: Type of resource. "Microsoft.Capacity/reservations".
     :vartype type: str
-    :param display_name: Friendly name for user to easily identified the reservation.
-    :type display_name: str
-    :param request_date_time: This is the DateTime when the reservation was initially requested for
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.reservations.models.SystemData
+    :ivar display_name: Friendly name for user to easily identified the reservation.
+    :vartype display_name: str
+    :ivar request_date_time: This is the DateTime when the reservation was initially requested for
      purchase.
-    :type request_date_time: ~datetime.datetime
-    :param created_date_time: This is the DateTime when the reservation was created.
-    :type created_date_time: ~datetime.datetime
-    :param expiry_date: This is the date when the Reservation will expire.
-    :type expiry_date: ~datetime.date
-    :param original_quantity: Quantity of the SKUs that are part of the Reservation. Must be
-     greater than zero.
-    :type original_quantity: int
-    :param term: Represent the term of Reservation. Possible values include: "P1Y", "P3Y".
-    :type term: str or ~azure.mgmt.reservations.models.ReservationTerm
-    :param provisioning_state: Current state of the reservation.
-    :type provisioning_state: str
-    :param billing_plan: Represent the billing plans. Possible values include: "Upfront",
-     "Monthly".
-    :type billing_plan: str or ~azure.mgmt.reservations.models.ReservationBillingPlan
-    :param plan_information: Information describing the type of billing plan for this reservation.
-    :type plan_information: ~azure.mgmt.reservations.models.ReservationOrderBillingPlanInformation
-    :param reservations:
-    :type reservations: list[~azure.mgmt.reservations.models.ReservationResponse]
+    :vartype request_date_time: ~datetime.datetime
+    :ivar created_date_time: This is the DateTime when the reservation was created.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar expiry_date: This is the date when the Reservation will expire.
+    :vartype expiry_date: ~datetime.date
+    :ivar benefit_start_time: This is the DateTime when the reservation benefit started.
+    :vartype benefit_start_time: ~datetime.datetime
+    :ivar original_quantity: Total Quantity of the SKUs purchased in the Reservation.
+    :vartype original_quantity: int
+    :ivar term: Represent the term of Reservation. Known values are: "P1Y", "P3Y", and "P5Y".
+    :vartype term: str or ~azure.mgmt.reservations.models.ReservationTerm
+    :ivar provisioning_state: Current state of the reservation. Known values are: "Creating",
+     "PendingResourceHold", "ConfirmedResourceHold", "PendingBilling", "ConfirmedBilling",
+     "Created", "Succeeded", "Cancelled", "Expired", "BillingFailed", "Failed", "Split", and
+     "Merged".
+    :vartype provisioning_state: str or ~azure.mgmt.reservations.models.ProvisioningState
+    :ivar billing_plan: Represent the billing plans. Known values are: "Upfront" and "Monthly".
+    :vartype billing_plan: str or ~azure.mgmt.reservations.models.ReservationBillingPlan
+    :ivar plan_information: Information describing the type of billing plan for this reservation.
+    :vartype plan_information:
+     ~azure.mgmt.reservations.models.ReservationOrderBillingPlanInformation
+    :ivar reservations:
+    :vartype reservations: list[~azure.mgmt.reservations.models.ReservationResponse]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'etag': {'key': 'etag', 'type': 'int'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'request_date_time': {'key': 'properties.requestDateTime', 'type': 'iso-8601'},
-        'created_date_time': {'key': 'properties.createdDateTime', 'type': 'iso-8601'},
-        'expiry_date': {'key': 'properties.expiryDate', 'type': 'date'},
-        'original_quantity': {'key': 'properties.originalQuantity', 'type': 'int'},
-        'term': {'key': 'properties.term', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'billing_plan': {'key': 'properties.billingPlan', 'type': 'str'},
-        'plan_information': {'key': 'properties.planInformation', 'type': 'ReservationOrderBillingPlanInformation'},
-        'reservations': {'key': 'properties.reservations', 'type': '[ReservationResponse]'},
+        "etag": {"key": "etag", "type": "int"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "request_date_time": {"key": "properties.requestDateTime", "type": "iso-8601"},
+        "created_date_time": {"key": "properties.createdDateTime", "type": "iso-8601"},
+        "expiry_date": {"key": "properties.expiryDate", "type": "date"},
+        "benefit_start_time": {"key": "properties.benefitStartTime", "type": "iso-8601"},
+        "original_quantity": {"key": "properties.originalQuantity", "type": "int"},
+        "term": {"key": "properties.term", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "billing_plan": {"key": "properties.billingPlan", "type": "str"},
+        "plan_information": {"key": "properties.planInformation", "type": "ReservationOrderBillingPlanInformation"},
+        "reservations": {"key": "properties.reservations", "type": "[ReservationResponse]"},
     }
 
     def __init__(
@@ -1952,23 +3013,58 @@ class ReservationOrderResponse(msrest.serialization.Model):
         request_date_time: Optional[datetime.datetime] = None,
         created_date_time: Optional[datetime.datetime] = None,
         expiry_date: Optional[datetime.date] = None,
+        benefit_start_time: Optional[datetime.datetime] = None,
         original_quantity: Optional[int] = None,
-        term: Optional[Union[str, "ReservationTerm"]] = None,
-        provisioning_state: Optional[str] = None,
-        billing_plan: Optional[Union[str, "ReservationBillingPlan"]] = None,
-        plan_information: Optional["ReservationOrderBillingPlanInformation"] = None,
-        reservations: Optional[List["ReservationResponse"]] = None,
+        term: Optional[Union[str, "_models.ReservationTerm"]] = None,
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
+        billing_plan: Optional[Union[str, "_models.ReservationBillingPlan"]] = None,
+        plan_information: Optional["_models.ReservationOrderBillingPlanInformation"] = None,
+        reservations: Optional[List["_models.ReservationResponse"]] = None,
         **kwargs
     ):
-        super(ReservationOrderResponse, self).__init__(**kwargs)
+        """
+        :keyword etag:
+        :paramtype etag: int
+        :keyword display_name: Friendly name for user to easily identified the reservation.
+        :paramtype display_name: str
+        :keyword request_date_time: This is the DateTime when the reservation was initially requested
+         for purchase.
+        :paramtype request_date_time: ~datetime.datetime
+        :keyword created_date_time: This is the DateTime when the reservation was created.
+        :paramtype created_date_time: ~datetime.datetime
+        :keyword expiry_date: This is the date when the Reservation will expire.
+        :paramtype expiry_date: ~datetime.date
+        :keyword benefit_start_time: This is the DateTime when the reservation benefit started.
+        :paramtype benefit_start_time: ~datetime.datetime
+        :keyword original_quantity: Total Quantity of the SKUs purchased in the Reservation.
+        :paramtype original_quantity: int
+        :keyword term: Represent the term of Reservation. Known values are: "P1Y", "P3Y", and "P5Y".
+        :paramtype term: str or ~azure.mgmt.reservations.models.ReservationTerm
+        :keyword provisioning_state: Current state of the reservation. Known values are: "Creating",
+         "PendingResourceHold", "ConfirmedResourceHold", "PendingBilling", "ConfirmedBilling",
+         "Created", "Succeeded", "Cancelled", "Expired", "BillingFailed", "Failed", "Split", and
+         "Merged".
+        :paramtype provisioning_state: str or ~azure.mgmt.reservations.models.ProvisioningState
+        :keyword billing_plan: Represent the billing plans. Known values are: "Upfront" and "Monthly".
+        :paramtype billing_plan: str or ~azure.mgmt.reservations.models.ReservationBillingPlan
+        :keyword plan_information: Information describing the type of billing plan for this
+         reservation.
+        :paramtype plan_information:
+         ~azure.mgmt.reservations.models.ReservationOrderBillingPlanInformation
+        :keyword reservations:
+        :paramtype reservations: list[~azure.mgmt.reservations.models.ReservationResponse]
+        """
+        super().__init__(**kwargs)
         self.etag = etag
         self.id = None
         self.name = None
         self.type = None
+        self.system_data = None
         self.display_name = display_name
         self.request_date_time = request_date_time
         self.created_date_time = created_date_time
         self.expiry_date = expiry_date
+        self.benefit_start_time = benefit_start_time
         self.original_quantity = original_quantity
         self.term = term
         self.provisioning_state = provisioning_state
@@ -1977,138 +3073,397 @@ class ReservationOrderResponse(msrest.serialization.Model):
         self.reservations = reservations
 
 
-class ReservationProperties(msrest.serialization.Model):
-    """ReservationProperties.
+class ReservationResponse(_serialization.Model):
+    """The definition of the reservation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param reserved_resource_type: The type of the resource that is being reserved. Possible values
-     include: "VirtualMachines", "SqlDatabases", "SuseLinux", "CosmosDb", "RedHat",
-     "SqlDataWarehouse", "VMwareCloudSimple", "RedHatOsa", "Databricks", "AppService",
-     "ManagedDisk", "BlockBlob", "RedisCache", "AzureDataExplorer", "MySql", "MariaDb",
-     "PostgreSql", "DedicatedHost", "SapHana", "SqlAzureHybridBenefit".
-    :type reserved_resource_type: str or ~azure.mgmt.reservations.models.ReservedResourceType
-    :param instance_flexibility: Turning this on will apply the reservation discount to other VMs
-     in the same VM size group. Only specify for VirtualMachines reserved resource type. Possible
-     values include: "On", "Off".
-    :type instance_flexibility: str or ~azure.mgmt.reservations.models.InstanceFlexibility
-    :param display_name: Friendly name for user to easily identify the reservation.
-    :type display_name: str
-    :param applied_scopes: List of the subscriptions that the benefit will be applied. Do not
-     specify if AppliedScopeType is Shared.
-    :type applied_scopes: list[str]
-    :param applied_scope_type: Type of the Applied Scope. Possible values include: "Single",
-     "Shared".
-    :type applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
-    :param quantity: Quantity of the SKUs that are part of the Reservation. Must be greater than
-     zero.
-    :type quantity: int
-    :param provisioning_state: Current state of the reservation.
-    :type provisioning_state: str
-    :param effective_date_time: DateTime of the Reservation starting when this version is effective
-     from.
-    :type effective_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: DateTime of the last time the Reservation was updated.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :param expiry_date: This is the date when the Reservation will expire.
-    :type expiry_date: ~datetime.date
-    :param sku_description: Description of the SKU in english.
-    :type sku_description: str
-    :param extended_status_info:
-    :type extended_status_info: ~azure.mgmt.reservations.models.ExtendedStatusInfo
-    :param billing_plan: Represent the billing plans. Possible values include: "Upfront",
-     "Monthly".
-    :type billing_plan: str or ~azure.mgmt.reservations.models.ReservationBillingPlan
-    :param split_properties:
-    :type split_properties: ~azure.mgmt.reservations.models.ReservationSplitProperties
-    :param merge_properties:
-    :type merge_properties: ~azure.mgmt.reservations.models.ReservationMergeProperties
-    :param billing_scope_id: Subscription that will be charged for purchasing Reservation.
-    :type billing_scope_id: str
-    :param renew: Setting this to true will automatically purchase a new reservation on the
-     expiration date time.
-    :type renew: bool
-    :param renew_source: Reservation Id of the reservation from which this reservation is renewed.
-     Format of the resource Id is
-     /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
-    :type renew_source: str
-    :param renew_destination: Reservation Id of the reservation which is purchased because of
-     renew. Format of the resource Id is
-     /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
-    :type renew_destination: str
-    :param renew_properties:
-    :type renew_properties: ~azure.mgmt.reservations.models.RenewPropertiesResponse
-    :param term: Represent the term of Reservation. Possible values include: "P1Y", "P3Y".
-    :type term: str or ~azure.mgmt.reservations.models.ReservationTerm
+    :ivar location: The Azure Region where the reserved resource lives.
+    :vartype location: str
+    :ivar etag:
+    :vartype etag: int
+    :ivar id: Identifier of the reservation.
+    :vartype id: str
+    :ivar name: Name of the reservation.
+    :vartype name: str
+    :ivar sku: The sku information associated to this reservation.
+    :vartype sku: ~azure.mgmt.reservations.models.SkuName
+    :ivar properties: The properties associated to this reservation.
+    :vartype properties: ~azure.mgmt.reservations.models.ReservationsProperties
+    :ivar type: Type of resource. "Microsoft.Capacity/reservationOrders/reservations".
+    :vartype type: str
+    :ivar kind: Resource Provider type to be reserved. Default value is "Microsoft.Compute".
+    :vartype kind: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.reservations.models.SystemData
     """
 
     _validation = {
-        'last_updated_date_time': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'reserved_resource_type': {'key': 'reservedResourceType', 'type': 'str'},
-        'instance_flexibility': {'key': 'instanceFlexibility', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'applied_scopes': {'key': 'appliedScopes', 'type': '[str]'},
-        'applied_scope_type': {'key': 'appliedScopeType', 'type': 'str'},
-        'quantity': {'key': 'quantity', 'type': 'int'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'effective_date_time': {'key': 'effectiveDateTime', 'type': 'iso-8601'},
-        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
-        'expiry_date': {'key': 'expiryDate', 'type': 'date'},
-        'sku_description': {'key': 'skuDescription', 'type': 'str'},
-        'extended_status_info': {'key': 'extendedStatusInfo', 'type': 'ExtendedStatusInfo'},
-        'billing_plan': {'key': 'billingPlan', 'type': 'str'},
-        'split_properties': {'key': 'splitProperties', 'type': 'ReservationSplitProperties'},
-        'merge_properties': {'key': 'mergeProperties', 'type': 'ReservationMergeProperties'},
-        'billing_scope_id': {'key': 'billingScopeId', 'type': 'str'},
-        'renew': {'key': 'renew', 'type': 'bool'},
-        'renew_source': {'key': 'renewSource', 'type': 'str'},
-        'renew_destination': {'key': 'renewDestination', 'type': 'str'},
-        'renew_properties': {'key': 'renewProperties', 'type': 'RenewPropertiesResponse'},
-        'term': {'key': 'term', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "etag": {"key": "etag", "type": "int"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "sku": {"key": "sku", "type": "SkuName"},
+        "properties": {"key": "properties", "type": "ReservationsProperties"},
+        "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(
         self,
         *,
-        reserved_resource_type: Optional[Union[str, "ReservedResourceType"]] = None,
-        instance_flexibility: Optional[Union[str, "InstanceFlexibility"]] = None,
-        display_name: Optional[str] = None,
-        applied_scopes: Optional[List[str]] = None,
-        applied_scope_type: Optional[Union[str, "AppliedScopeType"]] = None,
-        quantity: Optional[int] = None,
-        provisioning_state: Optional[str] = None,
-        effective_date_time: Optional[datetime.datetime] = None,
-        expiry_date: Optional[datetime.date] = None,
-        sku_description: Optional[str] = None,
-        extended_status_info: Optional["ExtendedStatusInfo"] = None,
-        billing_plan: Optional[Union[str, "ReservationBillingPlan"]] = None,
-        split_properties: Optional["ReservationSplitProperties"] = None,
-        merge_properties: Optional["ReservationMergeProperties"] = None,
-        billing_scope_id: Optional[str] = None,
-        renew: Optional[bool] = False,
-        renew_source: Optional[str] = None,
-        renew_destination: Optional[str] = None,
-        renew_properties: Optional["RenewPropertiesResponse"] = None,
-        term: Optional[Union[str, "ReservationTerm"]] = None,
+        location: Optional[str] = None,
+        etag: Optional[int] = None,
+        sku: Optional["_models.SkuName"] = None,
+        properties: Optional["_models.ReservationsProperties"] = None,
+        kind: Optional[str] = None,
         **kwargs
     ):
-        super(ReservationProperties, self).__init__(**kwargs)
+        """
+        :keyword location: The Azure Region where the reserved resource lives.
+        :paramtype location: str
+        :keyword etag:
+        :paramtype etag: int
+        :keyword sku: The sku information associated to this reservation.
+        :paramtype sku: ~azure.mgmt.reservations.models.SkuName
+        :keyword properties: The properties associated to this reservation.
+        :paramtype properties: ~azure.mgmt.reservations.models.ReservationsProperties
+        :keyword kind: Resource Provider type to be reserved. Default value is "Microsoft.Compute".
+        :paramtype kind: str
+        """
+        super().__init__(**kwargs)
+        self.location = location
+        self.etag = etag
+        self.id = None
+        self.name = None
+        self.sku = sku
+        self.properties = properties
+        self.type = None
+        self.kind = kind
+        self.system_data = None
+
+
+class ReservationsListResult(_serialization.Model):
+    """The list of reservations and summary of roll out count of reservations in each state.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The list of reservations.
+    :vartype value: list[~azure.mgmt.reservations.models.ReservationResponse]
+    :ivar next_link: The link (url) to the next page of results.
+    :vartype next_link: str
+    :ivar summary: The roll out count summary of the reservations.
+    :vartype summary: ~azure.mgmt.reservations.models.ReservationSummary
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ReservationResponse]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "summary": {"key": "summary", "type": "ReservationSummary"},
+    }
+
+    def __init__(self, *, summary: Optional["_models.ReservationSummary"] = None, **kwargs):
+        """
+        :keyword summary: The roll out count summary of the reservations.
+        :paramtype summary: ~azure.mgmt.reservations.models.ReservationSummary
+        """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+        self.summary = summary
+
+
+class ReservationSplitProperties(_serialization.Model):
+    """ReservationSplitProperties.
+
+    :ivar split_destinations: List of destination Resource Id that are created due to split. Format
+     of the resource Id is
+     /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+    :vartype split_destinations: list[str]
+    :ivar split_source: Resource Id of the Reservation from which this is split. Format of the
+     resource Id is
+     /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+    :vartype split_source: str
+    """
+
+    _attribute_map = {
+        "split_destinations": {"key": "splitDestinations", "type": "[str]"},
+        "split_source": {"key": "splitSource", "type": "str"},
+    }
+
+    def __init__(self, *, split_destinations: Optional[List[str]] = None, split_source: Optional[str] = None, **kwargs):
+        """
+        :keyword split_destinations: List of destination Resource Id that are created due to split.
+         Format of the resource Id is
+         /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+        :paramtype split_destinations: list[str]
+        :keyword split_source: Resource Id of the Reservation from which this is split. Format of the
+         resource Id is
+         /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+        :paramtype split_source: str
+        """
+        super().__init__(**kwargs)
+        self.split_destinations = split_destinations
+        self.split_source = split_source
+
+
+class ReservationsProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """The properties of the reservations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar reserved_resource_type: The type of the resource that is being reserved. Known values
+     are: "VirtualMachines", "SqlDatabases", "SuseLinux", "CosmosDb", "RedHat", "SqlDataWarehouse",
+     "VMwareCloudSimple", "RedHatOsa", "Databricks", "AppService", "ManagedDisk", "BlockBlob",
+     "RedisCache", "AzureDataExplorer", "MySql", "MariaDb", "PostgreSql", "DedicatedHost",
+     "SapHana", "SqlAzureHybridBenefit", "AVS", "DataFactory", "NetAppStorage", "AzureFiles",
+     "SqlEdge", and "VirtualMachineSoftware".
+    :vartype reserved_resource_type: str or ~azure.mgmt.reservations.models.ReservedResourceType
+    :ivar instance_flexibility: Allows reservation discount to be applied across skus within the
+     same Autofit group. Not all skus support instance size flexibility. Known values are: "On" and
+     "Off".
+    :vartype instance_flexibility: str or ~azure.mgmt.reservations.models.InstanceFlexibility
+    :ivar display_name: Friendly name for user to easily identify the reservation.
+    :vartype display_name: str
+    :ivar applied_scopes: The list of applied scopes.
+    :vartype applied_scopes: list[str]
+    :ivar applied_scope_type: The applied scope type. Known values are: "Single" and "Shared".
+    :vartype applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
+    :ivar archived: Indicates if the reservation is archived.
+    :vartype archived: bool
+    :ivar capabilities: Capabilities of the reservation.
+    :vartype capabilities: str
+    :ivar quantity: Quantity of the SKUs that are part of the Reservation.
+    :vartype quantity: int
+    :ivar provisioning_state: Current state of the reservation. Known values are: "Creating",
+     "PendingResourceHold", "ConfirmedResourceHold", "PendingBilling", "ConfirmedBilling",
+     "Created", "Succeeded", "Cancelled", "Expired", "BillingFailed", "Failed", "Split", and
+     "Merged".
+    :vartype provisioning_state: str or ~azure.mgmt.reservations.models.ProvisioningState
+    :ivar effective_date_time: DateTime of the Reservation starting when this version is effective
+     from.
+    :vartype effective_date_time: ~datetime.datetime
+    :ivar benefit_start_time: This is the DateTime when the reservation benefit started.
+    :vartype benefit_start_time: ~datetime.datetime
+    :ivar last_updated_date_time: DateTime of the last time the Reservation was updated.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar expiry_date: This is the date when the Reservation will expire.
+    :vartype expiry_date: ~datetime.date
+    :ivar sku_description: Description of the SKU in english.
+    :vartype sku_description: str
+    :ivar extended_status_info: The message giving detailed information about the status code.
+    :vartype extended_status_info: ~azure.mgmt.reservations.models.ExtendedStatusInfo
+    :ivar billing_plan: The billing plan options available for this SKU. Known values are:
+     "Upfront" and "Monthly".
+    :vartype billing_plan: str or ~azure.mgmt.reservations.models.ReservationBillingPlan
+    :ivar display_provisioning_state: The provisioning state of the reservation for display, e.g.
+     Succeeded.
+    :vartype display_provisioning_state: str
+    :ivar provisioning_sub_state: The provisioning state of the reservation, e.g. Succeeded.
+    :vartype provisioning_sub_state: str
+    :ivar purchase_date: This is the date when the Reservation was purchased.
+    :vartype purchase_date: ~datetime.date
+    :ivar split_properties:
+    :vartype split_properties: ~azure.mgmt.reservations.models.ReservationSplitProperties
+    :ivar merge_properties:
+    :vartype merge_properties: ~azure.mgmt.reservations.models.ReservationMergeProperties
+    :ivar billing_scope_id: Subscription that will be charged for purchasing Reservation.
+    :vartype billing_scope_id: str
+    :ivar renew: Setting this to true will automatically purchase a new reservation on the
+     expiration date time.
+    :vartype renew: bool
+    :ivar renew_source: Reservation Id of the reservation from which this reservation is renewed.
+     Format of the resource Id is
+     /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+    :vartype renew_source: str
+    :ivar renew_destination: Reservation Id of the reservation which is purchased because of renew.
+     Format of the resource Id is
+     /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+    :vartype renew_destination: str
+    :ivar renew_properties:
+    :vartype renew_properties: ~azure.mgmt.reservations.models.RenewPropertiesResponse
+    :ivar term: Represent the term of Reservation. Known values are: "P1Y", "P3Y", and "P5Y".
+    :vartype term: str or ~azure.mgmt.reservations.models.ReservationTerm
+    :ivar user_friendly_applied_scope_type: The applied scope type of the reservation for display,
+     e.g. Shared.
+    :vartype user_friendly_applied_scope_type: str
+    :ivar user_friendly_renew_state: The renew state of the reservation for display, e.g. On.
+    :vartype user_friendly_renew_state: str
+    :ivar utilization: Reservation utilization.
+    :vartype utilization: ~azure.mgmt.reservations.models.ReservationsPropertiesUtilization
+    """
+
+    _validation = {
+        "last_updated_date_time": {"readonly": True},
+        "display_provisioning_state": {"readonly": True},
+        "provisioning_sub_state": {"readonly": True},
+        "user_friendly_applied_scope_type": {"readonly": True},
+        "user_friendly_renew_state": {"readonly": True},
+        "utilization": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "reserved_resource_type": {"key": "reservedResourceType", "type": "str"},
+        "instance_flexibility": {"key": "instanceFlexibility", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "applied_scopes": {"key": "appliedScopes", "type": "[str]"},
+        "applied_scope_type": {"key": "appliedScopeType", "type": "str"},
+        "archived": {"key": "archived", "type": "bool"},
+        "capabilities": {"key": "capabilities", "type": "str"},
+        "quantity": {"key": "quantity", "type": "int"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "effective_date_time": {"key": "effectiveDateTime", "type": "iso-8601"},
+        "benefit_start_time": {"key": "benefitStartTime", "type": "iso-8601"},
+        "last_updated_date_time": {"key": "lastUpdatedDateTime", "type": "iso-8601"},
+        "expiry_date": {"key": "expiryDate", "type": "date"},
+        "sku_description": {"key": "skuDescription", "type": "str"},
+        "extended_status_info": {"key": "extendedStatusInfo", "type": "ExtendedStatusInfo"},
+        "billing_plan": {"key": "billingPlan", "type": "str"},
+        "display_provisioning_state": {"key": "displayProvisioningState", "type": "str"},
+        "provisioning_sub_state": {"key": "provisioningSubState", "type": "str"},
+        "purchase_date": {"key": "purchaseDate", "type": "date"},
+        "split_properties": {"key": "splitProperties", "type": "ReservationSplitProperties"},
+        "merge_properties": {"key": "mergeProperties", "type": "ReservationMergeProperties"},
+        "billing_scope_id": {"key": "billingScopeId", "type": "str"},
+        "renew": {"key": "renew", "type": "bool"},
+        "renew_source": {"key": "renewSource", "type": "str"},
+        "renew_destination": {"key": "renewDestination", "type": "str"},
+        "renew_properties": {"key": "renewProperties", "type": "RenewPropertiesResponse"},
+        "term": {"key": "term", "type": "str"},
+        "user_friendly_applied_scope_type": {"key": "userFriendlyAppliedScopeType", "type": "str"},
+        "user_friendly_renew_state": {"key": "userFriendlyRenewState", "type": "str"},
+        "utilization": {"key": "utilization", "type": "ReservationsPropertiesUtilization"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        reserved_resource_type: Optional[Union[str, "_models.ReservedResourceType"]] = None,
+        instance_flexibility: Optional[Union[str, "_models.InstanceFlexibility"]] = None,
+        display_name: Optional[str] = None,
+        applied_scopes: Optional[List[str]] = None,
+        applied_scope_type: Optional[Union[str, "_models.AppliedScopeType"]] = None,
+        archived: Optional[bool] = None,
+        capabilities: Optional[str] = None,
+        quantity: Optional[int] = None,
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
+        effective_date_time: Optional[datetime.datetime] = None,
+        benefit_start_time: Optional[datetime.datetime] = None,
+        expiry_date: Optional[datetime.date] = None,
+        sku_description: Optional[str] = None,
+        extended_status_info: Optional["_models.ExtendedStatusInfo"] = None,
+        billing_plan: Optional[Union[str, "_models.ReservationBillingPlan"]] = None,
+        purchase_date: Optional[datetime.date] = None,
+        split_properties: Optional["_models.ReservationSplitProperties"] = None,
+        merge_properties: Optional["_models.ReservationMergeProperties"] = None,
+        billing_scope_id: Optional[str] = None,
+        renew: bool = False,
+        renew_source: Optional[str] = None,
+        renew_destination: Optional[str] = None,
+        renew_properties: Optional["_models.RenewPropertiesResponse"] = None,
+        term: Optional[Union[str, "_models.ReservationTerm"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword reserved_resource_type: The type of the resource that is being reserved. Known values
+         are: "VirtualMachines", "SqlDatabases", "SuseLinux", "CosmosDb", "RedHat", "SqlDataWarehouse",
+         "VMwareCloudSimple", "RedHatOsa", "Databricks", "AppService", "ManagedDisk", "BlockBlob",
+         "RedisCache", "AzureDataExplorer", "MySql", "MariaDb", "PostgreSql", "DedicatedHost",
+         "SapHana", "SqlAzureHybridBenefit", "AVS", "DataFactory", "NetAppStorage", "AzureFiles",
+         "SqlEdge", and "VirtualMachineSoftware".
+        :paramtype reserved_resource_type: str or ~azure.mgmt.reservations.models.ReservedResourceType
+        :keyword instance_flexibility: Allows reservation discount to be applied across skus within the
+         same Autofit group. Not all skus support instance size flexibility. Known values are: "On" and
+         "Off".
+        :paramtype instance_flexibility: str or ~azure.mgmt.reservations.models.InstanceFlexibility
+        :keyword display_name: Friendly name for user to easily identify the reservation.
+        :paramtype display_name: str
+        :keyword applied_scopes: The list of applied scopes.
+        :paramtype applied_scopes: list[str]
+        :keyword applied_scope_type: The applied scope type. Known values are: "Single" and "Shared".
+        :paramtype applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
+        :keyword archived: Indicates if the reservation is archived.
+        :paramtype archived: bool
+        :keyword capabilities: Capabilities of the reservation.
+        :paramtype capabilities: str
+        :keyword quantity: Quantity of the SKUs that are part of the Reservation.
+        :paramtype quantity: int
+        :keyword provisioning_state: Current state of the reservation. Known values are: "Creating",
+         "PendingResourceHold", "ConfirmedResourceHold", "PendingBilling", "ConfirmedBilling",
+         "Created", "Succeeded", "Cancelled", "Expired", "BillingFailed", "Failed", "Split", and
+         "Merged".
+        :paramtype provisioning_state: str or ~azure.mgmt.reservations.models.ProvisioningState
+        :keyword effective_date_time: DateTime of the Reservation starting when this version is
+         effective from.
+        :paramtype effective_date_time: ~datetime.datetime
+        :keyword benefit_start_time: This is the DateTime when the reservation benefit started.
+        :paramtype benefit_start_time: ~datetime.datetime
+        :keyword expiry_date: This is the date when the Reservation will expire.
+        :paramtype expiry_date: ~datetime.date
+        :keyword sku_description: Description of the SKU in english.
+        :paramtype sku_description: str
+        :keyword extended_status_info: The message giving detailed information about the status code.
+        :paramtype extended_status_info: ~azure.mgmt.reservations.models.ExtendedStatusInfo
+        :keyword billing_plan: The billing plan options available for this SKU. Known values are:
+         "Upfront" and "Monthly".
+        :paramtype billing_plan: str or ~azure.mgmt.reservations.models.ReservationBillingPlan
+        :keyword purchase_date: This is the date when the Reservation was purchased.
+        :paramtype purchase_date: ~datetime.date
+        :keyword split_properties:
+        :paramtype split_properties: ~azure.mgmt.reservations.models.ReservationSplitProperties
+        :keyword merge_properties:
+        :paramtype merge_properties: ~azure.mgmt.reservations.models.ReservationMergeProperties
+        :keyword billing_scope_id: Subscription that will be charged for purchasing Reservation.
+        :paramtype billing_scope_id: str
+        :keyword renew: Setting this to true will automatically purchase a new reservation on the
+         expiration date time.
+        :paramtype renew: bool
+        :keyword renew_source: Reservation Id of the reservation from which this reservation is
+         renewed. Format of the resource Id is
+         /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+        :paramtype renew_source: str
+        :keyword renew_destination: Reservation Id of the reservation which is purchased because of
+         renew. Format of the resource Id is
+         /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+        :paramtype renew_destination: str
+        :keyword renew_properties:
+        :paramtype renew_properties: ~azure.mgmt.reservations.models.RenewPropertiesResponse
+        :keyword term: Represent the term of Reservation. Known values are: "P1Y", "P3Y", and "P5Y".
+        :paramtype term: str or ~azure.mgmt.reservations.models.ReservationTerm
+        """
+        super().__init__(**kwargs)
         self.reserved_resource_type = reserved_resource_type
         self.instance_flexibility = instance_flexibility
         self.display_name = display_name
         self.applied_scopes = applied_scopes
         self.applied_scope_type = applied_scope_type
+        self.archived = archived
+        self.capabilities = capabilities
         self.quantity = quantity
         self.provisioning_state = provisioning_state
         self.effective_date_time = effective_date_time
+        self.benefit_start_time = benefit_start_time
         self.last_updated_date_time = None
         self.expiry_date = expiry_date
         self.sku_description = sku_description
         self.extended_status_info = extended_status_info
         self.billing_plan = billing_plan
+        self.display_provisioning_state = None
+        self.provisioning_sub_state = None
+        self.purchase_date = purchase_date
         self.split_properties = split_properties
         self.merge_properties = merge_properties
         self.billing_scope_id = billing_scope_id
@@ -2117,112 +3472,112 @@ class ReservationProperties(msrest.serialization.Model):
         self.renew_destination = renew_destination
         self.renew_properties = renew_properties
         self.term = term
+        self.user_friendly_applied_scope_type = None
+        self.user_friendly_renew_state = None
+        self.utilization = None
 
 
-class ReservationResponse(msrest.serialization.Model):
-    """ReservationResponse.
+class ReservationsPropertiesUtilization(_serialization.Model):
+    """Reservation utilization.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar location: The Azure Region where the reserved resource lives.
-    :vartype location: str
-    :param etag:
-    :type etag: int
-    :ivar id: Identifier of the reservation.
-    :vartype id: str
-    :ivar name: Name of the reservation.
-    :vartype name: str
-    :param sku:
-    :type sku: ~azure.mgmt.reservations.models.SkuName
-    :param properties:
-    :type properties: ~azure.mgmt.reservations.models.ReservationProperties
-    :ivar type: Type of resource. "Microsoft.Capacity/reservationOrders/reservations".
-    :vartype type: str
+    :ivar trend: The number of days trend for a reservation.
+    :vartype trend: str
+    :ivar aggregates: The array of aggregates of a reservation's utilization.
+    :vartype aggregates: list[~azure.mgmt.reservations.models.ReservationUtilizationAggregates]
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "trend": {"readonly": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'int'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'SkuName'},
-        'properties': {'key': 'properties', 'type': 'ReservationProperties'},
-        'type': {'key': 'type', 'type': 'str'},
+        "trend": {"key": "trend", "type": "str"},
+        "aggregates": {"key": "aggregates", "type": "[ReservationUtilizationAggregates]"},
     }
 
-    def __init__(
-        self,
-        *,
-        etag: Optional[int] = None,
-        sku: Optional["SkuName"] = None,
-        properties: Optional["ReservationProperties"] = None,
-        **kwargs
-    ):
-        super(ReservationResponse, self).__init__(**kwargs)
-        self.location = None
-        self.etag = etag
-        self.id = None
-        self.name = None
-        self.sku = sku
-        self.properties = properties
-        self.type = None
+    def __init__(self, *, aggregates: Optional[List["_models.ReservationUtilizationAggregates"]] = None, **kwargs):
+        """
+        :keyword aggregates: The array of aggregates of a reservation's utilization.
+        :paramtype aggregates: list[~azure.mgmt.reservations.models.ReservationUtilizationAggregates]
+        """
+        super().__init__(**kwargs)
+        self.trend = None
+        self.aggregates = aggregates
 
 
-class ReservationSplitProperties(msrest.serialization.Model):
-    """ReservationSplitProperties.
+class ReservationSummary(_serialization.Model):
+    """The roll up count summary of reservations in each state.
 
-    :param split_destinations: List of destination Resource Id that are created due to split.
-     Format of the resource Id is
-     /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
-    :type split_destinations: list[str]
-    :param split_source: Resource Id of the Reservation from which this is split. Format of the
-     resource Id is
-     /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
-    :type split_source: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar succeeded_count: The number of reservation in Succeeded state.
+    :vartype succeeded_count: float
+    :ivar failed_count: The number of reservation in Failed state.
+    :vartype failed_count: float
+    :ivar expiring_count: The number of reservation in Expiring state.
+    :vartype expiring_count: float
+    :ivar expired_count: The number of reservation in Expired state.
+    :vartype expired_count: float
+    :ivar pending_count: The number of reservation in Pending state.
+    :vartype pending_count: float
+    :ivar cancelled_count: The number of reservation in Cancelled state.
+    :vartype cancelled_count: float
+    :ivar processing_count: The number of reservation in Processing state.
+    :vartype processing_count: float
     """
 
-    _attribute_map = {
-        'split_destinations': {'key': 'splitDestinations', 'type': '[str]'},
-        'split_source': {'key': 'splitSource', 'type': 'str'},
+    _validation = {
+        "succeeded_count": {"readonly": True},
+        "failed_count": {"readonly": True},
+        "expiring_count": {"readonly": True},
+        "expired_count": {"readonly": True},
+        "pending_count": {"readonly": True},
+        "cancelled_count": {"readonly": True},
+        "processing_count": {"readonly": True},
     }
 
-    def __init__(
-        self,
-        *,
-        split_destinations: Optional[List[str]] = None,
-        split_source: Optional[str] = None,
-        **kwargs
-    ):
-        super(ReservationSplitProperties, self).__init__(**kwargs)
-        self.split_destinations = split_destinations
-        self.split_source = split_source
+    _attribute_map = {
+        "succeeded_count": {"key": "succeededCount", "type": "float"},
+        "failed_count": {"key": "failedCount", "type": "float"},
+        "expiring_count": {"key": "expiringCount", "type": "float"},
+        "expired_count": {"key": "expiredCount", "type": "float"},
+        "pending_count": {"key": "pendingCount", "type": "float"},
+        "cancelled_count": {"key": "cancelledCount", "type": "float"},
+        "processing_count": {"key": "processingCount", "type": "float"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.succeeded_count = None
+        self.failed_count = None
+        self.expiring_count = None
+        self.expired_count = None
+        self.pending_count = None
+        self.cancelled_count = None
+        self.processing_count = None
 
 
-class ReservationToExchange(msrest.serialization.Model):
+class ReservationToExchange(_serialization.Model):
     """Reservation refund details.
 
-    :param reservation_id: Fully qualified id of the Reservation being returned.
-    :type reservation_id: str
-    :param quantity: Quantity to be returned.
-    :type quantity: int
-    :param billing_refund_amount:
-    :type billing_refund_amount: ~azure.mgmt.reservations.models.Price
-    :param billing_information: billing information.
-    :type billing_information: ~azure.mgmt.reservations.models.BillingInformation
+    :ivar reservation_id: Fully qualified id of the Reservation being returned.
+    :vartype reservation_id: str
+    :ivar quantity: Quantity to be returned.
+    :vartype quantity: int
+    :ivar billing_refund_amount:
+    :vartype billing_refund_amount: ~azure.mgmt.reservations.models.Price
+    :ivar billing_information: billing information.
+    :vartype billing_information: ~azure.mgmt.reservations.models.BillingInformation
     """
 
     _attribute_map = {
-        'reservation_id': {'key': 'reservationId', 'type': 'str'},
-        'quantity': {'key': 'quantity', 'type': 'int'},
-        'billing_refund_amount': {'key': 'billingRefundAmount', 'type': 'Price'},
-        'billing_information': {'key': 'billingInformation', 'type': 'BillingInformation'},
+        "reservation_id": {"key": "reservationId", "type": "str"},
+        "quantity": {"key": "quantity", "type": "int"},
+        "billing_refund_amount": {"key": "billingRefundAmount", "type": "Price"},
+        "billing_information": {"key": "billingInformation", "type": "BillingInformation"},
     }
 
     def __init__(
@@ -2230,66 +3585,82 @@ class ReservationToExchange(msrest.serialization.Model):
         *,
         reservation_id: Optional[str] = None,
         quantity: Optional[int] = None,
-        billing_refund_amount: Optional["Price"] = None,
-        billing_information: Optional["BillingInformation"] = None,
+        billing_refund_amount: Optional["_models.Price"] = None,
+        billing_information: Optional["_models.BillingInformation"] = None,
         **kwargs
     ):
-        super(ReservationToExchange, self).__init__(**kwargs)
+        """
+        :keyword reservation_id: Fully qualified id of the Reservation being returned.
+        :paramtype reservation_id: str
+        :keyword quantity: Quantity to be returned.
+        :paramtype quantity: int
+        :keyword billing_refund_amount:
+        :paramtype billing_refund_amount: ~azure.mgmt.reservations.models.Price
+        :keyword billing_information: billing information.
+        :paramtype billing_information: ~azure.mgmt.reservations.models.BillingInformation
+        """
+        super().__init__(**kwargs)
         self.reservation_id = reservation_id
         self.quantity = quantity
         self.billing_refund_amount = billing_refund_amount
         self.billing_information = billing_information
 
 
-class ReservationToPurchaseCalculateExchange(msrest.serialization.Model):
+class ReservationToPurchaseCalculateExchange(_serialization.Model):
     """Reservation purchase details.
 
-    :param properties:
-    :type properties: ~azure.mgmt.reservations.models.PurchaseRequest
-    :param billing_currency_total:
-    :type billing_currency_total: ~azure.mgmt.reservations.models.Price
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.reservations.models.PurchaseRequest
+    :ivar billing_currency_total:
+    :vartype billing_currency_total: ~azure.mgmt.reservations.models.Price
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'PurchaseRequest'},
-        'billing_currency_total': {'key': 'billingCurrencyTotal', 'type': 'Price'},
+        "properties": {"key": "properties", "type": "PurchaseRequest"},
+        "billing_currency_total": {"key": "billingCurrencyTotal", "type": "Price"},
     }
 
     def __init__(
         self,
         *,
-        properties: Optional["PurchaseRequest"] = None,
-        billing_currency_total: Optional["Price"] = None,
+        properties: Optional["_models.PurchaseRequest"] = None,
+        billing_currency_total: Optional["_models.Price"] = None,
         **kwargs
     ):
-        super(ReservationToPurchaseCalculateExchange, self).__init__(**kwargs)
+        """
+        :keyword properties:
+        :paramtype properties: ~azure.mgmt.reservations.models.PurchaseRequest
+        :keyword billing_currency_total:
+        :paramtype billing_currency_total: ~azure.mgmt.reservations.models.Price
+        """
+        super().__init__(**kwargs)
         self.properties = properties
         self.billing_currency_total = billing_currency_total
 
 
-class ReservationToPurchaseExchange(msrest.serialization.Model):
+class ReservationToPurchaseExchange(_serialization.Model):
     """Reservation purchase details.
 
-    :param reservation_order_id: Fully qualified id of the ReservationOrder being purchased.
-    :type reservation_order_id: str
-    :param reservation_id: Fully qualified id of the Reservation being purchased. This value is
-     only guaranteed to be non-null if the purchase is successful.
-    :type reservation_id: str
-    :param properties:
-    :type properties: ~azure.mgmt.reservations.models.PurchaseRequest
-    :param billing_currency_total:
-    :type billing_currency_total: ~azure.mgmt.reservations.models.Price
-    :param status: Status of the individual operation. Possible values include: "Succeeded",
-     "Failed", "Cancelled", "Pending".
-    :type status: str or ~azure.mgmt.reservations.models.OperationStatus
+    :ivar reservation_order_id: Fully qualified id of the ReservationOrder being purchased.
+    :vartype reservation_order_id: str
+    :ivar reservation_id: Fully qualified id of the Reservation being purchased. This value is only
+     guaranteed to be non-null if the purchase is successful.
+    :vartype reservation_id: str
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.reservations.models.PurchaseRequest
+    :ivar billing_currency_total:
+    :vartype billing_currency_total: ~azure.mgmt.reservations.models.Price
+    :ivar status: Status of the individual operation. Known values are: "Succeeded", "Failed",
+     "Cancelled", and "Pending".
+    :vartype status: str or ~azure.mgmt.reservations.models.OperationStatus
     """
 
     _attribute_map = {
-        'reservation_order_id': {'key': 'reservationOrderId', 'type': 'str'},
-        'reservation_id': {'key': 'reservationId', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'PurchaseRequest'},
-        'billing_currency_total': {'key': 'billingCurrencyTotal', 'type': 'Price'},
-        'status': {'key': 'status', 'type': 'str'},
+        "reservation_order_id": {"key": "reservationOrderId", "type": "str"},
+        "reservation_id": {"key": "reservationId", "type": "str"},
+        "properties": {"key": "properties", "type": "PurchaseRequest"},
+        "billing_currency_total": {"key": "billingCurrencyTotal", "type": "Price"},
+        "status": {"key": "status", "type": "str"},
     }
 
     def __init__(
@@ -2297,12 +3668,26 @@ class ReservationToPurchaseExchange(msrest.serialization.Model):
         *,
         reservation_order_id: Optional[str] = None,
         reservation_id: Optional[str] = None,
-        properties: Optional["PurchaseRequest"] = None,
-        billing_currency_total: Optional["Price"] = None,
-        status: Optional[Union[str, "OperationStatus"]] = None,
+        properties: Optional["_models.PurchaseRequest"] = None,
+        billing_currency_total: Optional["_models.Price"] = None,
+        status: Optional[Union[str, "_models.OperationStatus"]] = None,
         **kwargs
     ):
-        super(ReservationToPurchaseExchange, self).__init__(**kwargs)
+        """
+        :keyword reservation_order_id: Fully qualified id of the ReservationOrder being purchased.
+        :paramtype reservation_order_id: str
+        :keyword reservation_id: Fully qualified id of the Reservation being purchased. This value is
+         only guaranteed to be non-null if the purchase is successful.
+        :paramtype reservation_id: str
+        :keyword properties:
+        :paramtype properties: ~azure.mgmt.reservations.models.PurchaseRequest
+        :keyword billing_currency_total:
+        :paramtype billing_currency_total: ~azure.mgmt.reservations.models.Price
+        :keyword status: Status of the individual operation. Known values are: "Succeeded", "Failed",
+         "Cancelled", and "Pending".
+        :paramtype status: str or ~azure.mgmt.reservations.models.OperationStatus
+        """
+        super().__init__(**kwargs)
         self.reservation_order_id = reservation_order_id
         self.reservation_id = reservation_id
         self.properties = properties
@@ -2310,54 +3695,54 @@ class ReservationToPurchaseExchange(msrest.serialization.Model):
         self.status = status
 
 
-class ReservationToReturn(msrest.serialization.Model):
+class ReservationToReturn(_serialization.Model):
     """Reservation to return.
 
-    :param reservation_id: Fully qualified identifier of the Reservation being returned.
-    :type reservation_id: str
-    :param quantity: Quantity to be returned. Must be greater than zero.
-    :type quantity: int
+    :ivar reservation_id: Fully qualified identifier of the Reservation being returned.
+    :vartype reservation_id: str
+    :ivar quantity: Quantity to be returned. Must be greater than zero.
+    :vartype quantity: int
     """
 
     _attribute_map = {
-        'reservation_id': {'key': 'reservationId', 'type': 'str'},
-        'quantity': {'key': 'quantity', 'type': 'int'},
+        "reservation_id": {"key": "reservationId", "type": "str"},
+        "quantity": {"key": "quantity", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        reservation_id: Optional[str] = None,
-        quantity: Optional[int] = None,
-        **kwargs
-    ):
-        super(ReservationToReturn, self).__init__(**kwargs)
+    def __init__(self, *, reservation_id: Optional[str] = None, quantity: Optional[int] = None, **kwargs):
+        """
+        :keyword reservation_id: Fully qualified identifier of the Reservation being returned.
+        :paramtype reservation_id: str
+        :keyword quantity: Quantity to be returned. Must be greater than zero.
+        :paramtype quantity: int
+        """
+        super().__init__(**kwargs)
         self.reservation_id = reservation_id
         self.quantity = quantity
 
 
-class ReservationToReturnForExchange(msrest.serialization.Model):
+class ReservationToReturnForExchange(_serialization.Model):
     """Reservation refund details.
 
-    :param reservation_id: Fully qualified id of the Reservation being returned.
-    :type reservation_id: str
-    :param quantity: Quantity to be returned.
-    :type quantity: int
-    :param billing_refund_amount:
-    :type billing_refund_amount: ~azure.mgmt.reservations.models.Price
-    :param billing_information: billing information.
-    :type billing_information: ~azure.mgmt.reservations.models.BillingInformation
-    :param status: Status of the individual operation. Possible values include: "Succeeded",
-     "Failed", "Cancelled", "Pending".
-    :type status: str or ~azure.mgmt.reservations.models.OperationStatus
+    :ivar reservation_id: Fully qualified id of the Reservation being returned.
+    :vartype reservation_id: str
+    :ivar quantity: Quantity to be returned.
+    :vartype quantity: int
+    :ivar billing_refund_amount:
+    :vartype billing_refund_amount: ~azure.mgmt.reservations.models.Price
+    :ivar billing_information: billing information.
+    :vartype billing_information: ~azure.mgmt.reservations.models.BillingInformation
+    :ivar status: Status of the individual operation. Known values are: "Succeeded", "Failed",
+     "Cancelled", and "Pending".
+    :vartype status: str or ~azure.mgmt.reservations.models.OperationStatus
     """
 
     _attribute_map = {
-        'reservation_id': {'key': 'reservationId', 'type': 'str'},
-        'quantity': {'key': 'quantity', 'type': 'int'},
-        'billing_refund_amount': {'key': 'billingRefundAmount', 'type': 'Price'},
-        'billing_information': {'key': 'billingInformation', 'type': 'BillingInformation'},
-        'status': {'key': 'status', 'type': 'str'},
+        "reservation_id": {"key": "reservationId", "type": "str"},
+        "quantity": {"key": "quantity", "type": "int"},
+        "billing_refund_amount": {"key": "billingRefundAmount", "type": "Price"},
+        "billing_information": {"key": "billingInformation", "type": "BillingInformation"},
+        "status": {"key": "status", "type": "str"},
     }
 
     def __init__(
@@ -2365,12 +3750,25 @@ class ReservationToReturnForExchange(msrest.serialization.Model):
         *,
         reservation_id: Optional[str] = None,
         quantity: Optional[int] = None,
-        billing_refund_amount: Optional["Price"] = None,
-        billing_information: Optional["BillingInformation"] = None,
-        status: Optional[Union[str, "OperationStatus"]] = None,
+        billing_refund_amount: Optional["_models.Price"] = None,
+        billing_information: Optional["_models.BillingInformation"] = None,
+        status: Optional[Union[str, "_models.OperationStatus"]] = None,
         **kwargs
     ):
-        super(ReservationToReturnForExchange, self).__init__(**kwargs)
+        """
+        :keyword reservation_id: Fully qualified id of the Reservation being returned.
+        :paramtype reservation_id: str
+        :keyword quantity: Quantity to be returned.
+        :paramtype quantity: int
+        :keyword billing_refund_amount:
+        :paramtype billing_refund_amount: ~azure.mgmt.reservations.models.Price
+        :keyword billing_information: billing information.
+        :paramtype billing_information: ~azure.mgmt.reservations.models.BillingInformation
+        :keyword status: Status of the individual operation. Known values are: "Succeeded", "Failed",
+         "Cancelled", and "Pending".
+        :paramtype status: str or ~azure.mgmt.reservations.models.OperationStatus
+        """
+        super().__init__(**kwargs)
         self.reservation_id = reservation_id
         self.quantity = quantity
         self.billing_refund_amount = billing_refund_amount
@@ -2378,100 +3776,137 @@ class ReservationToReturnForExchange(msrest.serialization.Model):
         self.status = status
 
 
-class ResourceName(msrest.serialization.Model):
+class ReservationUtilizationAggregates(_serialization.Model):
+    """The aggregate values of reservation utilization.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar grain: The grain of the aggregate.
+    :vartype grain: float
+    :ivar grain_unit: The grain unit of the aggregate.
+    :vartype grain_unit: str
+    :ivar value: The aggregate value.
+    :vartype value: float
+    :ivar value_unit: The aggregate value unit.
+    :vartype value_unit: str
+    """
+
+    _validation = {
+        "grain": {"readonly": True},
+        "grain_unit": {"readonly": True},
+        "value": {"readonly": True},
+        "value_unit": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "grain": {"key": "grain", "type": "float"},
+        "grain_unit": {"key": "grainUnit", "type": "str"},
+        "value": {"key": "value", "type": "float"},
+        "value_unit": {"key": "valueUnit", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.grain = None
+        self.grain_unit = None
+        self.value = None
+        self.value_unit = None
+
+
+class ResourceName(_serialization.Model):
     """Resource name provided by the resource provider. Use this property for quotaRequest parameter.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: Resource name.
-    :type value: str
+    :ivar value: Resource name.
+    :vartype value: str
     :ivar localized_value: Resource display localized name.
     :vartype localized_value: str
     """
 
     _validation = {
-        'localized_value': {'readonly': True},
+        "localized_value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[str] = None,
-        **kwargs
-    ):
-        super(ResourceName, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[str] = None, **kwargs):
+        """
+        :keyword value: Resource name.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.localized_value = None
 
 
-class ScopeProperties(msrest.serialization.Model):
+class ScopeProperties(_serialization.Model):
     """ScopeProperties.
 
-    :param scope:
-    :type scope: str
-    :param valid:
-    :type valid: bool
+    :ivar scope:
+    :vartype scope: str
+    :ivar valid:
+    :vartype valid: bool
     """
 
     _attribute_map = {
-        'scope': {'key': 'scope', 'type': 'str'},
-        'valid': {'key': 'valid', 'type': 'bool'},
+        "scope": {"key": "scope", "type": "str"},
+        "valid": {"key": "valid", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        scope: Optional[str] = None,
-        valid: Optional[bool] = None,
-        **kwargs
-    ):
-        super(ScopeProperties, self).__init__(**kwargs)
+    def __init__(self, *, scope: Optional[str] = None, valid: Optional[bool] = None, **kwargs):
+        """
+        :keyword scope:
+        :paramtype scope: str
+        :keyword valid:
+        :paramtype valid: bool
+        """
+        super().__init__(**kwargs)
         self.scope = scope
         self.valid = valid
 
 
-class ServiceError(msrest.serialization.Model):
+class ServiceError(_serialization.Model):
     """The API error details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param code: The error code.
-    :type code: str
-    :param message: The error message text.
-    :type message: str
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message text.
+    :vartype message: str
     :ivar details: The list of error details.
     :vartype details: list[~azure.mgmt.reservations.models.ServiceErrorDetail]
     """
 
     _validation = {
-        'details': {'readonly': True},
+        "details": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ServiceErrorDetail]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[ServiceErrorDetail]"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super(ServiceError, self).__init__(**kwargs)
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+        """
+        :keyword code: The error code.
+        :paramtype code: str
+        :keyword message: The error message text.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.details = None
 
 
-class ServiceErrorDetail(msrest.serialization.Model):
+class ServiceErrorDetail(_serialization.Model):
     """The error details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2483,87 +3918,110 @@ class ServiceErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServiceErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
 
 
-class SkuName(msrest.serialization.Model):
-    """SkuName.
+class SkuCapability(_serialization.Model):
+    """SkuCapability.
 
-    :param name:
-    :type name: str
+    :ivar name: An invariant to describe the feature.
+    :vartype name: str
+    :ivar value: An invariant if the feature is measured by quantity.
+    :vartype value: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        **kwargs
-    ):
-        super(SkuName, self).__init__(**kwargs)
-        self.name = name
-
-
-class SkuProperty(msrest.serialization.Model):
-    """SkuProperty.
-
-    :param name: An invariant to describe the feature.
-    :type name: str
-    :param value: An invariant if the feature is measured by quantity.
-    :type value: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
-        super(SkuProperty, self).__init__(**kwargs)
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+        """
+        :keyword name: An invariant to describe the feature.
+        :paramtype name: str
+        :keyword value: An invariant if the feature is measured by quantity.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class SkuRestriction(msrest.serialization.Model):
-    """SkuRestriction.
+class SkuName(_serialization.Model):
+    """SkuName.
 
-    :param type: The type of restrictions.
-    :type type: str
-    :param values: The value of restrictions. If the restriction type is set to location. This
-     would be different locations where the SKU is restricted.
-    :type values: list[str]
-    :param reason_code: The reason for restriction.
-    :type reason_code: str
+    :ivar name:
+    :vartype name: str
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[str]'},
-        'reason_code': {'key': 'reasonCode', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, **kwargs):
+        """
+        :keyword name:
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+
+
+class SkuProperty(_serialization.Model):
+    """SkuProperty.
+
+    :ivar name: An invariant to describe the feature.
+    :vartype name: str
+    :ivar value: An invariant if the feature is measured by quantity.
+    :vartype value: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+        """
+        :keyword name: An invariant to describe the feature.
+        :paramtype name: str
+        :keyword value: An invariant if the feature is measured by quantity.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.value = value
+
+
+class SkuRestriction(_serialization.Model):
+    """SkuRestriction.
+
+    :ivar type: The type of restrictions.
+    :vartype type: str
+    :ivar values: The value of restrictions. If the restriction type is set to location. This would
+     be different locations where the SKU is restricted.
+    :vartype values: list[str]
+    :ivar reason_code: The reason for restriction.
+    :vartype reason_code: str
+    """
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
+        "reason_code": {"key": "reasonCode", "type": "str"},
     }
 
     def __init__(
@@ -2574,57 +4032,68 @@ class SkuRestriction(msrest.serialization.Model):
         reason_code: Optional[str] = None,
         **kwargs
     ):
-        super(SkuRestriction, self).__init__(**kwargs)
+        """
+        :keyword type: The type of restrictions.
+        :paramtype type: str
+        :keyword values: The value of restrictions. If the restriction type is set to location. This
+         would be different locations where the SKU is restricted.
+        :paramtype values: list[str]
+        :keyword reason_code: The reason for restriction.
+        :paramtype reason_code: str
+        """
+        super().__init__(**kwargs)
         self.type = type
         self.values = values
         self.reason_code = reason_code
 
 
-class SplitRequest(msrest.serialization.Model):
+class SplitRequest(_serialization.Model):
     """SplitRequest.
 
-    :param quantities: List of the quantities in the new reservations to create.
-    :type quantities: list[int]
-    :param reservation_id: Resource id of the reservation to be split. Format of the resource id
+    :ivar quantities: List of the quantities in the new reservations to create.
+    :vartype quantities: list[int]
+    :ivar reservation_id: Resource id of the reservation to be split. Format of the resource id
      should be
      /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
-    :type reservation_id: str
+    :vartype reservation_id: str
     """
 
     _attribute_map = {
-        'quantities': {'key': 'properties.quantities', 'type': '[int]'},
-        'reservation_id': {'key': 'properties.reservationId', 'type': 'str'},
+        "quantities": {"key": "properties.quantities", "type": "[int]"},
+        "reservation_id": {"key": "properties.reservationId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        quantities: Optional[List[int]] = None,
-        reservation_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(SplitRequest, self).__init__(**kwargs)
+    def __init__(self, *, quantities: Optional[List[int]] = None, reservation_id: Optional[str] = None, **kwargs):
+        """
+        :keyword quantities: List of the quantities in the new reservations to create.
+        :paramtype quantities: list[int]
+        :keyword reservation_id: Resource id of the reservation to be split. Format of the resource id
+         should be
+         /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+        :paramtype reservation_id: str
+        """
+        super().__init__(**kwargs)
         self.quantities = quantities
         self.reservation_id = reservation_id
 
 
-class SubRequest(msrest.serialization.Model):
+class SubRequest(_serialization.Model):
     """The sub-request submitted with the quota request.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar limit: Quota (resource limit).
     :vartype limit: int
-    :param name: The resource name.
-    :type name: ~azure.mgmt.reservations.models.ResourceName
+    :ivar name: The resource name.
+    :vartype name: ~azure.mgmt.reservations.models.ResourceName
     :ivar resource_type: Resource type for which the quota check was made.
     :vartype resource_type: str
-    :param unit: The limit units, such as **count** and **bytes**. Use the unit field provided in
+    :ivar unit: The limit units, such as **count** and **bytes**. Use the unit field provided in
      the response of the GET quota operation.
-    :type unit: str
-    :param provisioning_state: The quota request status. Possible values include: "Accepted",
-     "Invalid", "Succeeded", "Failed", "InProgress".
-    :type provisioning_state: str or ~azure.mgmt.reservations.models.QuotaRequestState
+    :vartype unit: str
+    :ivar provisioning_state: The quota request status. Known values are: "Accepted", "Invalid",
+     "Succeeded", "Failed", and "InProgress".
+    :vartype provisioning_state: str or ~azure.mgmt.reservations.models.QuotaRequestState
     :ivar message: User-friendly status message.
     :vartype message: str
     :ivar sub_request_id: Sub request ID for individual request.
@@ -2632,31 +4101,41 @@ class SubRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'limit': {'readonly': True},
-        'resource_type': {'readonly': True},
-        'message': {'readonly': True},
-        'sub_request_id': {'readonly': True},
+        "limit": {"readonly": True},
+        "resource_type": {"readonly": True},
+        "message": {"readonly": True},
+        "sub_request_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'limit': {'key': 'limit', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'ResourceName'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'sub_request_id': {'key': 'subRequestId', 'type': 'str'},
+        "limit": {"key": "limit", "type": "int"},
+        "name": {"key": "name", "type": "ResourceName"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "sub_request_id": {"key": "subRequestId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        name: Optional["ResourceName"] = None,
+        name: Optional["_models.ResourceName"] = None,
         unit: Optional[str] = None,
-        provisioning_state: Optional[Union[str, "QuotaRequestState"]] = None,
+        provisioning_state: Optional[Union[str, "_models.QuotaRequestState"]] = None,
         **kwargs
     ):
-        super(SubRequest, self).__init__(**kwargs)
+        """
+        :keyword name: The resource name.
+        :paramtype name: ~azure.mgmt.reservations.models.ResourceName
+        :keyword unit: The limit units, such as **count** and **bytes**. Use the unit field provided in
+         the response of the GET quota operation.
+        :paramtype unit: str
+        :keyword provisioning_state: The quota request status. Known values are: "Accepted", "Invalid",
+         "Succeeded", "Failed", and "InProgress".
+        :paramtype provisioning_state: str or ~azure.mgmt.reservations.models.QuotaRequestState
+        """
+        super().__init__(**kwargs)
         self.limit = None
         self.name = name
         self.resource_type = None
@@ -2666,22 +4145,85 @@ class SubRequest(msrest.serialization.Model):
         self.sub_request_id = None
 
 
-class SubscriptionScopeProperties(msrest.serialization.Model):
+class SubscriptionScopeProperties(_serialization.Model):
     """SubscriptionScopeProperties.
 
-    :param scopes:
-    :type scopes: list[~azure.mgmt.reservations.models.ScopeProperties]
+    :ivar scopes:
+    :vartype scopes: list[~azure.mgmt.reservations.models.ScopeProperties]
     """
 
     _attribute_map = {
-        'scopes': {'key': 'scopes', 'type': '[ScopeProperties]'},
+        "scopes": {"key": "scopes", "type": "[ScopeProperties]"},
+    }
+
+    def __init__(self, *, scopes: Optional[List["_models.ScopeProperties"]] = None, **kwargs):
+        """
+        :keyword scopes:
+        :paramtype scopes: list[~azure.mgmt.reservations.models.ScopeProperties]
+        """
+        super().__init__(**kwargs)
+        self.scopes = scopes
+
+
+class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.reservations.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.reservations.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
-        scopes: Optional[List["ScopeProperties"]] = None,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(SubscriptionScopeProperties, self).__init__(**kwargs)
-        self.scopes = scopes
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.reservations.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.reservations.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at

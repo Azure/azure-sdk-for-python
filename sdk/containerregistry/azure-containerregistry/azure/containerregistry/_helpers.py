@@ -4,18 +4,22 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import base64
-import json
+import hashlib
 import re
 import time
-from typing import TYPE_CHECKING, List, Dict
+import json
+from typing import TYPE_CHECKING
+from io import BytesIO
 try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse
 
 from azure.core.exceptions import ServiceRequestError
+from ._generated.models import OCIManifest
 
 if TYPE_CHECKING:
+    from typing import List, Dict, IO
     from azure.core.pipeline import PipelineRequest
 
 BEARER = "Bearer"
@@ -24,13 +28,13 @@ SUPPORTED_API_VERSIONS = [
     "2019-08-15-preview",
     "2021-07-01"
 ]
+OCI_MANIFEST_MEDIA_TYPE = "application/vnd.oci.image.manifest.v1+json"
 
 
 def _is_tag(tag_or_digest):
     # type: (str) -> bool
     tag = tag_or_digest.split(":")
-    return not (len(tag) == 2 and tag[0].startswith(u"sha"))
-
+    return not (len(tag) == 2 and tag[0].startswith("sha"))
 
 def _clean(matches):
     # type: (List[str]) -> None
@@ -47,7 +51,6 @@ def _clean(matches):
         except ValueError:
             return
 
-
 def _parse_challenge(header):
     # type: (str) -> Dict[str, str]
     """Parse challenge header into service and scope"""
@@ -62,7 +65,6 @@ def _parse_challenge(header):
             ret[matches[i]] = matches[i + 1]
 
     return ret
-
 
 def _parse_next_link(link_string):
     # type: (str) -> str
@@ -80,7 +82,6 @@ def _parse_next_link(link_string):
     if not link_string:
         return None
     return link_string[1 : link_string.find(">")]
-
 
 def _enforce_https(request):
     # type: (PipelineRequest) -> None
@@ -100,17 +101,14 @@ def _enforce_https(request):
             "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
         )
 
-
 def _host_only(url):
     # type: (str) -> str
     return urlparse(url).netloc
-
 
 def _strip_alg(digest):
     if len(digest.split(":")) == 2:
         return digest.split(":")[1]
     return digest
-
 
 def _parse_exp_time(raw_token):
     # type: (bytes) -> float
@@ -125,3 +123,27 @@ def _parse_exp_time(raw_token):
         return web_token.get("exp", time.time())
 
     return time.time()
+
+def _serialize_manifest(manifest):
+    # type: (OCIManifest) -> IO
+    data = json.dumps(manifest.serialize()).encode('utf-8')
+    return BytesIO(data)
+
+def _deserialize_manifest(data):
+    # type: (IO) -> OCIManifest
+    data.seek(0)
+    value = data.read()
+    data.seek(0)
+    return OCIManifest.deserialize(json.loads(value.decode()))
+
+def _compute_digest(data):
+    # type: (IO) -> str
+    data.seek(0)
+    value = data.read()
+    data.seek(0)
+    return "sha256:" + hashlib.sha256(value).hexdigest()
+
+def _validate_digest(data, digest):
+    # type: (IO, str) -> bool
+    data_digest = _compute_digest(data)
+    return data_digest == digest

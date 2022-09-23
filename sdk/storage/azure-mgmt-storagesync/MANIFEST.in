@@ -3,4 +3,5 @@ recursive-include tests *.py *.yaml
 include *.md
 include azure/__init__.py
 include azure/mgmt/__init__.py
-
+include LICENSE
+include azure/mgmt/storagesync/py.typed

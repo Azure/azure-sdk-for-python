@@ -6,12 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._deployments_operations import DeploymentsOperations
-from ._providers_operations import ProvidersOperations
-from ._resource_groups_operations import ResourceGroupsOperations
-from ._resources_operations import ResourcesOperations
-from ._tags_operations import TagsOperations
-from ._deployment_operations_operations import DeploymentOperationsOperations
+from ._operations import DeploymentsOperations
+from ._operations import ProvidersOperations
+from ._operations import ResourceGroupsOperations
+from ._operations import ResourcesOperations
+from ._operations import TagsOperations
+from ._operations import DeploymentOperationsOperations
 
 __all__ = [
     'DeploymentsOperations',

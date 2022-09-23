@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,124 +7,184 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
-import warnings
+from typing import Any, Callable, Dict, Optional, TypeVar
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
+from ..._serialization import Serializer
+from .._vendor import _convert_request, _format_url_section
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+T = TypeVar("T")
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
-class PredictiveMetricOperations(object):
-    """PredictiveMetricOperations operations.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
+def build_get_request(
+    resource_group_name: str,
+    autoscale_setting_name: str,
+    subscription_id: str,
+    *,
+    timespan: str,
+    interval: datetime.timedelta,
+    metric_namespace: str,
+    metric_name: str,
+    aggregation: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~$(python-base-namespace).v2021_05_01_preview.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Insights/autoscalesettings/{autoscaleSettingName}/predictiveMetrics",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "autoscaleSettingName": _SERIALIZER.url("autoscale_setting_name", autoscale_setting_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["timespan"] = _SERIALIZER.query("timespan", timespan, "str")
+    _params["interval"] = _SERIALIZER.query("interval", interval, "duration")
+    _params["metricNamespace"] = _SERIALIZER.query("metric_namespace", metric_namespace, "str")
+    _params["metricName"] = _SERIALIZER.query("metric_name", metric_name, "str")
+    _params["aggregation"] = _SERIALIZER.query("aggregation", aggregation, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class PredictiveMetricOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~$(python-base-namespace).v2021_05_01_preview.MonitorManagementClient`'s
+        :attr:`predictive_metric` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+    @distributed_trace
     def get(
         self,
-        resource_group_name,  # type: str
-        autoscale_setting_name,  # type: str
-        timespan,  # type: str
-        interval,  # type: datetime.timedelta
-        metric_namespace,  # type: str
-        metric_name,  # type: str
-        aggregation,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.PredictiveResponse"
+        resource_group_name: str,
+        autoscale_setting_name: str,
+        timespan: str,
+        interval: datetime.timedelta,
+        metric_namespace: str,
+        metric_name: str,
+        aggregation: str,
+        **kwargs: Any
+    ) -> _models.PredictiveResponse:
         """get predictive autoscale metric future data.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param autoscale_setting_name: The autoscale setting name.
+        :param autoscale_setting_name: The autoscale setting name. Required.
         :type autoscale_setting_name: str
         :param timespan: The timespan of the query. It is a string with the following format
-         'startDateTime_ISO/endDateTime_ISO'.
+         'startDateTime_ISO/endDateTime_ISO'. Required.
         :type timespan: str
-        :param interval: The interval (i.e. timegrain) of the query.
+        :param interval: The interval (i.e. timegrain) of the query. Required.
         :type interval: ~datetime.timedelta
-        :param metric_namespace: Metric namespace to query metric definitions for.
+        :param metric_namespace: Metric namespace to query metric definitions for. Required.
         :type metric_namespace: str
         :param metric_name: The names of the metrics (comma separated) to retrieve. Special case: If a
          metricname itself has a comma in it then use %2 to indicate it. Eg: 'Metric,Name1' should be
-         **'Metric%2Name1'**.
+         **'Metric%2Name1'**. Required.
         :type metric_name: str
-        :param aggregation: The list of aggregation types (comma separated) to retrieve.
+        :param aggregation: The list of aggregation types (comma separated) to retrieve. Required.
         :type aggregation: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PredictiveResponse, or the result of cls(response)
+        :return: PredictiveResponse or the result of cls(response)
         :rtype: ~$(python-base-namespace).v2021_05_01_preview.models.PredictiveResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PredictiveResponse"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01-preview"
-        accept = "application/json"
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'autoscaleSettingName': self._serialize.url("autoscale_setting_name", autoscale_setting_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['timespan'] = self._serialize.query("timespan", timespan, 'str')
-        query_parameters['interval'] = self._serialize.query("interval", interval, 'duration')
-        query_parameters['metricNamespace'] = self._serialize.query("metric_namespace", metric_namespace, 'str')
-        query_parameters['metricName'] = self._serialize.query("metric_name", metric_name, 'str')
-        query_parameters['aggregation'] = self._serialize.query("aggregation", aggregation, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PredictiveResponse]
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        request = build_get_request(
+            resource_group_name=resource_group_name,
+            autoscale_setting_name=autoscale_setting_name,
+            subscription_id=self._config.subscription_id,
+            timespan=timespan,
+            interval=interval,
+            metric_namespace=metric_namespace,
+            metric_name=metric_name,
+            aggregation=aggregation,
+            api_version=api_version,
+            template_url=self.get.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AutoscaleErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AutoscaleErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PredictiveResponse', pipeline_response)
+        deserialized = self._deserialize("PredictiveResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Insights/autoscalesettings/{autoscaleSettingName}/predictiveMetrics'}  # type: ignore
+
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Insights/autoscalesettings/{autoscaleSettingName}/predictiveMetrics"}  # type: ignore

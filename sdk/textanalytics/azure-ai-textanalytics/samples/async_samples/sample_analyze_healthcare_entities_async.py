@@ -18,15 +18,15 @@ USAGE:
     python sample_analyze_healthcare_entities_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
-    2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
+    1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
+    2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-
+from __future__ import annotations
 import asyncio
 
 
-async def sample_analyze_healthcare_entities_async():
+async def sample_analyze_healthcare_entities_async() -> None:
 
     print(
         "In this sample we will be combing through the prescriptions our pharmacy has fulfilled "
@@ -42,8 +42,8 @@ async def sample_analyze_healthcare_entities_async():
     from azure.ai.textanalytics import HealthcareEntityRelation
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+    endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+    key = os.environ["AZURE_LANGUAGE_KEY"]
 
     text_analytics_client = TextAnalyticsClient(
         endpoint=endpoint,
@@ -66,7 +66,7 @@ async def sample_analyze_healthcare_entities_async():
         docs = [doc async for doc in result if not doc.is_error]
 
     print("Let's first visualize the outputted healthcare result:")
-    for idx, doc in enumerate(docs):
+    for doc in docs:
         for entity in doc.entities:
             print(f"Entity: {entity.text}")
             print(f"...Normalized Text: {entity.normalized_text}")
@@ -106,7 +106,7 @@ async def sample_analyze_healthcare_entities_async():
     import re
     from collections import defaultdict
 
-    medication_to_dosage = defaultdict(int)
+    medication_to_dosage: dict[str, int] = defaultdict(int)
 
     for relation in dosage_of_medication_relations:
         # The DosageOfMedication relation should only contain the dosage and medication roles

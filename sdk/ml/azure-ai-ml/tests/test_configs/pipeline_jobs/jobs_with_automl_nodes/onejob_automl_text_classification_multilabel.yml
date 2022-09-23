@@ -1,0 +1,33 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+experiment_name: my_first_experiment
+
+compute: azureml:gpu-cluster
+
+settings:
+  continue_on_step_failure: false
+inputs:
+  text_classification_multilabel_training_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/paper_categorization/train
+  text_classification_multilabel_validation_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/paper_categorization/valid
+
+jobs:
+  automl_text_classification_multilabel:
+    type: automl
+    task: text_classification_multilabel
+    log_verbosity: info
+    primary_metric: accuracy
+    limits:
+      max_trials: 1
+      timeout_minutes: 60
+    target_column_name: terms
+    training_data: ${{parent.inputs.text_classification_multilabel_training_data}}
+    validation_data: ${{parent.inputs.text_classification_multilabel_validation_data}}

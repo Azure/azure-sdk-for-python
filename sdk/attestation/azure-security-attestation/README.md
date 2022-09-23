@@ -8,7 +8,7 @@ Azure Attestation enables cutting-edge security paradigms such as Azure Confiden
 
 Azure Attestation receives evidence from compute entities, turns them into a set of claims, validates them against configurable policies, and produces cryptographic proofs for claims-based applications (for example, relying parties and auditing authorities).
 
-This package has been tested with Python 2.7, 3.6 to 3.9.
+This package has been tested with Python 3.6+.
 
 For a more complete view of Azure libraries, see the [Azure SDK for Python release page](https://aka.ms/azsdk/python/all).
 

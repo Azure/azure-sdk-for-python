@@ -18,8 +18,8 @@ class TestContentType(FormRecognizerTest):
 
     def test_pdf_bytes(self):
         with open(self.invoice_pdf, "rb") as fd:
-            myfile = fd.read()
-        content_type = get_content_type(myfile)
+            my_file = fd.read()
+        content_type = get_content_type(my_file)
         assert content_type == "application/pdf"
 
     def test_jpg(self):
@@ -29,8 +29,8 @@ class TestContentType(FormRecognizerTest):
 
     def test_jpg_bytes(self):
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
-        content_type = get_content_type(myfile)
+            my_file = fd.read()
+        content_type = get_content_type(my_file)
         assert content_type == "image/jpeg"
 
     def test_png(self):
@@ -40,8 +40,8 @@ class TestContentType(FormRecognizerTest):
 
     def test_png_bytes(self):
         with open(self.receipt_png, "rb") as fd:
-            myfile = fd.read()
-        content_type = get_content_type(myfile)
+            my_file = fd.read()
+        content_type = get_content_type(my_file)
         assert content_type == "image/png"
 
     def test_tiff_little_endian(self):
@@ -51,8 +51,8 @@ class TestContentType(FormRecognizerTest):
 
     def test_tiff_little_endian_bytes(self):
         with open(self.invoice_tiff, "rb") as fd:
-            myfile = fd.read()
-        content_type = get_content_type(myfile)
+            my_file = fd.read()
+        content_type = get_content_type(my_file)
         assert content_type == "image/tiff"
 
     def test_tiff_big_endian(self):

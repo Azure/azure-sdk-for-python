@@ -205,6 +205,211 @@ class BoolEqualsAdvancedFilter(AdvancedFilter):
         self.value = value
 
 
+class Resource(msrest.serialization.Model):
+    """Definition of a Resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class Channel(Resource):
+    """Channel info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    :ivar system_data: The system metadata relating to Channel resource.
+    :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar channel_type: The type of the event channel which represents the direction flow of
+     events. Possible values include: "PartnerTopic".
+    :vartype channel_type: str or ~azure.mgmt.eventgrid.models.ChannelType
+    :ivar partner_topic_info: This property should be populated when channelType is PartnerTopic
+     and represents information about the partner topic resource corresponding to the channel.
+    :vartype partner_topic_info: ~azure.mgmt.eventgrid.models.PartnerTopicInfo
+    :ivar message_for_activation: Context or helpful message that can be used during the approval
+     process by the subscriber.
+    :vartype message_for_activation: str
+    :ivar provisioning_state: Provisioning state of the channel. Possible values include:
+     "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed",
+     "IdleDueToMirroredPartnerTopicDeletion".
+    :vartype provisioning_state: str or ~azure.mgmt.eventgrid.models.ChannelProvisioningState
+    :ivar readiness_state: The readiness state of the corresponding partner topic. Possible values
+     include: "NeverActivated", "Activated".
+    :vartype readiness_state: str or ~azure.mgmt.eventgrid.models.ReadinessState
+    :ivar expiration_time_if_not_activated_utc: Expiration time of the channel. If this timer
+     expires while the corresponding partner topic is never activated,
+     the channel and corresponding partner topic are deleted.
+    :vartype expiration_time_if_not_activated_utc: ~datetime.datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'channel_type': {'key': 'properties.channelType', 'type': 'str'},
+        'partner_topic_info': {'key': 'properties.partnerTopicInfo', 'type': 'PartnerTopicInfo'},
+        'message_for_activation': {'key': 'properties.messageForActivation', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'readiness_state': {'key': 'properties.readinessState', 'type': 'str'},
+        'expiration_time_if_not_activated_utc': {'key': 'properties.expirationTimeIfNotActivatedUtc', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        channel_type: Optional[Union[str, "ChannelType"]] = None,
+        partner_topic_info: Optional["PartnerTopicInfo"] = None,
+        message_for_activation: Optional[str] = None,
+        provisioning_state: Optional[Union[str, "ChannelProvisioningState"]] = None,
+        readiness_state: Optional[Union[str, "ReadinessState"]] = None,
+        expiration_time_if_not_activated_utc: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        """
+        :keyword channel_type: The type of the event channel which represents the direction flow of
+         events. Possible values include: "PartnerTopic".
+        :paramtype channel_type: str or ~azure.mgmt.eventgrid.models.ChannelType
+        :keyword partner_topic_info: This property should be populated when channelType is PartnerTopic
+         and represents information about the partner topic resource corresponding to the channel.
+        :paramtype partner_topic_info: ~azure.mgmt.eventgrid.models.PartnerTopicInfo
+        :keyword message_for_activation: Context or helpful message that can be used during the
+         approval process by the subscriber.
+        :paramtype message_for_activation: str
+        :keyword provisioning_state: Provisioning state of the channel. Possible values include:
+         "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed",
+         "IdleDueToMirroredPartnerTopicDeletion".
+        :paramtype provisioning_state: str or ~azure.mgmt.eventgrid.models.ChannelProvisioningState
+        :keyword readiness_state: The readiness state of the corresponding partner topic. Possible
+         values include: "NeverActivated", "Activated".
+        :paramtype readiness_state: str or ~azure.mgmt.eventgrid.models.ReadinessState
+        :keyword expiration_time_if_not_activated_utc: Expiration time of the channel. If this timer
+         expires while the corresponding partner topic is never activated,
+         the channel and corresponding partner topic are deleted.
+        :paramtype expiration_time_if_not_activated_utc: ~datetime.datetime
+        """
+        super(Channel, self).__init__(**kwargs)
+        self.system_data = None
+        self.channel_type = channel_type
+        self.partner_topic_info = partner_topic_info
+        self.message_for_activation = message_for_activation
+        self.provisioning_state = provisioning_state
+        self.readiness_state = readiness_state
+        self.expiration_time_if_not_activated_utc = expiration_time_if_not_activated_utc
+
+
+class ChannelsListResult(msrest.serialization.Model):
+    """Result of the List Channels operation.
+
+    :ivar value: A collection of Channels.
+    :vartype value: list[~azure.mgmt.eventgrid.models.Channel]
+    :ivar next_link: A link for the next page of channels.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Channel]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["Channel"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: A collection of Channels.
+        :paramtype value: list[~azure.mgmt.eventgrid.models.Channel]
+        :keyword next_link: A link for the next page of channels.
+        :paramtype next_link: str
+        """
+        super(ChannelsListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class ChannelUpdateParameters(msrest.serialization.Model):
+    """Properties of the Channel update.
+
+    :ivar expiration_time_if_not_activated_utc: Expiration time of the channel. If this timer
+     expires while the corresponding partner topic or partner destination is never activated,
+     the channel and corresponding partner topic or partner destination are deleted.
+    :vartype expiration_time_if_not_activated_utc: ~datetime.datetime
+    :ivar partner_topic_info: Partner topic properties which can be updated if the channel is of
+     type PartnerTopic.
+    :vartype partner_topic_info: ~azure.mgmt.eventgrid.models.PartnerUpdateTopicInfo
+    """
+
+    _attribute_map = {
+        'expiration_time_if_not_activated_utc': {'key': 'properties.expirationTimeIfNotActivatedUtc', 'type': 'iso-8601'},
+        'partner_topic_info': {'key': 'properties.partnerTopicInfo', 'type': 'PartnerUpdateTopicInfo'},
+    }
+
+    def __init__(
+        self,
+        *,
+        expiration_time_if_not_activated_utc: Optional[datetime.datetime] = None,
+        partner_topic_info: Optional["PartnerUpdateTopicInfo"] = None,
+        **kwargs
+    ):
+        """
+        :keyword expiration_time_if_not_activated_utc: Expiration time of the channel. If this timer
+         expires while the corresponding partner topic or partner destination is never activated,
+         the channel and corresponding partner topic or partner destination are deleted.
+        :paramtype expiration_time_if_not_activated_utc: ~datetime.datetime
+        :keyword partner_topic_info: Partner topic properties which can be updated if the channel is of
+         type PartnerTopic.
+        :paramtype partner_topic_info: ~azure.mgmt.eventgrid.models.PartnerUpdateTopicInfo
+        """
+        super(ChannelUpdateParameters, self).__init__(**kwargs)
+        self.expiration_time_if_not_activated_utc = expiration_time_if_not_activated_utc
+        self.partner_topic_info = partner_topic_info
+
+
 class ConnectionState(msrest.serialization.Model):
     """ConnectionState information.
 
@@ -425,43 +630,6 @@ class DeliveryWithResourceIdentity(msrest.serialization.Model):
         self.destination = destination
 
 
-class Resource(msrest.serialization.Model):
-    """Definition of a Resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified identifier of the resource.
-    :vartype id: str
-    :ivar name: Name of the resource.
-    :vartype name: str
-    :ivar type: Type of the resource.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-
-
 class TrackedResource(Resource):
     """Definition of a Tracked Resource.
 
@@ -531,7 +699,7 @@ class Domain(TrackedResource):
     :vartype location: str
     :ivar tags: A set of tags. Tags of the resource.
     :vartype tags: dict[str, str]
-    :ivar system_data: The system metadata relating to Domain resource.
+    :ivar system_data: The system metadata relating to the Event Grid Domain resource.
     :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
     :ivar identity: Identity information for the Event Grid Domain resource.
     :vartype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
@@ -541,16 +709,17 @@ class Domain(TrackedResource):
     :ivar provisioning_state: Provisioning state of the Event Grid Domain Resource. Possible values
      include: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.eventgrid.models.DomainProvisioningState
-    :ivar endpoint: Endpoint for the domain.
+    :ivar endpoint: Endpoint for the Event Grid Domain Resource which is used for publishing the
+     events.
     :vartype endpoint: str
     :ivar input_schema: This determines the format that Event Grid should expect for incoming
-     events published to the domain. Possible values include: "EventGridSchema",
+     events published to the Event Grid Domain Resource. Possible values include: "EventGridSchema",
      "CustomEventSchema", "CloudEventSchemaV1_0".
     :vartype input_schema: str or ~azure.mgmt.eventgrid.models.InputSchema
     :ivar input_schema_mapping: Information about the InputSchemaMapping which specified the info
      about mapping event payload.
     :vartype input_schema_mapping: ~azure.mgmt.eventgrid.models.InputSchemaMapping
-    :ivar metric_resource_id: Metric resource id for the domain.
+    :ivar metric_resource_id: Metric resource id for the Event Grid Domain Resource.
     :vartype metric_resource_id: str
     :ivar public_network_access: This determines if traffic is allowed over public network. By
      default it is enabled.
@@ -595,6 +764,9 @@ class Domain(TrackedResource):
      flexibility to perform less operations and manage fewer
      resources by the user.
     :vartype auto_delete_topic_with_last_subscription: bool
+    :ivar data_residency_boundary: Data Residency Boundary of the resource. Possible values
+     include: "WithinGeopair", "WithinRegion".
+    :vartype data_residency_boundary: str or ~azure.mgmt.eventgrid.models.DataResidencyBoundary
     """
 
     _validation = {
@@ -628,6 +800,7 @@ class Domain(TrackedResource):
         'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
         'auto_create_topic_with_first_subscription': {'key': 'properties.autoCreateTopicWithFirstSubscription', 'type': 'bool'},
         'auto_delete_topic_with_last_subscription': {'key': 'properties.autoDeleteTopicWithLastSubscription', 'type': 'bool'},
+        'data_residency_boundary': {'key': 'properties.dataResidencyBoundary', 'type': 'str'},
     }
 
     def __init__(
@@ -643,6 +816,7 @@ class Domain(TrackedResource):
         disable_local_auth: Optional[bool] = False,
         auto_create_topic_with_first_subscription: Optional[bool] = True,
         auto_delete_topic_with_last_subscription: Optional[bool] = True,
+        data_residency_boundary: Optional[Union[str, "DataResidencyBoundary"]] = None,
         **kwargs
     ):
         """
@@ -653,7 +827,7 @@ class Domain(TrackedResource):
         :keyword identity: Identity information for the Event Grid Domain resource.
         :paramtype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
         :keyword input_schema: This determines the format that Event Grid should expect for incoming
-         events published to the domain. Possible values include: "EventGridSchema",
+         events published to the Event Grid Domain Resource. Possible values include: "EventGridSchema",
          "CustomEventSchema", "CloudEventSchemaV1_0".
         :paramtype input_schema: str or ~azure.mgmt.eventgrid.models.InputSchema
         :keyword input_schema_mapping: Information about the InputSchemaMapping which specified the
@@ -702,6 +876,9 @@ class Domain(TrackedResource):
          flexibility to perform less operations and manage fewer
          resources by the user.
         :paramtype auto_delete_topic_with_last_subscription: bool
+        :keyword data_residency_boundary: Data Residency Boundary of the resource. Possible values
+         include: "WithinGeopair", "WithinRegion".
+        :paramtype data_residency_boundary: str or ~azure.mgmt.eventgrid.models.DataResidencyBoundary
         """
         super(Domain, self).__init__(location=location, tags=tags, **kwargs)
         self.system_data = None
@@ -717,6 +894,7 @@ class Domain(TrackedResource):
         self.disable_local_auth = disable_local_auth
         self.auto_create_topic_with_first_subscription = auto_create_topic_with_first_subscription
         self.auto_delete_topic_with_last_subscription = auto_delete_topic_with_last_subscription
+        self.data_residency_boundary = data_residency_boundary
 
 
 class DomainRegenerateKeyRequest(msrest.serialization.Model):
@@ -941,6 +1119,9 @@ class DomainUpdateParameters(msrest.serialization.Model):
      flexibility to perform less operations and manage fewer
      resources by the user.
     :vartype auto_delete_topic_with_last_subscription: bool
+    :ivar data_residency_boundary: The data residency boundary for the domain. Possible values
+     include: "WithinGeopair", "WithinRegion".
+    :vartype data_residency_boundary: str or ~azure.mgmt.eventgrid.models.DataResidencyBoundary
     """
 
     _attribute_map = {
@@ -951,6 +1132,7 @@ class DomainUpdateParameters(msrest.serialization.Model):
         'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
         'auto_create_topic_with_first_subscription': {'key': 'properties.autoCreateTopicWithFirstSubscription', 'type': 'bool'},
         'auto_delete_topic_with_last_subscription': {'key': 'properties.autoDeleteTopicWithLastSubscription', 'type': 'bool'},
+        'data_residency_boundary': {'key': 'properties.dataResidencyBoundary', 'type': 'str'},
     }
 
     def __init__(
@@ -963,6 +1145,7 @@ class DomainUpdateParameters(msrest.serialization.Model):
         disable_local_auth: Optional[bool] = None,
         auto_create_topic_with_first_subscription: Optional[bool] = None,
         auto_delete_topic_with_last_subscription: Optional[bool] = None,
+        data_residency_boundary: Optional[Union[str, "DataResidencyBoundary"]] = None,
         **kwargs
     ):
         """
@@ -1013,6 +1196,9 @@ class DomainUpdateParameters(msrest.serialization.Model):
          flexibility to perform less operations and manage fewer
          resources by the user.
         :paramtype auto_delete_topic_with_last_subscription: bool
+        :keyword data_residency_boundary: The data residency boundary for the domain. Possible values
+         include: "WithinGeopair", "WithinRegion".
+        :paramtype data_residency_boundary: str or ~azure.mgmt.eventgrid.models.DataResidencyBoundary
         """
         super(DomainUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
@@ -1022,6 +1208,7 @@ class DomainUpdateParameters(msrest.serialization.Model):
         self.disable_local_auth = disable_local_auth
         self.auto_create_topic_with_first_subscription = auto_create_topic_with_first_subscription
         self.auto_delete_topic_with_last_subscription = auto_delete_topic_with_last_subscription
+        self.data_residency_boundary = data_residency_boundary
 
 
 class DynamicDeliveryAttributeMapping(DeliveryAttributeMapping):
@@ -1136,6 +1323,8 @@ class EventSubscription(Resource):
      ~azure.mgmt.eventgrid.models.EventSubscriptionProvisioningState
     :ivar destination: Information about the destination where events have to be delivered for the
      event subscription.
+     Uses Azure Event Grid's identity to acquire the authentication tokens being used during
+     delivery / dead-lettering.
     :vartype destination: ~azure.mgmt.eventgrid.models.EventSubscriptionDestination
     :ivar delivery_with_resource_identity: Information about the destination where events have to
      be delivered for the event subscription.
@@ -1155,7 +1344,10 @@ class EventSubscription(Resource):
     :ivar retry_policy: The retry policy for events. This can be used to configure maximum number
      of delivery attempts and time to live for events.
     :vartype retry_policy: ~azure.mgmt.eventgrid.models.RetryPolicy
-    :ivar dead_letter_destination: The DeadLetter destination of the event subscription.
+    :ivar dead_letter_destination: The dead letter destination of the event subscription. Any event
+     that cannot be delivered to its' destination is sent to the dead letter destination.
+     Uses Azure Event Grid's identity to acquire the authentication tokens being used during
+     delivery / dead-lettering.
     :vartype dead_letter_destination: ~azure.mgmt.eventgrid.models.DeadLetterDestination
     :ivar dead_letter_with_resource_identity: The dead letter destination of the event
      subscription. Any event that cannot be delivered to its' destination is sent to the dead letter
@@ -1210,6 +1402,8 @@ class EventSubscription(Resource):
         """
         :keyword destination: Information about the destination where events have to be delivered for
          the event subscription.
+         Uses Azure Event Grid's identity to acquire the authentication tokens being used during
+         delivery / dead-lettering.
         :paramtype destination: ~azure.mgmt.eventgrid.models.EventSubscriptionDestination
         :keyword delivery_with_resource_identity: Information about the destination where events have
          to be delivered for the event subscription.
@@ -1229,7 +1423,10 @@ class EventSubscription(Resource):
         :keyword retry_policy: The retry policy for events. This can be used to configure maximum
          number of delivery attempts and time to live for events.
         :paramtype retry_policy: ~azure.mgmt.eventgrid.models.RetryPolicy
-        :keyword dead_letter_destination: The DeadLetter destination of the event subscription.
+        :keyword dead_letter_destination: The dead letter destination of the event subscription. Any
+         event that cannot be delivered to its' destination is sent to the dead letter destination.
+         Uses Azure Event Grid's identity to acquire the authentication tokens being used during
+         delivery / dead-lettering.
         :paramtype dead_letter_destination: ~azure.mgmt.eventgrid.models.DeadLetterDestination
         :keyword dead_letter_with_resource_identity: The dead letter destination of the event
          subscription. Any event that cannot be delivered to its' destination is sent to the dead letter
@@ -1436,6 +1633,8 @@ class EventSubscriptionUpdateParameters(msrest.serialization.Model):
 
     :ivar destination: Information about the destination where events have to be delivered for the
      event subscription.
+     Uses Azure Event Grid's identity to acquire the authentication tokens being used during
+     delivery / dead-lettering.
     :vartype destination: ~azure.mgmt.eventgrid.models.EventSubscriptionDestination
     :ivar delivery_with_resource_identity: Information about the destination where events have to
      be delivered for the event subscription.
@@ -1455,7 +1654,10 @@ class EventSubscriptionUpdateParameters(msrest.serialization.Model):
     :ivar retry_policy: The retry policy for events. This can be used to configure maximum number
      of delivery attempts and time to live for events.
     :vartype retry_policy: ~azure.mgmt.eventgrid.models.RetryPolicy
-    :ivar dead_letter_destination: The DeadLetter destination of the event subscription.
+    :ivar dead_letter_destination: The dead letter destination of the event subscription. Any event
+     that cannot be delivered to its' destination is sent to the dead letter destination.
+     Uses Azure Event Grid's identity to acquire the authentication tokens being used during
+     delivery / dead-lettering.
     :vartype dead_letter_destination: ~azure.mgmt.eventgrid.models.DeadLetterDestination
     :ivar dead_letter_with_resource_identity: The dead letter destination of the event
      subscription. Any event that cannot be delivered to its' destination is sent to the dead letter
@@ -1495,6 +1697,8 @@ class EventSubscriptionUpdateParameters(msrest.serialization.Model):
         """
         :keyword destination: Information about the destination where events have to be delivered for
          the event subscription.
+         Uses Azure Event Grid's identity to acquire the authentication tokens being used during
+         delivery / dead-lettering.
         :paramtype destination: ~azure.mgmt.eventgrid.models.EventSubscriptionDestination
         :keyword delivery_with_resource_identity: Information about the destination where events have
          to be delivered for the event subscription.
@@ -1514,7 +1718,10 @@ class EventSubscriptionUpdateParameters(msrest.serialization.Model):
         :keyword retry_policy: The retry policy for events. This can be used to configure maximum
          number of delivery attempts and time to live for events.
         :paramtype retry_policy: ~azure.mgmt.eventgrid.models.RetryPolicy
-        :keyword dead_letter_destination: The DeadLetter destination of the event subscription.
+        :keyword dead_letter_destination: The dead letter destination of the event subscription. Any
+         event that cannot be delivered to its' destination is sent to the dead letter destination.
+         Uses Azure Event Grid's identity to acquire the authentication tokens being used during
+         delivery / dead-lettering.
         :paramtype dead_letter_destination: ~azure.mgmt.eventgrid.models.DeadLetterDestination
         :keyword dead_letter_with_resource_identity: The dead letter destination of the event
          subscription. Any event that cannot be delivered to its' destination is sent to the dead letter
@@ -1599,6 +1806,46 @@ class EventType(Resource):
         self.is_in_default_set = is_in_default_set
 
 
+class EventTypeInfo(msrest.serialization.Model):
+    """The event type information for Channels.
+
+    :ivar kind: The kind of event type used. Possible values include: "Inline".
+    :vartype kind: str or ~azure.mgmt.eventgrid.models.EventDefinitionKind
+    :ivar inline_event_types: A collection of inline event types for the resource. The inline event
+     type keys are of type string which represents the name of the event.
+     An example of a valid inline event name is "Contoso.OrderCreated".
+     The inline event type values are of type InlineEventProperties and will contain additional
+     information for every inline event type.
+    :vartype inline_event_types: dict[str, ~azure.mgmt.eventgrid.models.InlineEventProperties]
+    """
+
+    _attribute_map = {
+        'kind': {'key': 'kind', 'type': 'str'},
+        'inline_event_types': {'key': 'inlineEventTypes', 'type': '{InlineEventProperties}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        kind: Optional[Union[str, "EventDefinitionKind"]] = None,
+        inline_event_types: Optional[Dict[str, "InlineEventProperties"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword kind: The kind of event type used. Possible values include: "Inline".
+        :paramtype kind: str or ~azure.mgmt.eventgrid.models.EventDefinitionKind
+        :keyword inline_event_types: A collection of inline event types for the resource. The inline
+         event type keys are of type string which represents the name of the event.
+         An example of a valid inline event name is "Contoso.OrderCreated".
+         The inline event type values are of type InlineEventProperties and will contain additional
+         information for every inline event type.
+        :paramtype inline_event_types: dict[str, ~azure.mgmt.eventgrid.models.InlineEventProperties]
+        """
+        super(EventTypeInfo, self).__init__(**kwargs)
+        self.kind = kind
+        self.inline_event_types = inline_event_types
+
+
 class EventTypesListResult(msrest.serialization.Model):
     """Result of the List Event Types operation.
 
@@ -1635,7 +1882,7 @@ class ExtensionTopic(Resource):
     :vartype name: str
     :ivar type: Type of the resource.
     :vartype type: str
-    :ivar system_data: The system metadata relating to the Extension Topic resource.
+    :ivar system_data: The system metadata relating to Extension Topic resource.
     :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
     :ivar description: Description of the extension topic.
     :vartype description: str
@@ -1818,6 +2065,52 @@ class InboundIpRule(msrest.serialization.Model):
         super(InboundIpRule, self).__init__(**kwargs)
         self.ip_mask = ip_mask
         self.action = action
+
+
+class InlineEventProperties(msrest.serialization.Model):
+    """Additional information about every inline event.
+
+    :ivar description: The description for the inline event.
+    :vartype description: str
+    :ivar display_name: The displayName for the inline event.
+    :vartype display_name: str
+    :ivar documentation_url: The documentationUrl for the inline event.
+    :vartype documentation_url: str
+    :ivar data_schema_url: The dataSchemaUrl for the inline event.
+    :vartype data_schema_url: str
+    """
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'documentation_url': {'key': 'documentationUrl', 'type': 'str'},
+        'data_schema_url': {'key': 'dataSchemaUrl', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        display_name: Optional[str] = None,
+        documentation_url: Optional[str] = None,
+        data_schema_url: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword description: The description for the inline event.
+        :paramtype description: str
+        :keyword display_name: The displayName for the inline event.
+        :paramtype display_name: str
+        :keyword documentation_url: The documentationUrl for the inline event.
+        :paramtype documentation_url: str
+        :keyword data_schema_url: The dataSchemaUrl for the inline event.
+        :paramtype data_schema_url: str
+        """
+        super(InlineEventProperties, self).__init__(**kwargs)
+        self.description = description
+        self.display_name = display_name
+        self.documentation_url = documentation_url
+        self.data_schema_url = data_schema_url
 
 
 class InputSchemaMapping(msrest.serialization.Model):
@@ -2451,6 +2744,9 @@ class Operation(msrest.serialization.Model):
     :vartype display: ~azure.mgmt.eventgrid.models.OperationInfo
     :ivar origin: Origin of the operation.
     :vartype origin: str
+    :ivar is_data_action: This Boolean is used to determine if the operation is a data plane action
+     or not.
+    :vartype is_data_action: bool
     :ivar properties: Properties of the operation.
     :vartype properties: any
     """
@@ -2459,6 +2755,7 @@ class Operation(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationInfo'},
         'origin': {'key': 'origin', 'type': 'str'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'properties': {'key': 'properties', 'type': 'object'},
     }
 
@@ -2468,6 +2765,7 @@ class Operation(msrest.serialization.Model):
         name: Optional[str] = None,
         display: Optional["OperationInfo"] = None,
         origin: Optional[str] = None,
+        is_data_action: Optional[bool] = None,
         properties: Optional[Any] = None,
         **kwargs
     ):
@@ -2478,6 +2776,9 @@ class Operation(msrest.serialization.Model):
         :paramtype display: ~azure.mgmt.eventgrid.models.OperationInfo
         :keyword origin: Origin of the operation.
         :paramtype origin: str
+        :keyword is_data_action: This Boolean is used to determine if the operation is a data plane
+         action or not.
+        :paramtype is_data_action: bool
         :keyword properties: Properties of the operation.
         :paramtype properties: any
         """
@@ -2485,6 +2786,7 @@ class Operation(msrest.serialization.Model):
         self.name = name
         self.display = display
         self.origin = origin
+        self.is_data_action = is_data_action
         self.properties = properties
 
 
@@ -2557,6 +2859,1003 @@ class OperationsListResult(msrest.serialization.Model):
         """
         super(OperationsListResult, self).__init__(**kwargs)
         self.value = value
+
+
+class Partner(msrest.serialization.Model):
+    """Information about the partner.
+
+    :ivar partner_registration_immutable_id: The immutableId of the corresponding partner
+     registration.
+    :vartype partner_registration_immutable_id: str
+    :ivar partner_name: The partner name.
+    :vartype partner_name: str
+    :ivar authorization_expiration_time_in_utc: Expiration time of the partner authorization. If
+     this timer expires, any request from this partner to create, update or delete resources in
+     subscriber's
+     context will fail. If specified, the allowed values are between 1 to the value of
+     defaultMaximumExpirationTimeInDays specified in PartnerConfiguration.
+     If not specified, the default value will be the value of defaultMaximumExpirationTimeInDays
+     specified in PartnerConfiguration or 7 if this value is not specified.
+    :vartype authorization_expiration_time_in_utc: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'partner_registration_immutable_id': {'key': 'partnerRegistrationImmutableId', 'type': 'str'},
+        'partner_name': {'key': 'partnerName', 'type': 'str'},
+        'authorization_expiration_time_in_utc': {'key': 'authorizationExpirationTimeInUtc', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        partner_registration_immutable_id: Optional[str] = None,
+        partner_name: Optional[str] = None,
+        authorization_expiration_time_in_utc: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        """
+        :keyword partner_registration_immutable_id: The immutableId of the corresponding partner
+         registration.
+        :paramtype partner_registration_immutable_id: str
+        :keyword partner_name: The partner name.
+        :paramtype partner_name: str
+        :keyword authorization_expiration_time_in_utc: Expiration time of the partner authorization. If
+         this timer expires, any request from this partner to create, update or delete resources in
+         subscriber's
+         context will fail. If specified, the allowed values are between 1 to the value of
+         defaultMaximumExpirationTimeInDays specified in PartnerConfiguration.
+         If not specified, the default value will be the value of defaultMaximumExpirationTimeInDays
+         specified in PartnerConfiguration or 7 if this value is not specified.
+        :paramtype authorization_expiration_time_in_utc: ~datetime.datetime
+        """
+        super(Partner, self).__init__(**kwargs)
+        self.partner_registration_immutable_id = partner_registration_immutable_id
+        self.partner_name = partner_name
+        self.authorization_expiration_time_in_utc = authorization_expiration_time_in_utc
+
+
+class PartnerAuthorization(msrest.serialization.Model):
+    """The partner authorization details.
+
+    :ivar default_maximum_expiration_time_in_days: Time used to validate the authorization
+     expiration time for each authorized partner. If DefaultMaximumExpirationTimeInDays is
+     not specified, the default is 7 days. Otherwise, allowed values are between 1 and 365 days.
+    :vartype default_maximum_expiration_time_in_days: int
+    :ivar authorized_partners_list: The list of authorized partners.
+    :vartype authorized_partners_list: list[~azure.mgmt.eventgrid.models.Partner]
+    """
+
+    _attribute_map = {
+        'default_maximum_expiration_time_in_days': {'key': 'defaultMaximumExpirationTimeInDays', 'type': 'int'},
+        'authorized_partners_list': {'key': 'authorizedPartnersList', 'type': '[Partner]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        default_maximum_expiration_time_in_days: Optional[int] = None,
+        authorized_partners_list: Optional[List["Partner"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword default_maximum_expiration_time_in_days: Time used to validate the authorization
+         expiration time for each authorized partner. If DefaultMaximumExpirationTimeInDays is
+         not specified, the default is 7 days. Otherwise, allowed values are between 1 and 365 days.
+        :paramtype default_maximum_expiration_time_in_days: int
+        :keyword authorized_partners_list: The list of authorized partners.
+        :paramtype authorized_partners_list: list[~azure.mgmt.eventgrid.models.Partner]
+        """
+        super(PartnerAuthorization, self).__init__(**kwargs)
+        self.default_maximum_expiration_time_in_days = default_maximum_expiration_time_in_days
+        self.authorized_partners_list = authorized_partners_list
+
+
+class PartnerConfiguration(Resource):
+    """Partner configuration information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    :ivar system_data: The system metadata relating to partner configuration resource.
+    :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar location: Location of the resource.
+    :vartype location: str
+    :ivar tags: A set of tags. Tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar partner_authorization: The details of authorized partners.
+    :vartype partner_authorization: ~azure.mgmt.eventgrid.models.PartnerAuthorization
+    :ivar provisioning_state: Provisioning state of the partner configuration. Possible values
+     include: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.eventgrid.models.PartnerConfigurationProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'partner_authorization': {'key': 'properties.partnerAuthorization', 'type': 'PartnerAuthorization'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        partner_authorization: Optional["PartnerAuthorization"] = None,
+        provisioning_state: Optional[Union[str, "PartnerConfigurationProvisioningState"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: Location of the resource.
+        :paramtype location: str
+        :keyword tags: A set of tags. Tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword partner_authorization: The details of authorized partners.
+        :paramtype partner_authorization: ~azure.mgmt.eventgrid.models.PartnerAuthorization
+        :keyword provisioning_state: Provisioning state of the partner configuration. Possible values
+         include: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
+        :paramtype provisioning_state: str or
+         ~azure.mgmt.eventgrid.models.PartnerConfigurationProvisioningState
+        """
+        super(PartnerConfiguration, self).__init__(**kwargs)
+        self.system_data = None
+        self.location = location
+        self.tags = tags
+        self.partner_authorization = partner_authorization
+        self.provisioning_state = provisioning_state
+
+
+class PartnerConfigurationsListResult(msrest.serialization.Model):
+    """Result of the List partner configurations operation.
+
+    :ivar value: A collection of partner configurations.
+    :vartype value: list[~azure.mgmt.eventgrid.models.PartnerConfiguration]
+    :ivar next_link: A link for the next page of partner configurations.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PartnerConfiguration]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PartnerConfiguration"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: A collection of partner configurations.
+        :paramtype value: list[~azure.mgmt.eventgrid.models.PartnerConfiguration]
+        :keyword next_link: A link for the next page of partner configurations.
+        :paramtype next_link: str
+        """
+        super(PartnerConfigurationsListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class PartnerConfigurationUpdateParameters(msrest.serialization.Model):
+    """Properties of the partner configuration update.
+
+    :ivar tags: A set of tags. Tags of the partner configuration resource.
+    :vartype tags: dict[str, str]
+    :ivar default_maximum_expiration_time_in_days: The default time used to validate the maximum
+     expiration time for each authorized partners in days. Allowed values ar between 1 and 365 days.
+    :vartype default_maximum_expiration_time_in_days: int
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'default_maximum_expiration_time_in_days': {'key': 'properties.defaultMaximumExpirationTimeInDays', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        default_maximum_expiration_time_in_days: Optional[int] = None,
+        **kwargs
+    ):
+        """
+        :keyword tags: A set of tags. Tags of the partner configuration resource.
+        :paramtype tags: dict[str, str]
+        :keyword default_maximum_expiration_time_in_days: The default time used to validate the maximum
+         expiration time for each authorized partners in days. Allowed values ar between 1 and 365 days.
+        :paramtype default_maximum_expiration_time_in_days: int
+        """
+        super(PartnerConfigurationUpdateParameters, self).__init__(**kwargs)
+        self.tags = tags
+        self.default_maximum_expiration_time_in_days = default_maximum_expiration_time_in_days
+
+
+class PartnerDetails(msrest.serialization.Model):
+    """Information about the partner.
+
+    :ivar description: This is short description about the partner. The length of this description
+     should not exceed 256 characters.
+    :vartype description: str
+    :ivar long_description: Long description for the partner's scenarios and integration.Length of
+     this description should not exceed 2048 characters.
+    :vartype long_description: str
+    :ivar setup_uri: URI of the partner website that can be used by Azure customers to setup Event
+     Grid
+     integration on an event source.
+    :vartype setup_uri: str
+    """
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'long_description': {'key': 'longDescription', 'type': 'str'},
+        'setup_uri': {'key': 'setupUri', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        long_description: Optional[str] = None,
+        setup_uri: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword description: This is short description about the partner. The length of this
+         description should not exceed 256 characters.
+        :paramtype description: str
+        :keyword long_description: Long description for the partner's scenarios and integration.Length
+         of this description should not exceed 2048 characters.
+        :paramtype long_description: str
+        :keyword setup_uri: URI of the partner website that can be used by Azure customers to setup
+         Event Grid
+         integration on an event source.
+        :paramtype setup_uri: str
+        """
+        super(PartnerDetails, self).__init__(**kwargs)
+        self.description = description
+        self.long_description = long_description
+        self.setup_uri = setup_uri
+
+
+class PartnerNamespace(TrackedResource):
+    """EventGrid Partner Namespace.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    :ivar location: Required. Location of the resource.
+    :vartype location: str
+    :ivar tags: A set of tags. Tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar system_data: The system metadata relating to Partner Namespace resource.
+    :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar private_endpoint_connections:
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
+    :ivar provisioning_state: Provisioning state of the partner namespace. Possible values include:
+     "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.eventgrid.models.PartnerNamespaceProvisioningState
+    :ivar partner_registration_fully_qualified_id: The fully qualified ARM Id of the partner
+     registration that should be associated with this partner namespace. This takes the following
+     format:
+    /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerRegistrations/{partnerRegistrationName}.
+    :vartype partner_registration_fully_qualified_id: str
+    :ivar endpoint: Endpoint for the partner namespace.
+    :vartype endpoint: str
+    :ivar public_network_access: This determines if traffic is allowed over public network. By
+     default it is enabled.
+     You can further restrict to specific IPs by configuring :code:`<seealso
+     cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.PartnerNamespaceProperties.InboundIpRules"
+     />`. Possible values include: "Enabled", "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.eventgrid.models.PublicNetworkAccess
+    :ivar inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of all
+     IPs. Note: These are considered only if PublicNetworkAccess is enabled.
+    :vartype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+    :ivar disable_local_auth: This boolean is used to enable or disable local auth. Default value
+     is false. When the property is set to true, only AAD token will be used to authenticate if user
+     is allowed to publish to the partner namespace.
+    :vartype disable_local_auth: bool
+    :ivar partner_topic_routing_mode: This determines if events published to this partner namespace
+     should use the source attribute in the event payload
+     or use the channel name in the header when matching to the partner topic. If none is
+     specified, source attribute routing will be used to match the partner topic. Possible values
+     include: "SourceEventAttribute", "ChannelNameHeader". Default value: "SourceEventAttribute".
+    :vartype partner_topic_routing_mode: str or
+     ~azure.mgmt.eventgrid.models.PartnerTopicRoutingMode
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'system_data': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'endpoint': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'partner_registration_fully_qualified_id': {'key': 'properties.partnerRegistrationFullyQualifiedId', 'type': 'str'},
+        'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'inbound_ip_rules': {'key': 'properties.inboundIpRules', 'type': '[InboundIpRule]'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        'partner_topic_routing_mode': {'key': 'properties.partnerTopicRoutingMode', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        partner_registration_fully_qualified_id: Optional[str] = None,
+        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
+        inbound_ip_rules: Optional[List["InboundIpRule"]] = None,
+        disable_local_auth: Optional[bool] = False,
+        partner_topic_routing_mode: Optional[Union[str, "PartnerTopicRoutingMode"]] = "SourceEventAttribute",
+        **kwargs
+    ):
+        """
+        :keyword location: Required. Location of the resource.
+        :paramtype location: str
+        :keyword tags: A set of tags. Tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword partner_registration_fully_qualified_id: The fully qualified ARM Id of the partner
+         registration that should be associated with this partner namespace. This takes the following
+         format:
+        /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerRegistrations/{partnerRegistrationName}.
+        :paramtype partner_registration_fully_qualified_id: str
+        :keyword public_network_access: This determines if traffic is allowed over public network. By
+         default it is enabled.
+         You can further restrict to specific IPs by configuring :code:`<seealso
+         cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.PartnerNamespaceProperties.InboundIpRules"
+         />`. Possible values include: "Enabled", "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.eventgrid.models.PublicNetworkAccess
+        :keyword inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of
+         all IPs. Note: These are considered only if PublicNetworkAccess is enabled.
+        :paramtype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+        :keyword disable_local_auth: This boolean is used to enable or disable local auth. Default
+         value is false. When the property is set to true, only AAD token will be used to authenticate
+         if user is allowed to publish to the partner namespace.
+        :paramtype disable_local_auth: bool
+        :keyword partner_topic_routing_mode: This determines if events published to this partner
+         namespace should use the source attribute in the event payload
+         or use the channel name in the header when matching to the partner topic. If none is
+         specified, source attribute routing will be used to match the partner topic. Possible values
+         include: "SourceEventAttribute", "ChannelNameHeader". Default value: "SourceEventAttribute".
+        :paramtype partner_topic_routing_mode: str or
+         ~azure.mgmt.eventgrid.models.PartnerTopicRoutingMode
+        """
+        super(PartnerNamespace, self).__init__(location=location, tags=tags, **kwargs)
+        self.system_data = None
+        self.private_endpoint_connections = None
+        self.provisioning_state = None
+        self.partner_registration_fully_qualified_id = partner_registration_fully_qualified_id
+        self.endpoint = None
+        self.public_network_access = public_network_access
+        self.inbound_ip_rules = inbound_ip_rules
+        self.disable_local_auth = disable_local_auth
+        self.partner_topic_routing_mode = partner_topic_routing_mode
+
+
+class PartnerNamespaceRegenerateKeyRequest(msrest.serialization.Model):
+    """PartnerNamespace regenerate shared access key request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar key_name: Required. Key name to regenerate (key1 or key2).
+    :vartype key_name: str
+    """
+
+    _validation = {
+        'key_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'key_name': {'key': 'keyName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        key_name: str,
+        **kwargs
+    ):
+        """
+        :keyword key_name: Required. Key name to regenerate (key1 or key2).
+        :paramtype key_name: str
+        """
+        super(PartnerNamespaceRegenerateKeyRequest, self).__init__(**kwargs)
+        self.key_name = key_name
+
+
+class PartnerNamespaceSharedAccessKeys(msrest.serialization.Model):
+    """Shared access keys of the partner namespace.
+
+    :ivar key1: Shared access key1 for the partner namespace.
+    :vartype key1: str
+    :ivar key2: Shared access key2 for the partner namespace.
+    :vartype key2: str
+    """
+
+    _attribute_map = {
+        'key1': {'key': 'key1', 'type': 'str'},
+        'key2': {'key': 'key2', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        key1: Optional[str] = None,
+        key2: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword key1: Shared access key1 for the partner namespace.
+        :paramtype key1: str
+        :keyword key2: Shared access key2 for the partner namespace.
+        :paramtype key2: str
+        """
+        super(PartnerNamespaceSharedAccessKeys, self).__init__(**kwargs)
+        self.key1 = key1
+        self.key2 = key2
+
+
+class PartnerNamespacesListResult(msrest.serialization.Model):
+    """Result of the List Partner Namespaces operation.
+
+    :ivar value: A collection of partner namespaces.
+    :vartype value: list[~azure.mgmt.eventgrid.models.PartnerNamespace]
+    :ivar next_link: A link for the next page of partner namespaces.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PartnerNamespace]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PartnerNamespace"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: A collection of partner namespaces.
+        :paramtype value: list[~azure.mgmt.eventgrid.models.PartnerNamespace]
+        :keyword next_link: A link for the next page of partner namespaces.
+        :paramtype next_link: str
+        """
+        super(PartnerNamespacesListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class PartnerNamespaceUpdateParameters(msrest.serialization.Model):
+    """Properties of the Partner Namespace update.
+
+    :ivar tags: A set of tags. Tags of the Partner Namespace.
+    :vartype tags: dict[str, str]
+    :ivar public_network_access: This determines if traffic is allowed over public network. By
+     default it is enabled.
+     You can further restrict to specific IPs by configuring :code:`<seealso
+     cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.PartnerNamespaceUpdateParameterProperties.InboundIpRules"
+     />`. Possible values include: "Enabled", "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.eventgrid.models.PublicNetworkAccess
+    :ivar inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of all
+     IPs. Note: These are considered only if PublicNetworkAccess is enabled.
+    :vartype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+    :ivar disable_local_auth: This boolean is used to enable or disable local auth. Default value
+     is false. When the property is set to true, only AAD token will be used to authenticate if user
+     is allowed to publish to the partner namespace.
+    :vartype disable_local_auth: bool
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'inbound_ip_rules': {'key': 'properties.inboundIpRules', 'type': '[InboundIpRule]'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
+        inbound_ip_rules: Optional[List["InboundIpRule"]] = None,
+        disable_local_auth: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword tags: A set of tags. Tags of the Partner Namespace.
+        :paramtype tags: dict[str, str]
+        :keyword public_network_access: This determines if traffic is allowed over public network. By
+         default it is enabled.
+         You can further restrict to specific IPs by configuring :code:`<seealso
+         cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.PartnerNamespaceUpdateParameterProperties.InboundIpRules"
+         />`. Possible values include: "Enabled", "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.eventgrid.models.PublicNetworkAccess
+        :keyword inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of
+         all IPs. Note: These are considered only if PublicNetworkAccess is enabled.
+        :paramtype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+        :keyword disable_local_auth: This boolean is used to enable or disable local auth. Default
+         value is false. When the property is set to true, only AAD token will be used to authenticate
+         if user is allowed to publish to the partner namespace.
+        :paramtype disable_local_auth: bool
+        """
+        super(PartnerNamespaceUpdateParameters, self).__init__(**kwargs)
+        self.tags = tags
+        self.public_network_access = public_network_access
+        self.inbound_ip_rules = inbound_ip_rules
+        self.disable_local_auth = disable_local_auth
+
+
+class PartnerRegistration(TrackedResource):
+    """Information about a partner registration.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    :ivar location: Required. Location of the resource.
+    :vartype location: str
+    :ivar tags: A set of tags. Tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar system_data: The system metadata relating to Partner Registration resource.
+    :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar provisioning_state: Provisioning state of the partner registration. Possible values
+     include: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.eventgrid.models.PartnerRegistrationProvisioningState
+    :ivar partner_registration_immutable_id: The immutableId of the corresponding partner
+     registration.
+     Note: This property is marked for deprecation and is not supported in any future GA API
+     version.
+    :vartype partner_registration_immutable_id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'partner_registration_immutable_id': {'key': 'properties.partnerRegistrationImmutableId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        partner_registration_immutable_id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: Required. Location of the resource.
+        :paramtype location: str
+        :keyword tags: A set of tags. Tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword partner_registration_immutable_id: The immutableId of the corresponding partner
+         registration.
+         Note: This property is marked for deprecation and is not supported in any future GA API
+         version.
+        :paramtype partner_registration_immutable_id: str
+        """
+        super(PartnerRegistration, self).__init__(location=location, tags=tags, **kwargs)
+        self.system_data = None
+        self.provisioning_state = None
+        self.partner_registration_immutable_id = partner_registration_immutable_id
+
+
+class PartnerRegistrationsListResult(msrest.serialization.Model):
+    """Result of the List Partner Registrations operation.
+
+    :ivar value: A collection of partner registrations.
+    :vartype value: list[~azure.mgmt.eventgrid.models.PartnerRegistration]
+    :ivar next_link: A link for the next page of partner registrations.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PartnerRegistration]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PartnerRegistration"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: A collection of partner registrations.
+        :paramtype value: list[~azure.mgmt.eventgrid.models.PartnerRegistration]
+        :keyword next_link: A link for the next page of partner registrations.
+        :paramtype next_link: str
+        """
+        super(PartnerRegistrationsListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class PartnerRegistrationUpdateParameters(msrest.serialization.Model):
+    """Properties of the Partner Registration update.
+
+    :ivar tags: A set of tags. Tags of the partner registration resource.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword tags: A set of tags. Tags of the partner registration resource.
+        :paramtype tags: dict[str, str]
+        """
+        super(PartnerRegistrationUpdateParameters, self).__init__(**kwargs)
+        self.tags = tags
+
+
+class PartnerTopic(TrackedResource):
+    """Event Grid Partner Topic.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    :ivar location: Required. Location of the resource.
+    :vartype location: str
+    :ivar tags: A set of tags. Tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar system_data: The system metadata relating to Partner Topic resource.
+    :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar identity: Identity information for the Partner Topic resource.
+    :vartype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
+    :ivar partner_registration_immutable_id: The immutableId of the corresponding partner
+     registration.
+    :vartype partner_registration_immutable_id: str
+    :ivar source: Source associated with this partner topic. This represents a unique partner
+     resource.
+    :vartype source: str
+    :ivar event_type_info: Event Type information from the corresponding event channel.
+    :vartype event_type_info: ~azure.mgmt.eventgrid.models.EventTypeInfo
+    :ivar expiration_time_if_not_activated_utc: Expiration time of the partner topic. If this timer
+     expires while the partner topic is still never activated,
+     the partner topic and corresponding event channel are deleted.
+    :vartype expiration_time_if_not_activated_utc: ~datetime.datetime
+    :ivar provisioning_state: Provisioning state of the partner topic. Possible values include:
+     "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed",
+     "IdleDueToMirroredChannelResourceDeletion".
+    :vartype provisioning_state: str or ~azure.mgmt.eventgrid.models.PartnerTopicProvisioningState
+    :ivar activation_state: Activation state of the partner topic. Possible values include:
+     "NeverActivated", "Activated", "Deactivated".
+    :vartype activation_state: str or ~azure.mgmt.eventgrid.models.PartnerTopicActivationState
+    :ivar partner_topic_friendly_description: Friendly description about the topic. This can be set
+     by the publisher/partner to show custom description for the customer partner topic.
+     This will be helpful to remove any ambiguity of the origin of creation of the partner topic
+     for the customer.
+    :vartype partner_topic_friendly_description: str
+    :ivar message_for_activation: Context or helpful message that can be used during the approval
+     process by the subscriber.
+    :vartype message_for_activation: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'identity': {'key': 'identity', 'type': 'IdentityInfo'},
+        'partner_registration_immutable_id': {'key': 'properties.partnerRegistrationImmutableId', 'type': 'str'},
+        'source': {'key': 'properties.source', 'type': 'str'},
+        'event_type_info': {'key': 'properties.eventTypeInfo', 'type': 'EventTypeInfo'},
+        'expiration_time_if_not_activated_utc': {'key': 'properties.expirationTimeIfNotActivatedUtc', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'activation_state': {'key': 'properties.activationState', 'type': 'str'},
+        'partner_topic_friendly_description': {'key': 'properties.partnerTopicFriendlyDescription', 'type': 'str'},
+        'message_for_activation': {'key': 'properties.messageForActivation', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        identity: Optional["IdentityInfo"] = None,
+        partner_registration_immutable_id: Optional[str] = None,
+        source: Optional[str] = None,
+        event_type_info: Optional["EventTypeInfo"] = None,
+        expiration_time_if_not_activated_utc: Optional[datetime.datetime] = None,
+        activation_state: Optional[Union[str, "PartnerTopicActivationState"]] = None,
+        partner_topic_friendly_description: Optional[str] = None,
+        message_for_activation: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: Required. Location of the resource.
+        :paramtype location: str
+        :keyword tags: A set of tags. Tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword identity: Identity information for the Partner Topic resource.
+        :paramtype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
+        :keyword partner_registration_immutable_id: The immutableId of the corresponding partner
+         registration.
+        :paramtype partner_registration_immutable_id: str
+        :keyword source: Source associated with this partner topic. This represents a unique partner
+         resource.
+        :paramtype source: str
+        :keyword event_type_info: Event Type information from the corresponding event channel.
+        :paramtype event_type_info: ~azure.mgmt.eventgrid.models.EventTypeInfo
+        :keyword expiration_time_if_not_activated_utc: Expiration time of the partner topic. If this
+         timer expires while the partner topic is still never activated,
+         the partner topic and corresponding event channel are deleted.
+        :paramtype expiration_time_if_not_activated_utc: ~datetime.datetime
+        :keyword activation_state: Activation state of the partner topic. Possible values include:
+         "NeverActivated", "Activated", "Deactivated".
+        :paramtype activation_state: str or ~azure.mgmt.eventgrid.models.PartnerTopicActivationState
+        :keyword partner_topic_friendly_description: Friendly description about the topic. This can be
+         set by the publisher/partner to show custom description for the customer partner topic.
+         This will be helpful to remove any ambiguity of the origin of creation of the partner topic
+         for the customer.
+        :paramtype partner_topic_friendly_description: str
+        :keyword message_for_activation: Context or helpful message that can be used during the
+         approval process by the subscriber.
+        :paramtype message_for_activation: str
+        """
+        super(PartnerTopic, self).__init__(location=location, tags=tags, **kwargs)
+        self.system_data = None
+        self.identity = identity
+        self.partner_registration_immutable_id = partner_registration_immutable_id
+        self.source = source
+        self.event_type_info = event_type_info
+        self.expiration_time_if_not_activated_utc = expiration_time_if_not_activated_utc
+        self.provisioning_state = None
+        self.activation_state = activation_state
+        self.partner_topic_friendly_description = partner_topic_friendly_description
+        self.message_for_activation = message_for_activation
+
+
+class PartnerTopicInfo(msrest.serialization.Model):
+    """Properties of the corresponding partner topic of a Channel.
+
+    :ivar azure_subscription_id: Azure subscription ID of the subscriber. The partner topic
+     associated with the channel will be
+     created under this Azure subscription.
+    :vartype azure_subscription_id: str
+    :ivar resource_group_name: Azure Resource Group of the subscriber. The partner topic associated
+     with the channel will be
+     created under this resource group.
+    :vartype resource_group_name: str
+    :ivar name: Name of the partner topic associated with the channel.
+    :vartype name: str
+    :ivar event_type_info: Event Type Information for the partner topic. This information is
+     provided by the publisher and can be used by the
+     subscriber to view different types of events that are published.
+    :vartype event_type_info: ~azure.mgmt.eventgrid.models.EventTypeInfo
+    :ivar source: The source information is provided by the publisher to determine the scope or
+     context from which the events
+     are originating. This information can be used by the subscriber during the approval process of
+     the
+     created partner topic.
+    :vartype source: str
+    """
+
+    _attribute_map = {
+        'azure_subscription_id': {'key': 'azureSubscriptionId', 'type': 'str'},
+        'resource_group_name': {'key': 'resourceGroupName', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'event_type_info': {'key': 'eventTypeInfo', 'type': 'EventTypeInfo'},
+        'source': {'key': 'source', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        azure_subscription_id: Optional[str] = None,
+        resource_group_name: Optional[str] = None,
+        name: Optional[str] = None,
+        event_type_info: Optional["EventTypeInfo"] = None,
+        source: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword azure_subscription_id: Azure subscription ID of the subscriber. The partner topic
+         associated with the channel will be
+         created under this Azure subscription.
+        :paramtype azure_subscription_id: str
+        :keyword resource_group_name: Azure Resource Group of the subscriber. The partner topic
+         associated with the channel will be
+         created under this resource group.
+        :paramtype resource_group_name: str
+        :keyword name: Name of the partner topic associated with the channel.
+        :paramtype name: str
+        :keyword event_type_info: Event Type Information for the partner topic. This information is
+         provided by the publisher and can be used by the
+         subscriber to view different types of events that are published.
+        :paramtype event_type_info: ~azure.mgmt.eventgrid.models.EventTypeInfo
+        :keyword source: The source information is provided by the publisher to determine the scope or
+         context from which the events
+         are originating. This information can be used by the subscriber during the approval process of
+         the
+         created partner topic.
+        :paramtype source: str
+        """
+        super(PartnerTopicInfo, self).__init__(**kwargs)
+        self.azure_subscription_id = azure_subscription_id
+        self.resource_group_name = resource_group_name
+        self.name = name
+        self.event_type_info = event_type_info
+        self.source = source
+
+
+class PartnerTopicsListResult(msrest.serialization.Model):
+    """Result of the List Partner Topics operation.
+
+    :ivar value: A collection of partner topics.
+    :vartype value: list[~azure.mgmt.eventgrid.models.PartnerTopic]
+    :ivar next_link: A link for the next page of partner topics.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PartnerTopic]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PartnerTopic"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: A collection of partner topics.
+        :paramtype value: list[~azure.mgmt.eventgrid.models.PartnerTopic]
+        :keyword next_link: A link for the next page of partner topics.
+        :paramtype next_link: str
+        """
+        super(PartnerTopicsListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class PartnerTopicUpdateParameters(msrest.serialization.Model):
+    """Properties of the Partner Topic update.
+
+    :ivar tags: A set of tags. Tags of the Partner Topic resource.
+    :vartype tags: dict[str, str]
+    :ivar identity: Identity information for the Partner Topic resource.
+    :vartype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'IdentityInfo'},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        identity: Optional["IdentityInfo"] = None,
+        **kwargs
+    ):
+        """
+        :keyword tags: A set of tags. Tags of the Partner Topic resource.
+        :paramtype tags: dict[str, str]
+        :keyword identity: Identity information for the Partner Topic resource.
+        :paramtype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
+        """
+        super(PartnerTopicUpdateParameters, self).__init__(**kwargs)
+        self.tags = tags
+        self.identity = identity
+
+
+class PartnerUpdateTopicInfo(msrest.serialization.Model):
+    """Update properties for the corresponding partner topic of a channel.
+
+    :ivar event_type_info: Event type info for the partner topic.
+    :vartype event_type_info: ~azure.mgmt.eventgrid.models.EventTypeInfo
+    """
+
+    _attribute_map = {
+        'event_type_info': {'key': 'eventTypeInfo', 'type': 'EventTypeInfo'},
+    }
+
+    def __init__(
+        self,
+        *,
+        event_type_info: Optional["EventTypeInfo"] = None,
+        **kwargs
+    ):
+        """
+        :keyword event_type_info: Event type info for the partner topic.
+        :paramtype event_type_info: ~azure.mgmt.eventgrid.models.EventTypeInfo
+        """
+        super(PartnerUpdateTopicInfo, self).__init__(**kwargs)
+        self.event_type_info = event_type_info
 
 
 class PrivateEndpoint(msrest.serialization.Model):
@@ -3694,6 +4993,9 @@ class Topic(TrackedResource):
      is false. When the property is set to true, only AAD token will be used to authenticate if user
      is allowed to publish to the topic.
     :vartype disable_local_auth: bool
+    :ivar data_residency_boundary: Data Residency Boundary of the resource. Possible values
+     include: "WithinGeopair", "WithinRegion".
+    :vartype data_residency_boundary: str or ~azure.mgmt.eventgrid.models.DataResidencyBoundary
     """
 
     _validation = {
@@ -3725,6 +5027,7 @@ class Topic(TrackedResource):
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'inbound_ip_rules': {'key': 'properties.inboundIpRules', 'type': '[InboundIpRule]'},
         'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        'data_residency_boundary': {'key': 'properties.dataResidencyBoundary', 'type': 'str'},
     }
 
     def __init__(
@@ -3738,6 +5041,7 @@ class Topic(TrackedResource):
         public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
         inbound_ip_rules: Optional[List["InboundIpRule"]] = None,
         disable_local_auth: Optional[bool] = False,
+        data_residency_boundary: Optional[Union[str, "DataResidencyBoundary"]] = None,
         **kwargs
     ):
         """
@@ -3768,6 +5072,9 @@ class Topic(TrackedResource):
          value is false. When the property is set to true, only AAD token will be used to authenticate
          if user is allowed to publish to the topic.
         :paramtype disable_local_auth: bool
+        :keyword data_residency_boundary: Data Residency Boundary of the resource. Possible values
+         include: "WithinGeopair", "WithinRegion".
+        :paramtype data_residency_boundary: str or ~azure.mgmt.eventgrid.models.DataResidencyBoundary
         """
         super(Topic, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
@@ -3781,6 +5088,7 @@ class Topic(TrackedResource):
         self.public_network_access = public_network_access
         self.inbound_ip_rules = inbound_ip_rules
         self.disable_local_auth = disable_local_auth
+        self.data_residency_boundary = data_residency_boundary
 
 
 class TopicRegenerateKeyRequest(msrest.serialization.Model):
@@ -3907,7 +5215,7 @@ class TopicTypeInfo(Resource):
     :vartype source_resource_format: str
     :ivar supported_scopes_for_source: Supported source scopes.
     :vartype supported_scopes_for_source: list[str or
-     ~azure.mgmt.eventgrid.models.TopicTypePropertiesSupportedScopesForSourceItem]
+     ~azure.mgmt.eventgrid.models.TopicTypeSourceScope]
     """
 
     _validation = {
@@ -3940,7 +5248,7 @@ class TopicTypeInfo(Resource):
         provisioning_state: Optional[Union[str, "TopicTypeProvisioningState"]] = None,
         supported_locations: Optional[List[str]] = None,
         source_resource_format: Optional[str] = None,
-        supported_scopes_for_source: Optional[List[Union[str, "TopicTypePropertiesSupportedScopesForSourceItem"]]] = None,
+        supported_scopes_for_source: Optional[List[Union[str, "TopicTypeSourceScope"]]] = None,
         **kwargs
     ):
         """
@@ -3962,7 +5270,7 @@ class TopicTypeInfo(Resource):
         :paramtype source_resource_format: str
         :keyword supported_scopes_for_source: Supported source scopes.
         :paramtype supported_scopes_for_source: list[str or
-         ~azure.mgmt.eventgrid.models.TopicTypePropertiesSupportedScopesForSourceItem]
+         ~azure.mgmt.eventgrid.models.TopicTypeSourceScope]
         """
         super(TopicTypeInfo, self).__init__(**kwargs)
         self.provider = provider
@@ -4003,7 +5311,7 @@ class TopicTypesListResult(msrest.serialization.Model):
 class TopicUpdateParameters(msrest.serialization.Model):
     """Properties of the Topic update.
 
-    :ivar tags: A set of tags. Tags of the resource.
+    :ivar tags: A set of tags. Tags of the Topic resource.
     :vartype tags: dict[str, str]
     :ivar identity: Topic resource identity information.
     :vartype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
@@ -4020,6 +5328,9 @@ class TopicUpdateParameters(msrest.serialization.Model):
      is false. When the property is set to true, only AAD token will be used to authenticate if user
      is allowed to publish to the topic.
     :vartype disable_local_auth: bool
+    :ivar data_residency_boundary: The data residency boundary for the topic. Possible values
+     include: "WithinGeopair", "WithinRegion".
+    :vartype data_residency_boundary: str or ~azure.mgmt.eventgrid.models.DataResidencyBoundary
     """
 
     _attribute_map = {
@@ -4028,6 +5339,7 @@ class TopicUpdateParameters(msrest.serialization.Model):
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'inbound_ip_rules': {'key': 'properties.inboundIpRules', 'type': '[InboundIpRule]'},
         'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        'data_residency_boundary': {'key': 'properties.dataResidencyBoundary', 'type': 'str'},
     }
 
     def __init__(
@@ -4038,10 +5350,11 @@ class TopicUpdateParameters(msrest.serialization.Model):
         public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
         inbound_ip_rules: Optional[List["InboundIpRule"]] = None,
         disable_local_auth: Optional[bool] = None,
+        data_residency_boundary: Optional[Union[str, "DataResidencyBoundary"]] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Tags of the resource.
+        :keyword tags: A set of tags. Tags of the Topic resource.
         :paramtype tags: dict[str, str]
         :keyword identity: Topic resource identity information.
         :paramtype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
@@ -4058,6 +5371,9 @@ class TopicUpdateParameters(msrest.serialization.Model):
          value is false. When the property is set to true, only AAD token will be used to authenticate
          if user is allowed to publish to the topic.
         :paramtype disable_local_auth: bool
+        :keyword data_residency_boundary: The data residency boundary for the topic. Possible values
+         include: "WithinGeopair", "WithinRegion".
+        :paramtype data_residency_boundary: str or ~azure.mgmt.eventgrid.models.DataResidencyBoundary
         """
         super(TopicUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
@@ -4065,6 +5381,7 @@ class TopicUpdateParameters(msrest.serialization.Model):
         self.public_network_access = public_network_access
         self.inbound_ip_rules = inbound_ip_rules
         self.disable_local_auth = disable_local_auth
+        self.data_residency_boundary = data_residency_boundary
 
 
 class UserIdentityProperties(msrest.serialization.Model):
@@ -4097,6 +5414,118 @@ class UserIdentityProperties(msrest.serialization.Model):
         super(UserIdentityProperties, self).__init__(**kwargs)
         self.principal_id = principal_id
         self.client_id = client_id
+
+
+class VerifiedPartner(Resource):
+    """Verified partner information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    :ivar system_data: The system metadata relating to Verified Partner resource.
+    :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar partner_registration_immutable_id: ImmutableId of the corresponding partner registration.
+    :vartype partner_registration_immutable_id: str
+    :ivar organization_name: Official name of the Partner.
+    :vartype organization_name: str
+    :ivar partner_display_name: Display name of the verified partner.
+    :vartype partner_display_name: str
+    :ivar partner_topic_details: Details of the partner topic scenario.
+    :vartype partner_topic_details: ~azure.mgmt.eventgrid.models.PartnerDetails
+    :ivar provisioning_state: Provisioning state of the verified partner. Possible values include:
+     "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.eventgrid.models.VerifiedPartnerProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'partner_registration_immutable_id': {'key': 'properties.partnerRegistrationImmutableId', 'type': 'str'},
+        'organization_name': {'key': 'properties.organizationName', 'type': 'str'},
+        'partner_display_name': {'key': 'properties.partnerDisplayName', 'type': 'str'},
+        'partner_topic_details': {'key': 'properties.partnerTopicDetails', 'type': 'PartnerDetails'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        partner_registration_immutable_id: Optional[str] = None,
+        organization_name: Optional[str] = None,
+        partner_display_name: Optional[str] = None,
+        partner_topic_details: Optional["PartnerDetails"] = None,
+        provisioning_state: Optional[Union[str, "VerifiedPartnerProvisioningState"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword partner_registration_immutable_id: ImmutableId of the corresponding partner
+         registration.
+        :paramtype partner_registration_immutable_id: str
+        :keyword organization_name: Official name of the Partner.
+        :paramtype organization_name: str
+        :keyword partner_display_name: Display name of the verified partner.
+        :paramtype partner_display_name: str
+        :keyword partner_topic_details: Details of the partner topic scenario.
+        :paramtype partner_topic_details: ~azure.mgmt.eventgrid.models.PartnerDetails
+        :keyword provisioning_state: Provisioning state of the verified partner. Possible values
+         include: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
+        :paramtype provisioning_state: str or
+         ~azure.mgmt.eventgrid.models.VerifiedPartnerProvisioningState
+        """
+        super(VerifiedPartner, self).__init__(**kwargs)
+        self.system_data = None
+        self.partner_registration_immutable_id = partner_registration_immutable_id
+        self.organization_name = organization_name
+        self.partner_display_name = partner_display_name
+        self.partner_topic_details = partner_topic_details
+        self.provisioning_state = provisioning_state
+
+
+class VerifiedPartnersListResult(msrest.serialization.Model):
+    """Result of the List verified partners operation.
+
+    :ivar value: A collection of verified partners.
+    :vartype value: list[~azure.mgmt.eventgrid.models.VerifiedPartner]
+    :ivar next_link: A link for the next page of verified partners if any.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[VerifiedPartner]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["VerifiedPartner"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: A collection of verified partners.
+        :paramtype value: list[~azure.mgmt.eventgrid.models.VerifiedPartner]
+        :keyword next_link: A link for the next page of verified partners if any.
+        :paramtype next_link: str
+        """
+        super(VerifiedPartnersListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class WebHookEventSubscriptionDestination(EventSubscriptionDestination):

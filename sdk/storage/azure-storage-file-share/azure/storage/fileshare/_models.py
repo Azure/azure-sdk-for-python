@@ -8,8 +8,10 @@
 
 from enum import Enum
 
+from azure.core import CaseInsensitiveEnumMeta
 from azure.core.paging import PageIterator
 from azure.core.exceptions import HttpResponseError
+
 from ._parser import _parse_datetime_from_str
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
@@ -740,7 +742,7 @@ class FileProperties(DictMixin):
         return props
 
 
-class ShareProtocols(str, Enum):
+class ShareProtocols(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enabled protocols on the share"""
     SMB = "SMB"
     NFS = "NFS"

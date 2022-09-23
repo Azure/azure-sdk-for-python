@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._operations import Operations
-from ._resource_links_operations import ResourceLinksOperations
+from ._operations import ResourceLinksOperations
 
 __all__ = [
     'Operations',

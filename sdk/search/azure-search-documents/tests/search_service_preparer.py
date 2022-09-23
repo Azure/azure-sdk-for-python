@@ -56,6 +56,10 @@ def _clean_up_indexes(endpoint, api_key):
     for map in client.get_synonym_maps():
         client.delete_synonym_map(map.name)
 
+    #wipe out any existing aliases
+    for alias in client.list_aliases():
+        client.delete_alias(alias)
+
     # wipe any existing indexes
     for index in client.list_indexes():
         client.delete_index(index)

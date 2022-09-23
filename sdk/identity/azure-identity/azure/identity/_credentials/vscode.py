@@ -12,6 +12,7 @@ from .._constants import AzureAuthorityHosts, AZURE_VSCODE_CLIENT_ID, Environmen
 from .._internal import normalize_authority, validate_tenant_id
 from .._internal.aad_client import AadClient
 from .._internal.get_token_mixin import GetTokenMixin
+from .._internal.decorators import log_get_token
 
 if sys.platform.startswith("win"):
     from .._internal.win_vscode_adapter import get_refresh_token, get_user_settings
@@ -22,7 +23,7 @@ else:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, Optional
+    from typing import Any, Dict, Optional, List
     from azure.core.credentials import AccessToken
     from .._internal.aad_client import AadClientBase
 
@@ -113,13 +114,16 @@ class _VSCodeCredentialBase(ABC):
 class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
     """Authenticates as the Azure user signed in to Visual Studio Code.
 
-    :keyword str authority: authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com".
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com".
         This argument is required for a custom cloud and usually unnecessary otherwise. Defaults to the authority
         matching the "Azure: Cloud" setting in VS Code's user settings or, when that setting has no value, the
         authority for Azure Public Cloud.
     :keyword str tenant_id: ID of the tenant the credential should authenticate in. Defaults to the "Azure: Tenant"
         setting in VS Code's user settings or, when that setting has no value, the "organizations" tenant, which
         supports only Azure Active Directory work or school accounts.
+    :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
+        for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
+        acquire tokens for any tenant the application can access.
     """
 
     def __enter__(self):
@@ -136,6 +140,7 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
         """Close the credential's transport session."""
         self.__exit__()
 
+    @log_get_token("VSCodeCredential")
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
@@ -148,7 +153,11 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
           Studio Code
         """
         if self._unavailable_reason:
-            raise CredentialUnavailableError(message=self._unavailable_reason)
+            error_message = self._unavailable_reason \
+                            + '\n' \
+                              "Visit https://aka.ms/azsdk/python/identity/vscodecredential/troubleshoot" \
+                              " to troubleshoot this issue."
+            raise CredentialUnavailableError(message=error_message)
         return super(VisualStudioCodeCredential, self).get_token(*scopes, **kwargs)
 
     def _acquire_token_silently(self, *scopes, **kwargs):

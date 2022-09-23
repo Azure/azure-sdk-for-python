@@ -5,9 +5,7 @@ import glob
 from lxml import etree
 import lxml.html
 import subprocess as sp
-from azure.storage.blob import BlobClient
-from pathlib import Path
-from typing import List
+from typing import List, Dict
 from github import Github
 from github.Repository import Repository
 import time
@@ -16,9 +14,10 @@ from pathlib import Path
 
 from util import add_certificate
 
-SERVICE_TEST_PATH = {}
 MAIN_REPO_SWAGGER = 'https://github.com/Azure/azure-rest-api-specs/tree/main'
 PR_URL = 'https://github.com/Azure/azure-rest-api-specs/pull/'
+FAILED_RESULT = []
+SKIP_TEXT = '-, -, -, -\n'
 
 def my_print(cmd):
     print('== ' + cmd + ' ==\n')
@@ -30,6 +29,11 @@ def print_check(cmd, path=''):
         sp.check_output(cmd, shell=True, cwd=path)
     else:
         sp.check_call(cmd, shell=True)
+
+
+def print_call(cmd):
+    my_print(cmd)
+    sp.call(cmd, shell=True)
 
 
 def version_sort(versions: List[str]) -> List[str]:
@@ -57,16 +61,17 @@ class PyPIClient:
         self.cli_version = cli_version
         self.bot_warning = ''
         self.multi_api = multi_api
+        self.package_size = ''  # Byte
 
     def get_package_name(self):
         return self._package_name
 
-    def project_html(self):
+    def project_html(self, folder: str):
         self.pypi_link = "{host}/pypi/{project_name}".format(
             host=self._host,
             project_name=self._package_name
         )
-        response = self._session.get(self.pypi_link + "/#history")
+        response = self._session.get(self.pypi_link + folder)
 
         return response
 
@@ -87,6 +92,16 @@ class PyPIClient:
 
         return strip_info
 
+    def get_latest_package_size(self):
+        response = self.project_html("/json")
+        try:
+            response.raise_for_status()
+            result = response.json()
+            version = self.track2_latest_version if self.track2_latest_version != 'NA' else self.track1_latest_version
+            self.package_size = result['releases'][version][0]['size']
+        except:
+            self.package_size = 'failed'
+
     def get_release_dict(self, response):
         version_list = self.get_release_info(response, xpath='//p[@class="release__version"]/text()', type='version')
         self.version_handler(version_list)
@@ -95,14 +110,23 @@ class PyPIClient:
         self.version_date_dict = dict(zip(version_list, data_list))
         self.version_date_dict['NA'] = 'NA'
 
-    def write_to_list(self):
-        response = self.project_html()
+        self.get_latest_package_size()
+
+    def output_package_size(self) -> str:
+        if isinstance(self.package_size, int):
+            return '%.3f' % float(self.package_size / 1024 / 1024)
+        else:
+            return self.package_size
+
+    def write_to_list(self, sdk_folder: str) -> str:
+        response = self.project_html("/#history")
         if 199 < response.status_code < 400:
             self.get_release_dict(response)
             self.bot_analysis()
-            return '{package_name},{pypi_link},{track1_latest_version},{track1_latest_release_date},' \
+            return '{sdk_folder}/{package_name},{pypi_link},{track1_latest_version},{track1_latest_release_date},' \
                    '{track1_ga_version},{track2_latest_version},{track2_latest_release_date},{track2_ga_version},' \
-                   '{cli_version},{track_config},{bot},{readme_link},{multiapi},'.format(
+                   '{cli_version},{track_config},{bot},{readme_link},{multiapi},{whl_size},'.format(
+                        sdk_folder=sdk_folder.split('/')[0],
                         package_name=self._package_name,
                         pypi_link=self.pypi_link,
                         track1_latest_version=self.track1_latest_version,
@@ -115,10 +139,11 @@ class PyPIClient:
                         track_config=self.track_config,
                         bot=self.bot_warning,
                         readme_link=self.rm_link,
-                        multiapi=self.multi_api)
+                        multiapi=self.multi_api,
+                        whl_size=self.output_package_size())
         else:
             self.pypi_link = 'NA'
-        return
+        return ''
 
     def find_track1_ga_version(self, versions: List[str]) -> None:
         if '1.0.0' in versions:
@@ -184,32 +209,32 @@ class PyPIClient:
             self.bot_warning += 'Need to add track2 config.'
 
 
-def sdk_info_from_pypi(sdk_info, cli_dependency):
+def sdk_info_from_pypi(sdk_info: List[Dict[str, str]], cli_dependency):
     all_sdk_status = []
     add_certificate(str(Path('../venv-sdk/lib/python3.8/site-packages/certifi/cacert.pem')))
     for package in sdk_info:
-        if ',' in package:
-            package = package.split(',')
-            sdk_name = package[0].strip()
-            if sdk_name in cli_dependency.keys():
-                cli_version = cli_dependency[sdk_name]
-            else:
-                cli_version = 'NA'
-            track_config = package[1].strip()
-            readme_link = package[2].strip()
-            rm_link = package[3].strip()
-            multi_api = package[4].strip()
-            pypi_ins = PyPIClient(package_name=sdk_name, track_config=track_config,
-                                  readme_link=readme_link, rm_link=rm_link, cli_version=cli_version, multi_api=multi_api)
-            text_to_write = pypi_ins.write_to_list()
-            if pypi_ins.pypi_link != 'NA':
-                if sdk_name == 'azure-mgmt-resource':
-                    test_result = run_playback_test('resources')
-                else:
-                    service_name = [k for k, v in SERVICE_TEST_PATH.items() if sdk_name in v][0]
-                    test_result = run_playback_test(service_name)
-                text_to_write += test_result
-                all_sdk_status.append(text_to_write)
+        sdk_name = package['package_name']
+        if sdk_name in cli_dependency.keys():
+            cli_version = cli_dependency[sdk_name]
+        else:
+            cli_version = 'NA'
+        track_config = package['track_config']
+        readme_link = package['readme_python_path']
+        rm_link = package['readme_html']
+        multi_api = package['multi_api']
+        pypi_ins = PyPIClient(package_name=sdk_name, track_config=track_config,
+                              readme_link=readme_link, rm_link=rm_link, cli_version=cli_version, multi_api=multi_api)
+        sdk_folder = package['sdk_folder']
+        text_to_write = pypi_ins.write_to_list(sdk_folder)
+        service_name = package['service_name']
+        if pypi_ins.pypi_link != 'NA':
+            test_result = SKIP_TEXT
+            try:
+                test_result = run_playback_test(service_name, sdk_folder)
+            except:
+                print(f'[Error] fail to play back test recordings: {sdk_name}')
+            text_to_write += test_result
+            all_sdk_status.append(text_to_write)
 
     my_print(f'total pypi package kinds: {len(all_sdk_status)}')
     return all_sdk_status
@@ -235,12 +260,12 @@ def get_test_result(txt_path):
     return f'{coverage}, {passed}, {failed}, {skipped}\n'
 
 
-def run_playback_test(service_name):
+def run_playback_test(service_name: str, sdk_folder: str):
     if os.getenv('SKIP_COVERAGE') in ('true', 'yes'):
-        return '-, -, -, -\n'
+        return SKIP_TEXT
 
     # eg: coverage_path='$(pwd)/sdk-repo/sdk/containerregistry/azure-mgmt-containerregistry/azure/mgmt/containerregistry/'
-    coverage_path = ''.join([os.getenv('SDK_REPO'), '/sdk/', SERVICE_TEST_PATH[service_name]])
+    coverage_path = ''.join([os.getenv('SDK_REPO'), '/sdk/', sdk_folder])
     service_path = coverage_path.split('/azure/mgmt')[0]
     test_path = service_path + '/tests'
     if os.path.exists(test_path):
@@ -266,12 +291,12 @@ def run_playback_test(service_name):
         if os.path.exists(service_path+'/result.txt'):
             return get_test_result(service_path+'/result.txt')
 
-    return '-, -, -, -\n'
+    return SKIP_TEXT
 
 
 def write_to_csv(sdk_status_list, csv_name):
     with open(csv_name, 'w') as file_out:
-        file_out.write('package name,'
+        file_out.write('foler/package name,'
                        'pypi link,'
                        'latest track1 version,'
                        'latest track1 release date,'
@@ -284,6 +309,7 @@ def write_to_csv(sdk_status_list, csv_name):
                        'bot advice,'
                        'readme link,'
                        'multi api,'
+                       'whl size(MB),'
                        'test coverage,'
                        'passed,'
                        'failed,'
@@ -330,7 +356,16 @@ def read_file(file_name):
     return content
 
 
-def sdk_info_from_swagger():
+def find_test_path(line: str) -> str:
+    line = line.strip('\n') + '\n'
+    try:
+        return re.findall('output-folder: \$\(python-sdks-folder\)/(.*?)\n', line)[0]
+    except:
+        FAILED_RESULT.append('[Fail to find sdk path] ' + line)
+        return ''
+
+
+def sdk_info_from_swagger() -> List[Dict[str, str]]:
     sdk_name_re = re.compile(r'azure-mgmt-[a-z]+-*([a-z])+')
     sdk_folder_re = re.compile('output-folder: \$\(python-sdks-folder\)/')
     resource_manager = []
@@ -339,7 +374,7 @@ def sdk_info_from_swagger():
     readme_folders = glob.glob(target_file_pattern)
     my_print(f'total readme folders: {len(readme_folders)}')
     for folder in readme_folders:
-        sdk_folder_path = False
+        sdk_folder = ''
         multi_api = ''
         linux_folder = Path(folder).as_posix()
         service_name = re.findall(r'specification/(.*?)/resource-manager/', linux_folder)[0]
@@ -355,21 +390,19 @@ def sdk_info_from_swagger():
                 track_config += 1
             if readme_python == 'NA' and sdk_name_re.search(line) is not None and package_name == '':
                 package_name = sdk_name_re.search(line).group()
-            if sdk_folder_re.search(line) and sdk_folder_path == False:
-                SERVICE_TEST_PATH[service_name] = re.findall('output-folder: \$\(python-sdks-folder\)/(.*?)\n', line)[0]
-                sdk_folder_path = True
+            if sdk_folder_re.search(line) and not sdk_folder:
+                sdk_folder = find_test_path(line)
 
         if readme_python != 'NA':
             readme_python_text = read_file(readme_python)
             for text in readme_python_text:
                 if sdk_name_re.search(text) is not None:
                     package_name = sdk_name_re.search(text).group()
-                if sdk_folder_re.search(text) and sdk_folder_path == False:
-                    SERVICE_TEST_PATH[service_name] = re.findall('output-folder: \$\(python-sdks-folder\)/(.*?)\n', text)[0]
-                    sdk_folder_path = True
+                if sdk_folder_re.search(text) and not sdk_folder:
+                    sdk_folder = find_test_path(text)
                 if 'batch:' in text and multi_api == '':
                     multi_api = 'fake'
-                    print(f'*********{service_name} is fake 1111')
+                    print(f'*********{service_name} is fake ')
                 if 'multiapiscript: true' in text:
                     multi_api = 'True'
 
@@ -378,11 +411,15 @@ def sdk_info_from_swagger():
         readme_html = folder.replace(SWAGGER_FOLDER, MAIN_REPO_SWAGGER)
         readme_html = Path(readme_html).as_posix()
         if package_name != '':
-            resource_manager.append('{},{},{},{},{}\n'.format(package_name,
-                                                              track_config,
-                                                              readme_python,
-                                                              readme_html,
-                                                              multi_api))
+            resource_manager.append({
+                'package_name': package_name.strip(),
+                'track_config': track_config,
+                'readme_python_path': readme_python.strip(),
+                'readme_html': readme_html.strip(),
+                'multi_api': multi_api.strip(),
+                'sdk_folder': sdk_folder.strip(),  # eg: resources/azure-mgmt-resource/azure/mgmt/resource
+                'service_name': service_name,
+            })
         my_print(f'{folder} : {package_name}')
 
     my_print(f'total package kinds: {len(resource_manager)}')
@@ -391,27 +428,9 @@ def sdk_info_from_swagger():
 
 
 def commit_to_github():
-    print_check('git add .')
-    print_check('git commit -m \"update excel\"')
-    print_check('git push -f origin HEAD')
-
-
-def count_sdk_status():
-    cli_dependency = get_cli_dependency()
-    sdk_info = sdk_info_from_swagger()
-    all_sdk_status = sdk_info_from_pypi(sdk_info, cli_dependency)
-
-    out_file = 'release_sdk_status.csv'
-    write_to_csv(all_sdk_status, out_file)
-    commit_to_github()
-
-
-def get_all_readme_html() -> List[str]:
-    swagger_folder = os.getenv('SWAGGER_REPO')
-    readme_folders = glob.glob(f'{swagger_folder}/specification/*/resource-manager')
-    my_print(f'total readme folders: {len(readme_folders)}')
-    service_name = [Path(item).parts[-2] for item in readme_folders]
-    return [f'{MAIN_REPO_SWAGGER}/specification/{item}/resource-manager' for item in service_name]
+    print_call('git add .')
+    print_call('git commit -m \"update excel\"')
+    print_call('git push -f origin HEAD')
 
 
 def get_latest_pr_from_readme(rest_repo: Repository, service_html: str):
@@ -432,35 +451,20 @@ def get_latest_pr_from_readme(rest_repo: Repository, service_html: str):
     return latest_pr_number_int[-1]
 
 
-def trigger_pipeline(readme_html: List[str]) -> None:
-    g = Github(os.getenv('TOKEN'))  # please fill user_token
-    rest_repo = g.get_repo('Azure/azure-rest-api-specs')
-    record = set()
-    for item in readme_html:
-        num = get_latest_pr_from_readme(rest_repo, item)
-        pr = rest_repo.get_pull(num)
-        # TODO: skip too old PR
-
-        # avoid duplicated trigger
-        if num not in record:
-            pr.create_issue_comment(body='/azp run')
-            record.add(num)
-            time.sleep(300)
-            my_print(f'get latest PR "{PR_URL}{num}" from {item} and comment "/azp run" successfully')
-        else:
-            my_print(f'get latest PR "{PR_URL}{num}" from {item} and but it is already triggered')
-
-
-def trigger_swagger_pipeline() -> None:
-    readme_html_all = get_all_readme_html()
-    trigger_pipeline(readme_html_all)
+def log_failed():
+    print('\n'.join(FAILED_RESULT))
 
 
 def main():
-    if os.environ.get('AZP_RUN') in ('yes', 'true'):
-        trigger_swagger_pipeline()
-    else:
-        count_sdk_status()
+    cli_dependency = get_cli_dependency()
+    sdk_info = sdk_info_from_swagger()
+    all_sdk_status = sdk_info_from_pypi(sdk_info, cli_dependency)
+
+    out_file = 'release_sdk_status.csv'
+    write_to_csv(all_sdk_status, out_file)
+    commit_to_github()
+
+    log_failed()
 
 
 if __name__ == '__main__':

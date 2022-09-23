@@ -6,7 +6,7 @@
 
 import pytest
 import functools
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
+from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer import FormTrainingClient, CustomFormModel
 from testcase import FormRecognizerTest
@@ -23,7 +23,6 @@ class TestTraining(FormRecognizerTest):
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
     def test_compose_model_v21(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
-        set_bodiless_matcher()
         
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True)
         model_1 = poller.result()
@@ -43,7 +42,6 @@ class TestTraining(FormRecognizerTest):
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
     def test_compose_model_invalid_unlabeled_models_v21(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
-        set_bodiless_matcher()
         
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         model_1 = poller.result()

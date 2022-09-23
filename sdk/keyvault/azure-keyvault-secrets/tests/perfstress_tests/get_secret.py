@@ -10,7 +10,6 @@ from azure.keyvault.secrets.aio import SecretClient as AsyncSecretClient
 
 
 class GetSecretTest(PerfStressTest):
-
     def __init__(self, arguments):
         super().__init__(arguments)
 

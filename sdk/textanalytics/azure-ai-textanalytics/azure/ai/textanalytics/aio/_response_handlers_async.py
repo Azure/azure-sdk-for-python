@@ -12,12 +12,17 @@ from .._response_handlers import healthcare_result, get_iter_items
 
 
 async def healthcare_extract_page_data_async(
-    doc_id_order, obj, response_headers, health_job_state
+    doc_id_order, obj, health_job_state
 ):  # pylint: disable=unused-argument
     return (
         health_job_state.next_link,
         healthcare_result(
-            doc_id_order, health_job_state.results, response_headers, lro=True
+            doc_id_order,
+            health_job_state.results
+            if hasattr(health_job_state, "results")
+            else health_job_state.tasks.items[0].results,
+            {},
+            lro=True
         ),
     )
 
@@ -39,6 +44,8 @@ async def lro_get_next_page_async(
     query_params = dict(parse_qsl(parsed_url.query.replace("$", "")))
     if "showStats" in query_params:
         query_params.pop("showStats")
+    if "api-version" in query_params:  # language api compat
+        query_params.pop("api-version")
     query_params["show_stats"] = show_stats
 
     return await lro_status_callback(job_id, **query_params)
@@ -47,26 +54,25 @@ async def lro_get_next_page_async(
 def healthcare_paged_result(
     doc_id_order,
     health_status_callback,
-    response,
+    _,
     obj,
-    response_headers,
     show_stats=False,
-):  # pylint: disable=unused-argument
+):
     return AsyncItemPaged(
         functools.partial(
             lro_get_next_page_async, health_status_callback, obj, show_stats=show_stats
         ),
         functools.partial(
-            healthcare_extract_page_data_async, doc_id_order, obj, response_headers
+            healthcare_extract_page_data_async, doc_id_order, obj
         ),
     )
 
 
 async def analyze_extract_page_data_async(
-    doc_id_order, task_order, response_headers, analyze_job_state
+    doc_id_order, task_order, bespoke, analyze_job_state
 ):
     iter_items = get_iter_items(
-        doc_id_order, task_order, response_headers, analyze_job_state
+        doc_id_order, task_order, bespoke, analyze_job_state
     )
     return analyze_job_state.next_link, AsyncList(iter_items)
 
@@ -75,14 +81,14 @@ def analyze_paged_result(
     doc_id_order,
     task_order,
     analyze_status_callback,
-    response,  # pylint: disable=unused-argument
+    _,
     obj,
-    response_headers,
-    show_stats=False,  # pylint: disable=unused-argument
+    show_stats=False,
+    bespoke=False
 ):
     return AsyncItemPaged(
-        functools.partial(lro_get_next_page_async, analyze_status_callback, obj),
+        functools.partial(lro_get_next_page_async, analyze_status_callback, obj, show_stats=show_stats),
         functools.partial(
-            analyze_extract_page_data_async, doc_id_order, task_order, response_headers
+            analyze_extract_page_data_async, doc_id_order, task_order, bespoke
         ),
     )

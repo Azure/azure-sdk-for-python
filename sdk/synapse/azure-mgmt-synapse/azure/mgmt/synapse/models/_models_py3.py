@@ -2335,6 +2335,112 @@ class DataWarehouseUserActivities(ProxyResource):
         self.active_queries_count = None
 
 
+class DedicatedSQLminimalTlsSettings(ProxyResource):
+    """Dedicated Sql Minimal Tls Settings Info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar minimal_tls_version: The minimal tls version of the sql server.
+    :vartype minimal_tls_version: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        minimal_tls_version: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword minimal_tls_version: The minimal tls version of the sql server.
+        :paramtype minimal_tls_version: str
+        """
+        super(DedicatedSQLminimalTlsSettings, self).__init__(**kwargs)
+        self.location = None
+        self.minimal_tls_version = minimal_tls_version
+
+
+class DedicatedSQLminimalTlsSettingsListResult(msrest.serialization.Model):
+    """A list of the server's dedicated sql minimal tls settings.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.synapse.models.DedicatedSQLminimalTlsSettings]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DedicatedSQLminimalTlsSettings]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(DedicatedSQLminimalTlsSettingsListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class DedicatedSQLminimalTlsSettingsPatchInfo(msrest.serialization.Model):
+    """Dedicated SQL minimal tls settings patch info.
+
+    :ivar minimal_tls_version: minimal tls version.
+    :vartype minimal_tls_version: str
+    """
+
+    _attribute_map = {
+        'minimal_tls_version': {'key': 'minimalTlsVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        minimal_tls_version: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword minimal_tls_version: minimal tls version.
+        :paramtype minimal_tls_version: str
+        """
+        super(DedicatedSQLminimalTlsSettingsPatchInfo, self).__init__(**kwargs)
+        self.minimal_tls_version = minimal_tls_version
+
+
 class DynamicExecutorAllocation(msrest.serialization.Model):
     """Dynamic Executor Allocation Properties.
 

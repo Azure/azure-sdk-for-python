@@ -1,0 +1,73 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/translator/text/batch/v1.0/batches",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "549",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-translation-document/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "inputs": [
+          {
+            "source": {
+              "sourceUrl": "https://fakeendpoint.blob.core.windows.net/srceea1f6d9-9a99-4b37-b13d-2dfe6e0cfb4d?se=end\u0026sp=rl\u0026sv=2021-06-08\u0026sr=c\u0026sig=fake_token_value",
+              "filter": {
+                "prefix": "",
+                "suffix": ".txt"
+              },
+              "language": "en"
+            },
+            "targets": [
+              {
+                "targetUrl": "https://fakeendpoint.blob.core.windows.net/target6744f69d-3a26-45c0-900f-31d7054ade10?se=end\u0026sp=wl\u0026sv=2021-06-08\u0026sr=c\u0026sig=fake_token_value",
+                "category": "fake",
+                "language": "es",
+                "glossaries": [
+                  {
+                    "glossaryUrl": "https://glossaryfile.txt",
+                    "format": "txt"
+                  }
+                ]
+              }
+            ],
+            "storageType": "File"
+          }
+        ]
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "apim-request-id": "0766198f-6521-41c7-b565-e7e66fb615ae",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 01 Jun 2022 21:11:19 GMT",
+        "Set-Cookie": [
+          "ARRAffinity=52534756bc24481c0848ee2def3c54a057fd0e51707d9dcf782aa603bbaa9f24;Path=/;HttpOnly;Secure;Domain=mtbatch.nam.microsofttranslator.com",
+          "ARRAffinitySameSite=52534756bc24481c0848ee2def3c54a057fd0e51707d9dcf782aa603bbaa9f24;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "X-Powered-By": "ASP.NET",
+        "X-RequestId": "0766198f-6521-41c7-b565-e7e66fb615ae"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidRequest",
+          "message": "The category parameter is invalid.",
+          "target": "Category",
+          "innerError": {
+            "code": "InvalidCategory",
+            "message": "The category parameter is invalid."
+          }
+        }
+      }
+    }
+  ],
+  "Variables": {
+    "source_container_name": "srceea1f6d9-9a99-4b37-b13d-2dfe6e0cfb4d",
+    "target_container_name": "target6744f69d-3a26-45c0-900f-31d7054ade10"
+  }
+}

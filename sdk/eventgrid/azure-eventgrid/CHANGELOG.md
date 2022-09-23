@@ -1,8 +1,6 @@
 # Release History
 
-## 4.7.2 (Unreleased)
-
-- This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+## 4.9.1 (Unreleased)
 
 ### Features Added
 
@@ -11,6 +9,26 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.9.0 (2022-07-05)
+
+### Features Added
+
+- Added support for publishing events to a channel.
+
+## 4.9.0b1 (2022-04-07)
+
+### Features Added
+
+- Added support for publishing events to a channel.
+
+## 4.8.0 (2022-04-06)
+
+- This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+
+### Features Added
+
+- Added new enum values to `SystemEventNames` related to health care APIs.
 
 ## 4.7.1 (2021-11-18)
 

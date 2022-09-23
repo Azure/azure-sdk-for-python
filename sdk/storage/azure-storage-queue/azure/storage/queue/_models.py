@@ -32,7 +32,7 @@ class QueueAnalyticsLogging(GeneratedLogging):
     """
 
     def __init__(self, **kwargs):
-        self.version = kwargs.get('version', u'1.0')
+        self.version = kwargs.get('version', '1.0')
         self.delete = kwargs.get('delete', False)
         self.read = kwargs.get('read', False)
         self.write = kwargs.get('write', False)
@@ -65,7 +65,7 @@ class Metrics(GeneratedMetrics):
     """
 
     def __init__(self, **kwargs):
-        self.version = kwargs.get('version', u'1.0')
+        self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
         self.include_apis = kwargs.get('include_apis')
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
@@ -264,8 +264,10 @@ class MessagesPaged(PageIterator):
     :param callable command: Function to retrieve the next page of items.
     :param int results_per_page: The maximum number of messages to retrieve per
         call.
+    :param int max_messages: The maximum number of messages to retrieve from
+        the queue.
     """
-    def __init__(self, command, results_per_page=None, continuation_token=None):
+    def __init__(self, command, results_per_page=None, continuation_token=None, max_messages=None):
         if continuation_token is not None:
             raise ValueError("This operation does not support continuation token")
 
@@ -275,9 +277,16 @@ class MessagesPaged(PageIterator):
         )
         self._command = command
         self.results_per_page = results_per_page
+        self._max_messages = max_messages
 
     def _get_next_cb(self, continuation_token):
         try:
+            if self._max_messages is not None:
+                if self.results_per_page is None:
+                    self.results_per_page = 1
+                if self._max_messages < 1:
+                    raise StopIteration("End of paging")
+                self.results_per_page = min(self.results_per_page, self._max_messages)
             return self._command(number_of_messages=self.results_per_page)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -286,6 +295,8 @@ class MessagesPaged(PageIterator):
         # There is no concept of continuation token, so raising on my own condition
         if not messages:
             raise StopIteration("End of paging")
+        if self._max_messages is not None:
+            self._max_messages = self._max_messages - len(messages)
         return "TOKEN_IGNORED", [QueueMessage._from_generated(q) for q in messages]  # pylint: disable=protected-access
 
 

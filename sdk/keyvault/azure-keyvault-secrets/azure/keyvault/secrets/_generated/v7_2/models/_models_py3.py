@@ -18,12 +18,12 @@ class Attributes(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param enabled: Determines whether the object is enabled.
-    :type enabled: bool
-    :param not_before: Not before date in UTC.
-    :type not_before: ~datetime.datetime
-    :param expires: Expiry date in UTC.
-    :type expires: ~datetime.datetime
+    :ivar enabled: Determines whether the object is enabled.
+    :vartype enabled: bool
+    :ivar not_before: Not before date in UTC.
+    :vartype not_before: ~datetime.datetime
+    :ivar expires: Expiry date in UTC.
+    :vartype expires: ~datetime.datetime
     :ivar created: Creation time in UTC.
     :vartype created: ~datetime.datetime
     :ivar updated: Last updated time in UTC.
@@ -51,6 +51,14 @@ class Attributes(msrest.serialization.Model):
         expires: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: Determines whether the object is enabled.
+        :paramtype enabled: bool
+        :keyword not_before: Not before date in UTC.
+        :paramtype not_before: ~datetime.datetime
+        :keyword expires: Expiry date in UTC.
+        :paramtype expires: ~datetime.datetime
+        """
         super(Attributes, self).__init__(**kwargs)
         self.enabled = enabled
         self.not_before = not_before
@@ -80,6 +88,8 @@ class BackupSecretResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(BackupSecretResult, self).__init__(**kwargs)
         self.value = None
 
@@ -89,16 +99,16 @@ class SecretBundle(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The secret value.
-    :type value: str
-    :param id: The secret id.
-    :type id: str
-    :param content_type: The content type of the secret.
-    :type content_type: str
-    :param attributes: The secret management attributes.
-    :type attributes: ~azure.keyvault.v7_2.models.SecretAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar value: The secret value.
+    :vartype value: str
+    :ivar id: The secret id.
+    :vartype id: str
+    :ivar content_type: The content type of the secret.
+    :vartype content_type: str
+    :ivar attributes: The secret management attributes.
+    :vartype attributes: ~azure.keyvault.v7_2.models.SecretAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     :ivar kid: If this is a secret backing a KV certificate, then this field specifies the
      corresponding key backing the KV certificate.
     :vartype kid: str
@@ -132,6 +142,18 @@ class SecretBundle(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The secret value.
+        :paramtype value: str
+        :keyword id: The secret id.
+        :paramtype id: str
+        :keyword content_type: The content type of the secret.
+        :paramtype content_type: str
+        :keyword attributes: The secret management attributes.
+        :paramtype attributes: ~azure.keyvault.v7_2.models.SecretAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(SecretBundle, self).__init__(**kwargs)
         self.value = value
         self.id = id
@@ -147,25 +169,25 @@ class DeletedSecretBundle(SecretBundle):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The secret value.
-    :type value: str
-    :param id: The secret id.
-    :type id: str
-    :param content_type: The content type of the secret.
-    :type content_type: str
-    :param attributes: The secret management attributes.
-    :type attributes: ~azure.keyvault.v7_2.models.SecretAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar value: The secret value.
+    :vartype value: str
+    :ivar id: The secret id.
+    :vartype id: str
+    :ivar content_type: The content type of the secret.
+    :vartype content_type: str
+    :ivar attributes: The secret management attributes.
+    :vartype attributes: ~azure.keyvault.v7_2.models.SecretAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     :ivar kid: If this is a secret backing a KV certificate, then this field specifies the
      corresponding key backing the KV certificate.
     :vartype kid: str
     :ivar managed: True if the secret's lifetime is managed by key vault. If this is a secret
      backing a certificate, then managed will be true.
     :vartype managed: bool
-    :param recovery_id: The url of the recovery object, used to identify and recover the deleted
+    :ivar recovery_id: The url of the recovery object, used to identify and recover the deleted
      secret.
-    :type recovery_id: str
+    :vartype recovery_id: str
     :ivar scheduled_purge_date: The time when the secret is scheduled to be purged, in UTC.
     :vartype scheduled_purge_date: ~datetime.datetime
     :ivar deleted_date: The time when the secret was deleted, in UTC.
@@ -203,6 +225,21 @@ class DeletedSecretBundle(SecretBundle):
         recovery_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The secret value.
+        :paramtype value: str
+        :keyword id: The secret id.
+        :paramtype id: str
+        :keyword content_type: The content type of the secret.
+        :paramtype content_type: str
+        :keyword attributes: The secret management attributes.
+        :paramtype attributes: ~azure.keyvault.v7_2.models.SecretAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
+         secret.
+        :paramtype recovery_id: str
+        """
         super(DeletedSecretBundle, self).__init__(value=value, id=id, content_type=content_type, attributes=attributes, tags=tags, **kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
@@ -214,14 +251,14 @@ class SecretItem(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: Secret identifier.
-    :type id: str
-    :param attributes: The secret management attributes.
-    :type attributes: ~azure.keyvault.v7_2.models.SecretAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :param content_type: Type of the secret value such as a password.
-    :type content_type: str
+    :ivar id: Secret identifier.
+    :vartype id: str
+    :ivar attributes: The secret management attributes.
+    :vartype attributes: ~azure.keyvault.v7_2.models.SecretAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
+    :ivar content_type: Type of the secret value such as a password.
+    :vartype content_type: str
     :ivar managed: True if the secret's lifetime is managed by key vault. If this is a key backing
      a certificate, then managed will be true.
     :vartype managed: bool
@@ -248,6 +285,16 @@ class SecretItem(msrest.serialization.Model):
         content_type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Secret identifier.
+        :paramtype id: str
+        :keyword attributes: The secret management attributes.
+        :paramtype attributes: ~azure.keyvault.v7_2.models.SecretAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword content_type: Type of the secret value such as a password.
+        :paramtype content_type: str
+        """
         super(SecretItem, self).__init__(**kwargs)
         self.id = id
         self.attributes = attributes
@@ -261,20 +308,20 @@ class DeletedSecretItem(SecretItem):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: Secret identifier.
-    :type id: str
-    :param attributes: The secret management attributes.
-    :type attributes: ~azure.keyvault.v7_2.models.SecretAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :param content_type: Type of the secret value such as a password.
-    :type content_type: str
+    :ivar id: Secret identifier.
+    :vartype id: str
+    :ivar attributes: The secret management attributes.
+    :vartype attributes: ~azure.keyvault.v7_2.models.SecretAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
+    :ivar content_type: Type of the secret value such as a password.
+    :vartype content_type: str
     :ivar managed: True if the secret's lifetime is managed by key vault. If this is a key backing
      a certificate, then managed will be true.
     :vartype managed: bool
-    :param recovery_id: The url of the recovery object, used to identify and recover the deleted
+    :ivar recovery_id: The url of the recovery object, used to identify and recover the deleted
      secret.
-    :type recovery_id: str
+    :vartype recovery_id: str
     :ivar scheduled_purge_date: The time when the secret is scheduled to be purged, in UTC.
     :vartype scheduled_purge_date: ~datetime.datetime
     :ivar deleted_date: The time when the secret was deleted, in UTC.
@@ -308,6 +355,19 @@ class DeletedSecretItem(SecretItem):
         recovery_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Secret identifier.
+        :paramtype id: str
+        :keyword attributes: The secret management attributes.
+        :paramtype attributes: ~azure.keyvault.v7_2.models.SecretAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword content_type: Type of the secret value such as a password.
+        :paramtype content_type: str
+        :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
+         secret.
+        :paramtype recovery_id: str
+        """
         super(DeletedSecretItem, self).__init__(id=id, attributes=attributes, tags=tags, content_type=content_type, **kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
@@ -340,6 +400,8 @@ class DeletedSecretListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DeletedSecretListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -374,6 +436,8 @@ class Error(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Error, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -401,6 +465,8 @@ class KeyVaultError(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(KeyVaultError, self).__init__(**kwargs)
         self.error = None
 
@@ -410,12 +476,12 @@ class SecretAttributes(Attributes):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param enabled: Determines whether the object is enabled.
-    :type enabled: bool
-    :param not_before: Not before date in UTC.
-    :type not_before: ~datetime.datetime
-    :param expires: Expiry date in UTC.
-    :type expires: ~datetime.datetime
+    :ivar enabled: Determines whether the object is enabled.
+    :vartype enabled: bool
+    :ivar not_before: Not before date in UTC.
+    :vartype not_before: ~datetime.datetime
+    :ivar expires: Expiry date in UTC.
+    :vartype expires: ~datetime.datetime
     :ivar created: Creation time in UTC.
     :vartype created: ~datetime.datetime
     :ivar updated: Last updated time in UTC.
@@ -457,6 +523,14 @@ class SecretAttributes(Attributes):
         expires: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: Determines whether the object is enabled.
+        :paramtype enabled: bool
+        :keyword not_before: Not before date in UTC.
+        :paramtype not_before: ~datetime.datetime
+        :keyword expires: Expiry date in UTC.
+        :paramtype expires: ~datetime.datetime
+        """
         super(SecretAttributes, self).__init__(enabled=enabled, not_before=not_before, expires=expires, **kwargs)
         self.recoverable_days = None
         self.recovery_level = None
@@ -488,6 +562,8 @@ class SecretListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SecretListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -496,8 +572,8 @@ class SecretListResult(msrest.serialization.Model):
 class SecretProperties(msrest.serialization.Model):
     """Properties of the key backing a certificate.
 
-    :param content_type: The media type (MIME type).
-    :type content_type: str
+    :ivar content_type: The media type (MIME type).
+    :vartype content_type: str
     """
 
     _attribute_map = {
@@ -510,6 +586,10 @@ class SecretProperties(msrest.serialization.Model):
         content_type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword content_type: The media type (MIME type).
+        :paramtype content_type: str
+        """
         super(SecretProperties, self).__init__(**kwargs)
         self.content_type = content_type
 
@@ -519,8 +599,8 @@ class SecretRestoreParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param secret_bundle_backup: Required. The backup blob associated with a secret bundle.
-    :type secret_bundle_backup: bytes
+    :ivar secret_bundle_backup: Required. The backup blob associated with a secret bundle.
+    :vartype secret_bundle_backup: bytes
     """
 
     _validation = {
@@ -537,6 +617,10 @@ class SecretRestoreParameters(msrest.serialization.Model):
         secret_bundle_backup: bytes,
         **kwargs
     ):
+        """
+        :keyword secret_bundle_backup: Required. The backup blob associated with a secret bundle.
+        :paramtype secret_bundle_backup: bytes
+        """
         super(SecretRestoreParameters, self).__init__(**kwargs)
         self.secret_bundle_backup = secret_bundle_backup
 
@@ -546,14 +630,14 @@ class SecretSetParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The value of the secret.
-    :type value: str
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :param content_type: Type of the secret value such as a password.
-    :type content_type: str
-    :param secret_attributes: The secret management attributes.
-    :type secret_attributes: ~azure.keyvault.v7_2.models.SecretAttributes
+    :ivar value: Required. The value of the secret.
+    :vartype value: str
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
+    :ivar content_type: Type of the secret value such as a password.
+    :vartype content_type: str
+    :ivar secret_attributes: The secret management attributes.
+    :vartype secret_attributes: ~azure.keyvault.v7_2.models.SecretAttributes
     """
 
     _validation = {
@@ -576,6 +660,16 @@ class SecretSetParameters(msrest.serialization.Model):
         secret_attributes: Optional["SecretAttributes"] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. The value of the secret.
+        :paramtype value: str
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword content_type: Type of the secret value such as a password.
+        :paramtype content_type: str
+        :keyword secret_attributes: The secret management attributes.
+        :paramtype secret_attributes: ~azure.keyvault.v7_2.models.SecretAttributes
+        """
         super(SecretSetParameters, self).__init__(**kwargs)
         self.value = value
         self.tags = tags
@@ -586,12 +680,12 @@ class SecretSetParameters(msrest.serialization.Model):
 class SecretUpdateParameters(msrest.serialization.Model):
     """The secret update parameters.
 
-    :param content_type: Type of the secret value such as a password.
-    :type content_type: str
-    :param secret_attributes: The secret management attributes.
-    :type secret_attributes: ~azure.keyvault.v7_2.models.SecretAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar content_type: Type of the secret value such as a password.
+    :vartype content_type: str
+    :ivar secret_attributes: The secret management attributes.
+    :vartype secret_attributes: ~azure.keyvault.v7_2.models.SecretAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -608,6 +702,14 @@ class SecretUpdateParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword content_type: Type of the secret value such as a password.
+        :paramtype content_type: str
+        :keyword secret_attributes: The secret management attributes.
+        :paramtype secret_attributes: ~azure.keyvault.v7_2.models.SecretAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(SecretUpdateParameters, self).__init__(**kwargs)
         self.content_type = content_type
         self.secret_attributes = secret_attributes

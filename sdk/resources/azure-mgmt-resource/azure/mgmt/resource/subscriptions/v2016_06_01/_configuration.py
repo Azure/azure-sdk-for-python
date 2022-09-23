@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class SubscriptionClientConfiguration(Configuration):
+class SubscriptionClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for SubscriptionClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -27,6 +27,9 @@ class SubscriptionClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
+    :keyword api_version: Api Version. Default value is "2016-06-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -35,11 +38,13 @@ class SubscriptionClientConfiguration(Configuration):
         **kwargs: Any
     ) -> None:
         super(SubscriptionClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2016-06-01")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
 
         self.credential = credential
-        self.api_version = "2016-06-01"
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-resource/{}'.format(VERSION))
         self._configure(**kwargs)

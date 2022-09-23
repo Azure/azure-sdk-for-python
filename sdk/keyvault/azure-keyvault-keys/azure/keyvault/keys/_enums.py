@@ -21,9 +21,9 @@ class KeyCurveName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 class KeyExportEncryptionAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Supported algorithms for protecting exported key material"""
 
-    CKM_RSA_AES_KEY_WRAP = "CKM_RSA_AES_KEY_WRAP"
-    RSA_AES_KEY_WRAP_256 = "RSA_AES_KEY_WRAP_256"
-    RSA_AES_KEY_WRAP_384 = "RSA_AES_KEY_WRAP_384"
+    ckm_rsa_aes_key_wrap = "CKM_RSA_AES_KEY_WRAP"
+    rsa_aes_key_wrap_256 = "RSA_AES_KEY_WRAP_256"
+    rsa_aes_key_wrap_384 = "RSA_AES_KEY_WRAP_384"
 
 
 class KeyOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
@@ -42,8 +42,8 @@ class KeyOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 class KeyRotationPolicyAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The action that will be executed in a key rotation policy"""
 
-    ROTATE = "Rotate"  #: Rotate the key based on the key policy.
-    NOTIFY = "Notify"  #: Trigger Event Grid events.
+    rotate = "Rotate"  #: Rotate the key based on the key policy.
+    notify = "Notify"  #: Trigger Event Grid events.
 
 
 class KeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
@@ -51,7 +51,14 @@ class KeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     ec = "EC"  #: Elliptic Curve
     ec_hsm = "EC-HSM"  #: Elliptic Curve with a private key which is not exportable from the HSM
-    rsa = "RSA"
+    rsa = "RSA"  #: RSA (https://tools.ietf.org/html/rfc3447)
     rsa_hsm = "RSA-HSM"  #: RSA with a private key which is not exportable from the HSM
     oct = "oct"  #: Octet sequence (used to represent symmetric keys)
     oct_hsm = "oct-HSM"  #: Octet sequence with a private key which is not exportable from the HSM
+
+    @classmethod
+    def _missing_(cls, value):
+        for member in cls:
+            if member.value.lower() == value.lower():
+                return member
+        raise ValueError(f"{value} is not a valid KeyType")

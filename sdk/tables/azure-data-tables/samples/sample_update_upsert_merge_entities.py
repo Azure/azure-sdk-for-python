@@ -16,11 +16,13 @@ USAGE:
     python sample_update_upsert_merge_entities.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) TABLES_STORAGE_ENDPOINT_SUFFIX - the Table service account URL suffix
+    2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
+    3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from dotenv import find_dotenv, load_dotenv
 import os
 from uuid import uuid4
@@ -32,14 +34,13 @@ class TableEntitySamples(object):
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name, self.access_key, self.endpoint_suffix
         )
         self.table_name = "SampleUpdateUpsertMerge"
 
     def create_and_get_entities(self):
-        # Instantiate a table service client
+        # Instantiate a table client
         from azure.data.tables import TableClient
 
         with TableClient.from_connection_string(self.connection_string, table_name="mytable3") as table:
@@ -48,15 +49,15 @@ class TableEntitySamples(object):
             table.create_table()
 
             my_entity = {
-                u"PartitionKey": u"color",
-                u"RowKey": u"brand",
+                "PartitionKey": "color",
+                "RowKey": "brand",
                 "text": "Marker",
                 "color": "Purple",
                 "price": 4.99,
                 "last_updated": datetime.today(),
                 "product_id": uuid4(),
                 "inventory_count": 42,
-                "barcode": b"135aefg8oj0ld58"
+                "barcode": b"135aefg8oj0ld58" # cspell:disable-line
             }
             try:
                 # [START create_entity]
@@ -75,7 +76,7 @@ class TableEntitySamples(object):
                 table.delete_table()
 
     def list_all_entities(self):
-        # Instantiate a table service client
+        # Instantiate a table client
         from azure.data.tables import TableClient
 
         with TableClient.from_connection_string(self.connection_string, table_name="mytable4") as table:
@@ -84,8 +85,8 @@ class TableEntitySamples(object):
             table.create_table()
 
             entity = {
-                u"PartitionKey": u"color2",
-                u"RowKey": u"sharpie",
+                "PartitionKey": "color2",
+                "RowKey": "sharpie",
                 "text": "Marker",
                 "color": "Purple",
                 "price": 5.99,
@@ -93,8 +94,8 @@ class TableEntitySamples(object):
                 "product_id": uuid4(),
             }
             entity1 = {
-                u"PartitionKey": u"color2",
-                u"RowKey": u"crayola",
+                "PartitionKey": "color2",
+                "RowKey": "crayola",
                 "text": "Marker",
                 "color": "Red",
                 "price": 3.99,
@@ -106,20 +107,19 @@ class TableEntitySamples(object):
                 # Create entities
                 table.create_entity(entity=entity)
                 table.create_entity(entity=entity1)
-                # [START query_entities]
+                # [START list_entities]
                 # Query the entities in the table
                 entities = list(table.list_entities())
-
                 for i, entity in enumerate(entities):
                     print("Entity #{}: {}".format(entity, i))
-                # [END query_entities]
+                # [END list_entities]
 
             finally:
                 # Delete the table
                 table.delete_table()
 
     def update_entities(self):
-        # Instantiate a table service client
+        # Instantiate a table client
         from azure.data.tables import TableClient
         from azure.data.tables import UpdateMode
 
@@ -129,8 +129,8 @@ class TableEntitySamples(object):
             table.create_table()
 
             entity = {
-                u"PartitionKey": u"color2",
-                u"RowKey": u"sharpie",
+                "PartitionKey": "color2",
+                "RowKey": "sharpie",
                 "text": "Marker",
                 "color": "Purple",
                 "price": 5.99,
@@ -138,8 +138,8 @@ class TableEntitySamples(object):
                 "product_id": uuid4(),
             }
             entity1 = {
-                u"PartitionKey": u"color2",
-                u"RowKey": u"crayola",
+                "PartitionKey": "color2",
+                "RowKey": "crayola",
                 "text": "Marker",
                 "color": "Red",
                 "price": 3.99,

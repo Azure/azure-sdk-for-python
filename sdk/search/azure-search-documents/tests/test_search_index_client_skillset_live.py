@@ -34,13 +34,10 @@ class TestSearchSkillset(AzureRecordedTestCase):
         self._test_create_skillset(client)
         self._test_get_skillset(client)
         self._test_get_skillsets(client)
-        # TODO: Disabled due to service regression. See #22769
-        #self._test_create_or_update_skillset(client)
+        self._test_create_or_update_skillset(client)
         self._test_create_or_update_skillset_if_unchanged(client)
-        # TODO: Disabled due to service regression. See #22769
-        #self._test_create_or_update_skillset_inplace(client)
-        # TODO: Disabled due to service regression. See #22769
-        #self._test_delete_skillset_if_unchanged(client)
+        self._test_create_or_update_skillset_inplace(client)
+        self._test_delete_skillset_if_unchanged(client)
         self._test_delete_skillset(client)
 
     def _test_create_skillset_validation(self):
@@ -199,12 +196,11 @@ class TestSearchSkillset(AzureRecordedTestCase):
 
         skillset1 = SearchIndexerSkillset(name=name, skills=list([s]), description="desc1")
         ss = client.create_or_update_skillset(skillset1)
-        etag = ss.e_tag
+        
+        ss.e_tag = 'changed_etag'
 
-        updated = SearchIndexerSkillset(name=name, skills=[s], description="desc2", skillset=ss)
-        updated.e_tag = etag
         with pytest.raises(HttpResponseError):
-            client.create_or_update_skillset(updated, match_condition=MatchConditions.IfNotModified)
+            client.create_or_update_skillset(ss, match_condition=MatchConditions.IfNotModified)
 
     def _test_delete_skillset_if_unchanged(self, client):
         name = "test-ss-deleted-unchanged"

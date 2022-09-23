@@ -6,33 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class DigitalTwinsSku(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DigitalTwinsSku(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The name of the SKU.
     """
 
     F1 = "F1"
 
-class EndpointProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EndpointProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioning state.
     """
 
@@ -42,7 +27,7 @@ class EndpointProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class EndpointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EndpointType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of Digital Twins endpoint
     """
 
@@ -50,7 +35,7 @@ class EndpointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     EVENT_GRID = "EventGrid"
     SERVICE_BUS = "ServiceBus"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioning state.
     """
 
@@ -60,7 +45,7 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Reason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Message providing the reason why the given name is invalid.
     """
 

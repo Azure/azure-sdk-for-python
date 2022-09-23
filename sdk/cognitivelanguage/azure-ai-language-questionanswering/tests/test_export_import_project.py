@@ -3,46 +3,44 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import pytest
-
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
+from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
 from azure.core.credentials import AzureKeyCredential
 
-from testcase import (
-    QuestionAnsweringTest,
-    GlobalQuestionAnsweringAccountPreparer,
-    QnaAuthoringHelper
-)
+from helpers import QnaAuthoringHelper
+from testcase import QuestionAnsweringTestCase
 
-from azure.ai.language.questionanswering.projects import QuestionAnsweringProjectsClient
 
-class ExportAndImportTests(QuestionAnsweringTest):
+class TestExportAndImport(QuestionAnsweringTestCase):
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    def test_export_project(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+    def test_export_project(self, recorded_test, qna_creds):
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
-        QnaAuthoringHelper.create_test_project(client, project_name=project_name)
+        QnaAuthoringHelper.create_test_project(client, project_name=project_name, **self.kwargs_for_polling)
 
         # export project
         export_poller = client.begin_export(
             project_name=project_name,
-            format="json"
+            format="json",
+            **self.kwargs_for_polling
         )
         result = export_poller.result()
         assert result["status"] == "succeeded"
         assert result["resultUrl"] is not None
 
-
-    @GlobalQuestionAnsweringAccountPreparer()
-    def test_import_project(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+    def test_import_project(self, recorded_test, qna_creds):
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
-        export_url = QnaAuthoringHelper.create_test_project(client, project_name=project_name, get_export_url=True, delete_old_project=True)
+        export_url = QnaAuthoringHelper.create_test_project(
+            client,
+            project_name=project_name,
+            get_export_url=True,
+            delete_old_project=True,
+            **self.kwargs_for_polling
+        )
 
         # import project
         project = {
@@ -58,9 +56,11 @@ class ExportAndImportTests(QuestionAnsweringTest):
         }
         import_poller = client.begin_import_assets(
             project_name=project_name,
-            options=project
+            options=project,
+            **self.kwargs_for_polling
         )
-        import_poller.result()
+        job_state = import_poller.result()
+        assert job_state["jobId"]
 
         # assert
         project_found = False

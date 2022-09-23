@@ -1,16 +1,29 @@
 # Release History
 
-## 1.1.0 (Unreleased)
+## 1.2.0 (Unreleased)
+
+This version and all future versions will require Python 3.7+, Python 3.6 is no longer supported.
+
+### Features Added
+
+- `get_schema_by_version` method has been added to the sync and async `SchemaRegistryClient`.
+- `version` has been added to `SchemaProperties`.
+
+### Other Changes
+
+- Updated azure-core minimum dependency to 1.24.0.
+
+## 1.1.0 (2022-05-10)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- `group_name` and `name` have been added as instance variables to `SchemaProperties`.
 
 ### Other Changes
+
+- Updated azure-core minimum dependency to 1.23.0.
 
 ## 1.0.0 (2021-11-10)
 

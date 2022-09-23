@@ -6,14 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._purview_catalog_client import PurviewCatalogClient
+from ._client import PurviewCatalogClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['PurviewCatalogClient']
 
 try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
+    from ._patch import __all__ as _patch_all
+    from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 except ImportError:
-    pass
+    _patch_all = []
+from ._patch import patch_sdk as _patch_sdk
+__all__ = ['PurviewCatalogClient']
+__all__.extend([p for p in _patch_all if p not in __all__])
+
+_patch_sdk()

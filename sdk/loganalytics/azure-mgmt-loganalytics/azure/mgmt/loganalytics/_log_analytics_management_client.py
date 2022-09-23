@@ -7,31 +7,28 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import LogAnalyticsManagementClientConfiguration
-from .operations import AvailableServiceTiersOperations, ClustersOperations, DataExportsOperations, DataSourcesOperations, DeletedWorkspacesOperations, GatewaysOperations, IntelligencePacksOperations, LinkedServicesOperations, LinkedStorageAccountsOperations, ManagementGroupsOperations, OperationStatusesOperations, Operations, SavedSearchesOperations, SchemaOperations, SharedKeysOperations, StorageInsightConfigsOperations, TablesOperations, UsagesOperations, WorkspacePurgeOperations, WorkspacesOperations
+from .operations import AvailableServiceTiersOperations, ClustersOperations, DataExportsOperations, DataSourcesOperations, DeletedWorkspacesOperations, GatewaysOperations, IntelligencePacksOperations, LinkedServicesOperations, LinkedStorageAccountsOperations, ManagementGroupsOperations, OperationStatusesOperations, Operations, QueriesOperations, QueryPacksOperations, SavedSearchesOperations, SchemaOperations, SharedKeysOperations, StorageInsightConfigsOperations, TablesOperations, UsagesOperations, WorkspacePurgeOperations, WorkspacesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class LogAnalyticsManagementClient:
+class LogAnalyticsManagementClient:    # pylint: disable=too-many-instance-attributes
     """Operational Insights Client.
 
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.loganalytics.operations.Operations
-    :ivar workspaces: WorkspacesOperations operations
-    :vartype workspaces: azure.mgmt.loganalytics.operations.WorkspacesOperations
-    :ivar deleted_workspaces: DeletedWorkspacesOperations operations
-    :vartype deleted_workspaces: azure.mgmt.loganalytics.operations.DeletedWorkspacesOperations
-    :ivar tables: TablesOperations operations
-    :vartype tables: azure.mgmt.loganalytics.operations.TablesOperations
+    :ivar query_packs: QueryPacksOperations operations
+    :vartype query_packs: azure.mgmt.loganalytics.operations.QueryPacksOperations
+    :ivar queries: QueriesOperations operations
+    :vartype queries: azure.mgmt.loganalytics.operations.QueriesOperations
     :ivar data_exports: DataExportsOperations operations
     :vartype data_exports: azure.mgmt.loganalytics.operations.DataExportsOperations
     :ivar data_sources: DataSourcesOperations operations
@@ -67,11 +64,19 @@ class LogAnalyticsManagementClient:
     :vartype workspace_purge: azure.mgmt.loganalytics.operations.WorkspacePurgeOperations
     :ivar clusters: ClustersOperations operations
     :vartype clusters: azure.mgmt.loganalytics.operations.ClustersOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.loganalytics.operations.Operations
+    :ivar workspaces: WorkspacesOperations operations
+    :vartype workspaces: azure.mgmt.loganalytics.operations.WorkspacesOperations
+    :ivar deleted_workspaces: DeletedWorkspacesOperations operations
+    :vartype deleted_workspaces: azure.mgmt.loganalytics.operations.DeletedWorkspacesOperations
+    :ivar tables: TablesOperations operations
+    :vartype tables: azure.mgmt.loganalytics.operations.TablesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -91,31 +96,77 @@ class LogAnalyticsManagementClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.workspaces = WorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.deleted_workspaces = DeletedWorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.tables = TablesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.data_exports = DataExportsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.data_sources = DataSourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.intelligence_packs = IntelligencePacksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.linked_services = LinkedServicesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.linked_storage_accounts = LinkedStorageAccountsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.management_groups = ManagementGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operation_statuses = OperationStatusesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.shared_keys = SharedKeysOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.storage_insight_configs = StorageInsightConfigsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.saved_searches = SavedSearchesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.available_service_tiers = AvailableServiceTiersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gateways = GatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.schema = SchemaOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workspace_purge = WorkspacePurgeOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.query_packs = QueryPacksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.queries = QueriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.data_exports = DataExportsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.data_sources = DataSourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.intelligence_packs = IntelligencePacksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.linked_services = LinkedServicesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.linked_storage_accounts = LinkedStorageAccountsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.management_groups = ManagementGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operation_statuses = OperationStatusesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.shared_keys = SharedKeysOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.usages = UsagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.storage_insight_configs = StorageInsightConfigsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.saved_searches = SavedSearchesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.available_service_tiers = AvailableServiceTiersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gateways = GatewaysOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.schema = SchemaOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workspace_purge = WorkspacePurgeOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.clusters = ClustersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workspaces = WorkspacesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.deleted_workspaces = DeletedWorkspacesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.tables = TablesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(
         self,
-        request,  # type: HttpRequest
+        request: HttpRequest,
         **kwargs: Any
     ) -> HttpResponse:
         """Runs the network request through the client's chained policies.

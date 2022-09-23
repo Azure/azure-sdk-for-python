@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class TemplateSpecsClientConfiguration(Configuration):
+class TemplateSpecsClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for TemplateSpecsClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -29,6 +29,9 @@ class TemplateSpecsClientConfiguration(Configuration):
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription Id which forms part of the URI for every service call.
     :type subscription_id: str
+    :keyword api_version: Api Version. Default value is "2021-05-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -38,6 +41,8 @@ class TemplateSpecsClientConfiguration(Configuration):
         **kwargs: Any
     ) -> None:
         super(TemplateSpecsClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2021-05-01")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
@@ -45,7 +50,7 @@ class TemplateSpecsClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2021-05-01"
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-resource/{}'.format(VERSION))
         self._configure(**kwargs)

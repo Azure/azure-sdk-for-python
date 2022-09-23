@@ -6,76 +6,45 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import CloudErrorBody
-    from ._models_py3 import ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties
-    from ._models_py3 import ImageTemplate
-    from ._models_py3 import ImageTemplateCustomizer
-    from ._models_py3 import ImageTemplateDistributor
-    from ._models_py3 import ImageTemplateFileCustomizer
-    from ._models_py3 import ImageTemplateIdentity
-    from ._models_py3 import ImageTemplateLastRunStatus
-    from ._models_py3 import ImageTemplateListResult
-    from ._models_py3 import ImageTemplateManagedImageDistributor
-    from ._models_py3 import ImageTemplateManagedImageSource
-    from ._models_py3 import ImageTemplatePlatformImageSource
-    from ._models_py3 import ImageTemplatePowerShellCustomizer
-    from ._models_py3 import ImageTemplateRestartCustomizer
-    from ._models_py3 import ImageTemplateSharedImageDistributor
-    from ._models_py3 import ImageTemplateSharedImageVersionSource
-    from ._models_py3 import ImageTemplateShellCustomizer
-    from ._models_py3 import ImageTemplateSource
-    from ._models_py3 import ImageTemplateUpdateParameters
-    from ._models_py3 import ImageTemplateVhdDistributor
-    from ._models_py3 import ImageTemplateVmProfile
-    from ._models_py3 import ImageTemplateWindowsUpdateCustomizer
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import PlatformImagePurchasePlan
-    from ._models_py3 import ProvisioningError
-    from ._models_py3 import Resource
-    from ._models_py3 import RunOutput
-    from ._models_py3 import RunOutputCollection
-    from ._models_py3 import SubResource
-    from ._models_py3 import SystemData
-    from ._models_py3 import TrackedResource
-    from ._models_py3 import VirtualNetworkConfig
-except (SyntaxError, ImportError):
-    from ._models import CloudErrorBody  # type: ignore
-    from ._models import ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
-    from ._models import ImageTemplate  # type: ignore
-    from ._models import ImageTemplateCustomizer  # type: ignore
-    from ._models import ImageTemplateDistributor  # type: ignore
-    from ._models import ImageTemplateFileCustomizer  # type: ignore
-    from ._models import ImageTemplateIdentity  # type: ignore
-    from ._models import ImageTemplateLastRunStatus  # type: ignore
-    from ._models import ImageTemplateListResult  # type: ignore
-    from ._models import ImageTemplateManagedImageDistributor  # type: ignore
-    from ._models import ImageTemplateManagedImageSource  # type: ignore
-    from ._models import ImageTemplatePlatformImageSource  # type: ignore
-    from ._models import ImageTemplatePowerShellCustomizer  # type: ignore
-    from ._models import ImageTemplateRestartCustomizer  # type: ignore
-    from ._models import ImageTemplateSharedImageDistributor  # type: ignore
-    from ._models import ImageTemplateSharedImageVersionSource  # type: ignore
-    from ._models import ImageTemplateShellCustomizer  # type: ignore
-    from ._models import ImageTemplateSource  # type: ignore
-    from ._models import ImageTemplateUpdateParameters  # type: ignore
-    from ._models import ImageTemplateVhdDistributor  # type: ignore
-    from ._models import ImageTemplateVmProfile  # type: ignore
-    from ._models import ImageTemplateWindowsUpdateCustomizer  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import PlatformImagePurchasePlan  # type: ignore
-    from ._models import ProvisioningError  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import RunOutput  # type: ignore
-    from ._models import RunOutputCollection  # type: ignore
-    from ._models import SubResource  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TrackedResource  # type: ignore
-    from ._models import VirtualNetworkConfig  # type: ignore
+from ._models_py3 import CloudErrorBody
+from ._models_py3 import ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties
+from ._models_py3 import ImageTemplate
+from ._models_py3 import ImageTemplateCustomizer
+from ._models_py3 import ImageTemplateDistributor
+from ._models_py3 import ImageTemplateFileCustomizer
+from ._models_py3 import ImageTemplateIdentity
+from ._models_py3 import ImageTemplateInVMValidator
+from ._models_py3 import ImageTemplateLastRunStatus
+from ._models_py3 import ImageTemplateListResult
+from ._models_py3 import ImageTemplateManagedImageDistributor
+from ._models_py3 import ImageTemplateManagedImageSource
+from ._models_py3 import ImageTemplatePlatformImageSource
+from ._models_py3 import ImageTemplatePowerShellCustomizer
+from ._models_py3 import ImageTemplatePowerShellValidator
+from ._models_py3 import ImageTemplatePropertiesValidate
+from ._models_py3 import ImageTemplateRestartCustomizer
+from ._models_py3 import ImageTemplateSharedImageDistributor
+from ._models_py3 import ImageTemplateSharedImageVersionSource
+from ._models_py3 import ImageTemplateShellCustomizer
+from ._models_py3 import ImageTemplateShellValidator
+from ._models_py3 import ImageTemplateSource
+from ._models_py3 import ImageTemplateUpdateParameters
+from ._models_py3 import ImageTemplateVhdDistributor
+from ._models_py3 import ImageTemplateVmProfile
+from ._models_py3 import ImageTemplateWindowsUpdateCustomizer
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import PlatformImagePurchasePlan
+from ._models_py3 import ProvisioningError
+from ._models_py3 import ProxyResource
+from ._models_py3 import Resource
+from ._models_py3 import RunOutput
+from ._models_py3 import RunOutputCollection
+from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
+from ._models_py3 import VirtualNetworkConfig
+
 
 from ._image_builder_client_enums import (
     CreatedByType,
@@ -95,16 +64,20 @@ __all__ = [
     'ImageTemplateDistributor',
     'ImageTemplateFileCustomizer',
     'ImageTemplateIdentity',
+    'ImageTemplateInVMValidator',
     'ImageTemplateLastRunStatus',
     'ImageTemplateListResult',
     'ImageTemplateManagedImageDistributor',
     'ImageTemplateManagedImageSource',
     'ImageTemplatePlatformImageSource',
     'ImageTemplatePowerShellCustomizer',
+    'ImageTemplatePowerShellValidator',
+    'ImageTemplatePropertiesValidate',
     'ImageTemplateRestartCustomizer',
     'ImageTemplateSharedImageDistributor',
     'ImageTemplateSharedImageVersionSource',
     'ImageTemplateShellCustomizer',
+    'ImageTemplateShellValidator',
     'ImageTemplateSource',
     'ImageTemplateUpdateParameters',
     'ImageTemplateVhdDistributor',
@@ -115,10 +88,10 @@ __all__ = [
     'OperationListResult',
     'PlatformImagePurchasePlan',
     'ProvisioningError',
+    'ProxyResource',
     'Resource',
     'RunOutput',
     'RunOutputCollection',
-    'SubResource',
     'SystemData',
     'TrackedResource',
     'VirtualNetworkConfig',

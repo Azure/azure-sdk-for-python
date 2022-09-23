@@ -199,11 +199,19 @@ class CommunicationRelayConfigurationRequest(msrest.serialization.Model):
     :ivar route_type: Filter the routing methodology returned. If not provided, will return all
      route types in separate ICE servers. Possible values include: "any", "nearest".
     :vartype route_type: str or ~azure.communication.networktraversal.models.RouteType
+    :ivar ttl: The credential Time-To-Live (TTL), in seconds. The default value will be used if
+     given value exceeds it.
+    :vartype ttl: int
     """
+
+    _validation = {
+        'ttl': {'maximum': 172800, 'minimum': 0},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'route_type': {'key': 'routeType', 'type': 'str'},
+        'ttl': {'key': 'ttl', 'type': 'int'},
     }
 
     def __init__(
@@ -218,7 +226,11 @@ class CommunicationRelayConfigurationRequest(msrest.serialization.Model):
         :keyword route_type: Filter the routing methodology returned. If not provided, will return all
          route types in separate ICE servers. Possible values include: "any", "nearest".
         :paramtype route_type: str or ~azure.communication.networktraversal.models.RouteType
+        :keyword ttl: The credential Time-To-Live (TTL), in seconds. The default value will be used if
+         given value exceeds it.
+        :paramtype ttl: int
         """
         super(CommunicationRelayConfigurationRequest, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.route_type = kwargs.get('route_type', None)
+        self.ttl = kwargs.get('ttl', 172800)

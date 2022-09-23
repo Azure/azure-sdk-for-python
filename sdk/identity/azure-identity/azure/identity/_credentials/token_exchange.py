@@ -36,7 +36,7 @@ class TokenExchangeCredential(ClientAssertionCredential, TokenFileMixin):
         super(TokenExchangeCredential, self).__init__(
             tenant_id=tenant_id,
             client_id=client_id,
-            get_assertion=self.get_service_account_token,
+            func=self.get_service_account_token,
             token_file_path=token_file_path,
             **kwargs
         )

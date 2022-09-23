@@ -1,0 +1,24 @@
+## IMPORTANT: this file and accompanying assets are the source for snippets in https://docs.microsoft.com/azure/machine-learning!
+## Please reach out to the Azure ML docs & samples team before editing for the first time.
+
+# <component>
+name: score_model
+version: 1
+display_name: ScoreModel
+type: command
+inputs:
+  predictions:
+    type: uri_folder
+  model:
+    type: uri_folder
+outputs:
+  score_report:
+    type: uri_folder
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cuda11-gpu:3
+code: ./score_src
+command: >-
+  python score.py
+  --predictions ${{inputs.predictions}}
+  --model ${{inputs.model}}
+  --score_report ${{outputs.score_report}}
+# </component>

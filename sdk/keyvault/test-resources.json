@@ -37,7 +37,7 @@
         },
         "hsmLocation": {
             "type": "string",
-            "defaultValue": "westus2",
+            "defaultValue": "westus3",
             "allowedValues": [
                 "australiacentral",
                 "canadacentral",
@@ -60,7 +60,7 @@
                 "westus3"
             ],
             "metadata": {
-                "description": "The location of the Managed HSM. By default, this is 'westus'."
+                "description": "The location of the Managed HSM. By default, this is 'westus3'."
             }
         },
         "enableHsm": {
@@ -77,11 +77,25 @@
                 "description": "Key Vault SKU to deploy. The default is 'premium'"
             }
         },
+        "baseTime": {
+            "type": "string",
+            "defaultValue": "[utcNow('u')]",
+            "metadata": {
+                "description": "The base time to add 500 minutes to for SAS token expiration. The default is the current time."
+            }
+        },
         "attestationImage": {
             "type": "string",
             "defaultValue": "keyvault-mock-attestation:latest",
             "metadata": {
                 "description": "The container image name and tag to use for the attestation mock service."
+            }
+        },
+        "storageEndpointSuffix": {
+            "type": "string",
+            "defaultValue": "core.windows.net",
+            "metadata": {
+                "description": "The url suffix to use when accessing the storage data plane."
             }
         }
     },
@@ -111,6 +125,14 @@
             "virtualNetworkRules": [],
             "ipRules": [],
             "defaultAction": "Allow"
+        },
+        "accountSasProperties": {
+            "signedServices": "b",
+            "signedPermission": "rwdlacu",
+            "signedProtocol": "https",
+            "signedExpiry": "[dateTimeAdd(parameters('baseTime'), 'PT500M')]",
+            "signedResourceTypes": "sco",
+            "keyToSign": "key1"
         }
     },
     "resources": [
@@ -270,13 +292,17 @@
             "type": "string",
             "value": "[parameters('testApplicationOid')]"
         },
+        "KEYVAULT_STORAGE_ENDPOINT_SUFFIX": {
+            "type": "string",
+            "value": "[parameters('storageEndpointSuffix')]"
+        },
         "BLOB_STORAGE_ACCOUNT_NAME": {
             "type": "string",
             "value": "[variables('primaryAccountName')]"
         },
-        "BLOB_PRIMARY_STORAGE_ACCOUNT_KEY": {
+        "BLOB_STORAGE_SAS_TOKEN": {
             "type": "string",
-            "value": "[listKeys(variables('primaryAccountName'), variables('mgmtApiVersion')).keys[0].value]"
+            "value": "[listAccountSas(variables('primaryAccountName'), '2019-06-01', variables('accountSasProperties')).accountSasToken]"
         },
         "BLOB_CONTAINER_NAME" : {
             "type": "string",

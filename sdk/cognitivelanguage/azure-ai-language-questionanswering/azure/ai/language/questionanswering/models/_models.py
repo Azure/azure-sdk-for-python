@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,19 +7,30 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+
+from .. import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class AnswersFromTextOptions(msrest.serialization.Model):
+class AnswersFromTextOptions(_serialization.Model):
     """The question and text record parameters to answer.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar question: Required. User question to query against the given text records.
+    :ivar question: User question to query against the given text records. Required.
     :vartype question: str
-    :ivar text_documents: Required. Text records to be searched for given question.
-    :vartype text_documents: list[str or ~azure.ai.language.questionanswering.models.TextDocument]
+    :ivar text_documents: Text records to be searched for given question. Required.
+    :vartype text_documents: list[~azure.ai.language.questionanswering.models.TextDocument]
     :ivar language: Language of the text records. This is BCP-47 representation of a language. For
      example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
      default.
@@ -34,28 +46,28 @@ class AnswersFromTextOptions(msrest.serialization.Model):
         "question": {"key": "question", "type": "str"},
         "text_documents": {"key": "records", "type": "[TextDocument]"},
         "language": {"key": "language", "type": "str"},
-        "string_index_type": {"key": "stringIndexType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self, *, question: str, text_documents: List["_models.TextDocument"], language: Optional[str] = None, **kwargs
+    ):
         """
-        :keyword question: Required. User question to query against the given text records.
+        :keyword question: User question to query against the given text records. Required.
         :paramtype question: str
-        :keyword text_documents: Required. Text records to be searched for given question.
-        :paramtype text_documents: list[str or ~azure.ai.language.questionanswering.models.TextDocument]
+        :keyword text_documents: Text records to be searched for given question. Required.
+        :paramtype text_documents: list[~azure.ai.language.questionanswering.models.TextDocument]
         :keyword language: Language of the text records. This is BCP-47 representation of a language.
          For example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
          default.
         :paramtype language: str
         """
-        super(AnswersFromTextOptions, self).__init__(**kwargs)
-        self.question = kwargs["question"]
-        self.text_documents = kwargs["text_documents"]
-        self.language = kwargs.get("language", None)
-        self.string_index_type = "UnicodeCodePoint"
+        super().__init__(**kwargs)
+        self.question = question
+        self.text_documents = text_documents
+        self.language = language
 
 
-class AnswersFromTextResult(msrest.serialization.Model):
+class AnswersFromTextResult(_serialization.Model):
     """Represents the answer results.
 
     :ivar answers: Represents the answer results.
@@ -66,16 +78,16 @@ class AnswersFromTextResult(msrest.serialization.Model):
         "answers": {"key": "answers", "type": "[TextAnswer]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, answers: Optional[List["_models.TextAnswer"]] = None, **kwargs):
         """
         :keyword answers: Represents the answer results.
         :paramtype answers: list[~azure.ai.language.questionanswering.models.TextAnswer]
         """
-        super(AnswersFromTextResult, self).__init__(**kwargs)
-        self.answers = kwargs.get("answers", None)
+        super().__init__(**kwargs)
+        self.answers = answers
 
 
-class AnswersOptions(msrest.serialization.Model):
+class AnswersOptions(_serialization.Model):
     """Parameters to query a knowledge base.
 
     :ivar qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
@@ -91,8 +103,7 @@ class AnswersOptions(msrest.serialization.Model):
     :vartype confidence_threshold: float
     :ivar answer_context: Context object with previous QnA's information.
     :vartype answer_context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
-    :ivar ranker_kind: Type of ranker to be used. Possible
-     values include: "Default", "QuestionOnly".
+    :ivar ranker_kind: Type of ranker to be used.
     :vartype ranker_kind: str
     :ivar filters: Filter QnAs based on given metadata list and knowledge base sources.
     :vartype filters: ~azure.ai.language.questionanswering.models.QueryFilters
@@ -119,7 +130,21 @@ class AnswersOptions(msrest.serialization.Model):
         "include_unstructured_sources": {"key": "includeUnstructuredSources", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        *,
+        qna_id: Optional[int] = None,
+        question: Optional[str] = None,
+        top: Optional[int] = None,
+        user_id: Optional[str] = None,
+        confidence_threshold: Optional[float] = None,
+        answer_context: Optional["_models.KnowledgeBaseAnswerContext"] = None,
+        ranker_kind: Optional[str] = None,
+        filters: Optional["_models.QueryFilters"] = None,
+        short_answer_options: Optional["_models.ShortAnswerOptions"] = None,
+        include_unstructured_sources: Optional[bool] = None,
+        **kwargs
+    ):
         """
         :keyword qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
          question.
@@ -133,9 +158,9 @@ class AnswersOptions(msrest.serialization.Model):
         :keyword confidence_threshold: Minimum threshold score for answers, value ranges from 0 to 1.
         :paramtype confidence_threshold: float
         :keyword answer_context: Context object with previous QnA's information.
-        :paramtype answer_context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
-        :keyword ranker_kind: Type of ranker to be used. Possible
-         values include: "Default", "QuestionOnly".
+        :paramtype answer_context:
+         ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
+        :keyword ranker_kind: Type of ranker to be used.
         :paramtype ranker_kind: str
         :keyword filters: Filter QnAs based on given metadata list and knowledge base sources.
         :paramtype filters: ~azure.ai.language.questionanswering.models.QueryFilters
@@ -145,20 +170,20 @@ class AnswersOptions(msrest.serialization.Model):
          Sources.
         :paramtype include_unstructured_sources: bool
         """
-        super(AnswersOptions, self).__init__(**kwargs)
-        self.qna_id = kwargs.get("qna_id", None)
-        self.question = kwargs.get("question", None)
-        self.top = kwargs.get("top", None)
-        self.user_id = kwargs.get("user_id", None)
-        self.confidence_threshold = kwargs.get("confidence_threshold", None)
-        self.answer_context = kwargs.get("answer_context", None)
-        self.ranker_kind = kwargs.get("ranker_kind", None)
-        self.filters = kwargs.get("filters", None)
-        self.short_answer_options = kwargs.get("short_answer_options", None)
-        self.include_unstructured_sources = kwargs.get("include_unstructured_sources", None)
+        super().__init__(**kwargs)
+        self.qna_id = qna_id
+        self.question = question
+        self.top = top
+        self.user_id = user_id
+        self.confidence_threshold = confidence_threshold
+        self.answer_context = answer_context
+        self.ranker_kind = ranker_kind
+        self.filters = filters
+        self.short_answer_options = short_answer_options
+        self.include_unstructured_sources = include_unstructured_sources
 
 
-class AnswerSpan(msrest.serialization.Model):
+class AnswerSpan(_serialization.Model):
     """Answer span object of QnA.
 
     :ivar text: Predicted text of answer span.
@@ -182,7 +207,15 @@ class AnswerSpan(msrest.serialization.Model):
         "length": {"key": "length", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        *,
+        text: Optional[str] = None,
+        confidence: Optional[float] = None,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        **kwargs
+    ):
         """
         :keyword text: Predicted text of answer span.
         :paramtype text: str
@@ -193,14 +226,14 @@ class AnswerSpan(msrest.serialization.Model):
         :keyword length: The length of the answer span.
         :paramtype length: int
         """
-        super(AnswerSpan, self).__init__(**kwargs)
-        self.text = kwargs.get("text", None)
-        self.confidence = kwargs.get("confidence", None)
-        self.offset = kwargs.get("offset", None)
-        self.length = kwargs.get("length", None)
+        super().__init__(**kwargs)
+        self.text = text
+        self.confidence = confidence
+        self.offset = offset
+        self.length = length
 
 
-class AnswersResult(msrest.serialization.Model):
+class AnswersResult(_serialization.Model):
     """Represents List of Question Answers.
 
     :ivar answers: Represents Answer Result list.
@@ -211,27 +244,27 @@ class AnswersResult(msrest.serialization.Model):
         "answers": {"key": "answers", "type": "[KnowledgeBaseAnswer]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, answers: Optional[List["_models.KnowledgeBaseAnswer"]] = None, **kwargs):
         """
         :keyword answers: Represents Answer Result list.
         :paramtype answers: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswer]
         """
-        super(AnswersResult, self).__init__(**kwargs)
-        self.answers = kwargs.get("answers", None)
+        super().__init__(**kwargs)
+        self.answers = answers
 
 
-class Error(msrest.serialization.Model):
+class Error(_serialization.Model):
     """The error object.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. One of a server-defined set of error codes. Possible values include:
+    :ivar code: One of a server-defined set of error codes. Required. Known values are:
      "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound",
      "ProjectNotFound", "OperationNotFound", "AzureCognitiveSearchNotFound",
      "AzureCognitiveSearchIndexNotFound", "TooManyRequests", "AzureCognitiveSearchThrottling",
-     "AzureCognitiveSearchIndexLimitReached", "InternalServerError", "ServiceUnavailable".
+     "AzureCognitiveSearchIndexLimitReached", "InternalServerError", and "ServiceUnavailable".
     :vartype code: str or ~azure.ai.language.questionanswering.models.ErrorCode
-    :ivar message: Required. A human-readable representation of the error.
+    :ivar message: A human-readable representation of the error. Required.
     :vartype message: str
     :ivar target: The target of the error.
     :vartype target: str
@@ -255,15 +288,24 @@ class Error(msrest.serialization.Model):
         "innererror": {"key": "innererror", "type": "InnerErrorModel"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        *,
+        code: Union[str, "_models.ErrorCode"],
+        message: str,
+        target: Optional[str] = None,
+        details: Optional[List["_models.Error"]] = None,
+        innererror: Optional["_models.InnerErrorModel"] = None,
+        **kwargs
+    ):
         """
-        :keyword code: Required. One of a server-defined set of error codes. Possible values include:
+        :keyword code: One of a server-defined set of error codes. Required. Known values are:
          "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound",
          "ProjectNotFound", "OperationNotFound", "AzureCognitiveSearchNotFound",
          "AzureCognitiveSearchIndexNotFound", "TooManyRequests", "AzureCognitiveSearchThrottling",
-         "AzureCognitiveSearchIndexLimitReached", "InternalServerError", "ServiceUnavailable".
+         "AzureCognitiveSearchIndexLimitReached", "InternalServerError", and "ServiceUnavailable".
         :paramtype code: str or ~azure.ai.language.questionanswering.models.ErrorCode
-        :keyword message: Required. A human-readable representation of the error.
+        :keyword message: A human-readable representation of the error. Required.
         :paramtype message: str
         :keyword target: The target of the error.
         :paramtype target: str
@@ -273,15 +315,15 @@ class Error(msrest.serialization.Model):
          about the error.
         :paramtype innererror: ~azure.ai.language.questionanswering.models.InnerErrorModel
         """
-        super(Error, self).__init__(**kwargs)
-        self.code = kwargs["code"]
-        self.message = kwargs["message"]
-        self.target = kwargs.get("target", None)
-        self.details = kwargs.get("details", None)
-        self.innererror = kwargs.get("innererror", None)
+        super().__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.target = target
+        self.details = details
+        self.innererror = innererror
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Error response.
 
     :ivar error: The error object.
@@ -292,25 +334,25 @@ class ErrorResponse(msrest.serialization.Model):
         "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, error: Optional["_models.Error"] = None, **kwargs):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.ai.language.questionanswering.models.Error
         """
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get("error", None)
+        super().__init__(**kwargs)
+        self.error = error
 
 
-class InnerErrorModel(msrest.serialization.Model):
+class InnerErrorModel(_serialization.Model):
     """An object containing more specific information about the error. As per Microsoft One API guidelines - https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. One of a server-defined set of error codes. Possible values include:
+    :ivar code: One of a server-defined set of error codes. Required. Known values are:
      "InvalidRequest", "InvalidParameterValue", "KnowledgeBaseNotFound",
-     "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", "ExtractionFailure".
+     "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", and "ExtractionFailure".
     :vartype code: str or ~azure.ai.language.questionanswering.models.InnerErrorCode
-    :ivar message: Required. Error message.
+    :ivar message: Error message. Required.
     :vartype message: str
     :ivar details: Error details.
     :vartype details: dict[str, str]
@@ -334,13 +376,22 @@ class InnerErrorModel(msrest.serialization.Model):
         "innererror": {"key": "innererror", "type": "InnerErrorModel"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        *,
+        code: Union[str, "_models.InnerErrorCode"],
+        message: str,
+        details: Optional[Dict[str, str]] = None,
+        target: Optional[str] = None,
+        innererror: Optional["_models.InnerErrorModel"] = None,
+        **kwargs
+    ):
         """
-        :keyword code: Required. One of a server-defined set of error codes. Possible values include:
+        :keyword code: One of a server-defined set of error codes. Required. Known values are:
          "InvalidRequest", "InvalidParameterValue", "KnowledgeBaseNotFound",
-         "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", "ExtractionFailure".
+         "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", and "ExtractionFailure".
         :paramtype code: str or ~azure.ai.language.questionanswering.models.InnerErrorCode
-        :keyword message: Required. Error message.
+        :keyword message: Error message. Required.
         :paramtype message: str
         :keyword details: Error details.
         :paramtype details: dict[str, str]
@@ -350,15 +401,15 @@ class InnerErrorModel(msrest.serialization.Model):
          about the error.
         :paramtype innererror: ~azure.ai.language.questionanswering.models.InnerErrorModel
         """
-        super(InnerErrorModel, self).__init__(**kwargs)
-        self.code = kwargs["code"]
-        self.message = kwargs["message"]
-        self.details = kwargs.get("details", None)
-        self.target = kwargs.get("target", None)
-        self.innererror = kwargs.get("innererror", None)
+        super().__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.details = details
+        self.target = target
+        self.innererror = innererror
 
 
-class KnowledgeBaseAnswer(msrest.serialization.Model):
+class KnowledgeBaseAnswer(_serialization.Model):
     """Represents knowledge base answer.
 
     :ivar questions: List of questions associated with the answer.
@@ -395,7 +446,19 @@ class KnowledgeBaseAnswer(msrest.serialization.Model):
         "short_answer": {"key": "answerSpan", "type": "AnswerSpan"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        *,
+        questions: Optional[List[str]] = None,
+        answer: Optional[str] = None,
+        confidence: Optional[float] = None,
+        qna_id: Optional[int] = None,
+        source: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        dialog: Optional["_models.KnowledgeBaseAnswerDialog"] = None,
+        short_answer: Optional["_models.AnswerSpan"] = None,
+        **kwargs
+    ):
         """
         :keyword questions: List of questions associated with the answer.
         :paramtype questions: list[str]
@@ -415,23 +478,23 @@ class KnowledgeBaseAnswer(msrest.serialization.Model):
         :keyword short_answer: Answer span object of QnA with respect to user's question.
         :paramtype short_answer: ~azure.ai.language.questionanswering.models.AnswerSpan
         """
-        super(KnowledgeBaseAnswer, self).__init__(**kwargs)
-        self.questions = kwargs.get("questions", None)
-        self.answer = kwargs.get("answer", None)
-        self.confidence = kwargs.get("confidence", None)
-        self.qna_id = kwargs.get("qna_id", None)
-        self.source = kwargs.get("source", None)
-        self.metadata = kwargs.get("metadata", None)
-        self.dialog = kwargs.get("dialog", None)
-        self.short_answer = kwargs.get("short_answer", None)
+        super().__init__(**kwargs)
+        self.questions = questions
+        self.answer = answer
+        self.confidence = confidence
+        self.qna_id = qna_id
+        self.source = source
+        self.metadata = metadata
+        self.dialog = dialog
+        self.short_answer = short_answer
 
 
-class KnowledgeBaseAnswerContext(msrest.serialization.Model):
+class KnowledgeBaseAnswerContext(_serialization.Model):
     """Context object with previous QnA's information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar previous_qna_id: Required. Previous turn top answer result QnA ID.
+    :ivar previous_qna_id: Previous turn top answer result QnA ID. Required.
     :vartype previous_qna_id: int
     :ivar previous_question: Previous user query.
     :vartype previous_question: str
@@ -446,19 +509,19 @@ class KnowledgeBaseAnswerContext(msrest.serialization.Model):
         "previous_question": {"key": "previousUserQuery", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, previous_qna_id: int, previous_question: Optional[str] = None, **kwargs):
         """
-        :keyword previous_qna_id: Required. Previous turn top answer result QnA ID.
+        :keyword previous_qna_id: Previous turn top answer result QnA ID. Required.
         :paramtype previous_qna_id: int
         :keyword previous_question: Previous user query.
         :paramtype previous_question: str
         """
-        super(KnowledgeBaseAnswerContext, self).__init__(**kwargs)
-        self.previous_qna_id = kwargs["previous_qna_id"]
-        self.previous_question = kwargs.get("previous_question", None)
+        super().__init__(**kwargs)
+        self.previous_qna_id = previous_qna_id
+        self.previous_question = previous_question
 
 
-class KnowledgeBaseAnswerDialog(msrest.serialization.Model):
+class KnowledgeBaseAnswerDialog(_serialization.Model):
     """Dialog associated with Answer.
 
     :ivar is_context_only: To mark if a prompt is relevant only with a previous question or not. If
@@ -478,7 +541,13 @@ class KnowledgeBaseAnswerDialog(msrest.serialization.Model):
         "prompts": {"key": "prompts", "type": "[KnowledgeBaseAnswerPrompt]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        *,
+        is_context_only: Optional[bool] = None,
+        prompts: Optional[List["_models.KnowledgeBaseAnswerPrompt"]] = None,
+        **kwargs
+    ):
         """
         :keyword is_context_only: To mark if a prompt is relevant only with a previous question or not.
          If true, do not include this QnA as search result for queries without context; otherwise, if
@@ -487,12 +556,12 @@ class KnowledgeBaseAnswerDialog(msrest.serialization.Model):
         :keyword prompts: List of prompts associated with the answer.
         :paramtype prompts: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerPrompt]
         """
-        super(KnowledgeBaseAnswerDialog, self).__init__(**kwargs)
-        self.is_context_only = kwargs.get("is_context_only", None)
-        self.prompts = kwargs.get("prompts", None)
+        super().__init__(**kwargs)
+        self.is_context_only = is_context_only
+        self.prompts = prompts
 
 
-class KnowledgeBaseAnswerPrompt(msrest.serialization.Model):
+class KnowledgeBaseAnswerPrompt(_serialization.Model):
     """Prompt for an answer.
 
     :ivar display_order: Index of the prompt - used in ordering of the prompts.
@@ -504,7 +573,7 @@ class KnowledgeBaseAnswerPrompt(msrest.serialization.Model):
     """
 
     _validation = {
-        "display_text": {"max_length": 200, "min_length": 0},
+        "display_text": {"max_length": 200},
     }
 
     _attribute_map = {
@@ -513,7 +582,14 @@ class KnowledgeBaseAnswerPrompt(msrest.serialization.Model):
         "display_text": {"key": "displayText", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        *,
+        display_order: Optional[int] = None,
+        qna_id: Optional[int] = None,
+        display_text: Optional[str] = None,
+        **kwargs
+    ):
         """
         :keyword display_order: Index of the prompt - used in ordering of the prompts.
         :paramtype display_order: int
@@ -522,19 +598,18 @@ class KnowledgeBaseAnswerPrompt(msrest.serialization.Model):
         :keyword display_text: Text displayed to represent a follow up question prompt.
         :paramtype display_text: str
         """
-        super(KnowledgeBaseAnswerPrompt, self).__init__(**kwargs)
-        self.display_order = kwargs.get("display_order", None)
-        self.qna_id = kwargs.get("qna_id", None)
-        self.display_text = kwargs.get("display_text", None)
+        super().__init__(**kwargs)
+        self.display_order = display_order
+        self.qna_id = qna_id
+        self.display_text = display_text
 
 
-class MetadataFilter(msrest.serialization.Model):
+class MetadataFilter(_serialization.Model):
     """Find QnAs that are associated with the given list of metadata.
 
     :ivar metadata:
-    :vartype metadata: list[tuple[str, str]]
-    :ivar logical_operation: Operation used to join metadata filters. Possible values include:
-     "AND", "OR".
+    :vartype metadata: list[JSON]
+    :ivar logical_operation: Operation used to join metadata filters.
     :vartype logical_operation: str
     """
 
@@ -543,20 +618,19 @@ class MetadataFilter(msrest.serialization.Model):
         "logical_operation": {"key": "logicalOperation", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, metadata: Optional[List[JSON]] = None, logical_operation: Optional[str] = None, **kwargs):
         """
         :keyword metadata:
-        :paramtype metadata: list[tuple[str, str]]
-        :keyword logical_operation: Operation used to join metadata filters. Possible values include:
-         "AND", "OR".
+        :paramtype metadata: list[JSON]
+        :keyword logical_operation: Operation used to join metadata filters.
         :paramtype logical_operation: str
         """
-        super(MetadataFilter, self).__init__(**kwargs)
-        self.metadata = kwargs.get("metadata", None)
-        self.logical_operation = kwargs.get("logical_operation", None)
+        super().__init__(**kwargs)
+        self.metadata = metadata
+        self.logical_operation = logical_operation
 
 
-class QueryFilters(msrest.serialization.Model):
+class QueryFilters(_serialization.Model):
     """filters over knowledge base.
 
     :ivar metadata_filter: Find QnAs that are associated with the given list of metadata.
@@ -565,7 +639,6 @@ class QueryFilters(msrest.serialization.Model):
      knowledge base.
     :vartype source_filter: list[str]
     :ivar logical_operation: Logical operation used to join metadata filter with source filter.
-     Possible values include: "AND", "OR".
     :vartype logical_operation: str
     """
 
@@ -575,7 +648,14 @@ class QueryFilters(msrest.serialization.Model):
         "logical_operation": {"key": "logicalOperation", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        *,
+        metadata_filter: Optional["_models.MetadataFilter"] = None,
+        source_filter: Optional[List[str]] = None,
+        logical_operation: Optional[str] = None,
+        **kwargs
+    ):
         """
         :keyword metadata_filter: Find QnAs that are associated with the given list of metadata.
         :paramtype metadata_filter: ~azure.ai.language.questionanswering.models.MetadataFilter
@@ -583,23 +663,22 @@ class QueryFilters(msrest.serialization.Model):
          knowledge base.
         :paramtype source_filter: list[str]
         :keyword logical_operation: Logical operation used to join metadata filter with source filter.
-         Possible values include: "AND", "OR".
         :paramtype logical_operation: str
         """
-        super(QueryFilters, self).__init__(**kwargs)
-        self.metadata_filter = kwargs.get("metadata_filter", None)
-        self.source_filter = kwargs.get("source_filter", None)
-        self.logical_operation = kwargs.get("logical_operation", None)
+        super().__init__(**kwargs)
+        self.metadata_filter = metadata_filter
+        self.source_filter = source_filter
+        self.logical_operation = logical_operation
 
 
-class ShortAnswerOptions(msrest.serialization.Model):
+class ShortAnswerOptions(_serialization.Model):
     """To configure Answer span prediction feature.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar enable: Enable or disable Answer Span prediction. Has constant value: True.
+    :ivar enable: Enable or disable Answer Span prediction. Required. Default value is True.
     :vartype enable: bool
     :ivar confidence_threshold: Minimum threshold score required to include an answer span, value
      ranges from 0 to 1.
@@ -622,7 +701,7 @@ class ShortAnswerOptions(msrest.serialization.Model):
 
     enable = True
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, confidence_threshold: Optional[float] = None, top: Optional[int] = None, **kwargs):
         """
         :keyword confidence_threshold: Minimum threshold score required to include an answer span,
          value ranges from 0 to 1.
@@ -630,12 +709,12 @@ class ShortAnswerOptions(msrest.serialization.Model):
         :keyword top: Number of Top answers to be considered for span prediction from 1 to 10.
         :paramtype top: int
         """
-        super(ShortAnswerOptions, self).__init__(**kwargs)
-        self.confidence_threshold = kwargs.get("confidence_threshold", None)
-        self.top = kwargs.get("top", None)
+        super().__init__(**kwargs)
+        self.confidence_threshold = confidence_threshold
+        self.top = top
 
 
-class TextAnswer(msrest.serialization.Model):
+class TextAnswer(_serialization.Model):
     """Represents answer result.
 
     :ivar answer: Answer.
@@ -665,7 +744,17 @@ class TextAnswer(msrest.serialization.Model):
         "length": {"key": "length", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        *,
+        answer: Optional[str] = None,
+        confidence: Optional[float] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        short_answer: Optional["_models.AnswerSpan"] = None,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        **kwargs
+    ):
         """
         :keyword answer: Answer.
         :paramtype answer: str
@@ -680,23 +769,23 @@ class TextAnswer(msrest.serialization.Model):
         :keyword length: The length of the sentence.
         :paramtype length: int
         """
-        super(TextAnswer, self).__init__(**kwargs)
-        self.answer = kwargs.get("answer", None)
-        self.confidence = kwargs.get("confidence", None)
-        self.id = kwargs.get("id", None)
-        self.short_answer = kwargs.get("short_answer", None)
-        self.offset = kwargs.get("offset", None)
-        self.length = kwargs.get("length", None)
+        super().__init__(**kwargs)
+        self.answer = answer
+        self.confidence = confidence
+        self.id = id
+        self.short_answer = short_answer
+        self.offset = offset
+        self.length = length
 
 
-class TextDocument(msrest.serialization.Model):
+class TextDocument(_serialization.Model):
     """Represent input text record to be queried.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. Unique identifier for the text record.
+    :ivar id: Unique identifier for the text record. Required.
     :vartype id: str
-    :ivar text: Required. Text contents of the record.
+    :ivar text: Text contents of the record. Required.
     :vartype text: str
     """
 
@@ -710,13 +799,13 @@ class TextDocument(msrest.serialization.Model):
         "text": {"key": "text", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str, text: str, **kwargs):  # pylint: disable=redefined-builtin
         """
-        :keyword id: Required. Unique identifier for the text record.
+        :keyword id: Unique identifier for the text record. Required.
         :paramtype id: str
-        :keyword text: Required. Text contents of the record.
+        :keyword text: Text contents of the record. Required.
         :paramtype text: str
         """
-        super(TextDocument, self).__init__(**kwargs)
-        self.id = kwargs["id"]
-        self.text = kwargs["text"]
+        super().__init__(**kwargs)
+        self.id = id
+        self.text = text

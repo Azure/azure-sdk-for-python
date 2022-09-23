@@ -6,7 +6,6 @@
 
 import pytest
 import functools
-from io import BytesIO
 from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
@@ -22,15 +21,14 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestContentFromStream(FormRecognizerTest):
 
-    @pytest.mark.skip()
     @FormRecognizerPreparer()
-    @recorded_by_proxy
-    def test_content_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    def test_content_bad_endpoint(self, **kwargs):
+        formrecognizer_test_api_key = kwargs.get("formrecognizer_test_api_key", None)
         with open(self.invoice_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         with pytest.raises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
-            poller = client.begin_recognize_content(myfile)
+            poller = client.begin_recognize_content(my_file)
 
     @FormRecognizerPreparer()
     @recorded_by_proxy
@@ -44,9 +42,9 @@ class TestContentFromStream(FormRecognizerTest):
     @recorded_by_proxy
     def test_passing_enum_content_type(self, client):
         with open(self.invoice_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         poller = client.begin_recognize_content(
-            myfile,
+            my_file,
             content_type=FormContentType.APPLICATION_PDF
         )
         result = poller.result()
@@ -67,10 +65,10 @@ class TestContentFromStream(FormRecognizerTest):
     def test_passing_bad_content_type_param_passed(self, **kwargs):
         client = kwargs.pop("client")
         with open(self.invoice_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         with pytest.raises(ValueError):
             poller = client.begin_recognize_content(
-                myfile,
+                my_file,
                 content_type="application/jpeg"
             )
 
@@ -79,11 +77,11 @@ class TestContentFromStream(FormRecognizerTest):
     def test_auto_detect_unsupported_stream_content(self, **kwargs):
         client = kwargs.pop("client")
         with open(self.unsupported_content_py, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         with pytest.raises(ValueError):
             poller = client.begin_recognize_content(
-                myfile
+                my_file
             )
 
     @FormRecognizerPreparer()
@@ -91,7 +89,7 @@ class TestContentFromStream(FormRecognizerTest):
     @recorded_by_proxy
     def test_content_stream_transform_pdf(self, client):
         with open(self.invoice_pdf, "rb") as fd:
-            myform = fd.read()
+            form = fd.read()
 
         responses = []
 
@@ -101,7 +99,7 @@ class TestContentFromStream(FormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_layout)
 
-        poller = client.begin_recognize_content(myform, cls=callback)
+        poller = client.begin_recognize_content(form, cls=callback)
         result = poller.result()
         raw_response = responses[0]
         layout = responses[1]
@@ -116,9 +114,9 @@ class TestContentFromStream(FormRecognizerTest):
     @recorded_by_proxy
     def test_content_reading_order(self, client):
         with open(self.invoice_pdf, "rb") as fd:
-            myform = fd.read()
+            form = fd.read()
 
-        poller = client.begin_recognize_content(myform, reading_order="natural")
+        poller = client.begin_recognize_content(form, reading_order="natural")
 
         assert 'natural' == poller._polling_method._initial_response.http_response.request.query['readingOrder']
         result = poller.result()
@@ -129,7 +127,7 @@ class TestContentFromStream(FormRecognizerTest):
     @recorded_by_proxy
     def test_content_stream_transform_jpg(self, client):
         with open(self.form_jpg, "rb") as fd:
-            myform = fd.read()
+            form = fd.read()
 
         responses = []
 
@@ -139,7 +137,7 @@ class TestContentFromStream(FormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_layout)
 
-        poller = client.begin_recognize_content(myform, cls=callback)
+        poller = client.begin_recognize_content(form, cls=callback)
         result = poller.result()
         raw_response = responses[0]
         layout = responses[1]
@@ -184,7 +182,7 @@ class TestContentFromStream(FormRecognizerTest):
     @recorded_by_proxy
     def test_content_multipage_transform(self, client):
         with open(self.multipage_invoice_pdf, "rb") as fd:
-            myform = fd.read()
+            form = fd.read()
 
         responses = []
 
@@ -194,7 +192,7 @@ class TestContentFromStream(FormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_layout)
 
-        poller = client.begin_recognize_content(myform, cls=callback)
+        poller = client.begin_recognize_content(form, cls=callback)
         result = poller.result()
         raw_response = responses[0]
         layout = responses[1]
@@ -210,8 +208,8 @@ class TestContentFromStream(FormRecognizerTest):
     def test_content_continuation_token(self, **kwargs):
         client = kwargs.pop("client")
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
-        initial_poller = client.begin_recognize_content(myfile)
+            my_file = fd.read()
+        initial_poller = client.begin_recognize_content(my_file)
         cont_token = initial_poller.continuation_token()
 
         poller = client.begin_recognize_content(None, continuation_token=cont_token)
@@ -225,7 +223,7 @@ class TestContentFromStream(FormRecognizerTest):
     @recorded_by_proxy
     def test_content_multipage_table_span_transform(self, client):
         with open(self.multipage_table_pdf, "rb") as fd:
-            myform = fd.read()
+            form = fd.read()
 
         responses = []
 
@@ -235,7 +233,7 @@ class TestContentFromStream(FormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_layout)
 
-        poller = client.begin_recognize_content(myform, cls=callback)
+        poller = client.begin_recognize_content(form, cls=callback)
         result = poller.result()
         raw_response = responses[0]
         layout = responses[1]
@@ -250,9 +248,9 @@ class TestContentFromStream(FormRecognizerTest):
     @recorded_by_proxy
     def test_content_selection_marks(self, client):
         with open(self.selection_form_pdf, "rb") as fd:
-            myform = fd.read()
+            form = fd.read()
 
-        poller = client.begin_recognize_content(myform)
+        poller = client.begin_recognize_content(form)
         result = poller.result()
         assert len(result) == 1
         layout = result[0]
@@ -264,9 +262,9 @@ class TestContentFromStream(FormRecognizerTest):
     @recorded_by_proxy
     def test_content_selection_marks_v2(self, client):
         with open(self.selection_form_pdf, "rb") as fd:
-            myform = fd.read()
+            form = fd.read()
 
-        poller = client.begin_recognize_content(myform)
+        poller = client.begin_recognize_content(form)
         result = poller.result()
         assert len(result) == 1
         layout = result[0]
@@ -279,21 +277,21 @@ class TestContentFromStream(FormRecognizerTest):
     def test_content_specify_pages(self, client):
 
         with open(self.multipage_invoice_pdf, "rb") as fd:
-            myform = fd.read()
+            form = fd.read()
 
-        poller = client.begin_recognize_content(myform, pages=["1"])
+        poller = client.begin_recognize_content(form, pages=["1"])
         result = poller.result()
         assert len(result) == 1
 
-        poller = client.begin_recognize_content(myform, pages=["1", "3"])
+        poller = client.begin_recognize_content(form, pages=["1", "3"])
         result = poller.result()
         assert len(result) == 2
 
-        poller = client.begin_recognize_content(myform, pages=["1-2"])
+        poller = client.begin_recognize_content(form, pages=["1-2"])
         result = poller.result()
         assert len(result) == 2
 
-        poller = client.begin_recognize_content(myform, pages=["1-2", "3"])
+        poller = client.begin_recognize_content(form, pages=["1-2", "3"])
         result = poller.result()
         assert len(result) == 3
 
@@ -302,8 +300,8 @@ class TestContentFromStream(FormRecognizerTest):
     @recorded_by_proxy
     def test_content_language_specified(self, client):
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
-        poller = client.begin_recognize_content(myfile, language="de")
+            my_file = fd.read()
+        poller = client.begin_recognize_content(my_file, language="de")
         assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
         result = poller.result()
         assert result
@@ -313,9 +311,9 @@ class TestContentFromStream(FormRecognizerTest):
     @recorded_by_proxy
     def test_content_language_error(self, client):
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         with pytest.raises(HttpResponseError) as e:
-            client.begin_recognize_content(myfile, language="not a language")
+            client.begin_recognize_content(my_file, language="not a language")
         assert "NotSupportedLanguage" == e.value.error.code
 
     @FormRecognizerPreparer()
@@ -323,7 +321,7 @@ class TestContentFromStream(FormRecognizerTest):
     def test_content_language_v2(self, **kwargs):
         client = kwargs.pop("client")
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         with pytest.raises(ValueError) as e:
-            client.begin_recognize_content(myfile, language="en")
+            client.begin_recognize_content(my_file, language="en")
         assert "'language' is only available for API version V2_1 and up" in str(e.value)

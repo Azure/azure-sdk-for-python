@@ -31,12 +31,18 @@ class EnvironmentCredential(AsyncContextManager):
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
       - **AZURE_CLIENT_ID**: the service principal's client ID
       - **AZURE_CLIENT_SECRET**: one of the service principal's client secrets
+      - **AZURE_AUTHORITY_HOST**: authority of an Azure Active Directory endpoint, for example
+        "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
+        when no value is given.
 
     Service principal with certificate:
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
       - **AZURE_CLIENT_ID**: the service principal's client ID
-      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM or PKCS12 certificate file including the private key. The
-        certificate must not be password-protected.
+      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM or PKCS12 certificate file including the private key.
+      - **AZURE_CLIENT_CERTIFICATE_PASSWORD**: (optional) password of the certificate file, if any.
+      - **AZURE_AUTHORITY_HOST**: authority of an Azure Active Directory endpoint, for example
+        "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
+        when no value is given.
     """
 
     def __init__(self, **kwargs: "Any") -> None:
@@ -54,6 +60,7 @@ class EnvironmentCredential(AsyncContextManager):
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 certificate_path=os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH],
+                password=os.environ.get(EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PASSWORD),
                 **kwargs
             )
 

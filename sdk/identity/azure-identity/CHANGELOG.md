@@ -1,6 +1,6 @@
 # Release History
 
-## 1.8.0b2 (Unreleased)
+## 1.12.0b2 (Unreleased)
 
 ### Features Added
 
@@ -10,13 +10,137 @@
 
 ### Other Changes
 
-## 1.8.0b1 (2022-02-08)
+## 1.12.0b1 (2022-09-22)
 
 ### Features Added
 
-- Added `validate_authority` support for msal client  #22625
-- Added `resource_id` support for user-assigned managed identity  #22329
-- Added `ClientAssertionCredential` support  #22328
+- Added ability to specify `tenant_id` for `AzureCliCredential` & `AzurePowerShellCredential` (thanks @tikicoder)    ([#25207](https://github.com/Azure/azure-sdk-for-python/pull/25207))
+- Removed `VisualStudioCodeCredential` from `DefaultAzureCredential` token chain. ([#23249](https://github.com/Azure/azure-sdk-for-python/issues/23249))
+- `EnvironmentCredential` added `AZURE_CLIENT_CERTIFICATE_PASSWORD` support for the cert password    ([#24652](https://github.com/Azure/azure-sdk-for-python/issues/24652))
+- Added `validate_authority` support for msal client  ([#22625](https://github.com/Azure/azure-sdk-for-python/issues/22625))
+
+## 1.11.0 (2022-09-19)
+
+### Features Added
+
+- Added `additionally_allowed_tenants` to the following credential options to force explicit opt-in behavior for multi-tenant authentication:
+  - `AuthorizationCodeCredential`
+  - `AzureCliCredential`
+  - `AzurePowerShellCredential`
+  - `CertificateCredential`
+  - `ClientAssertionCredential`
+  - `ClientSecretCredential`
+  - `DefaultAzureCredential`
+  - `OnBehalfOfCredential`
+  - `UsernamePasswordCredential`
+  - `VisualStudioCodeCredential`
+
+### Breaking Changes
+
+- Credential types supporting multi-tenant authentication will now throw `ClientAuthenticationError` if the requested tenant ID doesn't match the credential's tenant ID, and is not included in `additionally_allowed_tenants`. Applications must now explicitly add additional tenants to the `additionally_allowed_tenants` list, or add '*' to list, to enable acquiring tokens from tenants other than the originally specified tenant ID.
+
+More information on this change and the consideration behind it can be found [here](https://aka.ms/azsdk/blog/multi-tenant-guidance).
+
+- These beta features in 1.11.0b3 have been removed from this release and will be added back in 1.12.0b1
+  - `tenant_id` for `AzureCliCredential`
+  - removed `VisualStudioCodeCredential` from `DefaultAzureCredential` token chain
+  - `AZURE_CLIENT_CERTIFICATE_PASSWORD` support for `EnvironmentCredential`
+  - `validate_authority` support
+
+## 1.11.0b3 (2022-08-09)
+
+Azure-identity is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+
+### Features Added
+
+- Added ability to specify `tenant_id` for `AzureCliCredential` (thanks @tikicoder)    ([#25207](https://github.com/Azure/azure-sdk-for-python/pull/25207))
+
+### Breaking Changes
+
+- Removed `VisualStudioCodeCredential` from `DefaultAzureCredential` token chain. ([#23249](https://github.com/Azure/azure-sdk-for-python/issues/23249))
+
+## 1.11.0b2 (2022-07-05)
+
+### Features Added
+
+- `EnvironmentCredential` added `AZURE_CLIENT_CERTIFICATE_PASSWORD` support for the cert password    ([#24652](https://github.com/Azure/azure-sdk-for-python/issues/24652))
+
+### Bugs Fixed
+
+- Fixed the issue that failed to parse PEM certificate if it does not start with "-----"    ([#24643](https://github.com/Azure/azure-sdk-for-python/issues/24643))
+
+## 1.11.0b1 (2022-05-10)
+
+### Features Added
+
+- Added `validate_authority` support for msal client  ([#22625](https://github.com/Azure/azure-sdk-for-python/issues/22625))
+
+## 1.10.0 (2022-04-28)
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 1.9.0.
+> Only code written against a beta version such as 1.10.0b1 may be affected.
+- `validate_authority` support is not available in 1.10.0.
+
+### Other Changes
+
+- Supported msal-extensions version 1.0.0    ([#23927](https://github.com/Azure/azure-sdk-for-python/issues/23927))
+
+## 1.10.0b1 (2022-04-07)
+
+### Features Added
+
+- Added `validate_authority` support for msal client  ([#22625](https://github.com/Azure/azure-sdk-for-python/issues/22625))
+
+## 1.9.0 (2022-04-05)
+
+### Features Added
+
+- Added PII logging if logging.DEBUG is enabled.    ([#23203](https://github.com/Azure/azure-sdk-for-python/issues/23203))
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 1.8.0.
+> Only code written against a beta version such as 1.9.0b1 may be affected.
+- `validate_authority` support is not available in 1.9.0.
+
+### Bugs Fixed
+
+- Added check on `content` from msal response.    ([#23483](https://github.com/Azure/azure-sdk-for-python/issues/23483))
+- Fixed the issue that async OBO credential does not refresh correctly.    ([#21981](https://github.com/Azure/azure-sdk-for-python/issues/21981))
+
+### Other Changes
+
+- Removed `resource_id`, please use `identity_config` instead.
+- Renamed argument name `get_assertion` to `func` for `ClientAssertionCredential`.
+
+## 1.9.0b1 (2022-03-08)
+
+### Features Added
+
+- Added `validate_authority` support for msal client  ([#22625](https://github.com/Azure/azure-sdk-for-python/issues/22625))
+- Added `resource_id` support for user-assigned managed identity  ([#22329](https://github.com/Azure/azure-sdk-for-python/issues/22329))
+- Added `ClientAssertionCredential` support  ([#22328](https://github.com/Azure/azure-sdk-for-python/issues/22328))
+- Updated App service API version to "2019-08-01" ([#23034](https://github.com/Azure/azure-sdk-for-python/issues/23034))
+
+## 1.8.0 (2022-03-01)
+
+### Bugs Fixed
+
+- Handle injected "tenant_id" and "claims" ([#23138](https://github.com/Azure/azure-sdk-for-python/issues/23138))
+  
+  "tenant_id" argument in get_token() method is only supported by:
+
+  - `AuthorizationCodeCredential`
+  - `AzureCliCredential`
+  - `AzurePowerShellCredential`
+  - `InteractiveBrowserCredential`
+  - `DeviceCodeCredential`
+  - `EnvironmentCredential`
+  - `UsernamePasswordCredential`
+
+   it is ignored by other types of credentials.
 
 ### Other Changes
 

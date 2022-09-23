@@ -148,3 +148,18 @@ class TestClientTestAsync(AzureRecordedTestCase):
             {"hotelId": "2", "text": "Cheapest hotel in town. Infact, a motel."},
             {"hotelId": "9", "text": "Secret Point Motel"},
         ]
+
+    @SearchEnvVarPreparer()
+    @search_decorator(schema="hotel_schema.json", index_batch="hotel_large.json")
+    @recorded_by_proxy_async
+    async def test_search_client_large(self, endpoint, api_key, index_name):
+        client = SearchClient(endpoint, index_name, api_key)
+        async with client:
+            await self._test_get_search_simple_large(client)
+
+    async def _test_get_search_simple_large(self, client):
+        results = []
+        async for x in await client.search(search_text = ''):
+            results.append(x)
+        assert len(results) == 60
+            

@@ -16,13 +16,14 @@ USAGE:
     python sample_query_table_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) TABLES_STORAGE_ENDPOINT_SUFFIX - the Table service account URL suffix
+    2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
+    3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
 import os
 import copy
 import random
-from time import sleep
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
@@ -33,7 +34,6 @@ class SampleTablesQuery(object):
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name, self.access_key, self.endpoint_suffix
         )
@@ -81,6 +81,30 @@ class SampleTablesQuery(object):
                 queried_entities = table_client.query_entities(
                     query_filter=name_filter, select=[u"Brand", u"Color"], parameters=parameters
                 )
+
+                async for entity_chosen in queried_entities:
+                    print(entity_chosen)
+
+            except HttpResponseError as e:
+                pass
+            # [END query_entities]
+
+    async def sample_query_entities_without_metadata(self):
+        from azure.data.tables.aio import TableClient
+        from azure.core.exceptions import HttpResponseError
+
+        print("Entities with name: marker")
+        table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
+        # [START query_entities]
+        async with table_client:
+            try:
+                parameters = {u"name": u"marker"}
+                name_filter = u"Name eq @name"
+                headers = {"Accept" : "application/json;odata=nometadata"}
+                queried_entities = table_client.query_entities(
+                    query_filter=name_filter, select=[u"Brand", u"Color"], parameters=parameters, headers=headers
+                )
+
                 async for entity_chosen in queried_entities:
                     print(entity_chosen)
 
@@ -143,6 +167,7 @@ async def main():
     try:
         await stq.insert_random_entities()
         await stq.sample_query_entities()
+        await stq.sample_query_entities_without_metadata()
         await stq.sample_query_entities_multiple_params()
         await stq.sample_query_entities_values()
     except Exception as e:

@@ -658,7 +658,6 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
         self.provisioning_state = None
         self.status = None
         self.outputs = None
-        self.az_cli_version = az_cli_version
 
 
 class AzurePowerShellScript(DeploymentScript):
@@ -1015,7 +1014,6 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
         self.provisioning_state = None
         self.status = None
         self.outputs = None
-        self.az_power_shell_version = az_power_shell_version
 
 
 class ContainerConfiguration(msrest.serialization.Model):

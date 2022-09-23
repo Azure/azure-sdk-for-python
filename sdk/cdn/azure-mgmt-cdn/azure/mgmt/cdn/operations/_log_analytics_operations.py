@@ -6,22 +6,305 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
+import functools
+from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from msrest import Serializer
 
 from .. import models as _models
+from .._vendor import _convert_request, _format_url_section
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+def build_get_log_analytics_metrics_request(
+    subscription_id: str,
+    resource_group_name: str,
+    profile_name: str,
+    *,
+    metrics: List[Union[str, "_models.LogMetric"]],
+    date_time_begin: datetime.datetime,
+    date_time_end: datetime.datetime,
+    granularity: Union[str, "_models.LogMetricsGranularity"],
+    custom_domains: List[str],
+    protocols: List[str],
+    group_by: Optional[List[Union[str, "_models.LogMetricsGroupBy"]]] = None,
+    continents: Optional[List[str]] = None,
+    country_or_regions: Optional[List[str]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-06-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsMetrics')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+        "profileName": _SERIALIZER.url("profile_name", profile_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['metrics'] = [_SERIALIZER.query("metrics", q, 'str') if q is not None else '' for q in metrics]
+    query_parameters['dateTimeBegin'] = _SERIALIZER.query("date_time_begin", date_time_begin, 'iso-8601')
+    query_parameters['dateTimeEnd'] = _SERIALIZER.query("date_time_end", date_time_end, 'iso-8601')
+    query_parameters['granularity'] = _SERIALIZER.query("granularity", granularity, 'str')
+    if group_by is not None:
+        query_parameters['groupBy'] = [_SERIALIZER.query("group_by", q, 'str') if q is not None else '' for q in group_by]
+    if continents is not None:
+        query_parameters['continents'] = [_SERIALIZER.query("continents", q, 'str') if q is not None else '' for q in continents]
+    if country_or_regions is not None:
+        query_parameters['countryOrRegions'] = [_SERIALIZER.query("country_or_regions", q, 'str') if q is not None else '' for q in country_or_regions]
+    query_parameters['customDomains'] = [_SERIALIZER.query("custom_domains", q, 'str') if q is not None else '' for q in custom_domains]
+    query_parameters['protocols'] = [_SERIALIZER.query("protocols", q, 'str') if q is not None else '' for q in protocols]
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_log_analytics_rankings_request(
+    subscription_id: str,
+    resource_group_name: str,
+    profile_name: str,
+    *,
+    rankings: List[Union[str, "_models.LogRanking"]],
+    metrics: List[Union[str, "_models.LogRankingMetric"]],
+    max_ranking: int,
+    date_time_begin: datetime.datetime,
+    date_time_end: datetime.datetime,
+    custom_domains: Optional[List[str]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-06-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsRankings')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+        "profileName": _SERIALIZER.url("profile_name", profile_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['rankings'] = [_SERIALIZER.query("rankings", q, 'str') if q is not None else '' for q in rankings]
+    query_parameters['metrics'] = [_SERIALIZER.query("metrics", q, 'str') if q is not None else '' for q in metrics]
+    query_parameters['maxRanking'] = _SERIALIZER.query("max_ranking", max_ranking, 'int')
+    query_parameters['dateTimeBegin'] = _SERIALIZER.query("date_time_begin", date_time_begin, 'iso-8601')
+    query_parameters['dateTimeEnd'] = _SERIALIZER.query("date_time_end", date_time_end, 'iso-8601')
+    if custom_domains is not None:
+        query_parameters['customDomains'] = [_SERIALIZER.query("custom_domains", q, 'str') if q is not None else '' for q in custom_domains]
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_log_analytics_locations_request(
+    subscription_id: str,
+    resource_group_name: str,
+    profile_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-06-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsLocations')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+        "profileName": _SERIALIZER.url("profile_name", profile_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_log_analytics_resources_request(
+    subscription_id: str,
+    resource_group_name: str,
+    profile_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-06-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsResources')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+        "profileName": _SERIALIZER.url("profile_name", profile_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_waf_log_analytics_metrics_request(
+    subscription_id: str,
+    resource_group_name: str,
+    profile_name: str,
+    *,
+    metrics: List[Union[str, "_models.WafMetric"]],
+    date_time_begin: datetime.datetime,
+    date_time_end: datetime.datetime,
+    granularity: Union[str, "_models.WafGranularity"],
+    actions: Optional[List[Union[str, "_models.WafAction"]]] = None,
+    group_by: Optional[List[Union[str, "_models.WafRankingGroupBy"]]] = None,
+    rule_types: Optional[List[Union[str, "_models.WafRuleType"]]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-06-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getWafLogAnalyticsMetrics')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+        "profileName": _SERIALIZER.url("profile_name", profile_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['metrics'] = [_SERIALIZER.query("metrics", q, 'str') if q is not None else '' for q in metrics]
+    query_parameters['dateTimeBegin'] = _SERIALIZER.query("date_time_begin", date_time_begin, 'iso-8601')
+    query_parameters['dateTimeEnd'] = _SERIALIZER.query("date_time_end", date_time_end, 'iso-8601')
+    query_parameters['granularity'] = _SERIALIZER.query("granularity", granularity, 'str')
+    if actions is not None:
+        query_parameters['actions'] = [_SERIALIZER.query("actions", q, 'str') if q is not None else '' for q in actions]
+    if group_by is not None:
+        query_parameters['groupBy'] = [_SERIALIZER.query("group_by", q, 'str') if q is not None else '' for q in group_by]
+    if rule_types is not None:
+        query_parameters['ruleTypes'] = [_SERIALIZER.query("rule_types", q, 'str') if q is not None else '' for q in rule_types]
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_waf_log_analytics_rankings_request(
+    subscription_id: str,
+    resource_group_name: str,
+    profile_name: str,
+    *,
+    metrics: List[Union[str, "_models.WafMetric"]],
+    date_time_begin: datetime.datetime,
+    date_time_end: datetime.datetime,
+    max_ranking: int,
+    rankings: List[Union[str, "_models.WafRankingType"]],
+    actions: Optional[List[Union[str, "_models.WafAction"]]] = None,
+    rule_types: Optional[List[Union[str, "_models.WafRuleType"]]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-06-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getWafLogAnalyticsRankings')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+        "profileName": _SERIALIZER.url("profile_name", profile_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['metrics'] = [_SERIALIZER.query("metrics", q, 'str') if q is not None else '' for q in metrics]
+    query_parameters['dateTimeBegin'] = _SERIALIZER.query("date_time_begin", date_time_begin, 'iso-8601')
+    query_parameters['dateTimeEnd'] = _SERIALIZER.query("date_time_end", date_time_end, 'iso-8601')
+    query_parameters['maxRanking'] = _SERIALIZER.query("max_ranking", max_ranking, 'int')
+    query_parameters['rankings'] = [_SERIALIZER.query("rankings", q, 'str') if q is not None else '' for q in rankings]
+    if actions is not None:
+        query_parameters['actions'] = [_SERIALIZER.query("actions", q, 'str') if q is not None else '' for q in actions]
+    if rule_types is not None:
+        query_parameters['ruleTypes'] = [_SERIALIZER.query("rule_types", q, 'str') if q is not None else '' for q in rule_types]
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
 
 class LogAnalyticsOperations(object):
     """LogAnalyticsOperations operations.
@@ -45,27 +328,28 @@ class LogAnalyticsOperations(object):
         self._deserialize = deserializer
         self._config = config
 
+    @distributed_trace
     def get_log_analytics_metrics(
         self,
-        resource_group_name,  # type: str
-        profile_name,  # type: str
-        metrics,  # type: List[Union[str, "_models.LogMetric"]]
-        date_time_begin,  # type: datetime.datetime
-        date_time_end,  # type: datetime.datetime
-        granularity,  # type: Union[str, "_models.LogMetricsGranularity"]
-        custom_domains,  # type: List[str]
-        protocols,  # type: List[str]
-        group_by=None,  # type: Optional[List[Union[str, "_models.LogMetricsGroupBy"]]]
-        continents=None,  # type: Optional[List[str]]
-        country_or_regions=None,  # type: Optional[List[str]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.MetricsResponse"
+        resource_group_name: str,
+        profile_name: str,
+        metrics: List[Union[str, "_models.LogMetric"]],
+        date_time_begin: datetime.datetime,
+        date_time_end: datetime.datetime,
+        granularity: Union[str, "_models.LogMetricsGranularity"],
+        custom_domains: List[str],
+        protocols: List[str],
+        group_by: Optional[List[Union[str, "_models.LogMetricsGroupBy"]]] = None,
+        continents: Optional[List[str]] = None,
+        country_or_regions: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> "_models.MetricsResponse":
         """Get log report for AFD profile.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
-        :param profile_name: Name of the CDN profile which is unique within the resource group.
+        :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium profile
+         which is unique within the resource group. which is unique within the resource group.
         :type profile_name: str
         :param metrics:
         :type metrics: list[str or ~azure.mgmt.cdn.models.LogMetric]
@@ -95,45 +379,32 @@ class LogAnalyticsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_log_analytics_metrics.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_log_analytics_metrics_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            profile_name=profile_name,
+            metrics=metrics,
+            date_time_begin=date_time_begin,
+            date_time_end=date_time_end,
+            granularity=granularity,
+            custom_domains=custom_domains,
+            protocols=protocols,
+            group_by=group_by,
+            continents=continents,
+            country_or_regions=country_or_regions,
+            template_url=self.get_log_analytics_metrics.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['metrics'] = [self._serialize.query("metrics", q, 'str') if q is not None else '' for q in metrics]
-        query_parameters['dateTimeBegin'] = self._serialize.query("date_time_begin", date_time_begin, 'iso-8601')
-        query_parameters['dateTimeEnd'] = self._serialize.query("date_time_end", date_time_end, 'iso-8601')
-        query_parameters['granularity'] = self._serialize.query("granularity", granularity, 'str')
-        if group_by is not None:
-            query_parameters['groupBy'] = [self._serialize.query("group_by", q, 'str') if q is not None else '' for q in group_by]
-        if continents is not None:
-            query_parameters['continents'] = [self._serialize.query("continents", q, 'str') if q is not None else '' for q in continents]
-        if country_or_regions is not None:
-            query_parameters['countryOrRegions'] = [self._serialize.query("country_or_regions", q, 'str') if q is not None else '' for q in country_or_regions]
-        query_parameters['customDomains'] = [self._serialize.query("custom_domains", q, 'str') if q is not None else '' for q in custom_domains]
-        query_parameters['protocols'] = [self._serialize.query("protocols", q, 'str') if q is not None else '' for q in protocols]
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MetricsResponse', pipeline_response)
@@ -142,26 +413,29 @@ class LogAnalyticsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get_log_analytics_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsMetrics'}  # type: ignore
 
+
+    @distributed_trace
     def get_log_analytics_rankings(
         self,
-        resource_group_name,  # type: str
-        profile_name,  # type: str
-        rankings,  # type: List[Union[str, "_models.LogRanking"]]
-        metrics,  # type: List[Union[str, "_models.LogRankingMetric"]]
-        max_ranking,  # type: int
-        date_time_begin,  # type: datetime.datetime
-        date_time_end,  # type: datetime.datetime
-        custom_domains=None,  # type: Optional[List[str]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.RankingsResponse"
+        resource_group_name: str,
+        profile_name: str,
+        rankings: List[Union[str, "_models.LogRanking"]],
+        metrics: List[Union[str, "_models.LogRankingMetric"]],
+        max_ranking: int,
+        date_time_begin: datetime.datetime,
+        date_time_end: datetime.datetime,
+        custom_domains: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> "_models.RankingsResponse":
         """Get log analytics ranking report for AFD profile.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
-        :param profile_name: Name of the CDN profile which is unique within the resource group.
+        :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium profile
+         which is unique within the resource group. which is unique within the resource group.
         :type profile_name: str
         :param rankings:
         :type rankings: list[str or ~azure.mgmt.cdn.models.LogRanking]
@@ -185,40 +459,29 @@ class LogAnalyticsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_log_analytics_rankings.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_log_analytics_rankings_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            profile_name=profile_name,
+            rankings=rankings,
+            metrics=metrics,
+            max_ranking=max_ranking,
+            date_time_begin=date_time_begin,
+            date_time_end=date_time_end,
+            custom_domains=custom_domains,
+            template_url=self.get_log_analytics_rankings.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['rankings'] = [self._serialize.query("rankings", q, 'str') if q is not None else '' for q in rankings]
-        query_parameters['metrics'] = [self._serialize.query("metrics", q, 'str') if q is not None else '' for q in metrics]
-        query_parameters['maxRanking'] = self._serialize.query("max_ranking", max_ranking, 'int')
-        query_parameters['dateTimeBegin'] = self._serialize.query("date_time_begin", date_time_begin, 'iso-8601')
-        query_parameters['dateTimeEnd'] = self._serialize.query("date_time_end", date_time_end, 'iso-8601')
-        if custom_domains is not None:
-            query_parameters['customDomains'] = [self._serialize.query("custom_domains", q, 'str') if q is not None else '' for q in custom_domains]
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RankingsResponse', pipeline_response)
@@ -227,20 +490,23 @@ class LogAnalyticsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get_log_analytics_rankings.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsRankings'}  # type: ignore
 
+
+    @distributed_trace
     def get_log_analytics_locations(
         self,
-        resource_group_name,  # type: str
-        profile_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.ContinentsResponse"
+        resource_group_name: str,
+        profile_name: str,
+        **kwargs: Any
+    ) -> "_models.ContinentsResponse":
         """Get all available location names for AFD log analytics report.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
-        :param profile_name: Name of the CDN profile which is unique within the resource group.
+        :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium profile
+         which is unique within the resource group. which is unique within the resource group.
         :type profile_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ContinentsResponse, or the result of cls(response)
@@ -252,33 +518,23 @@ class LogAnalyticsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_log_analytics_locations.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_log_analytics_locations_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            profile_name=profile_name,
+            template_url=self.get_log_analytics_locations.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ContinentsResponse', pipeline_response)
@@ -287,20 +543,23 @@ class LogAnalyticsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get_log_analytics_locations.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsLocations'}  # type: ignore
 
+
+    @distributed_trace
     def get_log_analytics_resources(
         self,
-        resource_group_name,  # type: str
-        profile_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.ResourcesResponse"
+        resource_group_name: str,
+        profile_name: str,
+        **kwargs: Any
+    ) -> "_models.ResourcesResponse":
         """Get all endpoints and custom domains available for AFD log report.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
-        :param profile_name: Name of the CDN profile which is unique within the resource group.
+        :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium profile
+         which is unique within the resource group. which is unique within the resource group.
         :type profile_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourcesResponse, or the result of cls(response)
@@ -312,33 +571,23 @@ class LogAnalyticsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_log_analytics_resources.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_log_analytics_resources_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            profile_name=profile_name,
+            template_url=self.get_log_analytics_resources.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ResourcesResponse', pipeline_response)
@@ -347,27 +596,30 @@ class LogAnalyticsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get_log_analytics_resources.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getLogAnalyticsResources'}  # type: ignore
 
+
+    @distributed_trace
     def get_waf_log_analytics_metrics(
         self,
-        resource_group_name,  # type: str
-        profile_name,  # type: str
-        metrics,  # type: List[Union[str, "_models.WafMetric"]]
-        date_time_begin,  # type: datetime.datetime
-        date_time_end,  # type: datetime.datetime
-        granularity,  # type: Union[str, "_models.WafGranularity"]
-        actions=None,  # type: Optional[List[Union[str, "_models.WafAction"]]]
-        group_by=None,  # type: Optional[List[Union[str, "_models.WafRankingGroupBy"]]]
-        rule_types=None,  # type: Optional[List[Union[str, "_models.WafRuleType"]]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.WafMetricsResponse"
+        resource_group_name: str,
+        profile_name: str,
+        metrics: List[Union[str, "_models.WafMetric"]],
+        date_time_begin: datetime.datetime,
+        date_time_end: datetime.datetime,
+        granularity: Union[str, "_models.WafGranularity"],
+        actions: Optional[List[Union[str, "_models.WafAction"]]] = None,
+        group_by: Optional[List[Union[str, "_models.WafRankingGroupBy"]]] = None,
+        rule_types: Optional[List[Union[str, "_models.WafRuleType"]]] = None,
+        **kwargs: Any
+    ) -> "_models.WafMetricsResponse":
         """Get Waf related log analytics report for AFD profile.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
-        :param profile_name: Name of the CDN profile which is unique within the resource group.
+        :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium profile
+         which is unique within the resource group. which is unique within the resource group.
         :type profile_name: str
         :param metrics:
         :type metrics: list[str or ~azure.mgmt.cdn.models.WafMetric]
@@ -393,43 +645,30 @@ class LogAnalyticsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_waf_log_analytics_metrics.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_waf_log_analytics_metrics_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            profile_name=profile_name,
+            metrics=metrics,
+            date_time_begin=date_time_begin,
+            date_time_end=date_time_end,
+            granularity=granularity,
+            actions=actions,
+            group_by=group_by,
+            rule_types=rule_types,
+            template_url=self.get_waf_log_analytics_metrics.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['metrics'] = [self._serialize.query("metrics", q, 'str') if q is not None else '' for q in metrics]
-        query_parameters['dateTimeBegin'] = self._serialize.query("date_time_begin", date_time_begin, 'iso-8601')
-        query_parameters['dateTimeEnd'] = self._serialize.query("date_time_end", date_time_end, 'iso-8601')
-        query_parameters['granularity'] = self._serialize.query("granularity", granularity, 'str')
-        if actions is not None:
-            query_parameters['actions'] = [self._serialize.query("actions", q, 'str') if q is not None else '' for q in actions]
-        if group_by is not None:
-            query_parameters['groupBy'] = [self._serialize.query("group_by", q, 'str') if q is not None else '' for q in group_by]
-        if rule_types is not None:
-            query_parameters['ruleTypes'] = [self._serialize.query("rule_types", q, 'str') if q is not None else '' for q in rule_types]
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WafMetricsResponse', pipeline_response)
@@ -438,27 +677,30 @@ class LogAnalyticsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get_waf_log_analytics_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getWafLogAnalyticsMetrics'}  # type: ignore
 
+
+    @distributed_trace
     def get_waf_log_analytics_rankings(
         self,
-        resource_group_name,  # type: str
-        profile_name,  # type: str
-        metrics,  # type: List[Union[str, "_models.WafMetric"]]
-        date_time_begin,  # type: datetime.datetime
-        date_time_end,  # type: datetime.datetime
-        max_ranking,  # type: int
-        rankings,  # type: List[Union[str, "_models.WafRankingType"]]
-        actions=None,  # type: Optional[List[Union[str, "_models.WafAction"]]]
-        rule_types=None,  # type: Optional[List[Union[str, "_models.WafRuleType"]]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.WafRankingsResponse"
+        resource_group_name: str,
+        profile_name: str,
+        metrics: List[Union[str, "_models.WafMetric"]],
+        date_time_begin: datetime.datetime,
+        date_time_end: datetime.datetime,
+        max_ranking: int,
+        rankings: List[Union[str, "_models.WafRankingType"]],
+        actions: Optional[List[Union[str, "_models.WafAction"]]] = None,
+        rule_types: Optional[List[Union[str, "_models.WafRuleType"]]] = None,
+        **kwargs: Any
+    ) -> "_models.WafRankingsResponse":
         """Get WAF log analytics charts for AFD profile.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
-        :param profile_name: Name of the CDN profile which is unique within the resource group.
+        :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium profile
+         which is unique within the resource group. which is unique within the resource group.
         :type profile_name: str
         :param metrics:
         :type metrics: list[str or ~azure.mgmt.cdn.models.WafMetric]
@@ -484,42 +726,30 @@ class LogAnalyticsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_waf_log_analytics_rankings.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_waf_log_analytics_rankings_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            profile_name=profile_name,
+            metrics=metrics,
+            date_time_begin=date_time_begin,
+            date_time_end=date_time_end,
+            max_ranking=max_ranking,
+            rankings=rankings,
+            actions=actions,
+            rule_types=rule_types,
+            template_url=self.get_waf_log_analytics_rankings.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['metrics'] = [self._serialize.query("metrics", q, 'str') if q is not None else '' for q in metrics]
-        query_parameters['dateTimeBegin'] = self._serialize.query("date_time_begin", date_time_begin, 'iso-8601')
-        query_parameters['dateTimeEnd'] = self._serialize.query("date_time_end", date_time_end, 'iso-8601')
-        query_parameters['maxRanking'] = self._serialize.query("max_ranking", max_ranking, 'int')
-        query_parameters['rankings'] = [self._serialize.query("rankings", q, 'str') if q is not None else '' for q in rankings]
-        if actions is not None:
-            query_parameters['actions'] = [self._serialize.query("actions", q, 'str') if q is not None else '' for q in actions]
-        if rule_types is not None:
-            query_parameters['ruleTypes'] = [self._serialize.query("rule_types", q, 'str') if q is not None else '' for q in rule_types]
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.AfdErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.AfdErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WafRankingsResponse', pipeline_response)
@@ -528,4 +758,6 @@ class LogAnalyticsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get_waf_log_analytics_rankings.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getWafLogAnalyticsRankings'}  # type: ignore
+

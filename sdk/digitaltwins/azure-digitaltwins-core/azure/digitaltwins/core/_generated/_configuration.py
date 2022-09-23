@@ -11,15 +11,16 @@ from typing import TYPE_CHECKING
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
+from ._version import VERSION
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
     from azure.core.credentials import TokenCredential
 
-VERSION = "unknown"
 
-class AzureDigitalTwinsAPIConfiguration(Configuration):
+class AzureDigitalTwinsAPIConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for AzureDigitalTwinsAPI.
 
     Note that all parameters used to create this instance are saved as instance
@@ -27,6 +28,9 @@ class AzureDigitalTwinsAPIConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
+    :keyword api_version: Api Version. Default value is "2022-05-31". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -35,12 +39,14 @@ class AzureDigitalTwinsAPIConfiguration(Configuration):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        super(AzureDigitalTwinsAPIConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        super(AzureDigitalTwinsAPIConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
-        self.api_version = "2020-10-31"
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://digitaltwins.azure.net/.default'])
         kwargs.setdefault('sdk_moniker', 'azuredigitaltwinsapi/{}'.format(VERSION))
         self._configure(**kwargs)

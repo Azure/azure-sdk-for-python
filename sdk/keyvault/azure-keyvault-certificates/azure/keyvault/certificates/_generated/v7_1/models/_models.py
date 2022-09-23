@@ -13,9 +13,9 @@ import msrest.serialization
 class Action(msrest.serialization.Model):
     """The action that will be executed.
 
-    :param action_type: The type of the action. Possible values include: "EmailContacts",
+    :ivar action_type: The type of the action. Possible values include: "EmailContacts",
      "AutoRenew".
-    :type action_type: str or ~azure.keyvault.v7_1.models.ActionType
+    :vartype action_type: str or ~azure.keyvault.v7_1.models.ActionType
     """
 
     _attribute_map = {
@@ -26,6 +26,11 @@ class Action(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword action_type: The type of the action. Possible values include: "EmailContacts",
+         "AutoRenew".
+        :paramtype action_type: str or ~azure.keyvault.v7_1.models.ActionType
+        """
         super(Action, self).__init__(**kwargs)
         self.action_type = kwargs.get('action_type', None)
 
@@ -33,14 +38,14 @@ class Action(msrest.serialization.Model):
 class AdministratorDetails(msrest.serialization.Model):
     """Details of the organization administrator of the certificate issuer.
 
-    :param first_name: First name.
-    :type first_name: str
-    :param last_name: Last name.
-    :type last_name: str
-    :param email_address: Email address.
-    :type email_address: str
-    :param phone: Phone number.
-    :type phone: str
+    :ivar first_name: First name.
+    :vartype first_name: str
+    :ivar last_name: Last name.
+    :vartype last_name: str
+    :ivar email_address: Email address.
+    :vartype email_address: str
+    :ivar phone: Phone number.
+    :vartype phone: str
     """
 
     _attribute_map = {
@@ -54,6 +59,16 @@ class AdministratorDetails(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword first_name: First name.
+        :paramtype first_name: str
+        :keyword last_name: Last name.
+        :paramtype last_name: str
+        :keyword email_address: Email address.
+        :paramtype email_address: str
+        :keyword phone: Phone number.
+        :paramtype phone: str
+        """
         super(AdministratorDetails, self).__init__(**kwargs)
         self.first_name = kwargs.get('first_name', None)
         self.last_name = kwargs.get('last_name', None)
@@ -66,12 +81,12 @@ class Attributes(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param enabled: Determines whether the object is enabled.
-    :type enabled: bool
-    :param not_before: Not before date in UTC.
-    :type not_before: ~datetime.datetime
-    :param expires: Expiry date in UTC.
-    :type expires: ~datetime.datetime
+    :ivar enabled: Determines whether the object is enabled.
+    :vartype enabled: bool
+    :ivar not_before: Not before date in UTC.
+    :vartype not_before: ~datetime.datetime
+    :ivar expires: Expiry date in UTC.
+    :vartype expires: ~datetime.datetime
     :ivar created: Creation time in UTC.
     :vartype created: ~datetime.datetime
     :ivar updated: Last updated time in UTC.
@@ -95,6 +110,14 @@ class Attributes(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword enabled: Determines whether the object is enabled.
+        :paramtype enabled: bool
+        :keyword not_before: Not before date in UTC.
+        :paramtype not_before: ~datetime.datetime
+        :keyword expires: Expiry date in UTC.
+        :paramtype expires: ~datetime.datetime
+        """
         super(Attributes, self).__init__(**kwargs)
         self.enabled = kwargs.get('enabled', None)
         self.not_before = kwargs.get('not_before', None)
@@ -124,6 +147,8 @@ class BackupCertificateResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(BackupCertificateResult, self).__init__(**kwargs)
         self.value = None
 
@@ -133,12 +158,12 @@ class CertificateAttributes(Attributes):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param enabled: Determines whether the object is enabled.
-    :type enabled: bool
-    :param not_before: Not before date in UTC.
-    :type not_before: ~datetime.datetime
-    :param expires: Expiry date in UTC.
-    :type expires: ~datetime.datetime
+    :ivar enabled: Determines whether the object is enabled.
+    :vartype enabled: bool
+    :ivar not_before: Not before date in UTC.
+    :vartype not_before: ~datetime.datetime
+    :ivar expires: Expiry date in UTC.
+    :vartype expires: ~datetime.datetime
     :ivar created: Creation time in UTC.
     :vartype created: ~datetime.datetime
     :ivar updated: Last updated time in UTC.
@@ -176,6 +201,14 @@ class CertificateAttributes(Attributes):
         self,
         **kwargs
     ):
+        """
+        :keyword enabled: Determines whether the object is enabled.
+        :paramtype enabled: bool
+        :keyword not_before: Not before date in UTC.
+        :paramtype not_before: ~datetime.datetime
+        :keyword expires: Expiry date in UTC.
+        :paramtype expires: ~datetime.datetime
+        """
         super(CertificateAttributes, self).__init__(**kwargs)
         self.recoverable_days = None
         self.recovery_level = None
@@ -196,14 +229,14 @@ class CertificateBundle(msrest.serialization.Model):
     :vartype x509_thumbprint: bytes
     :ivar policy: The management policy.
     :vartype policy: ~azure.keyvault.v7_1.models.CertificatePolicy
-    :param cer: CER contents of x509 certificate.
-    :type cer: bytearray
-    :param content_type: The content type of the secret.
-    :type content_type: str
-    :param attributes: The certificate attributes.
-    :type attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar cer: CER contents of x509 certificate.
+    :vartype cer: bytearray
+    :ivar content_type: The content type of the secret.
+    :vartype content_type: str
+    :ivar attributes: The certificate attributes.
+    :vartype attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -230,6 +263,16 @@ class CertificateBundle(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword cer: CER contents of x509 certificate.
+        :paramtype cer: bytearray
+        :keyword content_type: The content type of the secret.
+        :paramtype content_type: str
+        :keyword attributes: The certificate attributes.
+        :paramtype attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(CertificateBundle, self).__init__(**kwargs)
         self.id = None
         self.kid = None
@@ -245,12 +288,12 @@ class CertificateBundle(msrest.serialization.Model):
 class CertificateCreateParameters(msrest.serialization.Model):
     """The certificate create parameters.
 
-    :param certificate_policy: The management policy for the certificate.
-    :type certificate_policy: ~azure.keyvault.v7_1.models.CertificatePolicy
-    :param certificate_attributes: The attributes of the certificate (optional).
-    :type certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar certificate_policy: The management policy for the certificate.
+    :vartype certificate_policy: ~azure.keyvault.v7_1.models.CertificatePolicy
+    :ivar certificate_attributes: The attributes of the certificate (optional).
+    :vartype certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -263,6 +306,14 @@ class CertificateCreateParameters(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword certificate_policy: The management policy for the certificate.
+        :paramtype certificate_policy: ~azure.keyvault.v7_1.models.CertificatePolicy
+        :keyword certificate_attributes: The attributes of the certificate (optional).
+        :paramtype certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(CertificateCreateParameters, self).__init__(**kwargs)
         self.certificate_policy = kwargs.get('certificate_policy', None)
         self.certificate_attributes = kwargs.get('certificate_attributes', None)
@@ -274,18 +325,18 @@ class CertificateImportParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param base64_encoded_certificate: Required. A PEM file or a base64-encoded PFX file.  PEM
-     files need to contain the private key.
-    :type base64_encoded_certificate: str
-    :param password: If the private key in base64EncodedCertificate is encrypted, the password used
+    :ivar base64_encoded_certificate: Required. A PEM file or a base64-encoded PFX file.  PEM files
+     need to contain the private key.
+    :vartype base64_encoded_certificate: str
+    :ivar password: If the private key in base64EncodedCertificate is encrypted, the password used
      for encryption.
-    :type password: str
-    :param certificate_policy: The management policy for the certificate.
-    :type certificate_policy: ~azure.keyvault.v7_1.models.CertificatePolicy
-    :param certificate_attributes: The attributes of the certificate (optional).
-    :type certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :vartype password: str
+    :ivar certificate_policy: The management policy for the certificate.
+    :vartype certificate_policy: ~azure.keyvault.v7_1.models.CertificatePolicy
+    :ivar certificate_attributes: The attributes of the certificate (optional).
+    :vartype certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -304,6 +355,20 @@ class CertificateImportParameters(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword base64_encoded_certificate: Required. A PEM file or a base64-encoded PFX file.  PEM
+         files need to contain the private key.
+        :paramtype base64_encoded_certificate: str
+        :keyword password: If the private key in base64EncodedCertificate is encrypted, the password
+         used for encryption.
+        :paramtype password: str
+        :keyword certificate_policy: The management policy for the certificate.
+        :paramtype certificate_policy: ~azure.keyvault.v7_1.models.CertificatePolicy
+        :keyword certificate_attributes: The attributes of the certificate (optional).
+        :paramtype certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(CertificateImportParameters, self).__init__(**kwargs)
         self.base64_encoded_certificate = kwargs['base64_encoded_certificate']
         self.password = kwargs.get('password', None)
@@ -315,10 +380,10 @@ class CertificateImportParameters(msrest.serialization.Model):
 class CertificateIssuerItem(msrest.serialization.Model):
     """The certificate issuer item containing certificate issuer metadata.
 
-    :param id: Certificate Identifier.
-    :type id: str
-    :param provider: The issuer provider.
-    :type provider: str
+    :ivar id: Certificate Identifier.
+    :vartype id: str
+    :ivar provider: The issuer provider.
+    :vartype provider: str
     """
 
     _attribute_map = {
@@ -330,6 +395,12 @@ class CertificateIssuerItem(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword id: Certificate Identifier.
+        :paramtype id: str
+        :keyword provider: The issuer provider.
+        :paramtype provider: str
+        """
         super(CertificateIssuerItem, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.provider = kwargs.get('provider', None)
@@ -361,6 +432,8 @@ class CertificateIssuerListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CertificateIssuerListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -371,14 +444,14 @@ class CertificateIssuerSetParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param provider: Required. The issuer provider.
-    :type provider: str
-    :param credentials: The credentials to be used for the issuer.
-    :type credentials: ~azure.keyvault.v7_1.models.IssuerCredentials
-    :param organization_details: Details of the organization as provided to the issuer.
-    :type organization_details: ~azure.keyvault.v7_1.models.OrganizationDetails
-    :param attributes: Attributes of the issuer object.
-    :type attributes: ~azure.keyvault.v7_1.models.IssuerAttributes
+    :ivar provider: Required. The issuer provider.
+    :vartype provider: str
+    :ivar credentials: The credentials to be used for the issuer.
+    :vartype credentials: ~azure.keyvault.v7_1.models.IssuerCredentials
+    :ivar organization_details: Details of the organization as provided to the issuer.
+    :vartype organization_details: ~azure.keyvault.v7_1.models.OrganizationDetails
+    :ivar attributes: Attributes of the issuer object.
+    :vartype attributes: ~azure.keyvault.v7_1.models.IssuerAttributes
     """
 
     _validation = {
@@ -396,6 +469,16 @@ class CertificateIssuerSetParameters(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword provider: Required. The issuer provider.
+        :paramtype provider: str
+        :keyword credentials: The credentials to be used for the issuer.
+        :paramtype credentials: ~azure.keyvault.v7_1.models.IssuerCredentials
+        :keyword organization_details: Details of the organization as provided to the issuer.
+        :paramtype organization_details: ~azure.keyvault.v7_1.models.OrganizationDetails
+        :keyword attributes: Attributes of the issuer object.
+        :paramtype attributes: ~azure.keyvault.v7_1.models.IssuerAttributes
+        """
         super(CertificateIssuerSetParameters, self).__init__(**kwargs)
         self.provider = kwargs['provider']
         self.credentials = kwargs.get('credentials', None)
@@ -406,14 +489,14 @@ class CertificateIssuerSetParameters(msrest.serialization.Model):
 class CertificateIssuerUpdateParameters(msrest.serialization.Model):
     """The certificate issuer update parameters.
 
-    :param provider: The issuer provider.
-    :type provider: str
-    :param credentials: The credentials to be used for the issuer.
-    :type credentials: ~azure.keyvault.v7_1.models.IssuerCredentials
-    :param organization_details: Details of the organization as provided to the issuer.
-    :type organization_details: ~azure.keyvault.v7_1.models.OrganizationDetails
-    :param attributes: Attributes of the issuer object.
-    :type attributes: ~azure.keyvault.v7_1.models.IssuerAttributes
+    :ivar provider: The issuer provider.
+    :vartype provider: str
+    :ivar credentials: The credentials to be used for the issuer.
+    :vartype credentials: ~azure.keyvault.v7_1.models.IssuerCredentials
+    :ivar organization_details: Details of the organization as provided to the issuer.
+    :vartype organization_details: ~azure.keyvault.v7_1.models.OrganizationDetails
+    :ivar attributes: Attributes of the issuer object.
+    :vartype attributes: ~azure.keyvault.v7_1.models.IssuerAttributes
     """
 
     _attribute_map = {
@@ -427,6 +510,16 @@ class CertificateIssuerUpdateParameters(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword provider: The issuer provider.
+        :paramtype provider: str
+        :keyword credentials: The credentials to be used for the issuer.
+        :paramtype credentials: ~azure.keyvault.v7_1.models.IssuerCredentials
+        :keyword organization_details: Details of the organization as provided to the issuer.
+        :paramtype organization_details: ~azure.keyvault.v7_1.models.OrganizationDetails
+        :keyword attributes: Attributes of the issuer object.
+        :paramtype attributes: ~azure.keyvault.v7_1.models.IssuerAttributes
+        """
         super(CertificateIssuerUpdateParameters, self).__init__(**kwargs)
         self.provider = kwargs.get('provider', None)
         self.credentials = kwargs.get('credentials', None)
@@ -437,14 +530,14 @@ class CertificateIssuerUpdateParameters(msrest.serialization.Model):
 class CertificateItem(msrest.serialization.Model):
     """The certificate item containing certificate metadata.
 
-    :param id: Certificate identifier.
-    :type id: str
-    :param attributes: The certificate management attributes.
-    :type attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :param x509_thumbprint: Thumbprint of the certificate.
-    :type x509_thumbprint: bytes
+    :ivar id: Certificate identifier.
+    :vartype id: str
+    :ivar attributes: The certificate management attributes.
+    :vartype attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
+    :ivar x509_thumbprint: Thumbprint of the certificate.
+    :vartype x509_thumbprint: bytes
     """
 
     _attribute_map = {
@@ -458,6 +551,16 @@ class CertificateItem(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword id: Certificate identifier.
+        :paramtype id: str
+        :keyword attributes: The certificate management attributes.
+        :paramtype attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword x509_thumbprint: Thumbprint of the certificate.
+        :paramtype x509_thumbprint: bytes
+        """
         super(CertificateItem, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.attributes = kwargs.get('attributes', None)
@@ -491,6 +594,8 @@ class CertificateListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CertificateListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -501,12 +606,12 @@ class CertificateMergeParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param x509_certificates: Required. The certificate or the certificate chain to merge.
-    :type x509_certificates: list[bytearray]
-    :param certificate_attributes: The attributes of the certificate (optional).
-    :type certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar x509_certificates: Required. The certificate or the certificate chain to merge.
+    :vartype x509_certificates: list[bytearray]
+    :ivar certificate_attributes: The attributes of the certificate (optional).
+    :vartype certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -523,6 +628,14 @@ class CertificateMergeParameters(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword x509_certificates: Required. The certificate or the certificate chain to merge.
+        :paramtype x509_certificates: list[bytearray]
+        :keyword certificate_attributes: The attributes of the certificate (optional).
+        :paramtype certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(CertificateMergeParameters, self).__init__(**kwargs)
         self.x509_certificates = kwargs['x509_certificates']
         self.certificate_attributes = kwargs.get('certificate_attributes', None)
@@ -536,24 +649,24 @@ class CertificateOperation(msrest.serialization.Model):
 
     :ivar id: The certificate id.
     :vartype id: str
-    :param issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
-    :type issuer_parameters: ~azure.keyvault.v7_1.models.IssuerParameters
-    :param csr: The certificate signing request (CSR) that is being used in the certificate
+    :ivar issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
+    :vartype issuer_parameters: ~azure.keyvault.v7_1.models.IssuerParameters
+    :ivar csr: The certificate signing request (CSR) that is being used in the certificate
      operation.
-    :type csr: bytearray
-    :param cancellation_requested: Indicates if cancellation was requested on the certificate
+    :vartype csr: bytearray
+    :ivar cancellation_requested: Indicates if cancellation was requested on the certificate
      operation.
-    :type cancellation_requested: bool
-    :param status: Status of the certificate operation.
-    :type status: str
-    :param status_details: The status details of the certificate operation.
-    :type status_details: str
-    :param error: Error encountered, if any, during the certificate operation.
-    :type error: ~azure.keyvault.v7_1.models.Error
-    :param target: Location which contains the result of the certificate operation.
-    :type target: str
-    :param request_id: Identifier for the certificate operation.
-    :type request_id: str
+    :vartype cancellation_requested: bool
+    :ivar status: Status of the certificate operation.
+    :vartype status: str
+    :ivar status_details: The status details of the certificate operation.
+    :vartype status_details: str
+    :ivar error: Error encountered, if any, during the certificate operation.
+    :vartype error: ~azure.keyvault.v7_1.models.Error
+    :ivar target: Location which contains the result of the certificate operation.
+    :vartype target: str
+    :ivar request_id: Identifier for the certificate operation.
+    :vartype request_id: str
     """
 
     _validation = {
@@ -576,6 +689,26 @@ class CertificateOperation(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
+        :paramtype issuer_parameters: ~azure.keyvault.v7_1.models.IssuerParameters
+        :keyword csr: The certificate signing request (CSR) that is being used in the certificate
+         operation.
+        :paramtype csr: bytearray
+        :keyword cancellation_requested: Indicates if cancellation was requested on the certificate
+         operation.
+        :paramtype cancellation_requested: bool
+        :keyword status: Status of the certificate operation.
+        :paramtype status: str
+        :keyword status_details: The status details of the certificate operation.
+        :paramtype status_details: str
+        :keyword error: Error encountered, if any, during the certificate operation.
+        :paramtype error: ~azure.keyvault.v7_1.models.Error
+        :keyword target: Location which contains the result of the certificate operation.
+        :paramtype target: str
+        :keyword request_id: Identifier for the certificate operation.
+        :paramtype request_id: str
+        """
         super(CertificateOperation, self).__init__(**kwargs)
         self.id = None
         self.issuer_parameters = kwargs.get('issuer_parameters', None)
@@ -593,9 +726,9 @@ class CertificateOperationUpdateParameter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param cancellation_requested: Required. Indicates if cancellation was requested on the
+    :ivar cancellation_requested: Required. Indicates if cancellation was requested on the
      certificate operation.
-    :type cancellation_requested: bool
+    :vartype cancellation_requested: bool
     """
 
     _validation = {
@@ -610,6 +743,11 @@ class CertificateOperationUpdateParameter(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword cancellation_requested: Required. Indicates if cancellation was requested on the
+         certificate operation.
+        :paramtype cancellation_requested: bool
+        """
         super(CertificateOperationUpdateParameter, self).__init__(**kwargs)
         self.cancellation_requested = kwargs['cancellation_requested']
 
@@ -621,19 +759,19 @@ class CertificatePolicy(msrest.serialization.Model):
 
     :ivar id: The certificate id.
     :vartype id: str
-    :param key_properties: Properties of the key backing a certificate.
-    :type key_properties: ~azure.keyvault.v7_1.models.KeyProperties
-    :param secret_properties: Properties of the secret backing a certificate.
-    :type secret_properties: ~azure.keyvault.v7_1.models.SecretProperties
-    :param x509_certificate_properties: Properties of the X509 component of a certificate.
-    :type x509_certificate_properties: ~azure.keyvault.v7_1.models.X509CertificateProperties
-    :param lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a
+    :ivar key_properties: Properties of the key backing a certificate.
+    :vartype key_properties: ~azure.keyvault.v7_1.models.KeyProperties
+    :ivar secret_properties: Properties of the secret backing a certificate.
+    :vartype secret_properties: ~azure.keyvault.v7_1.models.SecretProperties
+    :ivar x509_certificate_properties: Properties of the X509 component of a certificate.
+    :vartype x509_certificate_properties: ~azure.keyvault.v7_1.models.X509CertificateProperties
+    :ivar lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a
      certificate.
-    :type lifetime_actions: list[~azure.keyvault.v7_1.models.LifetimeAction]
-    :param issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
-    :type issuer_parameters: ~azure.keyvault.v7_1.models.IssuerParameters
-    :param attributes: The certificate attributes.
-    :type attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+    :vartype lifetime_actions: list[~azure.keyvault.v7_1.models.LifetimeAction]
+    :ivar issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
+    :vartype issuer_parameters: ~azure.keyvault.v7_1.models.IssuerParameters
+    :ivar attributes: The certificate attributes.
+    :vartype attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
     """
 
     _validation = {
@@ -654,6 +792,21 @@ class CertificatePolicy(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword key_properties: Properties of the key backing a certificate.
+        :paramtype key_properties: ~azure.keyvault.v7_1.models.KeyProperties
+        :keyword secret_properties: Properties of the secret backing a certificate.
+        :paramtype secret_properties: ~azure.keyvault.v7_1.models.SecretProperties
+        :keyword x509_certificate_properties: Properties of the X509 component of a certificate.
+        :paramtype x509_certificate_properties: ~azure.keyvault.v7_1.models.X509CertificateProperties
+        :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a
+         certificate.
+        :paramtype lifetime_actions: list[~azure.keyvault.v7_1.models.LifetimeAction]
+        :keyword issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
+        :paramtype issuer_parameters: ~azure.keyvault.v7_1.models.IssuerParameters
+        :keyword attributes: The certificate attributes.
+        :paramtype attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+        """
         super(CertificatePolicy, self).__init__(**kwargs)
         self.id = None
         self.key_properties = kwargs.get('key_properties', None)
@@ -669,9 +822,9 @@ class CertificateRestoreParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param certificate_bundle_backup: Required. The backup blob associated with a certificate
+    :ivar certificate_bundle_backup: Required. The backup blob associated with a certificate
      bundle.
-    :type certificate_bundle_backup: bytes
+    :vartype certificate_bundle_backup: bytes
     """
 
     _validation = {
@@ -686,6 +839,11 @@ class CertificateRestoreParameters(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword certificate_bundle_backup: Required. The backup blob associated with a certificate
+         bundle.
+        :paramtype certificate_bundle_backup: bytes
+        """
         super(CertificateRestoreParameters, self).__init__(**kwargs)
         self.certificate_bundle_backup = kwargs['certificate_bundle_backup']
 
@@ -693,12 +851,12 @@ class CertificateRestoreParameters(msrest.serialization.Model):
 class CertificateUpdateParameters(msrest.serialization.Model):
     """The certificate update parameters.
 
-    :param certificate_policy: The management policy for the certificate.
-    :type certificate_policy: ~azure.keyvault.v7_1.models.CertificatePolicy
-    :param certificate_attributes: The attributes of the certificate (optional).
-    :type certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar certificate_policy: The management policy for the certificate.
+    :vartype certificate_policy: ~azure.keyvault.v7_1.models.CertificatePolicy
+    :ivar certificate_attributes: The attributes of the certificate (optional).
+    :vartype certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -711,6 +869,14 @@ class CertificateUpdateParameters(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword certificate_policy: The management policy for the certificate.
+        :paramtype certificate_policy: ~azure.keyvault.v7_1.models.CertificatePolicy
+        :keyword certificate_attributes: The attributes of the certificate (optional).
+        :paramtype certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(CertificateUpdateParameters, self).__init__(**kwargs)
         self.certificate_policy = kwargs.get('certificate_policy', None)
         self.certificate_attributes = kwargs.get('certificate_attributes', None)
@@ -720,12 +886,12 @@ class CertificateUpdateParameters(msrest.serialization.Model):
 class Contact(msrest.serialization.Model):
     """The contact information for the vault certificates.
 
-    :param email_address: Email address.
-    :type email_address: str
-    :param name: Name.
-    :type name: str
-    :param phone: Phone number.
-    :type phone: str
+    :ivar email_address: Email address.
+    :vartype email_address: str
+    :ivar name: Name.
+    :vartype name: str
+    :ivar phone: Phone number.
+    :vartype phone: str
     """
 
     _attribute_map = {
@@ -738,6 +904,14 @@ class Contact(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword email_address: Email address.
+        :paramtype email_address: str
+        :keyword name: Name.
+        :paramtype name: str
+        :keyword phone: Phone number.
+        :paramtype phone: str
+        """
         super(Contact, self).__init__(**kwargs)
         self.email_address = kwargs.get('email_address', None)
         self.name = kwargs.get('name', None)
@@ -751,8 +925,8 @@ class Contacts(msrest.serialization.Model):
 
     :ivar id: Identifier for the contacts collection.
     :vartype id: str
-    :param contact_list: The contact list for the vault certificates.
-    :type contact_list: list[~azure.keyvault.v7_1.models.Contact]
+    :ivar contact_list: The contact list for the vault certificates.
+    :vartype contact_list: list[~azure.keyvault.v7_1.models.Contact]
     """
 
     _validation = {
@@ -768,6 +942,10 @@ class Contacts(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword contact_list: The contact list for the vault certificates.
+        :paramtype contact_list: list[~azure.keyvault.v7_1.models.Contact]
+        """
         super(Contacts, self).__init__(**kwargs)
         self.id = None
         self.contact_list = kwargs.get('contact_list', None)
@@ -788,17 +966,17 @@ class DeletedCertificateBundle(CertificateBundle):
     :vartype x509_thumbprint: bytes
     :ivar policy: The management policy.
     :vartype policy: ~azure.keyvault.v7_1.models.CertificatePolicy
-    :param cer: CER contents of x509 certificate.
-    :type cer: bytearray
-    :param content_type: The content type of the secret.
-    :type content_type: str
-    :param attributes: The certificate attributes.
-    :type attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :param recovery_id: The url of the recovery object, used to identify and recover the deleted
+    :ivar cer: CER contents of x509 certificate.
+    :vartype cer: bytearray
+    :ivar content_type: The content type of the secret.
+    :vartype content_type: str
+    :ivar attributes: The certificate attributes.
+    :vartype attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
+    :ivar recovery_id: The url of the recovery object, used to identify and recover the deleted
      certificate.
-    :type recovery_id: str
+    :vartype recovery_id: str
     :ivar scheduled_purge_date: The time when the certificate is scheduled to be purged, in UTC.
     :vartype scheduled_purge_date: ~datetime.datetime
     :ivar deleted_date: The time when the certificate was deleted, in UTC.
@@ -834,6 +1012,19 @@ class DeletedCertificateBundle(CertificateBundle):
         self,
         **kwargs
     ):
+        """
+        :keyword cer: CER contents of x509 certificate.
+        :paramtype cer: bytearray
+        :keyword content_type: The content type of the secret.
+        :paramtype content_type: str
+        :keyword attributes: The certificate attributes.
+        :paramtype attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
+         certificate.
+        :paramtype recovery_id: str
+        """
         super(DeletedCertificateBundle, self).__init__(**kwargs)
         self.recovery_id = kwargs.get('recovery_id', None)
         self.scheduled_purge_date = None
@@ -845,17 +1036,17 @@ class DeletedCertificateItem(CertificateItem):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: Certificate identifier.
-    :type id: str
-    :param attributes: The certificate management attributes.
-    :type attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :param x509_thumbprint: Thumbprint of the certificate.
-    :type x509_thumbprint: bytes
-    :param recovery_id: The url of the recovery object, used to identify and recover the deleted
+    :ivar id: Certificate identifier.
+    :vartype id: str
+    :ivar attributes: The certificate management attributes.
+    :vartype attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
+    :ivar x509_thumbprint: Thumbprint of the certificate.
+    :vartype x509_thumbprint: bytes
+    :ivar recovery_id: The url of the recovery object, used to identify and recover the deleted
      certificate.
-    :type recovery_id: str
+    :vartype recovery_id: str
     :ivar scheduled_purge_date: The time when the certificate is scheduled to be purged, in UTC.
     :vartype scheduled_purge_date: ~datetime.datetime
     :ivar deleted_date: The time when the certificate was deleted, in UTC.
@@ -881,6 +1072,19 @@ class DeletedCertificateItem(CertificateItem):
         self,
         **kwargs
     ):
+        """
+        :keyword id: Certificate identifier.
+        :paramtype id: str
+        :keyword attributes: The certificate management attributes.
+        :paramtype attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword x509_thumbprint: Thumbprint of the certificate.
+        :paramtype x509_thumbprint: bytes
+        :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
+         certificate.
+        :paramtype recovery_id: str
+        """
         super(DeletedCertificateItem, self).__init__(**kwargs)
         self.recovery_id = kwargs.get('recovery_id', None)
         self.scheduled_purge_date = None
@@ -913,6 +1117,8 @@ class DeletedCertificateListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DeletedCertificateListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -947,6 +1153,8 @@ class Error(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Error, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -958,8 +1166,8 @@ class IssuerAttributes(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param enabled: Determines whether the issuer is enabled.
-    :type enabled: bool
+    :ivar enabled: Determines whether the issuer is enabled.
+    :vartype enabled: bool
     :ivar created: Creation time in UTC.
     :vartype created: ~datetime.datetime
     :ivar updated: Last updated time in UTC.
@@ -981,6 +1189,10 @@ class IssuerAttributes(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword enabled: Determines whether the issuer is enabled.
+        :paramtype enabled: bool
+        """
         super(IssuerAttributes, self).__init__(**kwargs)
         self.enabled = kwargs.get('enabled', None)
         self.created = None
@@ -994,14 +1206,14 @@ class IssuerBundle(msrest.serialization.Model):
 
     :ivar id: Identifier for the issuer object.
     :vartype id: str
-    :param provider: The issuer provider.
-    :type provider: str
-    :param credentials: The credentials to be used for the issuer.
-    :type credentials: ~azure.keyvault.v7_1.models.IssuerCredentials
-    :param organization_details: Details of the organization as provided to the issuer.
-    :type organization_details: ~azure.keyvault.v7_1.models.OrganizationDetails
-    :param attributes: Attributes of the issuer object.
-    :type attributes: ~azure.keyvault.v7_1.models.IssuerAttributes
+    :ivar provider: The issuer provider.
+    :vartype provider: str
+    :ivar credentials: The credentials to be used for the issuer.
+    :vartype credentials: ~azure.keyvault.v7_1.models.IssuerCredentials
+    :ivar organization_details: Details of the organization as provided to the issuer.
+    :vartype organization_details: ~azure.keyvault.v7_1.models.OrganizationDetails
+    :ivar attributes: Attributes of the issuer object.
+    :vartype attributes: ~azure.keyvault.v7_1.models.IssuerAttributes
     """
 
     _validation = {
@@ -1020,6 +1232,16 @@ class IssuerBundle(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword provider: The issuer provider.
+        :paramtype provider: str
+        :keyword credentials: The credentials to be used for the issuer.
+        :paramtype credentials: ~azure.keyvault.v7_1.models.IssuerCredentials
+        :keyword organization_details: Details of the organization as provided to the issuer.
+        :paramtype organization_details: ~azure.keyvault.v7_1.models.OrganizationDetails
+        :keyword attributes: Attributes of the issuer object.
+        :paramtype attributes: ~azure.keyvault.v7_1.models.IssuerAttributes
+        """
         super(IssuerBundle, self).__init__(**kwargs)
         self.id = None
         self.provider = kwargs.get('provider', None)
@@ -1031,10 +1253,10 @@ class IssuerBundle(msrest.serialization.Model):
 class IssuerCredentials(msrest.serialization.Model):
     """The credentials to be used for the certificate issuer.
 
-    :param account_id: The user name/account name/account id.
-    :type account_id: str
-    :param password: The password/secret/account key.
-    :type password: str
+    :ivar account_id: The user name/account name/account id.
+    :vartype account_id: str
+    :ivar password: The password/secret/account key.
+    :vartype password: str
     """
 
     _attribute_map = {
@@ -1046,6 +1268,12 @@ class IssuerCredentials(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword account_id: The user name/account name/account id.
+        :paramtype account_id: str
+        :keyword password: The password/secret/account key.
+        :paramtype password: str
+        """
         super(IssuerCredentials, self).__init__(**kwargs)
         self.account_id = kwargs.get('account_id', None)
         self.password = kwargs.get('password', None)
@@ -1054,15 +1282,15 @@ class IssuerCredentials(msrest.serialization.Model):
 class IssuerParameters(msrest.serialization.Model):
     """Parameters for the issuer of the X509 component of a certificate.
 
-    :param name: Name of the referenced issuer object or reserved names; for example, 'Self' or
+    :ivar name: Name of the referenced issuer object or reserved names; for example, 'Self' or
      'Unknown'.
-    :type name: str
-    :param certificate_type: Certificate type as supported by the provider (optional); for example
+    :vartype name: str
+    :ivar certificate_type: Certificate type as supported by the provider (optional); for example
      'OV-SSL', 'EV-SSL'.
-    :type certificate_type: str
-    :param certificate_transparency: Indicates if the certificates generated under this policy
+    :vartype certificate_type: str
+    :ivar certificate_transparency: Indicates if the certificates generated under this policy
      should be published to certificate transparency logs.
-    :type certificate_transparency: bool
+    :vartype certificate_transparency: bool
     """
 
     _attribute_map = {
@@ -1075,6 +1303,17 @@ class IssuerParameters(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Name of the referenced issuer object or reserved names; for example, 'Self' or
+         'Unknown'.
+        :paramtype name: str
+        :keyword certificate_type: Certificate type as supported by the provider (optional); for
+         example 'OV-SSL', 'EV-SSL'.
+        :paramtype certificate_type: str
+        :keyword certificate_transparency: Indicates if the certificates generated under this policy
+         should be published to certificate transparency logs.
+        :paramtype certificate_transparency: bool
+        """
         super(IssuerParameters, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.certificate_type = kwargs.get('certificate_type', None)
@@ -1084,18 +1323,18 @@ class IssuerParameters(msrest.serialization.Model):
 class KeyProperties(msrest.serialization.Model):
     """Properties of the key pair backing a certificate.
 
-    :param exportable: Not supported in this version. Indicates if the private key can be exported.
-    :type exportable: bool
-    :param key_type: The type of key pair to be used for the certificate. Possible values include:
+    :ivar exportable: Not supported in this version. Indicates if the private key can be exported.
+    :vartype exportable: bool
+    :ivar key_type: The type of key pair to be used for the certificate. Possible values include:
      "EC", "EC-HSM", "RSA", "RSA-HSM", "oct".
-    :type key_type: str or ~azure.keyvault.v7_1.models.JsonWebKeyType
-    :param key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
-    :type key_size: int
-    :param reuse_key: Indicates if the same key pair will be used on certificate renewal.
-    :type reuse_key: bool
-    :param curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Possible values
+    :vartype key_type: str or ~azure.keyvault.v7_1.models.JsonWebKeyType
+    :ivar key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
+    :vartype key_size: int
+    :ivar reuse_key: Indicates if the same key pair will be used on certificate renewal.
+    :vartype reuse_key: bool
+    :ivar curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Possible values
      include: "P-256", "P-384", "P-521", "P-256K".
-    :type curve: str or ~azure.keyvault.v7_1.models.JsonWebKeyCurveName
+    :vartype curve: str or ~azure.keyvault.v7_1.models.JsonWebKeyCurveName
     """
 
     _attribute_map = {
@@ -1110,6 +1349,21 @@ class KeyProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword exportable: Not supported in this version. Indicates if the private key can be
+         exported.
+        :paramtype exportable: bool
+        :keyword key_type: The type of key pair to be used for the certificate. Possible values
+         include: "EC", "EC-HSM", "RSA", "RSA-HSM", "oct".
+        :paramtype key_type: str or ~azure.keyvault.v7_1.models.JsonWebKeyType
+        :keyword key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
+        :paramtype key_size: int
+        :keyword reuse_key: Indicates if the same key pair will be used on certificate renewal.
+        :paramtype reuse_key: bool
+        :keyword curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Possible values
+         include: "P-256", "P-384", "P-521", "P-256K".
+        :paramtype curve: str or ~azure.keyvault.v7_1.models.JsonWebKeyCurveName
+        """
         super(KeyProperties, self).__init__(**kwargs)
         self.exportable = kwargs.get('exportable', None)
         self.key_type = kwargs.get('key_type', None)
@@ -1139,6 +1393,8 @@ class KeyVaultError(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(KeyVaultError, self).__init__(**kwargs)
         self.error = None
 
@@ -1146,10 +1402,10 @@ class KeyVaultError(msrest.serialization.Model):
 class LifetimeAction(msrest.serialization.Model):
     """Action and its trigger that will be performed by Key Vault over the lifetime of a certificate.
 
-    :param trigger: The condition that will execute the action.
-    :type trigger: ~azure.keyvault.v7_1.models.Trigger
-    :param action: The action that will be executed.
-    :type action: ~azure.keyvault.v7_1.models.Action
+    :ivar trigger: The condition that will execute the action.
+    :vartype trigger: ~azure.keyvault.v7_1.models.Trigger
+    :ivar action: The action that will be executed.
+    :vartype action: ~azure.keyvault.v7_1.models.Action
     """
 
     _attribute_map = {
@@ -1161,6 +1417,12 @@ class LifetimeAction(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword trigger: The condition that will execute the action.
+        :paramtype trigger: ~azure.keyvault.v7_1.models.Trigger
+        :keyword action: The action that will be executed.
+        :paramtype action: ~azure.keyvault.v7_1.models.Action
+        """
         super(LifetimeAction, self).__init__(**kwargs)
         self.trigger = kwargs.get('trigger', None)
         self.action = kwargs.get('action', None)
@@ -1169,10 +1431,10 @@ class LifetimeAction(msrest.serialization.Model):
 class OrganizationDetails(msrest.serialization.Model):
     """Details of the organization of the certificate issuer.
 
-    :param id: Id of the organization.
-    :type id: str
-    :param admin_details: Details of the organization administrator.
-    :type admin_details: list[~azure.keyvault.v7_1.models.AdministratorDetails]
+    :ivar id: Id of the organization.
+    :vartype id: str
+    :ivar admin_details: Details of the organization administrator.
+    :vartype admin_details: list[~azure.keyvault.v7_1.models.AdministratorDetails]
     """
 
     _attribute_map = {
@@ -1184,6 +1446,12 @@ class OrganizationDetails(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword id: Id of the organization.
+        :paramtype id: str
+        :keyword admin_details: Details of the organization administrator.
+        :paramtype admin_details: list[~azure.keyvault.v7_1.models.AdministratorDetails]
+        """
         super(OrganizationDetails, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.admin_details = kwargs.get('admin_details', None)
@@ -1210,6 +1478,8 @@ class PendingCertificateSigningRequestResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PendingCertificateSigningRequestResult, self).__init__(**kwargs)
         self.value = None
 
@@ -1217,8 +1487,8 @@ class PendingCertificateSigningRequestResult(msrest.serialization.Model):
 class SecretProperties(msrest.serialization.Model):
     """Properties of the key backing a certificate.
 
-    :param content_type: The media type (MIME type).
-    :type content_type: str
+    :ivar content_type: The media type (MIME type).
+    :vartype content_type: str
     """
 
     _attribute_map = {
@@ -1229,6 +1499,10 @@ class SecretProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword content_type: The media type (MIME type).
+        :paramtype content_type: str
+        """
         super(SecretProperties, self).__init__(**kwargs)
         self.content_type = kwargs.get('content_type', None)
 
@@ -1236,12 +1510,12 @@ class SecretProperties(msrest.serialization.Model):
 class SubjectAlternativeNames(msrest.serialization.Model):
     """The subject alternate names of a X509 object.
 
-    :param emails: Email addresses.
-    :type emails: list[str]
-    :param dns_names: Domain names.
-    :type dns_names: list[str]
-    :param upns: User principal names.
-    :type upns: list[str]
+    :ivar emails: Email addresses.
+    :vartype emails: list[str]
+    :ivar dns_names: Domain names.
+    :vartype dns_names: list[str]
+    :ivar upns: User principal names.
+    :vartype upns: list[str]
     """
 
     _attribute_map = {
@@ -1254,6 +1528,14 @@ class SubjectAlternativeNames(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword emails: Email addresses.
+        :paramtype emails: list[str]
+        :keyword dns_names: Domain names.
+        :paramtype dns_names: list[str]
+        :keyword upns: User principal names.
+        :paramtype upns: list[str]
+        """
         super(SubjectAlternativeNames, self).__init__(**kwargs)
         self.emails = kwargs.get('emails', None)
         self.dns_names = kwargs.get('dns_names', None)
@@ -1263,13 +1545,13 @@ class SubjectAlternativeNames(msrest.serialization.Model):
 class Trigger(msrest.serialization.Model):
     """A condition to be satisfied for an action to be executed.
 
-    :param lifetime_percentage: Percentage of lifetime at which to trigger. Value should be between
+    :ivar lifetime_percentage: Percentage of lifetime at which to trigger. Value should be between
      1 and 99.
-    :type lifetime_percentage: int
-    :param days_before_expiry: Days before expiry to attempt renewal. Value should be between 1 and
+    :vartype lifetime_percentage: int
+    :ivar days_before_expiry: Days before expiry to attempt renewal. Value should be between 1 and
      validity_in_months multiplied by 27. If validity_in_months is 36, then value should be between
      1 and 972 (36 * 27).
-    :type days_before_expiry: int
+    :vartype days_before_expiry: int
     """
 
     _validation = {
@@ -1285,6 +1567,15 @@ class Trigger(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword lifetime_percentage: Percentage of lifetime at which to trigger. Value should be
+         between 1 and 99.
+        :paramtype lifetime_percentage: int
+        :keyword days_before_expiry: Days before expiry to attempt renewal. Value should be between 1
+         and validity_in_months multiplied by 27. If validity_in_months is 36, then value should be
+         between 1 and 972 (36 * 27).
+        :paramtype days_before_expiry: int
+        """
         super(Trigger, self).__init__(**kwargs)
         self.lifetime_percentage = kwargs.get('lifetime_percentage', None)
         self.days_before_expiry = kwargs.get('days_before_expiry', None)
@@ -1293,16 +1584,16 @@ class Trigger(msrest.serialization.Model):
 class X509CertificateProperties(msrest.serialization.Model):
     """Properties of the X509 component of a certificate.
 
-    :param subject: The subject name. Should be a valid X509 distinguished Name.
-    :type subject: str
-    :param ekus: The enhanced key usage.
-    :type ekus: list[str]
-    :param subject_alternative_names: The subject alternative names.
-    :type subject_alternative_names: ~azure.keyvault.v7_1.models.SubjectAlternativeNames
-    :param key_usage: List of key usages.
-    :type key_usage: list[str or ~azure.keyvault.v7_1.models.KeyUsageType]
-    :param validity_in_months: The duration that the certificate is valid in months.
-    :type validity_in_months: int
+    :ivar subject: The subject name. Should be a valid X509 distinguished Name.
+    :vartype subject: str
+    :ivar ekus: The enhanced key usage.
+    :vartype ekus: list[str]
+    :ivar subject_alternative_names: The subject alternative names.
+    :vartype subject_alternative_names: ~azure.keyvault.v7_1.models.SubjectAlternativeNames
+    :ivar key_usage: List of key usages.
+    :vartype key_usage: list[str or ~azure.keyvault.v7_1.models.KeyUsageType]
+    :ivar validity_in_months: The duration that the certificate is valid in months.
+    :vartype validity_in_months: int
     """
 
     _validation = {
@@ -1321,6 +1612,18 @@ class X509CertificateProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword subject: The subject name. Should be a valid X509 distinguished Name.
+        :paramtype subject: str
+        :keyword ekus: The enhanced key usage.
+        :paramtype ekus: list[str]
+        :keyword subject_alternative_names: The subject alternative names.
+        :paramtype subject_alternative_names: ~azure.keyvault.v7_1.models.SubjectAlternativeNames
+        :keyword key_usage: List of key usages.
+        :paramtype key_usage: list[str or ~azure.keyvault.v7_1.models.KeyUsageType]
+        :keyword validity_in_months: The duration that the certificate is valid in months.
+        :paramtype validity_in_months: int
+        """
         super(X509CertificateProperties, self).__init__(**kwargs)
         self.subject = kwargs.get('subject', None)
         self.ekus = kwargs.get('ekus', None)

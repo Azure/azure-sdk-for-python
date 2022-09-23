@@ -7,22 +7,46 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
+from .._serialization import Deserializer, Serializer
 from ._configuration import DataFactoryManagementClientConfiguration
-from .operations import ActivityRunsOperations, DataFlowDebugSessionOperations, DataFlowsOperations, DatasetsOperations, ExposureControlOperations, FactoriesOperations, IntegrationRuntimeNodesOperations, IntegrationRuntimeObjectMetadataOperations, IntegrationRuntimesOperations, LinkedServicesOperations, ManagedPrivateEndpointsOperations, ManagedVirtualNetworksOperations, Operations, PipelineRunsOperations, PipelinesOperations, PrivateEndPointConnectionsOperations, PrivateEndpointConnectionOperations, PrivateLinkResourcesOperations, TriggerRunsOperations, TriggersOperations
+from .operations import (
+    ActivityRunsOperations,
+    DataFlowDebugSessionOperations,
+    DataFlowsOperations,
+    DatasetsOperations,
+    ExposureControlOperations,
+    FactoriesOperations,
+    GlobalParametersOperations,
+    IntegrationRuntimeNodesOperations,
+    IntegrationRuntimeObjectMetadataOperations,
+    IntegrationRuntimesOperations,
+    LinkedServicesOperations,
+    ManagedPrivateEndpointsOperations,
+    ManagedVirtualNetworksOperations,
+    Operations,
+    PipelineRunsOperations,
+    PipelinesOperations,
+    PrivateEndPointConnectionsOperations,
+    PrivateEndpointConnectionOperations,
+    PrivateLinkResourcesOperations,
+    TriggerRunsOperations,
+    TriggersOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class DataFactoryManagementClient:
-    """The Azure Data Factory V2 management API provides a RESTful set of web services that interact with Azure Data Factory V2 services.
+
+class DataFactoryManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+    """The Azure Data Factory V2 management API provides a RESTful set of web services that interact
+    with Azure Data Factory V2 services.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.datafactory.aio.operations.Operations
@@ -74,12 +98,17 @@ class DataFactoryManagementClient:
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.datafactory.aio.operations.PrivateLinkResourcesOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :ivar global_parameters: GlobalParametersOperations operations
+    :vartype global_parameters: azure.mgmt.datafactory.aio.operations.GlobalParametersOperations
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The subscription identifier.
+    :param subscription_id: The subscription identifier. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2018-06-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -91,7 +120,9 @@ class DataFactoryManagementClient:
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = DataFactoryManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = DataFactoryManagementClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -100,10 +131,18 @@ class DataFactoryManagementClient:
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.factories = FactoriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.exposure_control = ExposureControlOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_runtimes = IntegrationRuntimesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_runtime_object_metadata = IntegrationRuntimeObjectMetadataOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_runtime_nodes = IntegrationRuntimeNodesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.exposure_control = ExposureControlOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_runtimes = IntegrationRuntimesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_runtime_object_metadata = IntegrationRuntimeObjectMetadataOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_runtime_nodes = IntegrationRuntimeNodesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.linked_services = LinkedServicesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.pipelines = PipelinesOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -112,19 +151,29 @@ class DataFactoryManagementClient:
         self.triggers = TriggersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.trigger_runs = TriggerRunsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.data_flows = DataFlowsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.data_flow_debug_session = DataFlowDebugSessionOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.managed_virtual_networks = ManagedVirtualNetworksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.managed_private_endpoints = ManagedPrivateEndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_end_point_connections = PrivateEndPointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connection = PrivateEndpointConnectionOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.data_flow_debug_session = DataFlowDebugSessionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_virtual_networks = ManagedVirtualNetworksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_private_endpoints = ManagedPrivateEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_end_point_connections = PrivateEndPointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoint_connection = PrivateEndpointConnectionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.global_parameters = GlobalParametersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -133,7 +182,7 @@ class DataFactoryManagementClient:
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

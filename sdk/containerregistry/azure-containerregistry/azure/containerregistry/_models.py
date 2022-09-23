@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import warnings
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, Any, List
 
@@ -17,8 +18,9 @@ from ._generated.models import (
 from ._helpers import _host_only, _is_tag, _strip_alg
 
 if TYPE_CHECKING:
+    from typing import IO
     from datetime import datetime
-    from ._generated.models import ManifestAttributesBase
+    from ._generated.models import ManifestAttributesBase, OCIManifest
 
 
 class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-attributes
@@ -29,17 +31,17 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     :ivar bool can_read: Read Permissions for an artifact.
     :ivar bool can_list: List Permissions for an artifact.
     :ivar architecture: CPU Architecture of an artifact.
-    :vartype architecture: ~azure.containerregistry.ArtifactArchitecture
+    :vartype architecture: Optional[~azure.containerregistry.ArtifactArchitecture]
     :ivar created_on: Time and date an artifact was created.
-    :vartype created_on: ~datetime.datetime
-    :ivar str digest: Digest for the artifact.
+    :vartype created_on: Optional[~datetime.datetime]
+    :ivar Optional[str] digest: Digest for the artifact.
     :ivar last_updated_on: Time and date an artifact was last updated.
-    :vartype last_updated_on: ~datetime.datetime
+    :vartype last_updated_on: Optional[~datetime.datetime]
     :ivar operating_system: Operating system for the artifact.
-    :vartype operating_system: ~azure.containerregistry.ArtifactOperatingSystem
-    :ivar str repository_name: Repository name the artifact belongs to.
-    :ivar str size_in_bytes: Size of the artifact.
-    :ivar List[str] tags: Tags associated with a registry artifact.
+    :vartype operating_system: Optional[~azure.containerregistry.ArtifactOperatingSystem]
+    :ivar Optional[str] repository_name: Repository name the artifact belongs to.
+    :ivar Optional[int] size_in_bytes: Size of the artifact.
+    :ivar Optional[List[str]] tags: Tags associated with a registry artifact.
     """
 
     def __init__(self, **kwargs):
@@ -157,12 +159,12 @@ class RepositoryProperties(object):
     :ivar bool can_read: Read Permissions for a repository.
     :ivar bool can_list: List Permissions for a repository.
     :ivar created_on: Time the repository was created
-    :vartype created_on: ~datetime.datetime
+    :vartype created_on: Optional[~datetime.datetime]
     :ivar last_updated_on: Time the repository was last updated.
-    :vartype last_updated_on: ~datetime.datetime
-    :ivar int manifest_count: Number of manifest in the repository.
-    :ivar str name: Name of the repository.
-    :ivar int tag_count: Number of tags associated with the repository.
+    :vartype last_updated_on: Optional[~datetime.datetime]
+    :ivar Optional[int] manifest_count: Number of manifest in the repository.
+    :ivar Optional[str] name: Name of the repository.
+    :ivar Optional[int] tag_count: Number of tags associated with the repository.
     """
 
     def __init__(self, **kwargs):
@@ -200,13 +202,21 @@ class RepositoryProperties(object):
             can_list=self.can_list,
         )
 
+    def __getattr__(self, name):
+        if name == "last_udpated_on":
+            warnings.warn(
+                "The property name with a typo called 'last_udpated_on' has been deprecated and will be retired in future versions", # pylint: disable=line-too-long
+                DeprecationWarning)
+            return self.last_updated_on
+        return super().__getattr__(self, name) # pylint: disable=no-member
+
     @property
     def created_on(self):
         # type: () -> datetime
         return self._created_on
 
     @property
-    def last_udpated_on(self):
+    def last_updated_on(self):
         # type: () -> datetime
         return self._last_updated_on
 
@@ -234,12 +244,12 @@ class ArtifactTagProperties(object):
     :ivar bool can_read: Read Permissions for a tag.
     :ivar bool can_list: List Permissions for a tag.
     :ivar created_on: Time the tag was created.
-    :vartype created_on: ~datetime.datetime
-    :ivar str digest: Digest for the tag.
+    :vartype created_on: Optional[~datetime.datetime]
+    :ivar Optional[str] digest: Digest for the tag.
     :ivar last_updated_on: Time the tag was last updated.
-    :vartype last_updated_on: ~datetime.datetime
-    :ivar str name: Name of the image the tag corresponds to.
-    :ivar str repository: Repository the tag belongs to.
+    :vartype last_updated_on: Optional[~datetime.datetime]
+    :ivar Optional[str] name: Name of the image the tag corresponds to.
+    :ivar Optional[str] repository_name: Repository name the tag belongs to.
     """
 
     def __init__(self, **kwargs):
@@ -303,7 +313,36 @@ class ArtifactTagProperties(object):
         return self._repository_name
 
 
-class ArtifactArchitecture(str, Enum):
+class DownloadBlobResult(object):
+    """The result from downloading a blob from the registry.
+
+    :ivar data: The blob content.
+    :vartype data: IO
+    :ivar str digest: The blob's digest, calculated by the registry.
+    """
+
+    def __init__(self, **kwargs):
+        self.data = kwargs.get("data")
+        self.digest = kwargs.get("digest")
+
+
+class DownloadManifestResult(object):
+    """The result from downloading a manifest from the registry.
+
+    :ivar manifest: The OCI manifest that was downloaded.
+    :vartype manifest: ~azure.containerregistry.models.OCIManifest
+    :ivar data: The manifest stream that was downloaded.
+    :vartype data: IO
+    :ivar str digest: The manifest's digest, calculated by the registry.
+    """
+
+    def __init__(self, **kwargs):
+        self.manifest = kwargs.get("manifest")
+        self.data = kwargs.get("data")
+        self.digest = kwargs.get("digest")
+
+
+class ArtifactArchitecture(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
 
     AMD64 = "amd64"
     ARM = "arm"
@@ -320,7 +359,7 @@ class ArtifactArchitecture(str, Enum):
     WASM = "wasm"
 
 
-class ArtifactOperatingSystem(str, Enum):
+class ArtifactOperatingSystem(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
 
     AIX = "aix"
     ANDROID = "android"

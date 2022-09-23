@@ -1,15 +1,75 @@
 # Release History
 
-## 5.2.0b3 (Unreleased)
+## 5.2.1 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 5.2.0 (2022-09-08)
+
+### Other Changes
+
+This version of the client library marks a stable release and defaults to the service API version `2022-05-01`.
+Includes all changes from `5.2.0b1` to `5.2.0b5`.
+
+## 5.2.0b5 (2022-08-11)
+
+The version of this client library defaults to the API version `2022-05-01`.
+
+### Features Added
+
+- Added `begin_recognize_custom_entities` client method to recognize custom named entities in documents.
+- Added `begin_single_label_classify` client method to perform custom single label classification on documents.
+- Added `begin_multi_label_classify` client method to perform custom multi label classification on documents.
+- Added property `details` on returned poller objects which contain long-running operation metadata.
+- Added `TextAnalysisLROPoller` and `AsyncTextAnalysisLROPoller` protocols to describe the return types from long-running operations.
+- Added `cancel` method on the poller objects. Call it to cancel a long-running operation that's in progress.
+- Added property `kind` to `RecognizeEntitiesResult`, `RecognizePiiEntitiesResult`, `AnalyzeHealthcareEntitiesResult`,
+  `DetectLanguageResult`, `ExtractKeyPhrasesResult`, `RecognizeLinkedEntitiesResult`, `AnalyzeSentimentResult`,
+  `RecognizeCustomEntitiesResult`, `ClassifyDocumentResult`, and `DocumentError`.
+- Added enum `TextAnalysisKind`.
+
+### Breaking Changes
+
+- Removed the Extractive Text Summarization feature and related models: `ExtractSummaryAction`, `ExtractSummaryResult`, and `SummarySentence`. To access this beta feature, install the `5.2.0b4` version of the client library.
+- Removed the `FHIR` feature and related keyword argument and property: `fhir_version` and `fhir_bundle`. To access this beta feature, install the `5.2.0b4` version of the client library.
+- `SingleCategoryClassifyResult` and `MultiCategoryClassifyResult` models have been merged into one model: `ClassifyDocumentResult`.
+- Renamed `SingleCategoryClassifyAction` to `SingleLabelClassifyAction`
+- Renamed `MultiCategoryClassifyAction` to `MultiLabelClassifyAction`.
+
+### Bugs Fixed
+
+- A `HttpResponseError` will be immediately raised when the call quota volume is exceeded in a `F0` tier Language resource.
+
+### Other Changes
+
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, see [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+
+
+## 5.2.0b4 (2022-05-18)
+
+Note that this is the first version of the client library that targets the Azure Cognitive Service for Language APIs which includes the existing text analysis and natural language processing features found in the Text Analytics client library.
+In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-04-01-preview`. Support for `v3.2-preview.2` is removed, however, all functionalities are included in the latest version.
+
+### Features Added
+
+- Added support for Healthcare Entities Analysis through the `begin_analyze_actions` API with the `AnalyzeHealthcareEntitiesAction` type.
+- Added keyword argument `fhir_version` to `begin_analyze_healthcare_entities` and `AnalyzeHealthcareEntitiesAction`. Use the keyword to indicate the version for the `fhir_bundle` contained on the `AnalyzeHealthcareEntitiesResult`.
+- Added property `fhir_bundle` to `AnalyzeHealthcareEntitiesResult`.
+- Added keyword argument `display_name` to `begin_analyze_healthcare_entities`.
+
+## 5.2.0b3 (2022-03-08)
+
+### Bugs Fixed
 - `string_index_type` now correctly defaults to the Python default `UnicodeCodePoint` for `AnalyzeSentimentAction` and `RecognizeCustomEntitiesAction`.
 - Fixed a bug in `begin_analyze_actions` where incorrect action types were being sent in the request if targeting the older API version `v3.1` in the beta version of the client library.
- 
+- `string_index_type` option `Utf16CodePoint` is corrected to `Utf16CodeUnit`.
+
 ### Other Changes
 - Python 2.7 is no longer supported. Please use Python version 3.6 or later.
 

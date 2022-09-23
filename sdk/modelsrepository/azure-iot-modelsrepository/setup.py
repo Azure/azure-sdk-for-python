@@ -7,23 +7,6 @@
 import re
 from setuptools import setup, find_packages
 
-# azure v0.x is not compatible with this package
-# azure v0.x used to have a __version__ attribute (newer versions don't)
-try:
-    import azure
-
-    try:
-        ver = azure.__version__
-        raise Exception(
-            "This package is incompatible with azure=={}. ".format(ver)
-            + 'Uninstall it with "pip uninstall azure".'
-        )
-    except AttributeError:
-        pass
-except ImportError:
-    pass
-
-
 # Fetch description
 with open("README.md", "r") as fh:
     _long_description = fh.read()
@@ -56,21 +39,19 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
     ],
     install_requires=[
         "azure-core<2.0.0,>=1.2.2",
         "six>=1.11.0",
     ],
-    extras_require={":python_version<'3.0'": ["azure-iot-nspkg"]},
-    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3*, !=3.4.*",
+    python_requires=">=3.6",
     packages=find_packages(
         exclude=[
             "tests",
@@ -82,5 +63,9 @@ setup(
             "azure.iot",
         ]
     ),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     zip_safe=False,
 )

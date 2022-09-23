@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://azuremlsdk2.blob.core.windows.net/latest/commandJob.schema.json
+
+command: python ./python-guide/advanced_example.py
+environment:
+  conda_file: conda_file.yml
+  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+code: ./light_gbm_examples
+compute: azureml:cpu-cluster

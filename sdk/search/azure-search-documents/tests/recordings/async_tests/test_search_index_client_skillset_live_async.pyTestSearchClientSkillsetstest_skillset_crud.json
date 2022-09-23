@@ -8,8 +8,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "1218",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6aa87b75-7fc3-11ec-9f80-74c63bed1137"
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "name": "test-ss-create",
@@ -106,20 +105,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "1925",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 22:49:41 GMT",
-        "elapsed-time": "46",
-        "ETag": "W/\u00220x8D9E1E74F05D2EC\u0022",
+        "Date": "Wed, 30 Mar 2022 21:09:50 GMT",
+        "elapsed-time": "51",
+        "ETag": "W/\u00220x8DA1291A0F24DF4\u0022",
         "Expires": "-1",
         "Location": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-create\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "6aa87b75-7fc3-11ec-9f80-74c63bed1137",
+        "request-id": "bcfb6358-b06d-11ec-bc7f-a04a5ed0778b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets/$entity",
-        "@odata.etag": "\u00220x8D9E1E74F05D2EC\u0022",
+        "@odata.etag": "\u00220x8DA1291A0F24DF4\u0022",
         "name": "test-ss-create",
         "description": "desc",
         "skills": [
@@ -250,8 +249,7 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6b10352b-7fc3-11ec-b483-74c63bed1137"
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -260,13 +258,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "2179",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 22:49:43 GMT",
-        "elapsed-time": "26",
+        "Date": "Wed, 30 Mar 2022 21:09:50 GMT",
+        "elapsed-time": "23",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "6b10352b-7fc3-11ec-b483-74c63bed1137",
+        "request-id": "bd428d4e-b06d-11ec-82e3-a04a5ed0778b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -274,7 +272,7 @@
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets",
         "value": [
           {
-            "@odata.etag": "\u00220x8D9E1E74F05D2EC\u0022",
+            "@odata.etag": "\u00220x8DA1291A0F24DF4\u0022",
             "name": "test-ss-create",
             "description": "desc",
             "skills": [
@@ -432,8 +430,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "66",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6b2720e9-7fc3-11ec-b19b-74c63bed1137"
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "skillNames": [
@@ -447,11 +444,11 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Date": "Thu, 27 Jan 2022 22:49:43 GMT",
+        "Date": "Wed, 30 Mar 2022 21:09:50 GMT",
         "elapsed-time": "20",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-id": "6b2720e9-7fc3-11ec-b19b-74c63bed1137",
+        "request-id": "bd53e946-b06d-11ec-b745-a04a5ed0778b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": null
@@ -464,8 +461,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "256",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6b3b94b8-7fc3-11ec-a431-74c63bed1137"
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "name": "test-ss-get",
@@ -493,20 +489,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "616",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 22:49:43 GMT",
-        "elapsed-time": "39",
-        "ETag": "W/\u00220x8D9E1E74F4EDF28\u0022",
+        "Date": "Wed, 30 Mar 2022 21:09:50 GMT",
+        "elapsed-time": "44",
+        "ETag": "W/\u00220x8DA1291A129827C\u0022",
         "Expires": "-1",
         "Location": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-get\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "6b3b94b8-7fc3-11ec-a431-74c63bed1137",
+        "request-id": "bd6466dc-b06d-11ec-bcb4-a04a5ed0778b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets/$entity",
-        "@odata.etag": "\u00220x8D9E1E74F4EDF28\u0022",
+        "@odata.etag": "\u00220x8DA1291A129827C\u0022",
         "name": "test-ss-get",
         "description": "desc",
         "skills": [
@@ -546,8 +542,7 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6b526468-7fc3-11ec-95f4-74c63bed1137"
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -556,20 +551,20 @@
         "Content-Encoding": "gzip",
         "Content-Length": "693",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 22:49:43 GMT",
-        "elapsed-time": "13",
-        "ETag": "W/\u00220x8D9E1E74F4EDF28\u0022",
+        "Date": "Wed, 30 Mar 2022 21:09:50 GMT",
+        "elapsed-time": "11",
+        "ETag": "W/\u00220x8DA1291A129827C\u0022",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "6b526468-7fc3-11ec-95f4-74c63bed1137",
+        "request-id": "bd774f79-b06d-11ec-8f42-a04a5ed0778b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets/$entity",
-        "@odata.etag": "\u00220x8D9E1E74F4EDF28\u0022",
+        "@odata.etag": "\u00220x8DA1291A129827C\u0022",
         "name": "test-ss-get",
         "description": "desc",
         "skills": [
@@ -619,8 +614,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "260",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6b65e8f9-7fc3-11ec-9c40-74c63bed1137"
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "name": "test-ss-list-1",
@@ -648,20 +642,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "620",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 22:49:43 GMT",
-        "elapsed-time": "39",
-        "ETag": "W/\u00220x8D9E1E74F79444D\u0022",
+        "Date": "Wed, 30 Mar 2022 21:09:51 GMT",
+        "elapsed-time": "37",
+        "ETag": "W/\u00220x8DA1291A14B8471\u0022",
         "Expires": "-1",
         "Location": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-list-1\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "6b65e8f9-7fc3-11ec-9c40-74c63bed1137",
+        "request-id": "bd86dd2b-b06d-11ec-80db-a04a5ed0778b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets/$entity",
-        "@odata.etag": "\u00220x8D9E1E74F79444D\u0022",
+        "@odata.etag": "\u00220x8DA1291A14B8471\u0022",
         "name": "test-ss-list-1",
         "description": "desc1",
         "skills": [
@@ -703,8 +697,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "260",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6b7c8065-7fc3-11ec-b64b-74c63bed1137"
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "name": "test-ss-list-2",
@@ -732,20 +725,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "620",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 22:49:43 GMT",
-        "elapsed-time": "39",
-        "ETag": "W/\u00220x8D9E1E74F8F611F\u0022",
+        "Date": "Wed, 30 Mar 2022 21:09:51 GMT",
+        "elapsed-time": "38",
+        "ETag": "W/\u00220x8DA1291A15CBFFC\u0022",
         "Expires": "-1",
         "Location": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-list-2\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "6b7c8065-7fc3-11ec-b64b-74c63bed1137",
+        "request-id": "bd98ce33-b06d-11ec-b340-a04a5ed0778b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets/$entity",
-        "@odata.etag": "\u00220x8D9E1E74F8F611F\u0022",
+        "@odata.etag": "\u00220x8DA1291A15CBFFC\u0022",
         "name": "test-ss-list-2",
         "description": "desc2",
         "skills": [
@@ -785,8 +778,7 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6b92c50c-7fc3-11ec-9416-74c63bed1137"
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -795,13 +787,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "3990",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 22:49:43 GMT",
-        "elapsed-time": "42",
+        "Date": "Wed, 30 Mar 2022 21:09:51 GMT",
+        "elapsed-time": "24",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "6b92c50c-7fc3-11ec-9416-74c63bed1137",
+        "request-id": "bdabaf62-b06d-11ec-a957-a04a5ed0778b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -809,7 +801,7 @@
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets",
         "value": [
           {
-            "@odata.etag": "\u00220x8D9E1E74F05D2EC\u0022",
+            "@odata.etag": "\u00220x8DA1291A0F24DF4\u0022",
             "name": "test-ss-create",
             "description": "desc",
             "skills": [
@@ -957,7 +949,7 @@
             "encryptionKey": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1E74F4EDF28\u0022",
+            "@odata.etag": "\u00220x8DA1291A129827C\u0022",
             "name": "test-ss-get",
             "description": "desc",
             "skills": [
@@ -999,7 +991,7 @@
             "encryptionKey": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1E74F79444D\u0022",
+            "@odata.etag": "\u00220x8DA1291A14B8471\u0022",
             "name": "test-ss-list-1",
             "description": "desc1",
             "skills": [
@@ -1041,7 +1033,7 @@
             "encryptionKey": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1E74F8F611F\u0022",
+            "@odata.etag": "\u00220x8DA1291A15CBFFC\u0022",
             "name": "test-ss-list-2",
             "description": "desc2",
             "skills": [
@@ -1086,6 +1078,939 @@
       }
     },
     {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-create-or-update\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "270",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "name": "test-ss-create-or-update",
+        "description": "desc1",
+        "skills": [
+          {
+            "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+            "inputs": [
+              {
+                "name": "text",
+                "source": "/document/content"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "organizations",
+                "targetName": "organizations"
+              }
+            ]
+          }
+        ]
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "630",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 30 Mar 2022 21:09:51 GMT",
+        "elapsed-time": "49",
+        "ETag": "W/\u00220x8DA1291A1821CDB\u0022",
+        "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-create-or-update\u0027)?api-version=2021-04-30-Preview",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "bdbc4d14-b06d-11ec-9616-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets/$entity",
+        "@odata.etag": "\u00220x8DA1291A1821CDB\u0022",
+        "name": "test-ss-create-or-update",
+        "description": "desc1",
+        "skills": [
+          {
+            "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+            "name": null,
+            "description": null,
+            "context": null,
+            "categories": [],
+            "defaultLanguageCode": null,
+            "minimumPrecision": null,
+            "includeTypelessEntities": null,
+            "inputs": [
+              {
+                "name": "text",
+                "source": "/document/content",
+                "sourceContext": null,
+                "inputs": []
+              }
+            ],
+            "outputs": [
+              {
+                "name": "organizations",
+                "targetName": "organizations"
+              }
+            ]
+          }
+        ],
+        "cognitiveServices": null,
+        "knowledgeStore": null,
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "4605",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 30 Mar 2022 21:09:51 GMT",
+        "elapsed-time": "25",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "bdcf4590-b06d-11ec-adc6-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets",
+        "value": [
+          {
+            "@odata.etag": "\u00220x8DA1291A1821CDB\u0022",
+            "name": "test-ss-create-or-update",
+            "description": "desc1",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A0F24DF4\u0022",
+            "name": "test-ss-create",
+            "description": "desc",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "skill1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": true,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizationsS1"
+                  }
+                ]
+              },
+              {
+                "@odata.type": "#Microsoft.Skills.Text.V3.EntityRecognitionSkill",
+                "name": "skill2",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Product",
+                  "PhoneNumber",
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "IPAddress",
+                  "URL",
+                  "Email",
+                  "Event",
+                  "Skill",
+                  "Location",
+                  "PersonType",
+                  "Address",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "modelVersion": "3",
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizationsS2"
+                  }
+                ]
+              },
+              {
+                "@odata.type": "#Microsoft.Skills.Text.SentimentSkill",
+                "name": "skill3",
+                "description": null,
+                "context": "/document",
+                "defaultLanguageCode": "en",
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "score",
+                    "targetName": "scoreS3"
+                  }
+                ]
+              },
+              {
+                "@odata.type": "#Microsoft.Skills.Text.V3.SentimentSkill",
+                "name": "skill4",
+                "description": null,
+                "context": "/document",
+                "defaultLanguageCode": "en",
+                "modelVersion": null,
+                "includeOpinionMining": true,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "confidenceScores",
+                    "targetName": "scoreS4"
+                  }
+                ]
+              },
+              {
+                "@odata.type": "#Microsoft.Skills.Text.V3.EntityLinkingSkill",
+                "name": "skill5",
+                "description": null,
+                "context": "/document",
+                "defaultLanguageCode": "en",
+                "minimumPrecision": 0.5,
+                "modelVersion": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "entities",
+                    "targetName": "entitiesS5"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A129827C\u0022",
+            "name": "test-ss-get",
+            "description": "desc",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A14B8471\u0022",
+            "name": "test-ss-list-1",
+            "description": "desc1",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A15CBFFC\u0022",
+            "name": "test-ss-list-2",
+            "description": "desc2",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-create-or-update\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "270",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "name": "test-ss-create-or-update",
+        "description": "desc2",
+        "skills": [
+          {
+            "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+            "inputs": [
+              {
+                "name": "text",
+                "source": "/document/content"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "organizations",
+                "targetName": "organizations"
+              }
+            ]
+          }
+        ]
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "630",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 30 Mar 2022 21:09:51 GMT",
+        "elapsed-time": "39",
+        "ETag": "W/\u00220x8DA1291A1A41ECE\u0022",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "bddfdf55-b06d-11ec-bd5f-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets/$entity",
+        "@odata.etag": "\u00220x8DA1291A1A41ECE\u0022",
+        "name": "test-ss-create-or-update",
+        "description": "desc2",
+        "skills": [
+          {
+            "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+            "name": null,
+            "description": null,
+            "context": null,
+            "categories": [],
+            "defaultLanguageCode": null,
+            "minimumPrecision": null,
+            "includeTypelessEntities": null,
+            "inputs": [
+              {
+                "name": "text",
+                "source": "/document/content",
+                "sourceContext": null,
+                "inputs": []
+              }
+            ],
+            "outputs": [
+              {
+                "name": "organizations",
+                "targetName": "organizations"
+              }
+            ]
+          }
+        ],
+        "cognitiveServices": null,
+        "knowledgeStore": null,
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "4605",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 30 Mar 2022 21:09:51 GMT",
+        "elapsed-time": "30",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "bdf23029-b06d-11ec-b82d-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets",
+        "value": [
+          {
+            "@odata.etag": "\u00220x8DA1291A1A41ECE\u0022",
+            "name": "test-ss-create-or-update",
+            "description": "desc2",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A0F24DF4\u0022",
+            "name": "test-ss-create",
+            "description": "desc",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "skill1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": true,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizationsS1"
+                  }
+                ]
+              },
+              {
+                "@odata.type": "#Microsoft.Skills.Text.V3.EntityRecognitionSkill",
+                "name": "skill2",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Product",
+                  "PhoneNumber",
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "IPAddress",
+                  "URL",
+                  "Email",
+                  "Event",
+                  "Skill",
+                  "Location",
+                  "PersonType",
+                  "Address",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "modelVersion": "3",
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizationsS2"
+                  }
+                ]
+              },
+              {
+                "@odata.type": "#Microsoft.Skills.Text.SentimentSkill",
+                "name": "skill3",
+                "description": null,
+                "context": "/document",
+                "defaultLanguageCode": "en",
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "score",
+                    "targetName": "scoreS3"
+                  }
+                ]
+              },
+              {
+                "@odata.type": "#Microsoft.Skills.Text.V3.SentimentSkill",
+                "name": "skill4",
+                "description": null,
+                "context": "/document",
+                "defaultLanguageCode": "en",
+                "modelVersion": null,
+                "includeOpinionMining": true,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "confidenceScores",
+                    "targetName": "scoreS4"
+                  }
+                ]
+              },
+              {
+                "@odata.type": "#Microsoft.Skills.Text.V3.EntityLinkingSkill",
+                "name": "skill5",
+                "description": null,
+                "context": "/document",
+                "defaultLanguageCode": "en",
+                "minimumPrecision": 0.5,
+                "modelVersion": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "entities",
+                    "targetName": "entitiesS5"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A129827C\u0022",
+            "name": "test-ss-get",
+            "description": "desc",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A14B8471\u0022",
+            "name": "test-ss-list-1",
+            "description": "desc1",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A15CBFFC\u0022",
+            "name": "test-ss-list-2",
+            "description": "desc2",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-create-or-update\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "707",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 30 Mar 2022 21:09:51 GMT",
+        "elapsed-time": "12",
+        "ETag": "W/\u00220x8DA1291A1A41ECE\u0022",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "be0532d6-b06d-11ec-9ea3-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets/$entity",
+        "@odata.etag": "\u00220x8DA1291A1A41ECE\u0022",
+        "name": "test-ss-create-or-update",
+        "description": "desc2",
+        "skills": [
+          {
+            "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+            "name": "#1",
+            "description": null,
+            "context": "/document",
+            "categories": [
+              "Person",
+              "Quantity",
+              "Organization",
+              "URL",
+              "Email",
+              "Location",
+              "DateTime"
+            ],
+            "defaultLanguageCode": "en",
+            "minimumPrecision": null,
+            "includeTypelessEntities": null,
+            "inputs": [
+              {
+                "name": "text",
+                "source": "/document/content",
+                "sourceContext": null,
+                "inputs": []
+              }
+            ],
+            "outputs": [
+              {
+                "name": "organizations",
+                "targetName": "organizations"
+              }
+            ]
+          }
+        ],
+        "cognitiveServices": null,
+        "knowledgeStore": null,
+        "encryptionKey": null
+      }
+    },
+    {
       "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-create-or-update-unchanged\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
@@ -1094,8 +2019,7 @@
         "Content-Length": "280",
         "Content-Type": "application/json",
         "Prefer": "return=representation",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6bab08ad-7fc3-11ec-81f5-74c63bed1137"
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "name": "test-ss-create-or-update-unchanged",
@@ -1123,20 +2047,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "640",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 22:49:44 GMT",
-        "elapsed-time": "38",
-        "ETag": "W/\u00220x8D9E1E74FBECE92\u0022",
+        "Date": "Wed, 30 Mar 2022 21:09:51 GMT",
+        "elapsed-time": "44",
+        "ETag": "W/\u00220x8DA1291A1D89496\u0022",
         "Expires": "-1",
         "Location": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-create-or-update-unchanged\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "6bab08ad-7fc3-11ec-81f5-74c63bed1137",
+        "request-id": "be130a0d-b06d-11ec-94e7-a04a5ed0778b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets/$entity",
-        "@odata.etag": "\u00220x8D9E1E74FBECE92\u0022",
+        "@odata.etag": "\u00220x8DA1291A1D89496\u0022",
         "name": "test-ss-create-or-update-unchanged",
         "description": "desc1",
         "skills": [
@@ -1176,23 +2100,23 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "320",
+        "Content-Length": "343",
         "Content-Type": "application/json",
-        "If-Match": "\u00220x8D9E1E74FBECE92\u0022",
+        "If-Match": "\u0022changed_etag\u0022",
         "Prefer": "return=representation",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6bc26633-7fc3-11ec-bfd7-74c63bed1137"
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "name": "test-ss-create-or-update-unchanged",
-        "description": "desc2",
+        "description": "desc1",
         "skills": [
           {
             "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
             "inputs": [
               {
                 "name": "text",
-                "source": "/document/content"
+                "source": "/document/content",
+                "inputs": []
               }
             ],
             "outputs": [
@@ -1200,49 +2124,48 @@
                 "name": "organizations",
                 "targetName": "organizations"
               }
-            ]
+            ],
+            "categories": []
           }
         ],
-        "@odata.etag": "\u00220x8D9E1E74FBECE92\u0022"
+        "@odata.etag": "changed_etag"
       },
-      "StatusCode": 500,
+      "StatusCode": 412,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Language": "en",
-        "Content-Length": "56",
+        "Content-Length": "160",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 22:49:44 GMT",
-        "elapsed-time": "14",
+        "Date": "Wed, 30 Mar 2022 21:09:52 GMT",
+        "elapsed-time": "9",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "6bc26633-7fc3-11ec-bfd7-74c63bed1137",
+        "request-id": "be25b9c0-b06d-11ec-a18d-a04a5ed0778b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "error": {
           "code": "",
-          "message": "An error has occurred."
+          "message": "The precondition given in one of the request headers evaluated to false. No change was made to the resource from this request."
         }
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-create-or-update-unchanged\u0027)?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-create-or-update-inplace\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "320",
+        "Content-Length": "278",
         "Content-Type": "application/json",
-        "If-Match": "\u00220x8D9E1E74FBECE92\u0022",
         "Prefer": "return=representation",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6bc26633-7fc3-11ec-bfd7-74c63bed1137"
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
-        "name": "test-ss-create-or-update-unchanged",
-        "description": "desc2",
+        "name": "test-ss-create-or-update-inplace",
+        "description": "desc1",
         "skills": [
           {
             "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
@@ -1259,54 +2182,45 @@
               }
             ]
           }
-        ],
-        "@odata.etag": "\u00220x8D9E1E74FBECE92\u0022"
+        ]
       },
-      "StatusCode": 500,
+      "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Language": "en",
-        "Content-Length": "56",
+        "Content-Length": "638",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 22:49:44 GMT",
-        "elapsed-time": "13",
+        "Date": "Wed, 30 Mar 2022 21:09:52 GMT",
+        "elapsed-time": "37",
+        "ETag": "W/\u00220x8DA1291A1F7D7CB\u0022",
         "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-create-or-update-inplace\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "6bc26633-7fc3-11ec-bfd7-74c63bed1137",
+        "request-id": "be32fad5-b06d-11ec-a270-a04a5ed0778b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
-        "error": {
-          "code": "",
-          "message": "An error has occurred."
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-create-or-update-unchanged\u0027)?api-version=2021-04-30-Preview",
-      "RequestMethod": "PUT",
-      "RequestHeaders": {
-        "Accept": "application/json;odata.metadata=minimal",
-        "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "320",
-        "Content-Type": "application/json",
-        "If-Match": "\u00220x8D9E1E74FBECE92\u0022",
-        "Prefer": "return=representation",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6bc26633-7fc3-11ec-bfd7-74c63bed1137"
-      },
-      "RequestBody": {
-        "name": "test-ss-create-or-update-unchanged",
-        "description": "desc2",
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets/$entity",
+        "@odata.etag": "\u00220x8DA1291A1F7D7CB\u0022",
+        "name": "test-ss-create-or-update-inplace",
+        "description": "desc1",
         "skills": [
           {
             "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+            "name": null,
+            "description": null,
+            "context": null,
+            "categories": [],
+            "defaultLanguageCode": null,
+            "minimumPrecision": null,
+            "includeTypelessEntities": null,
             "inputs": [
               {
                 "name": "text",
-                "source": "/document/content"
+                "source": "/document/content",
+                "sourceContext": null,
+                "inputs": []
               }
             ],
             "outputs": [
@@ -1317,85 +2231,9 @@
             ]
           }
         ],
-        "@odata.etag": "\u00220x8D9E1E74FBECE92\u0022"
-      },
-      "StatusCode": 500,
-      "ResponseHeaders": {
-        "Cache-Control": "no-cache",
-        "Content-Language": "en",
-        "Content-Length": "56",
-        "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 22:49:46 GMT",
-        "elapsed-time": "17",
-        "Expires": "-1",
-        "OData-Version": "4.0",
-        "Pragma": "no-cache",
-        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "6bc26633-7fc3-11ec-bfd7-74c63bed1137",
-        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
-      },
-      "ResponseBody": {
-        "error": {
-          "code": "",
-          "message": "An error has occurred."
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-create-or-update-unchanged\u0027)?api-version=2021-04-30-Preview",
-      "RequestMethod": "PUT",
-      "RequestHeaders": {
-        "Accept": "application/json;odata.metadata=minimal",
-        "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "320",
-        "Content-Type": "application/json",
-        "If-Match": "\u00220x8D9E1E74FBECE92\u0022",
-        "Prefer": "return=representation",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6bc26633-7fc3-11ec-bfd7-74c63bed1137"
-      },
-      "RequestBody": {
-        "name": "test-ss-create-or-update-unchanged",
-        "description": "desc2",
-        "skills": [
-          {
-            "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
-            "inputs": [
-              {
-                "name": "text",
-                "source": "/document/content"
-              }
-            ],
-            "outputs": [
-              {
-                "name": "organizations",
-                "targetName": "organizations"
-              }
-            ]
-          }
-        ],
-        "@odata.etag": "\u00220x8D9E1E74FBECE92\u0022"
-      },
-      "StatusCode": 500,
-      "ResponseHeaders": {
-        "Cache-Control": "no-cache",
-        "Content-Language": "en",
-        "Content-Length": "56",
-        "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 22:49:49 GMT",
-        "elapsed-time": "14",
-        "Expires": "-1",
-        "OData-Version": "4.0",
-        "Pragma": "no-cache",
-        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "6bc26633-7fc3-11ec-bfd7-74c63bed1137",
-        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
-      },
-      "ResponseBody": {
-        "error": {
-          "code": "",
-          "message": "An error has occurred."
-        }
+        "cognitiveServices": null,
+        "knowledgeStore": null,
+        "encryptionKey": null
       }
     },
     {
@@ -1404,23 +2242,22 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6eed1241-7fc3-11ec-9fd8-74c63bed1137"
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
-        "Content-Length": "4615",
+        "Content-Length": "5853",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 22:49:49 GMT",
-        "elapsed-time": "37",
+        "Date": "Wed, 30 Mar 2022 21:09:52 GMT",
+        "elapsed-time": "30",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "6eed1241-7fc3-11ec-9fd8-74c63bed1137",
+        "request-id": "be45be12-b06d-11ec-92e9-a04a5ed0778b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -1428,7 +2265,49 @@
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets",
         "value": [
           {
-            "@odata.etag": "\u00220x8D9E1E74FBECE92\u0022",
+            "@odata.etag": "\u00220x8DA1291A1F7D7CB\u0022",
+            "name": "test-ss-create-or-update-inplace",
+            "description": "desc1",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A1D89496\u0022",
             "name": "test-ss-create-or-update-unchanged",
             "description": "desc1",
             "skills": [
@@ -1470,7 +2349,49 @@
             "encryptionKey": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1E74F05D2EC\u0022",
+            "@odata.etag": "\u00220x8DA1291A1A41ECE\u0022",
+            "name": "test-ss-create-or-update",
+            "description": "desc2",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A0F24DF4\u0022",
             "name": "test-ss-create",
             "description": "desc",
             "skills": [
@@ -1618,7 +2539,7 @@
             "encryptionKey": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1E74F4EDF28\u0022",
+            "@odata.etag": "\u00220x8DA1291A129827C\u0022",
             "name": "test-ss-get",
             "description": "desc",
             "skills": [
@@ -1660,7 +2581,7 @@
             "encryptionKey": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1E74F79444D\u0022",
+            "@odata.etag": "\u00220x8DA1291A14B8471\u0022",
             "name": "test-ss-list-1",
             "description": "desc1",
             "skills": [
@@ -1702,7 +2623,7 @@
             "encryptionKey": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1E74F8F611F\u0022",
+            "@odata.etag": "\u00220x8DA1291A15CBFFC\u0022",
             "name": "test-ss-list-2",
             "description": "desc2",
             "skills": [
@@ -1747,24 +2668,1327 @@
       }
     },
     {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-create-or-update-inplace\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "278",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "name": "test-ss-create-or-update-inplace",
+        "description": "desc2",
+        "skills": [
+          {
+            "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+            "inputs": [
+              {
+                "name": "text",
+                "source": "/document/content"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "organizations",
+                "targetName": "organizations"
+              }
+            ]
+          }
+        ]
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "638",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 30 Mar 2022 21:09:52 GMT",
+        "elapsed-time": "38",
+        "ETag": "W/\u00220x8DA1291A21BFC4F\u0022",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "be5778f1-b06d-11ec-81a7-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets/$entity",
+        "@odata.etag": "\u00220x8DA1291A21BFC4F\u0022",
+        "name": "test-ss-create-or-update-inplace",
+        "description": "desc2",
+        "skills": [
+          {
+            "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+            "name": null,
+            "description": null,
+            "context": null,
+            "categories": [],
+            "defaultLanguageCode": null,
+            "minimumPrecision": null,
+            "includeTypelessEntities": null,
+            "inputs": [
+              {
+                "name": "text",
+                "source": "/document/content",
+                "sourceContext": null,
+                "inputs": []
+              }
+            ],
+            "outputs": [
+              {
+                "name": "organizations",
+                "targetName": "organizations"
+              }
+            ]
+          }
+        ],
+        "cognitiveServices": null,
+        "knowledgeStore": null,
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "5853",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 30 Mar 2022 21:09:52 GMT",
+        "elapsed-time": "39",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "be69aac0-b06d-11ec-a1c1-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets",
+        "value": [
+          {
+            "@odata.etag": "\u00220x8DA1291A21BFC4F\u0022",
+            "name": "test-ss-create-or-update-inplace",
+            "description": "desc2",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A1D89496\u0022",
+            "name": "test-ss-create-or-update-unchanged",
+            "description": "desc1",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A1A41ECE\u0022",
+            "name": "test-ss-create-or-update",
+            "description": "desc2",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A0F24DF4\u0022",
+            "name": "test-ss-create",
+            "description": "desc",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "skill1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": true,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizationsS1"
+                  }
+                ]
+              },
+              {
+                "@odata.type": "#Microsoft.Skills.Text.V3.EntityRecognitionSkill",
+                "name": "skill2",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Product",
+                  "PhoneNumber",
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "IPAddress",
+                  "URL",
+                  "Email",
+                  "Event",
+                  "Skill",
+                  "Location",
+                  "PersonType",
+                  "Address",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "modelVersion": "3",
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizationsS2"
+                  }
+                ]
+              },
+              {
+                "@odata.type": "#Microsoft.Skills.Text.SentimentSkill",
+                "name": "skill3",
+                "description": null,
+                "context": "/document",
+                "defaultLanguageCode": "en",
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "score",
+                    "targetName": "scoreS3"
+                  }
+                ]
+              },
+              {
+                "@odata.type": "#Microsoft.Skills.Text.V3.SentimentSkill",
+                "name": "skill4",
+                "description": null,
+                "context": "/document",
+                "defaultLanguageCode": "en",
+                "modelVersion": null,
+                "includeOpinionMining": true,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "confidenceScores",
+                    "targetName": "scoreS4"
+                  }
+                ]
+              },
+              {
+                "@odata.type": "#Microsoft.Skills.Text.V3.EntityLinkingSkill",
+                "name": "skill5",
+                "description": null,
+                "context": "/document",
+                "defaultLanguageCode": "en",
+                "minimumPrecision": 0.5,
+                "modelVersion": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "entities",
+                    "targetName": "entitiesS5"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A129827C\u0022",
+            "name": "test-ss-get",
+            "description": "desc",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A14B8471\u0022",
+            "name": "test-ss-list-1",
+            "description": "desc1",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A15CBFFC\u0022",
+            "name": "test-ss-list-2",
+            "description": "desc2",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-create-or-update-inplace\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "715",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 30 Mar 2022 21:09:52 GMT",
+        "elapsed-time": "13",
+        "ETag": "W/\u00220x8DA1291A21BFC4F\u0022",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "be7cbbcb-b06d-11ec-ba12-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets/$entity",
+        "@odata.etag": "\u00220x8DA1291A21BFC4F\u0022",
+        "name": "test-ss-create-or-update-inplace",
+        "description": "desc2",
+        "skills": [
+          {
+            "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+            "name": "#1",
+            "description": null,
+            "context": "/document",
+            "categories": [
+              "Person",
+              "Quantity",
+              "Organization",
+              "URL",
+              "Email",
+              "Location",
+              "DateTime"
+            ],
+            "defaultLanguageCode": "en",
+            "minimumPrecision": null,
+            "includeTypelessEntities": null,
+            "inputs": [
+              {
+                "name": "text",
+                "source": "/document/content",
+                "sourceContext": null,
+                "inputs": []
+              }
+            ],
+            "outputs": [
+              {
+                "name": "organizations",
+                "targetName": "organizations"
+              }
+            ]
+          }
+        ],
+        "cognitiveServices": null,
+        "knowledgeStore": null,
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets?api-version=2021-04-30-Preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "270",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "name": "test-ss-deleted-unchanged",
+        "description": "desc",
+        "skills": [
+          {
+            "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+            "inputs": [
+              {
+                "name": "text",
+                "source": "/document/content"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "organizations",
+                "targetName": "organizations"
+              }
+            ]
+          }
+        ]
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "630",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 30 Mar 2022 21:09:52 GMT",
+        "elapsed-time": "36",
+        "ETag": "W/\u00220x8DA1291A24FFD02\u0022",
+        "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-deleted-unchanged\u0027)?api-version=2021-04-30-Preview",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "be8b837a-b06d-11ec-ba63-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets/$entity",
+        "@odata.etag": "\u00220x8DA1291A24FFD02\u0022",
+        "name": "test-ss-deleted-unchanged",
+        "description": "desc",
+        "skills": [
+          {
+            "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+            "name": null,
+            "description": null,
+            "context": null,
+            "categories": [],
+            "defaultLanguageCode": null,
+            "minimumPrecision": null,
+            "includeTypelessEntities": null,
+            "inputs": [
+              {
+                "name": "text",
+                "source": "/document/content",
+                "sourceContext": null,
+                "inputs": []
+              }
+            ],
+            "outputs": [
+              {
+                "name": "organizations",
+                "targetName": "organizations"
+              }
+            ]
+          }
+        ],
+        "cognitiveServices": null,
+        "knowledgeStore": null,
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-deleted-unchanged\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "273",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "name": "test-ss-deleted-unchanged",
+        "description": "updated",
+        "skills": [
+          {
+            "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+            "inputs": [
+              {
+                "name": "text",
+                "source": "/document/content"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "organizations",
+                "targetName": "organizations"
+              }
+            ]
+          }
+        ]
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "633",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 30 Mar 2022 21:09:52 GMT",
+        "elapsed-time": "38",
+        "ETag": "W/\u00220x8DA1291A26297E9\u0022",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "be9dd059-b06d-11ec-9d4e-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets/$entity",
+        "@odata.etag": "\u00220x8DA1291A26297E9\u0022",
+        "name": "test-ss-deleted-unchanged",
+        "description": "updated",
+        "skills": [
+          {
+            "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+            "name": null,
+            "description": null,
+            "context": null,
+            "categories": [],
+            "defaultLanguageCode": null,
+            "minimumPrecision": null,
+            "includeTypelessEntities": null,
+            "inputs": [
+              {
+                "name": "text",
+                "source": "/document/content",
+                "sourceContext": null,
+                "inputs": []
+              }
+            ],
+            "outputs": [
+              {
+                "name": "organizations",
+                "targetName": "organizations"
+              }
+            ]
+          }
+        ],
+        "cognitiveServices": null,
+        "knowledgeStore": null,
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-deleted-unchanged\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "If-Match": "\u00220x8DA1291A24FFD02\u0022",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 412,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Language": "en",
+        "Content-Length": "160",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 30 Mar 2022 21:09:52 GMT",
+        "elapsed-time": "7",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "beb05cef-b06d-11ec-aebb-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "",
+          "message": "The precondition given in one of the request headers evaluated to false. No change was made to the resource from this request."
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "6471",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Wed, 30 Mar 2022 21:09:53 GMT",
+        "elapsed-time": "28",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "bebe4fe4-b06d-11ec-8d17-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#skillsets",
+        "value": [
+          {
+            "@odata.etag": "\u00220x8DA1291A21BFC4F\u0022",
+            "name": "test-ss-create-or-update-inplace",
+            "description": "desc2",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A1D89496\u0022",
+            "name": "test-ss-create-or-update-unchanged",
+            "description": "desc1",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A1A41ECE\u0022",
+            "name": "test-ss-create-or-update",
+            "description": "desc2",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A0F24DF4\u0022",
+            "name": "test-ss-create",
+            "description": "desc",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "skill1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": true,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizationsS1"
+                  }
+                ]
+              },
+              {
+                "@odata.type": "#Microsoft.Skills.Text.V3.EntityRecognitionSkill",
+                "name": "skill2",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Product",
+                  "PhoneNumber",
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "IPAddress",
+                  "URL",
+                  "Email",
+                  "Event",
+                  "Skill",
+                  "Location",
+                  "PersonType",
+                  "Address",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "modelVersion": "3",
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizationsS2"
+                  }
+                ]
+              },
+              {
+                "@odata.type": "#Microsoft.Skills.Text.SentimentSkill",
+                "name": "skill3",
+                "description": null,
+                "context": "/document",
+                "defaultLanguageCode": "en",
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "score",
+                    "targetName": "scoreS3"
+                  }
+                ]
+              },
+              {
+                "@odata.type": "#Microsoft.Skills.Text.V3.SentimentSkill",
+                "name": "skill4",
+                "description": null,
+                "context": "/document",
+                "defaultLanguageCode": "en",
+                "modelVersion": null,
+                "includeOpinionMining": true,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "confidenceScores",
+                    "targetName": "scoreS4"
+                  }
+                ]
+              },
+              {
+                "@odata.type": "#Microsoft.Skills.Text.V3.EntityLinkingSkill",
+                "name": "skill5",
+                "description": null,
+                "context": "/document",
+                "defaultLanguageCode": "en",
+                "minimumPrecision": 0.5,
+                "modelVersion": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "entities",
+                    "targetName": "entitiesS5"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A26297E9\u0022",
+            "name": "test-ss-deleted-unchanged",
+            "description": "updated",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A129827C\u0022",
+            "name": "test-ss-get",
+            "description": "desc",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A14B8471\u0022",
+            "name": "test-ss-list-1",
+            "description": "desc1",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8DA1291A15CBFFC\u0022",
+            "name": "test-ss-list-2",
+            "description": "desc2",
+            "skills": [
+              {
+                "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+                "name": "#1",
+                "description": null,
+                "context": "/document",
+                "categories": [
+                  "Person",
+                  "Quantity",
+                  "Organization",
+                  "URL",
+                  "Email",
+                  "Location",
+                  "DateTime"
+                ],
+                "defaultLanguageCode": "en",
+                "minimumPrecision": null,
+                "includeTypelessEntities": null,
+                "inputs": [
+                  {
+                    "name": "text",
+                    "source": "/document/content",
+                    "sourceContext": null,
+                    "inputs": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                  }
+                ]
+              }
+            ],
+            "cognitiveServices": null,
+            "knowledgeStore": null,
+            "encryptionKey": null
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-create-or-update-inplace\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Wed, 30 Mar 2022 21:09:53 GMT",
+        "elapsed-time": "25",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "bed10809-b06d-11ec-863d-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    },
+    {
       "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-create-or-update-unchanged\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6f03cccb-7fc3-11ec-8f41-74c63bed1137"
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Date": "Thu, 27 Jan 2022 22:49:49 GMT",
+        "Date": "Wed, 30 Mar 2022 21:09:53 GMT",
+        "elapsed-time": "33",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "bee2ad76-b06d-11ec-80f7-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-create-or-update\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Wed, 30 Mar 2022 21:09:53 GMT",
         "elapsed-time": "26",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-id": "6f03cccb-7fc3-11ec-8f41-74c63bed1137",
+        "request-id": "bef5d5f8-b06d-11ec-8dec-a04a5ed0778b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": null
@@ -1776,18 +4000,39 @@
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6f187242-7fc3-11ec-adeb-74c63bed1137"
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Date": "Thu, 27 Jan 2022 22:49:49 GMT",
-        "elapsed-time": "31",
+        "Date": "Wed, 30 Mar 2022 21:09:53 GMT",
+        "elapsed-time": "29",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-id": "6f187242-7fc3-11ec-adeb-74c63bed1137",
+        "request-id": "bf07722a-b06d-11ec-abc9-a04a5ed0778b",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/skillsets(\u0027test-ss-deleted-unchanged\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Wed, 30 Mar 2022 21:09:53 GMT",
+        "elapsed-time": "27",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "bf19895a-b06d-11ec-8347-a04a5ed0778b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": null
@@ -1799,18 +4044,17 @@
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6f2dd324-7fc3-11ec-8faa-74c63bed1137"
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Date": "Thu, 27 Jan 2022 22:49:49 GMT",
-        "elapsed-time": "28",
+        "Date": "Wed, 30 Mar 2022 21:09:53 GMT",
+        "elapsed-time": "27",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-id": "6f2dd324-7fc3-11ec-8faa-74c63bed1137",
+        "request-id": "bf2b7453-b06d-11ec-8688-a04a5ed0778b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": null
@@ -1822,18 +4066,17 @@
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6f42352f-7fc3-11ec-a2a6-74c63bed1137"
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Date": "Thu, 27 Jan 2022 22:49:49 GMT",
+        "Date": "Wed, 30 Mar 2022 21:09:53 GMT",
         "elapsed-time": "28",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-id": "6f42352f-7fc3-11ec-a2a6-74c63bed1137",
+        "request-id": "bf3c8418-b06d-11ec-ac4a-a04a5ed0778b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": null
@@ -1845,18 +4088,17 @@
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6f5789a4-7fc3-11ec-a4c5-74c63bed1137"
+        "User-Agent": "azsdk-python-search-documents/11.3.0b9 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Date": "Thu, 27 Jan 2022 22:49:49 GMT",
-        "elapsed-time": "25",
+        "Date": "Wed, 30 Mar 2022 21:09:53 GMT",
+        "elapsed-time": "27",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-id": "6f5789a4-7fc3-11ec-a4c5-74c63bed1137",
+        "request-id": "bf4e1988-b06d-11ec-a498-a04a5ed0778b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": null

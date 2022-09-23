@@ -12,9 +12,9 @@ parameters:
 # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 steps:
   - task: UsePythonVersion@0
-    displayName: 'Use Python 3.7'
+    displayName: 'Use Python 3.10'
     inputs:
-     versionSpec: '3.7'
+     versionSpec: '3.10'
     condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
 
   - script: |

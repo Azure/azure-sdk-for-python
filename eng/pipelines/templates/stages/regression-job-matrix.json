@@ -1,0 +1,45 @@
+{
+  "matrix": {
+    "Agent": {
+      "ubuntu-20.04": {
+        "OSVmImage": "MMSUbuntu20.04",
+        "Pool": "azsdk-pool-mms-ubuntu-2004-general"
+      }
+    },
+    "DependentService": [
+      "schemaregistry",
+      "remoterendering",
+      "eventhub",
+      "cognitivelanguage",
+      "tables",
+      "purview",
+      "eventgrid",
+      "confidentialledger",
+      "mixedreality",
+      "agrifood",
+      "monitor",
+      "attestation",
+      "digitaltwins",
+      "synapse",
+      "servicebus",
+      "keyvault",
+      "videoanalyzer",
+      "communication",
+      "search",
+      "cosmos",
+      "modelsrepository",
+      "containerregistry",
+      "identity",
+      "core",
+      "template",
+      "appconfiguration",
+      "webpubsub",
+      "textanalytics",
+      "metricsadvisor",
+      "storage",
+      "formrecognizer",
+      "translation",
+      "deviceupdate"
+    ]
+  }
+}

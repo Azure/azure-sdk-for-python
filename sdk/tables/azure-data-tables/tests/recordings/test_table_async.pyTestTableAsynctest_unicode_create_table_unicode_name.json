@@ -1,0 +1,49 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "47",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Tue, 08 Mar 2022 10:04:28 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "242ff79e-9ec7-11ec-b243-5cf37093a909",
+        "x-ms-date": "Tue, 08 Mar 2022 10:04:28 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "\u554A\u9F44\u4E02\u72DB\u72DC"
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
+        "Date": "Tue, 08 Mar 2022 10:04:28 GMT",
+        "Server": [
+          "Windows-Azure-Table/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "242ff79e-9ec7-11ec-b243-5cf37093a909",
+        "x-ms-request-id": "35d577df-3002-0034-03d3-322f76000000",
+        "x-ms-version": "2019-02-02"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InvalidResourceName",
+          "message": {
+            "lang": "en-US",
+            "value": "The specifed resource name contains invalid characters.\nRequestId:35d577df-3002-0034-03d3-322f76000000\nTime:2022-03-08T10:04:29.1847519Z"
+          }
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

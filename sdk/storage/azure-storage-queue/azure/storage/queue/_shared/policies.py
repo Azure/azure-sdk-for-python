@@ -82,7 +82,7 @@ def is_retry(response, mode):   # pylint: disable=too-many-return-statements
     """
     status = response.http_response.status_code
     if 300 <= status < 500:
-        # An exception occured, but in most cases it was expected. Examples could
+        # An exception occurred, but in most cases it was expected. Examples could
         # include a 309 Conflict or 412 Precondition Failed.
         if status == 404 and mode == LocationMode.SECONDARY:
             # Response code 404 should be retried if secondary was used.
@@ -115,6 +115,12 @@ def urljoin(base_url, stub_url):
 class QueueMessagePolicy(SansIOHTTPPolicy):
 
     def on_request(self, request):
+        # Hack to fix generated code adding '/messages' after SAS parameters
+        includes_messages = request.http_request.url.endswith('/messages')
+        if includes_messages:
+            request.http_request.url = request.http_request.url[:-(len('/messages'))]
+            request.http_request.url = urljoin(request.http_request.url, 'messages')
+
         message_id = request.context.options.pop('queue_message_id', None)
         if message_id:
             request.http_request.url = urljoin(
@@ -173,7 +179,7 @@ class StorageHosts(SansIOHTTPPolicy):
             # Lock retries to the specific location
             request.context.options['retry_to_secondary'] = False
             if use_location not in self.hosts:
-                raise ValueError("Attempting to use undefined host location {}".format(use_location))
+                raise ValueError(f"Attempting to use undefined host location {use_location}")
             if use_location != location_mode:
                 # Update request URL to use the specified location
                 updated = parsed_url._replace(netloc=self.hosts[use_location])
@@ -336,6 +342,9 @@ class StorageContentValidation(SansIOHTTPPolicy):
 
     @staticmethod
     def get_content_md5(data):
+        # Since HTTP does not differentiate between no content and empty content,
+        # we have to perform a None check.
+        data = data or b""
         md5 = hashlib.md5() # nosec
         if isinstance(data, bytes):
             md5.update(data)
@@ -370,9 +379,9 @@ class StorageContentValidation(SansIOHTTPPolicy):
             computed_md5 = request.context.get('validate_content_md5') or \
                 encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
             if response.http_response.headers['content-md5'] != computed_md5:
-                raise AzureError(
-                    'MD5 mismatch. Expected value is \'{0}\', computed value is \'{1}\'.'.format(
-                        response.http_response.headers['content-md5'], computed_md5),
+                raise AzureError((
+                    f"MD5 mismatch. Expected value is '{response.http_response.headers['content-md5']}', "
+                    f"computed value is '{computed_md5}'."),
                     response=response.http_response
                 )
 

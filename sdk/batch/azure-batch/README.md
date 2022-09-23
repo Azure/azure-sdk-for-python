@@ -2,7 +2,7 @@
 
 This is the Microsoft Azure Batch Client Library.
 
-This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8
+This package has been tested with Python 3.6+
 
 For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all
 

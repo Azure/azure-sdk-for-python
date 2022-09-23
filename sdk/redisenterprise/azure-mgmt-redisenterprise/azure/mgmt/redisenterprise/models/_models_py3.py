@@ -39,6 +39,8 @@ class AccessKeys(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AccessKeys, self).__init__(**kwargs)
         self.primary_key = None
         self.secondary_key = None
@@ -75,6 +77,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -96,10 +100,10 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
@@ -124,6 +128,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -144,17 +154,17 @@ class Cluster(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param sku: Required. The SKU to create, which affects price, performance, and features.
-    :type sku: ~azure.mgmt.redisenterprise.models.Sku
-    :param zones: The Availability Zones where this cluster will be deployed.
-    :type zones: list[str]
-    :param minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar sku: Required. The SKU to create, which affects price, performance, and features.
+    :vartype sku: ~azure.mgmt.redisenterprise.models.Sku
+    :ivar zones: The Availability Zones where this cluster will be deployed.
+    :vartype zones: list[str]
+    :ivar minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
      Possible values include: "1.0", "1.1", "1.2".
-    :type minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
+    :vartype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Possible values include:
@@ -211,6 +221,19 @@ class Cluster(TrackedResource):
         minimum_tls_version: Optional[Union[str, "TlsVersion"]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword sku: Required. The SKU to create, which affects price, performance, and features.
+        :paramtype sku: ~azure.mgmt.redisenterprise.models.Sku
+        :keyword zones: The Availability Zones where this cluster will be deployed.
+        :paramtype zones: list[str]
+        :keyword minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
+         Possible values include: "1.0", "1.1", "1.2".
+        :paramtype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
+        """
         super(Cluster, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.zones = zones
@@ -227,8 +250,8 @@ class ClusterList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of clusters.
-    :type value: list[~azure.mgmt.redisenterprise.models.Cluster]
+    :ivar value: List of clusters.
+    :vartype value: list[~azure.mgmt.redisenterprise.models.Cluster]
     :ivar next_link: The URI to fetch the next page of results.
     :vartype next_link: str
     """
@@ -248,6 +271,10 @@ class ClusterList(msrest.serialization.Model):
         value: Optional[List["Cluster"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of clusters.
+        :paramtype value: list[~azure.mgmt.redisenterprise.models.Cluster]
+        """
         super(ClusterList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -258,13 +285,13 @@ class ClusterUpdate(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param sku: The SKU to create, which affects price, performance, and features.
-    :type sku: ~azure.mgmt.redisenterprise.models.Sku
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
+    :ivar sku: The SKU to create, which affects price, performance, and features.
+    :vartype sku: ~azure.mgmt.redisenterprise.models.Sku
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
      Possible values include: "1.0", "1.1", "1.2".
-    :type minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
+    :vartype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Possible values include:
@@ -309,6 +336,15 @@ class ClusterUpdate(msrest.serialization.Model):
         minimum_tls_version: Optional[Union[str, "TlsVersion"]] = None,
         **kwargs
     ):
+        """
+        :keyword sku: The SKU to create, which affects price, performance, and features.
+        :paramtype sku: ~azure.mgmt.redisenterprise.models.Sku
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
+         Possible values include: "1.0", "1.1", "1.2".
+        :paramtype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
+        """
         super(ClusterUpdate, self).__init__(**kwargs)
         self.sku = sku
         self.tags = tags
@@ -320,7 +356,43 @@ class ClusterUpdate(msrest.serialization.Model):
         self.private_endpoint_connections = None
 
 
-class Database(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class Database(ProxyResource):
     """Describes a database on the RedisEnterprise cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -333,13 +405,13 @@ class Database(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param client_protocol: Specifies whether redis clients can connect using TLS-encrypted or
+    :ivar client_protocol: Specifies whether redis clients can connect using TLS-encrypted or
      plaintext redis protocols. Default is TLS-encrypted. Possible values include: "Encrypted",
      "Plaintext".
-    :type client_protocol: str or ~azure.mgmt.redisenterprise.models.Protocol
-    :param port: TCP port of the database endpoint. Specified at create time. Defaults to an
+    :vartype client_protocol: str or ~azure.mgmt.redisenterprise.models.Protocol
+    :ivar port: TCP port of the database endpoint. Specified at create time. Defaults to an
      available port.
-    :type port: int
+    :vartype port: int
     :ivar provisioning_state: Current provisioning status of the database. Possible values include:
      "Succeeded", "Failed", "Canceled", "Creating", "Updating", "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.redisenterprise.models.ProvisioningState
@@ -347,18 +419,21 @@ class Database(Resource):
      "Running", "Creating", "CreateFailed", "Updating", "UpdateFailed", "Deleting", "DeleteFailed",
      "Enabling", "EnableFailed", "Disabling", "DisableFailed", "Disabled".
     :vartype resource_state: str or ~azure.mgmt.redisenterprise.models.ResourceState
-    :param clustering_policy: Clustering policy - default is OSSCluster. Specified at create time.
+    :ivar clustering_policy: Clustering policy - default is OSSCluster. Specified at create time.
      Possible values include: "EnterpriseCluster", "OSSCluster".
-    :type clustering_policy: str or ~azure.mgmt.redisenterprise.models.ClusteringPolicy
-    :param eviction_policy: Redis eviction policy - default is VolatileLRU. Possible values
-     include: "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU",
-     "VolatileTTL", "VolatileRandom", "NoEviction".
-    :type eviction_policy: str or ~azure.mgmt.redisenterprise.models.EvictionPolicy
-    :param persistence: Persistence settings.
-    :type persistence: ~azure.mgmt.redisenterprise.models.Persistence
-    :param modules: Optional set of redis modules to enable in this database - modules can only be
+    :vartype clustering_policy: str or ~azure.mgmt.redisenterprise.models.ClusteringPolicy
+    :ivar eviction_policy: Redis eviction policy - default is VolatileLRU. Possible values include:
+     "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU", "VolatileTTL",
+     "VolatileRandom", "NoEviction".
+    :vartype eviction_policy: str or ~azure.mgmt.redisenterprise.models.EvictionPolicy
+    :ivar persistence: Persistence settings.
+    :vartype persistence: ~azure.mgmt.redisenterprise.models.Persistence
+    :ivar modules: Optional set of redis modules to enable in this database - modules can only be
      added at creation time.
-    :type modules: list[~azure.mgmt.redisenterprise.models.Module]
+    :vartype modules: list[~azure.mgmt.redisenterprise.models.Module]
+    :ivar geo_replication: Optional set of properties to configure geo replication for this
+     database.
+    :vartype geo_replication: ~azure.mgmt.redisenterprise.models.DatabasePropertiesGeoReplication
     """
 
     _validation = {
@@ -381,6 +456,7 @@ class Database(Resource):
         'eviction_policy': {'key': 'properties.evictionPolicy', 'type': 'str'},
         'persistence': {'key': 'properties.persistence', 'type': 'Persistence'},
         'modules': {'key': 'properties.modules', 'type': '[Module]'},
+        'geo_replication': {'key': 'properties.geoReplication', 'type': 'DatabasePropertiesGeoReplication'},
     }
 
     def __init__(
@@ -392,8 +468,33 @@ class Database(Resource):
         eviction_policy: Optional[Union[str, "EvictionPolicy"]] = None,
         persistence: Optional["Persistence"] = None,
         modules: Optional[List["Module"]] = None,
+        geo_replication: Optional["DatabasePropertiesGeoReplication"] = None,
         **kwargs
     ):
+        """
+        :keyword client_protocol: Specifies whether redis clients can connect using TLS-encrypted or
+         plaintext redis protocols. Default is TLS-encrypted. Possible values include: "Encrypted",
+         "Plaintext".
+        :paramtype client_protocol: str or ~azure.mgmt.redisenterprise.models.Protocol
+        :keyword port: TCP port of the database endpoint. Specified at create time. Defaults to an
+         available port.
+        :paramtype port: int
+        :keyword clustering_policy: Clustering policy - default is OSSCluster. Specified at create
+         time. Possible values include: "EnterpriseCluster", "OSSCluster".
+        :paramtype clustering_policy: str or ~azure.mgmt.redisenterprise.models.ClusteringPolicy
+        :keyword eviction_policy: Redis eviction policy - default is VolatileLRU. Possible values
+         include: "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU",
+         "VolatileTTL", "VolatileRandom", "NoEviction".
+        :paramtype eviction_policy: str or ~azure.mgmt.redisenterprise.models.EvictionPolicy
+        :keyword persistence: Persistence settings.
+        :paramtype persistence: ~azure.mgmt.redisenterprise.models.Persistence
+        :keyword modules: Optional set of redis modules to enable in this database - modules can only
+         be added at creation time.
+        :paramtype modules: list[~azure.mgmt.redisenterprise.models.Module]
+        :keyword geo_replication: Optional set of properties to configure geo replication for this
+         database.
+        :paramtype geo_replication: ~azure.mgmt.redisenterprise.models.DatabasePropertiesGeoReplication
+        """
         super(Database, self).__init__(**kwargs)
         self.client_protocol = client_protocol
         self.port = port
@@ -403,6 +504,7 @@ class Database(Resource):
         self.eviction_policy = eviction_policy
         self.persistence = persistence
         self.modules = modules
+        self.geo_replication = geo_replication
 
 
 class DatabaseList(msrest.serialization.Model):
@@ -410,8 +512,8 @@ class DatabaseList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of databases.
-    :type value: list[~azure.mgmt.redisenterprise.models.Database]
+    :ivar value: List of databases.
+    :vartype value: list[~azure.mgmt.redisenterprise.models.Database]
     :ivar next_link: The URI to fetch the next page of results.
     :vartype next_link: str
     """
@@ -431,9 +533,45 @@ class DatabaseList(msrest.serialization.Model):
         value: Optional[List["Database"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of databases.
+        :paramtype value: list[~azure.mgmt.redisenterprise.models.Database]
+        """
         super(DatabaseList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
+
+
+class DatabasePropertiesGeoReplication(msrest.serialization.Model):
+    """Optional set of properties to configure geo replication for this database.
+
+    :ivar group_nickname: Name for the group of linked database resources.
+    :vartype group_nickname: str
+    :ivar linked_databases: List of database resources to link with this database.
+    :vartype linked_databases: list[~azure.mgmt.redisenterprise.models.LinkedDatabase]
+    """
+
+    _attribute_map = {
+        'group_nickname': {'key': 'groupNickname', 'type': 'str'},
+        'linked_databases': {'key': 'linkedDatabases', 'type': '[LinkedDatabase]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        group_nickname: Optional[str] = None,
+        linked_databases: Optional[List["LinkedDatabase"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword group_nickname: Name for the group of linked database resources.
+        :paramtype group_nickname: str
+        :keyword linked_databases: List of database resources to link with this database.
+        :paramtype linked_databases: list[~azure.mgmt.redisenterprise.models.LinkedDatabase]
+        """
+        super(DatabasePropertiesGeoReplication, self).__init__(**kwargs)
+        self.group_nickname = group_nickname
+        self.linked_databases = linked_databases
 
 
 class DatabaseUpdate(msrest.serialization.Model):
@@ -441,13 +579,13 @@ class DatabaseUpdate(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param client_protocol: Specifies whether redis clients can connect using TLS-encrypted or
+    :ivar client_protocol: Specifies whether redis clients can connect using TLS-encrypted or
      plaintext redis protocols. Default is TLS-encrypted. Possible values include: "Encrypted",
      "Plaintext".
-    :type client_protocol: str or ~azure.mgmt.redisenterprise.models.Protocol
-    :param port: TCP port of the database endpoint. Specified at create time. Defaults to an
+    :vartype client_protocol: str or ~azure.mgmt.redisenterprise.models.Protocol
+    :ivar port: TCP port of the database endpoint. Specified at create time. Defaults to an
      available port.
-    :type port: int
+    :vartype port: int
     :ivar provisioning_state: Current provisioning status of the database. Possible values include:
      "Succeeded", "Failed", "Canceled", "Creating", "Updating", "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.redisenterprise.models.ProvisioningState
@@ -455,18 +593,21 @@ class DatabaseUpdate(msrest.serialization.Model):
      "Running", "Creating", "CreateFailed", "Updating", "UpdateFailed", "Deleting", "DeleteFailed",
      "Enabling", "EnableFailed", "Disabling", "DisableFailed", "Disabled".
     :vartype resource_state: str or ~azure.mgmt.redisenterprise.models.ResourceState
-    :param clustering_policy: Clustering policy - default is OSSCluster. Specified at create time.
+    :ivar clustering_policy: Clustering policy - default is OSSCluster. Specified at create time.
      Possible values include: "EnterpriseCluster", "OSSCluster".
-    :type clustering_policy: str or ~azure.mgmt.redisenterprise.models.ClusteringPolicy
-    :param eviction_policy: Redis eviction policy - default is VolatileLRU. Possible values
-     include: "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU",
-     "VolatileTTL", "VolatileRandom", "NoEviction".
-    :type eviction_policy: str or ~azure.mgmt.redisenterprise.models.EvictionPolicy
-    :param persistence: Persistence settings.
-    :type persistence: ~azure.mgmt.redisenterprise.models.Persistence
-    :param modules: Optional set of redis modules to enable in this database - modules can only be
+    :vartype clustering_policy: str or ~azure.mgmt.redisenterprise.models.ClusteringPolicy
+    :ivar eviction_policy: Redis eviction policy - default is VolatileLRU. Possible values include:
+     "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU", "VolatileTTL",
+     "VolatileRandom", "NoEviction".
+    :vartype eviction_policy: str or ~azure.mgmt.redisenterprise.models.EvictionPolicy
+    :ivar persistence: Persistence settings.
+    :vartype persistence: ~azure.mgmt.redisenterprise.models.Persistence
+    :ivar modules: Optional set of redis modules to enable in this database - modules can only be
      added at creation time.
-    :type modules: list[~azure.mgmt.redisenterprise.models.Module]
+    :vartype modules: list[~azure.mgmt.redisenterprise.models.Module]
+    :ivar geo_replication: Optional set of properties to configure geo replication for this
+     database.
+    :vartype geo_replication: ~azure.mgmt.redisenterprise.models.DatabasePropertiesGeoReplication
     """
 
     _validation = {
@@ -483,6 +624,7 @@ class DatabaseUpdate(msrest.serialization.Model):
         'eviction_policy': {'key': 'properties.evictionPolicy', 'type': 'str'},
         'persistence': {'key': 'properties.persistence', 'type': 'Persistence'},
         'modules': {'key': 'properties.modules', 'type': '[Module]'},
+        'geo_replication': {'key': 'properties.geoReplication', 'type': 'DatabasePropertiesGeoReplication'},
     }
 
     def __init__(
@@ -494,8 +636,33 @@ class DatabaseUpdate(msrest.serialization.Model):
         eviction_policy: Optional[Union[str, "EvictionPolicy"]] = None,
         persistence: Optional["Persistence"] = None,
         modules: Optional[List["Module"]] = None,
+        geo_replication: Optional["DatabasePropertiesGeoReplication"] = None,
         **kwargs
     ):
+        """
+        :keyword client_protocol: Specifies whether redis clients can connect using TLS-encrypted or
+         plaintext redis protocols. Default is TLS-encrypted. Possible values include: "Encrypted",
+         "Plaintext".
+        :paramtype client_protocol: str or ~azure.mgmt.redisenterprise.models.Protocol
+        :keyword port: TCP port of the database endpoint. Specified at create time. Defaults to an
+         available port.
+        :paramtype port: int
+        :keyword clustering_policy: Clustering policy - default is OSSCluster. Specified at create
+         time. Possible values include: "EnterpriseCluster", "OSSCluster".
+        :paramtype clustering_policy: str or ~azure.mgmt.redisenterprise.models.ClusteringPolicy
+        :keyword eviction_policy: Redis eviction policy - default is VolatileLRU. Possible values
+         include: "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU",
+         "VolatileTTL", "VolatileRandom", "NoEviction".
+        :paramtype eviction_policy: str or ~azure.mgmt.redisenterprise.models.EvictionPolicy
+        :keyword persistence: Persistence settings.
+        :paramtype persistence: ~azure.mgmt.redisenterprise.models.Persistence
+        :keyword modules: Optional set of redis modules to enable in this database - modules can only
+         be added at creation time.
+        :paramtype modules: list[~azure.mgmt.redisenterprise.models.Module]
+        :keyword geo_replication: Optional set of properties to configure geo replication for this
+         database.
+        :paramtype geo_replication: ~azure.mgmt.redisenterprise.models.DatabasePropertiesGeoReplication
+        """
         super(DatabaseUpdate, self).__init__(**kwargs)
         self.client_protocol = client_protocol
         self.port = port
@@ -505,6 +672,7 @@ class DatabaseUpdate(msrest.serialization.Model):
         self.eviction_policy = eviction_policy
         self.persistence = persistence
         self.modules = modules
+        self.geo_replication = geo_replication
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -515,7 +683,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -532,6 +700,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -574,6 +744,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -585,8 +757,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~azure.mgmt.redisenterprise.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.redisenterprise.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -599,6 +771,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.redisenterprise.models.ErrorDetail
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -608,8 +784,8 @@ class ExportClusterParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sas_uri: Required. SAS URI for the target directory to export to.
-    :type sas_uri: str
+    :ivar sas_uri: Required. SAS URI for the target directory to export to.
+    :vartype sas_uri: str
     """
 
     _validation = {
@@ -626,8 +802,43 @@ class ExportClusterParameters(msrest.serialization.Model):
         sas_uri: str,
         **kwargs
     ):
+        """
+        :keyword sas_uri: Required. SAS URI for the target directory to export to.
+        :paramtype sas_uri: str
+        """
         super(ExportClusterParameters, self).__init__(**kwargs)
         self.sas_uri = sas_uri
+
+
+class ForceUnlinkParameters(msrest.serialization.Model):
+    """Parameters for a Redis Enterprise Active Geo Replication Force Unlink operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar ids: Required. The resource IDs of the database resources to be unlinked.
+    :vartype ids: list[str]
+    """
+
+    _validation = {
+        'ids': {'required': True},
+    }
+
+    _attribute_map = {
+        'ids': {'key': 'ids', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        ids: List[str],
+        **kwargs
+    ):
+        """
+        :keyword ids: Required. The resource IDs of the database resources to be unlinked.
+        :paramtype ids: list[str]
+        """
+        super(ForceUnlinkParameters, self).__init__(**kwargs)
+        self.ids = ids
 
 
 class ImportClusterParameters(msrest.serialization.Model):
@@ -635,26 +846,66 @@ class ImportClusterParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sas_uri: Required. SAS URI for the target blob to import from.
-    :type sas_uri: str
+    :ivar sas_uris: Required. SAS URIs for the target blobs to import from.
+    :vartype sas_uris: list[str]
     """
 
     _validation = {
-        'sas_uri': {'required': True},
+        'sas_uris': {'required': True},
     }
 
     _attribute_map = {
-        'sas_uri': {'key': 'sasUri', 'type': 'str'},
+        'sas_uris': {'key': 'sasUris', 'type': '[str]'},
     }
 
     def __init__(
         self,
         *,
-        sas_uri: str,
+        sas_uris: List[str],
         **kwargs
     ):
+        """
+        :keyword sas_uris: Required. SAS URIs for the target blobs to import from.
+        :paramtype sas_uris: list[str]
+        """
         super(ImportClusterParameters, self).__init__(**kwargs)
-        self.sas_uri = sas_uri
+        self.sas_uris = sas_uris
+
+
+class LinkedDatabase(msrest.serialization.Model):
+    """Specifies details of a linked database resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID of a database resource to link with this database.
+    :vartype id: str
+    :ivar state: State of the link between the database resources. Possible values include:
+     "Linked", "Linking", "Unlinking", "LinkFailed", "UnlinkFailed".
+    :vartype state: str or ~azure.mgmt.redisenterprise.models.LinkState
+    """
+
+    _validation = {
+        'state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: Resource ID of a database resource to link with this database.
+        :paramtype id: str
+        """
+        super(LinkedDatabase, self).__init__(**kwargs)
+        self.id = id
+        self.state = None
 
 
 class Module(msrest.serialization.Model):
@@ -664,11 +915,11 @@ class Module(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the module, e.g. 'RedisBloom', 'RediSearch',
+    :ivar name: Required. The name of the module, e.g. 'RedisBloom', 'RediSearch',
      'RedisTimeSeries'.
-    :type name: str
-    :param args: Configuration options for the module, e.g. 'ERROR_RATE 0.00 INITIAL_SIZE 400'.
-    :type args: str
+    :vartype name: str
+    :ivar args: Configuration options for the module, e.g. 'ERROR_RATE 0.01 INITIAL_SIZE 400'.
+    :vartype args: str
     :ivar version: The version of the module, e.g. '1.0'.
     :vartype version: str
     """
@@ -691,6 +942,13 @@ class Module(msrest.serialization.Model):
         args: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the module, e.g. 'RedisBloom', 'RediSearch',
+         'RedisTimeSeries'.
+        :paramtype name: str
+        :keyword args: Configuration options for the module, e.g. 'ERROR_RATE 0.01 INITIAL_SIZE 400'.
+        :paramtype args: str
+        """
         super(Module, self).__init__(**kwargs)
         self.name = name
         self.args = args
@@ -705,11 +963,11 @@ class Operation(msrest.serialization.Model):
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
     :vartype name: str
-    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for data-
-     plane operations and "false" for ARM/control-plane operations.
+    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
+     data-plane operations and "false" for ARM/control-plane operations.
     :vartype is_data_action: bool
-    :param display: Localized display information for this particular operation.
-    :type display: ~azure.mgmt.redisenterprise.models.OperationDisplay
+    :ivar display: Localized display information for this particular operation.
+    :vartype display: ~azure.mgmt.redisenterprise.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
      (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
      "system", "user,system".
@@ -740,6 +998,10 @@ class Operation(msrest.serialization.Model):
         display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword display: Localized display information for this particular operation.
+        :paramtype display: ~azure.mgmt.redisenterprise.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.is_data_action = None
@@ -785,6 +1047,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -817,6 +1081,8 @@ class OperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -825,18 +1091,18 @@ class OperationListResult(msrest.serialization.Model):
 class OperationStatus(msrest.serialization.Model):
     """The status of a long-running operation.
 
-    :param id: The operation's unique id.
-    :type id: str
-    :param name: The operation's name.
-    :type name: str
-    :param start_time: The start time of the operation.
-    :type start_time: str
-    :param end_time: The end time of the operation.
-    :type end_time: str
-    :param status: The current status of the operation.
-    :type status: str
-    :param error: Error response describing why the operation failed.
-    :type error: ~azure.mgmt.redisenterprise.models.ErrorResponse
+    :ivar id: The operation's unique id.
+    :vartype id: str
+    :ivar name: The operation's name.
+    :vartype name: str
+    :ivar start_time: The start time of the operation.
+    :vartype start_time: str
+    :ivar end_time: The end time of the operation.
+    :vartype end_time: str
+    :ivar status: The current status of the operation.
+    :vartype status: str
+    :ivar error: Error response describing why the operation failed.
+    :vartype error: ~azure.mgmt.redisenterprise.models.ErrorResponse
     """
 
     _attribute_map = {
@@ -859,6 +1125,20 @@ class OperationStatus(msrest.serialization.Model):
         error: Optional["ErrorResponse"] = None,
         **kwargs
     ):
+        """
+        :keyword id: The operation's unique id.
+        :paramtype id: str
+        :keyword name: The operation's name.
+        :paramtype name: str
+        :keyword start_time: The start time of the operation.
+        :paramtype start_time: str
+        :keyword end_time: The end time of the operation.
+        :paramtype end_time: str
+        :keyword status: The current status of the operation.
+        :paramtype status: str
+        :keyword error: Error response describing why the operation failed.
+        :paramtype error: ~azure.mgmt.redisenterprise.models.ErrorResponse
+        """
         super(OperationStatus, self).__init__(**kwargs)
         self.id = id
         self.name = name
@@ -871,16 +1151,16 @@ class OperationStatus(msrest.serialization.Model):
 class Persistence(msrest.serialization.Model):
     """Persistence-related configuration for the RedisEnterprise database.
 
-    :param aof_enabled: Sets whether AOF is enabled.
-    :type aof_enabled: bool
-    :param rdb_enabled: Sets whether RDB is enabled.
-    :type rdb_enabled: bool
-    :param aof_frequency: Sets the frequency at which data is written to disk. Possible values
+    :ivar aof_enabled: Sets whether AOF is enabled.
+    :vartype aof_enabled: bool
+    :ivar rdb_enabled: Sets whether RDB is enabled.
+    :vartype rdb_enabled: bool
+    :ivar aof_frequency: Sets the frequency at which data is written to disk. Possible values
      include: "1s", "always".
-    :type aof_frequency: str or ~azure.mgmt.redisenterprise.models.AofFrequency
-    :param rdb_frequency: Sets the frequency at which a snapshot of the database is created.
+    :vartype aof_frequency: str or ~azure.mgmt.redisenterprise.models.AofFrequency
+    :ivar rdb_frequency: Sets the frequency at which a snapshot of the database is created.
      Possible values include: "1h", "6h", "12h".
-    :type rdb_frequency: str or ~azure.mgmt.redisenterprise.models.RdbFrequency
+    :vartype rdb_frequency: str or ~azure.mgmt.redisenterprise.models.RdbFrequency
     """
 
     _attribute_map = {
@@ -899,6 +1179,18 @@ class Persistence(msrest.serialization.Model):
         rdb_frequency: Optional[Union[str, "RdbFrequency"]] = None,
         **kwargs
     ):
+        """
+        :keyword aof_enabled: Sets whether AOF is enabled.
+        :paramtype aof_enabled: bool
+        :keyword rdb_enabled: Sets whether RDB is enabled.
+        :paramtype rdb_enabled: bool
+        :keyword aof_frequency: Sets the frequency at which data is written to disk. Possible values
+         include: "1s", "always".
+        :paramtype aof_frequency: str or ~azure.mgmt.redisenterprise.models.AofFrequency
+        :keyword rdb_frequency: Sets the frequency at which a snapshot of the database is created.
+         Possible values include: "1h", "6h", "12h".
+        :paramtype rdb_frequency: str or ~azure.mgmt.redisenterprise.models.RdbFrequency
+        """
         super(Persistence, self).__init__(**kwargs)
         self.aof_enabled = aof_enabled
         self.rdb_enabled = rdb_enabled
@@ -927,6 +1219,8 @@ class PrivateEndpoint(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateEndpoint, self).__init__(**kwargs)
         self.id = None
 
@@ -944,11 +1238,11 @@ class PrivateEndpointConnection(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param private_endpoint: The resource of private end point.
-    :type private_endpoint: ~azure.mgmt.redisenterprise.models.PrivateEndpoint
-    :param private_link_service_connection_state: A collection of information about the state of
-     the connection between service consumer and provider.
-    :type private_link_service_connection_state:
+    :ivar private_endpoint: The resource of private end point.
+    :vartype private_endpoint: ~azure.mgmt.redisenterprise.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: A collection of information about the state of the
+     connection between service consumer and provider.
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.redisenterprise.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
      Possible values include: "Succeeded", "Creating", "Deleting", "Failed".
@@ -979,6 +1273,14 @@ class PrivateEndpointConnection(Resource):
         private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
         **kwargs
     ):
+        """
+        :keyword private_endpoint: The resource of private end point.
+        :paramtype private_endpoint: ~azure.mgmt.redisenterprise.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: A collection of information about the state of
+         the connection between service consumer and provider.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.redisenterprise.models.PrivateLinkServiceConnectionState
+        """
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
@@ -988,8 +1290,8 @@ class PrivateEndpointConnection(Resource):
 class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """List of private endpoint connection associated with the specified storage account.
 
-    :param value: Array of private endpoint connections.
-    :type value: list[~azure.mgmt.redisenterprise.models.PrivateEndpointConnection]
+    :ivar value: Array of private endpoint connections.
+    :vartype value: list[~azure.mgmt.redisenterprise.models.PrivateEndpointConnection]
     """
 
     _attribute_map = {
@@ -1002,6 +1304,10 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
         value: Optional[List["PrivateEndpointConnection"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Array of private endpoint connections.
+        :paramtype value: list[~azure.mgmt.redisenterprise.models.PrivateEndpointConnection]
+        """
         super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1023,8 +1329,8 @@ class PrivateLinkResource(Resource):
     :vartype group_id: str
     :ivar required_members: The private link resource required member names.
     :vartype required_members: list[str]
-    :param required_zone_names: The private link resource Private link DNS zone name.
-    :type required_zone_names: list[str]
+    :ivar required_zone_names: The private link resource Private link DNS zone name.
+    :vartype required_zone_names: list[str]
     """
 
     _validation = {
@@ -1050,6 +1356,10 @@ class PrivateLinkResource(Resource):
         required_zone_names: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword required_zone_names: The private link resource Private link DNS zone name.
+        :paramtype required_zone_names: list[str]
+        """
         super(PrivateLinkResource, self).__init__(**kwargs)
         self.group_id = None
         self.required_members = None
@@ -1059,8 +1369,8 @@ class PrivateLinkResource(Resource):
 class PrivateLinkResourceListResult(msrest.serialization.Model):
     """A list of private link resources.
 
-    :param value: Array of private link resources.
-    :type value: list[~azure.mgmt.redisenterprise.models.PrivateLinkResource]
+    :ivar value: Array of private link resources.
+    :vartype value: list[~azure.mgmt.redisenterprise.models.PrivateLinkResource]
     """
 
     _attribute_map = {
@@ -1073,6 +1383,10 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
         value: Optional[List["PrivateLinkResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Array of private link resources.
+        :paramtype value: list[~azure.mgmt.redisenterprise.models.PrivateLinkResource]
+        """
         super(PrivateLinkResourceListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1080,14 +1394,15 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
 class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """A collection of information about the state of the connection between service consumer and provider.
 
-    :param status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
+    :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
      of the service. Possible values include: "Pending", "Approved", "Rejected".
-    :type status: str or ~azure.mgmt.redisenterprise.models.PrivateEndpointServiceConnectionStatus
-    :param description: The reason for approval/rejection of the connection.
-    :type description: str
-    :param actions_required: A message indicating if changes on the service provider require any
+    :vartype status: str or
+     ~azure.mgmt.redisenterprise.models.PrivateEndpointServiceConnectionStatus
+    :ivar description: The reason for approval/rejection of the connection.
+    :vartype description: str
+    :ivar actions_required: A message indicating if changes on the service provider require any
      updates on the consumer.
-    :type actions_required: str
+    :vartype actions_required: str
     """
 
     _attribute_map = {
@@ -1104,44 +1419,21 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
         actions_required: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
+         owner of the service. Possible values include: "Pending", "Approved", "Rejected".
+        :paramtype status: str or
+         ~azure.mgmt.redisenterprise.models.PrivateEndpointServiceConnectionStatus
+        :keyword description: The reason for approval/rejection of the connection.
+        :paramtype description: str
+        :keyword actions_required: A message indicating if changes on the service provider require any
+         updates on the consumer.
+        :paramtype actions_required: str
+        """
         super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
         self.status = status
         self.description = description
         self.actions_required = actions_required
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
 
 
 class RegenerateKeyParameters(msrest.serialization.Model):
@@ -1149,9 +1441,9 @@ class RegenerateKeyParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_type: Required. Which access key to regenerate. Possible values include: "Primary",
+    :ivar key_type: Required. Which access key to regenerate. Possible values include: "Primary",
      "Secondary".
-    :type key_type: str or ~azure.mgmt.redisenterprise.models.AccessKeyType
+    :vartype key_type: str or ~azure.mgmt.redisenterprise.models.AccessKeyType
     """
 
     _validation = {
@@ -1168,6 +1460,11 @@ class RegenerateKeyParameters(msrest.serialization.Model):
         key_type: Union[str, "AccessKeyType"],
         **kwargs
     ):
+        """
+        :keyword key_type: Required. Which access key to regenerate. Possible values include:
+         "Primary", "Secondary".
+        :paramtype key_type: str or ~azure.mgmt.redisenterprise.models.AccessKeyType
+        """
         super(RegenerateKeyParameters, self).__init__(**kwargs)
         self.key_type = key_type
 
@@ -1177,14 +1474,14 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The type of RedisEnterprise cluster to deploy. Possible values:
+    :ivar name: Required. The type of RedisEnterprise cluster to deploy. Possible values:
      (Enterprise_E10, EnterpriseFlash_F300 etc.). Possible values include: "Enterprise_E10",
      "Enterprise_E20", "Enterprise_E50", "Enterprise_E100", "EnterpriseFlash_F300",
      "EnterpriseFlash_F700", "EnterpriseFlash_F1500".
-    :type name: str or ~azure.mgmt.redisenterprise.models.SkuName
-    :param capacity: The size of the RedisEnterprise cluster. Defaults to 2 or 3 depending on SKU.
+    :vartype name: str or ~azure.mgmt.redisenterprise.models.SkuName
+    :ivar capacity: The size of the RedisEnterprise cluster. Defaults to 2 or 3 depending on SKU.
      Valid values are (2, 4, 6, ...) for Enterprise SKUs and (3, 9, 15, ...) for Flash SKUs.
-    :type capacity: int
+    :vartype capacity: int
     """
 
     _validation = {
@@ -1203,6 +1500,16 @@ class Sku(msrest.serialization.Model):
         capacity: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The type of RedisEnterprise cluster to deploy. Possible values:
+         (Enterprise_E10, EnterpriseFlash_F300 etc.). Possible values include: "Enterprise_E10",
+         "Enterprise_E20", "Enterprise_E50", "Enterprise_E100", "EnterpriseFlash_F300",
+         "EnterpriseFlash_F700", "EnterpriseFlash_F1500".
+        :paramtype name: str or ~azure.mgmt.redisenterprise.models.SkuName
+        :keyword capacity: The size of the RedisEnterprise cluster. Defaults to 2 or 3 depending on
+         SKU. Valid values are (2, 4, 6, ...) for Enterprise SKUs and (3, 9, 15, ...) for Flash SKUs.
+        :paramtype capacity: int
+        """
         super(Sku, self).__init__(**kwargs)
         self.name = name
         self.capacity = capacity

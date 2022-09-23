@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import RecoveryServicesBackupPassiveClientConfiguration
@@ -21,7 +22,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class RecoveryServicesBackupPassiveClient:
+class RecoveryServicesBackupPassiveClient:    # pylint: disable=too-many-instance-attributes
     """Open API 2.0 Specs for Azure RecoveryServices Backup service.
 
     :ivar backup_usage_summaries_crr: BackupUsageSummariesCRROperations operations
@@ -61,8 +62,11 @@ class RecoveryServicesBackupPassiveClient:
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription Id.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2021-11-15". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -81,22 +85,44 @@ class RecoveryServicesBackupPassiveClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.backup_usage_summaries_crr = BackupUsageSummariesCRROperations(self._client, self._config, self._serialize, self._deserialize)
-        self.aad_properties = AadPropertiesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.cross_region_restore = CrossRegionRestoreOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_crr_job_details = BackupCrrJobDetailsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_crr_jobs = BackupCrrJobsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.crr_operation_results = CrrOperationResultsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.crr_operation_status = CrrOperationStatusOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.recovery_points = RecoveryPointsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_resource_storage_configs = BackupResourceStorageConfigsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.recovery_points_crr = RecoveryPointsCrrOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_protected_items_crr = BackupProtectedItemsCrrOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.backup_usage_summaries_crr = BackupUsageSummariesCRROperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.aad_properties = AadPropertiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.cross_region_restore = CrossRegionRestoreOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_crr_job_details = BackupCrrJobDetailsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_crr_jobs = BackupCrrJobsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.crr_operation_results = CrrOperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.crr_operation_status = CrrOperationStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.recovery_points = RecoveryPointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_resource_storage_configs = BackupResourceStorageConfigsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.recovery_points_crr = RecoveryPointsCrrOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_protected_items_crr = BackupProtectedItemsCrrOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(
         self,
-        request,  # type: HttpRequest
+        request: HttpRequest,
         **kwargs: Any
     ) -> HttpResponse:
         """Runs the network request through the client's chained policies.

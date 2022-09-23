@@ -3,8 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
 from enum import Enum
 import msrest.serialization
+from azure.core import CaseInsensitiveEnumMeta
 from .._generated.models import (
     LexicalAnalyzer,
     LexicalTokenizer,
@@ -102,7 +104,7 @@ class SearchIndexerSkillset(_SearchIndexerSkillset):
         return cls(**kwargs)
 
 
-class EntityRecognitionSkillVersion(str, Enum):
+class EntityRecognitionSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the Entity Recognition skill version to use."""
 
     #: Use Entity Recognition skill V1.
@@ -244,7 +246,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
         return None
 
 
-class SentimentSkillVersion(str, Enum):
+class SentimentSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ Specifies the Sentiment Skill version to use."""
 
     #: Use Sentiment skill V1.
@@ -949,7 +951,6 @@ class SearchIndexerDataSourceConnection(msrest.serialization.Model):
             encryption_key=search_indexer_data_source.encryption_key,
             identity=search_indexer_data_source.identity
         )
-
 
 def pack_analyzer(analyzer):
     if not analyzer:

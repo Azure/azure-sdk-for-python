@@ -22,6 +22,7 @@
 import unittest
 
 import azure.cosmos.cosmos_client as cosmos_client
+from azure.cosmos import PartitionKey
 import pytest
 import time
 import random
@@ -43,11 +44,14 @@ class TestPartitionSplitQuery(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = test_config._test_config.create_database_if_not_exist_with_throughput(cls.client, cls.throughput)
-        cls.container = test_config._test_config.create_collection_if_not_exist_no_custom_throughput(cls.client)
+        cls.database = cls.client.create_database_if_not_exists(id=test_config._test_config.TEST_THROUGHPUT_DATABASE_ID,
+                                                                offer_throughput=cls.throughput)
+        cls.container = cls.database.create_container_if_not_exists(
+            id=test_config._test_config.TEST_COLLECTION_SINGLE_PARTITION_ID,
+            partition_key=PartitionKey(path="/id"))
 
     def test_partition_split_query(self):
-        for i in range(500):
+        for i in range(100):
             body = self.get_test_item()
             self.container.create_item(body=body)
 
@@ -58,16 +62,16 @@ class TestPartitionSplitQuery(unittest.TestCase):
         print("--------------------------------")
         print("now starting queries")
 
-        self.run_queries(self.container, 500)  # initial check for queries before partition split
+        self.run_queries(self.container, 100)  # initial check for queries before partition split
         print("initial check succeeded, now reading offer until replacing is done")
-        offer = self.database.read_offer()
+        offer = self.database.get_throughput()
         while True:
             if offer.properties['content'].get('isOfferReplacePending', False):
                 time.sleep(10)
-                offer = self.database.read_offer()
+                offer = self.database.get_throughput()
             else:
                 print("offer replaced successfully, took around {} seconds".format(time.time() - offer_time))
-                self.run_queries(self.container, 500)  # check queries work post partition split
+                self.run_queries(self.container, 100)  # check queries work post partition split
                 print("test over")
                 self.assertTrue(offer.offer_throughput > self.throughput)
                 self.client.delete_database(self.configs.TEST_THROUGHPUT_DATABASE_ID)
@@ -89,18 +93,13 @@ class TestPartitionSplitQuery(unittest.TestCase):
             print("validation succeeded for all query results")
 
     def get_test_item(self):
-        async_item = {
-            'id': 'Async_' + str(uuid.uuid4()),
-            'address': {
-                'state': 'WA',
-                'city': 'Redmond',
-                'street': '1 Microsoft Way'
-            },
+        test_item = {
+            'id': 'Item_' + str(uuid.uuid4()),
             'test_object': True,
             'lastName': 'Smith',
             'attr1': random.randint(0, 10)
         }
-        return async_item
+        return test_item
 
 
 if __name__ == "__main__":

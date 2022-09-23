@@ -1,0 +1,19 @@
+name: wps_fullpe
+location: WestCentralUS
+display_name: baniwps
+description: some desc
+storage_account: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Storage/storageAccounts/testwsswstorage16668f03c
+container_registry: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.ContainerRegistry/registries/clie2etestacr1
+key_vault: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.KeyVault/vaults/testwsswkeyvaultc4d0c78f
+application_insights: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Insights/components/testwsswinsightsc65d7983
+image_build_compute: some_compute_name
+public_network_access: enabled
+hbi_workspace: true
+#resource_group: banisdktest
+customer_managed_key:
+  key_vault: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.KeyVault/vaults/testwsswkeyvaultc4d0c78f
+  key_uri: https://testwsswkeyvaultc4d0c78f.vault.azure.net/keys/cmkkey/e8049617bbae4308a7887c53f0fb4c5b
+
+tags:
+  purpose: testing
+  team: ws-management

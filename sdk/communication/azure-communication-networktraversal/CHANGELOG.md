@@ -1,6 +1,29 @@
 # Release History
 
-## 1.0.0 (2022-02-04)
+## 1.1.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+
+## 1.1.0b1 (2022-03-23)
+
+### Features Added
+
+- Adding optional parameter to GetRelayConfiguration to choose credential Time-To-Live in seconds of max 48 hours.
+  The default value will be used if given value exceeds it.
+
+### Breaking Changes
+
+- Making User, RouteType and Ttl part of the options parameter
+- getRelayConfiguration can be called without parameters or passing the GetRelayConfigurationOptions parameter
+
+## 1.0.0 (2022-02-04) (Deprecated)
 
 ### Breaking Changes
 
@@ -31,4 +54,5 @@ The first preview of the Azure Communication Relay Client has the following feat
 - Added CommunicationRelayClient.get_relay_configuration in preview.
 
 <!-- LINKS -->
+
 [read_me]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/

@@ -7,19 +7,20 @@
 #--------------------------------------------------------------------------
 import unittest
 
-from azure.mgmt.subscription import SubscriptionClient
+import azure.mgmt.subscription
 from azure.mgmt.subscription.models import *
-from devtools_testutils import AzureMgmtTestCase
-import six
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 
 
-class MgmtSubscriptionTest(AzureMgmtTestCase):
-
-    def setUp(self):
-        super(MgmtSubscriptionTest, self).setUp()
-        self.subscription_client = self.create_basic_client(
-            SubscriptionClient
+class TestMgmtSubscription(AzureMgmtRecordedTestCase):
+    def setup_method(self, method):
+        self.mgmt_client = self.create_mgmt_client(
+            azure.mgmt.subscription.SubscriptionClient
         )
+    @recorded_by_proxy
+    def test_subscriptions_list(self):
+        result = self.mgmt_client.subscriptions.list()
+        assert list(result) is not None
 
 
 #------------------------------------------------------------------------------

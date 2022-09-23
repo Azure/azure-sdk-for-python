@@ -1,0 +1,68 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+# not supported yet.
+
+name: microsoft_samples_command_component_object_input_outputs
+display_name: CommandComponentObjectInputOutputs
+description: This is the command component with input/output types of object
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 1
+
+inputs:
+  # object with explicit inline json schema annotation
+  component_in_object_with_inline_schema:
+    type: object
+    description: This is and object that must have first_name, last_name and id
+    schema:
+      $schema: https://json-schema.org/draft/2019-09/schema
+      type: object
+      properties:
+        first_name: { type: string }
+        last_name: { type: string }
+        id: { type: integer }
+      additionalProperties: false
+
+  # object with explicit referenced schema annotation
+  component_in_object_with_schema:
+    type: object
+    description: This is and object that must have first_name, last_name and id
+    schema: https://ignite6981724196.blob.core.windows.net/schemas/my_json_schema.json#/definitions/person
+
+  # object without schema annotation
+  component_in_object_without_schema:
+    type: object
+    description: This and object isn't backed by a schema
+
+outputs:
+  component_out_object_with_inline_schema:
+    type: object
+    description: This is and object that must have first_name, last_name and id
+    schema:
+      $schema: https://json-schema.org/draft/2019-09/schema
+      type: object
+      properties:
+        first_name: { type: string }
+        last_name: { type: string }
+        id: { type: integer }
+      additionalProperties: false
+
+  component_out_object_with_schema:
+    type: object
+    description: This is and object that must have first_name, last_name and id
+    schema: https://ignite6981724196.blob.core.windows.net/schemas/my_json_schema.json#/definitions/person
+
+  component_out_object_without_schema:
+    type: object
+    description: This and object isn't backed by a schema
+
+command: |
+  # prints out the object in JSON format
+  echo ${{inputs.component_in_object_with_inline_schema}}
+  echo ${{inputs.component_in_object_with_schema}}
+  echo ${{inputs.component_in_object_without_schema}}
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

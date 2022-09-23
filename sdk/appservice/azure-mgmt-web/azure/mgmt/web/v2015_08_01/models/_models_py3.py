@@ -7,11 +7,13 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._web_site_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AppServiceCertificate(msrest.serialization.Model):
@@ -23,8 +25,8 @@ class AppServiceCertificate(msrest.serialization.Model):
     :vartype key_vault_id: str
     :ivar key_vault_secret_name: Key Vault secret name.
     :vartype key_vault_secret_name: str
-    :ivar provisioning_state: Status of the Key Vault secret. Possible values include:
-     "Initialized", "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
+    :ivar provisioning_state: Status of the Key Vault secret. Known values are: "Initialized",
+     "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
      "OperationNotPermittedOnKeyVault", "AzureServiceUnauthorizedToAccessKeyVault",
      "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey",
      "Unknown".
@@ -86,7 +88,7 @@ class AppServiceCertificateCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["AppServiceCertificateResource"],
+        value: List["_models.AppServiceCertificateResource"],
         **kwargs
     ):
         """
@@ -189,18 +191,17 @@ class AppServiceCertificateOrder(Resource):
     :vartype validity_in_years: int
     :ivar key_size: Certificate key size.
     :vartype key_size: int
-    :ivar product_type: Certificate product type. Possible values include:
-     "StandardDomainValidatedSsl", "StandardDomainValidatedWildCardSsl".
+    :ivar product_type: Certificate product type. Known values are: "StandardDomainValidatedSsl",
+     "StandardDomainValidatedWildCardSsl".
     :vartype product_type: str or ~azure.mgmt.web.v2015_08_01.models.CertificateProductType
     :ivar auto_renew: :code:`<code>true</code>` if the certificate should be automatically renewed
      when it expires; otherwise, :code:`<code>false</code>`.
     :vartype auto_renew: bool
-    :ivar provisioning_state: Status of certificate order. Possible values include: "Succeeded",
-     "Failed", "Canceled", "InProgress", "Deleting".
+    :ivar provisioning_state: Status of certificate order. Known values are: "Succeeded", "Failed",
+     "Canceled", "InProgress", "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.web.v2015_08_01.models.ProvisioningState
-    :ivar status: Current order status. Possible values include: "Pendingissuance", "Issued",
-     "Revoked", "Canceled", "Denied", "Pendingrevocation", "PendingRekey", "Unused", "Expired",
-     "NotSubmitted".
+    :ivar status: Current order status. Known values are: "Pendingissuance", "Issued", "Revoked",
+     "Canceled", "Denied", "Pendingrevocation", "PendingRekey", "Unused", "Expired", "NotSubmitted".
     :vartype status: str or ~azure.mgmt.web.v2015_08_01.models.CertificateOrderStatus
     :ivar signed_certificate: Signed certificate.
     :vartype signed_certificate: ~azure.mgmt.web.v2015_08_01.models.CertificateDetails
@@ -281,11 +282,11 @@ class AppServiceCertificateOrder(Resource):
         location: str,
         kind: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        certificates: Optional[Dict[str, "AppServiceCertificate"]] = None,
+        certificates: Optional[Dict[str, "_models.AppServiceCertificate"]] = None,
         distinguished_name: Optional[str] = None,
         validity_in_years: Optional[int] = 1,
         key_size: Optional[int] = 2048,
-        product_type: Optional[Union[str, "CertificateProductType"]] = None,
+        product_type: Optional[Union[str, "_models.CertificateProductType"]] = None,
         auto_renew: Optional[bool] = True,
         csr: Optional[str] = None,
         **kwargs
@@ -305,7 +306,7 @@ class AppServiceCertificateOrder(Resource):
         :paramtype validity_in_years: int
         :keyword key_size: Certificate key size.
         :paramtype key_size: int
-        :keyword product_type: Certificate product type. Possible values include:
+        :keyword product_type: Certificate product type. Known values are:
          "StandardDomainValidatedSsl", "StandardDomainValidatedWildCardSsl".
         :paramtype product_type: str or ~azure.mgmt.web.v2015_08_01.models.CertificateProductType
         :keyword auto_renew: :code:`<code>true</code>` if the certificate should be automatically
@@ -362,7 +363,7 @@ class AppServiceCertificateOrderCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["AppServiceCertificateOrder"],
+        value: List["_models.AppServiceCertificateOrder"],
         **kwargs
     ):
         """
@@ -442,18 +443,17 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
     :vartype validity_in_years: int
     :ivar key_size: Certificate key size.
     :vartype key_size: int
-    :ivar product_type: Certificate product type. Possible values include:
-     "StandardDomainValidatedSsl", "StandardDomainValidatedWildCardSsl".
+    :ivar product_type: Certificate product type. Known values are: "StandardDomainValidatedSsl",
+     "StandardDomainValidatedWildCardSsl".
     :vartype product_type: str or ~azure.mgmt.web.v2015_08_01.models.CertificateProductType
     :ivar auto_renew: :code:`<code>true</code>` if the certificate should be automatically renewed
      when it expires; otherwise, :code:`<code>false</code>`.
     :vartype auto_renew: bool
-    :ivar provisioning_state: Status of certificate order. Possible values include: "Succeeded",
-     "Failed", "Canceled", "InProgress", "Deleting".
+    :ivar provisioning_state: Status of certificate order. Known values are: "Succeeded", "Failed",
+     "Canceled", "InProgress", "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.web.v2015_08_01.models.ProvisioningState
-    :ivar status: Current order status. Possible values include: "Pendingissuance", "Issued",
-     "Revoked", "Canceled", "Denied", "Pendingrevocation", "PendingRekey", "Unused", "Expired",
-     "NotSubmitted".
+    :ivar status: Current order status. Known values are: "Pendingissuance", "Issued", "Revoked",
+     "Canceled", "Denied", "Pendingrevocation", "PendingRekey", "Unused", "Expired", "NotSubmitted".
     :vartype status: str or ~azure.mgmt.web.v2015_08_01.models.CertificateOrderStatus
     :ivar signed_certificate: Signed certificate.
     :vartype signed_certificate: ~azure.mgmt.web.v2015_08_01.models.CertificateDetails
@@ -529,11 +529,11 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
         self,
         *,
         kind: Optional[str] = None,
-        certificates: Optional[Dict[str, "AppServiceCertificate"]] = None,
+        certificates: Optional[Dict[str, "_models.AppServiceCertificate"]] = None,
         distinguished_name: Optional[str] = None,
         validity_in_years: Optional[int] = 1,
         key_size: Optional[int] = 2048,
-        product_type: Optional[Union[str, "CertificateProductType"]] = None,
+        product_type: Optional[Union[str, "_models.CertificateProductType"]] = None,
         auto_renew: Optional[bool] = True,
         csr: Optional[str] = None,
         **kwargs
@@ -549,7 +549,7 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
         :paramtype validity_in_years: int
         :keyword key_size: Certificate key size.
         :paramtype key_size: int
-        :keyword product_type: Certificate product type. Possible values include:
+        :keyword product_type: Certificate product type. Known values are:
          "StandardDomainValidatedSsl", "StandardDomainValidatedWildCardSsl".
         :paramtype product_type: str or ~azure.mgmt.web.v2015_08_01.models.CertificateProductType
         :keyword auto_renew: :code:`<code>true</code>` if the certificate should be automatically
@@ -597,8 +597,8 @@ class AppServiceCertificatePatchResource(ProxyOnlyResource):
     :vartype key_vault_id: str
     :ivar key_vault_secret_name: Key Vault secret name.
     :vartype key_vault_secret_name: str
-    :ivar provisioning_state: Status of the Key Vault secret. Possible values include:
-     "Initialized", "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
+    :ivar provisioning_state: Status of the Key Vault secret. Known values are: "Initialized",
+     "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
      "OperationNotPermittedOnKeyVault", "AzureServiceUnauthorizedToAccessKeyVault",
      "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey",
      "Unknown".
@@ -667,8 +667,8 @@ class AppServiceCertificateResource(Resource):
     :vartype key_vault_id: str
     :ivar key_vault_secret_name: Key Vault secret name.
     :vartype key_vault_secret_name: str
-    :ivar provisioning_state: Status of the Key Vault secret. Possible values include:
-     "Initialized", "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
+    :ivar provisioning_state: Status of the Key Vault secret. Known values are: "Initialized",
+     "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
      "OperationNotPermittedOnKeyVault", "AzureServiceUnauthorizedToAccessKeyVault",
      "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey",
      "Unknown".
@@ -858,7 +858,7 @@ class CertificateOrderAction(ProxyOnlyResource):
     :vartype kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar type_properties_type: Action type. Possible values include: "CertificateIssued",
+    :ivar type_properties_type: Action type. Known values are: "CertificateIssued",
      "CertificateOrderCanceled", "CertificateOrderCreated", "CertificateRevoked",
      "DomainValidationComplete", "FraudDetected", "OrgNameChange", "OrgValidationComplete",
      "SanDrop", "FraudCleared", "CertificateExpired", "CertificateExpirationWarning",
@@ -888,14 +888,14 @@ class CertificateOrderAction(ProxyOnlyResource):
         self,
         *,
         kind: Optional[str] = None,
-        type_properties_type: Optional[Union[str, "CertificateOrderActionType"]] = None,
+        type_properties_type: Optional[Union[str, "_models.CertificateOrderActionType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
-        :keyword type_properties_type: Action type. Possible values include: "CertificateIssued",
+        :keyword type_properties_type: Action type. Known values are: "CertificateIssued",
          "CertificateOrderCanceled", "CertificateOrderCreated", "CertificateRevoked",
          "DomainValidationComplete", "FraudDetected", "OrgNameChange", "OrgValidationComplete",
          "SanDrop", "FraudCleared", "CertificateExpired", "CertificateExpirationWarning",
@@ -936,7 +936,7 @@ class CsmOperationCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["CsmOperationDescription"],
+        value: List["_models.CsmOperationDescription"],
         **kwargs
     ):
         """
@@ -972,9 +972,9 @@ class CsmOperationDescription(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["CsmOperationDisplay"] = None,
+        display: Optional["_models.CsmOperationDisplay"] = None,
         origin: Optional[str] = None,
-        properties: Optional["CsmOperationDescriptionProperties"] = None,
+        properties: Optional["_models.CsmOperationDescriptionProperties"] = None,
         **kwargs
     ):
         """
@@ -1009,7 +1009,7 @@ class CsmOperationDescriptionProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        service_specification: Optional["ServiceSpecification"] = None,
+        service_specification: Optional["_models.ServiceSpecification"] = None,
         **kwargs
     ):
         """
@@ -1214,9 +1214,9 @@ class MetricSpecification(msrest.serialization.Model):
         metric_filter_pattern: Optional[str] = None,
         fill_gap_with_zero: Optional[bool] = None,
         is_internal: Optional[bool] = None,
-        dimensions: Optional[List["Dimension"]] = None,
+        dimensions: Optional[List["_models.Dimension"]] = None,
         category: Optional[str] = None,
-        availabilities: Optional[List["MetricAvailability"]] = None,
+        availabilities: Optional[List["_models.MetricAvailability"]] = None,
         **kwargs
     ):
         """
@@ -1445,7 +1445,7 @@ class ServiceSpecification(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        metric_specifications: Optional[List["MetricSpecification"]] = None,
+        metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
         **kwargs
     ):
         """

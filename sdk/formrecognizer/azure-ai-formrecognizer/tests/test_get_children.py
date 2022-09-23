@@ -32,8 +32,6 @@ class TestGetChildren(FormRecognizerTest):
         assert len(elements) == 1
         assert elements[0].content == "Contoso"
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -56,5 +54,3 @@ class TestGetChildren(FormRecognizerTest):
         line = DocumentLine.from_dict(d)
         with pytest.raises(ValueError):
             elements = line.get_words()
-        
-        return {}

@@ -42,7 +42,7 @@ class QueueMessageSamplesAsync(object):
             await queue.create_queue()
 
             # Send a message
-            await queue.send_message(u"hello world")
+            await queue.send_message("hello world")
 
             try:
                 # [START async_set_access_policy]
@@ -117,11 +117,11 @@ class QueueMessageSamplesAsync(object):
             try:
                 # [START async_send_messages]
                 await asyncio.gather(
-                    queue.send_message(u"message1"),
-                    queue.send_message(u"message2", visibility_timeout=30),  # wait 30s before becoming visible
-                    queue.send_message(u"message3"),
-                    queue.send_message(u"message4"),
-                    queue.send_message(u"message5")
+                    queue.send_message("message1"),
+                    queue.send_message("message2", visibility_timeout=30),  # wait 30s before becoming visible
+                    queue.send_message("message3"),
+                    queue.send_message("message4"),
+                    queue.send_message("message5")
                 )
                 # [END async_send_messages]
 
@@ -160,9 +160,9 @@ class QueueMessageSamplesAsync(object):
 
             try:
                 await asyncio.gather(
-                    queue.send_message(u"message1"),
-                    queue.send_message(u"message2"),
-                    queue.send_message(u"message3"))
+                    queue.send_message("message1"),
+                    queue.send_message("message2"),
+                    queue.send_message("message3"))
 
                 # [START receive_one_message]
                 # Pop two messages from the front of the queue
@@ -191,11 +191,11 @@ class QueueMessageSamplesAsync(object):
             try:
                 # Send messages
                 await asyncio.gather(
-                    queue.send_message(u"message1"),
-                    queue.send_message(u"message2"),
-                    queue.send_message(u"message3"),
-                    queue.send_message(u"message4"),
-                    queue.send_message(u"message5")
+                    queue.send_message("message1"),
+                    queue.send_message("message2"),
+                    queue.send_message("message3"),
+                    queue.send_message("message4"),
+                    queue.send_message("message5")
                 )
 
                 # [START async_delete_message]
@@ -227,11 +227,11 @@ class QueueMessageSamplesAsync(object):
             try:
                 # Send messages
                 await asyncio.gather(
-                    queue.send_message(u"message1"),
-                    queue.send_message(u"message2"),
-                    queue.send_message(u"message3"),
-                    queue.send_message(u"message4"),
-                    queue.send_message(u"message5")
+                    queue.send_message("message1"),
+                    queue.send_message("message2"),
+                    queue.send_message("message3"),
+                    queue.send_message("message4"),
+                    queue.send_message("message5")
                 )
 
                 # [START async_peek_message]
@@ -262,7 +262,7 @@ class QueueMessageSamplesAsync(object):
             try:
                 # [START async_update_message]
                 # Send a message
-                await queue.send_message(u"update me")
+                await queue.send_message("update me")
 
                 # Receive the message
                 messages = queue.receive_messages()
@@ -272,9 +272,47 @@ class QueueMessageSamplesAsync(object):
                     message = await queue.update_message(
                         message,
                         visibility_timeout=0,
-                        content=u"updated")
+                        content="updated")
                 # [END async_update_message]
                     break
+
+            finally:
+                # Delete the queue
+                await queue.delete_queue()
+    
+    async def receive_messages_with_max_messages(self):
+        # Instantiate a queue client
+        from azure.storage.queue.aio import QueueClient
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueue7")
+
+        # Create the queue
+        async with queue:
+            await queue.create_queue()
+
+            try:
+                await queue.send_message("message1")
+                await queue.send_message("message2")
+                await queue.send_message("message3")
+                await queue.send_message("message4")
+                await queue.send_message("message5")
+                await queue.send_message("message6")
+                await queue.send_message("message7")
+                await queue.send_message("message8")
+                await queue.send_message("message9")
+                await queue.send_message("message10")
+            
+                # Receive messages one-by-one
+                messages = queue.receive_messages(max_messages=5)
+                async for msg in messages:
+                    print(msg.content)
+                    await queue.delete_message(msg)
+
+                # Only prints 5 messages because 'max_messages'=5
+                # >>message1
+                # >>message2
+                # >>message3
+                # >>message4
+                # >>message5
 
             finally:
                 # Delete the queue
@@ -290,7 +328,7 @@ async def main():
     await sample.delete_and_clear_messages_async()
     await sample.peek_messages_async()
     await sample.update_message_async()
+    await sample.receive_messages_with_max_messages()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

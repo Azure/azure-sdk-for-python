@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import RecoveryServicesBackupClientConfiguration
@@ -21,7 +22,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin):
+class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin):    # pylint: disable=too-many-instance-attributes
     """Open API 2.0 Specs for Azure RecoveryServices Backup service.
 
     :ivar backup_resource_storage_configs_non_crr: BackupResourceStorageConfigsNonCRROperations
@@ -175,8 +176,11 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin):
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription Id.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-06-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -195,59 +199,155 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.backup_resource_storage_configs_non_crr = BackupResourceStorageConfigsNonCRROperations(self._client, self._config, self._serialize, self._deserialize)
-        self.protection_intent = ProtectionIntentOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_status = BackupStatusOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.feature_support = FeatureSupportOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_protection_intent = BackupProtectionIntentOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_usage_summaries = BackupUsageSummariesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_resource_vault_configs = BackupResourceVaultConfigsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_resource_encryption_configs = BackupResourceEncryptionConfigsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connection = PrivateEndpointConnectionOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint = PrivateEndpointOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.bms_prepare_data_move_operation_result = BMSPrepareDataMoveOperationResultOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.protected_items = ProtectedItemsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.protected_item_operation_results = ProtectedItemOperationResultsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.recovery_points = RecoveryPointsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.restores = RestoresOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_policies = BackupPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.protection_policies = ProtectionPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.protection_policy_operation_results = ProtectionPolicyOperationResultsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_jobs = BackupJobsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.job_details = JobDetailsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.job_cancellations = JobCancellationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.job_operation_results = JobOperationResultsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.export_jobs_operation_results = ExportJobsOperationResultsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_protected_items = BackupProtectedItemsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operation = OperationOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.validate_operation = ValidateOperationOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.validate_operation_results = ValidateOperationResultsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.validate_operation_statuses = ValidateOperationStatusesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_engines = BackupEnginesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.protection_container_refresh_operation_results = ProtectionContainerRefreshOperationResultsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.protectable_containers = ProtectableContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.protection_containers = ProtectionContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_workload_items = BackupWorkloadItemsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.protection_container_operation_results = ProtectionContainerOperationResultsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backups = BackupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.protected_item_operation_statuses = ProtectedItemOperationStatusesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.item_level_recovery_connections = ItemLevelRecoveryConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_operation_results = BackupOperationResultsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_operation_statuses = BackupOperationStatusesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.protection_policy_operation_statuses = ProtectionPolicyOperationStatusesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_protectable_items = BackupProtectableItemsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_protection_containers = BackupProtectionContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.security_pins = SecurityPINsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.recovery_points_recommended_for_move = RecoveryPointsRecommendedForMoveOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resource_guard_proxies = ResourceGuardProxiesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resource_guard_proxy = ResourceGuardProxyOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.backup_resource_storage_configs_non_crr = BackupResourceStorageConfigsNonCRROperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.protection_intent = ProtectionIntentOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_status = BackupStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.feature_support = FeatureSupportOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_protection_intent = BackupProtectionIntentOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_usage_summaries = BackupUsageSummariesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_resource_vault_configs = BackupResourceVaultConfigsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_resource_encryption_configs = BackupResourceEncryptionConfigsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoint_connection = PrivateEndpointConnectionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoint = PrivateEndpointOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.bms_prepare_data_move_operation_result = BMSPrepareDataMoveOperationResultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.protected_items = ProtectedItemsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.protected_item_operation_results = ProtectedItemOperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.recovery_points = RecoveryPointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.restores = RestoresOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_policies = BackupPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.protection_policies = ProtectionPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.protection_policy_operation_results = ProtectionPolicyOperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_jobs = BackupJobsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.job_details = JobDetailsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.job_cancellations = JobCancellationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.job_operation_results = JobOperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.export_jobs_operation_results = ExportJobsOperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.jobs = JobsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_protected_items = BackupProtectedItemsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operation = OperationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.validate_operation = ValidateOperationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.validate_operation_results = ValidateOperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.validate_operation_statuses = ValidateOperationStatusesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_engines = BackupEnginesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.protection_container_refresh_operation_results = ProtectionContainerRefreshOperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.protectable_containers = ProtectableContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.protection_containers = ProtectionContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_workload_items = BackupWorkloadItemsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.protection_container_operation_results = ProtectionContainerOperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backups = BackupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.protected_item_operation_statuses = ProtectedItemOperationStatusesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.item_level_recovery_connections = ItemLevelRecoveryConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_operation_results = BackupOperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_operation_statuses = BackupOperationStatusesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.protection_policy_operation_statuses = ProtectionPolicyOperationStatusesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_protectable_items = BackupProtectableItemsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_protection_containers = BackupProtectionContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.security_pins = SecurityPINsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.recovery_points_recommended_for_move = RecoveryPointsRecommendedForMoveOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.resource_guard_proxies = ResourceGuardProxiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.resource_guard_proxy = ResourceGuardProxyOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(
         self,
-        request,  # type: HttpRequest
+        request: HttpRequest,
         **kwargs: Any
     ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
