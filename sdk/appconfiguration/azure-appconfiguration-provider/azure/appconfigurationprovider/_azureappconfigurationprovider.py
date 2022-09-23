@@ -15,9 +15,9 @@ from azure.core.exceptions import (
     ResourceNotFoundError
 )
 from ._settingselector import SettingSelector
-from ._constants import (
-    KEY_VAULT_REFERENCE_CONTENT_TYPE
-)
+from ._azure_appconfiguration_provider_error import KeyVaultReferenceError
+from ._constants import KEY_VAULT_REFERENCE_CONTENT_TYPE
+
 from ._user_agent import USER_AGENT
 
 
@@ -75,15 +75,15 @@ class AzureAppConfigurationProvider:
                 raise e
             for config in configurations:
                 if config.content_type == KEY_VAULT_REFERENCE_CONTENT_TYPE:
-                    provider.__resolve_keyvault_references(
-                        config, key_vault_options, secret_clients)
+                    secret = provider.__resolve_keyvault_reference(config, key_vault_options, secret_clients)
+                    provider._dict[provider.__trim(config.key)] = secret
                 elif provider.__is_json_content_type(config.content_type):
                     try:
                         j_object = json.loads(config.value)
                         provider._dict[provider.__trim(config.key)] = j_object
                     except json.JSONDecodeError as e:
-                        raise ValueError(
-                            "Invalid JSON value for key: " + config.key)
+                        # If the value is not a valid JSON, treat it like regular string value
+                        provider._dict[provider.__trim(config.key)] = config.value
                 else:
                     provider._dict[provider.__trim(config.key)] = config.value
         return provider
@@ -93,7 +93,7 @@ class AzureAppConfigurationProvider:
         correlation_context = "RequestType=Startup"
 
         if (key_vault_options and
-                (key_vault_options.credential or key_vault_options or key_vault_options.secret_resolver)):
+                (key_vault_options.credential or key_vault_options.secret_clients or key_vault_options.secret_resolver)):
             correlation_context += ",UsesKeyVault"
 
         headers["Correlation-Context"] = correlation_context
@@ -110,7 +110,7 @@ class AzureAppConfigurationProvider:
         self._client = AzureAppConfigurationClient(
             endpoint, credential, user_agent=useragent, headers=headers)
 
-    def __resolve_keyvault_references(self, config, key_vault_options, secret_clients):
+    def __resolve_keyvault_reference(self, config, key_vault_options, secret_clients):
         if key_vault_options is None:
             raise AttributeError(
                 "Key Vault options must be set to resolve Key Vault references.")
@@ -134,21 +134,16 @@ class AzureAppConfigurationProvider:
 
         if referenced_client:
             try:
-                secret = referenced_client.get_secret(
-                    key_vault_identifier.name, version=key_vault_identifier.version)
-                self._dict[self.__trim(config.key)] = secret.value
-                return
+                return referenced_client.get_secret(key_vault_identifier.name, version=key_vault_identifier.version)
             except ResourceNotFoundError as e:
-                raise ValueError("Key Vault %s does not contain secret %s" % (
+                raise KeyVaultReferenceError("Key Vault %s does not contain secret %s" % (
                     key_vault_identifier.vault_url, key_vault_identifier.name))
             except HttpResponseError as e:
                 raise e
 
         if key_vault_options.secret_resolver is not None:
-            self._dict[self.__trim(
-                config.key)] = key_vault_options.secret_resolver(key_vault_identifier.vault_url)
-            return
-        raise AttributeError(
+            return key_vault_options.secret_resolver(config.secret_id)
+        raise KeyVaultReferenceError(
             "No Secret Client found for Key Vault reference %s" % (key_vault_identifier.vault_url))
 
     @staticmethod
