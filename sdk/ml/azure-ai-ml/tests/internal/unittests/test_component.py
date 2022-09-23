@@ -165,6 +165,7 @@ class TestComponent:
             },
         }
 
+    @pytest.mark.skip(reason="migration skip: sync pipeline changes during soft code complete.")
     @pytest.mark.parametrize(
         "yaml_path",
         list(map(lambda x: x[0], PARAMETERS_TO_TEST)),

@@ -42,6 +42,7 @@ def load_pipeline_entity_from_rest_json(job_dict) -> PipelineJob:
 @pytest.mark.timeout(_PIPELINE_JOB_TIMEOUT_SECOND)
 @pytest.mark.unittest
 class TestPipelineJobEntity:
+    @pytest.mark.skip(reason="migration skip: sync pipeline changes during soft code complete.")
     def test_automl_node_in_pipeline_regression(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_regression.yml"
 
@@ -1438,6 +1439,7 @@ class TestPipelineJobEntity:
             "type": "command",
         }
 
+    @pytest.mark.skip(reason="migration skip: sync pipeline changes during soft code complete.")
     def test_job_properties(self):
         pipeline_job: PipelineJob = load_job(
             source="./tests/test_configs/pipeline_jobs/pipeline_job_with_properties.yml"
