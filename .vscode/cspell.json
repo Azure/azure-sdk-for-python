@@ -231,6 +231,7 @@
     "myacr",
     "mydirectory",
     "myfile",
+    "myvault",
     "nazsdk",
     "nbytes",
     "noarch",
@@ -395,6 +396,8 @@
         "mytable",
         "mycontainer",
         "edmtypes",
+        "edmtypes",
+        "specifed",
         "aefg"
       ]
     },
@@ -470,6 +473,10 @@
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/tests/test_query_text*.py",
       "words": ["groovin", "Olufsen"]
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/**/_serialization.py",
+      "words": ["ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize"]
     },
     {
       "filename": "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/tests/*.py",
@@ -766,7 +773,8 @@
         "reprlib",
         "gzrs",
         "ragzrs",
-        "wsid"
+        "wsid",
+        "azml"
       ]
     },
     {

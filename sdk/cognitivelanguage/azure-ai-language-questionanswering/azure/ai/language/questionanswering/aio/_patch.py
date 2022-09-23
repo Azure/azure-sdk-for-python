@@ -10,7 +10,7 @@ from typing import List, Union, Any
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, AsyncBearerTokenCredentialPolicy
-from ._question_answering_client import QuestionAnsweringClient as QuestionAnsweringClientGenerated
+from ._client import QuestionAnsweringClient as QuestionAnsweringClientGenerated
 
 
 def _authentication_policy(credential, **kwargs):
@@ -56,7 +56,6 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
             endpoint = endpoint.rstrip("/")
         except AttributeError:
             raise ValueError("Parameter 'endpoint' must be a string.")
-
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore

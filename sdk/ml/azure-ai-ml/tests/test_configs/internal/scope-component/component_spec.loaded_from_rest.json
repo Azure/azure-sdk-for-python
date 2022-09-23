@@ -1,5 +1,4 @@
 {
-  "name": "test_757096096037",
   "description": "Convert adls test data to SS format",
   "tags": {
     "org": "bing",
@@ -15,7 +14,8 @@
         "AnyFile",
         "AnyDirectory"
       ],
-      "description": "text file on ADLS storage"
+      "description": "text file on ADLS storage",
+      "is_resource": false
     },
     "ExtractionClause": {
       "type": "string",

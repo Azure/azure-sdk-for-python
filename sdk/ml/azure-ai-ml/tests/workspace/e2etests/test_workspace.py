@@ -12,14 +12,23 @@ from azure.ai.ml.entities._workspace.identity import ManagedServiceIdentityType
 from azure.core.paging import ItemPaged
 from azure.mgmt.msi._managed_service_identity_client import ManagedServiceIdentityClient
 
+from devtools_testutils import AzureRecordedTestCase, is_live
+
 
 @pytest.mark.e2etest
 @pytest.mark.mlc
-class TestWorkspace:
+@pytest.mark.usefixtures(
+    "recorded_test", "mock_workspace_arm_template_deployment_name", "mock_workspace_dependent_resource_name_generator"
+)
+class TestWorkspace(AzureRecordedTestCase):
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
     def test_workspace_create_update_and_delete(
         self, client: MLClient, randstr: Callable[[], str], location: str
     ) -> None:
-        wps_name = f"e2etest_{randstr()}"
+        wps_name = f"e2etest_{randstr('wps_name')}"
         wps_description = f"{wps_name} description"
         wps_display_name = f"{wps_name} display name"
         params_override = [
@@ -87,7 +96,7 @@ class TestWorkspace:
 
     @pytest.mark.skip("Testing CMK workspace needs complicated setup, created TASK 1063112 to address that later")
     def test_workspace_cmk_create_and_delete(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        wps_name = f"e2etest_{randstr()}"
+        wps_name = f"e2etest_{randstr('wps_name')}"
         params_override = [{"name": wps_name}]
         wps = load_workspace(
             source="./tests/test_configs/workspace/workspace_cmk.yaml", params_override=params_override
@@ -106,6 +115,10 @@ class TestWorkspace:
 
     @pytest.mark.e2etest
     @pytest.mark.mlc
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
     def test_uai_workspace_create_update_and_delete(
         self, client: MLClient, randstr: Callable[[], str], location: str
     ) -> None:
@@ -149,7 +162,7 @@ class TestWorkspace:
             },
             {"primary_user_assigned_identity": user_assigned_identity.id},
         ]
-        wps = load_workspace(path="./tests/test_configs/workspace/workspace_min.yaml", params_override=params_override)
+        wps = load_workspace("./tests/test_configs/workspace/workspace_min.yaml", params_override=params_override)
         workspace = client.workspaces.begin_create(workspace=wps)
         assert workspace.name == wps_name
         assert workspace.location == location

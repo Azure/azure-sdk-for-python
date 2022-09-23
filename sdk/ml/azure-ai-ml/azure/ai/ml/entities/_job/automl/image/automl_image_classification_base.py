@@ -6,7 +6,6 @@
 
 from typing import Dict, List, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     ImageModelSettingsClassification,
     LearningRateScheduler,
@@ -20,6 +19,7 @@ from azure.ai.ml.entities._job.automl.image.image_limit_settings import ImageLim
 from azure.ai.ml.entities._job.automl.image.image_sweep_settings import ImageSweepSettings
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
 from azure.ai.ml.entities._job.automl.utils import cast_to_specific_search_space
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class AutoMLImageClassificationBase(AutoMLImage):
@@ -101,12 +101,10 @@ class AutoMLImageClassificationBase(AutoMLImage):
         *,
         advanced_settings: str = None,
         ams_gradient: bool = None,
-        augmentations: str = None,
         beta1: float = None,
         beta2: float = None,
         checkpoint_frequency: int = None,
         checkpoint_run_id: str = None,
-        checkpoint_model: Input = None,
         distributed: bool = None,
         early_stopping: bool = None,
         early_stopping_delay: int = None,
@@ -143,8 +141,6 @@ class AutoMLImageClassificationBase(AutoMLImage):
         :type advanced_settings: str
         :param ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
         :type ams_gradient: bool
-        :param augmentations: Settings for using Augmentations.
-        :type augmentations: str
         :param beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the
          range [0, 1].
         :type beta1: float
@@ -157,8 +153,6 @@ class AutoMLImageClassificationBase(AutoMLImage):
         :param checkpoint_run_id: The id of a previous run that has a pretrained checkpoint for
          incremental training.
         :type checkpoint_run_id: str
-        :param checkpoint_model: The pretrained checkpoint model for incremental training.
-        :type checkpoint_model: Input
         :param distributed: Whether to use distributed training.
         :type distributed: bool
         :param early_stopping: Enable early stopping logic during training.
@@ -252,16 +246,10 @@ class AutoMLImageClassificationBase(AutoMLImage):
         self._training_parameters.ams_gradient = (
             ams_gradient if ams_gradient is not None else self._training_parameters.ams_gradient
         )
-        self._training_parameters.augmentations = (
-            augmentations if augmentations is not None else self._training_parameters.augmentations
-        )
         self._training_parameters.beta1 = beta1 if beta1 is not None else self._training_parameters.beta1
         self._training_parameters.beta2 = beta2 if beta2 is not None else self._training_parameters.beta2
         self._training_parameters.checkpoint_frequency = (
             checkpoint_frequency if checkpoint_frequency is not None else self._training_parameters.checkpoint_frequency
-        )
-        self._training_parameters.checkpoint_model = (
-            checkpoint_model if checkpoint_model is not None else self._training_parameters.checkpoint_model
         )
         self._training_parameters.checkpoint_run_id = (
             checkpoint_run_id if checkpoint_run_id is not None else self._training_parameters.checkpoint_run_id

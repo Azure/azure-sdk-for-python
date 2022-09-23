@@ -10,7 +10,6 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointComputeType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
@@ -42,6 +41,7 @@ from azure.ai.ml.entities._deployment.scale_settings import (
 )
 from azure.ai.ml.entities._endpoint._endpoint_helpers import validate_endpoint_or_deployment_name
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
 
 from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 from .deployment import Deployment

@@ -7,7 +7,6 @@
 import os
 from typing import Callable, Dict, Tuple, Union
 
-from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.constants._common import AssetTypes, LegacyAssetTypes
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities._assets.environment import Environment
@@ -17,6 +16,7 @@ from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistr
 from azure.ai.ml.entities._job.identity import AmlToken, ManagedIdentity, UserIdentity
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
+from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 
 from .command import Command
 

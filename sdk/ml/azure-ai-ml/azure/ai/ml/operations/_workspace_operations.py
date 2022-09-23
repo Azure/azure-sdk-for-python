@@ -9,7 +9,6 @@ from typing import Dict, Iterable, Tuple, Union
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_05_01.models import (
     DiagnoseRequestProperties,
@@ -31,7 +30,8 @@ from azure.ai.ml._utils._workspace_utils import (
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants
-from azure.ai.ml.entities import ManagedServiceIdentity, Workspace
+from azure.ai.ml.entities import ManagedServiceIdentity, Workspace, WorkspaceKeys
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 
@@ -100,17 +100,18 @@ class WorkspaceOperations:
         obj = self._operation.get(resource_group, workspace_name)
         return Workspace._from_rest_object(obj)
 
-    @monitor_with_activity(logger, "Workspace.List_Keys", ActivityType.PUBLICAPI)
-    def list_keys(self, name: str = None) -> ListWorkspaceKeysResult:
-        """List keys for the workspace.
+    @monitor_with_activity(logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
+    def get_keys(self, name: str = None) -> WorkspaceKeys:
+        """Get keys for the workspace.
 
         :param name: Name of the workspace.
         :type name: str
-        :return: A list of keys.
-        :rtype: ListWorkspaceKeysResult
+        :return: Keys of workspace dependent resources.
+        :rtype: WorkspaceKeys
         """
         workspace_name = self._check_workspace_name(name)
-        return self._operation.list_keys(self._resource_group_name, workspace_name)
+        obj = self._operation.list_keys(self._resource_group_name, workspace_name)
+        return WorkspaceKeys._from_rest_object(obj)
 
     @monitor_with_activity(logger, "Workspace.BeginSyncKeys", ActivityType.PUBLICAPI)
     def begin_sync_keys(self, name: str = None, **kwargs: Dict) -> LROPoller:

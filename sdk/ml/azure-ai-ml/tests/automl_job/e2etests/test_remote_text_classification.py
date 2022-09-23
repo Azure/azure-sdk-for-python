@@ -1,3 +1,7 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
 from typing import Tuple
 
 import pytest
@@ -9,9 +13,16 @@ from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.nlp import TextClassificationJob
 from azure.ai.ml.operations._run_history_constants import JobStatus
 
+from devtools_testutils import AzureRecordedTestCase, is_live
+
 
 @pytest.mark.automle2etest
-class TestTextClassification:
+@pytest.mark.usefixtures("recorded_test")
+@pytest.mark.skipif(
+    condition=not is_live(),
+    reason="Datasets downloaded by test are too large to record reliably"
+)
+class TestTextClassification(AzureRecordedTestCase):
     def test_remote_run_text_classification(
         self,
         newsgroup: Tuple[Input, Input, str],
