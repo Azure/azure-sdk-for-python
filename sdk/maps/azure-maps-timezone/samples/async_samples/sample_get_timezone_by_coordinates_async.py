@@ -18,6 +18,7 @@ USAGE:
 """
 import asyncio
 import os
+import sys
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
@@ -40,5 +41,6 @@ async def get_timezone_by_coordinates():
     # [END get_timezone_by_coordinates_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(get_timezone_by_coordinates())
+    if sys.platform == 'win32':
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    asyncio.run(get_timezone_by_coordinates())

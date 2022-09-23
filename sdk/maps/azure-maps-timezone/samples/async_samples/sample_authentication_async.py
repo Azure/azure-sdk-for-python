@@ -23,6 +23,7 @@ USAGE:
 
 import asyncio
 import os
+import sys
 
 async def authentication_maps_service_client_with_subscription_key_credential_async():
     # [START create_maps_timezone_service_client_with_key_async]
@@ -62,7 +63,11 @@ async def authentication_maps_service_client_with_aad_credential_async():
     print('IANA "{}" timezone is {}'.format(iana_id, result.time_zones[0].names.generic))
 
 
+async def main():
+    await authentication_maps_service_client_with_subscription_key_credential_async()
+    await authentication_maps_service_client_with_aad_credential_async()
+
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(authentication_maps_service_client_with_subscription_key_credential_async())
-    loop.run_until_complete(authentication_maps_service_client_with_aad_credential_async())
+    if sys.platform == 'win32':
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    asyncio.run(main())

@@ -18,6 +18,7 @@ USAGE:
 """
 import asyncio
 import os
+import sys
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
@@ -40,5 +41,6 @@ async def convert_windows_timezone_to_iana_async():
     # [END convert_windows_timezone_to_iana_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(convert_windows_timezone_to_iana_async())
+    if sys.platform == 'win32':
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    asyncio.run(convert_windows_timezone_to_iana_async())
