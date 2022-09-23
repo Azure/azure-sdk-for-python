@@ -8,6 +8,7 @@
 
 ### Breaking Changes
 - ComputeOperations.attach has been renamed to begin_attach.
+- Deprecated parameter path has been removed from load and dump methods.
 
 ### Bugs Fixed
 

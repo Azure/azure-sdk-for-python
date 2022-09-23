@@ -73,7 +73,7 @@ class TestSchedule(AzureRecordedTestCase):
     def test_load_cron_schedule_with_arm_id(self, client: MLClient, randstr: Callable[[], str]):
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
-            path="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_comps.yml",
+            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_comps.yml",
             params_override=params_override,
         )
         pipeline_job = client.jobs.create_or_update(pipeline_job)
@@ -95,7 +95,7 @@ class TestSchedule(AzureRecordedTestCase):
         params_override = [{"name": randstr()}]
         test_job_path = "./tests/test_configs/pipeline_jobs/hello-pipeline-abc.yml"
         pipeline_job = load_job(
-            path=test_job_path,
+            test_job_path,
             params_override=params_override,
         )
         pipeline_job = client.jobs.create_or_update(pipeline_job)

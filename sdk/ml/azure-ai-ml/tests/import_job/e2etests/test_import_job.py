@@ -43,7 +43,7 @@ class TestImportJob(AzureRecordedTestCase):
     def test_import_job_submit_cancel(self, client: MLClient) -> None:
         # TODO: need to create a workspace under a e2e-testing-only subscription and resource group
 
-        job = load_job(path="./tests/test_configs/import_job/import_job_test.yml")
+        job = load_job("./tests/test_configs/import_job/import_job_test.yml")
         self.validate_import_job_submit_cancel(job, client)
 
     @pytest.mark.e2etest
@@ -91,7 +91,7 @@ class TestImportJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_import_pipeline_submit_cancel(self, client: MLClient) -> None:
 
-        pipeline: PipelineJob = load_job(path="./tests/test_configs/import_job/import_pipeline_test.yml")
+        pipeline: PipelineJob = load_job("./tests/test_configs/import_job/import_pipeline_test.yml")
         self.validate_test_import_pipepine_submit_cancel(pipeline, client, is_dsl=False)
 
     @pytest.mark.e2etest
@@ -194,7 +194,7 @@ class TestImportJob(AzureRecordedTestCase):
 
         job = client.jobs.create_or_update(
             load_job(
-                path="./tests/test_configs/import_job/import_job_test.yml",
+                "./tests/test_configs/import_job/import_job_test.yml",
                 params_override=[{"name": randstr("name")}],
             )
         )
