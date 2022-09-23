@@ -93,7 +93,8 @@ class AzureAppConfigurationProvider:
         correlation_context = "RequestType=Startup"
 
         if (key_vault_options and
-                (key_vault_options.credential or key_vault_options.secret_clients or key_vault_options.secret_resolver)):
+                (key_vault_options.credential or 
+                key_vault_options.secret_clients or key_vault_options.secret_resolver)):
             correlation_context += ",UsesKeyVault"
 
         headers["Correlation-Context"] = correlation_context
@@ -110,7 +111,8 @@ class AzureAppConfigurationProvider:
         self._client = AzureAppConfigurationClient(
             endpoint, credential, user_agent=useragent, headers=headers)
 
-    def __resolve_keyvault_reference(self, config, key_vault_options, secret_clients):
+    @staticmethod
+    def __resolve_keyvault_reference(config, key_vault_options, secret_clients):
         if key_vault_options is None:
             raise AttributeError(
                 "Key Vault options must be set to resolve Key Vault references.")

@@ -6,7 +6,3 @@
 
 class KeyVaultReferenceError(ValueError):
     """Raised when a Key Vault reference is invalid."""
-
-    def __init__(self, message, *args):
-        # type: (str, Any) -> None
-        super(KeyVaultReferenceError, self).__init__(message, *args)

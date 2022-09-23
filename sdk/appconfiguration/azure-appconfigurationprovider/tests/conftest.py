@@ -9,13 +9,6 @@ import pytest
 
 
 @pytest.fixture(scope="session", autouse=True)
-def start_proxy(test_proxy):
-    return
-
-# autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
-
-
-@pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(value="https://fake-endpoint.azconfig.io",
                                 regex=os.environ.get('APPCONFIGURATION_ENDPOINT_STRING'))
