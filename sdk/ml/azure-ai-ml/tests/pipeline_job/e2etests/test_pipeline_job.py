@@ -757,6 +757,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_job = client.jobs.create_or_update(pipeline_job)
         assert created_job.jobs[job_key].component == f"{component_name}:{component_versions[-1]}"
 
+    @pytest.mark.skip(reason="migration skip: refactor for download.")
     def test_pipeline_job_download(
         self, client: MLClient, tmp_path: Path, generate_weekly_fixed_job_name: Callable[[str], str]
     ) -> None:
