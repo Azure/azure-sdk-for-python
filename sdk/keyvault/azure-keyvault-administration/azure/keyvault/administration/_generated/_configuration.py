@@ -8,16 +8,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import Any
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from ._version import VERSION
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
 
 class KeyVaultClientConfiguration(Configuration):
     """Configuration for KeyVaultClient.
