@@ -112,7 +112,7 @@ class ModelOperations(_ScopeDependentOperations):
             sas_uri = None
 
             if self._registry_name:
-                # Case of promote model to registry
+                # Case of copy model to registry
                 if isinstance(model, WorkspaceModelReference):
                     # verify that model is not already in registry
                     try:
@@ -448,10 +448,10 @@ class ModelOperations(_ScopeDependentOperations):
         return Model._from_rest_object(result)
 
     # pylint: disable=no-self-use
-    def _prepare_to_promote(self, model: Model, name: str = None, version: str = None) -> WorkspaceModelReference:
+    def _prepare_to_copy(self, model: Model, name: str = None, version: str = None) -> WorkspaceModelReference:
 
         """Returns WorkspaceModelReference
-        to promote a registered model to registry given the asset id
+        to copy a registered model to registry given the asset id
 
         :param model: Registered model
         :type model: Model
@@ -464,7 +464,7 @@ class ModelOperations(_ScopeDependentOperations):
         workspace = self._service_client.workspaces.get(
             resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
         )
-        workspace_guid = workspace.discovery_url.split("/")[5]
+        workspace_guid = workspace.workspace_id
         workspace_location = workspace.location
 
         # Get model asset ID

@@ -50,6 +50,7 @@ from ._job.input_port import InputPort
 from ._job.job import Job
 from ._job.job_limits import CommandJobLimits
 from ._job.job_resource_configuration import JobResourceConfiguration
+from ._job.job_service import JobService
 from ._job.parallel.parallel_task import ParallelTask
 from ._job.parallel.retry_settings import RetrySettings
 from ._job.parameterized_command import ParameterizedCommand
@@ -83,6 +84,7 @@ from ._resource import Resource
 from ._schedule.schedule import JobSchedule
 from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
 from ._system_data import SystemData
+from ._validation import ValidationResult
 from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.customer_managed_key import CustomerManagedKey
 from ._workspace.identity import ManagedServiceIdentity
@@ -112,6 +114,7 @@ __all__ = [
     "CreatedByType",
     "ResourceConfiguration",
     "JobResourceConfiguration",
+    "JobService",
     "SparkResourceConfiguration",
     "ParameterizedCommand",
     "InputPort",
@@ -196,6 +199,7 @@ __all__ = [
     "AmlComputeNodeInfo",
     "SystemCreatedAcrAccount",
     "SystemCreatedStorageAccount",
+    "ValidationResult",
     "RegistryRegionArmDetails",
     "Registry",
     "SynapseSparkCompute",

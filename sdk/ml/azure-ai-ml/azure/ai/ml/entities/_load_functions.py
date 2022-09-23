@@ -41,9 +41,7 @@ _DEFAULT_RELATIVE_ORIGIN = "./"
 def load_common(
     cls: Type[Resource],
     source: Union[str, PathLike, IO[AnyStr]],
-    path: Union[str, PathLike],
     relative_origin: str,
-    args: tuple,
     params_override: list = None,
     **kwargs,
 ) -> Resource:
@@ -53,32 +51,24 @@ def load_common(
     :type cls: type[Resource]
     :param source: A source of yaml.
     :type source: Union[str, PathLike, IO[AnyStr]]
-    :param path: Deprecated way to input a file path source.
-        Maintained here to allow deprecated input parsing from users.
-    :type path: Union[str, Pathlike]
     :param relative_origin: The origin of to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Must be provided, and is assumed to be assigned by other internal
         functions that call this.
     :type relative_origin: str
-    :param args: *args input from caller functions. Kept as a potential deprecated input
-        method for the path input.
-    :type args: tuple
     :param params_override: _description_, defaults to None
     :type params_override: list, optional
     :return: _description_
     :rtype: Resource
     """
 
+    path = kwargs.pop("path", None)
     # Check for deprecated path input, either named or as first unnamed input
-    if source is None:
-        if args is not None and len(args) > 0:
-            source = args[0]
-        elif path is not None:
-            source = path
-            warnings.warn(
-                "the 'path' input for load functions is deprecated. Please use 'source' instead.", DeprecationWarning
-            )
+    if source is None and path is not None:
+        source = path
+        warnings.warn(
+            "the 'path' input for load functions is deprecated. Please use 'source' instead.", DeprecationWarning
+        )
 
     if relative_origin is None:
         if isinstance(source, (str, PathLike)):
@@ -143,10 +133,9 @@ def _load_common_raising_marshmallow_error(
 
 
 def load_job(
-    *args,
-    source: Union[str, PathLike, IO[AnyStr]] = None,
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
     relative_origin: str = None,
-    path: Union[str, PathLike] = None,
     **kwargs,
 ) -> Job:
     """Construct a job object from a yaml file.
@@ -166,22 +155,17 @@ def load_job(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :param path: Deprecated path to a local file as the source. It's recommended
-        that you change 'path=' inputs to 'source='. The first unnamed input of this function
-        is also treated like a path input.
-    :type path: Union[str, Pathlike]
 
     :return: Loaded job object.
     :rtype: Job
     """
-    return load_common(Job, source, path, relative_origin, args, **kwargs)
+    return load_common(Job, source, relative_origin, **kwargs)
 
 
 def load_workspace(
-    *args,
-    source: Union[str, PathLike, IO[AnyStr]] = None,
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
     relative_origin: str = None,
-    path: Union[str, PathLike] = None,
     **kwargs,
 ) -> Workspace:
     """Load a workspace object from a yaml file.
@@ -201,22 +185,17 @@ def load_workspace(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :param path: Deprecated path to a local file as the source. It's recommended
-        that you change 'path=' inputs to 'source='. The first unnamed input of this function
-        is also treated like a path input.
-    :type path: Union[str, Pathlike]
 
     :return: Loaded workspace object.
     :rtype: Workspace
     """
-    return load_common(Workspace, source, path, relative_origin, args, **kwargs)
+    return load_common(Workspace, source, relative_origin, **kwargs)
 
 
 def load_registry(
-    *args,
-    source: Union[str, PathLike, IO[AnyStr]] = None,
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
     relative_origin: str = None,
-    path: Union[str, PathLike] = None,
     **kwargs,
 ) -> Registry:
     """Load a registry object from a yaml file.
@@ -236,22 +215,17 @@ def load_registry(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :param path: Deprecated path to a local file as the source. It's recommended
-        that you change 'path=' inputs to 'source='. The first unnamed input of this function
-        is also treated like a path input.
-    :type path: Union[str, Pathlike]
 
     :return: Loaded registry object.
     :rtype: Registry
     """
-    return load_common(Registry, source, path, relative_origin, args, **kwargs)
+    return load_common(Registry, source, relative_origin, **kwargs)
 
 
 def load_datastore(
-    *args,
-    source: Union[str, PathLike, IO[AnyStr]] = None,
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
     relative_origin: str = None,
-    path: Union[str, PathLike] = None,
     **kwargs,
 ) -> Datastore:
     """Construct a datastore object from a yaml file.
@@ -271,22 +245,17 @@ def load_datastore(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :param path: Deprecated path to a local file as the source. It's recommended
-        that you change 'path=' inputs to 'source='. The first unnamed input of this function
-        is also treated like a path input.
-    :type path: Union[str, Pathlike]
 
     :return: Loaded datastore object.
     :rtype: Datastore
     """
-    return load_common(Datastore, source, path, relative_origin, args, **kwargs)
+    return load_common(Datastore, source, relative_origin, **kwargs)
 
 
 def load_code(
-    *args,
-    source: Union[str, PathLike, IO[AnyStr]] = None,
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
     relative_origin: str = None,
-    path: Union[str, PathLike] = None,
     **kwargs,
 ) -> Code:
     """Construct a code object from a yaml file.
@@ -306,22 +275,17 @@ def load_code(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :param path: Deprecated path to a local file as the source. It's recommended
-        that you change 'path=' inputs to 'source='. The first unnamed input of this function
-        is also treated like a path input.
-    :type path: Union[str, Pathlike]
 
     :return: Loaded compute object.
     :rtype: Compute
     """
-    return load_common(Code, source, path, relative_origin, args, **kwargs)
+    return load_common(Code, source, relative_origin, **kwargs)
 
 
 def load_compute(
-    *args,
-    source: Union[str, PathLike, IO[AnyStr]] = None,
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
     relative_origin: str = None,
-    path: Union[str, PathLike] = None,
     **kwargs,
 ) -> Compute:
     """Construct a compute object from a yaml file.
@@ -341,22 +305,17 @@ def load_compute(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :param path: Deprecated path to a local file as the source. It's recommended
-        that you change 'path=' inputs to 'source='. The first unnamed input of this function
-        is also treated like a path input.
-    :type path: Union[str, Pathlike]
 
     :return: Loaded compute object.
     :rtype: Compute
     """
-    return load_common(Compute, source, path, relative_origin, args, **kwargs)
+    return load_common(Compute, source, relative_origin, **kwargs)
 
 
 def load_component(
-    *args,
     source: Union[str, PathLike, IO[AnyStr]] = None,
+    *,
     relative_origin: str = None,
-    path: Union[str, PathLike] = None,
     **kwargs,
 ) -> Union[CommandComponent, ParallelComponent, PipelineComponent]:
     """Load component from local or remote to a component function.
@@ -394,10 +353,6 @@ def load_component(
     :type name: str
     :param version: Version of the component.
     :type version: str
-    :param path: Deprecated path to a local file as the source. It's recommended
-        that you change 'path=' inputs to 'source='. The first unnamed input of this function
-        is also treated like a path input.
-    :type path: Union[str, Pathlike]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
@@ -409,18 +364,8 @@ def load_component(
     name = kwargs.pop("name", None)
     version = kwargs.pop("version", None)
 
-    # Check for deprecated path input earlier than usual due to extra checks in this function.
-    if source is None:
-        if args is not None and len(args) > 0:
-            source = args[0]
-        elif path is not None:
-            source = path
-            warnings.warn(
-                "the 'path' input for load functions is deprecated. Please use 'source' instead.", DeprecationWarning
-            )
-
     if source:
-        component_entity = load_common(Component, source, path, relative_origin, args, **kwargs)
+        component_entity = load_common(Component, source, relative_origin, **kwargs)
     elif client and name and version:
         component_entity = client.components.get(name, version)
     else:
@@ -436,10 +381,9 @@ def load_component(
 
 
 def load_model(
-    *args,
-    source: Union[str, PathLike, IO[AnyStr]] = None,
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
     relative_origin: str = None,
-    path: Union[str, PathLike] = None,
     **kwargs,
 ) -> Model:
     """Construct a model object from yaml file.
@@ -459,22 +403,17 @@ def load_model(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :param path: Deprecated path to a local file as the source. It's recommended
-        that you change 'path=' inputs to 'source='. The first unnamed input of this function
-        is also treated like a path input.
-    :type path: Union[str, Pathlike]
 
     :return: Constructed model object.
     :rtype: Model
     """
-    return load_common(Model, source, path, relative_origin, args, **kwargs)
+    return load_common(Model, source, relative_origin, **kwargs)
 
 
 def load_data(
-    *args,
-    source: Union[str, PathLike, IO[AnyStr]] = None,
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
     relative_origin: str = None,
-    path: Union[str, PathLike] = None,
     **kwargs,
 ) -> Data:
     """Construct a data object from yaml file.
@@ -494,22 +433,17 @@ def load_data(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :param path: Deprecated path to a local file as the source. It's recommended
-        that you change 'path=' inputs to 'source='. The first unnamed input of this function
-        is also treated like a path input.
-    :type path: Union[str, Pathlike]
 
     :return: Constructed data object.
     :rtype: Data
     """
-    return load_common(Data, source, path, relative_origin, args, **kwargs)
+    return load_common(Data, source, relative_origin, **kwargs)
 
 
 def load_environment(
-    *args,
-    source: Union[str, PathLike, IO[AnyStr]] = None,
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
     relative_origin: str = None,
-    path: Union[str, PathLike] = None,
     **kwargs,
 ) -> Environment:
     """Construct a environment object from yaml file.
@@ -529,22 +463,17 @@ def load_environment(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :param path: Deprecated path to a local file as the source. It's recommended
-        that you change 'path=' inputs to 'source='. The first unnamed input of this function
-        is also treated like a path input.
-    :type path: Union[str, Pathlike]
 
     :return: Constructed environment object.
     :rtype: Environment
     """
-    return load_common(Environment, source, path, relative_origin, args, **kwargs)
+    return load_common(Environment, source, relative_origin, **kwargs)
 
 
 def load_online_deployment(
-    *args,
-    source: Union[str, PathLike, IO[AnyStr]] = None,
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
     relative_origin: str = None,
-    path: Union[str, PathLike] = None,
     **kwargs,
 ) -> OnlineDeployment:
     """Construct a online deployment object from yaml file.
@@ -564,22 +493,17 @@ def load_online_deployment(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :param path: Deprecated path to a local file as the source. It's recommended
-        that you change 'path=' inputs to 'source='. The first unnamed input of this function
-        is also treated like a path input.
-    :type path: Union[str, Pathlike]
 
     :return: Constructed online deployment object.
     :rtype: OnlineDeployment
     """
-    return load_common(OnlineDeployment, source, path, relative_origin, args, **kwargs)
+    return load_common(OnlineDeployment, source, relative_origin, **kwargs)
 
 
 def load_batch_deployment(
-    *args,
-    source: Union[str, PathLike, IO[AnyStr]] = None,
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
     relative_origin: str = None,
-    path: Union[str, PathLike] = None,
     **kwargs,
 ) -> BatchDeployment:
     """Construct a batch deployment object from yaml file.
@@ -599,22 +523,17 @@ def load_batch_deployment(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :param path: Deprecated path to a local file as the source. It's recommended
-        that you change 'path=' inputs to 'source='. The first unnamed input of this function
-        is also treated like a path input.
-    :type path: Union[str, Pathlike]
 
     :return: Constructed batch deployment object.
     :rtype: BatchDeployment
     """
-    return load_common(BatchDeployment, source, path, relative_origin, args, **kwargs)
+    return load_common(BatchDeployment, source, relative_origin, **kwargs)
 
 
 def load_online_endpoint(
-    *args,
-    source: Union[str, PathLike, IO[AnyStr]] = None,
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
     relative_origin: str = None,
-    path: Union[str, PathLike] = None,
     **kwargs,
 ) -> OnlineEndpoint:
     """Construct a online endpoint object from yaml file.
@@ -634,22 +553,16 @@ def load_online_endpoint(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :param path: Deprecated path to a local file as the source. It's recommended
-        that you change 'path=' inputs to 'source='. The first unnamed input of this function
-        is also treated like a path input.
-    :type path: Union[str, Pathlike]
 
     :return: Constructed online endpoint object.
     :rtype: OnlineEndpoint
     """
-    return load_common(OnlineEndpoint, source, path, relative_origin, args, **kwargs)
+    return load_common(OnlineEndpoint, source, relative_origin, **kwargs)
 
 
 def load_batch_endpoint(
-    *args,
-    source: Union[str, PathLike, IO[AnyStr]] = None,
+    source: Union[str, PathLike, IO[AnyStr]],
     relative_origin: str = None,
-    path: Union[str, PathLike] = None,
     **kwargs,
 ) -> BatchEndpoint:
     """Construct a batch endpoint object from yaml file.
@@ -669,22 +582,17 @@ def load_batch_endpoint(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :param path: Deprecated path to a local file as the source. It's recommended
-        that you change 'path=' inputs to 'source='. The first unnamed input of this function
-        is also treated like a path input.
-    :type path: Union[str, Pathlike]
 
     :return: Constructed batch endpoint object.
     :rtype: BatchEndpoint
     """
-    return load_common(BatchEndpoint, source, path, relative_origin, args, **kwargs)
+    return load_common(BatchEndpoint, source, relative_origin, **kwargs)
 
 
 def load_workspace_connection(
-    *args,
-    source: Union[str, PathLike, IO[AnyStr]] = None,
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
     relative_origin: str = None,
-    path: Union[str, PathLike] = None,
     **kwargs,
 ) -> WorkspaceConnection:
     """Construct a workspace connection object from yaml file.
@@ -704,22 +612,16 @@ def load_workspace_connection(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :param path: Deprecated path to a local file as the source. It's recommended
-        that you change 'path=' inputs to 'source='. The first unnamed input of this function
-        is also treated like a path input.
-    :type path: Union[str, Pathlike]
 
     :return: Constructed workspace connection object.
     :rtype: WorkspaceConnection
     """
-    return load_common(WorkspaceConnection, source, path, relative_origin, args, **kwargs)
+    return load_common(WorkspaceConnection, source, relative_origin, **kwargs)
 
 
 def load_schedule(
-    *args,
-    source: Union[str, PathLike, IO[AnyStr]] = None,
+    source: Union[str, PathLike, IO[AnyStr]],
     relative_origin: str = None,
-    path: Union[str, PathLike] = None,
     **kwargs,
 ) -> JobSchedule:
     """Construct a schedule object from yaml file.
@@ -739,12 +641,8 @@ def load_schedule(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :param path: Deprecated path to a local file as the source. It's recommended
-        that you change 'path=' inputs to 'source='. The first unnamed input of this function
-        is also treated like a path input.
-    :type path: Union[str, Pathlike]
 
     :return: Constructed schedule object.
     :rtype: JobSchedule
     """
-    return load_common(JobSchedule, source, path, relative_origin, args, **kwargs)
+    return load_common(JobSchedule, source, relative_origin, **kwargs)

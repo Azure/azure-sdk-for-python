@@ -50,7 +50,7 @@ class TestPipelineJobValidate:
     )
     def test_pipeline_job_validation_on_load(self, pipeline_job_path: str, expected_error: str) -> None:
         with pytest.raises(ValidationError, match=expected_error):
-            load_job(path=pipeline_job_path)
+            load_job(pipeline_job_path)
 
     @pytest.mark.parametrize(
         "pipeline_job_path, expected_validation_result",
@@ -118,7 +118,7 @@ class TestPipelineJobValidate:
     @pytest.mark.skip(reason="does not work locally")
     def test_pipeline_job_type_sensitive_error_message(self):
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_comps.yml"
-        pipeline_job: PipelineJob = load_job(path=test_path)
+        pipeline_job: PipelineJob = load_job(test_path)
         job_dict = pipeline_job._to_dict()
         unsupported_node_type = "unsupported_node_type"
         job_dict["jobs"]["hello_world_component_inline"]["type"] = unsupported_node_type
@@ -145,14 +145,14 @@ class TestPipelineJobValidate:
         for invalid_name in invalid_node_names:
             params_override = [{"jobs": {invalid_name: {"type": "command", "command": "ls"}}}]
             with pytest.raises(ValidationError) as e:
-                load_job(path=test_path, params_override=params_override)
+                load_job(test_path, params_override=params_override)
             err_msg = "Pipeline node name should be a valid python identifier"
             assert err_msg in str(e.value)
 
         valid_component_names = ["_abc", "n", "name", "n_a_m_e", "name_1"]
         for valid_name in valid_component_names:
             params_override = [{"jobs": {valid_name: {"type": "command", "command": "ls"}}}]
-            load_job(path=test_path, params_override=params_override)
+            load_job(test_path, params_override=params_override)
 
     def test_pipeline_job_source_path_resolution(self):
         test_path = "./tests/test_configs/pipeline_jobs/inline_file_comp_base_path_sensitive/pipeline.yml"
@@ -160,7 +160,7 @@ class TestPipelineJobValidate:
             "./tests/test_configs/pipeline_jobs/inline_file_comp_base_path_sensitive/component/component.yml"
         )
 
-        pipeline_job: PipelineJob = load_job(path=test_path)
+        pipeline_job: PipelineJob = load_job(test_path)
         assert_the_same_path(pipeline_job._source_path, test_path)
         for node_name in ["command_node", "command_node_file_ref"]:
             assert_the_same_path(pipeline_job.jobs[node_name].component._source_path, component_path)
@@ -175,7 +175,7 @@ class TestPipelineJobValidate:
 
     def test_pipeline_job_node_base_path_resolution(self, mocker: MockFixture):
         test_path = "./tests/test_configs/pipeline_jobs/inline_file_comp_base_path_sensitive/pipeline.yml"
-        pipeline_job: PipelineJob = load_job(path=test_path)
+        pipeline_job: PipelineJob = load_job(test_path)
         pipeline_job._validate(raise_error=True)
         # return origin value as no base path change
         assert pipeline_job.jobs["command_node"].component.code == "../../../python"
@@ -194,12 +194,12 @@ class TestPipelineJobValidate:
         # )
 
     def test_pipeline_job_base_path_resolution(self, mocker: MockFixture):
-        job: PipelineJob = load_job(path="./tests/test_configs/pipeline_jobs/my_exp/azureml-job.yaml")
+        job: PipelineJob = load_job("./tests/test_configs/pipeline_jobs/my_exp/azureml-job.yaml")
         job._validate(raise_error=True)
 
     def test_pipeline_job_validate_compute(self) -> None:
         test_path = "./tests/test_configs/pipeline_jobs/invalid/combo.yml"
-        pipeline_job: PipelineJob = load_job(path=test_path)
+        pipeline_job: PipelineJob = load_job(test_path)
         assert pipeline_job._validate()._to_dict()["errors"][0]["message"] == "Compute not set"
 
         pipeline_job.settings.default_compute = "cpu-cluster"
@@ -215,7 +215,7 @@ class TestPipelineJobValidate:
 
     def test_pipeline_job_diagnostics_location_resolution(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/combo.yml"
-        pipeline_job: PipelineJob = load_job(path=test_path)
+        pipeline_job: PipelineJob = load_job(test_path)
         result_dict = mock_machinelearning_client.jobs.validate(pipeline_job)._to_dict()
         assert result_dict == {
             "errors": [
@@ -245,7 +245,7 @@ class TestDSLPipelineJobValidate:
 
         @dsl.pipeline()
         def pipeline(component_in_number, component_in_path):
-            component_func = load_component(path=path)
+            component_func = load_component(path)
             component_func(component_in_number=component_in_number, component_in_path=component_in_path)
 
         test_job_input = Input(path="azureml:fake_data:1")
@@ -260,7 +260,7 @@ class TestDSLPipelineJobValidate:
         }
 
     def test_pipeline_with_none_parameter_no_default_optional_false(self) -> None:
-        default_optional_func = load_component(path=str(components_dir / "default_optional_component.yml"))
+        default_optional_func = load_component(str(components_dir / "default_optional_component.yml"))
 
         # None input is binding to a required input
         @dsl.pipeline(
@@ -334,7 +334,7 @@ class TestDSLPipelineJobValidate:
         }
 
     def test_pipeline_with_none_parameter_binding_to_two_component_inputs(self) -> None:
-        default_optional_func = load_component(path=str(components_dir / "default_optional_component.yml"))
+        default_optional_func = load_component(str(components_dir / "default_optional_component.yml"))
 
         # None pipeline parameter is binding to two component.
 
@@ -379,7 +379,7 @@ class TestDSLPipelineJobValidate:
 
         @dsl.pipeline(name="train_with_sweep_in_pipeline")
         def train_with_sweep_in_pipeline(raw_data):
-            component_to_sweep: CommandComponent = load_component(path=yaml_file)
+            component_to_sweep: CommandComponent = load_component(yaml_file)
             cmd_node1 = component_to_sweep(component_in_number=Choice([2, 3, 4, 5]), component_in_path=raw_data)
             return {
                 "pipeline_job_model": cmd_node1.outputs.component_out_path,
@@ -395,7 +395,7 @@ class TestDSLPipelineJobValidate:
     @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
     def test_dsl_pipeline_component_validate_compute(self) -> None:
         path = "./tests/test_configs/components/helloworld_component.yml"
-        component_func1 = load_component(path=path)
+        component_func1 = load_component(path)
         job_input = Input(
             type=AssetTypes.URI_FILE,
             path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
@@ -434,7 +434,7 @@ class TestDSLPipelineJobValidate:
     @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
     def test_pipeline_job_error_when_nested_component_has_no_concrete_type(self):
         path = "./tests/test_configs/components/helloworld_component.yml"
-        component_func1 = load_component(path=path)
+        component_func1 = load_component(path)
 
         @dsl.pipeline
         def sub_pipeline(component_in_number, component_in_path):
@@ -460,7 +460,7 @@ class TestDSLPipelineJobValidate:
         }
 
     def test_pipeline_optional_link_to_required(self):
-        default_optional_func = load_component(path=str(components_dir / "default_optional_component.yml"))
+        default_optional_func = load_component(str(components_dir / "default_optional_component.yml"))
 
         # None pipeline parameter is binding to two component.
 
@@ -497,7 +497,7 @@ class TestDSLPipelineJobValidate:
 
     def test_node_unknown_property_setting(self) -> None:
         path = "./tests/test_configs/components/helloworld_component.yml"
-        component_func1 = load_component(path=path)
+        component_func1 = load_component(path)
         job_input = Input(
             type=AssetTypes.URI_FILE,
             path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
@@ -517,7 +517,7 @@ class TestDSLPipelineJobValidate:
 
     def test_node_required_field_missing(self) -> None:
         path = "./tests/test_configs/components/helloworld_component.yml"
-        component_func1 = load_component(path=path)
+        component_func1 = load_component(path)
         job_input = Input(
             type=AssetTypes.URI_FILE,
             path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
@@ -543,7 +543,7 @@ class TestDSLPipelineJobValidate:
 
     def test_node_schema_validation(self) -> None:
         path = "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/score.yml"
-        batch_inference1 = load_component(path=path)
+        batch_inference1 = load_component(path)
 
         # Construct pipeline
         @dsl.pipeline(default_compute="cpu-cluster", experiment_name="sdk-cli-v2")
@@ -572,7 +572,7 @@ class TestDSLPipelineJobValidate:
 
         @dsl.pipeline()
         def pipeline_no_arg():
-            component_func = load_component(path=component_path)
+            component_func = load_component(component_path)
             r_iris_example = component_func(iris=Input(path="/a/path/on/ds"))
             r_iris_example.compute = "cpu-cluster"
 
@@ -583,7 +583,7 @@ class TestDSLPipelineJobValidate:
 
     def test_dsl_pipeline_with_use_node_with_multiple_output_as_input(self):
         path = "./tests/test_configs/components/merge_outputs_component.yml"
-        component_func1 = load_component(path=path)
+        component_func1 = load_component(path)
 
         @dsl.pipeline(name="pipeline_with_use_node_with_multiple_output_as_input")
         def pipeline_with_use_node_with_multiple_output_as_input(component_in_number: int, component_in_path: str):
