@@ -363,10 +363,10 @@ class TestDSLPipeline:
 
     def test_dsl_pipeline_with_spark(self) -> None:
         add_greeting_column_func = load_component(
-            path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
+            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
         )
         count_by_row_func = load_component(
-            path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/count_by_row_component.yml"
+            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/count_by_row_component.yml"
         )
         synapse_compute_name = "spark31"
 
@@ -1308,7 +1308,7 @@ class TestDSLPipeline:
     def test_pipeline_with_spark_function(self):
         # component func
         yaml_file = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/sample_component.yml"
-        component_func = load_component(path=yaml_file)
+        component_func = load_component(yaml_file)
 
         environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
         iris_data = Input(
@@ -1497,7 +1497,7 @@ class TestDSLPipeline:
     def test_pipeline_with_spark_function_by_setting_conf(self, client):
         # component func
         yaml_file = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/sample_component.yml"
-        component_func = load_component(path=yaml_file)
+        component_func = load_component(yaml_file)
 
         environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
         iris_data = Input(
@@ -3482,7 +3482,7 @@ class TestDSLPipeline:
 
     def test_nested_dsl_pipeline_with_use_node_pipeline_as_input(self):
         path = "./tests/test_configs/components/helloworld_component.yml"
-        component_func1 = load_component(path=path)
+        component_func1 = load_component(path)
 
         @dsl.pipeline(name="sub_pipeline")
         def sub_pipeline(component_in_number: int, component_in_path: str):
@@ -3571,7 +3571,7 @@ class TestDSLPipeline:
 
     def test_nested_dsl_pipeline_with_use_node_pipeline_to_set_input(self):
         path = "./tests/test_configs/components/helloworld_component.yml"
-        component_func1 = load_component(path=path)
+        component_func1 = load_component(path)
 
         @dsl.pipeline(name="sub_pipeline")
         def sub_pipeline(component_in_number: int, component_in_path: str):
@@ -3731,7 +3731,7 @@ class TestDSLPipeline:
 
     def test_pipeline_decorator_without_brackets(self):
         path = "./tests/test_configs/components/helloworld_component.yml"
-        component_func1 = load_component(path=path)
+        component_func1 = load_component(path)
 
         def my_pipeline(component_in_number: int, component_in_path: str):
             node1 = component_func1(component_in_number=component_in_number, component_in_path=component_in_path)
@@ -3786,7 +3786,7 @@ class TestDSLPipeline:
 
     def test_pipeline_with_pipeline_component_entity(self):
         path = "./tests/test_configs/components/helloworld_component.yml"
-        component_func1 = load_component(path=path)
+        component_func1 = load_component(path)
         data = Data(name="test", version="1", type=AssetTypes.MLTABLE)
 
         @dsl.pipeline
@@ -3817,10 +3817,10 @@ class TestDSLPipeline:
 @pytest.mark.unittest
 class TestInitFinalizeJob:
     component_func = partial(
-        load_component(path=str(components_dir / "echo_string_component.yml")),
+        load_component(str(components_dir / "echo_string_component.yml")),
         component_in_string="not important",
     )
-    hello_world_func = load_component(path=str(components_dir / "helloworld_component.yml"))
+    hello_world_func = load_component(str(components_dir / "helloworld_component.yml"))
 
     def test_init_finalize_job(self) -> None:
         from azure.ai.ml._internal.dsl import set_pipeline_settings
@@ -3963,10 +3963,10 @@ class TestInitFinalizeJob:
 
     def test_dsl_pipeline_with_spark_hobo(self) -> None:
         add_greeting_column_func = load_component(
-            path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
+            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
         )
         count_by_row_func = load_component(
-            path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/count_by_row_component.yml"
+            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/count_by_row_component.yml"
         )
 
         @dsl.pipeline(description="submit a pipeline with spark job")
