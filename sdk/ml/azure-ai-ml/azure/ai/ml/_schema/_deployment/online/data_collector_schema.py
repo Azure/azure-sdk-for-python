@@ -11,6 +11,7 @@ from marshmallow import fields, post_load
 
 from azure.ai.ml._schema import NestedField, PatchedSchemaMeta, StringTransformedEnum
 from azure.ai.ml._schema._deployment.online.destination_schema import DestinationSchema
+from azure.ai.ml._schema._deployment.online.request_logging_schema import RequestLoggingSchema
 from azure.ai.ml._schema._deployment.online.sampling_strategy_schema import SamplingStrategySchema
 from azure.ai.ml.constants._common import RollingRate
 
@@ -25,6 +26,7 @@ class DataCollectorSchema(metaclass=PatchedSchemaMeta):
     )
     destination = NestedField(DestinationSchema)
     sampling_strategy = NestedField(SamplingStrategySchema)
+    request_logging = NestedField(RequestLoggingSchema)
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument
