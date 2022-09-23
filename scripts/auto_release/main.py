@@ -460,7 +460,7 @@ class CodegenTestPR:
     @return_origin_path
     def install_package_locally(self):
         os.chdir(self.sdk_code_path())
-        print_check('pip install -e .')
+        print_check('pip install .')
         print_exec('pip install -r dev_requirements.txt')
 
     def prepare_test_env(self):
