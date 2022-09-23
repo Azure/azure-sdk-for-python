@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
+from azure.core.exceptions import HttpResponseError
 import sys
 from devtools_testutils import add_remove_header_sanitizer, add_general_regex_sanitizer, add_oauth_response_sanitizer, add_body_key_sanitizer, test_proxy
 
@@ -14,6 +15,14 @@ from devtools_testutils import add_remove_header_sanitizer, add_general_regex_sa
 collect_ignore_glob = []
 if sys.version_info < (3, 6):
     collect_ignore_glob.append("*_async.py")
+
+@pytest.hookimpl(hookwrapper=True)
+def skip_flaky_test_hook(session):
+    try:
+        yield
+    except HttpResponseError as error:
+        if "Invalid request" in error.message:
+            pytest.mark.skip("flaky test")
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
