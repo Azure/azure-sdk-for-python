@@ -55,7 +55,7 @@ setup(
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/appconfiguration/azure-appconfiguration-provider",
+    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/appconfiguration/azure-appconfigurationprovider",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
