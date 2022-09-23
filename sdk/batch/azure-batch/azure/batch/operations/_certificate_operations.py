@@ -7,10 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import sys
-from typing import Any, Callable, Dict, Iterable, Optional, TypeVar, cast
-
-from msrest import Serializer
+from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
@@ -20,12 +17,10 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
+from .. import models as _models
+from .._serialization import Serializer
 from .._vendor import _format_url_section
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
+from ..models._models import CertificateListResult
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -34,19 +29,18 @@ _SERIALIZER.client_side_validation = False
 
 def build_add_request(
     *,
-    json: Optional[JSON] = None,
-    content: Any = None,
-    timeout: Optional[int] = 30,
+    json: _models.Certificate,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
     content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -74,7 +68,6 @@ def build_add_request(
         params=_params,
         headers=_headers,
         json=json,
-        content=content,
         **kwargs
     )
 
@@ -83,10 +76,10 @@ def build_list_request(
     *,
     filter: Optional[str] = None,
     select: Optional[str] = None,
-    max_results: Optional[int] = 1000,
-    timeout: Optional[int] = 30,
+    max_results: int = 1000,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -132,9 +125,9 @@ def build_cancel_deletion_request(
     thumbprint_algorithm: str,
     thumbprint: str,
     *,
-    timeout: Optional[int] = 30,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -180,9 +173,9 @@ def build_delete_request(
     thumbprint_algorithm: str,
     thumbprint: str,
     *,
-    timeout: Optional[int] = 30,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -229,9 +222,9 @@ def build_get_request(
     thumbprint: str,
     *,
     select: Optional[str] = None,
-    timeout: Optional[int] = 30,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -284,6 +277,8 @@ class CertificateOperations:
         :attr:`certificate` attribute.
     """
 
+    models = _models
+
     def __init__(self, *args, **kwargs):
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
@@ -295,11 +290,11 @@ class CertificateOperations:
     @distributed_trace
     def add(  # pylint: disable=inconsistent-return-statements
         self,
-        certificate: JSON,
+        certificate: _models.Certificate,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -307,10 +302,10 @@ class CertificateOperations:
 
         Adds a Certificate to the specified Account.
 
-        :param certificate: The Certificate to be added.
-        :type certificate: JSON
+        :param certificate: The Certificate to be added. Required.
+        :type certificate: ~azure-batch.models.Certificate
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -325,25 +320,7 @@ class CertificateOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                certificate = {
-                    "certificateFormat": "str",  # Optional. The format of the Certificate data.
-                      Known values are: "pfx", "cer".
-                    "data": "str",  # Required. The base64-encoded contents of the Certificate.
-                      The maximum size is 10KB.
-                    "password": "str",  # Optional. This must be omitted if the Certificate
-                      format is cer.
-                    "thumbprint": "str",  # Required. The X.509 thumbprint of the Certificate.
-                      This is a sequence of up to 40 hex digits (it may include spaces but these are
-                      removed).
-                    "thumbprintAlgorithm": "str"  # Required. The algorithm used to derive the
-                      thumbprint. This must be sha1.
-                }
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -351,22 +328,21 @@ class CertificateOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        _content = certificate
+        _json = self._serialize.body(certificate, 'Certificate')
 
         request = build_add_request(
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -380,11 +356,13 @@ class CertificateOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
@@ -405,13 +383,13 @@ class CertificateOperations:
         *,
         filter: Optional[str] = None,
         select: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
+        max_results: int = 1000,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> Iterable[JSON]:
+    ) -> Iterable["_models.Certificate"]:
         """Lists all of the Certificates that have been added to the specified Account.
 
         Lists all of the Certificates that have been added to the specified Account.
@@ -426,7 +404,7 @@ class CertificateOperations:
          Certificates can be returned. Default value is 1000.
         :paramtype max_results: int
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -439,60 +417,14 @@ class CertificateOperations:
          current system clock time; set it explicitly if you are calling the REST API directly. Default
          value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "odata.nextLink": "str",  # Optional. The URL to get the next set of results.
-                    "value": [
-                        {
-                            "deleteCertificateError": {
-                                "code": "str",  # Optional. An identifier for the
-                                  Certificate deletion error. Codes are invariant and are intended to
-                                  be consumed programmatically.
-                                "message": "str",  # Optional. A message describing
-                                  the Certificate deletion error, intended to be suitable for display
-                                  in a user interface.
-                                "values": [
-                                    {
-                                        "name": "str",  # Optional. The name
-                                          in the name-value pair.
-                                        "value": "str"  # Optional. The value
-                                          in the name-value pair.
-                                    }
-                                ]
-                            },
-                            "previousState": "str",  # Optional. This property is not set
-                              if the Certificate is in its initial active state. Known values are:
-                              "active", "deleting", "deletefailed".
-                            "previousStateTransitionTime": "2020-02-20 00:00:00",  #
-                              Optional. This property is not set if the Certificate is in its initial
-                              Active state.
-                            "publicData": "str",  # Optional. The public part of the
-                              Certificate as a base-64 encoded .cer file.
-                            "state": "str",  # Optional. The state of the Certificate.
-                              Known values are: "active", "deleting", "deletefailed".
-                            "stateTransitionTime": "2020-02-20 00:00:00",  # Optional.
-                              The time at which the Certificate entered its current state.
-                            "thumbprint": "str",  # Optional. The X.509 thumbprint of the
-                              Certificate. This is a sequence of up to 40 hex digits.
-                            "thumbprintAlgorithm": "str",  # Optional. The algorithm used
-                              to derive the thumbprint.
-                            "url": "str"  # Optional. The URL of the Certificate.
-                        }
-                    ]
-                }
+        :return: An iterator like instance of Certificate
+        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.Certificate]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[CertificateListResult]
 
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -502,7 +434,6 @@ class CertificateOperations:
             if not next_link:
                 
                 request = build_list_request(
-                    api_version=api_version,
                     filter=filter,
                     select=select,
                     max_results=max_results,
@@ -510,6 +441,7 @@ class CertificateOperations:
                     client_request_id=client_request_id,
                     return_client_request_id=return_client_request_id,
                     ocp_date=ocp_date,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -539,16 +471,16 @@ class CertificateOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            deserialized = self._deserialize("CertificateListResult", pipeline_response)
+            list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("odata.nextLink", None), iter(list_of_elem)
+            return deserialized.odata_next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request,
                 stream=False,
                 **kwargs
@@ -557,7 +489,8 @@ class CertificateOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -573,9 +506,9 @@ class CertificateOperations:
         thumbprint_algorithm: str,
         thumbprint: str,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -589,12 +522,12 @@ class CertificateOperations:
         you can try again to delete the Certificate.
 
         :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
-         be sha1.
+         be sha1. Required.
         :type thumbprint_algorithm: str
-        :param thumbprint: The thumbprint of the Certificate being deleted.
+        :param thumbprint: The thumbprint of the Certificate being deleted. Required.
         :type thumbprint: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -609,7 +542,7 @@ class CertificateOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -617,20 +550,19 @@ class CertificateOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_cancel_deletion_request(
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
-            api_version=api_version,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -644,11 +576,13 @@ class CertificateOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
@@ -669,9 +603,9 @@ class CertificateOperations:
         thumbprint_algorithm: str,
         thumbprint: str,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -687,12 +621,12 @@ class CertificateOperations:
         continue using the Certificate.
 
         :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
-         be sha1.
+         be sha1. Required.
         :type thumbprint_algorithm: str
-        :param thumbprint: The thumbprint of the Certificate to be deleted.
+        :param thumbprint: The thumbprint of the Certificate to be deleted. Required.
         :type thumbprint: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -707,7 +641,7 @@ class CertificateOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -715,20 +649,19 @@ class CertificateOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_delete_request(
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
-            api_version=api_version,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -742,11 +675,13 @@ class CertificateOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
@@ -767,23 +702,23 @@ class CertificateOperations:
         thumbprint: str,
         *,
         select: Optional[str] = None,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> _models.Certificate:
         """Gets information about the specified Certificate.
 
         :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
-         be sha1.
+         be sha1. Required.
         :type thumbprint_algorithm: str
-        :param thumbprint: The thumbprint of the Certificate to get.
+        :param thumbprint: The thumbprint of the Certificate to get. Required.
         :type thumbprint: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -796,47 +731,9 @@ class CertificateOperations:
          current system clock time; set it explicitly if you are calling the REST API directly. Default
          value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: JSON object
-        :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "deleteCertificateError": {
-                        "code": "str",  # Optional. An identifier for the Certificate
-                          deletion error. Codes are invariant and are intended to be consumed
-                          programmatically.
-                        "message": "str",  # Optional. A message describing the Certificate
-                          deletion error, intended to be suitable for display in a user interface.
-                        "values": [
-                            {
-                                "name": "str",  # Optional. The name in the
-                                  name-value pair.
-                                "value": "str"  # Optional. The value in the
-                                  name-value pair.
-                            }
-                        ]
-                    },
-                    "previousState": "str",  # Optional. This property is not set if the
-                      Certificate is in its initial active state. Known values are: "active",
-                      "deleting", "deletefailed".
-                    "previousStateTransitionTime": "2020-02-20 00:00:00",  # Optional. This
-                      property is not set if the Certificate is in its initial Active state.
-                    "publicData": "str",  # Optional. The public part of the Certificate as a
-                      base-64 encoded .cer file.
-                    "state": "str",  # Optional. The state of the Certificate. Known values are:
-                      "active", "deleting", "deletefailed".
-                    "stateTransitionTime": "2020-02-20 00:00:00",  # Optional. The time at which
-                      the Certificate entered its current state.
-                    "thumbprint": "str",  # Optional. The X.509 thumbprint of the Certificate.
-                      This is a sequence of up to 40 hex digits.
-                    "thumbprintAlgorithm": "str",  # Optional. The algorithm used to derive the
-                      thumbprint.
-                    "url": "str"  # Optional. The URL of the Certificate.
-                }
+        :return: Certificate
+        :rtype: ~azure-batch.models.Certificate
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -844,21 +741,20 @@ class CertificateOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Certificate]
 
         
         request = build_get_request(
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
-            api_version=api_version,
             select=select,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -872,11 +768,13 @@ class CertificateOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
@@ -884,14 +782,11 @@ class CertificateOperations:
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = self._deserialize('Certificate', pipeline_response)
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
-        return cast(JSON, deserialized)
+        return deserialized
 
 

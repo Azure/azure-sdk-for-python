@@ -9,6 +9,7 @@
 from typing import Any
 
 from azure.core.configuration import Configuration
+from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 from .._version import VERSION
@@ -20,8 +21,10 @@ class BatchServiceClientConfiguration(Configuration):  # pylint: disable=too-man
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param batch_url: The base URL for all Azure Batch service requests.
+    :param batch_url: The base URL for all Azure Batch service requests. Required.
     :type batch_url: str
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: Api Version. Default value is "2022-01-01.15.0". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -30,6 +33,7 @@ class BatchServiceClientConfiguration(Configuration):  # pylint: disable=too-man
     def __init__(
         self,
         batch_url: str,
+        credential: AzureKeyCredential,
         **kwargs: Any
     ) -> None:
         super(BatchServiceClientConfiguration, self).__init__(**kwargs)
@@ -37,8 +41,11 @@ class BatchServiceClientConfiguration(Configuration):  # pylint: disable=too-man
 
         if batch_url is None:
             raise ValueError("Parameter 'batch_url' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
 
         self.batch_url = batch_url
+        self.credential = credential
         self.api_version = api_version
         kwargs.setdefault('sdk_moniker', 'batch/{}'.format(VERSION))
         self._configure(**kwargs)
@@ -56,3 +63,5 @@ class BatchServiceClientConfiguration(Configuration):  # pylint: disable=too-man
         self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
+        if self.credential and not self.authentication_policy:
+            self.authentication_policy = policies.AzureKeyCredentialPolicy(self.credential, "Authorization", **kwargs)

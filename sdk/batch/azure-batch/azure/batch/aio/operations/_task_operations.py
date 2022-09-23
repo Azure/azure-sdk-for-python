@@ -7,8 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import sys
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar, cast
+from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -19,12 +18,9 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
+from ... import models as _models
+from ...models._models import TaskListResult
 from ...operations._task_operations import build_add_collection_request, build_add_request, build_delete_request, build_get_request, build_list_request, build_list_subtasks_request, build_reactivate_request, build_terminate_request, build_update_request
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -38,6 +34,8 @@ class TaskOperations:
         :attr:`task` attribute.
     """
 
+    models = _models
+
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
@@ -50,11 +48,11 @@ class TaskOperations:
     async def add(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        task: JSON,
+        task: _models.BatchTask,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -64,12 +62,12 @@ class TaskOperations:
         completed within 180 days of being added it will be terminated by the Batch service and left in
         whatever state it was in at that time.
 
-        :param job_id: The ID of the Job to which the Task is to be added.
+        :param job_id: The ID of the Job to which the Task is to be added. Required.
         :type job_id: str
-        :param task: The Task to be added.
-        :type task: JSON
+        :param task: The Task to be added. Required.
+        :type task: ~azure-batch.models.BatchTask
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -84,372 +82,7 @@ class TaskOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                task = {
-                    "affinityInfo": {
-                        "affinityId": "str"  # Required. You can pass the affinityId of a
-                          Node to indicate that this Task needs to run on that Compute Node. Note that
-                          this is just a soft affinity. If the target Compute Node is busy or
-                          unavailable at the time the Task is scheduled, then the Task will be
-                          scheduled elsewhere.
-                    },
-                    "applicationPackageReferences": [
-                        {
-                            "applicationId": "str",  # Required. The ID of the
-                              application to deploy.
-                            "version": "str"  # Optional. If this is omitted on a Pool,
-                              and no default version is specified for this application, the request
-                              fails with the error code InvalidApplicationPackageReferences and HTTP
-                              status code 409. If this is omitted on a Task, and no default version is
-                              specified for this application, the Task fails with a pre-processing
-                              error.
-                        }
-                    ],
-                    "authenticationTokenSettings": {
-                        "access": [
-                            "job"  # Optional. Default value is "job". The authentication
-                              token grants access to a limited set of Batch service operations.
-                              Currently the only supported value for the access property is 'job',
-                              which grants access to all operations related to the Job which contains
-                              the Task.
-                        ]
-                    },
-                    "commandLine": "str",  # Required. For multi-instance Tasks, the command line
-                      is executed as the primary Task, after the primary Task and all subtasks have
-                      finished executing the coordination command line. The command line does not run
-                      under a shell, and therefore cannot take advantage of shell features such as
-                      environment variable expansion. If you want to take advantage of such features,
-                      you should invoke the shell in the command line, for example using "cmd /c
-                      MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line
-                      refers to file paths, it should use a relative path (relative to the Task working
-                      directory), or use the Batch provided environment variable
-                      (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
-                    "constraints": {
-                        "maxTaskRetryCount": 0,  # Optional. Note that this value
-                          specifically controls the number of retries for the Task executable due to a
-                          nonzero exit code. The Batch service will try the Task once, and may then
-                          retry up to this limit. For example, if the maximum retry count is 3, Batch
-                          tries the Task up to 4 times (one initial try and 3 retries). If the maximum
-                          retry count is 0, the Batch service does not retry the Task after the first
-                          attempt. If the maximum retry count is -1, the Batch service retries the Task
-                          without limit, however this is not recommended for a start task or any task.
-                          The default value is 0 (no retries).
-                        "maxWallClockTime": "1 day, 0:00:00",  # Optional. If this is not
-                          specified, there is no time limit on how long the Task may run.
-                        "retentionTime": "1 day, 0:00:00"  # Optional. The default is 7 days,
-                          i.e. the Task directory will be retained for 7 days unless the Compute Node
-                          is removed or the Job is deleted.
-                    },
-                    "containerSettings": {
-                        "containerRunOptions": "str",  # Optional. These additional options
-                          are supplied as arguments to the "docker create" command, in addition to
-                          those controlled by the Batch Service.
-                        "imageName": "str",  # Required. This is the full Image reference, as
-                          would be specified to "docker pull". If no tag is provided as part of the
-                          Image name, the tag ":latest" is used as a default.
-                        "registry": {
-                            "identityReference": {
-                                "resourceId": "str"  # Optional. The ARM resource id
-                                  of the user assigned identity.
-                            },
-                            "password": "str",  # Optional. The password to log into the
-                              registry server.
-                            "registryServer": "str",  # Optional. If omitted, the default
-                              is "docker.io".
-                            "username": "str"  # Optional. The user name to log into the
-                              registry server.
-                        },
-                        "workingDirectory": "str"  # Optional. The default is
-                          'taskWorkingDirectory'. Known values are: "taskWorkingDirectory",
-                          "containerImageDefault".
-                    },
-                    "dependsOn": {
-                        "taskIdRanges": [
-                            {
-                                "end": 0,  # Required. The last Task ID in the range.
-                                "start": 0  # Required. The first Task ID in the
-                                  range.
-                            }
-                        ],
-                        "taskIds": [
-                            "str"  # Optional. The taskIds collection is limited to 64000
-                              characters total (i.e. the combined length of all Task IDs). If the
-                              taskIds collection exceeds the maximum length, the Add Task request fails
-                              with error code TaskDependencyListTooLong. In this case consider using
-                              Task ID ranges instead.
-                        ]
-                    },
-                    "displayName": "str",  # Optional. The display name need not be unique and
-                      can contain any Unicode characters up to a maximum length of 1024.
-                    "environmentSettings": [
-                        {
-                            "name": "str",  # Required. The name of the environment
-                              variable.
-                            "value": "str"  # Optional. The value of the environment
-                              variable.
-                        }
-                    ],
-                    "exitConditions": {
-                        "default": {
-                            "dependencyAction": "str",  # Optional. Possible values are
-                              'satisfy' (allowing dependent tasks to progress) and 'block' (dependent
-                              tasks continue to wait). Batch does not yet support cancellation of
-                              dependent tasks. Known values are: "satisfy", "block".
-                            "jobAction": "str"  # Optional. The default is none for exit
-                              code 0 and terminate for all other exit conditions. If the Job's
-                              onTaskFailed property is noaction, then specifying this property returns
-                              an error and the add Task request fails with an invalid property value
-                              error; if you are calling the REST API directly, the HTTP status code is
-                              400 (Bad Request). Known values are: "none", "disable", "terminate".
-                        },
-                        "exitCodeRanges": [
-                            {
-                                "end": 0,  # Required. The last exit code in the
-                                  range.
-                                "exitOptions": {
-                                    "dependencyAction": "str",  # Optional.
-                                      Possible values are 'satisfy' (allowing dependent tasks to
-                                      progress) and 'block' (dependent tasks continue to wait). Batch
-                                      does not yet support cancellation of dependent tasks. Known
-                                      values are: "satisfy", "block".
-                                    "jobAction": "str"  # Optional. The default
-                                      is none for exit code 0 and terminate for all other exit
-                                      conditions. If the Job's onTaskFailed property is noaction, then
-                                      specifying this property returns an error and the add Task
-                                      request fails with an invalid property value error; if you are
-                                      calling the REST API directly, the HTTP status code is 400 (Bad
-                                      Request). Known values are: "none", "disable", "terminate".
-                                },
-                                "start": 0  # Required. The first exit code in the
-                                  range.
-                            }
-                        ],
-                        "exitCodes": [
-                            {
-                                "code": 0,  # Required. A process exit code.
-                                "exitOptions": {
-                                    "dependencyAction": "str",  # Optional.
-                                      Possible values are 'satisfy' (allowing dependent tasks to
-                                      progress) and 'block' (dependent tasks continue to wait). Batch
-                                      does not yet support cancellation of dependent tasks. Known
-                                      values are: "satisfy", "block".
-                                    "jobAction": "str"  # Optional. The default
-                                      is none for exit code 0 and terminate for all other exit
-                                      conditions. If the Job's onTaskFailed property is noaction, then
-                                      specifying this property returns an error and the add Task
-                                      request fails with an invalid property value error; if you are
-                                      calling the REST API directly, the HTTP status code is 400 (Bad
-                                      Request). Known values are: "none", "disable", "terminate".
-                                }
-                            }
-                        ],
-                        "fileUploadError": {
-                            "dependencyAction": "str",  # Optional. Possible values are
-                              'satisfy' (allowing dependent tasks to progress) and 'block' (dependent
-                              tasks continue to wait). Batch does not yet support cancellation of
-                              dependent tasks. Known values are: "satisfy", "block".
-                            "jobAction": "str"  # Optional. The default is none for exit
-                              code 0 and terminate for all other exit conditions. If the Job's
-                              onTaskFailed property is noaction, then specifying this property returns
-                              an error and the add Task request fails with an invalid property value
-                              error; if you are calling the REST API directly, the HTTP status code is
-                              400 (Bad Request). Known values are: "none", "disable", "terminate".
-                        },
-                        "preProcessingError": {
-                            "dependencyAction": "str",  # Optional. Possible values are
-                              'satisfy' (allowing dependent tasks to progress) and 'block' (dependent
-                              tasks continue to wait). Batch does not yet support cancellation of
-                              dependent tasks. Known values are: "satisfy", "block".
-                            "jobAction": "str"  # Optional. The default is none for exit
-                              code 0 and terminate for all other exit conditions. If the Job's
-                              onTaskFailed property is noaction, then specifying this property returns
-                              an error and the add Task request fails with an invalid property value
-                              error; if you are calling the REST API directly, the HTTP status code is
-                              400 (Bad Request). Known values are: "none", "disable", "terminate".
-                        }
-                    },
-                    "id": "str",  # Required. The ID can contain any combination of alphanumeric
-                      characters including hyphens and underscores, and cannot contain more than 64
-                      characters. The ID is case-preserving and case-insensitive (that is, you may not
-                      have two IDs within a Job that differ only by case).
-                    "multiInstanceSettings": {
-                        "commonResourceFiles": [
-                            {
-                                "autoStorageContainerName": "str",  # Optional. The
-                                  autoStorageContainerName, storageContainerUrl and httpUrl properties
-                                  are mutually exclusive and one of them must be specified.
-                                "blobPrefix": "str",  # Optional. The property is
-                                  valid only when autoStorageContainerName or storageContainerUrl is
-                                  used. This prefix can be a partial filename or a subdirectory. If a
-                                  prefix is not specified, all the files in the container will be
-                                  downloaded.
-                                "fileMode": "str",  # Optional. This property applies
-                                  only to files being downloaded to Linux Compute Nodes. It will be
-                                  ignored if it is specified for a resourceFile which will be
-                                  downloaded to a Windows Compute Node. If this property is not
-                                  specified for a Linux Compute Node, then a default value of 0770 is
-                                  applied to the file.
-                                "filePath": "str",  # Optional. If the httpUrl
-                                  property is specified, the filePath is required and describes the
-                                  path which the file will be downloaded to, including the filename.
-                                  Otherwise, if the autoStorageContainerName or storageContainerUrl
-                                  property is specified, filePath is optional and is the directory to
-                                  download the files to. In the case where filePath is used as a
-                                  directory, any directory structure already associated with the input
-                                  data will be retained in full and appended to the specified filePath
-                                  directory. The specified relative path cannot break out of the Task's
-                                  working directory (for example by using '..').
-                                "httpUrl": "str",  # Optional. The
-                                  autoStorageContainerName, storageContainerUrl and httpUrl properties
-                                  are mutually exclusive and one of them must be specified. If the URL
-                                  points to Azure Blob Storage, it must be readable from compute nodes.
-                                  There are three ways to get such a URL for a blob in Azure storage:
-                                  include a Shared Access Signature (SAS) granting read permissions on
-                                  the blob, use a managed identity with read permission, or set the ACL
-                                  for the blob or its container to allow public access.
-                                "identityReference": {
-                                    "resourceId": "str"  # Optional. The ARM
-                                      resource id of the user assigned identity.
-                                },
-                                "storageContainerUrl": "str"  # Optional. The
-                                  autoStorageContainerName, storageContainerUrl and httpUrl properties
-                                  are mutually exclusive and one of them must be specified. This URL
-                                  must be readable and listable from compute nodes. There are three
-                                  ways to get such a URL for a container in Azure storage: include a
-                                  Shared Access Signature (SAS) granting read and list permissions on
-                                  the container, use a managed identity with read and list permissions,
-                                  or set the ACL for the container to allow public access.
-                            }
-                        ],
-                        "coordinationCommandLine": "str",  # Required. A typical coordination
-                          command line launches a background service and verifies that the service is
-                          ready to process inter-node messages.
-                        "numberOfInstances": 0  # Optional. If omitted, the default is 1.
-                    },
-                    "outputFiles": [
-                        {
-                            "destination": {
-                                "container": {
-                                    "containerUrl": "str",  # Required. If not
-                                      using a managed identity, the URL must include a Shared Access
-                                      Signature (SAS) granting write permissions to the container.
-                                    "identityReference": {
-                                        "resourceId": "str"  # Optional. The
-                                          ARM resource id of the user assigned identity.
-                                    },
-                                    "path": "str",  # Optional. If filePattern
-                                      refers to a specific file (i.e. contains no wildcards), then path
-                                      is the name of the blob to which to upload that file. If
-                                      filePattern contains one or more wildcards (and therefore may
-                                      match multiple files), then path is the name of the blob virtual
-                                      directory (which is prepended to each blob name) to which to
-                                      upload the file(s). If omitted, file(s) are uploaded to the root
-                                      of the container with a blob name matching their file name.
-                                    "uploadHeaders": [
-                                        {
-                                            "name": "str",  # Required.
-                                              The case-insensitive name of the header to be used while
-                                              uploading output files.
-                                            "value": "str"  # Optional.
-                                              The value of the header to be used while uploading output
-                                              files.
-                                        }
-                                    ]
-                                }
-                            },
-                            "filePattern": "str",  # Required. Both relative and absolute
-                              paths are supported. Relative paths are relative to the Task working
-                              directory. The following wildcards are supported: * matches 0 or more
-                              characters (for example pattern abc* would match abc or abcdef), **
-                              matches any directory, ? matches any single character, [abc] matches one
-                              character in the brackets, and [a-c] matches one character in the range.
-                              Brackets can include a negation to match any character not specified (for
-                              example [!abc] matches any character but a, b, or c). If a file name
-                              starts with "." it is ignored by default but may be matched by specifying
-                              it explicitly (for example *.gif will not match .a.gif, but .*.gif will).
-                              A simple example: **"" *.txt matches any file that does not start in '.'
-                              and ends with .txt in the Task working directory or any subdirectory. If
-                              the filename contains a wildcard character it can be escaped using
-                              brackets (for example abc["" *] would match a file named abc*"" ). Note
-                              that both and / are treated as directory separators on Windows, but only
-                              / is on Linux. Environment variables (%var% on Windows or $var on Linux)
-                              are expanded prior to the pattern being applied.
-                            "uploadOptions": {
-                                "uploadCondition": "str"  # Required. The default is
-                                  taskcompletion. Known values are: "tasksuccess", "taskfailure",
-                                  "taskcompletion".
-                            }
-                        }
-                    ],
-                    "requiredSlots": 0,  # Optional. The default is 1. A Task can only be
-                      scheduled to run on a compute node if the node has enough free scheduling slots
-                      available. For multi-instance Tasks, this must be 1.
-                    "resourceFiles": [
-                        {
-                            "autoStorageContainerName": "str",  # Optional. The
-                              autoStorageContainerName, storageContainerUrl and httpUrl properties are
-                              mutually exclusive and one of them must be specified.
-                            "blobPrefix": "str",  # Optional. The property is valid only
-                              when autoStorageContainerName or storageContainerUrl is used. This prefix
-                              can be a partial filename or a subdirectory. If a prefix is not
-                              specified, all the files in the container will be downloaded.
-                            "fileMode": "str",  # Optional. This property applies only to
-                              files being downloaded to Linux Compute Nodes. It will be ignored if it
-                              is specified for a resourceFile which will be downloaded to a Windows
-                              Compute Node. If this property is not specified for a Linux Compute Node,
-                              then a default value of 0770 is applied to the file.
-                            "filePath": "str",  # Optional. If the httpUrl property is
-                              specified, the filePath is required and describes the path which the file
-                              will be downloaded to, including the filename. Otherwise, if the
-                              autoStorageContainerName or storageContainerUrl property is specified,
-                              filePath is optional and is the directory to download the files to. In
-                              the case where filePath is used as a directory, any directory structure
-                              already associated with the input data will be retained in full and
-                              appended to the specified filePath directory. The specified relative path
-                              cannot break out of the Task's working directory (for example by using
-                              '..').
-                            "httpUrl": "str",  # Optional. The autoStorageContainerName,
-                              storageContainerUrl and httpUrl properties are mutually exclusive and one
-                              of them must be specified. If the URL points to Azure Blob Storage, it
-                              must be readable from compute nodes. There are three ways to get such a
-                              URL for a blob in Azure storage: include a Shared Access Signature (SAS)
-                              granting read permissions on the blob, use a managed identity with read
-                              permission, or set the ACL for the blob or its container to allow public
-                              access.
-                            "identityReference": {
-                                "resourceId": "str"  # Optional. The ARM resource id
-                                  of the user assigned identity.
-                            },
-                            "storageContainerUrl": "str"  # Optional. The
-                              autoStorageContainerName, storageContainerUrl and httpUrl properties are
-                              mutually exclusive and one of them must be specified. This URL must be
-                              readable and listable from compute nodes. There are three ways to get
-                              such a URL for a container in Azure storage: include a Shared Access
-                              Signature (SAS) granting read and list permissions on the container, use
-                              a managed identity with read and list permissions, or set the ACL for the
-                              container to allow public access.
-                        }
-                    ],
-                    "userIdentity": {
-                        "autoUser": {
-                            "elevationLevel": "str",  # Optional. The default value is
-                              nonAdmin. Known values are: "nonadmin", "admin".
-                            "scope": "str"  # Optional. The default value is pool. If the
-                              pool is running Windows a value of Task should be specified if stricter
-                              isolation between tasks is required. For example, if the task mutates the
-                              registry in a way which could impact other tasks, or if certificates have
-                              been specified on the pool which should not be accessible by normal tasks
-                              but should be accessible by StartTasks. Known values are: "task", "pool".
-                        },
-                        "username": "str"  # Optional. The userName and autoUser properties
-                          are mutually exclusive; you must specify one but not both.
-                    }
-                }
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -457,23 +90,22 @@ class TaskOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        _content = task
+        _json = self._serialize.body(task, 'BatchTask')
 
         request = build_add_request(
             job_id=job_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -487,11 +119,13 @@ class TaskOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
@@ -514,19 +148,19 @@ class TaskOperations:
         filter: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
+        max_results: int = 1000,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    ) -> AsyncIterable["_models.BatchTask"]:
         """Lists all of the Tasks that are associated with the specified Job.
 
         For multi-instance Tasks, information such as affinityId, executionInfo and nodeInfo refer to
         the primary Task. Use the list subtasks API to retrieve information about subtasks.
 
-        :param job_id: The ID of the Job.
+        :param job_id: The ID of the Job. Required.
         :type job_id: str
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
          https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-tasks.
@@ -540,7 +174,7 @@ class TaskOperations:
          Tasks can be returned. Default value is 1000.
         :paramtype max_results: int
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -553,564 +187,14 @@ class TaskOperations:
          current system clock time; set it explicitly if you are calling the REST API directly. Default
          value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "odata.nextLink": "str",  # Optional. The URL to get the next set of results.
-                    "value": [
-                        {
-                            "affinityInfo": {
-                                "affinityId": "str"  # Required. You can pass the
-                                  affinityId of a Node to indicate that this Task needs to run on that
-                                  Compute Node. Note that this is just a soft affinity. If the target
-                                  Compute Node is busy or unavailable at the time the Task is
-                                  scheduled, then the Task will be scheduled elsewhere.
-                            },
-                            "applicationPackageReferences": [
-                                {
-                                    "applicationId": "str",  # Required. The ID
-                                      of the application to deploy.
-                                    "version": "str"  # Optional. If this is
-                                      omitted on a Pool, and no default version is specified for this
-                                      application, the request fails with the error code
-                                      InvalidApplicationPackageReferences and HTTP status code 409. If
-                                      this is omitted on a Task, and no default version is specified
-                                      for this application, the Task fails with a pre-processing error.
-                                }
-                            ],
-                            "authenticationTokenSettings": {
-                                "access": [
-                                    "job"  # Optional. Default value is "job".
-                                      The authentication token grants access to a limited set of Batch
-                                      service operations. Currently the only supported value for the
-                                      access property is 'job', which grants access to all operations
-                                      related to the Job which contains the Task.
-                                ]
-                            },
-                            "commandLine": "str",  # Optional. For multi-instance Tasks,
-                              the command line is executed as the primary Task, after the primary Task
-                              and all subtasks have finished executing the coordination command line.
-                              The command line does not run under a shell, and therefore cannot take
-                              advantage of shell features such as environment variable expansion. If
-                              you want to take advantage of such features, you should invoke the shell
-                              in the command line, for example using "cmd /c MyCommand" in Windows or
-                              "/bin/sh -c MyCommand" in Linux. If the command line refers to file
-                              paths, it should use a relative path (relative to the Task working
-                              directory), or use the Batch provided environment variable
-                              (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
-                            "constraints": {
-                                "maxTaskRetryCount": 0,  # Optional. Note that this
-                                  value specifically controls the number of retries for the Task
-                                  executable due to a nonzero exit code. The Batch service will try the
-                                  Task once, and may then retry up to this limit. For example, if the
-                                  maximum retry count is 3, Batch tries the Task up to 4 times (one
-                                  initial try and 3 retries). If the maximum retry count is 0, the
-                                  Batch service does not retry the Task after the first attempt. If the
-                                  maximum retry count is -1, the Batch service retries the Task without
-                                  limit, however this is not recommended for a start task or any task.
-                                  The default value is 0 (no retries).
-                                "maxWallClockTime": "1 day, 0:00:00",  # Optional. If
-                                  this is not specified, there is no time limit on how long the Task
-                                  may run.
-                                "retentionTime": "1 day, 0:00:00"  # Optional. The
-                                  default is 7 days, i.e. the Task directory will be retained for 7
-                                  days unless the Compute Node is removed or the Job is deleted.
-                            },
-                            "containerSettings": {
-                                "containerRunOptions": "str",  # Optional. These
-                                  additional options are supplied as arguments to the "docker create"
-                                  command, in addition to those controlled by the Batch Service.
-                                "imageName": "str",  # Required. This is the full
-                                  Image reference, as would be specified to "docker pull". If no tag is
-                                  provided as part of the Image name, the tag ":latest" is used as a
-                                  default.
-                                "registry": {
-                                    "identityReference": {
-                                        "resourceId": "str"  # Optional. The
-                                          ARM resource id of the user assigned identity.
-                                    },
-                                    "password": "str",  # Optional. The password
-                                      to log into the registry server.
-                                    "registryServer": "str",  # Optional. If
-                                      omitted, the default is "docker.io".
-                                    "username": "str"  # Optional. The user name
-                                      to log into the registry server.
-                                },
-                                "workingDirectory": "str"  # Optional. The default is
-                                  'taskWorkingDirectory'. Known values are: "taskWorkingDirectory",
-                                  "containerImageDefault".
-                            },
-                            "creationTime": "2020-02-20 00:00:00",  # Optional. The
-                              creation time of the Task.
-                            "dependsOn": {
-                                "taskIdRanges": [
-                                    {
-                                        "end": 0,  # Required. The last Task
-                                          ID in the range.
-                                        "start": 0  # Required. The first
-                                          Task ID in the range.
-                                    }
-                                ],
-                                "taskIds": [
-                                    "str"  # Optional. The taskIds collection is
-                                      limited to 64000 characters total (i.e. the combined length of
-                                      all Task IDs). If the taskIds collection exceeds the maximum
-                                      length, the Add Task request fails with error code
-                                      TaskDependencyListTooLong. In this case consider using Task ID
-                                      ranges instead.
-                                ]
-                            },
-                            "displayName": "str",  # Optional. The display name need not
-                              be unique and can contain any Unicode characters up to a maximum length
-                              of 1024.
-                            "eTag": "str",  # Optional. This is an opaque string. You can
-                              use it to detect whether the Task has changed between requests. In
-                              particular, you can be pass the ETag when updating a Task to specify that
-                              your changes should take effect only if nobody else has modified the Task
-                              in the meantime.
-                            "environmentSettings": [
-                                {
-                                    "name": "str",  # Required. The name of the
-                                      environment variable.
-                                    "value": "str"  # Optional. The value of the
-                                      environment variable.
-                                }
-                            ],
-                            "executionInfo": {
-                                "containerInfo": {
-                                    "containerId": "str",  # Optional. The ID of
-                                      the container.
-                                    "error": "str",  # Optional. This is the
-                                      detailed error string from the Docker service, if available. It
-                                      is equivalent to the error field returned by "docker inspect".
-                                    "state": "str"  # Optional. This is the state
-                                      of the container according to the Docker service. It is
-                                      equivalent to the status field returned by "docker inspect".
-                                },
-                                "endTime": "2020-02-20 00:00:00",  # Optional. This
-                                  property is set only if the Task is in the Completed state.
-                                "exitCode": 0,  # Optional. This property is set only
-                                  if the Task is in the completed state. In general, the exit code for
-                                  a process reflects the specific convention implemented by the
-                                  application developer for that process. If you use the exit code
-                                  value to make decisions in your code, be sure that you know the exit
-                                  code convention used by the application process. However, if the
-                                  Batch service terminates the Task (due to timeout, or user
-                                  termination via the API) you may see an operating system-defined exit
-                                  code.
-                                "failureInfo": {
-                                    "category": "str",  # Required. The category
-                                      of the error. Known values are: "usererror", "servererror".
-                                    "code": "str",  # Optional. An identifier for
-                                      the Task error. Codes are invariant and are intended to be
-                                      consumed programmatically.
-                                    "details": [
-                                        {
-                                            "name": "str",  # Optional.
-                                              The name in the name-value pair.
-                                            "value": "str"  # Optional.
-                                              The value in the name-value pair.
-                                        }
-                                    ],
-                                    "message": "str"  # Optional. A message
-                                      describing the Task error, intended to be suitable for display in
-                                      a user interface.
-                                },
-                                "lastRequeueTime": "2020-02-20 00:00:00",  #
-                                  Optional. This property is set only if the requeueCount is nonzero.
-                                "lastRetryTime": "2020-02-20 00:00:00",  # Optional.
-                                  This element is present only if the Task was retried (i.e. retryCount
-                                  is nonzero). If present, this is typically the same as startTime, but
-                                  may be different if the Task has been restarted for reasons other
-                                  than retry; for example, if the Compute Node was rebooted during a
-                                  retry, then the startTime is updated but the lastRetryTime is not.
-                                "requeueCount": 0,  # Required. When the user removes
-                                  Compute Nodes from a Pool (by resizing/shrinking the pool) or when
-                                  the Job is being disabled, the user can specify that running Tasks on
-                                  the Compute Nodes be requeued for execution. This count tracks how
-                                  many times the Task has been requeued for these reasons.
-                                "result": "str",  # Optional. If the value is
-                                  'failed', then the details of the failure can be found in the
-                                  failureInfo property. Known values are: "success", "failure".
-                                "retryCount": 0,  # Required. Task application
-                                  failures (non-zero exit code) are retried, pre-processing errors (the
-                                  Task could not be run) and file upload errors are not retried. The
-                                  Batch service will retry the Task up to the limit specified by the
-                                  constraints.
-                                "startTime": "2020-02-20 00:00:00"  # Optional.
-                                  'Running' corresponds to the running state, so if the Task specifies
-                                  resource files or Packages, then the start time reflects the time at
-                                  which the Task started downloading or deploying these. If the Task
-                                  has been restarted or retried, this is the most recent time at which
-                                  the Task started running. This property is present only for Tasks
-                                  that are in the running or completed state.
-                            },
-                            "exitConditions": {
-                                "default": {
-                                    "dependencyAction": "str",  # Optional.
-                                      Possible values are 'satisfy' (allowing dependent tasks to
-                                      progress) and 'block' (dependent tasks continue to wait). Batch
-                                      does not yet support cancellation of dependent tasks. Known
-                                      values are: "satisfy", "block".
-                                    "jobAction": "str"  # Optional. The default
-                                      is none for exit code 0 and terminate for all other exit
-                                      conditions. If the Job's onTaskFailed property is noaction, then
-                                      specifying this property returns an error and the add Task
-                                      request fails with an invalid property value error; if you are
-                                      calling the REST API directly, the HTTP status code is 400 (Bad
-                                      Request). Known values are: "none", "disable", "terminate".
-                                },
-                                "exitCodeRanges": [
-                                    {
-                                        "end": 0,  # Required. The last exit
-                                          code in the range.
-                                        "exitOptions": {
-                                            "dependencyAction": "str",  #
-                                              Optional. Possible values are 'satisfy' (allowing
-                                              dependent tasks to progress) and 'block' (dependent tasks
-                                              continue to wait). Batch does not yet support
-                                              cancellation of dependent tasks. Known values are:
-                                              "satisfy", "block".
-                                            "jobAction": "str"  #
-                                              Optional. The default is none for exit code 0 and
-                                              terminate for all other exit conditions. If the Job's
-                                              onTaskFailed property is noaction, then specifying this
-                                              property returns an error and the add Task request fails
-                                              with an invalid property value error; if you are calling
-                                              the REST API directly, the HTTP status code is 400 (Bad
-                                              Request). Known values are: "none", "disable",
-                                              "terminate".
-                                        },
-                                        "start": 0  # Required. The first
-                                          exit code in the range.
-                                    }
-                                ],
-                                "exitCodes": [
-                                    {
-                                        "code": 0,  # Required. A process
-                                          exit code.
-                                        "exitOptions": {
-                                            "dependencyAction": "str",  #
-                                              Optional. Possible values are 'satisfy' (allowing
-                                              dependent tasks to progress) and 'block' (dependent tasks
-                                              continue to wait). Batch does not yet support
-                                              cancellation of dependent tasks. Known values are:
-                                              "satisfy", "block".
-                                            "jobAction": "str"  #
-                                              Optional. The default is none for exit code 0 and
-                                              terminate for all other exit conditions. If the Job's
-                                              onTaskFailed property is noaction, then specifying this
-                                              property returns an error and the add Task request fails
-                                              with an invalid property value error; if you are calling
-                                              the REST API directly, the HTTP status code is 400 (Bad
-                                              Request). Known values are: "none", "disable",
-                                              "terminate".
-                                        }
-                                    }
-                                ],
-                                "fileUploadError": {
-                                    "dependencyAction": "str",  # Optional.
-                                      Possible values are 'satisfy' (allowing dependent tasks to
-                                      progress) and 'block' (dependent tasks continue to wait). Batch
-                                      does not yet support cancellation of dependent tasks. Known
-                                      values are: "satisfy", "block".
-                                    "jobAction": "str"  # Optional. The default
-                                      is none for exit code 0 and terminate for all other exit
-                                      conditions. If the Job's onTaskFailed property is noaction, then
-                                      specifying this property returns an error and the add Task
-                                      request fails with an invalid property value error; if you are
-                                      calling the REST API directly, the HTTP status code is 400 (Bad
-                                      Request). Known values are: "none", "disable", "terminate".
-                                },
-                                "preProcessingError": {
-                                    "dependencyAction": "str",  # Optional.
-                                      Possible values are 'satisfy' (allowing dependent tasks to
-                                      progress) and 'block' (dependent tasks continue to wait). Batch
-                                      does not yet support cancellation of dependent tasks. Known
-                                      values are: "satisfy", "block".
-                                    "jobAction": "str"  # Optional. The default
-                                      is none for exit code 0 and terminate for all other exit
-                                      conditions. If the Job's onTaskFailed property is noaction, then
-                                      specifying this property returns an error and the add Task
-                                      request fails with an invalid property value error; if you are
-                                      calling the REST API directly, the HTTP status code is 400 (Bad
-                                      Request). Known values are: "none", "disable", "terminate".
-                                }
-                            },
-                            "id": "str",  # Optional. The ID can contain any combination
-                              of alphanumeric characters including hyphens and underscores, and cannot
-                              contain more than 64 characters.
-                            "lastModified": "2020-02-20 00:00:00",  # Optional. The last
-                              modified time of the Task.
-                            "multiInstanceSettings": {
-                                "commonResourceFiles": [
-                                    {
-                                        "autoStorageContainerName": "str",  #
-                                          Optional. The autoStorageContainerName, storageContainerUrl
-                                          and httpUrl properties are mutually exclusive and one of them
-                                          must be specified.
-                                        "blobPrefix": "str",  # Optional. The
-                                          property is valid only when autoStorageContainerName or
-                                          storageContainerUrl is used. This prefix can be a partial
-                                          filename or a subdirectory. If a prefix is not specified, all
-                                          the files in the container will be downloaded.
-                                        "fileMode": "str",  # Optional. This
-                                          property applies only to files being downloaded to Linux
-                                          Compute Nodes. It will be ignored if it is specified for a
-                                          resourceFile which will be downloaded to a Windows Compute
-                                          Node. If this property is not specified for a Linux Compute
-                                          Node, then a default value of 0770 is applied to the file.
-                                        "filePath": "str",  # Optional. If
-                                          the httpUrl property is specified, the filePath is required
-                                          and describes the path which the file will be downloaded to,
-                                          including the filename. Otherwise, if the
-                                          autoStorageContainerName or storageContainerUrl property is
-                                          specified, filePath is optional and is the directory to
-                                          download the files to. In the case where filePath is used as
-                                          a directory, any directory structure already associated with
-                                          the input data will be retained in full and appended to the
-                                          specified filePath directory. The specified relative path
-                                          cannot break out of the Task's working directory (for example
-                                          by using '..').
-                                        "httpUrl": "str",  # Optional. The
-                                          autoStorageContainerName, storageContainerUrl and httpUrl
-                                          properties are mutually exclusive and one of them must be
-                                          specified. If the URL points to Azure Blob Storage, it must
-                                          be readable from compute nodes. There are three ways to get
-                                          such a URL for a blob in Azure storage: include a Shared
-                                          Access Signature (SAS) granting read permissions on the blob,
-                                          use a managed identity with read permission, or set the ACL
-                                          for the blob or its container to allow public access.
-                                        "identityReference": {
-                                            "resourceId": "str"  #
-                                              Optional. The ARM resource id of the user assigned
-                                              identity.
-                                        },
-                                        "storageContainerUrl": "str"  #
-                                          Optional. The autoStorageContainerName, storageContainerUrl
-                                          and httpUrl properties are mutually exclusive and one of them
-                                          must be specified. This URL must be readable and listable
-                                          from compute nodes. There are three ways to get such a URL
-                                          for a container in Azure storage: include a Shared Access
-                                          Signature (SAS) granting read and list permissions on the
-                                          container, use a managed identity with read and list
-                                          permissions, or set the ACL for the container to allow public
-                                          access.
-                                    }
-                                ],
-                                "coordinationCommandLine": "str",  # Required. A
-                                  typical coordination command line launches a background service and
-                                  verifies that the service is ready to process inter-node messages.
-                                "numberOfInstances": 0  # Optional. If omitted, the
-                                  default is 1.
-                            },
-                            "nodeInfo": {
-                                "affinityId": "str",  # Optional. An identifier for
-                                  the Node on which the Task ran, which can be passed when adding a
-                                  Task to request that the Task be scheduled on this Compute Node.
-                                "nodeId": "str",  # Optional. The ID of the Compute
-                                  Node on which the Task ran.
-                                "nodeUrl": "str",  # Optional. The URL of the Compute
-                                  Node on which the Task ran.
-                                "poolId": "str",  # Optional. The ID of the Pool on
-                                  which the Task ran.
-                                "taskRootDirectory": "str",  # Optional. The root
-                                  directory of the Task on the Compute Node.
-                                "taskRootDirectoryUrl": "str"  # Optional. The URL to
-                                  the root directory of the Task on the Compute Node.
-                            },
-                            "outputFiles": [
-                                {
-                                    "destination": {
-                                        "container": {
-                                            "containerUrl": "str",  #
-                                              Required. If not using a managed identity, the URL must
-                                              include a Shared Access Signature (SAS) granting write
-                                              permissions to the container.
-                                            "identityReference": {
-                                                "resourceId": "str"
-                                                  # Optional. The ARM resource id of the user assigned
-                                                  identity.
-                                            },
-                                            "path": "str",  # Optional.
-                                              If filePattern refers to a specific file (i.e. contains
-                                              no wildcards), then path is the name of the blob to which
-                                              to upload that file. If filePattern contains one or more
-                                              wildcards (and therefore may match multiple files), then
-                                              path is the name of the blob virtual directory (which is
-                                              prepended to each blob name) to which to upload the
-                                              file(s). If omitted, file(s) are uploaded to the root of
-                                              the container with a blob name matching their file name.
-                                            "uploadHeaders": [
-                                                {
-                                                    "name":
-                                                      "str",  # Required. The case-insensitive name of
-                                                      the header to be used while uploading output
-                                                      files.
-                                                    "value":
-                                                      "str"  # Optional. The value of the header to be
-                                                      used while uploading output files.
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    "filePattern": "str",  # Required. Both
-                                      relative and absolute paths are supported. Relative paths are
-                                      relative to the Task working directory. The following wildcards
-                                      are supported: * matches 0 or more characters (for example
-                                      pattern abc* would match abc or abcdef), ** matches any
-                                      directory, ? matches any single character, [abc] matches one
-                                      character in the brackets, and [a-c] matches one character in the
-                                      range. Brackets can include a negation to match any character not
-                                      specified (for example [!abc] matches any character but a, b, or
-                                      c). If a file name starts with "." it is ignored by default but
-                                      may be matched by specifying it explicitly (for example *.gif
-                                      will not match .a.gif, but .*.gif will). A simple example: **""
-                                      *.txt matches any file that does not start in '.' and ends with
-                                      .txt in the Task working directory or any subdirectory. If the
-                                      filename contains a wildcard character it can be escaped using
-                                      brackets (for example abc["" *] would match a file named abc*""
-                                      ). Note that both and / are treated as directory separators on
-                                      Windows, but only / is on Linux. Environment variables (%var% on
-                                      Windows or $var on Linux) are expanded prior to the pattern being
-                                      applied.
-                                    "uploadOptions": {
-                                        "uploadCondition": "str"  # Required.
-                                          The default is taskcompletion. Known values are:
-                                          "tasksuccess", "taskfailure", "taskcompletion".
-                                    }
-                                }
-                            ],
-                            "previousState": "str",  # Optional. This property is not set
-                              if the Task is in its initial Active state. Known values are: "active",
-                              "preparing", "running", "completed".
-                            "previousStateTransitionTime": "2020-02-20 00:00:00",  #
-                              Optional. This property is not set if the Task is in its initial Active
-                              state.
-                            "requiredSlots": 0,  # Optional. The default is 1. A Task can
-                              only be scheduled to run on a compute node if the node has enough free
-                              scheduling slots available. For multi-instance Tasks, this must be 1.
-                            "resourceFiles": [
-                                {
-                                    "autoStorageContainerName": "str",  #
-                                      Optional. The autoStorageContainerName, storageContainerUrl and
-                                      httpUrl properties are mutually exclusive and one of them must be
-                                      specified.
-                                    "blobPrefix": "str",  # Optional. The
-                                      property is valid only when autoStorageContainerName or
-                                      storageContainerUrl is used. This prefix can be a partial
-                                      filename or a subdirectory. If a prefix is not specified, all the
-                                      files in the container will be downloaded.
-                                    "fileMode": "str",  # Optional. This property
-                                      applies only to files being downloaded to Linux Compute Nodes. It
-                                      will be ignored if it is specified for a resourceFile which will
-                                      be downloaded to a Windows Compute Node. If this property is not
-                                      specified for a Linux Compute Node, then a default value of 0770
-                                      is applied to the file.
-                                    "filePath": "str",  # Optional. If the
-                                      httpUrl property is specified, the filePath is required and
-                                      describes the path which the file will be downloaded to,
-                                      including the filename. Otherwise, if the
-                                      autoStorageContainerName or storageContainerUrl property is
-                                      specified, filePath is optional and is the directory to download
-                                      the files to. In the case where filePath is used as a directory,
-                                      any directory structure already associated with the input data
-                                      will be retained in full and appended to the specified filePath
-                                      directory. The specified relative path cannot break out of the
-                                      Task's working directory (for example by using '..').
-                                    "httpUrl": "str",  # Optional. The
-                                      autoStorageContainerName, storageContainerUrl and httpUrl
-                                      properties are mutually exclusive and one of them must be
-                                      specified. If the URL points to Azure Blob Storage, it must be
-                                      readable from compute nodes. There are three ways to get such a
-                                      URL for a blob in Azure storage: include a Shared Access
-                                      Signature (SAS) granting read permissions on the blob, use a
-                                      managed identity with read permission, or set the ACL for the
-                                      blob or its container to allow public access.
-                                    "identityReference": {
-                                        "resourceId": "str"  # Optional. The
-                                          ARM resource id of the user assigned identity.
-                                    },
-                                    "storageContainerUrl": "str"  # Optional. The
-                                      autoStorageContainerName, storageContainerUrl and httpUrl
-                                      properties are mutually exclusive and one of them must be
-                                      specified. This URL must be readable and listable from compute
-                                      nodes. There are three ways to get such a URL for a container in
-                                      Azure storage: include a Shared Access Signature (SAS) granting
-                                      read and list permissions on the container, use a managed
-                                      identity with read and list permissions, or set the ACL for the
-                                      container to allow public access.
-                                }
-                            ],
-                            "state": "str",  # Optional. The state of the Task. Known
-                              values are: "active", "preparing", "running", "completed".
-                            "stateTransitionTime": "2020-02-20 00:00:00",  # Optional.
-                              The time at which the Task entered its current state.
-                            "stats": {
-                                "kernelCPUTime": "1 day, 0:00:00",  # Required. The
-                                  total kernel mode CPU time (summed across all cores and all Compute
-                                  Nodes) consumed by the Task.
-                                "lastUpdateTime": "2020-02-20 00:00:00",  # Required.
-                                  The time at which the statistics were last updated. All statistics
-                                  are limited to the range between startTime and lastUpdateTime.
-                                "readIOGiB": 0.0,  # Required. The total gibibytes
-                                  read from disk by the Task.
-                                "readIOps": 0.0,  # Required. The total number of
-                                  disk read operations made by the Task.
-                                "startTime": "2020-02-20 00:00:00",  # Required. The
-                                  start time of the time range covered by the statistics.
-                                "url": "str",  # Required. The URL of the statistics.
-                                "userCPUTime": "1 day, 0:00:00",  # Required. The
-                                  total user mode CPU time (summed across all cores and all Compute
-                                  Nodes) consumed by the Task.
-                                "waitTime": "1 day, 0:00:00",  # Required. The total
-                                  wait time of the Task. The wait time for a Task is defined as the
-                                  elapsed time between the creation of the Task and the start of Task
-                                  execution. (If the Task is retried due to failures, the wait time is
-                                  the time to the most recent Task execution.).
-                                "wallClockTime": "1 day, 0:00:00",  # Required. The
-                                  wall clock time is the elapsed time from when the Task started
-                                  running on a Compute Node to when it finished (or to the last time
-                                  the statistics were updated, if the Task had not finished by then).
-                                  If the Task was retried, this includes the wall clock time of all the
-                                  Task retries.
-                                "writeIOGiB": 0.0,  # Required. The total gibibytes
-                                  written to disk by the Task.
-                                "writeIOps": 0.0  # Required. The total number of
-                                  disk write operations made by the Task.
-                            },
-                            "url": "str",  # Optional. The URL of the Task.
-                            "userIdentity": {
-                                "autoUser": {
-                                    "elevationLevel": "str",  # Optional. The
-                                      default value is nonAdmin. Known values are: "nonadmin", "admin".
-                                    "scope": "str"  # Optional. The default value
-                                      is pool. If the pool is running Windows a value of Task should be
-                                      specified if stricter isolation between tasks is required. For
-                                      example, if the task mutates the registry in a way which could
-                                      impact other tasks, or if certificates have been specified on the
-                                      pool which should not be accessible by normal tasks but should be
-                                      accessible by StartTasks. Known values are: "task", "pool".
-                                },
-                                "username": "str"  # Optional. The userName and
-                                  autoUser properties are mutually exclusive; you must specify one but
-                                  not both.
-                            }
-                        }
-                    ]
-                }
+        :return: An iterator like instance of BatchTask
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure-batch.models.BatchTask]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[TaskListResult]
 
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1121,7 +205,6 @@ class TaskOperations:
                 
                 request = build_list_request(
                     job_id=job_id,
-                    api_version=api_version,
                     filter=filter,
                     select=select,
                     expand=expand,
@@ -1130,6 +213,7 @@ class TaskOperations:
                     client_request_id=client_request_id,
                     return_client_request_id=return_client_request_id,
                     ocp_date=ocp_date,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -1160,16 +244,16 @@ class TaskOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            deserialized = self._deserialize("TaskListResult", pipeline_response)
+            list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("odata.nextLink", None), AsyncList(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request,
                 stream=False,
                 **kwargs
@@ -1178,7 +262,8 @@ class TaskOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -1192,14 +277,14 @@ class TaskOperations:
     async def add_collection(
         self,
         job_id: str,
-        task_collection: JSON,
+        task_collection: _models.TaskCollection,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> _models.TaskAddCollectionResult:
         """Adds a collection of Tasks to the specified Job.
 
         Note that each Task must have a unique ID. The Batch service may not return the results for
@@ -1215,12 +300,12 @@ class TaskOperations:
         180 days of being added it will be terminated by the Batch service and left in whatever state
         it was in at that time.
 
-        :param job_id: The ID of the Job to which the Task collection is to be added.
+        :param job_id: The ID of the Job to which the Task collection is to be added. Required.
         :type job_id: str
-        :param task_collection: The Tasks to be added.
-        :type task_collection: JSON
+        :param task_collection: The Tasks to be added. Required.
+        :type task_collection: ~azure-batch.models.TaskCollection
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1233,462 +318,9 @@ class TaskOperations:
          current system clock time; set it explicitly if you are calling the REST API directly. Default
          value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: JSON object
-        :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                task_collection = {
-                    "value": [
-                        {
-                            "affinityInfo": {
-                                "affinityId": "str"  # Required. You can pass the
-                                  affinityId of a Node to indicate that this Task needs to run on that
-                                  Compute Node. Note that this is just a soft affinity. If the target
-                                  Compute Node is busy or unavailable at the time the Task is
-                                  scheduled, then the Task will be scheduled elsewhere.
-                            },
-                            "applicationPackageReferences": [
-                                {
-                                    "applicationId": "str",  # Required. The ID
-                                      of the application to deploy.
-                                    "version": "str"  # Optional. If this is
-                                      omitted on a Pool, and no default version is specified for this
-                                      application, the request fails with the error code
-                                      InvalidApplicationPackageReferences and HTTP status code 409. If
-                                      this is omitted on a Task, and no default version is specified
-                                      for this application, the Task fails with a pre-processing error.
-                                }
-                            ],
-                            "authenticationTokenSettings": {
-                                "access": [
-                                    "job"  # Optional. Default value is "job".
-                                      The authentication token grants access to a limited set of Batch
-                                      service operations. Currently the only supported value for the
-                                      access property is 'job', which grants access to all operations
-                                      related to the Job which contains the Task.
-                                ]
-                            },
-                            "commandLine": "str",  # Required. For multi-instance Tasks,
-                              the command line is executed as the primary Task, after the primary Task
-                              and all subtasks have finished executing the coordination command line.
-                              The command line does not run under a shell, and therefore cannot take
-                              advantage of shell features such as environment variable expansion. If
-                              you want to take advantage of such features, you should invoke the shell
-                              in the command line, for example using "cmd /c MyCommand" in Windows or
-                              "/bin/sh -c MyCommand" in Linux. If the command line refers to file
-                              paths, it should use a relative path (relative to the Task working
-                              directory), or use the Batch provided environment variable
-                              (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
-                            "constraints": {
-                                "maxTaskRetryCount": 0,  # Optional. Note that this
-                                  value specifically controls the number of retries for the Task
-                                  executable due to a nonzero exit code. The Batch service will try the
-                                  Task once, and may then retry up to this limit. For example, if the
-                                  maximum retry count is 3, Batch tries the Task up to 4 times (one
-                                  initial try and 3 retries). If the maximum retry count is 0, the
-                                  Batch service does not retry the Task after the first attempt. If the
-                                  maximum retry count is -1, the Batch service retries the Task without
-                                  limit, however this is not recommended for a start task or any task.
-                                  The default value is 0 (no retries).
-                                "maxWallClockTime": "1 day, 0:00:00",  # Optional. If
-                                  this is not specified, there is no time limit on how long the Task
-                                  may run.
-                                "retentionTime": "1 day, 0:00:00"  # Optional. The
-                                  default is 7 days, i.e. the Task directory will be retained for 7
-                                  days unless the Compute Node is removed or the Job is deleted.
-                            },
-                            "containerSettings": {
-                                "containerRunOptions": "str",  # Optional. These
-                                  additional options are supplied as arguments to the "docker create"
-                                  command, in addition to those controlled by the Batch Service.
-                                "imageName": "str",  # Required. This is the full
-                                  Image reference, as would be specified to "docker pull". If no tag is
-                                  provided as part of the Image name, the tag ":latest" is used as a
-                                  default.
-                                "registry": {
-                                    "identityReference": {
-                                        "resourceId": "str"  # Optional. The
-                                          ARM resource id of the user assigned identity.
-                                    },
-                                    "password": "str",  # Optional. The password
-                                      to log into the registry server.
-                                    "registryServer": "str",  # Optional. If
-                                      omitted, the default is "docker.io".
-                                    "username": "str"  # Optional. The user name
-                                      to log into the registry server.
-                                },
-                                "workingDirectory": "str"  # Optional. The default is
-                                  'taskWorkingDirectory'. Known values are: "taskWorkingDirectory",
-                                  "containerImageDefault".
-                            },
-                            "dependsOn": {
-                                "taskIdRanges": [
-                                    {
-                                        "end": 0,  # Required. The last Task
-                                          ID in the range.
-                                        "start": 0  # Required. The first
-                                          Task ID in the range.
-                                    }
-                                ],
-                                "taskIds": [
-                                    "str"  # Optional. The taskIds collection is
-                                      limited to 64000 characters total (i.e. the combined length of
-                                      all Task IDs). If the taskIds collection exceeds the maximum
-                                      length, the Add Task request fails with error code
-                                      TaskDependencyListTooLong. In this case consider using Task ID
-                                      ranges instead.
-                                ]
-                            },
-                            "displayName": "str",  # Optional. The display name need not
-                              be unique and can contain any Unicode characters up to a maximum length
-                              of 1024.
-                            "environmentSettings": [
-                                {
-                                    "name": "str",  # Required. The name of the
-                                      environment variable.
-                                    "value": "str"  # Optional. The value of the
-                                      environment variable.
-                                }
-                            ],
-                            "exitConditions": {
-                                "default": {
-                                    "dependencyAction": "str",  # Optional.
-                                      Possible values are 'satisfy' (allowing dependent tasks to
-                                      progress) and 'block' (dependent tasks continue to wait). Batch
-                                      does not yet support cancellation of dependent tasks. Known
-                                      values are: "satisfy", "block".
-                                    "jobAction": "str"  # Optional. The default
-                                      is none for exit code 0 and terminate for all other exit
-                                      conditions. If the Job's onTaskFailed property is noaction, then
-                                      specifying this property returns an error and the add Task
-                                      request fails with an invalid property value error; if you are
-                                      calling the REST API directly, the HTTP status code is 400 (Bad
-                                      Request). Known values are: "none", "disable", "terminate".
-                                },
-                                "exitCodeRanges": [
-                                    {
-                                        "end": 0,  # Required. The last exit
-                                          code in the range.
-                                        "exitOptions": {
-                                            "dependencyAction": "str",  #
-                                              Optional. Possible values are 'satisfy' (allowing
-                                              dependent tasks to progress) and 'block' (dependent tasks
-                                              continue to wait). Batch does not yet support
-                                              cancellation of dependent tasks. Known values are:
-                                              "satisfy", "block".
-                                            "jobAction": "str"  #
-                                              Optional. The default is none for exit code 0 and
-                                              terminate for all other exit conditions. If the Job's
-                                              onTaskFailed property is noaction, then specifying this
-                                              property returns an error and the add Task request fails
-                                              with an invalid property value error; if you are calling
-                                              the REST API directly, the HTTP status code is 400 (Bad
-                                              Request). Known values are: "none", "disable",
-                                              "terminate".
-                                        },
-                                        "start": 0  # Required. The first
-                                          exit code in the range.
-                                    }
-                                ],
-                                "exitCodes": [
-                                    {
-                                        "code": 0,  # Required. A process
-                                          exit code.
-                                        "exitOptions": {
-                                            "dependencyAction": "str",  #
-                                              Optional. Possible values are 'satisfy' (allowing
-                                              dependent tasks to progress) and 'block' (dependent tasks
-                                              continue to wait). Batch does not yet support
-                                              cancellation of dependent tasks. Known values are:
-                                              "satisfy", "block".
-                                            "jobAction": "str"  #
-                                              Optional. The default is none for exit code 0 and
-                                              terminate for all other exit conditions. If the Job's
-                                              onTaskFailed property is noaction, then specifying this
-                                              property returns an error and the add Task request fails
-                                              with an invalid property value error; if you are calling
-                                              the REST API directly, the HTTP status code is 400 (Bad
-                                              Request). Known values are: "none", "disable",
-                                              "terminate".
-                                        }
-                                    }
-                                ],
-                                "fileUploadError": {
-                                    "dependencyAction": "str",  # Optional.
-                                      Possible values are 'satisfy' (allowing dependent tasks to
-                                      progress) and 'block' (dependent tasks continue to wait). Batch
-                                      does not yet support cancellation of dependent tasks. Known
-                                      values are: "satisfy", "block".
-                                    "jobAction": "str"  # Optional. The default
-                                      is none for exit code 0 and terminate for all other exit
-                                      conditions. If the Job's onTaskFailed property is noaction, then
-                                      specifying this property returns an error and the add Task
-                                      request fails with an invalid property value error; if you are
-                                      calling the REST API directly, the HTTP status code is 400 (Bad
-                                      Request). Known values are: "none", "disable", "terminate".
-                                },
-                                "preProcessingError": {
-                                    "dependencyAction": "str",  # Optional.
-                                      Possible values are 'satisfy' (allowing dependent tasks to
-                                      progress) and 'block' (dependent tasks continue to wait). Batch
-                                      does not yet support cancellation of dependent tasks. Known
-                                      values are: "satisfy", "block".
-                                    "jobAction": "str"  # Optional. The default
-                                      is none for exit code 0 and terminate for all other exit
-                                      conditions. If the Job's onTaskFailed property is noaction, then
-                                      specifying this property returns an error and the add Task
-                                      request fails with an invalid property value error; if you are
-                                      calling the REST API directly, the HTTP status code is 400 (Bad
-                                      Request). Known values are: "none", "disable", "terminate".
-                                }
-                            },
-                            "id": "str",  # Required. The ID can contain any combination
-                              of alphanumeric characters including hyphens and underscores, and cannot
-                              contain more than 64 characters. The ID is case-preserving and
-                              case-insensitive (that is, you may not have two IDs within a Job that
-                              differ only by case).
-                            "multiInstanceSettings": {
-                                "commonResourceFiles": [
-                                    {
-                                        "autoStorageContainerName": "str",  #
-                                          Optional. The autoStorageContainerName, storageContainerUrl
-                                          and httpUrl properties are mutually exclusive and one of them
-                                          must be specified.
-                                        "blobPrefix": "str",  # Optional. The
-                                          property is valid only when autoStorageContainerName or
-                                          storageContainerUrl is used. This prefix can be a partial
-                                          filename or a subdirectory. If a prefix is not specified, all
-                                          the files in the container will be downloaded.
-                                        "fileMode": "str",  # Optional. This
-                                          property applies only to files being downloaded to Linux
-                                          Compute Nodes. It will be ignored if it is specified for a
-                                          resourceFile which will be downloaded to a Windows Compute
-                                          Node. If this property is not specified for a Linux Compute
-                                          Node, then a default value of 0770 is applied to the file.
-                                        "filePath": "str",  # Optional. If
-                                          the httpUrl property is specified, the filePath is required
-                                          and describes the path which the file will be downloaded to,
-                                          including the filename. Otherwise, if the
-                                          autoStorageContainerName or storageContainerUrl property is
-                                          specified, filePath is optional and is the directory to
-                                          download the files to. In the case where filePath is used as
-                                          a directory, any directory structure already associated with
-                                          the input data will be retained in full and appended to the
-                                          specified filePath directory. The specified relative path
-                                          cannot break out of the Task's working directory (for example
-                                          by using '..').
-                                        "httpUrl": "str",  # Optional. The
-                                          autoStorageContainerName, storageContainerUrl and httpUrl
-                                          properties are mutually exclusive and one of them must be
-                                          specified. If the URL points to Azure Blob Storage, it must
-                                          be readable from compute nodes. There are three ways to get
-                                          such a URL for a blob in Azure storage: include a Shared
-                                          Access Signature (SAS) granting read permissions on the blob,
-                                          use a managed identity with read permission, or set the ACL
-                                          for the blob or its container to allow public access.
-                                        "identityReference": {
-                                            "resourceId": "str"  #
-                                              Optional. The ARM resource id of the user assigned
-                                              identity.
-                                        },
-                                        "storageContainerUrl": "str"  #
-                                          Optional. The autoStorageContainerName, storageContainerUrl
-                                          and httpUrl properties are mutually exclusive and one of them
-                                          must be specified. This URL must be readable and listable
-                                          from compute nodes. There are three ways to get such a URL
-                                          for a container in Azure storage: include a Shared Access
-                                          Signature (SAS) granting read and list permissions on the
-                                          container, use a managed identity with read and list
-                                          permissions, or set the ACL for the container to allow public
-                                          access.
-                                    }
-                                ],
-                                "coordinationCommandLine": "str",  # Required. A
-                                  typical coordination command line launches a background service and
-                                  verifies that the service is ready to process inter-node messages.
-                                "numberOfInstances": 0  # Optional. If omitted, the
-                                  default is 1.
-                            },
-                            "outputFiles": [
-                                {
-                                    "destination": {
-                                        "container": {
-                                            "containerUrl": "str",  #
-                                              Required. If not using a managed identity, the URL must
-                                              include a Shared Access Signature (SAS) granting write
-                                              permissions to the container.
-                                            "identityReference": {
-                                                "resourceId": "str"
-                                                  # Optional. The ARM resource id of the user assigned
-                                                  identity.
-                                            },
-                                            "path": "str",  # Optional.
-                                              If filePattern refers to a specific file (i.e. contains
-                                              no wildcards), then path is the name of the blob to which
-                                              to upload that file. If filePattern contains one or more
-                                              wildcards (and therefore may match multiple files), then
-                                              path is the name of the blob virtual directory (which is
-                                              prepended to each blob name) to which to upload the
-                                              file(s). If omitted, file(s) are uploaded to the root of
-                                              the container with a blob name matching their file name.
-                                            "uploadHeaders": [
-                                                {
-                                                    "name":
-                                                      "str",  # Required. The case-insensitive name of
-                                                      the header to be used while uploading output
-                                                      files.
-                                                    "value":
-                                                      "str"  # Optional. The value of the header to be
-                                                      used while uploading output files.
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    "filePattern": "str",  # Required. Both
-                                      relative and absolute paths are supported. Relative paths are
-                                      relative to the Task working directory. The following wildcards
-                                      are supported: * matches 0 or more characters (for example
-                                      pattern abc* would match abc or abcdef), ** matches any
-                                      directory, ? matches any single character, [abc] matches one
-                                      character in the brackets, and [a-c] matches one character in the
-                                      range. Brackets can include a negation to match any character not
-                                      specified (for example [!abc] matches any character but a, b, or
-                                      c). If a file name starts with "." it is ignored by default but
-                                      may be matched by specifying it explicitly (for example *.gif
-                                      will not match .a.gif, but .*.gif will). A simple example: **""
-                                      *.txt matches any file that does not start in '.' and ends with
-                                      .txt in the Task working directory or any subdirectory. If the
-                                      filename contains a wildcard character it can be escaped using
-                                      brackets (for example abc["" *] would match a file named abc*""
-                                      ). Note that both and / are treated as directory separators on
-                                      Windows, but only / is on Linux. Environment variables (%var% on
-                                      Windows or $var on Linux) are expanded prior to the pattern being
-                                      applied.
-                                    "uploadOptions": {
-                                        "uploadCondition": "str"  # Required.
-                                          The default is taskcompletion. Known values are:
-                                          "tasksuccess", "taskfailure", "taskcompletion".
-                                    }
-                                }
-                            ],
-                            "requiredSlots": 0,  # Optional. The default is 1. A Task can
-                              only be scheduled to run on a compute node if the node has enough free
-                              scheduling slots available. For multi-instance Tasks, this must be 1.
-                            "resourceFiles": [
-                                {
-                                    "autoStorageContainerName": "str",  #
-                                      Optional. The autoStorageContainerName, storageContainerUrl and
-                                      httpUrl properties are mutually exclusive and one of them must be
-                                      specified.
-                                    "blobPrefix": "str",  # Optional. The
-                                      property is valid only when autoStorageContainerName or
-                                      storageContainerUrl is used. This prefix can be a partial
-                                      filename or a subdirectory. If a prefix is not specified, all the
-                                      files in the container will be downloaded.
-                                    "fileMode": "str",  # Optional. This property
-                                      applies only to files being downloaded to Linux Compute Nodes. It
-                                      will be ignored if it is specified for a resourceFile which will
-                                      be downloaded to a Windows Compute Node. If this property is not
-                                      specified for a Linux Compute Node, then a default value of 0770
-                                      is applied to the file.
-                                    "filePath": "str",  # Optional. If the
-                                      httpUrl property is specified, the filePath is required and
-                                      describes the path which the file will be downloaded to,
-                                      including the filename. Otherwise, if the
-                                      autoStorageContainerName or storageContainerUrl property is
-                                      specified, filePath is optional and is the directory to download
-                                      the files to. In the case where filePath is used as a directory,
-                                      any directory structure already associated with the input data
-                                      will be retained in full and appended to the specified filePath
-                                      directory. The specified relative path cannot break out of the
-                                      Task's working directory (for example by using '..').
-                                    "httpUrl": "str",  # Optional. The
-                                      autoStorageContainerName, storageContainerUrl and httpUrl
-                                      properties are mutually exclusive and one of them must be
-                                      specified. If the URL points to Azure Blob Storage, it must be
-                                      readable from compute nodes. There are three ways to get such a
-                                      URL for a blob in Azure storage: include a Shared Access
-                                      Signature (SAS) granting read permissions on the blob, use a
-                                      managed identity with read permission, or set the ACL for the
-                                      blob or its container to allow public access.
-                                    "identityReference": {
-                                        "resourceId": "str"  # Optional. The
-                                          ARM resource id of the user assigned identity.
-                                    },
-                                    "storageContainerUrl": "str"  # Optional. The
-                                      autoStorageContainerName, storageContainerUrl and httpUrl
-                                      properties are mutually exclusive and one of them must be
-                                      specified. This URL must be readable and listable from compute
-                                      nodes. There are three ways to get such a URL for a container in
-                                      Azure storage: include a Shared Access Signature (SAS) granting
-                                      read and list permissions on the container, use a managed
-                                      identity with read and list permissions, or set the ACL for the
-                                      container to allow public access.
-                                }
-                            ],
-                            "userIdentity": {
-                                "autoUser": {
-                                    "elevationLevel": "str",  # Optional. The
-                                      default value is nonAdmin. Known values are: "nonadmin", "admin".
-                                    "scope": "str"  # Optional. The default value
-                                      is pool. If the pool is running Windows a value of Task should be
-                                      specified if stricter isolation between tasks is required. For
-                                      example, if the task mutates the registry in a way which could
-                                      impact other tasks, or if certificates have been specified on the
-                                      pool which should not be accessible by normal tasks but should be
-                                      accessible by StartTasks. Known values are: "task", "pool".
-                                },
-                                "username": "str"  # Optional. The userName and
-                                  autoUser properties are mutually exclusive; you must specify one but
-                                  not both.
-                            }
-                        }
-                    ]
-                }
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "value": [
-                        {
-                            "eTag": "str",  # Optional. You can use this to detect
-                              whether the Task has changed between requests. In particular, you can be
-                              pass the ETag with an Update Task request to specify that your changes
-                              should take effect only if nobody else has modified the Job in the
-                              meantime.
-                            "error": {
-                                "code": "str",  # Optional. An identifier for the
-                                  error. Codes are invariant and are intended to be consumed
-                                  programmatically.
-                                "message": {
-                                    "lang": "str",  # Optional. The language code
-                                      of the error message.
-                                    "value": "str"  # Optional. The text of the
-                                      message.
-                                },
-                                "values": [
-                                    {
-                                        "key": "str",  # Optional. An
-                                          identifier specifying the meaning of the Value property.
-                                        "value": "str"  # Optional. The
-                                          additional information included with the error response.
-                                    }
-                                ]
-                            },
-                            "lastModified": "2020-02-20 00:00:00",  # Optional. The last
-                              modified time of the Task.
-                            "location": "str",  # Optional. The URL of the Task, if the
-                              Task was successfully added.
-                            "status": "str",  # Required. The status of the add Task
-                              request. Known values are: "success", "clienterror", "servererror".
-                            "taskId": "str"  # Required. The ID of the Task for which
-                              this is the result.
-                        }
-                    ]
-                }
+        :return: TaskAddCollectionResult
+        :rtype: ~azure-batch.models.TaskAddCollectionResult
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1696,23 +328,22 @@ class TaskOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.TaskAddCollectionResult]
 
-        _content = task_collection
+        _json = self._serialize.body(task_collection, 'TaskCollection')
 
         request = build_add_collection_request(
             job_id=job_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -1726,25 +357,24 @@ class TaskOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
         response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = self._deserialize('TaskAddCollectionResult', pipeline_response)
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
-        return cast(JSON, deserialized)
+        return deserialized
 
 
 
@@ -1754,9 +384,9 @@ class TaskOperations:
         job_id: str,
         task_id: str,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -1771,12 +401,12 @@ class TaskOperations:
         operation applies synchronously to the primary task; subtasks and their files are then deleted
         asynchronously in the background.
 
-        :param job_id: The ID of the Job from which to delete the Task.
+        :param job_id: The ID of the Job from which to delete the Task. Required.
         :type job_id: str
-        :param task_id: The ID of the Task to delete.
+        :param task_id: The ID of the Task to delete. Required.
         :type task_id: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1807,7 +437,7 @@ class TaskOperations:
         :paramtype if_unmodified_since: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1815,16 +445,14 @@ class TaskOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_delete_request(
             job_id=job_id,
             task_id=task_id,
-            api_version=api_version,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
@@ -1833,6 +461,7 @@ class TaskOperations:
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -1846,11 +475,13 @@ class TaskOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
@@ -1870,31 +501,31 @@ class TaskOperations:
         *,
         select: Optional[str] = None,
         expand: Optional[str] = None,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> _models.BatchTask:
         """Gets information about the specified Task.
 
         For multi-instance Tasks, information such as affinityId, executionInfo and nodeInfo refer to
         the primary Task. Use the list subtasks API to retrieve information about subtasks.
 
-        :param job_id: The ID of the Job that contains the Task.
+        :param job_id: The ID of the Job that contains the Task. Required.
         :type job_id: str
-        :param task_id: The ID of the Task to get information about.
+        :param task_id: The ID of the Task to get information about. Required.
         :type task_id: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
         :paramtype expand: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1923,499 +554,9 @@ class TaskOperations:
          known to the client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :return: JSON object
-        :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "affinityInfo": {
-                        "affinityId": "str"  # Required. You can pass the affinityId of a
-                          Node to indicate that this Task needs to run on that Compute Node. Note that
-                          this is just a soft affinity. If the target Compute Node is busy or
-                          unavailable at the time the Task is scheduled, then the Task will be
-                          scheduled elsewhere.
-                    },
-                    "applicationPackageReferences": [
-                        {
-                            "applicationId": "str",  # Required. The ID of the
-                              application to deploy.
-                            "version": "str"  # Optional. If this is omitted on a Pool,
-                              and no default version is specified for this application, the request
-                              fails with the error code InvalidApplicationPackageReferences and HTTP
-                              status code 409. If this is omitted on a Task, and no default version is
-                              specified for this application, the Task fails with a pre-processing
-                              error.
-                        }
-                    ],
-                    "authenticationTokenSettings": {
-                        "access": [
-                            "job"  # Optional. Default value is "job". The authentication
-                              token grants access to a limited set of Batch service operations.
-                              Currently the only supported value for the access property is 'job',
-                              which grants access to all operations related to the Job which contains
-                              the Task.
-                        ]
-                    },
-                    "commandLine": "str",  # Optional. For multi-instance Tasks, the command line
-                      is executed as the primary Task, after the primary Task and all subtasks have
-                      finished executing the coordination command line. The command line does not run
-                      under a shell, and therefore cannot take advantage of shell features such as
-                      environment variable expansion. If you want to take advantage of such features,
-                      you should invoke the shell in the command line, for example using "cmd /c
-                      MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line
-                      refers to file paths, it should use a relative path (relative to the Task working
-                      directory), or use the Batch provided environment variable
-                      (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
-                    "constraints": {
-                        "maxTaskRetryCount": 0,  # Optional. Note that this value
-                          specifically controls the number of retries for the Task executable due to a
-                          nonzero exit code. The Batch service will try the Task once, and may then
-                          retry up to this limit. For example, if the maximum retry count is 3, Batch
-                          tries the Task up to 4 times (one initial try and 3 retries). If the maximum
-                          retry count is 0, the Batch service does not retry the Task after the first
-                          attempt. If the maximum retry count is -1, the Batch service retries the Task
-                          without limit, however this is not recommended for a start task or any task.
-                          The default value is 0 (no retries).
-                        "maxWallClockTime": "1 day, 0:00:00",  # Optional. If this is not
-                          specified, there is no time limit on how long the Task may run.
-                        "retentionTime": "1 day, 0:00:00"  # Optional. The default is 7 days,
-                          i.e. the Task directory will be retained for 7 days unless the Compute Node
-                          is removed or the Job is deleted.
-                    },
-                    "containerSettings": {
-                        "containerRunOptions": "str",  # Optional. These additional options
-                          are supplied as arguments to the "docker create" command, in addition to
-                          those controlled by the Batch Service.
-                        "imageName": "str",  # Required. This is the full Image reference, as
-                          would be specified to "docker pull". If no tag is provided as part of the
-                          Image name, the tag ":latest" is used as a default.
-                        "registry": {
-                            "identityReference": {
-                                "resourceId": "str"  # Optional. The ARM resource id
-                                  of the user assigned identity.
-                            },
-                            "password": "str",  # Optional. The password to log into the
-                              registry server.
-                            "registryServer": "str",  # Optional. If omitted, the default
-                              is "docker.io".
-                            "username": "str"  # Optional. The user name to log into the
-                              registry server.
-                        },
-                        "workingDirectory": "str"  # Optional. The default is
-                          'taskWorkingDirectory'. Known values are: "taskWorkingDirectory",
-                          "containerImageDefault".
-                    },
-                    "creationTime": "2020-02-20 00:00:00",  # Optional. The creation time of the
-                      Task.
-                    "dependsOn": {
-                        "taskIdRanges": [
-                            {
-                                "end": 0,  # Required. The last Task ID in the range.
-                                "start": 0  # Required. The first Task ID in the
-                                  range.
-                            }
-                        ],
-                        "taskIds": [
-                            "str"  # Optional. The taskIds collection is limited to 64000
-                              characters total (i.e. the combined length of all Task IDs). If the
-                              taskIds collection exceeds the maximum length, the Add Task request fails
-                              with error code TaskDependencyListTooLong. In this case consider using
-                              Task ID ranges instead.
-                        ]
-                    },
-                    "displayName": "str",  # Optional. The display name need not be unique and
-                      can contain any Unicode characters up to a maximum length of 1024.
-                    "eTag": "str",  # Optional. This is an opaque string. You can use it to
-                      detect whether the Task has changed between requests. In particular, you can be
-                      pass the ETag when updating a Task to specify that your changes should take
-                      effect only if nobody else has modified the Task in the meantime.
-                    "environmentSettings": [
-                        {
-                            "name": "str",  # Required. The name of the environment
-                              variable.
-                            "value": "str"  # Optional. The value of the environment
-                              variable.
-                        }
-                    ],
-                    "executionInfo": {
-                        "containerInfo": {
-                            "containerId": "str",  # Optional. The ID of the container.
-                            "error": "str",  # Optional. This is the detailed error
-                              string from the Docker service, if available. It is equivalent to the
-                              error field returned by "docker inspect".
-                            "state": "str"  # Optional. This is the state of the
-                              container according to the Docker service. It is equivalent to the status
-                              field returned by "docker inspect".
-                        },
-                        "endTime": "2020-02-20 00:00:00",  # Optional. This property is set
-                          only if the Task is in the Completed state.
-                        "exitCode": 0,  # Optional. This property is set only if the Task is
-                          in the completed state. In general, the exit code for a process reflects the
-                          specific convention implemented by the application developer for that
-                          process. If you use the exit code value to make decisions in your code, be
-                          sure that you know the exit code convention used by the application process.
-                          However, if the Batch service terminates the Task (due to timeout, or user
-                          termination via the API) you may see an operating system-defined exit code.
-                        "failureInfo": {
-                            "category": "str",  # Required. The category of the error.
-                              Known values are: "usererror", "servererror".
-                            "code": "str",  # Optional. An identifier for the Task error.
-                              Codes are invariant and are intended to be consumed programmatically.
-                            "details": [
-                                {
-                                    "name": "str",  # Optional. The name in the
-                                      name-value pair.
-                                    "value": "str"  # Optional. The value in the
-                                      name-value pair.
-                                }
-                            ],
-                            "message": "str"  # Optional. A message describing the Task
-                              error, intended to be suitable for display in a user interface.
-                        },
-                        "lastRequeueTime": "2020-02-20 00:00:00",  # Optional. This property
-                          is set only if the requeueCount is nonzero.
-                        "lastRetryTime": "2020-02-20 00:00:00",  # Optional. This element is
-                          present only if the Task was retried (i.e. retryCount is nonzero). If
-                          present, this is typically the same as startTime, but may be different if the
-                          Task has been restarted for reasons other than retry; for example, if the
-                          Compute Node was rebooted during a retry, then the startTime is updated but
-                          the lastRetryTime is not.
-                        "requeueCount": 0,  # Required. When the user removes Compute Nodes
-                          from a Pool (by resizing/shrinking the pool) or when the Job is being
-                          disabled, the user can specify that running Tasks on the Compute Nodes be
-                          requeued for execution. This count tracks how many times the Task has been
-                          requeued for these reasons.
-                        "result": "str",  # Optional. If the value is 'failed', then the
-                          details of the failure can be found in the failureInfo property. Known values
-                          are: "success", "failure".
-                        "retryCount": 0,  # Required. Task application failures (non-zero
-                          exit code) are retried, pre-processing errors (the Task could not be run) and
-                          file upload errors are not retried. The Batch service will retry the Task up
-                          to the limit specified by the constraints.
-                        "startTime": "2020-02-20 00:00:00"  # Optional. 'Running' corresponds
-                          to the running state, so if the Task specifies resource files or Packages,
-                          then the start time reflects the time at which the Task started downloading
-                          or deploying these. If the Task has been restarted or retried, this is the
-                          most recent time at which the Task started running. This property is present
-                          only for Tasks that are in the running or completed state.
-                    },
-                    "exitConditions": {
-                        "default": {
-                            "dependencyAction": "str",  # Optional. Possible values are
-                              'satisfy' (allowing dependent tasks to progress) and 'block' (dependent
-                              tasks continue to wait). Batch does not yet support cancellation of
-                              dependent tasks. Known values are: "satisfy", "block".
-                            "jobAction": "str"  # Optional. The default is none for exit
-                              code 0 and terminate for all other exit conditions. If the Job's
-                              onTaskFailed property is noaction, then specifying this property returns
-                              an error and the add Task request fails with an invalid property value
-                              error; if you are calling the REST API directly, the HTTP status code is
-                              400 (Bad Request). Known values are: "none", "disable", "terminate".
-                        },
-                        "exitCodeRanges": [
-                            {
-                                "end": 0,  # Required. The last exit code in the
-                                  range.
-                                "exitOptions": {
-                                    "dependencyAction": "str",  # Optional.
-                                      Possible values are 'satisfy' (allowing dependent tasks to
-                                      progress) and 'block' (dependent tasks continue to wait). Batch
-                                      does not yet support cancellation of dependent tasks. Known
-                                      values are: "satisfy", "block".
-                                    "jobAction": "str"  # Optional. The default
-                                      is none for exit code 0 and terminate for all other exit
-                                      conditions. If the Job's onTaskFailed property is noaction, then
-                                      specifying this property returns an error and the add Task
-                                      request fails with an invalid property value error; if you are
-                                      calling the REST API directly, the HTTP status code is 400 (Bad
-                                      Request). Known values are: "none", "disable", "terminate".
-                                },
-                                "start": 0  # Required. The first exit code in the
-                                  range.
-                            }
-                        ],
-                        "exitCodes": [
-                            {
-                                "code": 0,  # Required. A process exit code.
-                                "exitOptions": {
-                                    "dependencyAction": "str",  # Optional.
-                                      Possible values are 'satisfy' (allowing dependent tasks to
-                                      progress) and 'block' (dependent tasks continue to wait). Batch
-                                      does not yet support cancellation of dependent tasks. Known
-                                      values are: "satisfy", "block".
-                                    "jobAction": "str"  # Optional. The default
-                                      is none for exit code 0 and terminate for all other exit
-                                      conditions. If the Job's onTaskFailed property is noaction, then
-                                      specifying this property returns an error and the add Task
-                                      request fails with an invalid property value error; if you are
-                                      calling the REST API directly, the HTTP status code is 400 (Bad
-                                      Request). Known values are: "none", "disable", "terminate".
-                                }
-                            }
-                        ],
-                        "fileUploadError": {
-                            "dependencyAction": "str",  # Optional. Possible values are
-                              'satisfy' (allowing dependent tasks to progress) and 'block' (dependent
-                              tasks continue to wait). Batch does not yet support cancellation of
-                              dependent tasks. Known values are: "satisfy", "block".
-                            "jobAction": "str"  # Optional. The default is none for exit
-                              code 0 and terminate for all other exit conditions. If the Job's
-                              onTaskFailed property is noaction, then specifying this property returns
-                              an error and the add Task request fails with an invalid property value
-                              error; if you are calling the REST API directly, the HTTP status code is
-                              400 (Bad Request). Known values are: "none", "disable", "terminate".
-                        },
-                        "preProcessingError": {
-                            "dependencyAction": "str",  # Optional. Possible values are
-                              'satisfy' (allowing dependent tasks to progress) and 'block' (dependent
-                              tasks continue to wait). Batch does not yet support cancellation of
-                              dependent tasks. Known values are: "satisfy", "block".
-                            "jobAction": "str"  # Optional. The default is none for exit
-                              code 0 and terminate for all other exit conditions. If the Job's
-                              onTaskFailed property is noaction, then specifying this property returns
-                              an error and the add Task request fails with an invalid property value
-                              error; if you are calling the REST API directly, the HTTP status code is
-                              400 (Bad Request). Known values are: "none", "disable", "terminate".
-                        }
-                    },
-                    "id": "str",  # Optional. The ID can contain any combination of alphanumeric
-                      characters including hyphens and underscores, and cannot contain more than 64
-                      characters.
-                    "lastModified": "2020-02-20 00:00:00",  # Optional. The last modified time of
-                      the Task.
-                    "multiInstanceSettings": {
-                        "commonResourceFiles": [
-                            {
-                                "autoStorageContainerName": "str",  # Optional. The
-                                  autoStorageContainerName, storageContainerUrl and httpUrl properties
-                                  are mutually exclusive and one of them must be specified.
-                                "blobPrefix": "str",  # Optional. The property is
-                                  valid only when autoStorageContainerName or storageContainerUrl is
-                                  used. This prefix can be a partial filename or a subdirectory. If a
-                                  prefix is not specified, all the files in the container will be
-                                  downloaded.
-                                "fileMode": "str",  # Optional. This property applies
-                                  only to files being downloaded to Linux Compute Nodes. It will be
-                                  ignored if it is specified for a resourceFile which will be
-                                  downloaded to a Windows Compute Node. If this property is not
-                                  specified for a Linux Compute Node, then a default value of 0770 is
-                                  applied to the file.
-                                "filePath": "str",  # Optional. If the httpUrl
-                                  property is specified, the filePath is required and describes the
-                                  path which the file will be downloaded to, including the filename.
-                                  Otherwise, if the autoStorageContainerName or storageContainerUrl
-                                  property is specified, filePath is optional and is the directory to
-                                  download the files to. In the case where filePath is used as a
-                                  directory, any directory structure already associated with the input
-                                  data will be retained in full and appended to the specified filePath
-                                  directory. The specified relative path cannot break out of the Task's
-                                  working directory (for example by using '..').
-                                "httpUrl": "str",  # Optional. The
-                                  autoStorageContainerName, storageContainerUrl and httpUrl properties
-                                  are mutually exclusive and one of them must be specified. If the URL
-                                  points to Azure Blob Storage, it must be readable from compute nodes.
-                                  There are three ways to get such a URL for a blob in Azure storage:
-                                  include a Shared Access Signature (SAS) granting read permissions on
-                                  the blob, use a managed identity with read permission, or set the ACL
-                                  for the blob or its container to allow public access.
-                                "identityReference": {
-                                    "resourceId": "str"  # Optional. The ARM
-                                      resource id of the user assigned identity.
-                                },
-                                "storageContainerUrl": "str"  # Optional. The
-                                  autoStorageContainerName, storageContainerUrl and httpUrl properties
-                                  are mutually exclusive and one of them must be specified. This URL
-                                  must be readable and listable from compute nodes. There are three
-                                  ways to get such a URL for a container in Azure storage: include a
-                                  Shared Access Signature (SAS) granting read and list permissions on
-                                  the container, use a managed identity with read and list permissions,
-                                  or set the ACL for the container to allow public access.
-                            }
-                        ],
-                        "coordinationCommandLine": "str",  # Required. A typical coordination
-                          command line launches a background service and verifies that the service is
-                          ready to process inter-node messages.
-                        "numberOfInstances": 0  # Optional. If omitted, the default is 1.
-                    },
-                    "nodeInfo": {
-                        "affinityId": "str",  # Optional. An identifier for the Node on which
-                          the Task ran, which can be passed when adding a Task to request that the Task
-                          be scheduled on this Compute Node.
-                        "nodeId": "str",  # Optional. The ID of the Compute Node on which the
-                          Task ran.
-                        "nodeUrl": "str",  # Optional. The URL of the Compute Node on which
-                          the Task ran.
-                        "poolId": "str",  # Optional. The ID of the Pool on which the Task
-                          ran.
-                        "taskRootDirectory": "str",  # Optional. The root directory of the
-                          Task on the Compute Node.
-                        "taskRootDirectoryUrl": "str"  # Optional. The URL to the root
-                          directory of the Task on the Compute Node.
-                    },
-                    "outputFiles": [
-                        {
-                            "destination": {
-                                "container": {
-                                    "containerUrl": "str",  # Required. If not
-                                      using a managed identity, the URL must include a Shared Access
-                                      Signature (SAS) granting write permissions to the container.
-                                    "identityReference": {
-                                        "resourceId": "str"  # Optional. The
-                                          ARM resource id of the user assigned identity.
-                                    },
-                                    "path": "str",  # Optional. If filePattern
-                                      refers to a specific file (i.e. contains no wildcards), then path
-                                      is the name of the blob to which to upload that file. If
-                                      filePattern contains one or more wildcards (and therefore may
-                                      match multiple files), then path is the name of the blob virtual
-                                      directory (which is prepended to each blob name) to which to
-                                      upload the file(s). If omitted, file(s) are uploaded to the root
-                                      of the container with a blob name matching their file name.
-                                    "uploadHeaders": [
-                                        {
-                                            "name": "str",  # Required.
-                                              The case-insensitive name of the header to be used while
-                                              uploading output files.
-                                            "value": "str"  # Optional.
-                                              The value of the header to be used while uploading output
-                                              files.
-                                        }
-                                    ]
-                                }
-                            },
-                            "filePattern": "str",  # Required. Both relative and absolute
-                              paths are supported. Relative paths are relative to the Task working
-                              directory. The following wildcards are supported: * matches 0 or more
-                              characters (for example pattern abc* would match abc or abcdef), **
-                              matches any directory, ? matches any single character, [abc] matches one
-                              character in the brackets, and [a-c] matches one character in the range.
-                              Brackets can include a negation to match any character not specified (for
-                              example [!abc] matches any character but a, b, or c). If a file name
-                              starts with "." it is ignored by default but may be matched by specifying
-                              it explicitly (for example *.gif will not match .a.gif, but .*.gif will).
-                              A simple example: **"" *.txt matches any file that does not start in '.'
-                              and ends with .txt in the Task working directory or any subdirectory. If
-                              the filename contains a wildcard character it can be escaped using
-                              brackets (for example abc["" *] would match a file named abc*"" ). Note
-                              that both and / are treated as directory separators on Windows, but only
-                              / is on Linux. Environment variables (%var% on Windows or $var on Linux)
-                              are expanded prior to the pattern being applied.
-                            "uploadOptions": {
-                                "uploadCondition": "str"  # Required. The default is
-                                  taskcompletion. Known values are: "tasksuccess", "taskfailure",
-                                  "taskcompletion".
-                            }
-                        }
-                    ],
-                    "previousState": "str",  # Optional. This property is not set if the Task is
-                      in its initial Active state. Known values are: "active", "preparing", "running",
-                      "completed".
-                    "previousStateTransitionTime": "2020-02-20 00:00:00",  # Optional. This
-                      property is not set if the Task is in its initial Active state.
-                    "requiredSlots": 0,  # Optional. The default is 1. A Task can only be
-                      scheduled to run on a compute node if the node has enough free scheduling slots
-                      available. For multi-instance Tasks, this must be 1.
-                    "resourceFiles": [
-                        {
-                            "autoStorageContainerName": "str",  # Optional. The
-                              autoStorageContainerName, storageContainerUrl and httpUrl properties are
-                              mutually exclusive and one of them must be specified.
-                            "blobPrefix": "str",  # Optional. The property is valid only
-                              when autoStorageContainerName or storageContainerUrl is used. This prefix
-                              can be a partial filename or a subdirectory. If a prefix is not
-                              specified, all the files in the container will be downloaded.
-                            "fileMode": "str",  # Optional. This property applies only to
-                              files being downloaded to Linux Compute Nodes. It will be ignored if it
-                              is specified for a resourceFile which will be downloaded to a Windows
-                              Compute Node. If this property is not specified for a Linux Compute Node,
-                              then a default value of 0770 is applied to the file.
-                            "filePath": "str",  # Optional. If the httpUrl property is
-                              specified, the filePath is required and describes the path which the file
-                              will be downloaded to, including the filename. Otherwise, if the
-                              autoStorageContainerName or storageContainerUrl property is specified,
-                              filePath is optional and is the directory to download the files to. In
-                              the case where filePath is used as a directory, any directory structure
-                              already associated with the input data will be retained in full and
-                              appended to the specified filePath directory. The specified relative path
-                              cannot break out of the Task's working directory (for example by using
-                              '..').
-                            "httpUrl": "str",  # Optional. The autoStorageContainerName,
-                              storageContainerUrl and httpUrl properties are mutually exclusive and one
-                              of them must be specified. If the URL points to Azure Blob Storage, it
-                              must be readable from compute nodes. There are three ways to get such a
-                              URL for a blob in Azure storage: include a Shared Access Signature (SAS)
-                              granting read permissions on the blob, use a managed identity with read
-                              permission, or set the ACL for the blob or its container to allow public
-                              access.
-                            "identityReference": {
-                                "resourceId": "str"  # Optional. The ARM resource id
-                                  of the user assigned identity.
-                            },
-                            "storageContainerUrl": "str"  # Optional. The
-                              autoStorageContainerName, storageContainerUrl and httpUrl properties are
-                              mutually exclusive and one of them must be specified. This URL must be
-                              readable and listable from compute nodes. There are three ways to get
-                              such a URL for a container in Azure storage: include a Shared Access
-                              Signature (SAS) granting read and list permissions on the container, use
-                              a managed identity with read and list permissions, or set the ACL for the
-                              container to allow public access.
-                        }
-                    ],
-                    "state": "str",  # Optional. The state of the Task. Known values are:
-                      "active", "preparing", "running", "completed".
-                    "stateTransitionTime": "2020-02-20 00:00:00",  # Optional. The time at which
-                      the Task entered its current state.
-                    "stats": {
-                        "kernelCPUTime": "1 day, 0:00:00",  # Required. The total kernel mode
-                          CPU time (summed across all cores and all Compute Nodes) consumed by the
-                          Task.
-                        "lastUpdateTime": "2020-02-20 00:00:00",  # Required. The time at
-                          which the statistics were last updated. All statistics are limited to the
-                          range between startTime and lastUpdateTime.
-                        "readIOGiB": 0.0,  # Required. The total gibibytes read from disk by
-                          the Task.
-                        "readIOps": 0.0,  # Required. The total number of disk read
-                          operations made by the Task.
-                        "startTime": "2020-02-20 00:00:00",  # Required. The start time of
-                          the time range covered by the statistics.
-                        "url": "str",  # Required. The URL of the statistics.
-                        "userCPUTime": "1 day, 0:00:00",  # Required. The total user mode CPU
-                          time (summed across all cores and all Compute Nodes) consumed by the Task.
-                        "waitTime": "1 day, 0:00:00",  # Required. The total wait time of the
-                          Task. The wait time for a Task is defined as the elapsed time between the
-                          creation of the Task and the start of Task execution. (If the Task is retried
-                          due to failures, the wait time is the time to the most recent Task
-                          execution.).
-                        "wallClockTime": "1 day, 0:00:00",  # Required. The wall clock time
-                          is the elapsed time from when the Task started running on a Compute Node to
-                          when it finished (or to the last time the statistics were updated, if the
-                          Task had not finished by then). If the Task was retried, this includes the
-                          wall clock time of all the Task retries.
-                        "writeIOGiB": 0.0,  # Required. The total gibibytes written to disk
-                          by the Task.
-                        "writeIOps": 0.0  # Required. The total number of disk write
-                          operations made by the Task.
-                    },
-                    "url": "str",  # Optional. The URL of the Task.
-                    "userIdentity": {
-                        "autoUser": {
-                            "elevationLevel": "str",  # Optional. The default value is
-                              nonAdmin. Known values are: "nonadmin", "admin".
-                            "scope": "str"  # Optional. The default value is pool. If the
-                              pool is running Windows a value of Task should be specified if stricter
-                              isolation between tasks is required. For example, if the task mutates the
-                              registry in a way which could impact other tasks, or if certificates have
-                              been specified on the pool which should not be accessible by normal tasks
-                              but should be accessible by StartTasks. Known values are: "task", "pool".
-                        },
-                        "username": "str"  # Optional. The userName and autoUser properties
-                          are mutually exclusive; you must specify one but not both.
-                    }
-                }
+        :return: BatchTask
+        :rtype: ~azure-batch.models.BatchTask
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2423,16 +564,14 @@ class TaskOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BatchTask]
 
         
         request = build_get_request(
             job_id=job_id,
             task_id=task_id,
-            api_version=api_version,
             select=select,
             expand=expand,
             timeout=timeout,
@@ -2443,6 +582,7 @@ class TaskOperations:
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -2456,11 +596,13 @@ class TaskOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
@@ -2469,15 +611,12 @@ class TaskOperations:
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
         response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = self._deserialize('BatchTask', pipeline_response)
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
-        return cast(JSON, deserialized)
+        return deserialized
 
 
 
@@ -2486,11 +625,11 @@ class TaskOperations:
         self,
         job_id: str,
         task_id: str,
-        task_update_parameter: JSON,
+        task: _models.BatchTask,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -2500,14 +639,14 @@ class TaskOperations:
     ) -> None:
         """Updates the properties of the specified Task.
 
-        :param job_id: The ID of the Job containing the Task.
+        :param job_id: The ID of the Job containing the Task. Required.
         :type job_id: str
-        :param task_id: The ID of the Task to update.
+        :param task_id: The ID of the Task to update. Required.
         :type task_id: str
-        :param task_update_parameter: The parameters for the request.
-        :type task_update_parameter: JSON
+        :param task: The parameters for the request. Required.
+        :type task: ~azure-batch.models.BatchTask
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -2538,30 +677,7 @@ class TaskOperations:
         :paramtype if_unmodified_since: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                task_update_parameter = {
-                    "constraints": {
-                        "maxTaskRetryCount": 0,  # Optional. Note that this value
-                          specifically controls the number of retries for the Task executable due to a
-                          nonzero exit code. The Batch service will try the Task once, and may then
-                          retry up to this limit. For example, if the maximum retry count is 3, Batch
-                          tries the Task up to 4 times (one initial try and 3 retries). If the maximum
-                          retry count is 0, the Batch service does not retry the Task after the first
-                          attempt. If the maximum retry count is -1, the Batch service retries the Task
-                          without limit, however this is not recommended for a start task or any task.
-                          The default value is 0 (no retries).
-                        "maxWallClockTime": "1 day, 0:00:00",  # Optional. If this is not
-                          specified, there is no time limit on how long the Task may run.
-                        "retentionTime": "1 day, 0:00:00"  # Optional. The default is 7 days,
-                          i.e. the Task directory will be retained for 7 days unless the Compute Node
-                          is removed or the Job is deleted.
-                    }
-                }
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2569,20 +685,16 @@ class TaskOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        _content = task_update_parameter
+        _json = self._serialize.body(task, 'BatchTask')
 
         request = build_update_request(
             job_id=job_id,
             task_id=task_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
@@ -2591,6 +703,9 @@ class TaskOperations:
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -2604,11 +719,13 @@ class TaskOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
@@ -2630,24 +747,24 @@ class TaskOperations:
         task_id: str,
         *,
         select: Optional[str] = None,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> _models.TaskListSubtasksResult:
         """Lists all of the subtasks that are associated with the specified multi-instance Task.
 
         If the Task is not a multi-instance Task then this returns an empty collection.
 
-        :param job_id: The ID of the Job.
+        :param job_id: The ID of the Job. Required.
         :type job_id: str
-        :param task_id: The ID of the Task.
+        :param task_id: The ID of the Task. Required.
         :type task_id: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -2660,91 +777,9 @@ class TaskOperations:
          current system clock time; set it explicitly if you are calling the REST API directly. Default
          value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: JSON object
-        :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "value": [
-                        {
-                            "containerInfo": {
-                                "containerId": "str",  # Optional. The ID of the
-                                  container.
-                                "error": "str",  # Optional. This is the detailed
-                                  error string from the Docker service, if available. It is equivalent
-                                  to the error field returned by "docker inspect".
-                                "state": "str"  # Optional. This is the state of the
-                                  container according to the Docker service. It is equivalent to the
-                                  status field returned by "docker inspect".
-                            },
-                            "endTime": "2020-02-20 00:00:00",  # Optional. This property
-                              is set only if the subtask is in the Completed state.
-                            "exitCode": 0,  # Optional. This property is set only if the
-                              subtask is in the completed state. In general, the exit code for a
-                              process reflects the specific convention implemented by the application
-                              developer for that process. If you use the exit code value to make
-                              decisions in your code, be sure that you know the exit code convention
-                              used by the application process. However, if the Batch service terminates
-                              the subtask (due to timeout, or user termination via the API) you may see
-                              an operating system-defined exit code.
-                            "failureInfo": {
-                                "category": "str",  # Required. The category of the
-                                  error. Known values are: "usererror", "servererror".
-                                "code": "str",  # Optional. An identifier for the
-                                  Task error. Codes are invariant and are intended to be consumed
-                                  programmatically.
-                                "details": [
-                                    {
-                                        "name": "str",  # Optional. The name
-                                          in the name-value pair.
-                                        "value": "str"  # Optional. The value
-                                          in the name-value pair.
-                                    }
-                                ],
-                                "message": "str"  # Optional. A message describing
-                                  the Task error, intended to be suitable for display in a user
-                                  interface.
-                            },
-                            "id": 0,  # Optional. The ID of the subtask.
-                            "nodeInfo": {
-                                "affinityId": "str",  # Optional. An identifier for
-                                  the Node on which the Task ran, which can be passed when adding a
-                                  Task to request that the Task be scheduled on this Compute Node.
-                                "nodeId": "str",  # Optional. The ID of the Compute
-                                  Node on which the Task ran.
-                                "nodeUrl": "str",  # Optional. The URL of the Compute
-                                  Node on which the Task ran.
-                                "poolId": "str",  # Optional. The ID of the Pool on
-                                  which the Task ran.
-                                "taskRootDirectory": "str",  # Optional. The root
-                                  directory of the Task on the Compute Node.
-                                "taskRootDirectoryUrl": "str"  # Optional. The URL to
-                                  the root directory of the Task on the Compute Node.
-                            },
-                            "previousState": "str",  # Optional. This property is not set
-                              if the subtask is in its initial running state. Known values are:
-                              "preparing", "running", "completed".
-                            "previousStateTransitionTime": "2020-02-20 00:00:00",  #
-                              Optional. This property is not set if the subtask is in its initial
-                              running state.
-                            "result": "str",  # Optional. If the value is 'failed', then
-                              the details of the failure can be found in the failureInfo property.
-                              Known values are: "success", "failure".
-                            "startTime": "2020-02-20 00:00:00",  # Optional. The time at
-                              which the subtask started running. If the subtask has been restarted or
-                              retried, this is the most recent time at which the subtask started
-                              running.
-                            "state": "str",  # Optional. The state of the subtask. Known
-                              values are: "preparing", "running", "completed".
-                            "stateTransitionTime": "2020-02-20 00:00:00"  # Optional. The
-                              time at which the subtask entered its current state.
-                        }
-                    ]
-                }
+        :return: TaskListSubtasksResult
+        :rtype: ~azure-batch.models.TaskListSubtasksResult
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2752,21 +787,20 @@ class TaskOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.TaskListSubtasksResult]
 
         
         request = build_list_subtasks_request(
             job_id=job_id,
             task_id=task_id,
-            api_version=api_version,
             select=select,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -2780,11 +814,13 @@ class TaskOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
@@ -2792,15 +828,12 @@ class TaskOperations:
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = self._deserialize('TaskListSubtasksResult', pipeline_response)
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
-        return cast(JSON, deserialized)
+        return deserialized
 
 
 
@@ -2810,9 +843,9 @@ class TaskOperations:
         job_id: str,
         task_id: str,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -2826,12 +859,12 @@ class TaskOperations:
         the terminate Task operation applies synchronously to the primary task; subtasks are then
         terminated asynchronously in the background.
 
-        :param job_id: The ID of the Job containing the Task.
+        :param job_id: The ID of the Job containing the Task. Required.
         :type job_id: str
-        :param task_id: The ID of the Task to terminate.
+        :param task_id: The ID of the Task to terminate. Required.
         :type task_id: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -2862,7 +895,7 @@ class TaskOperations:
         :paramtype if_unmodified_since: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2870,16 +903,14 @@ class TaskOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_terminate_request(
             job_id=job_id,
             task_id=task_id,
-            api_version=api_version,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
@@ -2888,6 +919,7 @@ class TaskOperations:
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -2901,11 +933,13 @@ class TaskOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
@@ -2926,9 +960,9 @@ class TaskOperations:
         job_id: str,
         task_id: str,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -2945,12 +979,12 @@ class TaskOperations:
         not completed or that previously completed successfully (with an exit code of 0). Additionally,
         it will fail if the Job has completed (or is terminating or deleting).
 
-        :param job_id: The ID of the Job containing the Task.
+        :param job_id: The ID of the Job containing the Task. Required.
         :type job_id: str
-        :param task_id: The ID of the Task to reactivate.
+        :param task_id: The ID of the Task to reactivate. Required.
         :type task_id: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -2981,7 +1015,7 @@ class TaskOperations:
         :paramtype if_unmodified_since: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2989,16 +1023,14 @@ class TaskOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_reactivate_request(
             job_id=job_id,
             task_id=task_id,
-            api_version=api_version,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
@@ -3007,6 +1039,7 @@ class TaskOperations:
             if_none_match=if_none_match,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -3020,11 +1053,13 @@ class TaskOperations:
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
