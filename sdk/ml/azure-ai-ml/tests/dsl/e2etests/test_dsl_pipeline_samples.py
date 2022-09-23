@@ -16,6 +16,7 @@ from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities import Job, PipelineJob
 from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.core.exceptions import HttpResponseError
+from azure.core.polling import LROPoller
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -37,7 +38,9 @@ def job_cancel_after_submit(pipeline, client: MLClient):
     #  the status before confirming whether there is a problem with pipeline cancel.
     job = client.jobs.create_or_update(pipeline)
     try:
-        client.jobs.cancel(job.name)
+        cancel_poller = client.jobs.begin_cancel(job.name)
+        assert isinstance(cancel_poller, LROPoller)
+        assert cancel_poller.result() is None
     except HttpResponseError:
         pass
 

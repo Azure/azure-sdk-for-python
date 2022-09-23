@@ -25,6 +25,7 @@ from azure.ai.ml.exceptions import JobException, ValidationException
 from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.polling import LROPoller
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 
@@ -46,7 +47,9 @@ def assert_job_input_output_types(job: PipelineJob):
 def assert_job_cancel(pipeline, client: MLClient):
     job = client.jobs.create_or_update(pipeline)
     try:
-        client.jobs.cancel(job.name)
+        cancel_poller = client.jobs.begin_cancel(job.name)
+        assert isinstance(cancel_poller, LROPoller)
+        assert cancel_poller.result() is None
     except HttpResponseError:
         pass
     return job
@@ -69,7 +72,9 @@ def wait_until_done(client: MLClient, job: Job, timeout: int = None) -> str:
         job = client.jobs.get(job.name)
         if timeout is not None and time.time() - poll_start_time > timeout:
             # if timeout is passed in, execute job cancel if timeout and directly return CANCELED status
-            client.jobs.cancel(job.name)
+            cancel_poller = client.jobs.begin_cancel(job.name)
+            assert isinstance(cancel_poller, LROPoller)
+            assert cancel_poller.result() is None
             return JobStatus.CANCELED
     return job.status
 
@@ -152,7 +157,9 @@ class TestPipelineJob(AzureRecordedTestCase):
                     params_override=[{"name": job_name}],
                 )
             )
-            client.jobs.cancel(job.name)
+            cancel_poller = client.jobs.begin_cancel(job.name)
+            assert isinstance(cancel_poller, LROPoller)
+            assert cancel_poller.result() is None
 
         child_job = next(
             job
@@ -165,10 +172,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert isinstance(retrieved_child_run, Job)
         assert retrieved_child_run.name == child_job.name
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="Recording file names are too long and need to be shortened"
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="Recording file names are too long and need to be shortened")
     @pytest.mark.parametrize(
         "pipeline_job_path, expected_error_type",
         [
@@ -395,10 +399,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             else:
                 assert job.compute in pipeline_job.jobs[job_name].compute
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="Recording file names are too long and need to be shortened"
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="Recording file names are too long and need to be shortened")
     @pytest.mark.parametrize(
         "pipeline_job_path, converted_jobs, expected_dict, fields_to_omit",
         [
@@ -595,10 +596,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"], *fields_to_omit)
         assert actual_dict == expected_dict
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="Recording file names are too long and need to be shortened"
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="Recording file names are too long and need to be shortened")
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
@@ -923,10 +921,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_pipeline_dict = created_pipeline._to_dict()
         assert pydash.get(created_pipeline_dict, "jobs.hello_sweep_inline_trial.early_termination") == policy_yaml_dict
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="Recording file names are too long and need to be shortened"
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="Recording file names are too long and need to be shortened")
     @pytest.mark.parametrize(
         "pipeline_job_path, expected_error",
         [
