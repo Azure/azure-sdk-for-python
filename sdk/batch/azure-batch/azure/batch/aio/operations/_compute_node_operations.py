@@ -7,11 +7,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, cast
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, Optional, TypeVar
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -19,14 +26,25 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ...operations._compute_node_operations import build_add_user_request, build_delete_user_request, build_disable_scheduling_request, build_enable_scheduling_request, build_get_remote_desktop_request, build_get_remote_login_settings_request, build_get_request, build_list_request, build_reboot_request, build_reimage_request, build_update_user_request, build_upload_batch_service_logs_request
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
-T = TypeVar('T')
+from ... import models as _models
+from ...operations._compute_node_operations import (
+    build_add_user_request,
+    build_delete_user_request,
+    build_disable_scheduling_request,
+    build_enable_scheduling_request,
+    build_get_remote_desktop_request,
+    build_get_remote_login_settings_request,
+    build_get_request,
+    build_list_request,
+    build_reboot_request,
+    build_reimage_request,
+    build_update_user_request,
+    build_upload_batch_service_logs_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ComputeNodeOperations:
     """
@@ -38,6 +56,8 @@ class ComputeNodeOperations:
         :attr:`compute_node` attribute.
     """
 
+    models = _models
+
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
@@ -45,17 +65,16 @@ class ComputeNodeOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace_async
     async def add_user(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         node_id: str,
-        user: JSON,
+        user: _models.ComputeNodeUser,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -63,14 +82,14 @@ class ComputeNodeOperations:
 
         You can add a user Account to a Compute Node only when it is in the idle or running state.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node.
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
         :type pool_id: str
-        :param node_id: The ID of the machine on which you want to create a user Account.
+        :param node_id: The ID of the machine on which you want to create a user Account. Required.
         :type node_id: str
-        :param user: The user Account to be created.
-        :type user: JSON
+        :param user: The user Account to be created. Required.
+        :type user: ~azure-batch.models.ComputeNodeUser
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -85,85 +104,62 @@ class ComputeNodeOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                user = {
-                    "expiryTime": "2020-02-20 00:00:00",  # Optional. If omitted, the default is
-                      1 day from the current time. For Linux Compute Nodes, the expiryTime has a
-                      precision up to a day.
-                    "isAdmin": bool,  # Optional. The default value is false.
-                    "name": "str",  # Required. The user name of the Account.
-                    "password": "str",  # Optional. The password is required for Windows Compute
-                      Nodes (those created with 'cloudServiceConfiguration', or created with
-                      'virtualMachineConfiguration' using a Windows Image reference). For Linux Compute
-                      Nodes, the password can optionally be specified along with the sshPublicKey
-                      property.
-                    "sshPublicKey": "str"  # Optional. The public key should be compatible with
-                      OpenSSH encoding and should be base 64 encoded. This property can be specified
-                      only for Linux Compute Nodes. If this is specified for a Windows Compute Node,
-                      then the Batch service rejects the request; if you are calling the REST API
-                      directly, the HTTP status code is 400 (Bad Request).
-                }
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        _content = user
+        _json = self._serialize.body(user, "ComputeNodeUser")
 
         request = build_add_user_request(
             pool_id=pool_id,
             node_id=node_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
-
-
 
     @distributed_trace_async
     async def delete_user(  # pylint: disable=inconsistent-return-statements
@@ -172,9 +168,9 @@ class ComputeNodeOperations:
         node_id: str,
         user_name: str,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -182,14 +178,14 @@ class ComputeNodeOperations:
 
         You can delete a user Account to a Compute Node only when it is in the idle or running state.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node.
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
         :type pool_id: str
-        :param node_id: The ID of the machine on which you want to delete a user Account.
+        :param node_id: The ID of the machine on which you want to delete a user Account. Required.
         :type node_id: str
-        :param user_name: The name of the user Account to delete.
+        :param user_name: The name of the user Account to delete. Required.
         :type user_name: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -204,57 +200,55 @@ class ComputeNodeOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_delete_user_request(
             pool_id=pool_id,
             node_id=node_id,
             user_name=user_name,
-            api_version=api_version,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
-
-
 
     @distributed_trace_async
     async def update_user(  # pylint: disable=inconsistent-return-statements
@@ -262,11 +256,11 @@ class ComputeNodeOperations:
         pool_id: str,
         node_id: str,
         user_name: str,
-        node_update_user_parameter: JSON,
+        parameters: _models.NodeUpdateUserParameters,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -277,16 +271,16 @@ class ComputeNodeOperations:
         left unmodified. You can update a user Account on a Compute Node only when it is in the idle or
         running state.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node.
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
         :type pool_id: str
-        :param node_id: The ID of the machine on which you want to update a user Account.
+        :param node_id: The ID of the machine on which you want to update a user Account. Required.
         :type node_id: str
-        :param user_name: The name of the user Account to update.
+        :param user_name: The name of the user Account to update. Required.
         :type user_name: str
-        :param node_update_user_parameter: The parameters for the request.
-        :type node_update_user_parameter: JSON
+        :param parameters: The parameters for the request. Required.
+        :type parameters: ~azure-batch.models.NodeUpdateUserParameters
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -301,85 +295,63 @@ class ComputeNodeOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                node_update_user_parameter = {
-                    "expiryTime": "2020-02-20 00:00:00",  # Optional. If omitted, the default is
-                      1 day from the current time. For Linux Compute Nodes, the expiryTime has a
-                      precision up to a day.
-                    "password": "str",  # Optional. The password is required for Windows Compute
-                      Nodes (those created with 'cloudServiceConfiguration', or created with
-                      'virtualMachineConfiguration' using a Windows Image reference). For Linux Compute
-                      Nodes, the password can optionally be specified along with the sshPublicKey
-                      property. If omitted, any existing password is removed.
-                    "sshPublicKey": "str"  # Optional. The public key should be compatible with
-                      OpenSSH encoding and should be base 64 encoded. This property can be specified
-                      only for Linux Compute Nodes. If this is specified for a Windows Compute Node,
-                      then the Batch service rejects the request; if you are calling the REST API
-                      directly, the HTTP status code is 400 (Bad Request). If omitted, any existing SSH
-                      public key is removed.
-                }
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        _content = node_update_user_parameter
+        _json = self._serialize.body(parameters, "NodeUpdateUserParameters")
 
         request = build_update_user_request(
             pool_id=pool_id,
             node_id=node_id,
             user_name=user_name,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
-
-
 
     @distributed_trace_async
     async def get(
@@ -388,24 +360,24 @@ class ComputeNodeOperations:
         node_id: str,
         *,
         select: Optional[str] = None,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> _models.ComputeNode:
         """Gets information about the specified Compute Node.
 
         Gets information about the specified Compute Node.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node.
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
         :type pool_id: str
-        :param node_id: The ID of the Compute Node that you want to get information about.
+        :param node_id: The ID of the Compute Node that you want to get information about. Required.
         :type node_id: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -418,489 +390,74 @@ class ComputeNodeOperations:
          current system clock time; set it explicitly if you are calling the REST API directly. Default
          value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: JSON object
-        :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "affinityId": "str",  # Optional. Note that this is just a soft affinity. If
-                      the target Compute Node is busy or unavailable at the time the Task is scheduled,
-                      then the Task will be scheduled elsewhere.
-                    "allocationTime": "2020-02-20 00:00:00",  # Optional. This is the time when
-                      the Compute Node was initially allocated and doesn't change once set. It is not
-                      updated when the Compute Node is service healed or preempted.
-                    "certificateReferences": [
-                        {
-                            "storeLocation": "str",  # Optional. The default value is
-                              currentuser. This property is applicable only for Pools configured with
-                              Windows Compute Nodes (that is, created with cloudServiceConfiguration,
-                              or with virtualMachineConfiguration using a Windows Image reference). For
-                              Linux Compute Nodes, the Certificates are stored in a directory inside
-                              the Task working directory and an environment variable
-                              AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
-                              location. For Certificates with visibility of 'remoteUser', a 'certs'
-                              directory is created in the user's home directory (e.g.,
-                              /home/{user-name}/certs) and Certificates are placed in that directory.
-                              Known values are: "currentuser", "localmachine".
-                            "storeName": "str",  # Optional. This property is applicable
-                              only for Pools configured with Windows Compute Nodes (that is, created
-                              with cloudServiceConfiguration, or with virtualMachineConfiguration using
-                              a Windows Image reference). Common store names include: My, Root, CA,
-                              Trust, Disallowed, TrustedPeople, TrustedPublisher, AuthRoot,
-                              AddressBook, but any custom store name can also be used. The default
-                              value is My.
-                            "thumbprint": "str",  # Required. The thumbprint of the
-                              Certificate.
-                            "thumbprintAlgorithm": "str",  # Required. The algorithm with
-                              which the thumbprint is associated. This must be sha1.
-                            "visibility": [
-                                "str"  # Optional. You can specify more than one
-                                  visibility in this collection. The default is all Accounts.
-                            ]
-                        }
-                    ],
-                    "endpointConfiguration": {
-                        "inboundEndpoints": [
-                            {
-                                "backendPort": 0,  # Required. The backend port
-                                  number of the endpoint.
-                                "frontendPort": 0,  # Required. The public port
-                                  number of the endpoint.
-                                "name": "str",  # Required. The name of the endpoint.
-                                "protocol": "str",  # Required. The protocol of the
-                                  endpoint. Known values are: "tcp", "udp".
-                                "publicFQDN": "str",  # Required. The public fully
-                                  qualified domain name for the Compute Node.
-                                "publicIPAddress": "str"  # Required. The public IP
-                                  address of the Compute Node.
-                            }
-                        ]
-                    },
-                    "errors": [
-                        {
-                            "code": "str",  # Optional. An identifier for the Compute
-                              Node error. Codes are invariant and are intended to be consumed
-                              programmatically.
-                            "errorDetails": [
-                                {
-                                    "name": "str",  # Optional. The name in the
-                                      name-value pair.
-                                    "value": "str"  # Optional. The value in the
-                                      name-value pair.
-                                }
-                            ],
-                            "message": "str"  # Optional. A message describing the
-                              Compute Node error, intended to be suitable for display in a user
-                              interface.
-                        }
-                    ],
-                    "id": "str",  # Optional. Every Compute Node that is added to a Pool is
-                      assigned a unique ID. Whenever a Compute Node is removed from a Pool, all of its
-                      local files are deleted, and the ID is reclaimed and could be reused for new
-                      Compute Nodes.
-                    "ipAddress": "str",  # Optional. Every Compute Node that is added to a Pool
-                      is assigned a unique IP address. Whenever a Compute Node is removed from a Pool,
-                      all of its local files are deleted, and the IP address is reclaimed and could be
-                      reused for new Compute Nodes.
-                    "isDedicated": bool,  # Optional. Whether this Compute Node is a dedicated
-                      Compute Node. If false, the Compute Node is a Spot/Low-priority Compute Node.
-                    "lastBootTime": "2020-02-20 00:00:00",  # Optional. This property may not be
-                      present if the Compute Node state is unusable.
-                    "nodeAgentInfo": {
-                        "lastUpdateTime": "2020-02-20 00:00:00",  # Required. This is the
-                          most recent time that the Compute Node agent was updated to a new version.
-                        "version": "str"  # Required. This version number can be checked
-                          against the Compute Node agent release notes located at
-                          https://github.com/Azure/Batch/blob/master/changelogs/nodeagent/CHANGELOG.md.
-                    },
-                    "recentTasks": [
-                        {
-                            "executionInfo": {
-                                "containerInfo": {
-                                    "containerId": "str",  # Optional. The ID of
-                                      the container.
-                                    "error": "str",  # Optional. This is the
-                                      detailed error string from the Docker service, if available. It
-                                      is equivalent to the error field returned by "docker inspect".
-                                    "state": "str"  # Optional. This is the state
-                                      of the container according to the Docker service. It is
-                                      equivalent to the status field returned by "docker inspect".
-                                },
-                                "endTime": "2020-02-20 00:00:00",  # Optional. This
-                                  property is set only if the Task is in the Completed state.
-                                "exitCode": 0,  # Optional. This property is set only
-                                  if the Task is in the completed state. In general, the exit code for
-                                  a process reflects the specific convention implemented by the
-                                  application developer for that process. If you use the exit code
-                                  value to make decisions in your code, be sure that you know the exit
-                                  code convention used by the application process. However, if the
-                                  Batch service terminates the Task (due to timeout, or user
-                                  termination via the API) you may see an operating system-defined exit
-                                  code.
-                                "failureInfo": {
-                                    "category": "str",  # Required. The category
-                                      of the error. Known values are: "usererror", "servererror".
-                                    "code": "str",  # Optional. An identifier for
-                                      the Task error. Codes are invariant and are intended to be
-                                      consumed programmatically.
-                                    "details": [
-                                        {
-                                            "name": "str",  # Optional.
-                                              The name in the name-value pair.
-                                            "value": "str"  # Optional.
-                                              The value in the name-value pair.
-                                        }
-                                    ],
-                                    "message": "str"  # Optional. A message
-                                      describing the Task error, intended to be suitable for display in
-                                      a user interface.
-                                },
-                                "lastRequeueTime": "2020-02-20 00:00:00",  #
-                                  Optional. This property is set only if the requeueCount is nonzero.
-                                "lastRetryTime": "2020-02-20 00:00:00",  # Optional.
-                                  This element is present only if the Task was retried (i.e. retryCount
-                                  is nonzero). If present, this is typically the same as startTime, but
-                                  may be different if the Task has been restarted for reasons other
-                                  than retry; for example, if the Compute Node was rebooted during a
-                                  retry, then the startTime is updated but the lastRetryTime is not.
-                                "requeueCount": 0,  # Required. When the user removes
-                                  Compute Nodes from a Pool (by resizing/shrinking the pool) or when
-                                  the Job is being disabled, the user can specify that running Tasks on
-                                  the Compute Nodes be requeued for execution. This count tracks how
-                                  many times the Task has been requeued for these reasons.
-                                "result": "str",  # Optional. If the value is
-                                  'failed', then the details of the failure can be found in the
-                                  failureInfo property. Known values are: "success", "failure".
-                                "retryCount": 0,  # Required. Task application
-                                  failures (non-zero exit code) are retried, pre-processing errors (the
-                                  Task could not be run) and file upload errors are not retried. The
-                                  Batch service will retry the Task up to the limit specified by the
-                                  constraints.
-                                "startTime": "2020-02-20 00:00:00"  # Optional.
-                                  'Running' corresponds to the running state, so if the Task specifies
-                                  resource files or Packages, then the start time reflects the time at
-                                  which the Task started downloading or deploying these. If the Task
-                                  has been restarted or retried, this is the most recent time at which
-                                  the Task started running. This property is present only for Tasks
-                                  that are in the running or completed state.
-                            },
-                            "jobId": "str",  # Optional. The ID of the Job to which the
-                              Task belongs.
-                            "subtaskId": 0,  # Optional. The ID of the subtask if the
-                              Task is a multi-instance Task.
-                            "taskId": "str",  # Optional. The ID of the Task.
-                            "taskState": "str",  # Required. The state of the Task. Known
-                              values are: "active", "preparing", "running", "completed".
-                            "taskUrl": "str"  # Optional. The URL of the Task.
-                        }
-                    ],
-                    "runningTaskSlotsCount": 0,  # Optional. The total number of scheduling slots
-                      used by currently running Job Tasks on the Compute Node. This includes Job
-                      Manager Tasks and normal Tasks, but not Job Preparation, Job Release or Start
-                      Tasks.
-                    "runningTasksCount": 0,  # Optional. The total number of currently running
-                      Job Tasks on the Compute Node. This includes Job Manager Tasks and normal Tasks,
-                      but not Job Preparation, Job Release or Start Tasks.
-                    "schedulingState": "str",  # Optional. Whether the Compute Node is available
-                      for Task scheduling. Known values are: "enabled", "disabled".
-                    "startTask": {
-                        "commandLine": "str",  # Required. The command line does not run
-                          under a shell, and therefore cannot take advantage of shell features such as
-                          environment variable expansion. If you want to take advantage of such
-                          features, you should invoke the shell in the command line, for example using
-                          "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the
-                          command line refers to file paths, it should use a relative path (relative to
-                          the Task working directory), or use the Batch provided environment variable
-                          (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
-                        "containerSettings": {
-                            "containerRunOptions": "str",  # Optional. These additional
-                              options are supplied as arguments to the "docker create" command, in
-                              addition to those controlled by the Batch Service.
-                            "imageName": "str",  # Required. This is the full Image
-                              reference, as would be specified to "docker pull". If no tag is provided
-                              as part of the Image name, the tag ":latest" is used as a default.
-                            "registry": {
-                                "identityReference": {
-                                    "resourceId": "str"  # Optional. The ARM
-                                      resource id of the user assigned identity.
-                                },
-                                "password": "str",  # Optional. The password to log
-                                  into the registry server.
-                                "registryServer": "str",  # Optional. If omitted, the
-                                  default is "docker.io".
-                                "username": "str"  # Optional. The user name to log
-                                  into the registry server.
-                            },
-                            "workingDirectory": "str"  # Optional. The default is
-                              'taskWorkingDirectory'. Known values are: "taskWorkingDirectory",
-                              "containerImageDefault".
-                        },
-                        "environmentSettings": [
-                            {
-                                "name": "str",  # Required. The name of the
-                                  environment variable.
-                                "value": "str"  # Optional. The value of the
-                                  environment variable.
-                            }
-                        ],
-                        "maxTaskRetryCount": 0,  # Optional. The Batch service retries a Task
-                          if its exit code is nonzero. Note that this value specifically controls the
-                          number of retries. The Batch service will try the Task once, and may then
-                          retry up to this limit. For example, if the maximum retry count is 3, Batch
-                          tries the Task up to 4 times (one initial try and 3 retries). If the maximum
-                          retry count is 0, the Batch service does not retry the Task. If the maximum
-                          retry count is -1, the Batch service retries the Task without limit, however
-                          this is not recommended for a start task or any task. The default value is 0
-                          (no retries).
-                        "resourceFiles": [
-                            {
-                                "autoStorageContainerName": "str",  # Optional. The
-                                  autoStorageContainerName, storageContainerUrl and httpUrl properties
-                                  are mutually exclusive and one of them must be specified.
-                                "blobPrefix": "str",  # Optional. The property is
-                                  valid only when autoStorageContainerName or storageContainerUrl is
-                                  used. This prefix can be a partial filename or a subdirectory. If a
-                                  prefix is not specified, all the files in the container will be
-                                  downloaded.
-                                "fileMode": "str",  # Optional. This property applies
-                                  only to files being downloaded to Linux Compute Nodes. It will be
-                                  ignored if it is specified for a resourceFile which will be
-                                  downloaded to a Windows Compute Node. If this property is not
-                                  specified for a Linux Compute Node, then a default value of 0770 is
-                                  applied to the file.
-                                "filePath": "str",  # Optional. If the httpUrl
-                                  property is specified, the filePath is required and describes the
-                                  path which the file will be downloaded to, including the filename.
-                                  Otherwise, if the autoStorageContainerName or storageContainerUrl
-                                  property is specified, filePath is optional and is the directory to
-                                  download the files to. In the case where filePath is used as a
-                                  directory, any directory structure already associated with the input
-                                  data will be retained in full and appended to the specified filePath
-                                  directory. The specified relative path cannot break out of the Task's
-                                  working directory (for example by using '..').
-                                "httpUrl": "str",  # Optional. The
-                                  autoStorageContainerName, storageContainerUrl and httpUrl properties
-                                  are mutually exclusive and one of them must be specified. If the URL
-                                  points to Azure Blob Storage, it must be readable from compute nodes.
-                                  There are three ways to get such a URL for a blob in Azure storage:
-                                  include a Shared Access Signature (SAS) granting read permissions on
-                                  the blob, use a managed identity with read permission, or set the ACL
-                                  for the blob or its container to allow public access.
-                                "identityReference": {
-                                    "resourceId": "str"  # Optional. The ARM
-                                      resource id of the user assigned identity.
-                                },
-                                "storageContainerUrl": "str"  # Optional. The
-                                  autoStorageContainerName, storageContainerUrl and httpUrl properties
-                                  are mutually exclusive and one of them must be specified. This URL
-                                  must be readable and listable from compute nodes. There are three
-                                  ways to get such a URL for a container in Azure storage: include a
-                                  Shared Access Signature (SAS) granting read and list permissions on
-                                  the container, use a managed identity with read and list permissions,
-                                  or set the ACL for the container to allow public access.
-                            }
-                        ],
-                        "userIdentity": {
-                            "autoUser": {
-                                "elevationLevel": "str",  # Optional. The default
-                                  value is nonAdmin. Known values are: "nonadmin", "admin".
-                                "scope": "str"  # Optional. The default value is
-                                  pool. If the pool is running Windows a value of Task should be
-                                  specified if stricter isolation between tasks is required. For
-                                  example, if the task mutates the registry in a way which could impact
-                                  other tasks, or if certificates have been specified on the pool which
-                                  should not be accessible by normal tasks but should be accessible by
-                                  StartTasks. Known values are: "task", "pool".
-                            },
-                            "username": "str"  # Optional. The userName and autoUser
-                              properties are mutually exclusive; you must specify one but not both.
-                        },
-                        "waitForSuccess": bool  # Optional. If true and the StartTask fails
-                          on a Node, the Batch service retries the StartTask up to its maximum retry
-                          count (maxTaskRetryCount). If the Task has still not completed successfully
-                          after all retries, then the Batch service marks the Node unusable, and will
-                          not schedule Tasks to it. This condition can be detected via the Compute Node
-                          state and failure info details. If false, the Batch service will not wait for
-                          the StartTask to complete. In this case, other Tasks can start executing on
-                          the Compute Node while the StartTask is still running; and even if the
-                          StartTask fails, new Tasks will continue to be scheduled on the Compute Node.
-                          The default is true.
-                    },
-                    "startTaskInfo": {
-                        "containerInfo": {
-                            "containerId": "str",  # Optional. The ID of the container.
-                            "error": "str",  # Optional. This is the detailed error
-                              string from the Docker service, if available. It is equivalent to the
-                              error field returned by "docker inspect".
-                            "state": "str"  # Optional. This is the state of the
-                              container according to the Docker service. It is equivalent to the status
-                              field returned by "docker inspect".
-                        },
-                        "endTime": "2020-02-20 00:00:00",  # Optional. This is the end time
-                          of the most recent run of the StartTask, if that run has completed (even if
-                          that run failed and a retry is pending). This element is not present if the
-                          StartTask is currently running.
-                        "exitCode": 0,  # Optional. This property is set only if the
-                          StartTask is in the completed state. In general, the exit code for a process
-                          reflects the specific convention implemented by the application developer for
-                          that process. If you use the exit code value to make decisions in your code,
-                          be sure that you know the exit code convention used by the application
-                          process. However, if the Batch service terminates the StartTask (due to
-                          timeout, or user termination via the API) you may see an operating
-                          system-defined exit code.
-                        "failureInfo": {
-                            "category": "str",  # Required. The category of the error.
-                              Known values are: "usererror", "servererror".
-                            "code": "str",  # Optional. An identifier for the Task error.
-                              Codes are invariant and are intended to be consumed programmatically.
-                            "details": [
-                                {
-                                    "name": "str",  # Optional. The name in the
-                                      name-value pair.
-                                    "value": "str"  # Optional. The value in the
-                                      name-value pair.
-                                }
-                            ],
-                            "message": "str"  # Optional. A message describing the Task
-                              error, intended to be suitable for display in a user interface.
-                        },
-                        "lastRetryTime": "2020-02-20 00:00:00",  # Optional. This element is
-                          present only if the Task was retried (i.e. retryCount is nonzero). If
-                          present, this is typically the same as startTime, but may be different if the
-                          Task has been restarted for reasons other than retry; for example, if the
-                          Compute Node was rebooted during a retry, then the startTime is updated but
-                          the lastRetryTime is not.
-                        "result": "str",  # Optional. If the value is 'failed', then the
-                          details of the failure can be found in the failureInfo property. Known values
-                          are: "success", "failure".
-                        "retryCount": 0,  # Required. Task application failures (non-zero
-                          exit code) are retried, pre-processing errors (the Task could not be run) and
-                          file upload errors are not retried. The Batch service will retry the Task up
-                          to the limit specified by the constraints.
-                        "startTime": "2020-02-20 00:00:00",  # Required. This value is reset
-                          every time the Task is restarted or retried (that is, this is the most recent
-                          time at which the StartTask started running).
-                        "state": "str"  # Required. The state of the StartTask on the Compute
-                          Node. Known values are: "running", "completed".
-                    },
-                    "state": "str",  # Optional. The Spot/Low-priority Compute Node has been
-                      preempted. Tasks which were running on the Compute Node when it was preempted
-                      will be rescheduled when another Compute Node becomes available. Known values
-                      are: "idle", "rebooting", "reimaging", "running", "unusable", "creating",
-                      "starting", "waitingforstarttask", "starttaskfailed", "unknown", "leavingpool",
-                      "offline", "preempted".
-                    "stateTransitionTime": "2020-02-20 00:00:00",  # Optional. The time at which
-                      the Compute Node entered its current state.
-                    "totalTasksRun": 0,  # Optional. The total number of Job Tasks completed on
-                      the Compute Node. This includes Job Manager Tasks and normal Tasks, but not Job
-                      Preparation, Job Release or Start Tasks.
-                    "totalTasksSucceeded": 0,  # Optional. The total number of Job Tasks which
-                      completed successfully (with exitCode 0) on the Compute Node. This includes Job
-                      Manager Tasks and normal Tasks, but not Job Preparation, Job Release or Start
-                      Tasks.
-                    "url": "str",  # Optional. The URL of the Compute Node.
-                    "virtualMachineInfo": {
-                        "imageReference": {
-                            "exactVersion": "str",  # Optional. The specific version of
-                              the platform image or marketplace image used to create the node. This
-                              read-only field differs from 'version' only if the value specified for
-                              'version' when the pool was created was 'latest'.
-                            "offer": "str",  # Optional. For example, UbuntuServer or
-                              WindowsServer.
-                            "publisher": "str",  # Optional. For example, Canonical or
-                              MicrosoftWindowsServer.
-                            "sku": "str",  # Optional. For example, 18.04-LTS or
-                              2019-Datacenter.
-                            "version": "str",  # Optional. A value of 'latest' can be
-                              specified to select the latest version of an Image. If omitted, the
-                              default is 'latest'.
-                            "virtualMachineImageId": "str"  # Optional. This property is
-                              mutually exclusive with other ImageReference properties. The Shared Image
-                              Gallery Image must have replicas in the same region and must be in the
-                              same subscription as the Azure Batch account. If the image version is not
-                              specified in the imageId, the latest version will be used. For
-                              information about the firewall settings for the Batch Compute Node agent
-                              to communicate with the Batch service see
-                              https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
-                        }
-                    },
-                    "vmSize": "str"  # Optional. For information about available sizes of virtual
-                      machines in Pools, see Choose a VM size for Compute Nodes in an Azure Batch Pool
-                      (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
-                }
+        :return: ComputeNode
+        :rtype: ~azure-batch.models.ComputeNode
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ComputeNode]
 
-        
         request = build_get_request(
             pool_id=pool_id,
             node_id=node_id,
-            api_version=api_version,
             select=select,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = self._deserialize("ComputeNode", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
-        return cast(JSON, deserialized)
-
-
+        return deserialized
 
     @distributed_trace_async
     async def reboot(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         node_id: str,
-        node_reboot_parameter: Optional[JSON] = None,
+        parameters: Optional[_models.NodeRebootParameters] = None,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -908,14 +465,14 @@ class ComputeNodeOperations:
 
         You can restart a Compute Node only if it is in an idle or running state.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node.
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
         :type pool_id: str
-        :param node_id: The ID of the Compute Node that you want to restart.
+        :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
-        :param node_reboot_parameter: The parameters for the request. Default value is None.
-        :type node_reboot_parameter: JSON
+        :param parameters: The parameters for the request. Default value is None.
+        :type parameters: ~azure-batch.models.NodeRebootParameters
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -930,86 +487,76 @@ class ComputeNodeOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                node_reboot_parameter = {
-                    "nodeRebootOption": "str"  # Optional. The default value is requeue. Known
-                      values are: "requeue", "terminate", "taskcompletion", "retaineddata".
-                }
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        if node_reboot_parameter is not None:
-            _content = node_reboot_parameter
+        if parameters is not None:
+            _json = self._serialize.body(parameters, "NodeRebootParameters")
         else:
-            _content = None
+            _json = None
 
         request = build_reboot_request(
             pool_id=pool_id,
             node_id=node_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
-
-
 
     @distributed_trace_async
     async def reimage(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         node_id: str,
-        node_reimage_parameter: Optional[JSON] = None,
+        parameters: Optional[_models.NodeReimageParameters] = None,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -1019,14 +566,14 @@ class ComputeNodeOperations:
         state. This API can be invoked only on Pools created with the cloud service configuration
         property.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node.
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
         :type pool_id: str
-        :param node_id: The ID of the Compute Node that you want to restart.
+        :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
-        :param node_reimage_parameter: The parameters for the request. Default value is None.
-        :type node_reimage_parameter: JSON
+        :param parameters: The parameters for the request. Default value is None.
+        :type parameters: ~azure-batch.models.NodeReimageParameters
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1041,86 +588,76 @@ class ComputeNodeOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                node_reimage_parameter = {
-                    "nodeReimageOption": "str"  # Optional. The default value is requeue. Known
-                      values are: "requeue", "terminate", "taskcompletion", "retaineddata".
-                }
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        if node_reimage_parameter is not None:
-            _content = node_reimage_parameter
+        if parameters is not None:
+            _json = self._serialize.body(parameters, "NodeReimageParameters")
         else:
-            _content = None
+            _json = None
 
         request = build_reimage_request(
             pool_id=pool_id,
             node_id=node_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
-
-
 
     @distributed_trace_async
     async def disable_scheduling(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         node_id: str,
-        node_disable_scheduling_parameter: Optional[JSON] = None,
+        parameters: Optional[_models.NodeDisableSchedulingParameters] = None,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -1129,15 +666,15 @@ class ComputeNodeOperations:
         You can disable Task scheduling on a Compute Node only if its current scheduling state is
         enabled.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node.
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
         :type pool_id: str
         :param node_id: The ID of the Compute Node on which you want to disable Task scheduling.
+         Required.
         :type node_id: str
-        :param node_disable_scheduling_parameter: The parameters for the request. Default value is
-         None.
-        :type node_disable_scheduling_parameter: JSON
+        :param parameters: The parameters for the request. Default value is None.
+        :type parameters: ~azure-batch.models.NodeDisableSchedulingParameters
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1152,75 +689,65 @@ class ComputeNodeOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                node_disable_scheduling_parameter = {
-                    "nodeDisableSchedulingOption": "str"  # Optional. The default value is
-                      requeue. Known values are: "requeue", "terminate", "taskcompletion".
-                }
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        if node_disable_scheduling_parameter is not None:
-            _content = node_disable_scheduling_parameter
+        if parameters is not None:
+            _json = self._serialize.body(parameters, "NodeDisableSchedulingParameters")
         else:
-            _content = None
+            _json = None
 
         request = build_disable_scheduling_request(
             pool_id=pool_id,
             node_id=node_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
-
-
 
     @distributed_trace_async
     async def enable_scheduling(  # pylint: disable=inconsistent-return-statements
@@ -1228,9 +755,9 @@ class ComputeNodeOperations:
         pool_id: str,
         node_id: str,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -1239,12 +766,13 @@ class ComputeNodeOperations:
         You can enable Task scheduling on a Compute Node only if its current scheduling state is
         disabled.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node.
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
         :type pool_id: str
         :param node_id: The ID of the Compute Node on which you want to enable Task scheduling.
+         Required.
         :type node_id: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1259,59 +787,57 @@ class ComputeNodeOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_enable_scheduling_request(
             pool_id=pool_id,
             node_id=node_id,
-            api_version=api_version,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
-
-
 
     @distributed_trace_async
     async def get_remote_login_settings(
@@ -1319,12 +845,12 @@ class ComputeNodeOperations:
         pool_id: str,
         node_id: str,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> _models.ComputeNodeGetRemoteLoginSettingsResult:
         """Gets the settings required for remote login to a Compute Node.
 
         Before you can remotely login to a Compute Node using the remote login settings, you must
@@ -1332,12 +858,13 @@ class ComputeNodeOperations:
         the virtual machine configuration property. For Pools created with a cloud service
         configuration, see the GetRemoteDesktop API.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node.
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
         :type pool_id: str
         :param node_id: The ID of the Compute Node for which to obtain the remote login settings.
+         Required.
         :type node_id: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1350,77 +877,62 @@ class ComputeNodeOperations:
          current system clock time; set it explicitly if you are calling the REST API directly. Default
          value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: JSON object
-        :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "remoteLoginIPAddress": "str",  # Required. The IP address used for remote
-                      login to the Compute Node.
-                    "remoteLoginPort": 0  # Required. The port used for remote login to the
-                      Compute Node.
-                }
+        :return: ComputeNodeGetRemoteLoginSettingsResult
+        :rtype: ~azure-batch.models.ComputeNodeGetRemoteLoginSettingsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ComputeNodeGetRemoteLoginSettingsResult]
 
-        
         request = build_get_remote_login_settings_request(
             pool_id=pool_id,
             node_id=node_id,
-            api_version=api_version,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = self._deserialize("ComputeNodeGetRemoteLoginSettingsResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
-        return cast(JSON, deserialized)
-
-
+        return deserialized
 
     @distributed_trace_async
     async def get_remote_desktop(
@@ -1428,12 +940,12 @@ class ComputeNodeOperations:
         pool_id: str,
         node_id: str,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> IO:
+    ) -> AsyncIterator[bytes]:
         """Gets the Remote Desktop Protocol file for the specified Compute Node.
 
         Before you can access a Compute Node by using the RDP file, you must create a user Account on
@@ -1441,13 +953,13 @@ class ComputeNodeOperations:
         configuration. For Pools created with a virtual machine configuration, see the
         GetRemoteLoginSettings API.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node.
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
         :type pool_id: str
         :param node_id: The ID of the Compute Node for which you want to get the Remote Desktop
-         Protocol file.
+         Protocol file. Required.
         :type node_id: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1460,77 +972,76 @@ class ComputeNodeOperations:
          current system clock time; set it explicitly if you are calling the REST API directly. Default
          value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: IO
-        :rtype: IO
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: Async iterator of the response bytes
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
+        cls = kwargs.pop("cls", None)  # type: ClsType[AsyncIterator[bytes]]
 
-        
         request = build_get_remote_desktop_request(
             pool_id=pool_id,
             node_id=node_id,
-            api_version=api_version,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=True,
-            **kwargs
+            request, stream=True, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
-        deserialized = response
+        deserialized = response.iter_bytes()
 
         if cls:
-            return cls(pipeline_response, cast(IO, deserialized), response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
-        return cast(IO, deserialized)
-
-
+        return deserialized
 
     @distributed_trace_async
     async def upload_batch_service_logs(
         self,
         pool_id: str,
         node_id: str,
-        upload_batch_service_logs_configuration: JSON,
+        upload_batch_service_logs_configuration: _models.UploadBatchServiceLogsConfiguration,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> _models.UploadBatchServiceLogsResult:
         """Upload Azure Batch service log files from the specified Compute Node to Azure Blob Storage.
 
         This is for gathering Azure Batch service log files in an automated fashion from Compute Nodes
@@ -1538,16 +1049,17 @@ class ComputeNodeOperations:
         log files should be shared with Azure support to aid in debugging issues with the Batch
         service.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node.
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
         :type pool_id: str
         :param node_id: The ID of the Compute Node from which you want to upload the Azure Batch
-         service log files.
+         service log files. Required.
         :type node_id: str
         :param upload_batch_service_logs_configuration: The Azure Batch service log files upload
-         configuration.
-        :type upload_batch_service_logs_configuration: JSON
+         configuration. Required.
+        :type upload_batch_service_logs_configuration:
+         ~azure-batch.models.UploadBatchServiceLogsConfiguration
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1560,104 +1072,65 @@ class ComputeNodeOperations:
          current system clock time; set it explicitly if you are calling the REST API directly. Default
          value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: JSON object
-        :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                upload_batch_service_logs_configuration = {
-                    "containerUrl": "str",  # Required. If a user assigned managed identity is
-                      not being used, the URL must include a Shared Access Signature (SAS) granting
-                      write permissions to the container. The SAS duration must allow enough time for
-                      the upload to finish. The start time for SAS is optional and recommended to not
-                      be specified.
-                    "endTime": "2020-02-20 00:00:00",  # Optional. Any log file containing a log
-                      message in the time range will be uploaded. This means that the operation might
-                      retrieve more logs than have been requested since the entire log file is always
-                      uploaded, but the operation should not retrieve fewer logs than have been
-                      requested. If omitted, the default is to upload all logs available after the
-                      startTime.
-                    "identityReference": {
-                        "resourceId": "str"  # Optional. The ARM resource id of the user
-                          assigned identity.
-                    },
-                    "startTime": "2020-02-20 00:00:00"  # Required. Any log file containing a log
-                      message in the time range will be uploaded. This means that the operation might
-                      retrieve more logs than have been requested since the entire log file is always
-                      uploaded, but the operation should not retrieve fewer logs than have been
-                      requested.
-                }
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "numberOfFilesUploaded": 0,  # Required. The number of log files which will
-                      be uploaded.
-                    "virtualDirectoryName": "str"  # Required. The virtual directory name is part
-                      of the blob name for each log file uploaded, and it is built based poolId, nodeId
-                      and a unique identifier.
-                }
+        :return: UploadBatchServiceLogsResult
+        :rtype: ~azure-batch.models.UploadBatchServiceLogsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.UploadBatchServiceLogsResult]
 
-        _content = upload_batch_service_logs_configuration
+        _json = self._serialize.body(upload_batch_service_logs_configuration, "UploadBatchServiceLogsConfiguration")
 
         request = build_upload_batch_service_logs_request(
             pool_id=pool_id,
             node_id=node_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = self._deserialize("UploadBatchServiceLogsResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
-        return cast(JSON, deserialized)
-
-
+        return deserialized
 
     @distributed_trace
     def list(
@@ -1666,18 +1139,18 @@ class ComputeNodeOperations:
         *,
         filter: Optional[str] = None,
         select: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
+        max_results: int = 1000,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    ) -> AsyncIterable["_models.ComputeNode"]:
         """Lists the Compute Nodes in the specified Pool.
 
         Lists the Compute Nodes in the specified Pool.
 
-        :param pool_id: The ID of the Pool from which you want to list Compute Nodes.
+        :param pool_id: The ID of the Pool from which you want to list Compute Nodes. Required.
         :type pool_id: str
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
          https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-nodes-in-a-pool.
@@ -1689,7 +1162,7 @@ class ComputeNodeOperations:
          Compute Nodes can be returned. Default value is 1000.
         :paramtype max_results: int
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1702,492 +1175,28 @@ class ComputeNodeOperations:
          current system clock time; set it explicitly if you are calling the REST API directly. Default
          value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "odata.nextLink": "str",  # Optional. The URL to get the next set of results.
-                    "value": [
-                        {
-                            "affinityId": "str",  # Optional. Note that this is just a
-                              soft affinity. If the target Compute Node is busy or unavailable at the
-                              time the Task is scheduled, then the Task will be scheduled elsewhere.
-                            "allocationTime": "2020-02-20 00:00:00",  # Optional. This is
-                              the time when the Compute Node was initially allocated and doesn't change
-                              once set. It is not updated when the Compute Node is service healed or
-                              preempted.
-                            "certificateReferences": [
-                                {
-                                    "storeLocation": "str",  # Optional. The
-                                      default value is currentuser. This property is applicable only
-                                      for Pools configured with Windows Compute Nodes (that is, created
-                                      with cloudServiceConfiguration, or with
-                                      virtualMachineConfiguration using a Windows Image reference). For
-                                      Linux Compute Nodes, the Certificates are stored in a directory
-                                      inside the Task working directory and an environment variable
-                                      AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for
-                                      this location. For Certificates with visibility of 'remoteUser',
-                                      a 'certs' directory is created in the user's home directory
-                                      (e.g., /home/{user-name}/certs) and Certificates are placed in
-                                      that directory. Known values are: "currentuser", "localmachine".
-                                    "storeName": "str",  # Optional. This
-                                      property is applicable only for Pools configured with Windows
-                                      Compute Nodes (that is, created with cloudServiceConfiguration,
-                                      or with virtualMachineConfiguration using a Windows Image
-                                      reference). Common store names include: My, Root, CA, Trust,
-                                      Disallowed, TrustedPeople, TrustedPublisher, AuthRoot,
-                                      AddressBook, but any custom store name can also be used. The
-                                      default value is My.
-                                    "thumbprint": "str",  # Required. The
-                                      thumbprint of the Certificate.
-                                    "thumbprintAlgorithm": "str",  # Required.
-                                      The algorithm with which the thumbprint is associated. This must
-                                      be sha1.
-                                    "visibility": [
-                                        "str"  # Optional. You can specify
-                                          more than one visibility in this collection. The default is
-                                          all Accounts.
-                                    ]
-                                }
-                            ],
-                            "endpointConfiguration": {
-                                "inboundEndpoints": [
-                                    {
-                                        "backendPort": 0,  # Required. The
-                                          backend port number of the endpoint.
-                                        "frontendPort": 0,  # Required. The
-                                          public port number of the endpoint.
-                                        "name": "str",  # Required. The name
-                                          of the endpoint.
-                                        "protocol": "str",  # Required. The
-                                          protocol of the endpoint. Known values are: "tcp", "udp".
-                                        "publicFQDN": "str",  # Required. The
-                                          public fully qualified domain name for the Compute Node.
-                                        "publicIPAddress": "str"  # Required.
-                                          The public IP address of the Compute Node.
-                                    }
-                                ]
-                            },
-                            "errors": [
-                                {
-                                    "code": "str",  # Optional. An identifier for
-                                      the Compute Node error. Codes are invariant and are intended to
-                                      be consumed programmatically.
-                                    "errorDetails": [
-                                        {
-                                            "name": "str",  # Optional.
-                                              The name in the name-value pair.
-                                            "value": "str"  # Optional.
-                                              The value in the name-value pair.
-                                        }
-                                    ],
-                                    "message": "str"  # Optional. A message
-                                      describing the Compute Node error, intended to be suitable for
-                                      display in a user interface.
-                                }
-                            ],
-                            "id": "str",  # Optional. Every Compute Node that is added to
-                              a Pool is assigned a unique ID. Whenever a Compute Node is removed from a
-                              Pool, all of its local files are deleted, and the ID is reclaimed and
-                              could be reused for new Compute Nodes.
-                            "ipAddress": "str",  # Optional. Every Compute Node that is
-                              added to a Pool is assigned a unique IP address. Whenever a Compute Node
-                              is removed from a Pool, all of its local files are deleted, and the IP
-                              address is reclaimed and could be reused for new Compute Nodes.
-                            "isDedicated": bool,  # Optional. Whether this Compute Node
-                              is a dedicated Compute Node. If false, the Compute Node is a
-                              Spot/Low-priority Compute Node.
-                            "lastBootTime": "2020-02-20 00:00:00",  # Optional. This
-                              property may not be present if the Compute Node state is unusable.
-                            "nodeAgentInfo": {
-                                "lastUpdateTime": "2020-02-20 00:00:00",  # Required.
-                                  This is the most recent time that the Compute Node agent was updated
-                                  to a new version.
-                                "version": "str"  # Required. This version number can
-                                  be checked against the Compute Node agent release notes located at
-                                  https://github.com/Azure/Batch/blob/master/changelogs/nodeagent/CHANGELOG.md.
-                            },
-                            "recentTasks": [
-                                {
-                                    "executionInfo": {
-                                        "containerInfo": {
-                                            "containerId": "str",  #
-                                              Optional. The ID of the container.
-                                            "error": "str",  # Optional.
-                                              This is the detailed error string from the Docker
-                                              service, if available. It is equivalent to the error
-                                              field returned by "docker inspect".
-                                            "state": "str"  # Optional.
-                                              This is the state of the container according to the
-                                              Docker service. It is equivalent to the status field
-                                              returned by "docker inspect".
-                                        },
-                                        "endTime": "2020-02-20 00:00:00",  #
-                                          Optional. This property is set only if the Task is in the
-                                          Completed state.
-                                        "exitCode": 0,  # Optional. This
-                                          property is set only if the Task is in the completed state.
-                                          In general, the exit code for a process reflects the specific
-                                          convention implemented by the application developer for that
-                                          process. If you use the exit code value to make decisions in
-                                          your code, be sure that you know the exit code convention
-                                          used by the application process. However, if the Batch
-                                          service terminates the Task (due to timeout, or user
-                                          termination via the API) you may see an operating
-                                          system-defined exit code.
-                                        "failureInfo": {
-                                            "category": "str",  #
-                                              Required. The category of the error. Known values are:
-                                              "usererror", "servererror".
-                                            "code": "str",  # Optional.
-                                              An identifier for the Task error. Codes are invariant and
-                                              are intended to be consumed programmatically.
-                                            "details": [
-                                                {
-                                                    "name":
-                                                      "str",  # Optional. The name in the name-value
-                                                      pair.
-                                                    "value":
-                                                      "str"  # Optional. The value in the name-value
-                                                      pair.
-                                                }
-                                            ],
-                                            "message": "str"  # Optional.
-                                              A message describing the Task error, intended to be
-                                              suitable for display in a user interface.
-                                        },
-                                        "lastRequeueTime": "2020-02-20
-                                          00:00:00",  # Optional. This property is set only if the
-                                          requeueCount is nonzero.
-                                        "lastRetryTime": "2020-02-20
-                                          00:00:00",  # Optional. This element is present only if the
-                                          Task was retried (i.e. retryCount is nonzero). If present,
-                                          this is typically the same as startTime, but may be different
-                                          if the Task has been restarted for reasons other than retry;
-                                          for example, if the Compute Node was rebooted during a retry,
-                                          then the startTime is updated but the lastRetryTime is not.
-                                        "requeueCount": 0,  # Required. When
-                                          the user removes Compute Nodes from a Pool (by
-                                          resizing/shrinking the pool) or when the Job is being
-                                          disabled, the user can specify that running Tasks on the
-                                          Compute Nodes be requeued for execution. This count tracks
-                                          how many times the Task has been requeued for these reasons.
-                                        "result": "str",  # Optional. If the
-                                          value is 'failed', then the details of the failure can be
-                                          found in the failureInfo property. Known values are:
-                                          "success", "failure".
-                                        "retryCount": 0,  # Required. Task
-                                          application failures (non-zero exit code) are retried,
-                                          pre-processing errors (the Task could not be run) and file
-                                          upload errors are not retried. The Batch service will retry
-                                          the Task up to the limit specified by the constraints.
-                                        "startTime": "2020-02-20 00:00:00"  #
-                                          Optional. 'Running' corresponds to the running state, so if
-                                          the Task specifies resource files or Packages, then the start
-                                          time reflects the time at which the Task started downloading
-                                          or deploying these. If the Task has been restarted or
-                                          retried, this is the most recent time at which the Task
-                                          started running. This property is present only for Tasks that
-                                          are in the running or completed state.
-                                    },
-                                    "jobId": "str",  # Optional. The ID of the
-                                      Job to which the Task belongs.
-                                    "subtaskId": 0,  # Optional. The ID of the
-                                      subtask if the Task is a multi-instance Task.
-                                    "taskId": "str",  # Optional. The ID of the
-                                      Task.
-                                    "taskState": "str",  # Required. The state of
-                                      the Task. Known values are: "active", "preparing", "running",
-                                      "completed".
-                                    "taskUrl": "str"  # Optional. The URL of the
-                                      Task.
-                                }
-                            ],
-                            "runningTaskSlotsCount": 0,  # Optional. The total number of
-                              scheduling slots used by currently running Job Tasks on the Compute Node.
-                              This includes Job Manager Tasks and normal Tasks, but not Job
-                              Preparation, Job Release or Start Tasks.
-                            "runningTasksCount": 0,  # Optional. The total number of
-                              currently running Job Tasks on the Compute Node. This includes Job
-                              Manager Tasks and normal Tasks, but not Job Preparation, Job Release or
-                              Start Tasks.
-                            "schedulingState": "str",  # Optional. Whether the Compute
-                              Node is available for Task scheduling. Known values are: "enabled",
-                              "disabled".
-                            "startTask": {
-                                "commandLine": "str",  # Required. The command line
-                                  does not run under a shell, and therefore cannot take advantage of
-                                  shell features such as environment variable expansion. If you want to
-                                  take advantage of such features, you should invoke the shell in the
-                                  command line, for example using "cmd /c MyCommand" in Windows or
-                                  "/bin/sh -c MyCommand" in Linux. If the command line refers to file
-                                  paths, it should use a relative path (relative to the Task working
-                                  directory), or use the Batch provided environment variable
-                                  (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
-                                "containerSettings": {
-                                    "containerRunOptions": "str",  # Optional.
-                                      These additional options are supplied as arguments to the "docker
-                                      create" command, in addition to those controlled by the Batch
-                                      Service.
-                                    "imageName": "str",  # Required. This is the
-                                      full Image reference, as would be specified to "docker pull". If
-                                      no tag is provided as part of the Image name, the tag ":latest"
-                                      is used as a default.
-                                    "registry": {
-                                        "identityReference": {
-                                            "resourceId": "str"  #
-                                              Optional. The ARM resource id of the user assigned
-                                              identity.
-                                        },
-                                        "password": "str",  # Optional. The
-                                          password to log into the registry server.
-                                        "registryServer": "str",  # Optional.
-                                          If omitted, the default is "docker.io".
-                                        "username": "str"  # Optional. The
-                                          user name to log into the registry server.
-                                    },
-                                    "workingDirectory": "str"  # Optional. The
-                                      default is 'taskWorkingDirectory'. Known values are:
-                                      "taskWorkingDirectory", "containerImageDefault".
-                                },
-                                "environmentSettings": [
-                                    {
-                                        "name": "str",  # Required. The name
-                                          of the environment variable.
-                                        "value": "str"  # Optional. The value
-                                          of the environment variable.
-                                    }
-                                ],
-                                "maxTaskRetryCount": 0,  # Optional. The Batch
-                                  service retries a Task if its exit code is nonzero. Note that this
-                                  value specifically controls the number of retries. The Batch service
-                                  will try the Task once, and may then retry up to this limit. For
-                                  example, if the maximum retry count is 3, Batch tries the Task up to
-                                  4 times (one initial try and 3 retries). If the maximum retry count
-                                  is 0, the Batch service does not retry the Task. If the maximum retry
-                                  count is -1, the Batch service retries the Task without limit,
-                                  however this is not recommended for a start task or any task. The
-                                  default value is 0 (no retries).
-                                "resourceFiles": [
-                                    {
-                                        "autoStorageContainerName": "str",  #
-                                          Optional. The autoStorageContainerName, storageContainerUrl
-                                          and httpUrl properties are mutually exclusive and one of them
-                                          must be specified.
-                                        "blobPrefix": "str",  # Optional. The
-                                          property is valid only when autoStorageContainerName or
-                                          storageContainerUrl is used. This prefix can be a partial
-                                          filename or a subdirectory. If a prefix is not specified, all
-                                          the files in the container will be downloaded.
-                                        "fileMode": "str",  # Optional. This
-                                          property applies only to files being downloaded to Linux
-                                          Compute Nodes. It will be ignored if it is specified for a
-                                          resourceFile which will be downloaded to a Windows Compute
-                                          Node. If this property is not specified for a Linux Compute
-                                          Node, then a default value of 0770 is applied to the file.
-                                        "filePath": "str",  # Optional. If
-                                          the httpUrl property is specified, the filePath is required
-                                          and describes the path which the file will be downloaded to,
-                                          including the filename. Otherwise, if the
-                                          autoStorageContainerName or storageContainerUrl property is
-                                          specified, filePath is optional and is the directory to
-                                          download the files to. In the case where filePath is used as
-                                          a directory, any directory structure already associated with
-                                          the input data will be retained in full and appended to the
-                                          specified filePath directory. The specified relative path
-                                          cannot break out of the Task's working directory (for example
-                                          by using '..').
-                                        "httpUrl": "str",  # Optional. The
-                                          autoStorageContainerName, storageContainerUrl and httpUrl
-                                          properties are mutually exclusive and one of them must be
-                                          specified. If the URL points to Azure Blob Storage, it must
-                                          be readable from compute nodes. There are three ways to get
-                                          such a URL for a blob in Azure storage: include a Shared
-                                          Access Signature (SAS) granting read permissions on the blob,
-                                          use a managed identity with read permission, or set the ACL
-                                          for the blob or its container to allow public access.
-                                        "identityReference": {
-                                            "resourceId": "str"  #
-                                              Optional. The ARM resource id of the user assigned
-                                              identity.
-                                        },
-                                        "storageContainerUrl": "str"  #
-                                          Optional. The autoStorageContainerName, storageContainerUrl
-                                          and httpUrl properties are mutually exclusive and one of them
-                                          must be specified. This URL must be readable and listable
-                                          from compute nodes. There are three ways to get such a URL
-                                          for a container in Azure storage: include a Shared Access
-                                          Signature (SAS) granting read and list permissions on the
-                                          container, use a managed identity with read and list
-                                          permissions, or set the ACL for the container to allow public
-                                          access.
-                                    }
-                                ],
-                                "userIdentity": {
-                                    "autoUser": {
-                                        "elevationLevel": "str",  # Optional.
-                                          The default value is nonAdmin. Known values are: "nonadmin",
-                                          "admin".
-                                        "scope": "str"  # Optional. The
-                                          default value is pool. If the pool is running Windows a value
-                                          of Task should be specified if stricter isolation between
-                                          tasks is required. For example, if the task mutates the
-                                          registry in a way which could impact other tasks, or if
-                                          certificates have been specified on the pool which should not
-                                          be accessible by normal tasks but should be accessible by
-                                          StartTasks. Known values are: "task", "pool".
-                                    },
-                                    "username": "str"  # Optional. The userName
-                                      and autoUser properties are mutually exclusive; you must specify
-                                      one but not both.
-                                },
-                                "waitForSuccess": bool  # Optional. If true and the
-                                  StartTask fails on a Node, the Batch service retries the StartTask up
-                                  to its maximum retry count (maxTaskRetryCount). If the Task has still
-                                  not completed successfully after all retries, then the Batch service
-                                  marks the Node unusable, and will not schedule Tasks to it. This
-                                  condition can be detected via the Compute Node state and failure info
-                                  details. If false, the Batch service will not wait for the StartTask
-                                  to complete. In this case, other Tasks can start executing on the
-                                  Compute Node while the StartTask is still running; and even if the
-                                  StartTask fails, new Tasks will continue to be scheduled on the
-                                  Compute Node. The default is true.
-                            },
-                            "startTaskInfo": {
-                                "containerInfo": {
-                                    "containerId": "str",  # Optional. The ID of
-                                      the container.
-                                    "error": "str",  # Optional. This is the
-                                      detailed error string from the Docker service, if available. It
-                                      is equivalent to the error field returned by "docker inspect".
-                                    "state": "str"  # Optional. This is the state
-                                      of the container according to the Docker service. It is
-                                      equivalent to the status field returned by "docker inspect".
-                                },
-                                "endTime": "2020-02-20 00:00:00",  # Optional. This
-                                  is the end time of the most recent run of the StartTask, if that run
-                                  has completed (even if that run failed and a retry is pending). This
-                                  element is not present if the StartTask is currently running.
-                                "exitCode": 0,  # Optional. This property is set only
-                                  if the StartTask is in the completed state. In general, the exit code
-                                  for a process reflects the specific convention implemented by the
-                                  application developer for that process. If you use the exit code
-                                  value to make decisions in your code, be sure that you know the exit
-                                  code convention used by the application process. However, if the
-                                  Batch service terminates the StartTask (due to timeout, or user
-                                  termination via the API) you may see an operating system-defined exit
-                                  code.
-                                "failureInfo": {
-                                    "category": "str",  # Required. The category
-                                      of the error. Known values are: "usererror", "servererror".
-                                    "code": "str",  # Optional. An identifier for
-                                      the Task error. Codes are invariant and are intended to be
-                                      consumed programmatically.
-                                    "details": [
-                                        {
-                                            "name": "str",  # Optional.
-                                              The name in the name-value pair.
-                                            "value": "str"  # Optional.
-                                              The value in the name-value pair.
-                                        }
-                                    ],
-                                    "message": "str"  # Optional. A message
-                                      describing the Task error, intended to be suitable for display in
-                                      a user interface.
-                                },
-                                "lastRetryTime": "2020-02-20 00:00:00",  # Optional.
-                                  This element is present only if the Task was retried (i.e. retryCount
-                                  is nonzero). If present, this is typically the same as startTime, but
-                                  may be different if the Task has been restarted for reasons other
-                                  than retry; for example, if the Compute Node was rebooted during a
-                                  retry, then the startTime is updated but the lastRetryTime is not.
-                                "result": "str",  # Optional. If the value is
-                                  'failed', then the details of the failure can be found in the
-                                  failureInfo property. Known values are: "success", "failure".
-                                "retryCount": 0,  # Required. Task application
-                                  failures (non-zero exit code) are retried, pre-processing errors (the
-                                  Task could not be run) and file upload errors are not retried. The
-                                  Batch service will retry the Task up to the limit specified by the
-                                  constraints.
-                                "startTime": "2020-02-20 00:00:00",  # Required. This
-                                  value is reset every time the Task is restarted or retried (that is,
-                                  this is the most recent time at which the StartTask started running).
-                                "state": "str"  # Required. The state of the
-                                  StartTask on the Compute Node. Known values are: "running",
-                                  "completed".
-                            },
-                            "state": "str",  # Optional. The Spot/Low-priority Compute
-                              Node has been preempted. Tasks which were running on the Compute Node
-                              when it was preempted will be rescheduled when another Compute Node
-                              becomes available. Known values are: "idle", "rebooting", "reimaging",
-                              "running", "unusable", "creating", "starting", "waitingforstarttask",
-                              "starttaskfailed", "unknown", "leavingpool", "offline", "preempted".
-                            "stateTransitionTime": "2020-02-20 00:00:00",  # Optional.
-                              The time at which the Compute Node entered its current state.
-                            "totalTasksRun": 0,  # Optional. The total number of Job
-                              Tasks completed on the Compute Node. This includes Job Manager Tasks and
-                              normal Tasks, but not Job Preparation, Job Release or Start Tasks.
-                            "totalTasksSucceeded": 0,  # Optional. The total number of
-                              Job Tasks which completed successfully (with exitCode 0) on the Compute
-                              Node. This includes Job Manager Tasks and normal Tasks, but not Job
-                              Preparation, Job Release or Start Tasks.
-                            "url": "str",  # Optional. The URL of the Compute Node.
-                            "virtualMachineInfo": {
-                                "imageReference": {
-                                    "exactVersion": "str",  # Optional. The
-                                      specific version of the platform image or marketplace image used
-                                      to create the node. This read-only field differs from 'version'
-                                      only if the value specified for 'version' when the pool was
-                                      created was 'latest'.
-                                    "offer": "str",  # Optional. For example,
-                                      UbuntuServer or WindowsServer.
-                                    "publisher": "str",  # Optional. For example,
-                                      Canonical or MicrosoftWindowsServer.
-                                    "sku": "str",  # Optional. For example,
-                                      18.04-LTS or 2019-Datacenter.
-                                    "version": "str",  # Optional. A value of
-                                      'latest' can be specified to select the latest version of an
-                                      Image. If omitted, the default is 'latest'.
-                                    "virtualMachineImageId": "str"  # Optional.
-                                      This property is mutually exclusive with other ImageReference
-                                      properties. The Shared Image Gallery Image must have replicas in
-                                      the same region and must be in the same subscription as the Azure
-                                      Batch account. If the image version is not specified in the
-                                      imageId, the latest version will be used. For information about
-                                      the firewall settings for the Batch Compute Node agent to
-                                      communicate with the Batch service see
-                                      https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
-                                }
-                            },
-                            "vmSize": "str"  # Optional. For information about available
-                              sizes of virtual machines in Pools, see Choose a VM size for Compute
-                              Nodes in an Azure Batch Pool
-                              (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
-                        }
-                    ]
-                }
+        :return: An iterator like instance of ComputeNode
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure-batch.models.ComputeNode]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.ComputeNodeListResult]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     pool_id=pool_id,
-                    api_version=api_version,
                     filter=filter,
                     select=select,
                     max_results=max_results,
@@ -2195,60 +1204,52 @@ class ComputeNodeOperations:
                     client_request_id=client_request_id,
                     return_client_request_id=return_client_request_id,
                     ocp_date=ocp_date,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_list_request(
-                    pool_id=pool_id,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            deserialized = self._deserialize("_models.ComputeNodeListResult", pipeline_response)
+            list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("odata.nextLink", None), AsyncList(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)

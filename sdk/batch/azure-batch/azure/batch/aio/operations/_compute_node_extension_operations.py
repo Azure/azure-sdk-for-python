@@ -7,11 +7,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import sys
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar, cast
+from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -19,14 +26,12 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
+from ... import models as _models
 from ...operations._compute_node_extension_operations import build_get_request, build_list_request
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ComputeNodeExtensionOperations:
     """
@@ -38,13 +43,14 @@ class ComputeNodeExtensionOperations:
         :attr:`compute_node_extension` attribute.
     """
 
+    models = _models
+
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
 
     @distributed_trace_async
     async def get(
@@ -54,27 +60,27 @@ class ComputeNodeExtensionOperations:
         extension_name: str,
         *,
         select: Optional[str] = None,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> _models.NodeVMExtension:
         """Gets information about the specified Compute Node Extension.
 
         Gets information about the specified Compute Node Extension.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node.
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
         :type pool_id: str
-        :param node_id: The ID of the Compute Node that contains the extensions.
+        :param node_id: The ID of the Compute Node that contains the extensions. Required.
         :type node_id: str
         :param extension_name: The name of the of the Compute Node Extension that you want to get
-         information about.
+         information about. Required.
         :type extension_name: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -87,126 +93,64 @@ class ComputeNodeExtensionOperations:
          current system clock time; set it explicitly if you are calling the REST API directly. Default
          value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: JSON object
-        :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "instanceView": {
-                        "name": "str",  # Optional. The name of the vm extension instance
-                          view.
-                        "statuses": [
-                            {
-                                "code": "str",  # Optional. The status code.
-                                "displayStatus": "str",  # Optional. The localized
-                                  label for the status.
-                                "level": "str",  # Optional. Level code. Known values
-                                  are: "Error", "Info", "Warning".
-                                "message": "str",  # Optional. The detailed status
-                                  message.
-                                "time": "str"  # Optional. The time of the status.
-                            }
-                        ],
-                        "subStatuses": [
-                            {
-                                "code": "str",  # Optional. The status code.
-                                "displayStatus": "str",  # Optional. The localized
-                                  label for the status.
-                                "level": "str",  # Optional. Level code. Known values
-                                  are: "Error", "Info", "Warning".
-                                "message": "str",  # Optional. The detailed status
-                                  message.
-                                "time": "str"  # Optional. The time of the status.
-                            }
-                        ]
-                    },
-                    "provisioningState": "str",  # Optional. The provisioning state of the
-                      virtual machine extension.
-                    "vmExtension": {
-                        "autoUpgradeMinorVersion": bool,  # Optional. Indicates whether the
-                          extension should use a newer minor version if one is available at deployment
-                          time. Once deployed, however, the extension will not upgrade minor versions
-                          unless redeployed, even with this property set to true.
-                        "name": "str",  # Required. The name of the virtual machine
-                          extension.
-                        "protectedSettings": {},  # Optional. The extension can contain
-                          either protectedSettings or protectedSettingsFromKeyVault or no protected
-                          settings at all.
-                        "provisionAfterExtensions": [
-                            "str"  # Optional. Collection of extension names after which
-                              this extension needs to be provisioned.
-                        ],
-                        "publisher": "str",  # Required. The name of the extension handler
-                          publisher.
-                        "settings": {},  # Optional. Any object.
-                        "type": "str",  # Required. The type of the extension.
-                        "typeHandlerVersion": "str"  # Optional. The version of script
-                          handler.
-                    }
-                }
+        :return: NodeVMExtension
+        :rtype: ~azure-batch.models.NodeVMExtension
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.NodeVMExtension]
 
-        
         request = build_get_request(
             pool_id=pool_id,
             node_id=node_id,
             extension_name=extension_name,
-            api_version=api_version,
             select=select,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        deserialized = self._deserialize("NodeVMExtension", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
-        return cast(JSON, deserialized)
-
-
+        return deserialized
 
     @distributed_trace
     def list(
@@ -215,20 +159,20 @@ class ComputeNodeExtensionOperations:
         node_id: str,
         *,
         select: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
+        max_results: int = 1000,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    ) -> AsyncIterable["_models.NodeVMExtension"]:
         """Lists the Compute Nodes Extensions in the specified Pool.
 
         Lists the Compute Nodes Extensions in the specified Pool.
 
-        :param pool_id: The ID of the Pool that contains Compute Node.
+        :param pool_id: The ID of the Pool that contains Compute Node. Required.
         :type pool_id: str
-        :param node_id: The ID of the Compute Node that you want to list extensions.
+        :param node_id: The ID of the Compute Node that you want to list extensions. Required.
         :type node_id: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
@@ -236,7 +180,7 @@ class ComputeNodeExtensionOperations:
          Compute Nodes can be returned. Default value is 1000.
         :paramtype max_results: int
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -249,157 +193,81 @@ class ComputeNodeExtensionOperations:
          current system clock time; set it explicitly if you are calling the REST API directly. Default
          value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "odata.nextLink": "str",  # Optional. The URL to get the next set of results.
-                    "value": [
-                        {
-                            "instanceView": {
-                                "name": "str",  # Optional. The name of the vm
-                                  extension instance view.
-                                "statuses": [
-                                    {
-                                        "code": "str",  # Optional. The
-                                          status code.
-                                        "displayStatus": "str",  # Optional.
-                                          The localized label for the status.
-                                        "level": "str",  # Optional. Level
-                                          code. Known values are: "Error", "Info", "Warning".
-                                        "message": "str",  # Optional. The
-                                          detailed status message.
-                                        "time": "str"  # Optional. The time
-                                          of the status.
-                                    }
-                                ],
-                                "subStatuses": [
-                                    {
-                                        "code": "str",  # Optional. The
-                                          status code.
-                                        "displayStatus": "str",  # Optional.
-                                          The localized label for the status.
-                                        "level": "str",  # Optional. Level
-                                          code. Known values are: "Error", "Info", "Warning".
-                                        "message": "str",  # Optional. The
-                                          detailed status message.
-                                        "time": "str"  # Optional. The time
-                                          of the status.
-                                    }
-                                ]
-                            },
-                            "provisioningState": "str",  # Optional. The provisioning
-                              state of the virtual machine extension.
-                            "vmExtension": {
-                                "autoUpgradeMinorVersion": bool,  # Optional.
-                                  Indicates whether the extension should use a newer minor version if
-                                  one is available at deployment time. Once deployed, however, the
-                                  extension will not upgrade minor versions unless redeployed, even
-                                  with this property set to true.
-                                "name": "str",  # Required. The name of the virtual
-                                  machine extension.
-                                "protectedSettings": {},  # Optional. The extension
-                                  can contain either protectedSettings or protectedSettingsFromKeyVault
-                                  or no protected settings at all.
-                                "provisionAfterExtensions": [
-                                    "str"  # Optional. Collection of extension
-                                      names after which this extension needs to be provisioned.
-                                ],
-                                "publisher": "str",  # Required. The name of the
-                                  extension handler publisher.
-                                "settings": {},  # Optional. Any object.
-                                "type": "str",  # Required. The type of the
-                                  extension.
-                                "typeHandlerVersion": "str"  # Optional. The version
-                                  of script handler.
-                            }
-                        }
-                    ]
-                }
+        :return: An iterator like instance of NodeVMExtension
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure-batch.models.NodeVMExtension]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.NodeVMExtensionList]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     pool_id=pool_id,
                     node_id=node_id,
-                    api_version=api_version,
                     select=select,
                     max_results=max_results,
                     timeout=timeout,
                     client_request_id=client_request_id,
                     return_client_request_id=return_client_request_id,
                     ocp_date=ocp_date,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_list_request(
-                    pool_id=pool_id,
-                    node_id=node_id,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            deserialized = self._deserialize("_models.NodeVMExtensionList", pipeline_response)
+            list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("odata.nextLink", None), AsyncList(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)

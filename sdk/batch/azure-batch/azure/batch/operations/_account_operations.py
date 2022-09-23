@@ -7,119 +7,117 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import sys
 from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
+from urllib.parse import parse_qs, urljoin, urlparse
 
-from msrest import Serializer
-
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
-T = TypeVar('T')
+
+from .. import models as _models
+from .._serialization import Serializer
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
+
 def build_list_supported_images_request(
     *,
     filter: Optional[str] = None,
-    max_results: Optional[int] = 1000,
-    timeout: Optional[int] = 30,
+    max_results: int = 1000,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/supportedimages"
 
     # Construct parameters
     if filter is not None:
-        _params['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
     if max_results is not None:
-        _params['maxresults'] = _SERIALIZER.query("max_results", max_results, 'int', maximum=1000, minimum=1)
+        _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int", maximum=1000, minimum=1)
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_pool_node_counts_request(
     *,
     filter: Optional[str] = None,
-    max_results: Optional[int] = 10,
-    timeout: Optional[int] = 30,
+    max_results: int = 10,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/nodecounts"
 
     # Construct parameters
     if filter is not None:
-        _params['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
     if max_results is not None:
-        _params['maxresults'] = _SERIALIZER.query("max_results", max_results, 'int', maximum=10, minimum=1)
+        _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int", maximum=10, minimum=1)
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
 
 class AccountOperations:
     """
@@ -131,6 +129,8 @@ class AccountOperations:
         :attr:`account` attribute.
     """
 
+    models = _models
+
     def __init__(self, *args, **kwargs):
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
@@ -138,19 +138,18 @@ class AccountOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def list_supported_images(
         self,
         *,
         filter: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
+        max_results: int = 1000,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> Iterable[JSON]:
+    ) -> Iterable["_models.ImageInformation"]:
         """Lists all Virtual Machine Images supported by the Azure Batch service.
 
         Lists all Virtual Machine Images supported by the Azure Batch service.
@@ -163,7 +162,7 @@ class AccountOperations:
          results will be returned. Default value is 1000.
         :paramtype max_results: int
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -176,153 +175,95 @@ class AccountOperations:
          current system clock time; set it explicitly if you are calling the REST API directly. Default
          value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "odata.nextLink": "str",  # Optional. The URL to get the next set of results.
-                    "value": [
-                        {
-                            "batchSupportEndOfLife": "2020-02-20 00:00:00",  # Optional.
-                              The time when the Azure Batch service will stop accepting create Pool
-                              requests for the Image.
-                            "capabilities": [
-                                "str"  # Optional. Not every capability of the Image
-                                  is listed. Capabilities in this list are considered of special
-                                  interest and are generally related to integration with other features
-                                  in the Azure Batch service.
-                            ],
-                            "imageReference": {
-                                "exactVersion": "str",  # Optional. The specific
-                                  version of the platform image or marketplace image used to create the
-                                  node. This read-only field differs from 'version' only if the value
-                                  specified for 'version' when the pool was created was 'latest'.
-                                "offer": "str",  # Optional. For example,
-                                  UbuntuServer or WindowsServer.
-                                "publisher": "str",  # Optional. For example,
-                                  Canonical or MicrosoftWindowsServer.
-                                "sku": "str",  # Optional. For example, 18.04-LTS or
-                                  2019-Datacenter.
-                                "version": "str",  # Optional. A value of 'latest'
-                                  can be specified to select the latest version of an Image. If
-                                  omitted, the default is 'latest'.
-                                "virtualMachineImageId": "str"  # Optional. This
-                                  property is mutually exclusive with other ImageReference properties.
-                                  The Shared Image Gallery Image must have replicas in the same region
-                                  and must be in the same subscription as the Azure Batch account. If
-                                  the image version is not specified in the imageId, the latest version
-                                  will be used. For information about the firewall settings for the
-                                  Batch Compute Node agent to communicate with the Batch service see
-                                  https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
-                            },
-                            "nodeAgentSKUId": "str",  # Required. The ID of the Compute
-                              Node agent SKU which the Image supports.
-                            "osType": "str",  # Required. The type of operating system
-                              (e.g. Windows or Linux) of the Image. Known values are: "linux",
-                              "windows".
-                            "verificationType": "str"  # Required. Whether the Azure
-                              Batch service actively verifies that the Image is compatible with the
-                              associated Compute Node agent SKU. Known values are: "verified",
-                              "unverified".
-                        }
-                    ]
-                }
+        :return: An iterator like instance of ImageInformation
+        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.ImageInformation]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.AccountListSupportedImagesResult]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_supported_images_request(
-                    api_version=api_version,
                     filter=filter,
                     max_results=max_results,
                     timeout=timeout,
                     client_request_id=client_request_id,
                     return_client_request_id=return_client_request_id,
                     ocp_date=ocp_date,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_list_supported_images_request(
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            deserialized = self._deserialize("_models.AccountListSupportedImagesResult", pipeline_response)
+            list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("odata.nextLink", None), iter(list_of_elem)
+            return deserialized.odata_next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def list_pool_node_counts(
         self,
         *,
         filter: Optional[str] = None,
-        max_results: Optional[int] = 10,
-        timeout: Optional[int] = 30,
+        max_results: int = 10,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> Iterable[JSON]:
+    ) -> Iterable["_models.PoolNodeCounts"]:
         """Gets the number of Compute Nodes in each state, grouped by Pool. Note that the numbers returned
         may not always be up to date. If you need exact node counts, use a list query.
 
@@ -334,7 +275,7 @@ class AccountOperations:
          10.
         :paramtype max_results: int
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
+         seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -347,157 +288,79 @@ class AccountOperations:
          current system clock time; set it explicitly if you are calling the REST API directly. Default
          value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response.json() == {
-                    "odata.nextLink": "str",  # Optional. The URL to get the next set of results.
-                    "value": [
-                        {
-                            "dedicated": {
-                                "creating": 0,  # Required. The number of Compute
-                                  Nodes in the creating state.
-                                "idle": 0,  # Required. The number of Compute Nodes
-                                  in the idle state.
-                                "leavingPool": 0,  # Required. The number of Compute
-                                  Nodes in the leavingPool state.
-                                "offline": 0,  # Required. The number of Compute
-                                  Nodes in the offline state.
-                                "preempted": 0,  # Required. The number of Compute
-                                  Nodes in the preempted state.
-                                "rebooting": 0,  # Required. The count of Compute
-                                  Nodes in the rebooting state.
-                                "reimaging": 0,  # Required. The number of Compute
-                                  Nodes in the reimaging state.
-                                "running": 0,  # Required. The number of Compute
-                                  Nodes in the running state.
-                                "startTaskFailed": 0,  # Required. The number of
-                                  Compute Nodes in the startTaskFailed state.
-                                "starting": 0,  # Required. The number of Compute
-                                  Nodes in the starting state.
-                                "total": 0,  # Required. The total number of Compute
-                                  Nodes.
-                                "unknown": 0,  # Required. The number of Compute
-                                  Nodes in the unknown state.
-                                "unusable": 0,  # Required. The number of Compute
-                                  Nodes in the unusable state.
-                                "waitingForStartTask": 0  # Required. The number of
-                                  Compute Nodes in the waitingForStartTask state.
-                            },
-                            "lowPriority": {
-                                "creating": 0,  # Required. The number of Compute
-                                  Nodes in the creating state.
-                                "idle": 0,  # Required. The number of Compute Nodes
-                                  in the idle state.
-                                "leavingPool": 0,  # Required. The number of Compute
-                                  Nodes in the leavingPool state.
-                                "offline": 0,  # Required. The number of Compute
-                                  Nodes in the offline state.
-                                "preempted": 0,  # Required. The number of Compute
-                                  Nodes in the preempted state.
-                                "rebooting": 0,  # Required. The count of Compute
-                                  Nodes in the rebooting state.
-                                "reimaging": 0,  # Required. The number of Compute
-                                  Nodes in the reimaging state.
-                                "running": 0,  # Required. The number of Compute
-                                  Nodes in the running state.
-                                "startTaskFailed": 0,  # Required. The number of
-                                  Compute Nodes in the startTaskFailed state.
-                                "starting": 0,  # Required. The number of Compute
-                                  Nodes in the starting state.
-                                "total": 0,  # Required. The total number of Compute
-                                  Nodes.
-                                "unknown": 0,  # Required. The number of Compute
-                                  Nodes in the unknown state.
-                                "unusable": 0,  # Required. The number of Compute
-                                  Nodes in the unusable state.
-                                "waitingForStartTask": 0  # Required. The number of
-                                  Compute Nodes in the waitingForStartTask state.
-                            },
-                            "poolId": "str"  # Required. The ID of the Pool.
-                        }
-                    ]
-                }
+        :return: An iterator like instance of PoolNodeCounts
+        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.PoolNodeCounts]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.PoolNodeCountsListResult]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_pool_node_counts_request(
-                    api_version=api_version,
                     filter=filter,
                     max_results=max_results,
                     timeout=timeout,
                     client_request_id=client_request_id,
                     return_client_request_id=return_client_request_id,
                     ocp_date=ocp_date,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_list_pool_node_counts_request(
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-                path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
-                }
-                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized["value"]
+            deserialized = self._deserialize("_models.PoolNodeCountsListResult", pipeline_response)
+            list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("odata.nextLink", None), iter(list_of_elem)
+            return deserialized.odata_next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = self._deserialize.failsafe_deserialize(_models.BatchError, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-
+        return ItemPaged(get_next, extract_data)
