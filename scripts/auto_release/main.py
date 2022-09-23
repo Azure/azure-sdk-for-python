@@ -527,8 +527,10 @@ class CodegenTestPR:
         print(tests_info)
         return tests_info
 
+    @return_origin_path
     def prepare_tests(self):
-        test_path = 'tests/'
+        os.chdir('../../../')
+        test_path = self.sdk_code_path() + '/tests'
         if not Path(test_path).exists():
             os.mkdir(test_path)
         module_name = f'azure.mgmt.{self.package_name}'
@@ -551,7 +553,7 @@ class CodegenTestPR:
 
             with suppress(black.NothingChanged):
                 file_content = black.format_file_contents(temp_out, fast=True, mode=_BLACK_MODE)
-                with open(f'tests/test_mgmt_{self.package_name.lower()}_{operation_name}.py', 'w', encoding='utf-8') as f:
+                with open(f'{test_path}/test_mgmt_{self.package_name.lower()}_{operation_name}.py', 'w', encoding='utf-8') as f:
                     f.writelines(file_content)
 
         if not Path(f'{test_path}/conftest.py').exists():
