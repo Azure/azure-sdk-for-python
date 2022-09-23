@@ -93,7 +93,7 @@ class AzureAppConfigurationProvider:
         correlation_context = "RequestType=Startup"
 
         if (key_vault_options and
-                (key_vault_options.credential or 
+                (key_vault_options.credential or
                 key_vault_options.secret_clients or key_vault_options.secret_resolver)):
             correlation_context += ",UsesKeyVault"
 
@@ -123,8 +123,9 @@ class AzureAppConfigurationProvider:
 
         key_vault_identifier = KeyVaultSecretIdentifier(config.secret_id)
 
-        referenced_client = next((client for client in secret_clients if client.vault_url == key_vault_identifier.vault_url), None)
-        
+        referenced_client = next(
+            (client for client in secret_clients if client.vault_url == key_vault_identifier.vault_url), None)
+
         if referenced_client is None and key_vault_options.credential is not None:
             referenced_client = SecretClient(
                 vault_url=key_vault_identifier.vault_url, credential=key_vault_options.credential)
