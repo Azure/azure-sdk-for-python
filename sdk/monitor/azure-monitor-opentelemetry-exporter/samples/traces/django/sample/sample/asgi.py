@@ -7,6 +7,7 @@ For more information on this file, see
 https://docs.djangoproject.com/en/3.2/howto/deployment/asgi/
 """
 
+# cSpell:disable
 import os
 
 from django.core.asgi import get_asgi_application
@@ -14,3 +15,6 @@ from django.core.asgi import get_asgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sample.settings')
 
 application = get_asgi_application()
+
+# cSpell:enable
+

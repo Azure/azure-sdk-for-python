@@ -7,6 +7,7 @@ application insights with the AzureMonitorTraceExporter.
 See more info on the psycopg2 instrumentation here:
 https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-psycopg2
 """
+# cSpell:disable
 import os
 import psycopg2
 
@@ -34,3 +35,5 @@ cursor = cnx.cursor()
 cursor.execute("INSERT INTO test (testField) VALUES (123)")
 cursor.close()
 cnx.close()
+
+# cSpell:enable

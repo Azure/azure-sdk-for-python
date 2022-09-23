@@ -6,6 +6,7 @@ products:
   - azure-monitor
 ---
 
+<!-- cSpell:disable -->
 # Microsoft Azure Monitor Opentelemetry Exporter Trace Python Samples
 
 These code samples show common champion scenario operations with the AzureMonitorTraceExporter.
@@ -16,7 +17,7 @@ These code samples show common champion scenario operations with the AzureMonito
 * Collector: [sample_collector.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/collector/sample_collector.py)
 * Jaeger: [sample_jaeger.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_jaeger.py)
 
-* Django instrumentation: [sample_django.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/django/manage.py)
+* Django instrumentation: [manage.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/django/manage.py)
 * Flask instrumentation: [sample_flask.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_flask.py)
 * Requests instrumentation: [sample_requests.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_requests.py)
 
@@ -475,3 +476,5 @@ $ python sample_text_analytics.py
 
 After running the applications, data would be available in [Azure](
 https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview#where-do-i-see-my-telemetry)
+
+<!-- cSpell:enable -->
