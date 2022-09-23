@@ -9,7 +9,10 @@ import base64
 import hmac
 from yarl import URL
 from azure.core.pipeline.policies import HTTPPolicy
-from azure.core.pipeline.transport import AioHttpTransport
+try:
+    from azure.core.pipeline.transport import AioHttpTransport
+except ImportError:
+    AioHttpTransport = None
 from ._utils import get_current_utc_time
 
 
