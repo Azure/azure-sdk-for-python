@@ -28,12 +28,10 @@ from azure.ai.ml.constants._job.automl import (
 class ImageModelSettingsSchema(metaclass=PatchedSchemaMeta):
     ams_gradient = fields.Bool()
     advanced_settings = fields.Str()
-    augmentations = fields.Str()
     beta1 = fields.Float()
     beta2 = fields.Float()
     checkpoint_frequency = fields.Int()
     checkpoint_run_id = fields.Str()
-    checkpoint_model = InputsField()
     distributed = fields.Bool()
     early_stopping = fields.Bool()
     early_stopping_delay = fields.Int()

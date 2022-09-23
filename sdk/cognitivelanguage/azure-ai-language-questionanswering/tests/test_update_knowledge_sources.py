@@ -36,7 +36,9 @@ class TestSourcesQnasSynonyms(QuestionAnsweringTestCase):
             }],
             **self.kwargs_for_polling
         )
-        sources_poller.result() # wait until done
+        sources = sources_poller.result() # wait until done
+        for source in sources:
+            assert source["sourceKind"]
 
         # assert
         sources = client.list_sources(
@@ -71,7 +73,10 @@ class TestSourcesQnasSynonyms(QuestionAnsweringTestCase):
             }],
             **self.kwargs_for_polling
         )
-        qna_poller.result()
+        qnas = qna_poller.result()
+        for qna in qnas:
+            assert qna["questions"]
+            assert qna["answer"]
 
         # assert
         qnas = client.list_qnas(

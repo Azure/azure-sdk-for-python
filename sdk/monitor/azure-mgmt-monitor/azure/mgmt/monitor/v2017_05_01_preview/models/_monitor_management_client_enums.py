@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """the primary aggregation type value defining how to use the values for display.
-    """
+    """the primary aggregation type value defining how to use the values for display."""
 
     NONE = "None"
     AVERAGE = "Average"
@@ -21,21 +20,23 @@ class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MAXIMUM = "Maximum"
     TOTAL = "Total"
 
+
 class CategoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the diagnostic settings category.
-    """
+    """The type of the diagnostic settings category."""
 
     METRICS = "Metrics"
     LOGS = "Logs"
 
+
 class ResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ResultType."""
 
     DATA = "Data"
     METADATA = "Metadata"
 
+
 class Unit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The unit of the metric.
-    """
+    """The unit of the metric."""
 
     COUNT = "Count"
     BYTES = "Bytes"

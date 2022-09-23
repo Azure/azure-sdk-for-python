@@ -38,58 +38,56 @@ from ._models_py3 import VoiceReceiver
 from ._models_py3 import WebhookReceiver
 from ._models_py3 import WebtestLocationAvailabilityCriteria
 
-
-from ._monitor_management_client_enums import (
-    AggregationTypeEnum,
-    CriterionType,
-    DynamicThresholdOperator,
-    DynamicThresholdSensitivity,
-    Odatatype,
-    Operator,
-    ReceiverStatus,
-)
+from ._monitor_management_client_enums import AggregationTypeEnum
+from ._monitor_management_client_enums import CriterionType
+from ._monitor_management_client_enums import DynamicThresholdOperator
+from ._monitor_management_client_enums import DynamicThresholdSensitivity
+from ._monitor_management_client_enums import Odatatype
+from ._monitor_management_client_enums import Operator
+from ._monitor_management_client_enums import ReceiverStatus
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'ActionGroupList',
-    'ActionGroupPatchBody',
-    'ActionGroupResource',
-    'AutomationRunbookReceiver',
-    'AzureAppPushReceiver',
-    'AzureFunctionReceiver',
-    'DynamicMetricCriteria',
-    'DynamicThresholdFailingPeriods',
-    'EmailReceiver',
-    'EnableRequest',
-    'ErrorResponse',
-    'ItsmReceiver',
-    'LogicAppReceiver',
-    'MetricAlertAction',
-    'MetricAlertCriteria',
-    'MetricAlertMultipleResourceMultipleMetricCriteria',
-    'MetricAlertResource',
-    'MetricAlertResourceCollection',
-    'MetricAlertResourcePatch',
-    'MetricAlertSingleResourceMultipleMetricCriteria',
-    'MetricAlertStatus',
-    'MetricAlertStatusCollection',
-    'MetricAlertStatusProperties',
-    'MetricCriteria',
-    'MetricDimension',
-    'MultiMetricCriteria',
-    'Resource',
-    'SmsReceiver',
-    'VoiceReceiver',
-    'WebhookReceiver',
-    'WebtestLocationAvailabilityCriteria',
-    'AggregationTypeEnum',
-    'CriterionType',
-    'DynamicThresholdOperator',
-    'DynamicThresholdSensitivity',
-    'Odatatype',
-    'Operator',
-    'ReceiverStatus',
+    "ActionGroupList",
+    "ActionGroupPatchBody",
+    "ActionGroupResource",
+    "AutomationRunbookReceiver",
+    "AzureAppPushReceiver",
+    "AzureFunctionReceiver",
+    "DynamicMetricCriteria",
+    "DynamicThresholdFailingPeriods",
+    "EmailReceiver",
+    "EnableRequest",
+    "ErrorResponse",
+    "ItsmReceiver",
+    "LogicAppReceiver",
+    "MetricAlertAction",
+    "MetricAlertCriteria",
+    "MetricAlertMultipleResourceMultipleMetricCriteria",
+    "MetricAlertResource",
+    "MetricAlertResourceCollection",
+    "MetricAlertResourcePatch",
+    "MetricAlertSingleResourceMultipleMetricCriteria",
+    "MetricAlertStatus",
+    "MetricAlertStatusCollection",
+    "MetricAlertStatusProperties",
+    "MetricCriteria",
+    "MetricDimension",
+    "MultiMetricCriteria",
+    "Resource",
+    "SmsReceiver",
+    "VoiceReceiver",
+    "WebhookReceiver",
+    "WebtestLocationAvailabilityCriteria",
+    "AggregationTypeEnum",
+    "CriterionType",
+    "DynamicThresholdOperator",
+    "DynamicThresholdSensitivity",
+    "Odatatype",
+    "Operator",
+    "ReceiverStatus",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

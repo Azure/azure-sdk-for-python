@@ -75,13 +75,10 @@ async def sample_create_and_deploy_project_async():
                 }
             ]
         )
-        await update_sources_poller.result()
+        sources = await update_sources_poller.result()
 
         # list sources
         print("list project sources")
-        sources = client.list_sources(
-            project_name=project_name
-        )
         async for source in sources:
             print("source name: {}".format(source.get("displayName", "N/A")))
             print("\tsource: {}".format(source["source"]))
@@ -93,7 +90,8 @@ async def sample_create_and_deploy_project_async():
             project_name=project_name,
             deployment_name="production"
         )
-        await deployment_poller.result()
+        deployment = await deployment_poller.result()
+        print(f"Deployment successfully created under {deployment['deploymentName']}.")
 
         # list all deployments
         deployments = client.list_deployments(

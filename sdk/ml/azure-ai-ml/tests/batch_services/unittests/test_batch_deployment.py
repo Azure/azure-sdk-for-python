@@ -6,7 +6,7 @@ import pytest
 from pytest_mock import MockFixture
 
 from azure.ai.ml import load_batch_deployment
-from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 from azure.ai.ml.operations import BatchDeploymentOperations, WorkspaceOperations
@@ -57,6 +57,7 @@ def mock_local_endpoint_helper() -> Mock:
 @pytest.fixture
 def mock_batch_deployment_operations(
     mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
     mock_aml_services_2022_05_01: Mock,
     mock_aml_services_2020_09_01_dataplanepreview: Mock,
     mock_machinelearning_client: Mock,
@@ -66,6 +67,7 @@ def mock_batch_deployment_operations(
 
     yield BatchDeploymentOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         service_client_05_2022=mock_aml_services_2022_05_01,
         all_operations=mock_machinelearning_client._operation_container,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
