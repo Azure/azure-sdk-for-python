@@ -17,7 +17,6 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJob as Res
 from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJobLimits as RestCommandJobLimits
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobService
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._schema.job.services import JobServiceSchema
@@ -37,6 +36,7 @@ from azure.ai.ml.entities._job.distribution import (
 )
 from azure.ai.ml.entities._job.job_limits import CommandJobLimits
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
+from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
@@ -96,7 +96,7 @@ class Command(BaseNode):
     :param identity: Identity that training job will use while running on compute.
     :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
     :param services: Interactive services for the node.
-    :type services: dict
+    :type services: Dict[str, JobService]
     """
 
     # pylint: disable=too-many-instance-attributes
@@ -123,7 +123,7 @@ class Command(BaseNode):
         environment: Union[Environment, str] = None,
         environment_variables: Dict = None,
         resources: JobResourceConfiguration = None,
-        services: dict = None,
+        services: Dict[str, JobService] = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -434,7 +434,7 @@ class Command(BaseNode):
         rest_obj = super()._to_rest_object(**kwargs)
         distribution = self.distribution._to_rest_object() if self.distribution else None
         limits = self.limits._to_rest_object() if self.limits else None
-        services = {k: v.as_dict() for k, v in self.services.items()} if isinstance(self.services, dict) else None
+        services = {k: v._to_rest_object() for k, v in self.services.items()} if self.services else None
         rest_obj.update(
             convert_ordered_dict_to_dict(
                 dict(
@@ -484,6 +484,10 @@ class Command(BaseNode):
         if "distribution" in obj and obj["distribution"]:
             obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
 
+        # services, sweep won't have services
+        if "services" in obj and obj["services"]:
+            obj["services"] = JobService._from_rest_job_services(obj["services"])
+
         # handle limits
         if "limits" in obj and obj["limits"]:
             rest_limits = RestCommandJobLimits.from_dict(obj["limits"])
@@ -505,7 +509,7 @@ class Command(BaseNode):
             properties=rest_command_job.properties,
             command=rest_command_job.command,
             experiment_name=rest_command_job.experiment_name,
-            services=rest_command_job.services,
+            services=JobService._from_rest_job_services(rest_command_job.services),
             status=rest_command_job.status,
             creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
             code=rest_command_job.code_id,
@@ -542,6 +546,7 @@ class Command(BaseNode):
         for key, value in inputs.items():
             if value is not None:
                 built_inputs[key] = value
+
         return built_inputs
 
     @classmethod
@@ -589,7 +594,7 @@ class Command(BaseNode):
         )
 
 
-def _resolve_job_services(services: dict) -> dict:
+def _resolve_job_services(services: dict) -> Dict[str, JobService]:
     """Resolve normal dict to dict[str, JobService]"""
     if services is None:
         return None
