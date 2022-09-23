@@ -27,7 +27,7 @@ To authenticate with AAD, you must first [pip][pip] install [`azure-identity`][a
 
 After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
 
-As an example, sign in via the Azure CLI `az login` command and DefaultAzureCredential will authenticate as that user.
+As an example, sign in via the Azure CLI `az login` command and [DefaultAzureCredential](https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python) will authenticate as that user.
 
 Use the returned token credential to authenticate the client.
 

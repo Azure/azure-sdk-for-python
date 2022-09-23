@@ -5,13 +5,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: create_or_update_test.py
+FILE: delete_load_test.py
 
 DESCRIPTION:
     This sample shows how to delete a load test
 
 USAGE:
-    python create_or_update_app_components.py
+    python delete_load_test.py
 
     Set the environment variables with your own values before running the sample:
     1)  AZURE_CLIENT_ID - client id

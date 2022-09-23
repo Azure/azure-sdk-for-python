@@ -5,12 +5,12 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: create_or_update_test.py
+FILE: upload_test_file.py
 
 DESCRIPTION:
     This sample shows how to upload a file to your loadtest
 USAGE:
-    python create_or_update_test.py
+    python upload_test_file.py
 
     Set the environment variables with your own values before running the sample:
     1)  AZURE_CLIENT_ID - client id
