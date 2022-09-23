@@ -55,3 +55,4 @@ result = client.load_test_administration.create_or_update_app_components(
 )
 
 print(result)
+print(result["testRunId"])

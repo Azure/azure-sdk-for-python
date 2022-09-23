@@ -50,4 +50,5 @@ result = client.load_test_administration.create_or_update_test(
     },
 )
 
+print(result["testId"])
 print(result)

@@ -42,4 +42,6 @@ result = client.load_test_runs.create_or_update_test(
         "displayName": "My New Load Test Run",
     },
 )
+
+print(result["status"])
 print(result)
