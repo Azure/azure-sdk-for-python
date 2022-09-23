@@ -15,6 +15,7 @@ from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import Job, PipelineJob
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
+from azure.core.polling import LROPoller
 
 _PYTEST_TIMEOUT_METHOD = "signal" if hasattr(signal, "SIGALRM") else "thread"  # use signal when os support SIGALRM
 DEFAULT_TASK_TIMEOUT = 30 * 60  # 30mins
@@ -152,7 +153,9 @@ def assert_final_job_status(
         job = client.jobs.get(job.name)
 
     if job.status not in RunHistoryConstants.TERMINAL_STATUSES:
-        client.jobs.cancel(job.name)
+        cancel_poller = client.jobs.begin_cancel(job.name)
+        assert isinstance(cancel_poller, LROPoller)
+        assert cancel_poller.result() is None
 
     assert job.status == expected_terminal_status, f"Job status mismatch. Job created: {job}"
 

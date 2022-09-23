@@ -23,16 +23,13 @@ from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code, load_job
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
 
 
-from devtools_testutils import (
-    AzureRecordedTestCase,
-    is_live,
-    set_bodiless_matcher
-)
+from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
 
 
 def create_component(
@@ -269,7 +266,7 @@ class TestComponent(AzureRecordedTestCase):
             path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml",
             expected_dict=expected_dict,
             omit_fields=["name", "creation_context", "id", "code", "environment"],
-            recorded_component_name="spark_component_name"
+            recorded_component_name="spark_component_name",
         )
 
     @pytest.mark.parametrize(
@@ -381,10 +378,7 @@ class TestComponent(AzureRecordedTestCase):
         assert component_resource.display_name == display_name
 
     @pytest.mark.disable_mock_code_hash
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="non-deterministic upload fails in playback on CI"
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="non-deterministic upload fails in playback on CI")
     def test_component_create_twice_same_code_arm_id(
         self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path
     ) -> None:
@@ -409,10 +403,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         # the code arm id should be the same
         assert component_resource1.code == component_resource2.code
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="non-deterministic upload fails in playback on CI"
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="non-deterministic upload fails in playback on CI")
     def test_component_update_code(self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path) -> None:
         component_name = randstr("component_name")
         path = "./tests/test_configs/components/basic_component_code_local_path.yml"
@@ -851,7 +842,9 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         )
         job = client.jobs.create_or_update(pipeline_job)
         try:
-            client.jobs.cancel(job.name)
+            cancel_poller = client.jobs.begin_cancel(job.name)
+            assert isinstance(cancel_poller, LROPoller)
+            assert cancel_poller.result() is None
         except Exception:
             pass
         component = PipelineComponent(name=randstr(), source_job_id=job.id)
