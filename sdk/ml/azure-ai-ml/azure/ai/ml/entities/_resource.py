@@ -12,7 +12,8 @@ from typing import IO, AnyStr, Dict, Optional, Union
 from msrest import Serializer
 
 from azure.ai.ml._restclient.v2021_10_01 import models
-from azure.ai.ml._restclient.v2021_10_01.models import SystemData
+
+from ._system_data import SystemData
 
 
 class Resource(ABC):
@@ -82,7 +83,7 @@ class Resource(ABC):
         """Creation context.
 
         :return: Creation metadata of the resource.
-        :rtype: Optional[SystemData]
+        :rtype: Optional[~azure.ai.ml.entities.SystemData]
         """
         return self._creation_context
 
@@ -96,9 +97,7 @@ class Resource(ABC):
         return self._base_path
 
     @abstractmethod
-    def dump(
-        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
-    ) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the object content into a file.
 
         :param dest: The destination to receive this object's data.
@@ -108,12 +107,6 @@ class Resource(ABC):
             If dest is an open file, the file will be written to directly,
             and an exception will be raised if the file is not writable.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :param path: Deprecated path to a local file as the target, a new file
-            will be created, raises exception if the file exists.
-            It's recommended what you change 'path=' inputs to 'dest='.
-            The first unnamed input of this function will also be treated like
-            a path input.
-        :type path: Union[str, Pathlike]
         """
         pass
 

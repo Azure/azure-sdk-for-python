@@ -1,11 +1,20 @@
 import os
+from copy import deepcopy
+from email.mime import image
 from pathlib import Path
 from typing import List
 from unittest.mock import patch
 
 import pytest
+from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_job
+from azure.ai.ml._restclient.v2022_06_01_preview.models._azure_machine_learning_workspaces_enums import (
+    LearningRateScheduler,
+    ModelSize,
+    StochasticOptimizer,
+    ValidationMetricType,
+)
 from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import BanditPolicy as RestBanditPolicy
 from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
@@ -58,6 +67,11 @@ from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
 from azure.ai.ml.entities import Job
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+from azure.ai.ml.entities._job.automl.image import (
+    image_classification_job,
+    image_instance_segmentation_job,
+    image_object_detection_job,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -73,10 +87,18 @@ def compute_binding_expected(mock_workspace_scope: OperationScope) -> str:
 
 @pytest.fixture
 def expected_image_limits(run_type: str) -> RestImageLimitSettings:
+    maxTrials = 1
+    maxConcurrentTrials = 1
+    if run_type == "sweep":
+        maxTrials = 20
+        maxConcurrentTrials = 4
+    elif run_type == "automode":
+        maxTrials = 2
+
     return RestImageLimitSettings(
         timeout=to_iso_duration_format_mins(60),
-        max_concurrent_trials=1,
-        max_trials=2 if run_type == "automode" else 1,
+        max_concurrent_trials=maxConcurrentTrials,
+        max_trials=maxTrials,
     )
 
 
@@ -102,10 +124,7 @@ def expected_image_target_column_name() -> str:
 @pytest.fixture
 def expected_image_sweep_settings() -> RestImageSweepSettings:
     return RestImageSweepSettings(
-        limits=RestImageSweepLimitSettings(
-            max_concurrent_trials=4,
-            max_trials=20,
-        ),
+        limits=RestImageSweepLimitSettings(),
         sampling_algorithm="grid",
         early_termination=RestBanditPolicy(
             slack_factor=0.2,
@@ -159,12 +178,30 @@ def expected_image_search_space_settings() -> List[RestImageClassificationSearch
 def expected_image_object_detection_search_space_settings() -> List[RestImageObjectDetectionSearchSpace]:
     return [
         RestImageObjectDetectionSearchSpace(
-            model_name="choice('maskrcnn_resnet50_fpn')",
+            model_name="choice('yolov5')",
+            learning_rate="uniform(0.0001,0.01)",
+            model_size="choice('small','medium')",
+        ),
+        RestImageObjectDetectionSearchSpace(
+            model_name="choice('fasterrcnn_resnet50_fpn')",
             learning_rate="uniform(0.005,0.05)",
             warmup_cosine_lr_warmup_epochs="choice(0,3)",
             optimizer="choice('sgd','adam','adamw')",
             min_size="choice(600,800)",
         ),
+    ]
+
+
+@pytest.fixture
+def expected_image_instance_segmentation_search_space_settings() -> List[RestImageObjectDetectionSearchSpace]:
+    return [
+        RestImageObjectDetectionSearchSpace(
+            model_name="choice('maskrcnn_resnet50_fpn')",
+            learning_rate="uniform(0.005,0.05)",
+            warmup_cosine_lr_warmup_epochs="choice(0,3)",
+            optimizer="choice('sgd','adam','adamw')",
+            min_size="choice(600,800)",
+        )
     ]
 
 
@@ -268,7 +305,7 @@ def expected_image_instance_segmentation_job(
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
     expected_image_model_settings_object_detection: ImageModelSettingsObjectDetection,
-    expected_image_object_detection_search_space_settings: List[RestImageObjectDetectionSearchSpace],
+    expected_image_instance_segmentation_search_space_settings: List[RestImageObjectDetectionSearchSpace],
     compute_binding_expected: str,
 ) -> JobBase:
     return _get_rest_automl_job(
@@ -279,7 +316,7 @@ def expected_image_instance_segmentation_job(
             limit_settings=expected_image_limits,
             sweep_settings=expected_image_sweep_settings if run_type == "sweep" else None,
             model_settings=expected_image_model_settings_object_detection,
-            search_space=expected_image_object_detection_search_space_settings if run_type == "sweep" else None,
+            search_space=expected_image_instance_segmentation_search_space_settings if run_type == "sweep" else None,
             primary_metric=InstanceSegmentationPrimaryMetrics.MEAN_AVERAGE_PRECISION,
             log_verbosity=LogVerbosity.DEBUG,
         ),
@@ -311,6 +348,10 @@ def loaded_image_classification_job(
     test_config = load_yaml(test_schema_path)
     if run_type == "automode":
         test_config["limits"]["max_trials"] = 2
+        test_config["limits"]["max_concurrent_trials"] = 1
+    elif run_type == "single":
+        test_config["limits"]["max_trials"] = 1
+        test_config["limits"]["max_concurrent_trials"] = 1
     if run_type != "sweep":
         # Remove search_space and sweep sections from the yaml
         del test_config["search_space"]
@@ -335,6 +376,10 @@ def loaded_image_classification_multilabel_job(
     test_config = load_yaml(test_schema_path)
     if run_type == "automode":
         test_config["limits"]["max_trials"] = 2
+        test_config["limits"]["max_concurrent_trials"] = 1
+    elif run_type == "single":
+        test_config["limits"]["max_trials"] = 1
+        test_config["limits"]["max_concurrent_trials"] = 1
     if run_type != "sweep":
         # Remove search_space and sweep sections from the yaml
         del test_config["search_space"]
@@ -357,6 +402,10 @@ def loaded_image_object_detection_job(
     test_config = load_yaml(test_schema_path)
     if run_type == "automode":
         test_config["limits"]["max_trials"] = 2
+        test_config["limits"]["max_concurrent_trials"] = 1
+    elif run_type == "single":
+        test_config["limits"]["max_trials"] = 1
+        test_config["limits"]["max_concurrent_trials"] = 1
     if run_type != "sweep":
         # Remove search_space and sweep sections from the yaml
         del test_config["search_space"]
@@ -379,6 +428,10 @@ def loaded_image_instance_segmentation_job(
     test_config = load_yaml(test_schema_path)
     if run_type == "automode":
         test_config["limits"]["max_trials"] = 2
+        test_config["limits"]["max_concurrent_trials"] = 1
+    elif run_type == "single":
+        test_config["limits"]["max_trials"] = 1
+        test_config["limits"]["max_concurrent_trials"] = 1
     if run_type != "sweep":
         # Remove search_space and sweep sections from the yaml
         del test_config["search_space"]
@@ -496,3 +549,257 @@ class TestAutoMLImageSchema:
         # test expected job when deserialized is same as loaded one.
         from_rest_job = AutoMLJob._from_rest_object(expected_image_classification_job)
         assert from_rest_job == loaded_image_classification_job
+
+    def test_model_name_validation_image_classification(
+        self,
+        tmp_path: Path,
+    ):
+        test_schema_path = Path("./tests/test_configs/automl_job/automl_image_classification_job_mock.yaml")
+
+        test_config = load_yaml(test_schema_path)
+
+        # Add model name which is not supported for classification
+        test_config["training_parameters"]["model_name"] = "yolov5"
+
+        test_yaml_path = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_path, test_config)
+
+        with pytest.raises(ValidationError):
+            load_job(test_yaml_path)
+
+    def test_model_name_validation_image_object_detection(
+        self,
+        tmp_path: Path,
+    ):
+        test_schema_path = Path("./tests/test_configs/automl_job/automl_image_object_detection_job_mock.yaml")
+
+        test_config = load_yaml(test_schema_path)
+        # Add model name which is not supported for image object detection
+        test_config["training_parameters"]["model_name"] = "maskrcnn_resnet101_fpn"
+
+        test_yaml_path = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_path, test_config)
+
+        with pytest.raises(ValidationError):
+            load_job(test_yaml_path)
+
+    def test_model_name_validation_image_instance_segmentation(
+        self,
+        tmp_path: Path,
+    ):
+        test_schema_path = Path("./tests/test_configs/automl_job/automl_image_instance_segmentation_job_mock.yaml")
+
+        test_config = load_yaml(test_schema_path)
+        # Add model name which is not supported for image instance segmentation
+        test_config["training_parameters"]["model_name"] = "vitb16r224"
+
+        test_yaml_path = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_path, test_config)
+
+        with pytest.raises(ValidationError):
+            load_job(test_yaml_path)
+
+    def test_image_classification_schema_validation(self, tmp_path: Path):
+        test_schema_path = Path("./tests/test_configs/automl_job/automl_image_classification_job_mock.yaml")
+        test_config = load_yaml(test_schema_path)
+
+        # Test Model Name
+        test_config_copy = deepcopy(test_config)
+        test_config_copy["search_space"][0]["model_name"]["values"].append("yolov5")
+        test_yaml_path = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Value 'yolov5' passed is not in set"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["model_name"] = 1
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Value 1 passed is not in set"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["model_name"] = 100.5
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Value 100.5 passed is not in set"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["model_name"] = True
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Value True passed is not in set"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["model_name"] = "vitb16r224"
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        assert isinstance(load_job(test_yaml_path), image_classification_job.ImageClassificationJob)
+
+        # Test AMS Gradient
+        test_config_copy = deepcopy(test_config)
+        test_config_copy["search_space"][0]["ams_gradient"] = {"type": "choice", "values": [1.2, 2.5]}
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Not a valid boolean"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["ams_gradient"] = {"type": "choice", "values": [True, False]}
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        assert isinstance(load_job(test_yaml_path), image_classification_job.ImageClassificationJob)
+
+        # Test early_stopping_delay
+        test_config_copy = deepcopy(test_config)
+        test_config_copy["search_space"][0]["early_stopping_delay"] = {"type": "choice", "values": [1.2, 2.5]}
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Not a valid integer"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["early_stopping_delay"] = {
+            "type": "uniform",
+            "min_value": 1,
+            "max_value": 15,
+        }
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Not a valid integer"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["early_stopping_delay"] = 10.5
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Not a valid integer"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["early_stopping_delay"] = "test"
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Not a valid integer"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["early_stopping_delay"] = True
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Not a valid integer"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["early_stopping_delay"] = {"type": "choice", "values": [1, 2, 3]}
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        assert isinstance(load_job(test_yaml_path), image_classification_job.ImageClassificationJob)
+
+        # test LRSChedular Enum
+        test_config_copy = deepcopy(test_config)
+        test_config_copy["search_space"][0]["learning_rate_scheduler"] = {
+            "type": "choice",
+            "values": ["random_lr_scheduler1", "random_lr_scheduler2"],
+        }
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Value 'random_lr_scheduler1' passed is not in set"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["learning_rate_scheduler"] = f"{LearningRateScheduler.WARMUP_COSINE}"
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        assert isinstance(load_job(test_yaml_path), image_classification_job.ImageClassificationJob)
+
+        test_config_copy["search_space"][0]["learning_rate_scheduler"] = {
+            "type": "choice",
+            "values": [f"{LearningRateScheduler.WARMUP_COSINE}", f"{LearningRateScheduler.STEP}"],
+        }
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        assert isinstance(load_job(test_yaml_path), image_classification_job.ImageClassificationJob)
+
+        # test Optimizer
+        test_config_copy = deepcopy(test_config)
+        test_config_copy["search_space"][0]["optimizer"] = {"type": "choice", "values": ["random1", "random2"]}
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Value 'random1' passed is not in set"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["optimizer"] = f"{StochasticOptimizer.ADAM}"
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        assert isinstance(load_job(test_yaml_path), image_classification_job.ImageClassificationJob)
+
+        test_config_copy["search_space"][0]["optimizer"] = {
+            "type": "choice",
+            "values": [f"{StochasticOptimizer.SGD}", f"{StochasticOptimizer.ADAM}"],
+        }
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        assert isinstance(load_job(test_yaml_path), image_classification_job.ImageClassificationJob)
+
+        # test validation_resize_size
+        test_config_copy = deepcopy(test_config)
+        test_config_copy["search_space"][0]["validation_resize_size"] = {"type": "choice", "values": ["255", "230"]}
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Not a valid integer"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["validation_resize_size"] = {"type": "choice", "values": [255.1, 230.1]}
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Not a valid integer"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["validation_resize_size"] = {"type": "choice", "values": [255, 230]}
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        assert isinstance(load_job(test_yaml_path), image_classification_job.ImageClassificationJob)
+
+    def test_object_detection_schema_validation(self, tmp_path: Path):
+        test_schema_path = Path("./tests/test_configs/automl_job/automl_image_object_detection_job_mock.yaml")
+        test_config = load_yaml(test_schema_path)
+
+        # Test Model Name
+        test_config_copy = deepcopy(test_config)
+        test_config_copy["search_space"][0]["model_name"]["values"].append("resnext")
+        test_yaml_path = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Value 'resnext' passed is not in set"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["model_name"] = "yolov5"
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        assert isinstance(load_job(test_yaml_path), image_object_detection_job.ImageObjectDetectionJob)
+
+        # Test model size
+        test_config_copy = deepcopy(test_config)
+        test_config_copy["search_space"][0]["model_size"] = {"type": "uniform", "min_value": 10, "max_value": 100}
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Value 'uniform' passed is not in set"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["model_size"] = {"type": "choice", "values": [10, 100]}
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Value 100 passed is not in set"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["model_size"] = f"{ModelSize.SMALL}"
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        assert isinstance(load_job(test_yaml_path), image_object_detection_job.ImageObjectDetectionJob)
+
+        test_config_copy["search_space"][0]["model_size"] = {
+            "type": "choice",
+            "values": [f"{ModelSize.SMALL}", f"{ModelSize.LARGE}"],
+        }
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        assert isinstance(load_job(test_yaml_path), image_object_detection_job.ImageObjectDetectionJob)
+
+    def test_instance_segmentation_schema_validation(self, tmp_path: Path):
+        test_schema_path = Path("./tests/test_configs/automl_job/automl_image_instance_segmentation_job_mock.yaml")
+        test_config = load_yaml(test_schema_path)
+
+        # Test Model Name
+        test_config_copy = deepcopy(test_config)
+        test_config_copy["search_space"][0]["model_name"]["values"].append("vitb16r224")
+        test_yaml_path = tmp_path / "job.yml"
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Value 'vitb16r224' passed is not in set"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["model_name"] = "maskrcnn_resnet18_fpn"
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        assert isinstance(load_job(test_yaml_path), image_instance_segmentation_job.ImageInstanceSegmentationJob)
+
+        # Test validation metric type
+        test_config_copy = deepcopy(test_config)
+        test_config_copy["search_space"][0]["validation_metric_type"] = {"type": "choice", "values": ["type1", "type2"]}
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Value 'type1' passed is not in set"):
+            load_job(test_yaml_path)
+
+        test_config_copy["search_space"][0]["validation_metric_type"] = f"{ValidationMetricType.COCO}"
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        assert isinstance(load_job(test_yaml_path), image_instance_segmentation_job.ImageInstanceSegmentationJob)
+
+        test_config_copy["search_space"][0]["validation_metric_type"] = {
+            "type": "choice",
+            "values": [f"{ValidationMetricType.COCO}", f"{ValidationMetricType.VOC}"],
+        }
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        assert isinstance(load_job(test_yaml_path), image_instance_segmentation_job.ImageInstanceSegmentationJob)

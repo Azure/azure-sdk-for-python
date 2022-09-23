@@ -25,7 +25,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
 command: >-
   python train.py
   --training_data ${{inputs.training_data}}
-  [--max_epochs ${{inputs.max_epochs}}]
+  $[[--max_epochs ${{inputs.max_epochs}}]]
   --learning_rate ${{inputs.learning_rate}}
   --learning_rate_schedule ${{inputs.learning_rate_schedule}}
   --model_output ${{outputs.model_output}}

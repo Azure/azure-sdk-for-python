@@ -129,7 +129,7 @@ def test_model_basic(json_dumps_with_encoder):
             self.bytes_data = b"data as bytes"
 
     expected = BasicModel()
-    expected_bytes = "data as bytes" if sys.version_info.major == 2 else "ZGF0YSBhcyBieXRlcw=="
+    expected_bytes = "data as bytes" if sys.version_info.major == 2 else "ZGF0YSBhcyBieXRlcw==" # cspell:disable-line
     expected_dict = {
         "string": "myid",
         "number": 42,
@@ -201,7 +201,7 @@ def test_model_key_vault(json_dumps_with_encoder):
             self._tags = None
 
     expected = Properties()
-    expected_bytes = "thumbprint bytes" if sys.version_info.major == 2 else "dGh1bWJwcmludCBieXRlcw=="
+    expected_bytes = "thumbprint bytes" if sys.version_info.major == 2 else "dGh1bWJwcmludCBieXRlcw==" # cspell:disable-line
     expected_dict = {
         "_attributes": {
             "enabled": True,

@@ -3,9 +3,8 @@ from pathlib import Path
 
 import pytest
 
-from azure.ai.ml import Input, MLClient, load_component, load_job
-from azure.ai.ml.entities import PipelineJob
-from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
+from azure.ai.ml import Input, load_component, load_job
+from azure.ai.ml.entities import PipelineComponent, PipelineJob
 from azure.ai.ml.entities._inputs_outputs import GroupInput
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
 
@@ -37,13 +36,12 @@ class TestPipelineComponentEntity:
                     "description": "A number",
                 },
                 "component_in_path": {"type": "uri_folder", "description": "A path"},
+                "node_compute": {"type": "string", "default": "azureml:cpu-cluster"},
             },
             "outputs": {},
             "type": "pipeline",
             "jobs": {
                 "component_a_job": {
-                    "$schema": "{}",
-                    "command": 'echo "hello" && echo "world" > ' "${{outputs.world_output}}/world.txt",
                     "component": {
                         "command": 'echo "hello" && echo ' '"world" > ' "${{outputs.world_output}}/world.txt",
                         "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
@@ -55,7 +53,7 @@ class TestPipelineComponentEntity:
                         "type": "command",
                         "version": "1",
                     },
-                    "compute": "azureml:cpu-cluster",
+                    "compute": "${{parent.inputs.node_compute}}",
                     "environment_variables": {},
                     "inputs": {},
                     "outputs": {},
@@ -86,18 +84,11 @@ class TestPipelineComponentEntity:
             "is_deterministic": True,
             "jobs": {
                 "component_a_job": {
-                    "$schema": "{}",
-                    "command": "echo Hello World & echo "
-                    "[${{inputs.component_in_number}}] & "
-                    "echo ${{inputs.component_in_path}} & "
-                    "echo ${{outputs.component_out_path}} "
-                    "> "
-                    "${{outputs.component_out_path}}/component_in_number",
                     "component": {
                         "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json",
                         "command": "echo Hello World & "
                         "echo "
-                        "[${{inputs.component_in_number}}] "
+                        "$[[${{inputs.component_in_number}}]] "
                         "& echo "
                         "${{inputs.component_in_path}} "
                         "& echo "
@@ -161,7 +152,6 @@ class TestPipelineComponentEntity:
             "is_deterministic": True,
             "jobs": {
                 "pipeline_component": {
-                    "$schema": "{}",
                     "component": {
                         "$schema": "https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json",
                         "creation_context": None,
@@ -180,21 +170,6 @@ class TestPipelineComponentEntity:
                         "is_deterministic": True,
                         "jobs": {
                             "component_a_job": {
-                                "$schema": "{}",
-                                "command": "echo "
-                                "Hello "
-                                "World "
-                                "& "
-                                "echo "
-                                "[${{inputs.component_in_number}}] "
-                                "& "
-                                "echo "
-                                "${{inputs.component_in_path}} "
-                                "& "
-                                "echo "
-                                "${{outputs.component_out_path}} "
-                                "> "
-                                "${{outputs.component_out_path}}/component_in_number",
                                 "component": {
                                     "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json",
                                     "command": "echo "
@@ -202,7 +177,7 @@ class TestPipelineComponentEntity:
                                     "World "
                                     "& "
                                     "echo "
-                                    "[${{inputs.component_in_number}}] "
+                                    "$[[${{inputs.component_in_number}}]] "
                                     "& "
                                     "echo "
                                     "${{inputs.component_in_path}} "
@@ -269,12 +244,11 @@ class TestPipelineComponentEntity:
             "inputs": {
                 "job_in_number": {"default": "10", "type": "integer"},
                 "job_in_other_number": {"default": "15", "type": "integer"},
-                "job_in_path": {"type": "uri_folder"},
+                "job_in_path": {"type": "uri_folder", "mode": "ro_mount"},
             },
             "is_deterministic": True,
             "jobs": {
                 "hello_world_component": {
-                    "$schema": "{}",
                     "component": "azureml:microsoftsamplesCommandComponentBasic_second:1",
                     "compute": "azureml:cpu-cluster",
                     "environment_variables": {},
@@ -286,7 +260,6 @@ class TestPipelineComponentEntity:
                     "type": "command",
                 },
                 "hello_world_component_2": {
-                    "$schema": "{}",
                     "component": "azureml:microsoftsamplesCommandComponentBasic_second:1",
                     "compute": "azureml:cpu-cluster",
                     "environment_variables": {},
@@ -359,7 +332,7 @@ class TestPipelineComponentEntity:
 
     def test_pipeline_component_with_group(self) -> None:
         component_path = "./tests/test_configs/components/pipeline_component_with_group.yml"
-        component: PipelineComponent = load_component(path=component_path)
+        component: PipelineComponent = load_component(component_path)
         assert len(component.inputs) == 2
         assert isinstance(component.inputs["group"], GroupInput)
         component_dict = component._to_dict()
@@ -389,7 +362,7 @@ class TestPipelineComponentEntity:
 
     def test_nested_pipeline_component_with_group(self) -> None:
         component_path = "./tests/test_configs/components/nested_pipeline_component_with_group.yml"
-        component: PipelineComponent = load_component(path=component_path)
+        component: PipelineComponent = load_component(component_path)
         assert len(component.inputs) == 2
         assert isinstance(component.inputs["top_group"], GroupInput)
         nested_pipeline_component = component.jobs["component_a_job"]
@@ -416,11 +389,26 @@ class TestPipelineComponentEntity:
             "group.component_in_number": {"path": "${{parent.inputs.top_group.component_in_number}}"},
             "group.sub.component_in_number2": {"path": "${{parent.inputs.top_group.sub2.component_in_number2}}"},
         }
+        assert component_dict["jobs"]["component_a_job"]["component"]["inputs"] == {
+            "component_in_path": {"description": "A path", "type": "uri_folder"},
+            "group.component_in_number": {
+                "default": "10.99",
+                "description": "A number",
+                "optional": True,
+                "type": "number",
+            },
+            "group.sub.component_in_number2": {
+                "default": "10.99",
+                "description": "A number",
+                "optional": True,
+                "type": "number",
+            },
+        }
 
     def test_invalid_nested_pipeline_component_with_group(self) -> None:
         component_path = "./tests/test_configs/components/invalid/invalid_nested_pipeline_component_with_group.yml"
         with pytest.raises(Exception) as e:
-            load_component(path=component_path)
+            load_component(component_path)
         assert (
             "'group' is defined as a parameter group but got input '${{parent.inputs.top_group}}' with type '<class 'str'>'"
             in str(e.value)

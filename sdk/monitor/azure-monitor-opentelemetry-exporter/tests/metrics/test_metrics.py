@@ -231,7 +231,6 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(len(envelope.data.base_data.metrics), 1)
         self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 10)
-        self.assertEqual(envelope.data.base_data.metrics[0].data_point_type, "Aggregation")
         self.assertEqual(envelope.data.base_data.metrics[0].count, 1)
 
     def test_point_to_envelope_histogram(self):
@@ -260,7 +259,6 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(len(envelope.data.base_data.metrics), 1)
         self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 31)
-        self.assertEqual(envelope.data.base_data.metrics[0].data_point_type, "Aggregation")
         self.assertEqual(envelope.data.base_data.metrics[0].count, 7)
 
 class TestAzureMetricExporterUtils(unittest.TestCase):

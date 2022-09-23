@@ -45,5 +45,4 @@ async def search_structured_address_async():
     # [END search_structured_address_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(search_structured_address_async())
+    asyncio.run(search_structured_address_async())

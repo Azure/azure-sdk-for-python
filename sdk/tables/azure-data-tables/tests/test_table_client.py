@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from multiprocessing.sharedctypes import Value
+from multiprocessing.sharedctypes import Value # cspell:disable-line
 import pytest
 import platform
 

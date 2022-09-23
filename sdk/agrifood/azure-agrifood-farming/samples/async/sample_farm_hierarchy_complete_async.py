@@ -298,5 +298,4 @@ if __name__ == "__main__":
 
     load_dotenv()
 
-    asyncio.get_event_loop().run_until_complete(
-        sample_farm_hierarchy_complete_async())
+    asyncio.run(sample_farm_hierarchy_complete_async())

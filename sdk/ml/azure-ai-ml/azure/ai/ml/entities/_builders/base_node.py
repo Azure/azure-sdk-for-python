@@ -10,25 +10,21 @@ from enum import Enum
 from functools import wraps
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 from azure.ai.ml.constants import JobType
+from azure.ai.ml.entities import Data
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import build_input_output
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
-from azure.ai.ml.entities._job.pipeline._io import (
-    InputsAttrDict,
-    OutputsAttrDict,
-    PipelineInput,
-    PipelineNodeIOMixin,
-    PipelineOutputBase,
-)
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, PipelineNodeIOMixin
+from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, resolve_pipeline_parameters
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
+from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -65,6 +61,9 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
     """Base class for node in pipeline, used for component version consumption.
     Can't be instantiated directly.
 
+    You should not instantiate this class directly. Instead, you should
+    create from a builder function.
+
     :param type: Type of pipeline node
     :type type: str
     :param component: Id or instance of the component version to be run for the step
@@ -99,7 +98,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             str,
             Union[
                 PipelineInput,
-                PipelineOutputBase,
+                NodeOutput,
                 Input,
                 str,
                 bool,
@@ -138,11 +137,14 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         # initialize io
         inputs = resolve_pipeline_parameters(inputs)
         inputs, outputs = inputs or {}, outputs or {}
-        self._validate_io(inputs, self._get_supported_inputs_types(), Input)
-        self._validate_io(outputs, self._get_supported_outputs_types(), Output)
+        self._parse_io(inputs, Input)
+        self._validate_io(inputs, self._get_supported_inputs_types())
+        self._parse_io(outputs, Output)
+        self._validate_io(outputs, self._get_supported_outputs_types())
         # parse empty dict to None so we won't pass default mode, type to backend
+        # add `isinstance` to avoid converting to expression
         for k, v in inputs.items():
-            if v == {}:
+            if isinstance(v, dict) and v == {}:
                 inputs[k] = None
 
         # TODO: get rid of self._job_inputs, self._job_outputs once we have unified Input
@@ -158,6 +160,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             self._outputs = self._build_outputs_dict_without_meta(outputs or {})
 
         self._component = component
+        self._referenced_control_flow_node_instance_id = None
         self.kwargs = kwargs
 
         # Generate an id for every instance
@@ -175,28 +178,36 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
     @classmethod
     def _get_supported_inputs_types(cls):
-        return None
+        # supported input types for node input
+        return (
+            PipelineInput,
+            NodeOutput,
+            Input,
+            Data,
+            str,
+            bool,
+            int,
+            float,
+            Enum,
+            PipelineExpression,
+        )
 
     @classmethod
     def _get_supported_outputs_types(cls):
+        # supported output types for node input
         return None
 
+    @property
+    def _skip_required_compute_missing_validation(self):
+        return False
+
     @classmethod
-    def _validate_io(cls, io_dict: dict, allowed_types: Optional[tuple], parse_cls):
+    def _validate_io(cls, io_dict: dict, allowed_types: Optional[tuple]):
         if allowed_types is None:
             return
         for key, value in io_dict.items():
-            # output mode of last node should not affect input mode of next node
-            if isinstance(value, PipelineOutputBase):
-                # value = copy.deepcopy(value)
-                value = value._deepcopy()  # Decoupled input and output
-                io_dict[key] = value
-                value.mode = None
             if value is None or isinstance(value, allowed_types):
                 pass
-            elif isinstance(value, dict):
-                # parse dict to allowed type
-                io_dict[key] = parse_cls(**value)
             else:
                 msg = "Expecting {} for input/output {}, got {} instead."
                 raise ValidationException(
@@ -205,6 +216,19 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
                     target=ErrorTarget.PIPELINE,
                     error_type=ValidationErrorType.INVALID_VALUE,
                 )
+
+    @classmethod
+    def _parse_io(cls, io_dict: dict, parse_cls):
+        for key, value in io_dict.items():
+            # output mode of last node should not affect input mode of next node
+            if isinstance(value, NodeOutput):
+                # value = copy.deepcopy(value)
+                value = value._deepcopy()  # Decoupled input and output
+                io_dict[key] = value
+                value.mode = None
+            elif isinstance(value, dict):
+                # parse dict to allowed type
+                io_dict[key] = parse_cls(**value)
 
     def _initializing(self) -> bool:
         # use this to indicate ongoing init process so all attributes set during init process won't be set as
@@ -220,6 +244,14 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         SchemaValidatableMixin._base_path_for_validation).
         """
         self._base_path = base_path
+
+    def _set_referenced_control_flow_node_instance_id(self, instance_id):
+        """Set the referenced control flow node instance id.
+
+        If this node is referenced to a control flow node, the instance_id will not be modified.
+        """
+        if not self._referenced_control_flow_node_instance_id:
+            self._referenced_control_flow_node_instance_id = instance_id
 
     def _get_component_id(self) -> Union[str, Component]:
         """Return component id if possible."""
@@ -373,11 +405,11 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         return convert_ordered_dict_to_dict(rest_obj)
 
     @property
-    def inputs(self) -> InputsAttrDict:
+    def inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
         return self._inputs
 
     @property
-    def outputs(self) -> OutputsAttrDict:
+    def outputs(self) -> Dict[str, Union[str, Output]]:
         return self._outputs
 
     def __str__(self):
@@ -387,17 +419,24 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             # add try catch in case component job failed in schema parse
             return _AttrDict.__str__()
 
+    def __hash__(self):
+        return hash(self.__str__())
+
     def __help__(self):
         # only show help when component has definition
         if isinstance(self._component, Component):
             return self._component.__help__()
+
+    def __bool__(self):
+        # _attr_dict will return False if no extra attributes are set
+        return True
 
     def _get_origin_job_outputs(self):
         """Restore outputs to JobOutput/BindingString and return them."""
         outputs: Dict[str, Union[str, Output]] = {}
         if self.outputs is not None:
             for output_name, output_obj in self.outputs.items():
-                if isinstance(output_obj, PipelineOutputBase):
+                if isinstance(output_obj, NodeOutput):
                     outputs[output_name] = output_obj._data
                 else:
                     raise TypeError("unsupported built output type: {}: {}".format(output_name, type(output_obj)))

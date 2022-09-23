@@ -41,7 +41,7 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
 from azure.ai.ml._schema.automl.table_vertical.regression import AutoMLRegressionSchema
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils.utils import camel_to_snake, to_iso_duration_format_mins
-from azure.ai.ml.constants import AutoMLConstants, AutoMLTransformerParameterKeys
+from azure.ai.ml.constants._job.automl import AutoMLConstants, AutoMLTransformerParameterKeys
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities import Job
 from azure.ai.ml.entities._inputs_outputs import Input
@@ -232,6 +232,7 @@ def expected_classification_job(
     return _get_rest_automl_job(
         RestClassification(
             target_column_name=expected_target_column_name,
+            positive_label="label",
             training_data=expected_training_data,
             validation_data=expected_validation_data,
             test_data=expected_test_data,

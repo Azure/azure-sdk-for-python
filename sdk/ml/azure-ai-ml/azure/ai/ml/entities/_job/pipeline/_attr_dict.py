@@ -133,18 +133,22 @@ class _AttrDict(Generic[K, V], dict, ABC):
         return list(super().__dir__()) + list(self.keys())
 
 
+def has_attr_safe(obj, attr):
+    if isinstance(obj, _AttrDict):
+        has_attr = not obj._is_arbitrary_attr(attr)
+    elif isinstance(obj, dict):
+        return attr in obj
+    else:
+        has_attr = hasattr(obj, attr)
+    return has_attr
+
+
 def try_get_non_arbitrary_attr_for_potential_attr_dict(obj, attr):
     """Try to get non-arbitrary attribute for potential attribute dict.
 
     Will not create target attribute if it is an arbitrary attribute in
     _AttrDict.
     """
-    if isinstance(obj, _AttrDict):
-        has_attr = not obj._is_arbitrary_attr(attr)
-    elif isinstance(obj, dict):
-        return obj[attr] if attr in obj else None
-    else:
-        has_attr = hasattr(obj, attr)
-    if has_attr:
-        return getattr(obj, attr)
+    if has_attr_safe(obj, attr):
+        return obj[attr] if isinstance(obj, dict) else getattr(obj, attr)
     return None

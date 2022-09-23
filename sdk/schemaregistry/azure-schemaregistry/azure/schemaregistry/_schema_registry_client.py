@@ -171,6 +171,34 @@ class SchemaRegistryClient(object):
         response.raise_for_status()
         return _parse_response_schema(response)
 
+    def get_schema_by_version(self, group_name: str, name: str, version: int, **kwargs: Any) -> Schema:
+        """
+        Gets a specific version of a schema within the specified schema group.
+
+        :param str group_name: Name of schema group that contains the registered schema.
+        :param str name: Name of schema which should be retrieved.
+        :param int version: Version of schema which should be retrieved.
+        :rtype: ~azure.schemaregistry.Schema
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_schemaregistry.py
+                :start-after: [START get_schema_by_version_sync]
+                :end-before: [END get_schema_by_version_sync]
+                :language: python
+                :dedent: 4
+                :caption: Get schema by version.
+
+        """
+        http_request_kwargs = get_http_request_kwargs(kwargs)
+        request = schema_rest.build_get_schema_version_request(
+            group_name=group_name, schema_name=name, schema_version=version, **http_request_kwargs
+        )
+        response = self._generated_client.send_request(request, **kwargs)
+        response.raise_for_status()
+        return _parse_response_schema(response)
+
     def get_schema_properties(
         self,
         group_name,
