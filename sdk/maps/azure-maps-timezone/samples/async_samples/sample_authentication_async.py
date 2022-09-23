@@ -18,7 +18,7 @@ USAGE:
     - TENANT_ID - your tenant ID that wants to access Azure Maps account
     - CLIENT_ID - your client ID that wants to access Azure Maps account
     - CLIENT_SECRET - your client secret that wants to access Azure Maps account
-    - MAPS_CLIENT_ID - your Azure Maps client ID
+    - AZURE_MAPS_CLIENT_ID - your Azure Maps client ID
 """
 
 import asyncio
@@ -43,14 +43,14 @@ async def authentication_maps_service_client_with_subscription_key_credential_as
 
 async def authentication_maps_service_client_with_aad_credential_async():
     """DefaultAzureCredential will use the values from these environment
-    variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, MAPS_CLIENT_ID
+    variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, AZURE_MAPS_CLIENT_ID
     """
     # [START create_maps_timezone_service_client_with_aad_async]
     from azure.identity.aio import DefaultAzureCredential
     from azure.maps.timezone.aio import MapsTimezoneClient
 
     credential = DefaultAzureCredential()
-    maps_client_id = os.getenv("MAPS_CLIENT_ID")
+    maps_client_id = os.getenv("AZURE_MAPS_CLIENT_ID")
 
     maps_timezone_client = MapsTimezoneClient(client_id=maps_client_id, credential=credential)
     # [END create_maps_timezone_service_client_with_aad_async]

@@ -18,7 +18,7 @@ USAGE:
     - TENANT_ID - your tenant ID that wants to access Azure Maps account
     - CLIENT_ID - your client ID that wants to access Azure Maps account
     - CLIENT_SECRET - your client secret that wants to access Azure Maps account
-    - MAPS_CLIENT_ID - your Azure Maps client ID
+    - AZURE_MAPS_CLIENT_ID - your Azure Maps client ID
 """
 
 import os
@@ -45,7 +45,7 @@ def authentication_maps_service_client_with_aad_credential():
     from azure.maps.timezone import MapsTimezoneClient
 
     credential = DefaultAzureCredential()
-    maps_client_id = os.getenv("MAPS_CLIENT_ID")
+    maps_client_id = os.getenv("AZURE_MAPS_CLIENT_ID")
 
     maps_timezone_client = MapsTimezoneClient(client_id=maps_client_id, credential=credential)
     # [END create_maps_timezone_service_client_with_aad]

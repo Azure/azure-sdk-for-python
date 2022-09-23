@@ -9,15 +9,17 @@
           "description": "The base resource name."
         }
       },
-      "endpointPrefix": {
-        "defaultValue": "maps",
-        "type": "string"
-      },
       "tenantId": {
         "type": "string",
           "metadata": {
             "description": "The tenant id to which the application and resources belong."
         }
+      },
+      "testApplicationOid": {
+          "type": "string",
+          "metadata": {
+              "description": "The client OID to grant access to test resources."
+          }
       },
       "testApplicationId": {
         "type": "string",
@@ -33,6 +35,7 @@
       }
     },
     "variables": {
+      "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/8f5e0ce6-4f7b-4dcf-bddf-e6f48634a204')]",
       "mapsAccountName": "[guid(resourceGroup().id, deployment().name, parameters('baseName'))]"
     },
     "resources": [
@@ -61,6 +64,15 @@
                 ]
             }
         }
+      },
+      {
+          "type": "Microsoft.Authorization/roleAssignments",
+          "apiVersion": "2018-09-01-preview",
+          "name": "[guid(resourceGroup().id)]",
+          "properties": {
+              "roleDefinitionId": "[variables('roleDefinitionId')]",
+              "principalId": "[parameters('testApplicationOid')]"
+          }
       }
     ],
     "outputs": {
@@ -75,6 +87,10 @@
       "AZURE_CLIENT_SECRET": {
             "type": "string",
             "value": "[parameters('testApplicationSecret')]"
+      },
+      "AZURE_MAPS_CLIENT_ID": {
+          "type": "string",
+          "value": "[reference(resourceId('Microsoft.Maps/accounts',variables('mapsAccountName'))).uniqueId]"
       },
       "AZURE_SUBSCRIPTION_KEY": {
         "type": "string",
