@@ -182,7 +182,9 @@ class TestImportJob(AzureRecordedTestCase):
                 == import_pipeline.jobs[import_step].outputs["output"]._data.path
             )
 
-        client.jobs.cancel(import_pipeline.name)
+        cancel_poller = client.jobs.begin_cancel(import_pipeline.name)
+        assert isinstance(cancel_poller, LROPoller)
+        assert cancel_poller.result() is None
         import_pipeline_3 = client.jobs.get(import_pipeline.name)
         assert import_pipeline_3.status in (JobStatus.CANCEL_REQUESTED, JobStatus.CANCELED)
 

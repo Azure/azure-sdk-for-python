@@ -1680,6 +1680,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
+    @pytest.mark.skip("TODO: re-record since job is in terminal state before cancel")
     def test_parallel_job(self, randstr: Callable[[str], str], client: MLClient):
         environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
         inputs = {
