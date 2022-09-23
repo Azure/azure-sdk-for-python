@@ -3,15 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import logging
 import os
 from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.maps.timezone import MapsTimezoneClient
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
 from timezone_preparer import MapsTimezonePreparer
-
-
-logger = logging.getLogger(__name__)
 
 
 class TestMapsTimezoneClient(AzureRecordedTestCase):

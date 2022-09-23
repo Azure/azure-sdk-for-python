@@ -35,11 +35,11 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_timezone_get_timezone_by_id_request(
-    format: Union[str, "_models.JsonFormat"] = "json",
+    format: Union[str, _models.JsonFormat] = "json",
     *,
     timezone_id: str,
     accept_language: Optional[str] = None,
-    options: Optional[Union[str, "_models.TimezoneOptions"]] = None,
+    options: Optional[Union[str, _models.TimezoneOptions]] = None,
     time_stamp: Optional[datetime.datetime] = None,
     daylight_savings_time_from: Optional[datetime.datetime] = None,
     daylight_savings_time_lasting_years: Optional[int] = None,
@@ -87,11 +87,11 @@ def build_timezone_get_timezone_by_id_request(
 
 
 def build_timezone_get_timezone_by_coordinates_request(
-    format: Union[str, "_models.JsonFormat"] = "json",
+    format: Union[str, _models.JsonFormat] = "json",
     *,
     coordinates: List[float],
     accept_language: Optional[str] = None,
-    options: Optional[Union[str, "_models.TimezoneOptions"]] = None,
+    options: Optional[Union[str, _models.TimezoneOptions]] = None,
     time_stamp: Optional[datetime.datetime] = None,
     daylight_savings_time_from: Optional[datetime.datetime] = None,
     daylight_savings_time_lasting_years: Optional[int] = None,
@@ -139,7 +139,7 @@ def build_timezone_get_timezone_by_coordinates_request(
 
 
 def build_timezone_get_windows_timezone_ids_request(
-    format: Union[str, "_models.JsonFormat"] = "json", *, client_id: Optional[str] = None, **kwargs: Any
+    format: Union[str, _models.JsonFormat] = "json", *, client_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -167,7 +167,7 @@ def build_timezone_get_windows_timezone_ids_request(
 
 
 def build_timezone_get_iana_timezone_ids_request(
-    format: Union[str, "_models.JsonFormat"] = "json", *, client_id: Optional[str] = None, **kwargs: Any
+    format: Union[str, _models.JsonFormat] = "json", *, client_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -195,7 +195,7 @@ def build_timezone_get_iana_timezone_ids_request(
 
 
 def build_timezone_get_iana_version_request(
-    format: Union[str, "_models.JsonFormat"] = "json", *, client_id: Optional[str] = None, **kwargs: Any
+    format: Union[str, _models.JsonFormat] = "json", *, client_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -223,7 +223,7 @@ def build_timezone_get_iana_version_request(
 
 
 def build_timezone_convert_windows_timezone_to_iana_request(
-    format: Union[str, "_models.JsonFormat"] = "json",
+    format: Union[str, _models.JsonFormat] = "json",
     *,
     windows_timezone_id: str,
     windows_territory_code: Optional[str] = None,
@@ -280,11 +280,11 @@ class TimezoneOperations:
     @distributed_trace
     def get_timezone_by_id(
         self,
-        format: Union[str, "_models.JsonFormat"] = "json",
+        format: Union[str, _models.JsonFormat] = "json",
         *,
         timezone_id: str,
         accept_language: Optional[str] = None,
-        options: Optional[Union[str, "_models.TimezoneOptions"]] = None,
+        options: Optional[Union[str, _models.TimezoneOptions]] = None,
         time_stamp: Optional[datetime.datetime] = None,
         daylight_savings_time_from: Optional[datetime.datetime] = None,
         daylight_savings_time_lasting_years: Optional[int] = None,
@@ -375,11 +375,11 @@ class TimezoneOperations:
     @distributed_trace
     def get_timezone_by_coordinates(
         self,
-        format: Union[str, "_models.JsonFormat"] = "json",
+        format: Union[str, _models.JsonFormat] = "json",
         *,
         coordinates: List[float],
         accept_language: Optional[str] = None,
-        options: Optional[Union[str, "_models.TimezoneOptions"]] = None,
+        options: Optional[Union[str, _models.TimezoneOptions]] = None,
         time_stamp: Optional[datetime.datetime] = None,
         daylight_savings_time_from: Optional[datetime.datetime] = None,
         daylight_savings_time_lasting_years: Optional[int] = None,
@@ -473,7 +473,7 @@ class TimezoneOperations:
 
     @distributed_trace
     def get_windows_timezone_ids(
-        self, format: Union[str, "_models.JsonFormat"] = "json", **kwargs: Any
+        self, format: Union[str, _models.JsonFormat] = "json", **kwargs: Any
     ) -> List[_models.TimezoneWindows]:
         """**Windows Time Zones**
 
@@ -530,7 +530,7 @@ class TimezoneOperations:
 
     @distributed_trace
     def get_iana_timezone_ids(
-        self, format: Union[str, "_models.JsonFormat"] = "json", **kwargs: Any
+        self, format: Union[str, _models.JsonFormat] = "json", **kwargs: Any
     ) -> List[_models.IanaId]:
         """**IANA Time Zones**
 
@@ -588,7 +588,7 @@ class TimezoneOperations:
 
     @distributed_trace
     def get_iana_version(
-        self, format: Union[str, "_models.JsonFormat"] = "json", **kwargs: Any
+        self, format: Union[str, _models.JsonFormat] = "json", **kwargs: Any
     ) -> _models.TimezoneIanaVersionResult:
         """**Time Zone IANA Version**
 
@@ -646,7 +646,7 @@ class TimezoneOperations:
     @distributed_trace
     def convert_windows_timezone_to_iana(
         self,
-        format: Union[str, "_models.JsonFormat"] = "json",
+        format: Union[str, _models.JsonFormat] = "json",
         *,
         windows_timezone_id: str,
         windows_territory_code: Optional[str] = None,

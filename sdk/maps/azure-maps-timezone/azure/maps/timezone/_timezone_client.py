@@ -10,10 +10,10 @@ from typing import Union, Any, List
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.tracing.decorator import distributed_trace
-from .models import LatLon
 from ._generated import TimezoneClient as _MapsTimezoneClient
-from ._generated.models import (
+from .models import (
     IanaId,
+    LatLon,
     TimezoneIanaVersionResult,
     TimezoneResult,
     TimezoneWindows
@@ -47,9 +47,9 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
      AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved
      from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see
      the following `articles <https://aka.ms/amauthdetails>` for guidance. Default value is None.
-    :type client_id: str
+    :paramtype client_id: str
     :keyword endpoint: Service URL. Default value is "https://atlas.microsoft.com".
-    :type endpoint: str
+    :paramtype endpoint: str
     :keyword api_version: Api Version. Default value is "1.0". Note that overriding this default
      value may result in unsupported behavior.
     :paramtype api_version: str
@@ -111,22 +111,22 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
          returned. If no language code is provided, the response will be in "EN". Please refer to
          `Supported Languages <https://docs.microsoft.com/en-us/azure/azure-maps/supported-languages>`
          for details. Default value is None.
-        :type accept_language: str
+        :paramtype accept_language: str
         :keyword options: Alternatively, use alias "o". Options available for types of information
          returned in the result. Known values are: "none", "zoneInfo", "transitions", and "all". Default
          value is None.
-        :type options: str or ~azure.maps.timezone.models.TimezoneOptions
+        :paramtype options: str or ~azure.maps.timezone.models.TimezoneOptions
         :keyword time_stamp: Alternatively, use alias "stamp", or "s". Reference time, if omitted, the
          API will use the machine time serving the request. Default value is None.
-        :type time_stamp: ~datetime.datetime
+        :paramtype time_stamp: ~datetime.datetime
         :keyword daylight_savings_time_from: Alternatively, use alias "tf". The start date from which
          daylight savings time (DST) transitions are requested, only applies when "options" = all or
          "options" = transitions. Default value is None.
-        :type daylight_savings_time_from: ~datetime.datetime
+        :paramtype daylight_savings_time_from: ~datetime.datetime
         :keyword daylight_savings_time_lasting_years: Alternatively, use alias "ty". The number of years
          from "transitionsFrom" for which DST transitions are requested, only applies when "options" =
          all or "options" = transitions. Default value is None.
-        :type daylight_savings_time_lasting_years: int
+        :paramtype daylight_savings_time_lasting_years: int
         :rtype: ~azure.maps.timezone.models.TimezoneResult
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -273,7 +273,7 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
         :param windows_timezone_id: The Windows time zone ID. Required. For example: "pacific standard time".
         :type windows_timezone_id: str
         :keyword windows_territory_code: Windows Time Zone territory code. Default value is None.
-        :type windows_territory_code: str
+        :paramtype windows_territory_code: str
         :rtype: list[~azure.maps.timezone.models.IanaId]
         :raises ~azure.core.exceptions.HttpResponseError:
 

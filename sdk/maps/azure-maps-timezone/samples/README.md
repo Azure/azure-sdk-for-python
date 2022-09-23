@@ -17,23 +17,17 @@ Authenticate the client with a Azure Maps Search [API Key Credential](https://do
 
 Then for common Azure Maps Search operations:
 
-* Perform fuzzy search: [sample_fuzzy_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_fuzzy_search.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_fuzzy_search_async.py))
+* Get timezone by coordinates : [sample_get_timezone_by_coordinates.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-timezone/samples/sample_get_timezone_by_coordinates.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-timezone/samples/async_samples/sample_get_timezone_by_coordinates_async.py))
 
-* Perform get POI categories search: [sample_get_point_of_interest_categories.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_get_point_of_interest_categories.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_get_point_of_interest_categories_async.py))
+* Get timezone by IANA ID: [sample_get_timezone_by_id.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-timezone/samples/sample_get_timezone_by_id.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-timezone/samples/async_samples/sample_get_timezone_by_id_async.py))
 
-* Perform reverse search address: [sample_reverse_search_address.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_reverse_search_address.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_reverse_search_address_async.py))
+* Enumerate timezone IANA IDs: [sample_get_iana_timezone_ids.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-timezone/samples/sample_get_iana_timezone_ids.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-timezone/samples/async_samples/sample_get_iana_timezone_ids_async.py))
 
-* Perform reverse search cross street address: [sample_reverse_search_cross_street_address.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_reverse_search_cross_street_address.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_reverse_search_cross_street_address_async.py))
+* Enumerate Windows timezone IDs: [sample_get_windows_timezone_ids.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-timezone/samples/sample_get_windows_timezone_ids.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-timezone/samples/async_samples/sample_get_windows_timezone_ids_async.py))
 
-* Get search nearby POI: [sample_search_nearby_point_of_interest.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_search_nearby_point_of_interest.py)) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_search_nearby_point_of_interest_async.py))
+* Get IANA version: [sample_get_iana_version.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-timezone/samples/sample_get_iana_version.py)) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-timezone/samples/async_samples/sample_get_iana_version_async.py))
 
-* Get search POI: [sample_search_point_of_interest.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_search_point_of_interest.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_search_point_of_interest_async.py))
-
-* Get search POI category: [sample_search_point_of_interest_category.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_search_point_of_interest_category.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_search_point_of_interest_category_async.py))
-
-* Perform search with structured address: [sample_search_structured_address.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_search_structured_address.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_search_structured_address_async.py))
-
-* Search inside Geometry: [sample_search_inside_geometry.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_search_inside_geometry.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_search_inside_geometry_async.py))
+* Convert Windows timezone to IANA: [sample_convert_windows_timezone_to_iana.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-timezone/samples/sample_convert_windows_timezone_to_iana.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-timezone/samples/async_samples/sample_convert_windows_timezone_to_iana_async.py))
 
 ## Prerequisites
 
@@ -46,7 +40,7 @@ Then for common Azure Maps Search operations:
 1. Install the Azure Maps Search client library for Python with [pip](https://pypi.org/project/pip/):
 
    ```bash
-   pip install azure-maps-search --pre
+   pip install azure-maps-timezone --pre
    ```
 
 2. Clone or download [this repository](https://github.com/Azure/azure-sdk-for-python)

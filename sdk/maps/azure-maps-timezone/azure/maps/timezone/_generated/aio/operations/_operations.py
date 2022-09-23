@@ -58,11 +58,11 @@ class TimezoneOperations:
     @distributed_trace_async
     async def get_timezone_by_id(
         self,
-        format: Union[str, "_models.JsonFormat"] = "json",
+        format: Union[str, _models.JsonFormat] = "json",
         *,
         timezone_id: str,
         accept_language: Optional[str] = None,
-        options: Optional[Union[str, "_models.TimezoneOptions"]] = None,
+        options: Optional[Union[str, _models.TimezoneOptions]] = None,
         time_stamp: Optional[datetime.datetime] = None,
         daylight_savings_time_from: Optional[datetime.datetime] = None,
         daylight_savings_time_lasting_years: Optional[int] = None,
@@ -153,11 +153,11 @@ class TimezoneOperations:
     @distributed_trace_async
     async def get_timezone_by_coordinates(
         self,
-        format: Union[str, "_models.JsonFormat"] = "json",
+        format: Union[str, _models.JsonFormat] = "json",
         *,
         coordinates: List[float],
         accept_language: Optional[str] = None,
-        options: Optional[Union[str, "_models.TimezoneOptions"]] = None,
+        options: Optional[Union[str, _models.TimezoneOptions]] = None,
         time_stamp: Optional[datetime.datetime] = None,
         daylight_savings_time_from: Optional[datetime.datetime] = None,
         daylight_savings_time_lasting_years: Optional[int] = None,
@@ -251,7 +251,7 @@ class TimezoneOperations:
 
     @distributed_trace_async
     async def get_windows_timezone_ids(
-        self, format: Union[str, "_models.JsonFormat"] = "json", **kwargs: Any
+        self, format: Union[str, _models.JsonFormat] = "json", **kwargs: Any
     ) -> List[_models.TimezoneWindows]:
         """**Windows Time Zones**
 
@@ -308,7 +308,7 @@ class TimezoneOperations:
 
     @distributed_trace_async
     async def get_iana_timezone_ids(
-        self, format: Union[str, "_models.JsonFormat"] = "json", **kwargs: Any
+        self, format: Union[str, _models.JsonFormat] = "json", **kwargs: Any
     ) -> List[_models.IanaId]:
         """**IANA Time Zones**
 
@@ -366,7 +366,7 @@ class TimezoneOperations:
 
     @distributed_trace_async
     async def get_iana_version(
-        self, format: Union[str, "_models.JsonFormat"] = "json", **kwargs: Any
+        self, format: Union[str, _models.JsonFormat] = "json", **kwargs: Any
     ) -> _models.TimezoneIanaVersionResult:
         """**Time Zone IANA Version**
 
@@ -424,7 +424,7 @@ class TimezoneOperations:
     @distributed_trace_async
     async def convert_windows_timezone_to_iana(
         self,
-        format: Union[str, "_models.JsonFormat"] = "json",
+        format: Union[str, _models.JsonFormat] = "json",
         *,
         windows_timezone_id: str,
         windows_territory_code: Optional[str] = None,
