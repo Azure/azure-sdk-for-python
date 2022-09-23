@@ -5,7 +5,7 @@ This cheat sheet details guidance for typing as it relates to the Python SDK. Us
 ### General guidance
 
 - Do provide type annotations (per PEP 484) to public APIs in the client library.
-- You do not need to type annotate all functions in a client library, but you should provide type hints where unit tests are worth writing or where type annotations will assist in understanding of the code.
+- You do not need to type annotate internal functions in a client library, but you should provide type hints where unit tests are worth writing or where type annotations will assist in understanding of the code.
 - Do not use comment style type hints. Use inline, annotation style.
   
 ```python
@@ -180,7 +180,6 @@ def create_batch(entities: Iterable[Entity]) -> None:
 ```
 
 - If you don't need to mutate the collection, prefer parameter types `Sequence` over `MutableSequence`, `Mapping` over `MutableMapping`, etc.
-- Use `from __future__ import annotations` to use built-in generic collection types (`list` instead of `typing.List`).
 - Consider using `typing.TypedDict` if a dictionary has a fixed set of keys. This is especially useful if a user needs to construct the dict. Do make this importable from the public namespace.
 - Consider using `typing.NamedTuple` if your tuple should have named fields. Do make this importable from the public namespace.
 
@@ -335,6 +334,7 @@ from azure.core.credentials import AzureKeyCredential, TokenCredential, AzureSas
 CredentialTypes = Union[AzureKeyCredential, TokenCredential, AzureSasCredential, Dict[str, str]]  # PascalCase
 ```
 
+- Do not use type aliases in docstrings. Specify the fully expanded type to satisfy rendered documentation.
 - Do use `typing.TypeAlias` if your type alias might be otherwise confused with a global assignment.
 
 ### Literals
