@@ -91,6 +91,8 @@ from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.sweep import SweepJob
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
@@ -209,11 +211,12 @@ class JobOperations(_ScopeDependentOperations):
             self._api_base_url = self._get_workspace_url(url_key=API_URL_KEY)
         return self._api_base_url
 
+    @distributed_trace
     @monitor_with_activity(logger, "Job.List", ActivityType.PUBLICAPI)
     def list(
         self,
-        parent_job_name: str = None,
         *,
+        parent_job_name: str = None,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
         **kwargs,
     ) -> Iterable[Job]:
@@ -251,6 +254,7 @@ class JobOperations(_ScopeDependentOperations):
         except JobParsingError:
             pass
 
+    @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.Get", ActivityType.PUBLICAPI)
     def get(self, name: str) -> Job:
         """Get a job resource.
@@ -294,13 +298,16 @@ class JobOperations(_ScopeDependentOperations):
             k: ServiceInstance._from_rest_object(v, node_index) for k, v in service_instances_dict.instances.items()
         }
 
+    @distributed_trace
     @monitor_with_activity(logger, "Job.Cancel", ActivityType.PUBLICAPI)
-    def cancel(self, name: str) -> None:
+    def begin_cancel(self, name: str) -> LROPoller[None]:
         """Cancel job resource.
 
         :param str name: Name of the job.
         :return: None, or the result of cls(response)
         :rtype: None
+        :return: A poller to track the operation status.
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raise: ResourceNotFoundError if can't find a job matching provided name.
         """
         return self._operation_2022_06_preview.begin_cancel(
@@ -344,6 +351,7 @@ class JobOperations(_ScopeDependentOperations):
                 raise ResourceNotFoundError(response=response)
         return None
 
+    @distributed_trace
     @experimental
     @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.PUBLICAPI)
     def validate(self, job: Job, *, raise_on_failure: bool = False, **kwargs) -> ValidationResult:
@@ -410,6 +418,7 @@ class JobOperations(_ScopeDependentOperations):
         validation_result.resolve_location_for_diagnostics(job._source_path)
         return validation_result.try_raise(raise_error=raise_on_failure, error_target=ErrorTarget.PIPELINE)
 
+    @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
         self,
@@ -539,6 +548,7 @@ class JobOperations(_ScopeDependentOperations):
             body=job_object,
         )
 
+    @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.Archive", ActivityType.PUBLICAPI)
     def archive(self, name: str) -> None:
         """Archive a job or restore an archived job.
@@ -550,6 +560,7 @@ class JobOperations(_ScopeDependentOperations):
 
         self._archive_or_restore(name=name, is_archived=True)
 
+    @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.Restore", ActivityType.PUBLICAPI)
     def restore(self, name: str) -> None:
         """Archive a job or restore an archived job.
@@ -561,6 +572,7 @@ class JobOperations(_ScopeDependentOperations):
 
         self._archive_or_restore(name=name, is_archived=False)
 
+    @distributed_trace
     @monitor_with_activity(logger, "Job.Stream", ActivityType.PUBLICAPI)
     def stream(self, name: str) -> None:
         """Stream logs of a job.
@@ -577,6 +589,7 @@ class JobOperations(_ScopeDependentOperations):
             self._runs_operations, job_object, self._datastore_operations, requests_pipeline=self._requests_pipeline
         )
 
+    @distributed_trace
     @monitor_with_activity(logger, "Job.Download", ActivityType.PUBLICAPI)
     def download(
         self,
