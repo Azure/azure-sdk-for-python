@@ -11,7 +11,7 @@ import pytest
 from marshmallow import ValidationError
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
 
-from azure.ai.ml import MLClient, load_component, load_data, load_job
+from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants import InputOutputModes
@@ -26,7 +26,7 @@ from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
-from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
+from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, DATABINDING_EXPRESSION_TEST_CASES
 
 
 def assert_job_input_output_types(job: PipelineJob):
@@ -173,7 +173,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         "pipeline_job_path, expected_error_type",
         [
             # flaky parameterization
-            # ("./tests/test_configs/pipeline_jobs/invalid/non_existent_remote_component.yml", ValidationException),
+            # ("./tests/test_configs/pipeline_jobs/invalid/non_existent_remote_component.yml", Exception),
             (
                 "tests/test_configs/pipeline_jobs/invalid/non_existent_remote_version.yml",
                 Exception,
@@ -469,6 +469,8 @@ class TestPipelineJob(AzureRecordedTestCase):
                     "experiment_name",
                     "jobs.hello_world_inline_commandjob_1.componentId",
                     "jobs.hello_world_inline_commandjob_2.componentId",
+                    "jobs.hello_world_inline_commandjob_1.properties",
+                    "jobs.hello_world_inline_commandjob_2.properties",
                     "source_job_id",
                 ],
             ),
@@ -563,6 +565,8 @@ class TestPipelineJob(AzureRecordedTestCase):
                     "inputs.pipeline_job_training_input.uri",
                     "inputs.pipeline_job_test_input.uri",
                     "jobs.score_job.componentId",
+                    "jobs.train_job.properties",
+                    "jobs.score_job.properties",
                     "source_job_id",
                 ],
             ),
@@ -929,50 +933,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     )
     @pytest.mark.parametrize(
         "pipeline_job_path, expected_error",
-        [
-            (
-                "tests/test_configs/dsl_pipeline/data_binding_expression/input_basic.yml",
-                None,
-            ),
-            (
-                "tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_cross_type.yml",
-                None,
-            ),
-            (
-                "tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_meta.yml",
-                HttpResponseError(),
-            ),
-            (
-                "tests/test_configs/dsl_pipeline/data_binding_expression/input_path.yml",
-                None,
-            ),
-            (
-                "tests/test_configs/dsl_pipeline/data_binding_expression/input_path_concatenate.yml",
-                HttpResponseError(),
-            ),
-            (
-                "tests/test_configs/dsl_pipeline/data_binding_expression/input_reason_expression.yml",
-                HttpResponseError(),
-            ),
-            (
-                "tests/test_configs/dsl_pipeline/data_binding_expression/input_string_concatenate.yml",
-                None,
-            ),
-            (
-                "tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_compute.yml",
-                JobException("", no_personal_data_message=""),
-            ),
-            (
-                "tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_literal.yml",
-                None,
-            ),
-            ("tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_literal.yml", None),
-            (
-                "tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_choice.yml",
-                JobException("", no_personal_data_message=""),
-            ),
-            ("tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_limits.yml", None),
-        ],
+        DATABINDING_EXPRESSION_TEST_CASES,
     )
     def test_pipeline_job_with_data_binding_expression(
         self,
@@ -1490,6 +1451,21 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert isinstance(created_pipeline.jobs["command_component_body_node"], Command)
         assert isinstance(created_pipeline.jobs["get_do_while_result"], Command)
 
+    @pytest.mark.skip(reason="Currently not enable submit a pipeline with primitive inputs")
+    def test_do_while_pipeline_with_primitive_inputs(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        params_override = [{"name": randstr()}]
+        pipeline_job = load_job(
+            path="./tests/test_configs/dsl_pipeline/pipeline_with_do_while/pipeline_with_primitive_inputs.yml",
+            params_override=params_override,
+        )
+        created_pipeline = assert_job_cancel(pipeline_job, client)
+        assert len(created_pipeline.jobs) == 5
+        assert isinstance(created_pipeline.jobs["pipeline_body_node"], Pipeline)
+        assert isinstance(created_pipeline.jobs["do_while_job_with_pipeline_job"], DoWhile)
+        assert isinstance(created_pipeline.jobs["do_while_job_with_command_component"], DoWhile)
+        assert isinstance(created_pipeline.jobs["command_component_body_node"], Command)
+        assert isinstance(created_pipeline.jobs["get_do_while_result"], Command)
+
     @pytest.mark.skip(reason="Currently do_while only enable in master region.")
     def test_pipeline_with_invalid_do_while_node(self, client: MLClient, randstr: Callable[[], str]) -> None:
         params_override = [{"name": randstr()}]
@@ -1517,13 +1493,47 @@ class TestPipelineJob(AzureRecordedTestCase):
             error_messages["errors"],
         )
 
-    @pytest.mark.skip("Skip for Bug https://msdata.visualstudio.com/Vienna/_workitems/edit/1963914/")
-    def test_pipeline_component_job(self, client: MLClient, randstr: Callable[[], str]):
+    def test_pipeline_component_job(self, client: MLClient):
         test_path = "./tests/test_configs/pipeline_jobs/pipeline_component_job.yml"
         job: PipelineJob = load_job(source=test_path)
-        rest_job = client.jobs.create_or_update(job)
+        rest_job = assert_job_cancel(job, client)
         pipeline_dict = rest_job._to_rest_object().as_dict()["properties"]
-        assert pipeline_dict == {}
+        assert pipeline_dict["component_id"]
+        assert pipeline_dict["inputs"] == {
+            "component_in_number": {"job_input_type": "literal", "value": "10"},
+            "component_in_path": {
+                "mode": "ReadOnlyMount",
+                "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
+                "job_input_type": "uri_file",
+            },
+        }
+        assert pipeline_dict["outputs"] == {"output_path": {"mode": "ReadWriteMount", "job_output_type": "uri_folder"}}
+        assert pipeline_dict["settings"] == {"default_compute": "cpu-cluster", "_source": "REMOTE.WORKSPACE.JOB"}
+
+    def test_remote_pipeline_component_job(self, client: MLClient, randstr: Callable[[str], str]):
+        params_override = [{"name": randstr("component_name")}]
+        test_path = "./tests/test_configs/components/helloworld_pipeline_component.yml"
+        component = load_component(source=test_path, params_override=params_override)
+        rest_component = client.components.create_or_update(component)
+        pipeline_node = rest_component(
+            component_in_number=10,
+            component_in_path=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
+        )
+        pipeline_node.settings.default_compute = "cpu-cluster"
+        rest_job = assert_job_cancel(pipeline_node, client)
+        pipeline_dict = rest_job._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["component_id"]
+        assert pipeline_dict["inputs"] == {
+            "component_in_number": {"job_input_type": "literal", "value": "10"},
+            "component_in_path": {
+                "mode": "ReadOnlyMount",
+                "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
+                "job_input_type": "uri_file",
+            },
+        }
+        # No job output now, https://msdata.visualstudio.com/Vienna/_workitems/edit/1993701/
+        # assert pipeline_dict["outputs"] == {"output_path": {"mode": "ReadWriteMount", "job_output_type": "uri_folder"}}
+        assert pipeline_dict["settings"] == {"default_compute": "cpu-cluster", "_source": "REMOTE.WORKSPACE.COMPONENT"}
 
 
 @pytest.mark.usefixtures(
