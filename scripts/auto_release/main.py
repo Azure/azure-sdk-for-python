@@ -215,8 +215,7 @@ class CodegenTestPR:
             json.dump(input_data, file)
 
         # generate code(be careful about the order)
-        print_exec('python scripts/dev_setup.py -p azure-core')
-        print_exec('python sdk/core/azure-core/setup.py install')
+        print_exec('python scripts/dev_setup.py -p --disabledevelop azure-core')
         print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
 
         generate_result = self.get_autorest_result()
