@@ -22,7 +22,6 @@ from azure.ai.ml.entities._job.identity import Identity
 from azure.ai.ml.entities._util import load_from_dict
 
 
-@experimental
 class ImageClassificationJob(AutoMLImageClassificationBase):
     """Configuration for AutoML multi-class Image Classification job."""
 

@@ -23,7 +23,6 @@ from azure.ai.ml.entities._job.identity import Identity
 from azure.ai.ml.entities._util import load_from_dict
 
 
-@experimental
 class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
     """Configuration for AutoML Image Instance Segmentation job."""
 

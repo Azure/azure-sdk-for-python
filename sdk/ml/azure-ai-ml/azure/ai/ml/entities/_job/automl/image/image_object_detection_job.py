@@ -21,7 +21,6 @@ from azure.ai.ml.entities._job.identity import Identity
 from azure.ai.ml.entities._util import load_from_dict
 
 
-@experimental
 class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
     """Configuration for AutoML Image Object Detection job."""
 
