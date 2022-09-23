@@ -6,29 +6,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import AnswerSpan
-from ._models_py3 import AnswersFromTextOptions
-from ._models_py3 import AnswersFromTextResult
-from ._models_py3 import AnswersOptions
-from ._models_py3 import AnswersResult
-from ._models_py3 import Error
-from ._models_py3 import ErrorResponse
-from ._models_py3 import InnerErrorModel
-from ._models_py3 import KnowledgeBaseAnswer
-from ._models_py3 import KnowledgeBaseAnswerContext
-from ._models_py3 import KnowledgeBaseAnswerDialog
-from ._models_py3 import KnowledgeBaseAnswerPrompt
-from ._models_py3 import MetadataFilter
-from ._models_py3 import QueryFilters
-from ._models_py3 import ShortAnswerOptions
-from ._models_py3 import TextAnswer
-from ._models_py3 import TextDocument
+from ._models import AnswerSpan
+from ._models import AnswersFromTextOptions
+from ._models import AnswersFromTextResult
+from ._models import AnswersOptions
+from ._models import AnswersResult
+from ._models import Error
+from ._models import ErrorResponse
+from ._models import InnerErrorModel
+from ._models import KnowledgeBaseAnswer
+from ._models import KnowledgeBaseAnswerContext
+from ._models import KnowledgeBaseAnswerDialog
+from ._models import KnowledgeBaseAnswerPrompt
+from ._models import MetadataFilter
+from ._models import QueryFilters
+from ._models import ShortAnswerOptions
+from ._models import TextAnswer
+from ._models import TextDocument
 
-
-from ._question_answering_client_enums import (
-    ErrorCode,
-    InnerErrorCode,
-)
+from ._enums import ErrorCode
+from ._enums import InnerErrorCode
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk

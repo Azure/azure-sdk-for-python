@@ -4,10 +4,10 @@
 
 from typing import Dict, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.entities._job.automl.image.image_classification_search_space import ImageClassificationSearchSpace
 from azure.ai.ml.entities._job.automl.image.image_object_detection_search_space import ImageObjectDetectionSearchSpace
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 def cast_to_specific_search_space(

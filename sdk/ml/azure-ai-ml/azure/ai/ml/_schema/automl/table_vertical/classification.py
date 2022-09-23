@@ -6,7 +6,7 @@
 
 from typing import Any, Dict
 
-from marshmallow import post_load
+from marshmallow import fields, post_load
 
 from azure.ai.ml._restclient.v2022_06_01_preview.models import ClassificationPrimaryMetrics, TaskType
 from azure.ai.ml._schema.automl.table_vertical.table_vertical import AutoMLTableVerticalSchema
@@ -28,6 +28,7 @@ class AutoMLClassificationSchema(AutoMLTableVerticalSchema):
         casing_transform=camel_to_snake,
         load_default=camel_to_snake(ClassificationPrimaryMetrics.AUC_WEIGHTED),
     )
+    positive_label = fields.Str()
     training = NestedField(ClassificationTrainingSettingsSchema(), data_key=AutoMLConstants.TRAINING_YAML)
 
     @post_load

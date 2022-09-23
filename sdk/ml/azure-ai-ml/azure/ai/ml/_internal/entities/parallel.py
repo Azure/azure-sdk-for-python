@@ -23,6 +23,7 @@ class Parallel(Command):
         self._init = True
         self._max_concurrency_per_instance = kwargs.pop("max_concurrency_per_instance", None)
         self._error_threshold = kwargs.pop("error_threshold", None)
+        self._mini_batch_size = kwargs.pop("mini_batch_size", None)
         self._logging_level = kwargs.pop("logging_level", None)
         self._retry_settings = kwargs.pop("retry_settings", BatchRetrySettings())
         self._init = False
@@ -51,6 +52,15 @@ class Parallel(Command):
         self._error_threshold = value
 
     @property
+    def mini_batch_size(self) -> int:
+        """The number of records to be sent to run() method for each mini-batch."""
+        return self._mini_batch_size
+
+    @mini_batch_size.setter
+    def mini_batch_size(self, value: int):
+        self._mini_batch_size = value
+
+    @property
     def logging_level(self) -> str:
         """A string of the logging level name"""
         return self._logging_level
@@ -75,6 +85,7 @@ class Parallel(Command):
             "error_threshold",
             "logging_level",
             "retry_settings",
+            "mini_batch_size",
         ]
 
     @classmethod

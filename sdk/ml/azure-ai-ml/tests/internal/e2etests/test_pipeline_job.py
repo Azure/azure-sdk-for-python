@@ -5,12 +5,13 @@ import json
 from pathlib import Path
 from typing import Callable
 
+from devtools_testutils import AzureRecordedTestCase, is_live
 import pydash
 import pytest
 
 from azure.ai.ml import Input, MLClient, Output, load_component
 from azure.ai.ml._internal.entities.component import InternalComponent
-from azure.ai.ml.constants import AssetTypes
+from azure.ai.ml.constants import AssetTypes, InputOutputModes
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import Data, PipelineJob
 from azure.core.exceptions import HttpResponseError
@@ -46,11 +47,21 @@ def create_internal_sample_dependent_datasets(client: MLClient):
             )
 
 
-@pytest.mark.usefixtures("enable_pipeline_private_preview_features")
-@pytest.mark.usefixtures("create_internal_sample_dependent_datasets")
-@pytest.mark.usefixtures("enable_internal_components")
+@pytest.mark.usefixtures(
+    "recorded_test",
+    "mock_code_hash",
+    "mock_asset_name",
+    "mock_component_hash",
+    "enable_pipeline_private_preview_features",
+    "create_internal_sample_dependent_datasets",
+    "enable_internal_components",
+)
+@pytest.mark.skipif(
+    condition=not is_live(),
+    reason="Works in live mode, does not work in playback"
+)
 @pytest.mark.e2etest
-class TestPipelineJob:
+class TestPipelineJob(AzureRecordedTestCase):
     @classmethod
     def _test_component(cls, node_func, inputs, runsettings_dict, pipeline_runsettings_dict, client):
         @pipeline()
@@ -113,8 +124,8 @@ class TestPipelineJob:
         runsettings_dict,
         pipeline_runsettings_dict,
     ):
-        component_to_register = load_component(yaml_path, params_override=[{"name": randstr()}])
-        component_name = randstr()
+        component_to_register = load_component(yaml_path, params_override=[{"name": randstr("name")}])
+        component_name = randstr("component_name")
         component_resource = client.components.create_or_update(component_to_register)
 
         created_component = client.components.get(component_name, component_resource.version)
@@ -128,7 +139,6 @@ class TestPipelineJob:
     def test_data_as_node_inputs(
         self,
         client: MLClient,
-        randstr: Callable[[], str],
         yaml_path,
         inputs,
         runsettings_dict,
@@ -178,7 +188,7 @@ class TestPipelineJob:
         runsettings_dict,
         pipeline_runsettings_dict,
     ):
-        component_func = load_component(yaml_path, params_override=[{"name": randstr()}])
+        component_func = load_component(yaml_path, params_override=[{"name": randstr("name")}])
 
         @pipeline()
         def sub_pipeline_func():
@@ -225,5 +235,34 @@ class TestPipelineJob:
 
         pipeline_job = pipeline_with_command_components(tsv_file="out.tsv", content="1\t2\t3\t4")
 
+        pipeline_job = client.jobs.create_or_update(pipeline_job, experiment_name="v15_v2_interop")
+        client.jobs.cancel(pipeline_job.name)
+
+    def test_pipeline_with_setting_node_output_mode(self, client: MLClient):
+        # get dataset
+        training_data = Input(type=AssetTypes.URI_FILE, path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
+        test_data = Input(type=AssetTypes.URI_FILE, path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
+
+        component_dir = (
+            Path(__file__).parent.parent.parent / "test_configs" / "internal" / "get_started_train_score_eval"
+        )
+        train_component_func = load_component(component_dir / "train.yaml")
+        score_component_func = load_component(component_dir / "score.yaml")
+        eval_component_func = load_component(component_dir / "eval.yaml")
+
+        @pipeline()
+        def training_pipeline_with_components_in_registry(input_data, test_data, learning_rate):
+            # we don't link node output with pipeline output, because pipeline output will override node output in
+            # backend and backend will set pipeline output mode as mount according to contract
+            train = train_component_func(training_data=input_data, max_epochs=5, learning_rate=learning_rate)
+            train.outputs.model_output.mode = InputOutputModes.UPLOAD
+            score = score_component_func(model_input=train.outputs.model_output, test_data=test_data)
+            eval = eval_component_func(scoring_result=score.outputs.score_output)
+            eval.outputs.eval_output.mode = InputOutputModes.UPLOAD
+
+        pipeline_job = training_pipeline_with_components_in_registry(
+            input_data=training_data, test_data=test_data, learning_rate=0.1
+        )
+        pipeline_job.settings.default_compute = "cpu-cluster"
         pipeline_job = client.jobs.create_or_update(pipeline_job, experiment_name="v15_v2_interop")
         client.jobs.cancel(pipeline_job.name)

@@ -35,7 +35,7 @@ class EndpointYamlFields(object):
     CODE = "code"
     SCORING_SCRIPT = "scoring_script"
     SCORING_URI = "scoring_uri"
-    SWAGGER_URI = "swagger_uri"
+    OPENAPI_URI = "openapi_uri"
     PROVISIONING_STATE = "provisioning_state"
     MINI_BATCH_SIZE = "mini_batch_size"
     RETRY_SETTINGS = "retry_settings"

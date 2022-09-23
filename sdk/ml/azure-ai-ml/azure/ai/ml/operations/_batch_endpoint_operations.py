@@ -7,25 +7,24 @@
 import json
 import os
 import re
-import time
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Union
+from typing import TYPE_CHECKING, Dict, List
 
 from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
 from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
-)
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointTrackedResourceArmPaginatedResult
 from azure.ai.ml._schema._deployment.batch.batch_job import BatchJobSchema
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._arm_id_utils import get_datastore_arm_id, is_ARM_id_for_resource, remove_datastore_prefix
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import polling_wait, validate_response
+from azure.ai.ml._utils._endpoint_utils import validate_response
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client
@@ -43,9 +42,12 @@ from azure.ai.ml.constants._common import (
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointYamlFields
 from azure.ai.ml.entities import BatchEndpoint
 from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from ._operation_orchestrator import OperationOrchestrator
 
@@ -67,18 +69,18 @@ class BatchEndpointOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client_05_2022: ServiceClient052022,
-        service_client_09_2020_dataplanepreview: ServiceClient092020DataplanePreview,
         all_operations: OperationsContainer,
         credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
 
-        super(BatchEndpointOperations, self).__init__(operation_scope)
+        super(BatchEndpointOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._batch_operation = service_client_05_2022.batch_endpoints
         self._batch_deployment_operation = service_client_05_2022.batch_deployments
-        self._batch_job_endpoint = service_client_09_2020_dataplanepreview.batch_job_endpoint
+        self._batch_job_endpoint = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_endpoint
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs
@@ -89,13 +91,13 @@ class BatchEndpointOperations(_ScopeDependentOperations):
     def _datastore_operations(self) -> "DatastoreOperations":
         return self._all_operations.all_operations[AzureMLResourceType.DATASTORE]
 
+    @distributed_trace
     @monitor_with_activity(logger, "BatchEndpoint.List", ActivityType.PUBLICAPI)
-    def list(
-        self,
-    ) -> Iterable[BatchEndpointTrackedResourceArmPaginatedResult]:
+    def list(self) -> ItemPaged[BatchEndpoint]:
         """List endpoints of the workspace.
 
-        :return: a list of endpoints
+        :return: A list of endpoints
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.BatchEndpoint]
         """
         return self._batch_operation.list(
             resource_group_name=self._resource_group_name,
@@ -104,6 +106,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             **self._init_kwargs,
         )
 
+    @distributed_trace
     @monitor_with_activity(logger, "BatchEndpoint.Get", ActivityType.PUBLICAPI)
     def get(
         self,
@@ -126,22 +129,21 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         endpoint_data = BatchEndpoint._from_rest_object(endpoint)
         return endpoint_data
 
+    @distributed_trace
     @monitor_with_activity(logger, "BatchEndpoint.BeginDelete", ActivityType.PUBLICAPI)
-    def begin_delete(self, name: str = None, **kwargs: Any) -> Union[None, LROPoller]:
+    def begin_delete(self, name: str) -> LROPoller[None]:
         """Delete a batch Endpoint.
 
         :param name: Name of the batch endpoint.
         :type name: str
         :return: A poller to track the operation status.
-        :rtype: Optional[LROPoller]
+        :rtype: ~azure.core.polling.LROPoller[None]
         """
-        start_time = time.time()
         path_format_arguments = {
             "endpointName": name,
             "resourceGroupName": self._resource_group_name,
             "workspaceName": self._workspace_name,
         }
-        no_wait = kwargs.get("no_wait", False)
 
         delete_poller = self._batch_operation.begin_delete(
             resource_group_name=self._resource_group_name,
@@ -151,31 +153,23 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 LROConfigurations.POLL_INTERVAL,
                 path_format_arguments=path_format_arguments,
                 **self._init_kwargs,
-            )
-            if not no_wait
-            else False,
+            ),
             polling_interval=LROConfigurations.POLL_INTERVAL,
             **self._init_kwargs,
         )
-        if no_wait:
-            module_logger.info(
-                "Delete request initiated. Status can be checked using `az ml batch-endpoint show %s`\n", name
-            )
-            return delete_poller
-        message = f"Deleting batch endpoint {name} "
-        polling_wait(poller=delete_poller, start_time=start_time, message=message)
+        return delete_poller
 
+    @distributed_trace
     @monitor_with_activity(logger, "BatchEndpoint.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
-    def begin_create_or_update(self, endpoint: BatchEndpoint, **kwargs: Any) -> Union[BatchEndpoint, LROPoller]:
+    def begin_create_or_update(self, endpoint: BatchEndpoint) -> LROPoller[BatchEndpoint]:
         """Create or update a batch endpoint.
 
         :param endpoint: The endpoint entity.
-        :type endpoint: Endpoint
+        :type endpoint: ~azure.ai.ml.entities.BatchEndpoint
         :return: A poller to track the operation status.
-        :rtype: LROPoller
+        :rtype:  ~azure.core.polling.LROPoller[~azure.ai.ml.entities.BatchEndpoint]
         """
 
-        no_wait = kwargs.get("no_wait", False)
         try:
             location = self._get_workspace_location()
 
@@ -185,26 +179,20 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 workspace_name=self._workspace_name,
                 endpoint_name=endpoint.name,
                 body=endpoint_resource,
-                polling=not no_wait,
+                polling=True,
                 **self._init_kwargs,
             )
-            if no_wait:
-                module_logger.info(
-                    "Batch endpoint create/update request initiated. "
-                    "Status can be checked using"
-                    "`az ml batch-endpoint show -n %s`\n",
-                    endpoint.name,
-                )
-                return poller
-            return BatchEndpoint._from_rest_object(poller.result())
+            return poller
 
         except Exception as ex:
             raise ex
 
+    @distributed_trace
     @monitor_with_activity(logger, "BatchEndpoint.Invoke", ActivityType.PUBLICAPI)
     def invoke(
         self,
         endpoint_name: str,
+        *,
         deployment_name: str = None,
         input: Input = None,  # pylint: disable=redefined-builtin
         params_override=None,
@@ -287,13 +275,16 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         batch_job = json.loads(response.text())
         return BatchJobResource.deserialize(batch_job)
 
+    @distributed_trace
     @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
-    def list_jobs(self, endpoint_name: str):
+    def list_jobs(self, endpoint_name: str) -> List[BatchJobResource]:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.
 
-        :param str endpoint_name: the endpoint name
-        :return: Iterable[BatchJobResourceArmPaginatedResult]
+        :param endpoint_name: The endpoint name
+        :type endpoint_name: str
+        :return: List of jobs
+        :rtype: list[BatchJobResource]
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
@@ -386,7 +377,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                     return
                 asset_type = AzureMLResourceType.DATASTORE
                 entry.path = remove_datastore_prefix(entry.path)
-                orchestrator = OperationOrchestrator(self._all_operations, self._operation_scope)
+                orchestrator = OperationOrchestrator(
+                    self._all_operations, self._operation_scope, self._operation_config
+                )
                 entry.path = orchestrator.get_asset_arm_id(entry.path, asset_type)
             else:  # relative local path, upload, transform to remote url
                 local_path = Path(base_path, entry.path).resolve()

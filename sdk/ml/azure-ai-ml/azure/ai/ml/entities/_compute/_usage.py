@@ -6,7 +6,6 @@ from os import PathLike
 from typing import IO, AnyStr, Dict, Union
 
 from azure.ai.ml._restclient.v2022_01_01_preview.models import Usage as RestUsage
-from azure.ai.ml._restclient.v2022_01_01_preview.models import UsageName as RestUsageName
 from azure.ai.ml._restclient.v2022_01_01_preview.models import UsageUnit
 from azure.ai.ml._schema.compute.usage import UsageSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
@@ -38,7 +37,7 @@ class Usage(RestTranslatableMixin):
         unit: Union[str, UsageUnit] = None,  # enum
         current_value: int = None,
         limit: int = None,
-        name: RestUsageName = None,
+        name: UsageName = None,
     ):
         """Describes AML Resource Usage.
 
@@ -49,13 +48,13 @@ class Usage(RestTranslatableMixin):
         :param type: Specifies the resource type.
         :type type: str
         :param unit: An enum describing the unit of usage measurement. Possible values include: "Count".
-        :type unit: str or ~azure.mgmt.machinelearningservices.models.UsageUnit
+        :type unit: str or ~azure.ai.ml.entities.UsageUnit
         :param current_value: The current usage of the resource.
         :type current_value: int
         :param limit: The maximum permitted usage of the resource.
         :type limit: int
         :param name: The name of the type of usage.
-        :type name: ~azure.mgmt.machinelearningservices.models.UsageName
+        :type name: ~azure.ai.ml.entities.UsageName
         """
         self.id = id
         self.aml_workspace_location = aml_workspace_location
@@ -98,7 +97,7 @@ class Usage(RestTranslatableMixin):
         return UsageSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
-    def load(
+    def _load(
         cls,
         path: Union[PathLike, str],
         params_override: list = None,
