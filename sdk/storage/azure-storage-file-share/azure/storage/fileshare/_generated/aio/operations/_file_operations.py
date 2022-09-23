@@ -1254,9 +1254,9 @@ class FileOperations:
         range: str,
         content_length: int,
         timeout: Optional[int] = None,
-        file_range_write: Union[str, "_models.FileRangeWriteType"] = "update",
+        file_range_write: Union[str, _models.FileRangeWriteType] = "update",
         content_md5: Optional[bytes] = None,
-        file_last_written_mode: Optional[Union[str, "_models.FileLastWrittenMode"]] = None,
+        file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         optionalbody: Optional[IO] = None,
         **kwargs: Any
@@ -1385,7 +1385,7 @@ class FileOperations:
         source_range: Optional[str] = None,
         source_content_crc64: Optional[bytes] = None,
         copy_source_authorization: Optional[str] = None,
-        file_last_written_mode: Optional[Union[str, "_models.FileLastWrittenMode"]] = None,
+        file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any

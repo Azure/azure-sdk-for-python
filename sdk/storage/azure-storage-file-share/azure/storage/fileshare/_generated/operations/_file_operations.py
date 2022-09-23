@@ -504,10 +504,10 @@ def build_upload_range_request(
     range: str,
     content_length: int,
     timeout: Optional[int] = None,
-    file_range_write: Union[str, "_models.FileRangeWriteType"] = "update",
+    file_range_write: Union[str, _models.FileRangeWriteType] = "update",
     content_md5: Optional[bytes] = None,
     lease_id: Optional[str] = None,
-    file_last_written_mode: Optional[Union[str, "_models.FileLastWrittenMode"]] = None,
+    file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
     content: Optional[IO] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -565,7 +565,7 @@ def build_upload_range_from_url_request(
     source_if_none_match_crc64: Optional[bytes] = None,
     lease_id: Optional[str] = None,
     copy_source_authorization: Optional[str] = None,
-    file_last_written_mode: Optional[Union[str, "_models.FileLastWrittenMode"]] = None,
+    file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -679,7 +679,7 @@ def build_start_copy_request(
     metadata: Optional[Dict[str, str]] = None,
     file_permission: str = "inherit",
     file_permission_key: Optional[str] = None,
-    file_permission_copy_mode: Optional[Union[str, "_models.PermissionCopyModeType"]] = None,
+    file_permission_copy_mode: Optional[Union[str, _models.PermissionCopyModeType]] = None,
     ignore_read_only: Optional[bool] = None,
     file_attributes: Optional[str] = None,
     file_creation_time: Optional[str] = None,
@@ -2139,9 +2139,9 @@ class FileOperations:
         range: str,
         content_length: int,
         timeout: Optional[int] = None,
-        file_range_write: Union[str, "_models.FileRangeWriteType"] = "update",
+        file_range_write: Union[str, _models.FileRangeWriteType] = "update",
         content_md5: Optional[bytes] = None,
-        file_last_written_mode: Optional[Union[str, "_models.FileLastWrittenMode"]] = None,
+        file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         optionalbody: Optional[IO] = None,
         **kwargs: Any
@@ -2270,7 +2270,7 @@ class FileOperations:
         source_range: Optional[str] = None,
         source_content_crc64: Optional[bytes] = None,
         copy_source_authorization: Optional[str] = None,
-        file_last_written_mode: Optional[Union[str, "_models.FileLastWrittenMode"]] = None,
+        file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any

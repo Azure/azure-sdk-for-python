@@ -39,9 +39,9 @@ def build_create_request(
     timeout: Optional[int] = None,
     metadata: Optional[Dict[str, str]] = None,
     quota: Optional[int] = None,
-    access_tier: Optional[Union[str, "_models.ShareAccessTier"]] = None,
+    access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
     enabled_protocols: Optional[str] = None,
-    root_squash: Optional[Union[str, "_models.ShareRootSquash"]] = None,
+    root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -125,7 +125,7 @@ def build_delete_request(
     *,
     sharesnapshot: Optional[str] = None,
     timeout: Optional[int] = None,
-    delete_snapshots: Optional[Union[str, "_models.DeleteSnapshotsOptionType"]] = None,
+    delete_snapshots: Optional[Union[str, _models.DeleteSnapshotsOptionType]] = None,
     lease_id: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -503,9 +503,9 @@ def build_set_properties_request(
     *,
     timeout: Optional[int] = None,
     quota: Optional[int] = None,
-    access_tier: Optional[Union[str, "_models.ShareAccessTier"]] = None,
+    access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
     lease_id: Optional[str] = None,
-    root_squash: Optional[Union[str, "_models.ShareRootSquash"]] = None,
+    root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -762,9 +762,9 @@ class ShareOperations:
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
         quota: Optional[int] = None,
-        access_tier: Optional[Union[str, "_models.ShareAccessTier"]] = None,
+        access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
         enabled_protocols: Optional[str] = None,
-        root_squash: Optional[Union[str, "_models.ShareRootSquash"]] = None,
+        root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
         **kwargs: Any
     ) -> None:
         """Creates a new share under the specified account. If the share with the same name already
@@ -970,7 +970,7 @@ class ShareOperations:
         self,
         sharesnapshot: Optional[str] = None,
         timeout: Optional[int] = None,
-        delete_snapshots: Optional[Union[str, "_models.DeleteSnapshotsOptionType"]] = None,
+        delete_snapshots: Optional[Union[str, _models.DeleteSnapshotsOptionType]] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
@@ -1899,8 +1899,8 @@ class ShareOperations:
         self,
         timeout: Optional[int] = None,
         quota: Optional[int] = None,
-        access_tier: Optional[Union[str, "_models.ShareAccessTier"]] = None,
-        root_squash: Optional[Union[str, "_models.ShareRootSquash"]] = None,
+        access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
+        root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:

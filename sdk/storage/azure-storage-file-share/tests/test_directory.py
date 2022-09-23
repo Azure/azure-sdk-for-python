@@ -431,22 +431,37 @@ class StorageDirectoryTest(StorageTestCase):
     def test_list_subdirectories_and_files_encoded(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
-        # directory = share_client.create_directory('directory\uFFFE')
-        # directory.create_subdirectory("subdir1\uFFFE")
-        # directory.upload_file("file\uFFFE", "data1")
-        directory = share_client.create_directory('directory')
-        directory.create_subdirectory("subdir1")
-        directory.upload_file("file", "data1")
+        directory = share_client.create_directory('directory\uFFFE')
+        directory.create_subdirectory("subdir1\uFFFE")
+        directory.upload_file("file\uFFFE", "data1")
 
         # Act
         list_dir = list(directory.list_directories_and_files())
 
         # Assert
         self.assertEqual(len(list_dir), 2)
-        self.assertEqual(list_dir[0]['name'], 'subdir1')
+        self.assertEqual(list_dir[0]['name'], 'subdir1\uFFFE')
         self.assertEqual(list_dir[0]['is_directory'], True)
-        self.assertEqual(list_dir[3]['name'], 'file1')
-        self.assertEqual(list_dir[3]['is_directory'], False)
+        self.assertEqual(list_dir[1]['name'], 'file\uFFFE')
+        self.assertEqual(list_dir[1]['is_directory'], False)
+
+    @FileSharePreparer()
+    def test_list_subdirectories_and_files_encoded_prefix(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory = share_client.create_directory('\uFFFFdirectory')
+        directory.create_subdirectory("\uFFFFsubdir1")
+        directory.upload_file("\uFFFFfile", "data1")
+
+        # Act
+        list_dir = list(directory.list_directories_and_files(name_starts_with="\uFFFF"))
+
+        # Assert
+        self.assertEqual(len(list_dir), 2)
+        self.assertEqual(list_dir[0]['name'], '\uFFFFsubdir1')
+        self.assertEqual(list_dir[0]['is_directory'], True)
+        self.assertEqual(list_dir[1]['name'], '\uFFFFfile')
+        self.assertEqual(list_dir[1]['is_directory'], False)
 
     @FileSharePreparer()
     def test_list_subdirectories_and_files_include_other_data(self, storage_account_name, storage_account_key):

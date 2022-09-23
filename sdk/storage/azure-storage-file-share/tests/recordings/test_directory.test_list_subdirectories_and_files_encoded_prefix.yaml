@@ -13,21 +13,21 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.11.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 22 Sep 2022 23:37:19 GMT
+      - Thu, 22 Sep 2022 23:47:49 GMT
       x-ms-version:
       - '2021-12-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/utsharead951779?restype=share
+    uri: https://storagename.file.core.windows.net/utshare5d761a66?restype=share
   response:
     body:
       string: ''
     headers:
       date:
-      - Thu, 22 Sep 2022 23:37:20 GMT
+      - Thu, 22 Sep 2022 23:47:49 GMT
       etag:
-      - '"0x8DA9CF36459AE74"'
+      - '"0x8DA9CF4DB59FCF4"'
       last-modified:
-      - Thu, 22 Sep 2022 23:37:20 GMT
+      - Thu, 22 Sep 2022 23:47:49 GMT
       transfer-encoding:
       - chunked
       x-ms-version:
@@ -49,7 +49,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.11.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 22 Sep 2022 23:37:20 GMT
+      - Thu, 22 Sep 2022 23:47:49 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -61,29 +61,29 @@ interactions:
       x-ms-version:
       - '2021-12-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/utsharead951779/directory%EF%BF%BE?restype=directory
+    uri: https://storagename.file.core.windows.net/utshare5d761a66/%EF%BF%BFdirectory?restype=directory
   response:
     body:
       string: ''
     headers:
       date:
-      - Thu, 22 Sep 2022 23:37:20 GMT
+      - Thu, 22 Sep 2022 23:47:49 GMT
       etag:
-      - '"0x8DA9CF36473E1D3"'
+      - '"0x8DA9CF4DB6EE788"'
       last-modified:
-      - Thu, 22 Sep 2022 23:37:20 GMT
+      - Thu, 22 Sep 2022 23:47:49 GMT
       transfer-encoding:
       - chunked
       x-ms-file-attributes:
       - Directory
       x-ms-file-change-time:
-      - '2022-09-22T23:37:20.2648531Z'
+      - '2022-09-22T23:47:49.3778312Z'
       x-ms-file-creation-time:
-      - '2022-09-22T23:37:20.2648531Z'
+      - '2022-09-22T23:47:49.3778312Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2022-09-22T23:37:20.2648531Z'
+      - '2022-09-22T23:47:49.3778312Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
@@ -109,7 +109,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.11.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 22 Sep 2022 23:37:20 GMT
+      - Thu, 22 Sep 2022 23:47:49 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -121,29 +121,29 @@ interactions:
       x-ms-version:
       - '2021-12-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/utsharead951779/directory%EF%BF%BE%2Fsubdir1%EF%BF%BE?restype=directory
+    uri: https://storagename.file.core.windows.net/utshare5d761a66/%EF%BF%BFdirectory%2F%EF%BF%BFsubdir1?restype=directory
   response:
     body:
       string: ''
     headers:
       date:
-      - Thu, 22 Sep 2022 23:37:20 GMT
+      - Thu, 22 Sep 2022 23:47:49 GMT
       etag:
-      - '"0x8DA9CF3648A0208"'
+      - '"0x8DA9CF4DB7C0721"'
       last-modified:
-      - Thu, 22 Sep 2022 23:37:20 GMT
+      - Thu, 22 Sep 2022 23:47:49 GMT
       transfer-encoding:
       - chunked
       x-ms-file-attributes:
       - Directory
       x-ms-file-change-time:
-      - '2022-09-22T23:37:20.4098568Z'
+      - '2022-09-22T23:47:49.4638369Z'
       x-ms-file-creation-time:
-      - '2022-09-22T23:37:20.4098568Z'
+      - '2022-09-22T23:47:49.4638369Z'
       x-ms-file-id:
       - '11529285414812647424'
       x-ms-file-last-write-time:
-      - '2022-09-22T23:37:20.4098568Z'
+      - '2022-09-22T23:47:49.4638369Z'
       x-ms-file-parent-id:
       - '13835128424026341376'
       x-ms-file-permission-key:
@@ -171,7 +171,7 @@ interactions:
       x-ms-content-length:
       - '5'
       x-ms-date:
-      - Thu, 22 Sep 2022 23:37:20 GMT
+      - Thu, 22 Sep 2022 23:47:49 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -185,29 +185,29 @@ interactions:
       x-ms-version:
       - '2021-12-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/utsharead951779/directory%EF%BF%BE/file%EF%BF%BE
+    uri: https://storagename.file.core.windows.net/utshare5d761a66/%EF%BF%BFdirectory/%EF%BF%BFfile
   response:
     body:
       string: ''
     headers:
       date:
-      - Thu, 22 Sep 2022 23:37:20 GMT
+      - Thu, 22 Sep 2022 23:47:49 GMT
       etag:
-      - '"0x8DA9CF3649B4021"'
+      - '"0x8DA9CF4DB8D9350"'
       last-modified:
-      - Thu, 22 Sep 2022 23:37:20 GMT
+      - Thu, 22 Sep 2022 23:47:49 GMT
       transfer-encoding:
       - chunked
       x-ms-file-attributes:
       - Archive
       x-ms-file-change-time:
-      - '2022-09-22T23:37:20.5228577Z'
+      - '2022-09-22T23:47:49.5788368Z'
       x-ms-file-creation-time:
-      - '2022-09-22T23:37:20.5228577Z'
+      - '2022-09-22T23:47:49.5788368Z'
       x-ms-file-id:
       - '16140971433240035328'
       x-ms-file-last-write-time:
-      - '2022-09-22T23:37:20.5228577Z'
+      - '2022-09-22T23:47:49.5788368Z'
       x-ms-file-parent-id:
       - '13835128424026341376'
       x-ms-file-permission-key:
@@ -235,7 +235,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.11.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 22 Sep 2022 23:37:20 GMT
+      - Thu, 22 Sep 2022 23:47:49 GMT
       x-ms-range:
       - bytes=0-4
       x-ms-version:
@@ -243,7 +243,7 @@ interactions:
       x-ms-write:
       - update
     method: PUT
-    uri: https://storagename.file.core.windows.net/utsharead951779/directory%EF%BF%BE/file%EF%BF%BE?comp=range
+    uri: https://storagename.file.core.windows.net/utshare5d761a66/%EF%BF%BFdirectory/%EF%BF%BFfile?comp=range
   response:
     body:
       string: ''
@@ -251,15 +251,15 @@ interactions:
       content-md5:
       - idkDvDXe3nJP1SxRQ3/1/Q==
       date:
-      - Thu, 22 Sep 2022 23:37:20 GMT
+      - Thu, 22 Sep 2022 23:47:49 GMT
       etag:
-      - '"0x8DA9CF364AB1EBD"'
+      - '"0x8DA9CF4DB9CD5AA"'
       last-modified:
-      - Thu, 22 Sep 2022 23:37:20 GMT
+      - Thu, 22 Sep 2022 23:47:49 GMT
       transfer-encoding:
       - chunked
       x-ms-file-last-write-time:
-      - '2022-09-22T23:37:20.6268605Z'
+      - '2022-09-22T23:47:49.6788394Z'
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -279,24 +279,24 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.11.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 22 Sep 2022 23:37:20 GMT
+      - Thu, 22 Sep 2022 23:47:49 GMT
       x-ms-version:
       - '2021-12-02'
     method: GET
-    uri: https://storagename.file.core.windows.net/utsharead951779/directory%EF%BF%BE?restype=directory&comp=list
+    uri: https://storagename.file.core.windows.net/utshare5d761a66/%EF%BF%BFdirectory?restype=directory&comp=list&prefix=%EF%BF%BF
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.file.core.windows.net/\" ShareName=\"utsharead951779\"
-        Encoded=\"true\" DirectoryPath=\"directory%EF%BF%BE\"><DirectoryId>13835128424026341376</DirectoryId><Entries><File><Name
-        Encoded=\"true\">file%EF%BF%BE</Name><FileId>16140971433240035328</FileId><Properties><Content-Length>5</Content-Length></Properties></File><Directory><Name
-        Encoded=\"true\">subdir1%EF%BF%BE</Name><FileId>11529285414812647424</FileId><Properties
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\" ShareName=\"utshare5d761a66\"
+        Encoded=\"true\" DirectoryPath=\"%EF%BF%BFdirectory\"><Prefix Encoded=\"true\">%EF%BF%BF</Prefix><DirectoryId>13835128424026341376</DirectoryId><Entries><File><Name
+        Encoded=\"true\">%EF%BF%BFfile</Name><FileId>16140971433240035328</FileId><Properties><Content-Length>5</Content-Length></Properties></File><Directory><Name
+        Encoded=\"true\">%EF%BF%BFsubdir1</Name><FileId>11529285414812647424</FileId><Properties
         /></Directory></Entries><NextMarker /></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Thu, 22 Sep 2022 23:37:20 GMT
+      - Thu, 22 Sep 2022 23:47:49 GMT
       transfer-encoding:
       - chunked
       x-ms-version:

@@ -496,6 +496,52 @@ class StorageDirectoryTest(AsyncStorageTestCase):
 
     @FileSharePreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_list_subdirectories_and_files_encoded_async(self, storage_account_name, storage_account_key):
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory = await share_client.create_directory('dir1\uFFFE')
+        await asyncio.gather(
+            directory.create_subdirectory("subdir1\uFFFE"),
+            directory.upload_file("file1\uFFFE", "data1"))
+
+        # Act
+        list_dir = []
+        async for d in directory.list_directories_and_files():
+            list_dir.append(d)
+
+        # Assert
+        self.assertEqual(len(list_dir), 2)
+        self.assertEqual(list_dir[0]['name'], 'subdir1\uFFFE')
+        self.assertEqual(list_dir[0]['is_directory'], True)
+        self.assertEqual(list_dir[1]['name'], 'file1\uFFFE')
+        self.assertEqual(list_dir[1]['is_directory'], False)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_subdirectories_and_files_encoded_prefix_async(self, storage_account_name, storage_account_key):
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory = await share_client.create_directory('\uFFFFdir1')
+        await asyncio.gather(
+            directory.create_subdirectory("\uFFFFsubdir1"),
+            directory.upload_file("\uFFFFfile1", "data1"))
+
+        # Act
+        list_dir = []
+        async for d in directory.list_directories_and_files(name_starts_with="\uFFFF"):
+            list_dir.append(d)
+
+        # Assert
+        self.assertEqual(len(list_dir), 2)
+        self.assertEqual(list_dir[0]['name'], '\uFFFFsubdir1')
+        self.assertEqual(list_dir[0]['is_directory'], True)
+        self.assertEqual(list_dir[1]['name'], '\uFFFFfile1')
+        self.assertEqual(list_dir[1]['is_directory'], False)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_list_subdirectories_and_files_include_other_data_async(self, storage_account_name, storage_account_key):
         # Arrange
         await self._setup(storage_account_name, storage_account_key)

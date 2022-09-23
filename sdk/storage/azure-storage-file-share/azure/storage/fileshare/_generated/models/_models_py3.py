@@ -732,7 +732,7 @@ class LeaseAccessConditions(_serialization.Model):
         self.lease_id = lease_id
 
 
-class ListFilesAndDirectoriesSegmentResponse(_serialization.Model):
+class ListFilesAndDirectoriesSegmentResponse(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """An enumeration of directories and files.
 
     All required parameters must be populated in order to send to Azure.
@@ -743,8 +743,10 @@ class ListFilesAndDirectoriesSegmentResponse(_serialization.Model):
     :vartype share_name: str
     :ivar share_snapshot:
     :vartype share_snapshot: str
+    :ivar encoded:
+    :vartype encoded: bool
     :ivar directory_path: Required.
-    :vartype directory_path: ~azure.storage.fileshare.models.StringEncoded
+    :vartype directory_path: str
     :ivar prefix: Required.
     :vartype prefix: ~azure.storage.fileshare.models.StringEncoded
     :ivar marker:
@@ -772,7 +774,8 @@ class ListFilesAndDirectoriesSegmentResponse(_serialization.Model):
         "service_endpoint": {"key": "ServiceEndpoint", "type": "str", "xml": {"attr": True}},
         "share_name": {"key": "ShareName", "type": "str", "xml": {"attr": True}},
         "share_snapshot": {"key": "ShareSnapshot", "type": "str", "xml": {"attr": True}},
-        "directory_path": {"key": "DirectoryPath", "type": "StringEncoded"},
+        "encoded": {"key": "Encoded", "type": "bool", "xml": {"attr": True}},
+        "directory_path": {"key": "DirectoryPath", "type": "str", "xml": {"attr": True}},
         "prefix": {"key": "Prefix", "type": "StringEncoded"},
         "marker": {"key": "Marker", "type": "str"},
         "max_results": {"key": "MaxResults", "type": "int"},
@@ -787,11 +790,12 @@ class ListFilesAndDirectoriesSegmentResponse(_serialization.Model):
         *,
         service_endpoint: str,
         share_name: str,
-        directory_path: "_models.StringEncoded",
+        directory_path: str,
         prefix: "_models.StringEncoded",
         segment: "_models.FilesAndDirectoriesListSegment",
         next_marker: str,
         share_snapshot: Optional[str] = None,
+        encoded: Optional[bool] = None,
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
         directory_id: Optional[str] = None,
@@ -804,8 +808,10 @@ class ListFilesAndDirectoriesSegmentResponse(_serialization.Model):
         :paramtype share_name: str
         :keyword share_snapshot:
         :paramtype share_snapshot: str
+        :keyword encoded:
+        :paramtype encoded: bool
         :keyword directory_path: Required.
-        :paramtype directory_path: ~azure.storage.fileshare.models.StringEncoded
+        :paramtype directory_path: str
         :keyword prefix: Required.
         :paramtype prefix: ~azure.storage.fileshare.models.StringEncoded
         :keyword marker:
@@ -823,6 +829,7 @@ class ListFilesAndDirectoriesSegmentResponse(_serialization.Model):
         self.service_endpoint = service_endpoint
         self.share_name = share_name
         self.share_snapshot = share_snapshot
+        self.encoded = encoded
         self.directory_path = directory_path
         self.prefix = prefix
         self.marker = marker

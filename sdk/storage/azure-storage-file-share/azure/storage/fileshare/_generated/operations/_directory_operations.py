@@ -240,7 +240,7 @@ def build_list_files_and_directories_segment_request(
     marker: Optional[str] = None,
     maxresults: Optional[int] = None,
     timeout: Optional[int] = None,
-    include: Optional[List[Union[str, "_models.ListFilesIncludeType"]]] = None,
+    include: Optional[List[Union[str, _models.ListFilesIncludeType]]] = None,
     include_extended_info: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -974,7 +974,7 @@ class DirectoryOperations:
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
         timeout: Optional[int] = None,
-        include: Optional[List[Union[str, "_models.ListFilesIncludeType"]]] = None,
+        include: Optional[List[Union[str, _models.ListFilesIncludeType]]] = None,
         include_extended_info: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.ListFilesAndDirectoriesSegmentResponse:

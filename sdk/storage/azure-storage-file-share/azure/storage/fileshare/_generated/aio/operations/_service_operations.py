@@ -210,7 +210,7 @@ class ServiceOperations:
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
-        include: Optional[List[Union[str, "_models.ListSharesIncludeType"]]] = None,
+        include: Optional[List[Union[str, _models.ListSharesIncludeType]]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> _models.ListSharesResponse:
