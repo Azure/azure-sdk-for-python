@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
-from azure.core import PipelineClient
+from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
 from ._configuration import KeyVaultClientConfiguration
 from ._operations_mixin import KeyVaultClientOperationsMixin
+from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+    from azure.core.credentials import TokenCredential
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -41,6 +40,9 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
     The profile sets a mapping between an operation group and its API version.
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
+
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
     :param profile: A profile definition, from KnownProfiles to dict.
@@ -117,6 +119,7 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
 
     def __init__(
         self,
+        credential: "TokenCredential",
         api_version=None, # type: Optional[str]
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
@@ -125,8 +128,8 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
             base_url = '{vaultBaseUrl}'
         else:
             raise ValueError("API version {} is not available".format(api_version))
-        self._config = KeyVaultClientConfiguration(**kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = KeyVaultClientConfiguration(credential, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(KeyVaultClient, self).__init__(
             api_version=api_version,
             profile=profile
