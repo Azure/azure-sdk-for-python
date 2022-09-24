@@ -9,6 +9,8 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Updated minimum `azure-core` version to 1.24.0
+- Dropped `msrest` requirement
 
 ## 4.6.0 (2022-09-19)
 

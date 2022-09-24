@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Dropped `msrest` requirement
 
 ## 4.8.0b1 (2022-09-22)
 
