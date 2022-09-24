@@ -25,7 +25,7 @@ def initialize_logger(path: str) -> Logger:
 
     # create file handler which will generate additional logging uploadable by CI
     if in_ci():
-        logfile = os.path.abspath(os.path.join(get_log_directory(), path + f"{now()}.log"))
+        logfile = os.path.abspath(os.path.join(get_log_directory(), path, f"{now()}.log"))
         fh = logging.FileHandler(logfile)
         fh.setLevel(logging.DEBUG)
         logger.addHandler(fh)
@@ -37,7 +37,7 @@ def get_log_file(prefix: str = "") -> str:
     Used to retrieve a file pointer that can be used by subprocess.run
     """
     logdirectory = get_log_directory()
-    logfile = os.path.abspath(os.path.join(logdirectory, prefix + f"{now()}.log"))
+    logfile = os.path.abspath(os.path.join(logdirectory, prefix, f"{now()}.log"))
     if not os.path.exists(logdirectory):
         os.mkdir(logdirectory)
     
