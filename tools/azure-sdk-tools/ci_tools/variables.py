@@ -1,5 +1,6 @@
 import os
 
+
 def discover_repo_root(input_repo: str = None):
     """
     Resolves the root of the repository given a current working directory. This function should be used if a target repo argument is not provided.
@@ -44,6 +45,7 @@ def get_log_directory(input_directory: str = None) -> str:
         return input_directory
     return os.getenv("SDK_LOG_DIRECTORY", os.path.join(discover_repo_root(), ".logs"))
 
+
 def in_ci() -> bool:
     # CI is set to `true` on github actions agents
     # TF_BUILD is set to `true` on azure devops agents
@@ -51,6 +53,7 @@ def in_ci() -> bool:
         return True
 
     return False
+
 
 DEV_BUILD_IDENTIFIER = os.getenv("SDK_DEV_BUILD_IDENTIFIER", "a")
 DEFAULT_BUILD_ID = os.getenv("GITHUB_RUN_ID", os.getenv("BUILD.BUILDID", os.getenv("SDK_BUILD_ID", "20220101.1")))
