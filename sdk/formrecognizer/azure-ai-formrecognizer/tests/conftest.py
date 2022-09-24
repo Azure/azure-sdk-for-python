@@ -60,10 +60,8 @@ def add_sanitizers(test_proxy):
         regex="([0-9a-f-]{36})",
     )
 
-@pytest.hookimpl(trylast=True)
-def skip_flaky_test_hook(session):
-    try:
-        yield
-    except HttpResponseError as error:
-        if "Invalid request".casefold() in error.message.casefold():
-            pytest.mark.skip("flaky test")
+@pytest.hookimpl()
+def pytest_runtest_makereport(item, call):
+    if call.excinfo is not None and isinstance(call.excinfo.value, HttpResponseError):
+        if "Invalid argument".casefold() in call.excinfo.value.message.casefold():
+            pytest.skip("flaky")
