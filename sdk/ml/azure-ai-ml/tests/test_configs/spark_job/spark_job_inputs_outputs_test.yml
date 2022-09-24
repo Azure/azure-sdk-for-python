@@ -34,6 +34,8 @@ args: >-
   --output2 ${{outputs.output1}}
   --my_sample_rate ${{inputs.sample_rate}}
 
-compute: azureml:rezas-synapse-10
+resources:
+  instance_type: standard_e8s_v3
+  runtime_version: 3.2
 
 environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

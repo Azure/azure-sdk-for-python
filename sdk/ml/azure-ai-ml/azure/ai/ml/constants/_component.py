@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+DO_WHILE_MAX_ITERATION = 1000
+
 
 class ComponentJobConstants(object):
     INPUT_PATTERN = r"^\$\{\{parent\.(inputs|jobs)\.(.*?)\}\}$"
@@ -20,6 +22,14 @@ class NodeType(object):
     PIPELINE = "pipeline"
     IMPORT = "import"
     SPARK = "spark"
+    # Note: container is not a real component type,
+    # only used to mark component from container data.
+    _CONTAINER = "_container"
+
+
+class ControlFlowType(object):
+    DO_WHILE = "do_while"
+    IF_ELSE = "if_else"
 
 
 class ComponentSource:

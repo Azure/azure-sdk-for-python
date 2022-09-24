@@ -10,6 +10,8 @@ primary_metric: accuracy
 
 limits:
   timeout_minutes: 60
+  max_trials: 10
+  max_concurrent_trials: 2
 
 target_column_name: label
 
@@ -21,9 +23,6 @@ validation_data:
   type: mltable
 
 sweep:
-  limits:
-    max_trials: 10
-    max_concurrent_trials: 2
   sampling_algorithm: random
   early_termination:
     type: bandit
@@ -37,10 +36,24 @@ training_parameters:
   optimizer: sgd
 
 search_space:
-  - model_name: "choice('vitb16r224','vits16r224')"
-    learning_rate: "uniform(0.001,0.01)"
-    number_of_epochs: "choice(15,30)"
+  - model_name:
+      type: choice
+      values: [vitb16r224, vits16r224]
+    learning_rate:
+      type: uniform
+      min_value: 0.001
+      max_value: 0.01
+    number_of_epochs:
+      type: choice
+      values: [15, 30]
 
-  - model_name: "choice('seresnext','resnest50')"
-    learning_rate: "uniform(0.001,0.01)"
-    layers_to_freeze: "choice(0,2)"
+  - model_name:
+      type: choice
+      values: [seresnext, resnest50]
+    learning_rate:
+      type: uniform
+      min_value: 0.001
+      max_value: 0.01
+    layers_to_freeze:
+      type: choice
+      values: [0, 2]

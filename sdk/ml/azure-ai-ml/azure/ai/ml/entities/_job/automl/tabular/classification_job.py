@@ -11,7 +11,7 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import Classification as
 from azure.ai.ml._restclient.v2022_06_01_preview.models import ClassificationPrimaryMetrics, JobBase, TaskType
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
-from azure.ai.ml.constants import AutoMLConstants
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
 from azure.ai.ml.entities._job.automl.tabular.automl_tabular import AutoMLTabular
@@ -32,12 +32,17 @@ class ClassificationJob(AutoMLTabular):
         self,
         *,
         primary_metric: str = None,
+        positive_label: str = None,
         **kwargs,
     ) -> None:
         """Initialize a new AutoML Classification task.
 
         :param primary_metric: The primary metric to use for optimization
+        :type primary_metric: str, optional
+        :param positive_label: Positive label for binary metrics calculation.
+        :type positive_label: str, optional
         :param kwargs: Job-specific arguments
+        :type kwargs: dict
         """
         # Extract any task specific settings
         featurization = kwargs.pop("featurization", None)
@@ -53,6 +58,7 @@ class ClassificationJob(AutoMLTabular):
         )
 
         self.primary_metric = primary_metric or ClassificationJob._DEFAULT_PRIMARY_METRIC
+        self.positive_label = positive_label
 
     @property
     def primary_metric(self):
@@ -89,6 +95,7 @@ class ClassificationJob(AutoMLTabular):
             limit_settings=self._limits._to_rest_object() if self._limits else None,
             training_settings=self._training._to_rest_object() if self._training else None,
             primary_metric=self.primary_metric,
+            positive_label=self.positive_label,
             log_verbosity=self.log_verbosity,
         )
         self._resolve_data_inputs(classification_task)
@@ -156,6 +163,7 @@ class ClassificationJob(AutoMLTabular):
             if task_details.training_settings
             else None,
             primary_metric=task_details.primary_metric,
+            positive_label=task_details.positive_label,
             log_verbosity=task_details.log_verbosity,
             **job_args_dict,
         )

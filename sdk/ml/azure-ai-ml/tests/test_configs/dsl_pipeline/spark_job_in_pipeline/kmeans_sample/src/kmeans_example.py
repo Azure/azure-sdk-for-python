@@ -4,8 +4,9 @@ This example requires NumPy (http://www.numpy.org/).
 """
 
 import argparse
-from pathlib import Path
 
+import numpy as np
+import pandas as pd
 from pyspark.ml.clustering import KMeans
 from pyspark.ml.evaluation import ClusteringEvaluator
 from pyspark.sql import SparkSession
@@ -39,4 +40,7 @@ print("Cluster Centers: ")
 for center in centers:
     print(center)
 
-(Path(args.output) / "result.txt").write_text(str(centers))
+centers = np.array(centers)
+df = pd.DataFrame(centers)
+spark_df = spark.createDataFrame(df)
+spark_df.write.csv(path=args.output, header=True, sep=",", mode="overwrite")

@@ -14,13 +14,25 @@ from azure.ai.ml import MLClient, automl
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities import Data
 from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._job.automl import SearchSpace
 from azure.ai.ml.entities._job.automl.image import ImageClassificationMultilabelJob, ImageClassificationSearchSpace
 from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
+from devtools_testutils import AzureRecordedTestCase, is_live
+
 
 @pytest.mark.automle2etest
-class TestAutoMLImageClassificationMultilabel:
+@pytest.mark.usefixtures(
+    "recorded_test",
+    "mock_asset_name",
+    "mock_code_hash",
+)
+@pytest.mark.skipif(
+    condition=not is_live(),
+    reason="Datasets downloaded by test are too large to record reliably"
+)
+class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
     def _create_jsonl_multilabel(self, client: MLClient, train_path: str, val_path: str):
         src_images = "./multilabelFridgeObjects/"
 
@@ -98,13 +110,13 @@ class TestAutoMLImageClassificationMultilabel:
         image_classification_multilabel_job_sweep.set_training_parameters(early_stopping=True, evaluation_frequency=1)
         image_classification_multilabel_job_sweep.extend_search_space(
             [
-                ImageClassificationSearchSpace(
+                SearchSpace(
                     model_name=Choice(["vitb16r224"]),
                     learning_rate=Uniform(0.005, 0.05),
                     number_of_epochs=Choice([15, 30]),
                     gradient_accumulation_step=Choice([1, 2]),
                 ),
-                ImageClassificationSearchSpace(
+                SearchSpace(
                     model_name=Choice(["seresnext"]),
                     learning_rate=Uniform(0.005, 0.05),
                     # model-specific, valid_resize_size should be larger or equal than valid_crop_size
@@ -114,9 +126,8 @@ class TestAutoMLImageClassificationMultilabel:
                 ),
             ]
         )
+        image_classification_multilabel_job_sweep.set_limits(max_trials=1, max_concurrent_trials=1)
         image_classification_multilabel_job_sweep.set_sweep(
-            max_trials=1,
-            max_concurrent_trials=1,
             sampling_algorithm="Random",
             early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
         )

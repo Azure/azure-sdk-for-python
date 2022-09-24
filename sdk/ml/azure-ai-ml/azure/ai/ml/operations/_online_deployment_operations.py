@@ -5,32 +5,33 @@
 # pylint: disable=protected-access,no-self-use
 
 import random
-import time
 from typing import Dict, Optional
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
+from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._local_endpoints import LocalEndpointMode
 from azure.ai.ml._local_endpoints.errors import InvalidVSCodeRequestError
-from azure.ai.ml._ml_exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-    log_and_raise_error,
-)
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DeploymentLogsRequest
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import polling_wait, upload_dependencies
+from azure.ai.ml._utils._endpoint_utils import upload_dependencies
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations
 from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType
 from azure.ai.ml.entities import OnlineDeployment
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator
@@ -50,13 +51,14 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client_02_2022_preview: ServiceClient022022Preview,
         all_operations: OperationsContainer,
         local_deployment_helper: _LocalDeploymentHelper,
         credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
-        super(OnlineDeploymentOperations, self).__init__(operation_scope)
+        super(OnlineDeploymentOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._local_deployment_helper = local_deployment_helper
         self._online_deployment = service_client_02_2022_preview.online_deployments
@@ -65,6 +67,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         self._credentials = credentials
         self._init_kwargs = kwargs
 
+    @distributed_trace
     @monitor_with_activity(logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
@@ -72,20 +75,17 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         *,
         local: bool = False,
         vscode_debug: bool = False,
-        no_wait: bool = False,
-    ) -> None:
+    ) -> LROPoller[OnlineDeployment]:
         """Create or update a deployment.
 
         :param deployment: the deployment entity
-        :type deployment: OnlineDeployment
+        :type deployment: ~azure.ai.ml.entities.OnlineDeployment
         :param local: Whether deployment should be created locally, defaults to False
         :type local: bool, optional
         :param vscode_debug: Whether to open VSCode instance to debug local deployment, defaults to False
         :type vscode_debug: bool, optional
-        :param no_wait: Applied only to online deployment, defaults to False
-        :type no_wait: bool, optional
-        :return: None
-        :rtype: None | OnlineDeployment
+        :return: A poller to track the operation status
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.OnlineDeployment]
         """
         try:
             if vscode_debug and not local:
@@ -98,7 +98,6 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                     local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug),
                 )
 
-            start_time = time.time()
             path_format_arguments = {
                 "endpointName": deployment.name,
                 "resourceGroupName": self._resource_group_name,
@@ -115,6 +114,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             orchestrators = OperationOrchestrator(
                 operation_container=self._all_operations,
                 operation_scope=self._operation_scope,
+                operation_config=self._operation_config,
             )
 
             upload_dependencies(deployment, orchestrators)
@@ -132,34 +132,23 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                         LROConfigurations.POLL_INTERVAL,
                         path_format_arguments=path_format_arguments,
                         **self._init_kwargs,
-                    )
-                    if not no_wait
-                    else False,
+                    ),
                     polling_interval=LROConfigurations.POLL_INTERVAL,
                     **self._init_kwargs,
+                    cls=lambda response, deserialized, headers: OnlineDeployment._from_rest_object(deserialized),
                 )
-                if no_wait:
-                    module_logger.info(
-                        """Online deployment create/update request initiated. Status can be checked using
-    `az ml online-deployment show -e %s -n %s`\n""",
-                        deployment.endpoint_name,
-                        deployment.name,
-                    )
-                    return poller
-
-                message = f"Creating/updating online deployment {deployment.name} "
-                polling_wait(poller=poller, start_time=start_time, message=message, timeout=None)
-
+                return poller
             except Exception as ex:
                 raise ex
-        except Exception as ex:
+        except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:
                 raise ex
 
+    @distributed_trace
     @monitor_with_activity(logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, endpoint_name: str, local: bool = False) -> OnlineDeployment:
+    def get(self, name: str, endpoint_name: str, *, local: bool = False) -> OnlineDeployment:
         """Get a deployment resource.
 
         :param name: The name of the deployment
@@ -169,7 +158,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :param local: Whether deployment should be retrieved from local docker environment, defaults to False
         :type local: bool, optional
         :return: a deployment entity
-        :rtype: OnlineDeployment
+        :rtype: ~azure.ai.ml.entities.OnlineDeployment
         """
         if local:
             deployment = self._local_deployment_helper.get(endpoint_name=endpoint_name, deployment_name=name)
@@ -187,8 +176,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         deployment.endpoint_name = endpoint_name
         return deployment
 
+    @distributed_trace
     @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
-    def delete(self, name: str, endpoint_name: str, local: bool = False) -> None:
+    def delete(self, name: str, endpoint_name: str, *, local: bool = False) -> LROPoller[None]:
         """Delete a deployment.
 
         :param name: The name of the deployment
@@ -197,6 +187,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :type endpoint_name: str
         :param local: Whether deployment should be retrieved from local docker environment, defaults to False
         :type local: bool, optional
+        :return: A poller to track the operation status
+        :rtype: ~azure.core.polling.LROPoller[None]
         """
         if local:
             return self._local_deployment_helper.delete(name=endpoint_name, deployment_name=name)
@@ -208,12 +200,14 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             **self._init_kwargs,
         )
 
+    @distributed_trace
     @monitor_with_activity(logger, "OnlineDeployment.GetLogs", ActivityType.PUBLICAPI)
     def get_logs(
         self,
         name: str,
         endpoint_name: str,
         lines: int,
+        *,
         container_type: Optional[str] = None,
         local: bool = False,
     ) -> str:
@@ -249,8 +243,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             **self._init_kwargs,
         ).content
 
+    @distributed_trace
     @monitor_with_activity(logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
-    def list(self, endpoint_name: str, local: bool = False) -> ItemPaged[OnlineDeployment]:
+    def list(self, endpoint_name: str, *, local: bool = False) -> ItemPaged[OnlineDeployment]:
         """List a deployment resource.
 
         :param endpoint_name: The name of the endpoint
@@ -258,7 +253,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :param local: Whether deployment should be retrieved from local docker environment, defaults to False
         :type local: bool, optional
         :return: an iterator of deployment entities
-        :rtype: Iterable[OnlineDeployment]
+        :rtype: Iterable[~azure.ai.ml.entities.OnlineDeployment]
         """
         if local:
             return self._local_deployment_helper.list()

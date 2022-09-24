@@ -10,7 +10,6 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointComputeType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
@@ -35,9 +34,14 @@ from azure.ai.ml.entities._deployment.code_configuration import CodeConfiguratio
 from azure.ai.ml.entities._deployment.data_collector import DataCollector
 from azure.ai.ml.entities._deployment.deployment_settings import OnlineRequestSettings, ProbeSettings
 from azure.ai.ml.entities._deployment.resource_requirements_settings import ResourceRequirementsSettings
-from azure.ai.ml.entities._deployment.scale_settings import DefaultScaleSettings, OnlineScaleSettings
+from azure.ai.ml.entities._deployment.scale_settings import (
+    DefaultScaleSettings,
+    OnlineScaleSettings,
+    TargetUtilizationScaleSettings,
+)
 from azure.ai.ml.entities._endpoint._endpoint_helpers import validate_endpoint_or_deployment_name
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
 
 from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 from .deployment import Deployment
@@ -310,7 +314,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
     :param app_insights_enabled: defaults to False
     :type app_insights_enabled: bool, optional
     :param scale_settings: How the online deployment will scale.
-    :type scale_settings: OnlineScaleSettings, optional
+    :type scale_settings: Union[DefaultScaleSettings, TargetUtilizationScaleSettings], optional
     :param request_settings: defaults to RequestSettings()
     :type request_settings: OnlineRequestSettings, optional
     :param liveness_probe: Liveness probe settings.
@@ -343,7 +347,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         code_configuration: CodeConfiguration = None,
         environment: Union[str, "Environment"] = None,
         app_insights_enabled: bool = False,
-        scale_settings: OnlineScaleSettings = None,
+        scale_settings: Union[DefaultScaleSettings, TargetUtilizationScaleSettings] = None,
         request_settings: OnlineRequestSettings = None,
         liveness_probe: ProbeSettings = None,
         readiness_probe: ProbeSettings = None,
@@ -494,7 +498,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :param app_insights_enabled: defaults to False
     :type app_insights_enabled: bool, optional
     :param scale_settings: How the online deployment will scale.
-    :type scale_settings: OnlineScaleSettings, optional
+    :type scale_settings: Union[DefaultScaleSettings, TargetUtilizationScaleSettings], optional
     :param request_settings: defaults to RequestSettings()
     :type request_settings: OnlineRequestSettings, optional
     :param liveness_probe: Liveness probe settings.
@@ -527,7 +531,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
         code_configuration: CodeConfiguration = None,
         environment: Union[str, "Environment"] = None,
         app_insights_enabled: bool = False,
-        scale_settings: OnlineScaleSettings = None,
+        scale_settings: Union[DefaultScaleSettings, TargetUtilizationScaleSettings] = None,
         request_settings: OnlineRequestSettings = None,
         liveness_probe: ProbeSettings = None,
         readiness_probe: ProbeSettings = None,

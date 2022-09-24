@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 import tempfile
 import typing
-from abc import abstractmethod
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
@@ -11,9 +10,14 @@ from typing import IO, AnyStr, Dict, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails, SystemData
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    ComponentContainerData,
+    ComponentContainerDetails,
+    ComponentVersionData,
+    ComponentVersionDetails,
+)
 from azure.ai.ml._schema import PathAwareSchema
+from azure.ai.ml._schema.component import ComponentSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, hash_dict, is_private_preview_enabled
 from azure.ai.ml.constants._common import (
     ANONYMOUS_COMPONENT_NAME,
@@ -25,8 +29,10 @@ from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import find_type_in_override
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
@@ -53,6 +59,7 @@ class Component(
     :param id:  Global id of the resource, Azure Resource Manager ID.
     :type id: str
     :param type:  Type of the command, supported is 'command'.
+    :param type:  Type of the command, supported is 'command'.
     :type type: str
     :param description: Description of the resource.
     :type description: str
@@ -73,7 +80,7 @@ class Component(
     :param _schema: Schema of the component.
     :type _schema: str
     :param creation_context: Creation metadata of the component.
-    :type creation_context: SystemData
+    :type creation_context: ~azure.ai.ml.entities.SystemData
     """
 
     # pylint: disable=too-many-instance-attributes
@@ -102,7 +109,6 @@ class Component(
         self._source = (
             self._resolve_component_source_from_id(id) if id else kwargs.pop("_source", ComponentSource.CLASS)
         )
-
         super().__init__(
             name=name,
             version=version,
@@ -113,6 +119,7 @@ class Component(
             creation_context=creation_context,
             is_anonymous=kwargs.pop("is_anonymous", False),
             base_path=kwargs.pop("base_path", None),
+            source_path=kwargs.pop("source_path", None),
         )
         # store kwargs to self._other_parameter instead of pop to super class to allow component have extra
         # fields not defined in current schema.
@@ -128,8 +135,8 @@ class Component(
         self._type = type
         self._display_name = display_name
         self._is_deterministic = is_deterministic
-        self._inputs = self.build_io(inputs, is_input=True)
-        self._outputs = self.build_io(outputs, is_input=False)
+        self._inputs = self._build_io(inputs, is_input=True)
+        self._outputs = self._build_io(outputs, is_input=False)
         # Store original yaml
         self._yaml_str = yaml_str
         self._other_parameter = kwargs
@@ -137,42 +144,9 @@ class Component(
 
         # validate input names before create component function
         # TODO(1924371): discuss if validate & update self._func after input changes
-        self.validate_io_names(self._inputs)
-        self.validate_io_names(self._outputs)
+        self._validate_io_names(self._inputs)
+        self._validate_io_names(self._outputs)
         self._func = _generate_component_function(self)
-
-    @classmethod
-    def validate_io_names(cls, io_dict: Dict, raise_error=True):
-        """Validate input/output names, raise exception if invalid."""
-        validation_result = cls._create_empty_validation_result()
-        lower2original_kwargs = {}
-
-        for name in io_dict.keys():
-            # validate name format
-            if not name.isidentifier():
-                msg = "{!r} is not a valid parameter name, must be composed letters, numbers, and underscores."
-                validation_result.append_error(message=msg.format(name), yaml_path=f"inputs.{name}")
-
-            # validate name conflict
-            lower_key = name.lower()
-            if lower_key in lower2original_kwargs:
-                msg = "Invalid component input names {!r} and {!r}, which are equal ignore case."
-                validation_result.append_error(
-                    message=msg.format(name, lower2original_kwargs[lower_key]), yaml_path=f"inputs.{name}"
-                )
-            else:
-                lower2original_kwargs[lower_key] = name
-        return validation_result.try_raise(error_target=ErrorTarget.COMPONENT, raise_error=raise_error)
-
-    @classmethod
-    def build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
-        component_io = {}
-        for name, port in io_dict.items():
-            if is_input:
-                component_io[name] = port if isinstance(port, Input) else Input(**port)
-            else:
-                component_io[name] = port if isinstance(port, Output) else Output(**port)
-        return component_io
 
     @property
     def type(self) -> str:
@@ -182,49 +156,6 @@ class Component(
         :rtype: str
         """
         return self._type
-
-    def _set_is_anonymous(self, is_anonymous: bool):
-        """Mark this component as anonymous and overwrite component name to
-        ANONYMOUS_COMPONENT_NAME."""
-        if is_anonymous is True:
-            self._is_anonymous = True
-            self.name = ANONYMOUS_COMPONENT_NAME
-        else:
-            self._is_anonymous = False
-
-    def _update_anonymous_hash(self):
-        """For anonymous component, we use code hash + yaml hash as component
-        version so the same anonymous component(same interface and same code)
-        won't be created again.
-
-        Should be called before _to_rest_object.
-        """
-        if self._is_anonymous:
-            self.version = self._get_anonymous_hash()
-
-    def _get_anonymous_hash(self) -> str:
-        """Return the name of anonymous component.
-
-        same anonymous component(same code and interface) will have same
-        name.
-        """
-        component_interface_dict = self._to_dict()
-        # omit version since anonymous component's version is random guid
-        # omit name since name doesn't impact component's uniqueness
-        return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])
-
-    @staticmethod
-    def _resolve_component_source_from_id(id):
-        """Resolve the component source from id."""
-        if id is None:
-            return ComponentSource.CLASS
-        # Consider default is workspace source, as
-        # azureml: prefix will be removed for arm versioned id.
-        return (
-            ComponentSource.REMOTE_REGISTRY
-            if id.startswith(REGISTRY_URI_FORMAT)
-            else ComponentSource.REMOTE_WORKSPACE_COMPONENT
-        )
 
     @property
     def display_name(self) -> str:
@@ -285,9 +216,7 @@ class Component(
         self._version = value
         self._auto_increment_version = self.name and not self._version
 
-    def dump(
-        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
-    ) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the component content into a file in yaml format.
 
         :param dest: The destination to receive this component's content.
@@ -297,46 +226,64 @@ class Component(
             If dest is an open file, the file will be written to directly,
             and an exception will be raised if the file is not writable.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :param path: Deprecated path to a local file as the target, a new file
-            will be created, raises exception if the file exists.
-            It's recommended what you change 'path=' inputs to 'dest='.
-            The first unnamed input of this function will also be treated like a
-            path input.
-        :type path: Union[str, Pathlike]
         """
+        path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, args=args, **kwargs)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
+
+    @staticmethod
+    def _resolve_component_source_from_id(id):
+        """Resolve the component source from id."""
+        if id is None:
+            return ComponentSource.CLASS
+        # Consider default is workspace source, as
+        # azureml: prefix will be removed for arm versioned id.
+        return (
+            ComponentSource.REMOTE_REGISTRY
+            if id.startswith(REGISTRY_URI_FORMAT)
+            else ComponentSource.REMOTE_WORKSPACE_COMPONENT
+        )
 
     @classmethod
-    @abstractmethod
+    def _validate_io_names(cls, io_dict: Dict, raise_error=True):
+        """Validate input/output names, raise exception if invalid."""
+        validation_result = cls._create_empty_validation_result()
+        lower2original_kwargs = {}
+
+        for name in io_dict.keys():
+            # validate name format
+            if not name.isidentifier():
+                msg = "{!r} is not a valid parameter name, must be composed letters, numbers, and underscores."
+                validation_result.append_error(message=msg.format(name), yaml_path=f"inputs.{name}")
+
+            # validate name conflict
+            lower_key = name.lower()
+            if lower_key in lower2original_kwargs:
+                msg = "Invalid component input names {!r} and {!r}, which are equal ignore case."
+                validation_result.append_error(
+                    message=msg.format(name, lower2original_kwargs[lower_key]), yaml_path=f"inputs.{name}"
+                )
+            else:
+                lower2original_kwargs[lower_key] = name
+        return validation_result.try_raise(error_target=ErrorTarget.COMPONENT, raise_error=raise_error)
+
+    @classmethod
+    def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
+        component_io = {}
+        for name, port in io_dict.items():
+            if is_input:
+                component_io[name] = port if isinstance(port, Input) else Input(**port)
+            else:
+                component_io[name] = port if isinstance(port, Output) else Output(**port)
+        return component_io
+
+    @classmethod
     def _create_schema_for_validation(cls, context) -> typing.Union[PathAwareSchema, Schema]:
-        pass
+        return ComponentSchema(context=context)
 
     @classmethod
     def _get_validation_error_target(cls) -> ErrorTarget:
         return ErrorTarget.COMPONENT
-
-    def _customized_validate(self) -> ValidationResult:
-        validation_result = super(Component, self)._customized_validate()
-        # If private features are enable and component has code value of type str we need to check
-        # that it is a valid git path case. Otherwise we should throw a ValidationError
-        # saying that the code value is not valid
-        # pylint: disable=no-member
-        if (
-            hasattr(self, "code")
-            and self.code is not None
-            and isinstance(self.code, str)
-            and self.code.startswith("git+")
-            and not is_private_preview_enabled()
-        ):
-            validation_result.append_error(
-                message="Not a valid code value: git paths are not supported.",
-                yaml_path="code",
-            )
-        # validate inputs names before creation in case user added invalid inputs after entity built
-        validation_result.merge_with(self.validate_io_names(self.inputs, raise_error=False))
-
-        return validation_result
 
     @classmethod
     def _load(
@@ -362,6 +309,22 @@ class Component(
         return component
 
     @classmethod
+    def _from_container_rest_object(cls, component_container_rest_object: ComponentContainerData) -> "Component":
+        component_container_details: ComponentContainerDetails = component_container_rest_object.properties
+        component = Component(
+            id=component_container_rest_object.id,
+            name=component_container_rest_object.name,
+            description=component_container_details.description,
+            creation_context=SystemData._from_rest_object(component_container_rest_object.system_data),
+            tags=component_container_details.tags,
+            properties=component_container_details.properties,
+            type=NodeType._CONTAINER,
+            # Set this field to None as it hold a default True in init.
+            is_deterministic=None,
+        )
+        return component
+
+    @classmethod
     def _from_rest_object(cls, obj: ComponentVersionData) -> "Component":
         from azure.ai.ml.entities._component.component_factory import component_factory
 
@@ -378,6 +341,58 @@ class Component(
         if "_source" in obj.properties.component_spec:
             del obj.properties.component_spec["_source"]
         return component_factory.load_from_rest(obj=obj)
+
+    def _set_is_anonymous(self, is_anonymous: bool):
+        """Mark this component as anonymous and overwrite component name to
+        ANONYMOUS_COMPONENT_NAME."""
+        if is_anonymous is True:
+            self._is_anonymous = True
+            self.name = ANONYMOUS_COMPONENT_NAME
+        else:
+            self._is_anonymous = False
+
+    def _update_anonymous_hash(self):
+        """For anonymous component, we use code hash + yaml hash as component
+        version so the same anonymous component(same interface and same code)
+        won't be created again.
+
+        Should be called before _to_rest_object.
+        """
+        if self._is_anonymous:
+            self.version = self._get_anonymous_hash()
+
+    def _get_anonymous_hash(self) -> str:
+        """Return the name of anonymous component.
+
+        same anonymous component(same code and interface) will have same
+        name.
+        """
+        component_interface_dict = self._to_dict()
+        # omit version since anonymous component's version is random guid
+        # omit name since name doesn't impact component's uniqueness
+        return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])
+
+    def _customized_validate(self) -> ValidationResult:
+        validation_result = super(Component, self)._customized_validate()
+        # If private features are enable and component has code value of type str we need to check
+        # that it is a valid git path case. Otherwise we should throw a ValidationError
+        # saying that the code value is not valid
+        # pylint: disable=no-member
+        if (
+            hasattr(self, "code")
+            and self.code is not None
+            and isinstance(self.code, str)
+            and self.code.startswith("git+")
+            and not is_private_preview_enabled()
+        ):
+            validation_result.append_error(
+                message="Not a valid code value: git paths are not supported.",
+                yaml_path="code",
+            )
+        # validate inputs names before creation in case user added invalid inputs after entity built
+        validation_result.merge_with(self._validate_io_names(self.inputs, raise_error=False))
+
+        return validation_result
 
     def _to_rest_object(self) -> ComponentVersionData:
         component = self._to_dict()
