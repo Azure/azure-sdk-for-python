@@ -120,3 +120,7 @@ steps:
         ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
         ArtifactName: 'manifest'
 
+    - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+      parameters:
+        ArtifactPath: '$(Build.SourcesDirectory)/.logs'
+        ArtifactName: 'logs'

@@ -1,0 +1,12 @@
+- environment: no requests
+  uninstall: [requests]
+  install: []
+  env: []
+  test-tools: true
+  dev-reqs: true
+
+- environment: no aiohttp
+  uninstall: [aiohttp]
+  install: []
+  env: []
+  test-tools: true
