@@ -15,10 +15,10 @@ class CheckpointStore(object):
 
     @abstractmethod
     def list_ownership(
-        self, 
-        fully_qualified_namespace: str, 
-        eventhub_name: str, 
-        consumer_group: str, 
+        self,
+        fully_qualified_namespace: str,
+        eventhub_name: str,
+        consumer_group: str,
         **kwargs: Any
     ) -> Iterable[Dict[str, Any]]:
         """Retrieves a complete ownership list from the chosen storage service.
@@ -44,8 +44,8 @@ class CheckpointStore(object):
 
     @abstractmethod
     def claim_ownership(
-        self, 
-        ownership_list: Iterable[Dict[str, Any]], 
+        self,
+        ownership_list: Iterable[Dict[str, Any]],
         **kwargs: Any
         ) -> Iterable[Dict[str, Any]]:
         """Tries to claim ownership for a list of specified partitions.
@@ -91,10 +91,10 @@ class CheckpointStore(object):
 
     @abstractmethod
     def list_checkpoints(
-        self, 
-        fully_qualified_namespace: str, 
-        eventhub_name: str, 
-        consumer_group: str, 
+        self,
+        fully_qualified_namespace: str,
+        eventhub_name: str,
+        consumer_group: str,
         **kwargs: Any
     ) -> Iterable[Dict[str, Any]]:
         """List the updated checkpoints from the chosen storage service.

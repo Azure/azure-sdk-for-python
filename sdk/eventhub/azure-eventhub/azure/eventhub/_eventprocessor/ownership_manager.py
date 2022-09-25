@@ -104,8 +104,8 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         self.cached_parition_ids = self.eventhub_client.get_partition_ids()
 
     def _balance_ownership(  # pylint:disable=too-many-locals
-        self, 
-        ownership_list: Iterable[Dict[str, Any]], 
+        self,
+        ownership_list: Iterable[Dict[str, Any]],
         all_partition_ids: List[str]
     ) -> List[Dict[str, Any]]:
         """Balances and claims ownership of partitions for this EventProcessor."""

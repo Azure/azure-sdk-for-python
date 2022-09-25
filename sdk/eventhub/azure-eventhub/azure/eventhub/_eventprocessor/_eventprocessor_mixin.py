@@ -50,8 +50,8 @@ class EventProcessorMixin(object):
     )  # type: Union[int, str, datetime, Dict[str, Union[int, str, datetime]]]
 
     def get_init_event_position(
-        self, 
-        partition_id: str, 
+        self,
+        partition_id: str,
         checkpoint: Optional[Dict[str, Any]]
         ) -> Tuple[Union[str, int, datetime], bool]:
         checkpoint_offset = checkpoint.get("offset") if checkpoint else None
@@ -79,9 +79,9 @@ class EventProcessorMixin(object):
     def create_consumer(
         self,
         partition_id: str,
-        initial_event_position: Union[str, int, datetime],  
+        initial_event_position: Union[str, int, datetime],
         initial_event_position_inclusive: bool,
-        on_event_received: Callable[[Union[Optional[EventData], List[EventData]]], None], 
+        on_event_received: Callable[[Union[Optional[EventData], List[EventData]]], None],
         **kwargs: Any
     ) -> Union[EventHubConsumer, EventHubConsumerAsync]:
         consumer = self._eventhub_client._create_consumer(  # type: ignore  # pylint: disable=protected-access

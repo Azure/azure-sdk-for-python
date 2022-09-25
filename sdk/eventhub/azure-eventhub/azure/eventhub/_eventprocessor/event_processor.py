@@ -50,9 +50,9 @@ class EventProcessor(
     def __init__(
         self,
         eventhub_client: EventHubConsumerClient,
-        consumer_group: str,  
-        on_event: Callable[[PartitionContext, Union[Optional[EventData], List[EventData]]], None],  
-        **kwargs: Any 
+        consumer_group: str,
+        on_event: Callable[[PartitionContext, Union[Optional[EventData], List[EventData]]], None],
+        **kwargs: Any
     ) -> None:
         # pylint: disable=line-too-long
         self._consumer_group = consumer_group
@@ -177,8 +177,8 @@ class EventProcessor(
         )
 
     def _create_tasks_for_claimed_ownership(
-        self, 
-        claimed_partitions: Iterable[str], 
+        self,
+        claimed_partitions: Iterable[str],
         checkpoints: Optional[Dict[str, Dict[str, Any]]]=None
     ) -> None:
         with self._lock:
@@ -224,8 +224,8 @@ class EventProcessor(
                     self._initialize_partition_consumer(partition_id)
 
     def _on_event_received(
-        self, 
-        partition_context: PartitionContext, 
+        self,
+        partition_context: PartitionContext,
         event: Union[Optional[EventData], List[EventData]]
     ) -> None:
         if event:
@@ -300,9 +300,9 @@ class EventProcessor(
             time.sleep(load_balancing_interval)
 
     def _close_consumer(
-        self, 
-        partition_id: str, 
-        consumer: EventHubConsumer, 
+        self,
+        partition_id: str,
+        consumer: EventHubConsumer,
         reason: CloseReason
     ) -> None:
         consumer.close()
