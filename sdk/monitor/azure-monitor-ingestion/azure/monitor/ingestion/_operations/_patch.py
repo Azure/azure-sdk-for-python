@@ -87,7 +87,7 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
                         error = err,
                         failed_logs = request
                     ))
-        
+
         if not results:
             status = UploadLogsStatus.SUCCESS
         elif 0 < len(results) < len(requests):
