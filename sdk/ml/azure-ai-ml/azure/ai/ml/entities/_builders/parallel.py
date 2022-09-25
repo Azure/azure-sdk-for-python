@@ -25,8 +25,7 @@ from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
 
 from ..._schema import PathAwareSchema
 from .._job.distribution import DistributionConfiguration
-from .._job.pipeline._io import PipelineInput, PipelineOutputBase
-from .._job.pipeline._pipeline_expression import PipelineExpression
+from .._job.pipeline._io import NodeOutput, PipelineInput
 from .._util import convert_ordered_dict_to_dict, get_rest_dict, validate_attribute_type
 from .base_node import BaseNode
 
@@ -36,6 +35,9 @@ module_logger = logging.getLogger(__name__)
 class Parallel(BaseNode):
     """Base class for parallel node, used for parallel component version
     consumption.
+
+    You should not instantiate this class directly. Instead, you should
+    create from builder function: parallel.
 
     :param component: Id or instance of the parallel component/job to be run for the step
     :type component: parallelComponent
@@ -85,7 +87,7 @@ class Parallel(BaseNode):
             str,
             Union[
                 PipelineInput,
-                PipelineOutputBase,
+                NodeOutput,
                 Input,
                 str,
                 bool,
@@ -171,21 +173,6 @@ class Parallel(BaseNode):
                 self._base_path = self.component.base_path
 
         self._init = False
-
-    @classmethod
-    def _get_supported_inputs_types(cls):
-        # when command node is constructed inside dsl.pipeline, inputs can be PipelineInput or Output of another node
-        return (
-            PipelineInput,
-            PipelineOutputBase,
-            Input,
-            str,
-            bool,
-            int,
-            float,
-            Enum,
-            PipelineExpression,
-        )
 
     @classmethod
     def _get_supported_outputs_types(cls):
@@ -343,10 +330,10 @@ class Parallel(BaseNode):
         obj = BaseNode._rest_object_to_init_params(obj)
         # retry_settings
         if "retry_settings" in obj and obj["retry_settings"]:
-            obj["retry_settings"] = RetrySettings.from_dict(obj["retry_settings"])
+            obj["retry_settings"] = RetrySettings._from_dict(obj["retry_settings"])
 
         if "task" in obj and obj["task"]:
-            obj["task"] = ParallelTask.from_dict(obj["task"])
+            obj["task"] = ParallelTask._from_dict(obj["task"])
             task_code = obj["task"].code
             task_env = obj["task"].environment
             # remove azureml: prefix in code and environment which is added in _to_rest_object

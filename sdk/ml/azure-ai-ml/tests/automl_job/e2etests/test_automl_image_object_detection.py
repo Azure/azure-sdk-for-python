@@ -14,13 +14,21 @@ from azure.ai.ml import MLClient, automl
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities import Data
 from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._job.automl import SearchSpace
 from azure.ai.ml.entities._job.automl.image import ImageObjectDetectionJob, ImageObjectDetectionSearchSpace
 from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
+from devtools_testutils import AzureRecordedTestCase, is_live
+
 
 @pytest.mark.automle2etest
-class TestAutoMLImageObjectDetection:
+@pytest.mark.usefixtures("recorded_test")
+@pytest.mark.skipif(
+    condition=not is_live(),
+    reason="Datasets downloaded by test are too large to record reliably"
+)
+class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
     def _create_jsonl_object_detection(self, client, train_path, val_path):
         import xml.etree.ElementTree as ET
 
@@ -129,12 +137,12 @@ class TestAutoMLImageObjectDetection:
         image_object_detection_job_sweep.set_training_parameters(early_stopping=True, evaluation_frequency=1)
         image_object_detection_job_sweep.extend_search_space(
             [
-                ImageObjectDetectionSearchSpace(
+                SearchSpace(
                     model_name=Choice(["yolov5"]),
                     learning_rate=Uniform(0.0001, 0.01),
                     model_size=Choice(["small", "medium"]),  # model-specific
                 ),
-                ImageObjectDetectionSearchSpace(
+                SearchSpace(
                     model_name=Choice(["fasterrcnn_resnet50_fpn"]),
                     learning_rate=Uniform(0.0001, 0.001),
                     optimizer=Choice(["sgd", "adam", "adamw"]),
@@ -142,9 +150,8 @@ class TestAutoMLImageObjectDetection:
                 ),
             ]
         )
+        image_classification_multilabel_job_sweep.set_limits(max_trials=1, max_concurrent_trials=1)
         image_object_detection_job_sweep.set_sweep(
-            max_trials=1,
-            max_concurrent_trials=1,
             sampling_algorithm="Random",
             early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
         )

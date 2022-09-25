@@ -113,6 +113,4 @@ async def data_lake_service_sample():
     await token_credential.close()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(data_lake_service_sample())
-
+    asyncio.run(data_lake_service_sample())

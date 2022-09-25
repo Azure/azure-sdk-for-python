@@ -60,6 +60,9 @@ class RegistriesOperations:
 
         :param skip: Continuation token for pagination.
         :type skip: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RegistryTrackedResourceArmPaginatedResult or the
          result of cls(response)
@@ -67,6 +70,8 @@ class RegistriesOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.RegistryTrackedResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryTrackedResourceArmPaginatedResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -77,6 +82,7 @@ class RegistriesOperations:
                 
                 request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     skip=skip,
                     template_url=self.list_by_subscription.metadata['url'],
                 )
@@ -87,6 +93,7 @@ class RegistriesOperations:
                 
                 request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     skip=skip,
                     template_url=next_link,
                 )
@@ -136,6 +143,9 @@ class RegistriesOperations:
         :type resource_group_name: str
         :param skip: Continuation token for pagination.
         :type skip: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RegistryTrackedResourceArmPaginatedResult or the
          result of cls(response)
@@ -143,6 +153,8 @@ class RegistriesOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.RegistryTrackedResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryTrackedResourceArmPaginatedResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -154,6 +166,7 @@ class RegistriesOperations:
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
+                    api_version=api_version,
                     skip=skip,
                     template_url=self.list.metadata['url'],
                 )
@@ -165,6 +178,7 @@ class RegistriesOperations:
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
+                    api_version=api_version,
                     skip=skip,
                     template_url=next_link,
                 )
@@ -214,6 +228,9 @@ class RegistriesOperations:
         :type resource_group_name: str
         :param registry_name: Name of registry. This is case-insensitive.
         :type registry_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -225,11 +242,14 @@ class RegistriesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_delete_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
+            api_version=api_version,
             template_url=self.delete.metadata['url'],
         )
         request = _convert_request(request)
@@ -264,6 +284,9 @@ class RegistriesOperations:
         :type resource_group_name: str
         :param registry_name: Name of registry. This is case-insensitive.
         :type registry_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Registry, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.Registry
@@ -275,11 +298,14 @@ class RegistriesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
+            api_version=api_version,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -321,6 +347,9 @@ class RegistriesOperations:
         :type registry_name: str
         :param body: Details required to create the registry.
         :type body: ~azure.mgmt.machinelearningservices.models.PartialRegistryPartialTrackedResource
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Registry, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.Registry
@@ -332,6 +361,7 @@ class RegistriesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'PartialRegistryPartialTrackedResource')
@@ -340,6 +370,7 @@ class RegistriesOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self.update.metadata['url'],
@@ -378,6 +409,7 @@ class RegistriesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'Registry')
@@ -386,6 +418,7 @@ class RegistriesOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self._create_or_update_initial.metadata['url'],
@@ -432,6 +465,9 @@ class RegistriesOperations:
         :type registry_name: str
         :param body: Details required to create the registry.
         :type body: ~azure.mgmt.machinelearningservices.models.Registry
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -445,6 +481,7 @@ class RegistriesOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.Registry]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
@@ -458,6 +495,7 @@ class RegistriesOperations:
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
                 body=body,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs

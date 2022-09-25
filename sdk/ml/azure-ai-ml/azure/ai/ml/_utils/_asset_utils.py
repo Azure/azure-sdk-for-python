@@ -33,7 +33,6 @@ from azure.ai.ml._artifacts._constants import (
     PROCESSES_PER_CORE,
     UPLOAD_CONFIRMATION,
 )
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._restclient.v2021_10_01.models import (
     DatasetVersionData,
     ModelVersionData,
@@ -53,6 +52,7 @@ from azure.ai.ml._utils._exception_utils import EmptyDirectoryError
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry
 from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, OrderString
 from azure.ai.ml.entities._assets.asset import Asset
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 if TYPE_CHECKING:

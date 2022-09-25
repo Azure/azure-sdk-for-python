@@ -11,11 +11,10 @@ from azure.ai.ml import MLClient, load_component
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, AssetTypes, LegacyAssetTypes
-from azure.ai.ml.entities import CommandComponent, Component
+from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._component.component import COMPONENT_CODE_PLACEHOLDER, COMPONENT_PLACEHOLDER
 from azure.ai.ml.entities._component.component_factory import component_factory
-from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -325,9 +324,9 @@ class TestPipelineComponent:
 class TestSparkComponent:
     def test_component_load(self):
         # code is specified in yaml, value is respected
-        component_yaml = "./tests/test_configs/components/basic_spark_component.yml"
+        component_yaml = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
         spark_component = load_component(
-            path=component_yaml,
+            component_yaml,
         )
         validation_result = spark_component._validate()
         assert validation_result.passed is True

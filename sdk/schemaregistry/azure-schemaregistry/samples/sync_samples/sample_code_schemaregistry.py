@@ -27,7 +27,7 @@
 FILE: sample_code_schemaregistry.py
 DESCRIPTION:
     This sample demonstrates authenticating the SchemaRegistryClient and registering a schema,
-     retrieving a schema by its ID, and retrieving schema properties.
+     retrieving a schema by its ID, retrieving a schema by its version, and retrieving schema properties.
 USAGE:
     python sample_code_schemaregistry.py
     Set the environment variables with your own values before running the sample:
@@ -78,7 +78,7 @@ def register_schema(schema_registry_client):
     )
     schema_id = schema_properties.id
     # [END register_schema_sync]
-    return schema_id
+    return schema_properties
 
 
 def get_schema(schema_registry_client, schema_id):
@@ -91,6 +91,41 @@ def get_schema(schema_registry_client, schema_id):
     print(properties)
     return schema
 
+def get_schema_by_version(schema_registry_client, version):
+    # [START get_schema_by_version_sync]
+    group_name = os.environ["SCHEMAREGISTRY_GROUP"]
+    name = "your-schema-name"
+    schema = schema_registry_client.get_schema_by_version(group_name, name, version)
+    definition = schema.definition
+    properties = schema.properties
+    # [END get_schema_by_version_sync]
+    print(definition)
+    print(properties)
+    return schema
+
+def get_old_schema_by_version(schema_registry_client):
+    GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
+    NAME = "your-schema-name"
+    FORMAT = "Avro"
+    NEW_SCHEMA_JSON = {
+        "namespace": "example.avro",
+        "type": "record",
+        "name": "User2",
+        "fields": [
+            {"name": "name", "type": "string"},
+            {"name": "favorite_number", "type": ["int", "null"]},
+            {"name": "favorite_color", "type": ["string", "null"]},
+        ],
+    }
+    NEW_DEFINTION = json.dumps(NEW_SCHEMA_JSON, separators=(",", ":"))
+    updated_schema_properties = schema_registry_client.register_schema(
+        GROUP_NAME, NAME, NEW_DEFINTION, FORMAT
+    )
+    print(f"Updated schema v{updated_schema_properties.version}: {NEW_SCHEMA_JSON}")
+    old_version = updated_schema_properties.version - 1
+    schema = schema_registry_client.get_schema_by_version(GROUP_NAME, NAME, old_version)
+    print(f"Retrieving old schema v{schema.properties.version}: {schema.definition}")
+    return schema
 
 def get_schema_id(schema_registry_client):
     # [START get_schema_id_sync]
@@ -119,6 +154,8 @@ def get_schema_id(schema_registry_client):
 if __name__ == "__main__":
     client = create_client()
     with client:
-        schema_id = register_schema(client)
-        schema = get_schema(client, schema_id)
+        schema_properties= register_schema(client)
+        schema = get_schema(client, schema_properties.id)
+        schema = get_schema_by_version(client, schema_properties.version)
+        schema = get_old_schema_by_version(client)
         schema_id = get_schema_id(client)

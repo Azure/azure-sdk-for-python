@@ -65,12 +65,14 @@ from enum import EnumMeta
 from inspect import Parameter, signature
 from typing import Dict, Iterable, Sequence, Union, overload
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from typing_extensions import Literal
+
 from azure.ai.ml._schema.component.input_output import SUPPORTED_PARAM_TYPES
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
 from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
 class _InputOutputBase(DictMixin, RestTranslatableMixin):
@@ -128,7 +130,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
-        type: str = "uri_folder",
+        type: Literal["uri_folder"] = "uri_folder",
         path: str = None,
         mode: str = None,
         optional: bool = None,
@@ -160,7 +162,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
-        type: str = "number",
+        type: Literal["number"] = "number",
         default: float = None,
         min: float = None,
         max: float = None,
@@ -188,7 +190,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
-        type: str = "integer",
+        type: Literal["integer"] = "integer",
         default: int = None,
         min: int = None,
         max: int = None,
@@ -216,7 +218,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
-        type: str = "string",
+        type: Literal["string"] = "string",
         default: str = None,
         optional: bool = None,
         description: str = None,
@@ -238,7 +240,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
-        type: str = "boolean",
+        type: Literal["boolean"] = "boolean",
         default: bool = None,
         optional: bool = None,
         description: str = None,
@@ -373,10 +375,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def _update_default(self, default_value):
         """Update provided default values."""
         name = "" if not self.name else f"{self.name!r} "
-        if not self._multiple_types:
-            msg_prefix = f"Default value of {self.type} Input {name}"
-        else:
-            msg_prefix = "Default value of [" + ", ".join(self.type) + f"] Input {name}"
+        msg_prefix = f"Default value of Input {name}"
         if not self._is_primitive_type and default_value is not None:
             msg = f"{msg_prefix}cannot be set: Non-primitive type Input has no default value."
             raise UserErrorException(msg)
@@ -500,8 +499,9 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         return None
 
     @classmethod
-    def _get_default_string_input(cls, optional=None):
-        return cls(type="string", optional=optional)
+    def _get_default_unknown_input(cls, optional=None):
+        # Set type as None here to avoid schema validation failed
+        return cls(type=None, optional=optional)
 
     @classmethod
     def _get_param_with_standard_annotation(cls, func):
@@ -545,7 +545,14 @@ class Output(_InputOutputBase):
     """
 
     @overload
-    def __init__(self, type="uri_folder", path=None, mode=None, description=None):
+    def __init__(
+        self,
+        *,
+        type: Literal["uri_folder"] = "uri_folder",
+        path=None,
+        mode=None,
+        description=None,
+    ):
         """Define a uri_folder output.
 
         :param type: The type of the data output. Possible values include:
@@ -563,7 +570,7 @@ class Output(_InputOutputBase):
         """
 
     @overload
-    def __init__(self, type="uri_file", path=None, mode=None, description=None):
+    def __init__(self, type: Literal["uri_file"] = "uri_file", path=None, mode=None, description=None):
         """Define a uri_file output.
 
         :param type: The type of the data output. Possible values include:
@@ -590,6 +597,8 @@ class Output(_InputOutputBase):
 
         self.path = path
         self.mode = mode
+        # use this field to determine the Output is control or not, currently hide in kwargs
+        self.is_control = kwargs.pop("is_control", None)
 
     def _get_hint(self, new_line_style=False):
         comment_str = self.description.replace('"', '\\"') if self.description else self.type
@@ -597,7 +606,7 @@ class Output(_InputOutputBase):
 
     def _to_dict(self, remove_name=True):
         """Convert the Output object to a dict."""
-        keys = ["name", "path", "type", "mode", "description"]
+        keys = ["name", "path", "type", "mode", "description", "is_control"]
         if remove_name:
             keys.remove("name")
         result = {key: getattr(self, key) for key in keys}
@@ -768,7 +777,7 @@ class GroupInput(Input):
         for key, value in values.items():
             if not isinstance(value, Input):
                 raise ValueError(msg.format(key, type(value).__name__))
-            if value.type == "unknown":
+            if value.type is None:
                 # Skip check for parameter translated from pipeline job (lost type)
                 continue
             if value.type not in IOConstants.PRIMITIVE_STR_2_TYPE and not isinstance(value, GroupInput):
@@ -911,7 +920,7 @@ def _get_annotation_by_value(val):
     elif val is Parameter.empty or val is None:
         # If no default value or default is None, create val as the basic parameter type,
         # it could be replaced using component parameter definition.
-        annotation = Input._get_default_string_input()
+        annotation = Input._get_default_unknown_input()
     elif isinstance(val, PyEnum):
         # Handle enum values
         annotation = EnumInput(enum=val.__class__)
@@ -919,7 +928,7 @@ def _get_annotation_by_value(val):
         annotation = _get_annotation_cls_by_type(type(val), raise_error=False)
         if not annotation:
             # Fall back to default
-            annotation = Input._get_default_string_input()
+            annotation = Input._get_default_unknown_input()
     return annotation
 
 

@@ -17,6 +17,7 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity as R
 from azure.ai.ml.automl import image_classification_multilabel
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._job.automl import SearchSpace
 from azure.ai.ml.entities._job.automl.image import ImageClassificationMultilabelJob, ImageClassificationSearchSpace
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
@@ -40,11 +41,11 @@ class TestAutoMLImageClassificationMultilabel:
             identity=identity,
         )  # type: ImageClassificationMultilabelJob
 
-        if (run_type == "single") or (run_type == "sweep"):
-            # image_classification_multilabel_job.limits = {"timeout": 60, "max_trials": 1, "max_concurrent_trials": 1}
+        if run_type == "single":
             image_classification_multilabel_job.set_limits(timeout_minutes=60)
+        elif run_type == "sweep":
+            image_classification_multilabel_job.set_limits(timeout_minutes=60, max_concurrent_trials=4, max_trials=20)
         elif run_type == "automode":
-            # image_classification_multilabel_job.limits = {"timeout": 60, "max_trials": 2, "max_concurrent_trials": 1}
             image_classification_multilabel_job.set_limits(timeout_minutes=60, max_trials=2, max_concurrent_trials=1)
 
         # image_classification_multilabel_job.training_parameters = {
@@ -80,13 +81,13 @@ class TestAutoMLImageClassificationMultilabel:
                 },
             ]
             """
-            search_sub_space_1 = ImageClassificationSearchSpace(
+            search_sub_space_1 = SearchSpace(
                 model_name="vitb16r224",
                 learning_rate=Uniform(0.005, 0.05),
                 number_of_epochs=Choice([15, 30]),
                 gradient_accumulation_step=Choice([1, 2]),
             )
-            search_sub_space_2 = ImageClassificationSearchSpace(
+            search_sub_space_2 = SearchSpace(
                 model_name="seresnext",
                 learning_rate=Uniform(0.005, 0.05),
                 validation_resize_size=Choice([288, 320, 352]),
@@ -104,8 +105,6 @@ class TestAutoMLImageClassificationMultilabel:
             # }
             image_classification_multilabel_job.set_sweep(
                 sampling_algorithm=SamplingAlgorithmType.GRID,
-                max_concurrent_trials=4,
-                max_trials=20,
                 early_termination=early_termination_policy,
             )
 

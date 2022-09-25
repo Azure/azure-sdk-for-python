@@ -12,11 +12,11 @@ from .errors import InvalidVSCodeRequestError, LocalEndpointNotFoundError
 from .local_endpoint_mode import LocalEndpointMode
 
 __all__ = [
+    "AzureMlImageContext",
     "DockerClient",
     "DockerfileResolver",
-    "AzureMlImageContext",
-    "LocalEndpointNotFoundError",
+    "EndpointStub",
     "InvalidVSCodeRequestError",
     "LocalEndpointMode",
-    "EndpointStub",
+    "LocalEndpointNotFoundError",
 ]

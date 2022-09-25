@@ -20,10 +20,11 @@ from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
 
-from ..._ml_exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
+from ...exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
 from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 
 
@@ -168,9 +169,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         schedule.create_job = create_job
         return schedule
 
-    def dump(
-        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
-    ) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the schedule content into a file in yaml format.
 
         :param dest: The destination to receive this schedule's content.
@@ -180,16 +179,10 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
             If dest is an open file, the file will be written to directly,
             and an exception will be raised if the file is not writable.
         :type dest: Union[str, PathLike, IO[AnyStr]]
-        :param path: Deprecated path to a local file as the target, a new file
-            will be created, raises exception if the file exists.
-            It's recommended what you change 'path=' inputs to 'dest='.
-            The first unnamed input of this function will also be treated like
-            a path input.
-        :type path: Union[str, Pathlike]
         """
-
+        path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, args=args, **kwargs)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     @classmethod
     def _create_schema_for_validation(cls, context):
@@ -250,7 +243,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
             properties=properties.properties,
             provisioning_state=properties.provisioning_state,
             is_enabled=properties.is_enabled,
-            creation_context=obj.system_data,
+            creation_context=SystemData._from_rest_object(obj.system_data),
         )
 
     def _to_rest_object(self) -> RestSchedule:

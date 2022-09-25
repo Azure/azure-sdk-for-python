@@ -37,5 +37,4 @@ async def reverse_search_cross_street_address_async():
     # [END reverse_search_cross_street_address_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(reverse_search_cross_street_address_async())
+    asyncio.run(reverse_search_cross_street_address_async())

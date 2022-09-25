@@ -5,7 +5,6 @@
 import os
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._schema.job.loadable_mixin import LoadableMixin
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._job.spark_job_entry import SparkJobEntry
 
@@ -14,7 +13,7 @@ from .._job.spark_job_entry_mixin import SparkJobEntryMixin
 DUMMY_IMAGE = "conda/miniconda3"
 
 
-class ParameterizedSpark(LoadableMixin, SparkJobEntryMixin):
+class ParameterizedSpark(SparkJobEntryMixin):
     """Spark component that contains supporting parameters.
 
     :param code: The source code to run the job.

@@ -11,7 +11,7 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import ImageObjectDetect
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase, ObjectDetectionPrimaryMetrics, TaskType
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
-from azure.ai.ml.constants import AutoMLConstants
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
 from azure.ai.ml.entities._job.automl.image.automl_image_object_detection_base import AutoMLImageObjectDetectionBase
@@ -171,6 +171,8 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
         from azure.ai.ml._schema.pipeline.automl_node import ImageObjectDetectionNodeSchema
 
         if inside_pipeline:
+            if context.get("inside_pipeline", None) is None:
+                context["inside_pipeline"] = True
             loaded_data = load_from_dict(
                 ImageObjectDetectionNodeSchema,
                 data,
@@ -186,15 +188,13 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
     @classmethod
     def _create_instance_from_schema_dict(cls, loaded_data: Dict) -> "ImageObjectDetectionJob":
         loaded_data.pop(AutoMLConstants.TASK_TYPE_YAML, None)
-        search_space_val = loaded_data.pop("search_space", None)
-        search_space = ImageObjectDetectionJob._get_search_space_from_str(search_space_val)
         data_settings = {
             "training_data": loaded_data.pop("training_data"),
             "target_column_name": loaded_data.pop("target_column_name"),
             "validation_data": loaded_data.pop("validation_data", None),
             "validation_data_size": loaded_data.pop("validation_data_size", None),
         }
-        job = ImageObjectDetectionJob(search_space=search_space, **loaded_data)
+        job = ImageObjectDetectionJob(**loaded_data)
         job.set_data(**data_settings)
         return job
 
@@ -203,7 +203,9 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
         from azure.ai.ml._schema.pipeline.automl_node import ImageObjectDetectionNodeSchema
 
         if inside_pipeline:
-            schema_dict = ImageObjectDetectionNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = ImageObjectDetectionNodeSchema(
+                context={BASE_PATH_CONTEXT_KEY: "./", "inside_pipeline": True}
+            ).dump(self)
         else:
             schema_dict = ImageObjectDetectionSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 

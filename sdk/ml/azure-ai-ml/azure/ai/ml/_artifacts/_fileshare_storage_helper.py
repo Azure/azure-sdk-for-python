@@ -17,7 +17,6 @@ from azure.ai.ml._artifacts._constants import (
     LEGACY_ARTIFACT_DIRECTORY,
     UPLOAD_CONFIRMATION,
 )
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, MlException
 from azure.ai.ml._utils._asset_utils import (
     DirectoryUploadProgressBar,
     FileUploadProgressBar,
@@ -27,6 +26,7 @@ from azure.ai.ml._utils._asset_utils import (
     get_directory_size,
     traverse_directory,
 )
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.storage.fileshare import ShareDirectoryClient, ShareFileClient
 
