@@ -32,5 +32,5 @@ selects = {SettingSelector("message*", "\0")}
 config = AzureAppConfigurationProvider.load(
     endpoint=endpoint, credential=credential, selects=selects)
 
-print("message found: " + str(config.has_key("message")))
-print("test.message found: " + str(config.has_key("config.message")))
+print("message found: " + str("message" in config))
+print("test.message found: " + str("test.message" in config))
