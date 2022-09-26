@@ -3,23 +3,35 @@ import re
 from time import sleep
 from typing import Callable
 
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher, is_live
 import pytest
 
 from azure.ai.ml import MLClient, load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
-from azure.ai.ml.constants._common import ARM_ID_PREFIX
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, PROVIDER_RESOURCE_ID_WITH_VERSION, AzureMLResourceType
+from azure.ai.ml.entities._assets import Environment
+from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
 
 @pytest.fixture
-def env_name() -> str:
-    return f"env-test-{str(random.randint(1, 10000000))}"
+def env_name(variable_recorder) -> Callable[[str], str]:
+    def generate_random_environment_name(env_name: Callable[[str], str]) -> str:
+        random_env_name = f"env-test-{str(random.randint(1, 10000000))}"
+        return variable_recorder.get_or_record(env_name, random_env_name)
+    return generate_random_environment_name
+
+
+@pytest.mark.fixture(autouse=True)
+def bodiless_matching(test_proxy):
+    set_bodiless_matcher()
 
 
 @pytest.mark.e2etest
-class TestEnvironment:
-    def test_environment_create_conda(self, client: MLClient, env_name: str) -> None:
-        params_override = [{"name": env_name}]
+@pytest.mark.usefixtures("recorded_test", "mock_code_hash")
+class TestEnvironment(AzureRecordedTestCase):
+    def test_environment_create_conda(self, client: MLClient, env_name: Callable[[str], str]) -> None:
+        params_override = [{"name": env_name("name")}]
         env = load_environment(
             source="./tests/test_configs/environment/environment_conda.yml", params_override=params_override
         )
@@ -39,8 +51,8 @@ class TestEnvironment:
         assert env_dump["conda_file"]
         assert env_dump["description"]
 
-    def test_environment_create_conda_inline(self, client: MLClient, env_name: str) -> None:
-        params_override = [{"name": env_name}]
+    def test_environment_create_conda_inline(self, client: MLClient, env_name: Callable[[str], str]) -> None:
+        params_override = [{"name": env_name("name")}]
         env = load_environment(
             source="./tests/test_configs/environment/environment_conda_inline.yml", params_override=params_override
         )
@@ -58,8 +70,8 @@ class TestEnvironment:
         assert env_dump["conda_file"]
         assert env_dump["description"]
 
-    def test_environment_create_or_update_docker(self, client: MLClient, env_name: str) -> None:
-        params_override = [{"name": env_name}]
+    def test_environment_create_or_update_docker(self, client: MLClient, env_name: Callable[[str], str]) -> None:
+        params_override = [{"name": env_name("name")}]
         env = load_environment(
             source="./tests/test_configs/environment/environment_docker_image.yml",
             params_override=params_override,
@@ -79,8 +91,8 @@ class TestEnvironment:
         assert env_dump["id"] == ARM_ID_PREFIX + environment_id
         assert env_dump["image"] == environment.image
 
-    def test_environment_create_or_update_docker_context(self, client: MLClient, env_name: str) -> None:
-        params_override = [{"name": env_name}]
+    def test_environment_create_or_update_docker_context(self, client: MLClient, env_name: Callable[[str], str]) -> None:
+        params_override = [{"name": env_name("name")}]
         env = load_environment(
             source="./tests/test_configs/environment/environment_docker_context.yml",
             params_override=params_override,
@@ -115,8 +127,8 @@ class TestEnvironment:
         assert environment_with_context_uri.build.dockerfile_path == dockerfile_path
         assert environment_with_context_uri.build.path == context_uri
 
-    def test_environment_create_or_update_docker_context_and_image(self, client: MLClient, env_name: str) -> None:
-        params_override = [{"name": env_name}]
+    def test_environment_create_or_update_docker_context_and_image(self, client: MLClient, env_name: Callable[[str], str]) -> None:
+        params_override = [{"name": env_name("name")}]
         env = load_environment(
             source="./tests/test_configs/environment/environment_docker_context.yml",
             params_override=params_override,
@@ -128,10 +140,10 @@ class TestEnvironment:
 
         assert "Docker image or Dockerfile should be provided not both" in str(error.value)
 
-    def test_create_autoincrement(self, client: MLClient, env_name: str) -> None:
+    def test_create_autoincrement(self, client: MLClient, env_name: Callable[[str], str]) -> None:
         env = load_environment(source="./tests/test_configs/environment/environment_no_version.yml")
 
-        env.name = env_name
+        env.name = env_name("name")
         assert env.version is None
         assert env._auto_increment_version
 
@@ -160,11 +172,12 @@ class TestEnvironment:
         assert environment
         assert environment.id == environment_id
 
-    def test_environment_archive_restore_version(self, client: MLClient, env_name: str) -> None:
+    def test_environment_archive_restore_version(self, client: MLClient, env_name: Callable[[str], str]) -> None:
         versions = ["1", "2"]
         version_archived = versions[0]
+        name = env_name("name")
         for version in versions:
-            params_override = [{"name": env_name, "version": version}]
+            params_override = [{"name": name, "version": version}]
             env = load_environment(
                 source="./tests/test_configs/environment/environment_conda.yml", params_override=params_override
             )
@@ -172,19 +185,21 @@ class TestEnvironment:
 
         def get_environment_list():
             # Wait for list index to update before calling list command
-            sleep(30)
-            environment_list = client.environments.list(name=env_name, list_view_type=ListViewType.ACTIVE_ONLY)
+            if is_live():
+                sleep(30)
+            environment_list = client.environments.list(name=name, list_view_type=ListViewType.ACTIVE_ONLY)
             return [e.version for e in environment_list if e is not None]
 
         assert version_archived in get_environment_list()
-        client.environments.archive(name=env_name, version=version_archived)
+        client.environments.archive(name=name, version=version_archived)
         assert version_archived not in get_environment_list()
-        client.environments.restore(name=env_name, version=version_archived)
+        client.environments.restore(name=name, version=version_archived)
         assert version_archived in get_environment_list()
 
     @pytest.mark.skip(reason="Task 1791832: Inefficient, possibly causing testing pipeline to time out.")
-    def test_environment_archive_restore_container(self, client: MLClient, env_name: str) -> None:
-        params_override = [{"name": env_name}]
+    def test_environment_archive_restore_container(self, client: MLClient, env_name: Callable[[str], str]) -> None:
+        name = env_name("name")
+        params_override = [{"name": name}]
         env = load_environment(
             source="./tests/test_configs/environment/environment_conda.yml", params_override=params_override
         )
@@ -196,16 +211,16 @@ class TestEnvironment:
             environment_list = client.environments.list(list_view_type=ListViewType.ACTIVE_ONLY)
             return [e.name for e in environment_list if e is not None]
 
-        assert env_name in get_environment_list()
-        client.environments.archive(name=env_name)
-        assert env_name not in get_environment_list()
-        client.environments.restore(name=env_name)
-        assert env_name in get_environment_list()
+        assert name in get_environment_list()
+        client.environments.archive(name=name)
+        assert name not in get_environment_list()
+        client.environments.restore(name=name)
+        assert name in get_environment_list()
 
     def test_environment_get_latest_label(self, client: MLClient, randstr: Callable[[], str]) -> None:
         from time import sleep
 
-        name = randstr()
+        name = randstr("name")
         versions = ["foo", "bar", "baz", "foobar"]
 
         for version in versions:
@@ -220,8 +235,8 @@ class TestEnvironment:
             sleep(2)
             assert client.environments.get(name, label="latest").version == version
 
-    def test_registry_environment_create_conda_and_get(self, only_registry_client: MLClient, env_name: str) -> None:
-        params_override = [{"name": env_name}]
+    def test_registry_environment_create_conda_and_get(self, only_registry_client: MLClient, env_name: Callable[[str], str]) -> None:
+        params_override = [{"name": env_name("name")}]
         env = load_environment(
             source="./tests/test_configs/environment/environment_conda.yml", params_override=params_override
         )

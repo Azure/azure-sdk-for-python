@@ -9,11 +9,11 @@ from azure.identity import ClientSecretCredential
 @pytest.mark.e2etest
 class TestMlClient:
     def test_ml_client_validation_rg_sub_missing_throws(
-        self, e2e_ws_scope: OperationScope, get_auth: ClientSecretCredential
+        self, auth: ClientSecretCredential
     ) -> None:
         with pytest.raises(ValidationException) as exception:
             MLClient(
-                credential=get_auth,
+                credential=auth,
             )
         message = exception.value.args[0]
         assert (
@@ -26,11 +26,11 @@ class TestMlClient:
         assert environment_list
 
     def test_ml_client_with_no_rg_sub_for_ws_throws(
-        self, e2e_ws_scope: OperationScope, get_auth: ClientSecretCredential
+        self, e2e_ws_scope: OperationScope, auth: ClientSecretCredential
     ) -> None:
         with pytest.raises(ValidationException) as exception:
             MLClient(
-                credential=get_auth,
+                credential=auth,
                 workspace_name=e2e_ws_scope.workspace_name,
             )
         message = exception.value.args[0]
