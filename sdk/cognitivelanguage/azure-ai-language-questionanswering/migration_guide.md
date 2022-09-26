@@ -2,11 +2,11 @@
 
 This guide is intended to assist in the migration to [azure-ai-language-questionanswering](https://pypi.org/project/azure-ai-language-questionanswering/) from the old one [azure-cognitiveservices-knowledge-qnamaker](https://pypi.org/project/azure-cognitiveservices-knowledge-qnamaker/). It will focus on side-by-side comparisons for similar operations between the two packages.
 
-Familiarity with the `azure-cognitiveservices-knowledge-qnamaker` package is assumed. For those new to the Question Answering client library for Python, please refer to the [README for `azure-ai-language-questionanswering`][qna_readme] rather than this guide.
+Familiarity with the `azure-cognitiveservices-knowledge-qnamaker` package is assumed. For those new to the Question Answering client library for Python, please refer to the [README for azure-ai-language-questionanswering][qna_readme] rather than this guide.
 
 ## Table of contents
   - [Migration benefits](#migration-benefits)
-  - [General changes](#important-changes)
+  - [General changes](#general-changes)
     - [Package and namespaces](#package-and-namespaces)
     - [Runtime Client](#runtime-client)
       - [Authenticating runtime client](#authenticating-runtime-client)
@@ -32,12 +32,12 @@ To try and improve the development experience across Azure services, a set of un
 ## General changes
 
 The modern Question Answering client library provides the ability to share in some of the cross-service improvements made to the Azure development experience, such as
-- using the new [`azure-identity`][identity_readme] library to share a single authentication approach between clients
+- using the new [azure-identity][identity_readme] library to share a single authentication approach between clients
 - a unified logging and diagnostics pipeline offering a common view of the activities across each of the client libraries
 
 ### Package and namespaces
 
-Package names and the namespace root for the modern Azure Cognitive Services client libraries for Python have changed. Each will follow the pattern `azure.ai.[Services]` where the legacy clients followed the pattern `azure.cognitiveservices.[services]`. This provides a quick and accessible means to help understand, at a glance, whether you are using the modern or legacy clients.
+Package names and the namespace root for the modern Azure Cognitive Services client libraries for Python have changed. Each will follow the pattern `azure.ai.[services]` where the legacy clients followed the pattern `azure.cognitiveservices.[services]`. This provides a quick and accessible means to help understand, at a glance, whether you are using the modern or legacy clients.
 
 In the case of Question Answering, the modern client libraries have packages and namespaces that begin with `azure.ai.language.questionanswering` and were released beginning with version 1. The legacy client libraries have packages and namespaces that begin with `azure.cognitiveservices.knowledge.qnamaker` and a version of 0.3.0 or below.
 
@@ -57,7 +57,7 @@ client = QnAMakerClient(
 )
 ```
 
-Now in `azure-ai-language-questionanswering` you can create a `QuestionAnsweringClient` using an [`AzureKeyCredential`][[azure_key_credential]] or a token credential from the [azure-identity](https://pypi.org/project/azure-identity/) library:
+Now in `azure-ai-language-questionanswering` you can create a `QuestionAnsweringClient` using an [AzureKeyCredential][azure_key_credential] or a token credential from the [azure-identity](https://pypi.org/project/azure-identity/) library:
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -172,7 +172,7 @@ client = QnAMakerClient(
 )
 ```
 
-Now in `azure-ai-language-questionanswering` you can create a `QuestionAnsweringAuthoringClient` using an [`AzureKeyCredential`][[azure_key_credential]] or a token credential from the [azure-identity](https://pypi.org/project/azure-identity/) library:
+Now in `azure-ai-language-questionanswering` you can create a `QuestionAnsweringAuthoringClient` using an [AzureKeyCredential][azure_key_credential] or a token credential from the [azure-identity](https://pypi.org/project/azure-identity/) library:
 
 ```python
 from azure.core.credentials import AzureKeyCredential
