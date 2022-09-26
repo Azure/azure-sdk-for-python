@@ -13,11 +13,13 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.ai.formrecognizer._generated.v2022_08_31.models import DocumentModelBuildOperationDetails, DocumentModelDetails as ModelDetails
 from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModelDetails, DocumentModelAdministrationLROPoller
 from testcase import FormRecognizerTest
+from conftest import skip_flaky_test
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
+@skip_flaky_test
 class TestDMACTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
