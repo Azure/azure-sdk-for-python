@@ -15,8 +15,8 @@ import datetime
 from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus import ServiceBusMessage
 
-CONNECTION_STR = os.environ["SERVICE_BUS_CONNECTION_STR"]
-TOPIC_NAME = os.environ["SERVICE_BUS_TOPIC_NAME"]
+CONNECTION_STR = os.environ["SERVICEBUSCONNECTION_STR"]
+TOPIC_NAME = os.environ["SERVICEBUS_TOPIC_NAME"]
 
 
 async def schedule_single_message(sender):
