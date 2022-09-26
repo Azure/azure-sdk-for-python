@@ -1,3 +1,4 @@
+import pydash
 import pytest
 from marshmallow import ValidationError
 
@@ -10,7 +11,6 @@ from .._util import _SCHEDULE_TIMEOUT_SECOND
 @pytest.mark.timeout(_SCHEDULE_TIMEOUT_SECOND)
 @pytest.mark.unittest
 class TestScheduleSchema:
-    @pytest.mark.skip(reason="broken test")
     def test_load_cron_schedule_with_file_reference(self):
         test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml"
         schedule = load_schedule(test_path)
@@ -37,7 +37,7 @@ class TestScheduleSchema:
                 "outputs": {},
                 "jobs": {
                     "a": {
-                        "command": "echo hello ${{inputs.hello_string}}",
+                        "properties": {},
                         "environment_variables": {},
                         "inputs": {"hello_string": {"path": "${{parent.inputs.hello_string_top_level_input}}"}},
                         "outputs": {},
@@ -55,7 +55,7 @@ class TestScheduleSchema:
                         "type": "command",
                     },
                     "b": {
-                        "command": 'echo "world" >> ${{outputs.world_output}}/world.txt',
+                        "properties": {},
                         "environment_variables": {},
                         "inputs": {},
                         "outputs": {},
@@ -73,7 +73,7 @@ class TestScheduleSchema:
                         "type": "command",
                     },
                     "c": {
-                        "command": "echo ${{inputs.world_input}}/world.txt",
+                        "properties": {},
                         "environment_variables": {},
                         "inputs": {"world_input": {"path": "${{parent.jobs.b.outputs.world_output}}"}},
                         "outputs": {},
