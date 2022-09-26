@@ -41,7 +41,7 @@ from azure.identity import EnvironmentCredential
 
 
 FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
-QUEUE_NAME = os.environ["SERVICEBUSQUEUE_NAME"]
+QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 
 credential = EnvironmentCredential()
 
