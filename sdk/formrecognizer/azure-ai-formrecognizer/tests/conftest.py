@@ -62,6 +62,13 @@ def add_sanitizers(test_proxy):
     )
 
 @pytest.fixture(autouse=True)
+def skip_tests(request):
+    try:
+        yield
+    except HttpResponseError as error:
+        if "Invalid request".casefold() in error.message.casefold():
+            pytest.mark.skip("flaky service response")
+
 def skip_flaky_tests(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
