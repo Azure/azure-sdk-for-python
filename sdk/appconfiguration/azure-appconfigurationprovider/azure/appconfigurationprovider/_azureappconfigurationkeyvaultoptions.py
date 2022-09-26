@@ -7,6 +7,7 @@
 class AzureAppConfigurationKeyVaultOptions:
     """
     Options for connecting to Key Vault.
+    
     :param credential: A credential for authenticating with the key vault. This is optional if secret_clients is
      provided.
     :type credential: ~azure.core.credentials.TokenCredential

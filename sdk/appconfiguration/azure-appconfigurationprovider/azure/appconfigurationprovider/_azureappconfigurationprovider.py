@@ -38,6 +38,7 @@ class AzureAppConfigurationProvider:
     def load(cls, connection_string=None, endpoint=None, credential=None, **kwargs):
         """
         Loads configuration settings from Azure App Configuration into a Python application.
+
         :param connection_string: Connection string (one of connection_string or endpoint and credential must be set)
         :type connection_string: str
         :param endpoint: Endpoint (one of connection_string or endpoint and credential must be set)
@@ -185,6 +186,7 @@ class AzureAppConfigurationProvider:
     def copy(self):
         """
         Returns a copy of the configuration settings
+
         type: () -> dict
         """
         return self._dict.copy()
@@ -192,6 +194,7 @@ class AzureAppConfigurationProvider:
     def has_key(self, k):
         """
         Returns True if the configuration settings has been loaded from Azure App Configuration.
+
         type: (str) -> bool
         """
         return k in self._dict
@@ -199,6 +202,7 @@ class AzureAppConfigurationProvider:
     def keys(self):
         """
         Returns a list of keys loaded from Azure App Configuration.
+
         type: () -> list
         """
         return self._dict.keys()
@@ -207,6 +211,7 @@ class AzureAppConfigurationProvider:
         """
         Returns a list of values loaded from Azure App Configuration. Any values that are Key Vault references will be
         resolved.
+        
         type: () -> list
         """
         return self._dict.values()
