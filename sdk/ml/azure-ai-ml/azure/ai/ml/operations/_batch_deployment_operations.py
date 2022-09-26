@@ -77,7 +77,6 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         
         if not skip_script_validation and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX) and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code):
             validate_scoring_script(deployment)
-        no_wait = kwargs.get("no_wait", False)
         module_logger.debug("Checking endpoint %s exists", deployment.endpoint_name)
         self._batch_endpoint_operations.get(
             endpoint_name=deployment.endpoint_name,
