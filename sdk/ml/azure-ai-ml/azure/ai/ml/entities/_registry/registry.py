@@ -21,7 +21,7 @@ from azure.ai.ml.entities._registry.identity import ManagedServiceIdentity
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 
-from .registry_support_classes import RegistryRegionArmDetails
+from .registry_support_classes import RegistryRegionArmDetails, SystemCreatedStorageAccount
 
 YAML_REGION_DETAILS = "replication_locations"
 YAML_SINGLE_ACR_DETAIL = "container_registry"
@@ -90,7 +90,21 @@ class Registry(Resource):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return RegistrySchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        schema = RegistrySchema(context={BASE_PATH_CONTEXT_KEY: "./"})
+        # Change name of region_details to user-shown anme
+        self.replication_locations = self.region_details
+        # Grab the first acr account of the first region and set that
+        # as the system-wide container registry.
+        if self.replication_locations and len(self.replication_locations) > 0:
+            if self.replication_locations[0].acr_config and len(self.replication_locations[0].acr_config) > 0:
+                self.container_registry = self.replication_locations[0].acr_config[0]
+        # Change single-list managed storage accounts to not be lists
+        for region_detail in self.replication_locations:
+            if region_detail.storage_config and isinstance(
+                region_detail.storage_config[0], SystemCreatedStorageAccount
+            ):
+                region_detail.storage_config = region_detail.storage_config[0]
+        return schema.dump(self)
 
     @classmethod
     def _load(
@@ -130,7 +144,8 @@ class Registry(Resource):
             name=rest_obj.name,
             description=real_registry.description,
             identity=identity,
-            tags=real_registry.tags,
+            id=rest_obj.id,
+            tags=rest_obj.tags,
             location=rest_obj.location,
             public_network_access=real_registry.public_network_access,
             discovery_url=real_registry.discovery_url,
@@ -139,6 +154,7 @@ class Registry(Resource):
             mlflow_registry_uri=real_registry.ml_flow_registry_uri,
             region_details=region_details,
         )
+        return result
 
     # There are differences between what our registry validation schema
     # accepts, and how we actually represent things internally.
@@ -156,9 +172,13 @@ class Registry(Resource):
             acr_input = input.pop(YAML_SINGLE_ACR_DETAIL)
             global_acr_exists = True
         for region_detail in input[CLASS_REGION_DETAILS]:
+            # Apply container_registry as acr_config of each region detail
             if global_acr_exists:
                 if not hasattr(region_detail, "acr_details") or len(region_detail.acr_details) == 0:
                     region_detail.acr_config = [acr_input]
+            # Return single, non-list managed storage into a 1-element list.
+            if region_detail.storage_config and isinstance(region_detail.storage_config, SystemCreatedStorageAccount):
+                region_detail.storage_config = [region_detail.storage_config]
 
     def _to_rest_object(self) -> RestRegistry:
         """Build current parameterized schedule instance to a registry object before submission.
