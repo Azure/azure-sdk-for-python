@@ -32,12 +32,7 @@ async def get_map_static_image_async():
 
     print("Get map tile result:")
     print(result)
-    # Save result to file as png
-    file = open('result.png', 'wb')
-    file.write(next(result))
-    file.close()
     # [END get_map_static_image_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(get_map_static_image_async())
+   asyncio.run(get_map_static_image_async())

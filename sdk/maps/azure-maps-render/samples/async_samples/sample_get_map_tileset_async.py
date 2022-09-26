@@ -36,5 +36,4 @@ async def get_map_tileset_async():
     # [END get_map_tile_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(get_map_tileset_async())
+    asyncio.run(get_map_tileset_async())

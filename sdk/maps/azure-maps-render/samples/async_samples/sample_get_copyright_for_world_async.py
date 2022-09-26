@@ -40,5 +40,4 @@ async def get_copyright_for_world_async():
     # [END get_copyright_for_world_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(get_copyright_for_world_async())
+    asyncio.run(get_copyright_for_world_async())

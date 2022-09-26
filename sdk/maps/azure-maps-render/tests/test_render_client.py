@@ -3,17 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import logging
 import os
-from azure.core.credentials import AccessToken, AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential
 from azure.maps.render import MapsRenderClient
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from render_preparer import MapsRenderPreparer
 from azure.maps.render.models import TilesetID, BoundingBox
-
-
-logger = logging.getLogger(__name__)
-
 
 class TestMapsRenderClient(AzureRecordedTestCase):
     def setup_method(self, method):
@@ -36,7 +31,6 @@ class TestMapsRenderClient(AzureRecordedTestCase):
         import types
         assert isinstance(result, types.GeneratorType)
 
-    # cSpell:ignore CEST
     @MapsRenderPreparer()
     @recorded_by_proxy
     def test_get_map_tileset(self):

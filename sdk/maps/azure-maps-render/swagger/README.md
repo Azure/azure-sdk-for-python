@@ -26,8 +26,6 @@ output-folder: ../azure/maps/render/_generated
 namespace: azure.maps.render
 package-name: azure-maps-render
 no-namespace-folders: true
-use-extension:
-  "@autorest/modelerfour": "4.22.3"
 license-header: MICROSOFT_MIT_NO_VERSION
 credential-scopes: https://atlas.microsoft.com/.default
 clear-output-folder: true

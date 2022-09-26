@@ -45,5 +45,4 @@ async def get_copyright_from_bounding_box_async():
     # [END get_copyright_from_bounding_box]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(get_copyright_from_bounding_box_async())
+    asyncio.run(get_copyright_from_bounding_box_async())
