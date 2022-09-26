@@ -49,7 +49,7 @@ def sample_export_import_project():
         # export
         export_poller = client.begin_export(
             project_name=project_name,
-            format="json"
+            file_format="json"
         )
         export_result = export_poller.result()
         export_url = export_result["resultUrl"]

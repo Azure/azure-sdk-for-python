@@ -31,7 +31,7 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
         ...
 
     @overload
-    async def get_answers(
+    async def get_answers(  # pylint: disable=arguments-differ
         self,
         *,
         project_name: str,
@@ -96,7 +96,7 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
         ...
 
     @overload
-    async def get_answers_from_text(
+    async def get_answers_from_text(  # pylint: disable=arguments-differ
         self,
         *,
         question: str,

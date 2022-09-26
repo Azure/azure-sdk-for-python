@@ -617,7 +617,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     async def _export_initial(
-        self, project_name: str, *, format: str = "json", asset_kind: Optional[str] = None, **kwargs: Any
+        self, project_name: str, *, file_format: str = "json", asset_kind: Optional[str] = None, **kwargs: Any
     ) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError,
@@ -634,7 +634,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
 
         request = build_export_request(
             project_name=project_name,
-            format=format,
+            file_format=file_format,
             asset_kind=asset_kind,
             api_version=self._config.api_version,
             headers=_headers,
@@ -675,7 +675,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
 
     @distributed_trace_async
     async def begin_export(
-        self, project_name: str, *, format: str = "json", asset_kind: Optional[str] = None, **kwargs: Any
+        self, project_name: str, *, file_format: str = "json", asset_kind: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
         """Export project metadata and assets.
 
@@ -683,9 +683,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :keyword format: Knowledge base Import or Export format. Known values are: "json", "tsv", and
-         "excel". Default value is "json".
-        :paramtype format: str
+        :keyword file_format: Knowledge base Import or Export format. Known values are: "json", "tsv",
+         and "excel". Default value is "json".
+        :paramtype file_format: str
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
         :paramtype asset_kind: str
@@ -757,7 +757,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         if cont_token is None:
             raw_result = await self._export_initial(  # type: ignore
                 project_name=project_name,
-                format=format,
+                file_format=file_format,
                 asset_kind=asset_kind,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -803,7 +803,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         project_name: str,
         options: Optional[Union[JSON, IO]] = None,
         *,
-        format: str = "json",
+        file_format: str = "json",
         asset_kind: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[JSON]:
@@ -834,7 +834,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
 
         request = build_import_assets_request(
             project_name=project_name,
-            format=format,
+            file_format=file_format,
             asset_kind=asset_kind,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -882,7 +882,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         project_name: str,
         options: Optional[JSON] = None,
         *,
-        format: str = "json",
+        file_format: str = "json",
         asset_kind: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -895,9 +895,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         :type project_name: str
         :param options: Project assets the needs to be imported. Default value is None.
         :type options: JSON
-        :keyword format: Knowledge base Import or Export format. Known values are: "json", "tsv", and
-         "excel". Default value is "json".
-        :paramtype format: str
+        :keyword file_format: Knowledge base Import or Export format. Known values are: "json", "tsv",
+         and "excel". Default value is "json".
+        :paramtype file_format: str
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
         :paramtype asset_kind: str
@@ -1099,7 +1099,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         project_name: str,
         options: Optional[IO] = None,
         *,
-        format: str = "json",
+        file_format: str = "json",
         asset_kind: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1112,9 +1112,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         :type project_name: str
         :param options: Project assets the needs to be imported. Default value is None.
         :type options: IO
-        :keyword format: Knowledge base Import or Export format. Known values are: "json", "tsv", and
-         "excel". Default value is "json".
-        :paramtype format: str
+        :keyword file_format: Knowledge base Import or Export format. Known values are: "json", "tsv",
+         and "excel". Default value is "json".
+        :paramtype file_format: str
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
         :paramtype asset_kind: str
@@ -1184,7 +1184,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         project_name: str,
         options: Optional[Union[JSON, IO]] = None,
         *,
-        format: str = "json",
+        file_format: str = "json",
         asset_kind: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
@@ -1197,9 +1197,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         :param options: Project assets the needs to be imported. Is either a model type or a IO type.
          Default value is None.
         :type options: JSON or IO
-        :keyword format: Knowledge base Import or Export format. Known values are: "json", "tsv", and
-         "excel". Default value is "json".
-        :paramtype format: str
+        :keyword file_format: Knowledge base Import or Export format. Known values are: "json", "tsv",
+         and "excel". Default value is "json".
+        :paramtype file_format: str
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
         :paramtype asset_kind: str
@@ -1274,7 +1274,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
             raw_result = await self._import_assets_initial(  # type: ignore
                 project_name=project_name,
                 options=options,
-                format=format,
+                file_format=file_format,
                 asset_kind=asset_kind,
                 content_type=content_type,
                 cls=lambda x, y, z: x,

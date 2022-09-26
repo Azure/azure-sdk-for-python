@@ -25,7 +25,7 @@ class TestExportAndImportAsync(QuestionAnsweringTestCase):
         # export project
         export_poller = await client.begin_export(
             project_name=project_name,
-            format="json",
+            file_format="json",
             **self.kwargs_for_polling
         )
         result = await export_poller.result()
