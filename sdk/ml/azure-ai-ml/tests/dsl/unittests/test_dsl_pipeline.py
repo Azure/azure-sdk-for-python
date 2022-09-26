@@ -3952,6 +3952,21 @@ class TestInitFinalizeJob:
             set_pipeline_settings(on_init="init_job", on_finalize="finalize_job")
         assert str(e.value) == "Please call `set_pipeline_settings` inside a `pipeline` decorated function."
 
+        # invalid case: set on_init for pipeline component
+        @dsl.pipeline
+        def subgraph_func():
+            node = self.component_func()
+            set_pipeline_settings(on_init=node)  # set on_init for subgraph (pipeline component)
+
+        @dsl.pipeline
+        def subgraph_with_init_func():
+            subgraph_func()
+            self.component_func()
+
+        with pytest.raises(UserErrorException) as e:
+            subgraph_with_init_func()
+        assert str(e.value) == "On_init/on_finalize is not supported for subgraph."
+
     def test_init_finalize_job_with_subgraph(self, caplog) -> None:
         from azure.ai.ml._internal.dsl import set_pipeline_settings
 
