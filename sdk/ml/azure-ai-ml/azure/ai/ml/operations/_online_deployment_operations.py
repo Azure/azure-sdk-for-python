@@ -15,7 +15,12 @@ from azure.ai.ml._local_endpoints import LocalEndpointMode
 from azure.ai.ml._local_endpoints.errors import InvalidVSCodeRequestError
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DeploymentLogsRequest
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
@@ -48,13 +53,14 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client_02_2022_preview: ServiceClient022022Preview,
         all_operations: OperationsContainer,
         local_deployment_helper: _LocalDeploymentHelper,
         credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
-        super(OnlineDeploymentOperations, self).__init__(operation_scope)
+        super(OnlineDeploymentOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._local_deployment_helper = local_deployment_helper
         self._online_deployment = service_client_02_2022_preview.online_deployments
@@ -113,6 +119,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             orchestrators = OperationOrchestrator(
                 operation_container=self._all_operations,
                 operation_scope=self._operation_scope,
+                operation_config=self._operation_config,
             )
 
             upload_dependencies(deployment, orchestrators)

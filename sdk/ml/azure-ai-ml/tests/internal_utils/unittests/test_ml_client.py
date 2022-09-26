@@ -81,6 +81,26 @@ class TestMachineLearningClient:
         assert "fake-sub-id" == client.subscription_id
         assert "fake-rg-name" == client.resource_group_name
 
+    def test_show_progress(self) -> None:
+        client = MLClient(
+            credential=DefaultAzureCredential(), subscription_id="fake-sub-id", resource_group_name="fake-rg-name"
+        )
+
+        assert client.jobs._show_progress  # By default show_progress is True
+        assert client.data._show_progress
+        assert client.models._show_progress
+
+        client = MLClient(
+            credential=DefaultAzureCredential(),
+            subscription_id="fake-sub-id",
+            resource_group_name="fake-rg-name",
+            show_progress=False,
+        )
+
+        assert not client.jobs._show_progress
+        assert not client.data._show_progress
+        assert not client.models._show_progress
+
     @patch("azure.ai.ml._ml_client._get_base_url_from_metadata")
     def test_mfe_url_overwrite(self, mock_get_mfe_url_override, mock_credential):
         mock_url = "http://localhost:65535/mferp/managementfrontend"

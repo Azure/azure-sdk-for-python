@@ -4,7 +4,7 @@
 
 from marshmallow import fields, post_dump, post_load, validate
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import RecurrenceFrequency, TriggerType, WeekDay
+from azure.ai.ml._restclient.v2022_10_01_preview.models import RecurrenceFrequency, TriggerType, WeekDay
 from azure.ai.ml._schema.core.fields import (
     DateTimeStr,
     DumpableIntegerField,
@@ -51,6 +51,12 @@ class RecurrencePatternSchema(metaclass=PatchedSchemaMeta):
         [
             StringTransformedEnum(allowed_values=[o.value for o in WeekDay]),
             fields.List(StringTransformedEnum(allowed_values=[o.value for o in WeekDay])),
+        ]
+    )
+    month_days = UnionField(
+        [
+            fields.Int(),
+            fields.List(fields.Int()),
         ]
     )
 

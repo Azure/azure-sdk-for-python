@@ -464,7 +464,7 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
         tsc = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         invalid_table_name = u'啊齄丂狛狜'
 
-        with pytest.raises(HttpResponseError) as excinfo:
+        with pytest.raises(ValueError) as excinfo:
             tsc.create_table(invalid_table_name)
             assert "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long." in str(
                 excinfo)
@@ -476,7 +476,7 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
         tsc = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         invalid_table_name = "my_table"
 
-        with pytest.raises(HttpResponseError) as excinfo:
+        with pytest.raises(ValueError) as excinfo:
             tsc.create_table(invalid_table_name)
             assert "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long." in str(
                 excinfo)

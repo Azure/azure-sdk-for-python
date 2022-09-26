@@ -20,6 +20,7 @@ class CloudServiceSlotType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PRODUCTION = "Production"
     STAGING = "Staging"
 
+
 class CloudServiceUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Update mode for the cloud service. Role instances are allocated to update domains when the
     service is deployed. Updates can be initiated manually in each update domain or initiated
@@ -35,20 +36,22 @@ class CloudServiceUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MANUAL = "Manual"
     SIMULTANEOUS = "Simultaneous"
 
+
 class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of extendedLocation.
-    """
+    """The type of extendedLocation."""
 
     EDGE_ZONE = "EdgeZone"
 
+
 class InstanceViewTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """InstanceViewTypes."""
 
     INSTANCE_VIEW = "instanceView"
     USER_DATA = "userData"
 
+
 class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The level code.
-    """
+    """The level code."""
 
     INFO = "Info"
     WARNING = "Warning"

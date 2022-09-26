@@ -93,6 +93,7 @@ class TestParallelComponentEntity:
             "name": None,
             "outputs": {},
             "tags": {},
+            "properties": {},
             "input_data": "${{inputs.component_in_path}}",
             "type": "parallel",
             "error_threshold": None,
