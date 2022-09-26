@@ -287,7 +287,7 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         """
         _center=kwargs.pop("center", None)
         if _center is not None:
-            _center = f"{_center[0]}, {_center[1]}"
+            _center = [_center[0], _center[1]]
 
         _bbox = kwargs.pop("bounding_box_private", None)
         if _bbox is not None:

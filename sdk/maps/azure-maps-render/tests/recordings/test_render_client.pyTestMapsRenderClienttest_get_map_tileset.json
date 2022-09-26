@@ -1,0 +1,49 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://atlas.microsoft.com/map/tileset?api-version=2022-08-01\u0026tilesetId=microsoft.base",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "subscription-key": "AzureMapsSubscriptionKey",
+        "User-Agent": "azsdk-python-maps-render/unknown Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "365",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 26 Sep 2022 15:11:11 GMT",
+        "Expires": "Mon, 03 Oct 2022 15:11:11 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-azuremaps-region": "West US 2",
+        "X-MSEdge-Ref": "Ref A: A37E85465DA3456D9B91F11297772F6A Ref B: TPE30EDGE0910 Ref C: 2022-09-26T15:11:11Z"
+      },
+      "ResponseBody": {
+        "tilejson": "2.2.0",
+        "name": "microsoft.base",
+        "version": "1.0.0",
+        "attribution": "\u003Ca data-azure-maps-attribution-tileset=\u0022microsoft.base\u0022\u003E\u0026copy;2022 TomTom\u003C/a\u003E",
+        "scheme": "xyz",
+        "tiles": [
+          "https://atlas.microsoft.com/map/tile?api-version=2.1\u0026tilesetId=microsoft.base\u0026zoom={z}\u0026x={x}\u0026y={y}"
+        ],
+        "grids": [],
+        "data": [],
+        "minzoom": 0,
+        "maxzoom": 22,
+        "bounds": [
+          -180.0,
+          -90.0,
+          180.0,
+          90.0
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}
