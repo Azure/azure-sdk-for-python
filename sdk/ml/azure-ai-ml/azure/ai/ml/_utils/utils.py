@@ -776,3 +776,31 @@ def _is_user_error_from_exception_type(e: Union[Exception, None]):
     # For OSError/IOError with error no 28: "No space left on device" should be sdk user error
     if isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28):
         return True
+
+
+def _validate_missing_sub_or_rg_and_raise(subscription_id: str, resource_group: str):
+    """Determine if subscription or resource group is missing and raise exception
+    as appropriate."""
+    msg = "Both subscription id and resource group are required for this operation, missing {}"
+    sub_msg = None
+    if not subscription_id and not resource_group:
+        sub_msg = "subscription id and resource group"
+    elif not subscription_id and resource_group:
+        sub_msg = "subscription id"
+    elif subscription_id and not resource_group:
+        sub_msg = "resource group"
+
+    if sub_msg:
+        raise ValidationException(
+            message=msg.format(sub_msg),
+            no_personal_data_message=msg.format(sub_msg),
+            target=ErrorTarget.GENERAL,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+
+
+def get_all_enum_values_iter(enum_type):
+    """Get all values of an enum type."""
+    for key in dir(enum_type):
+        if not key.startswith("_"):
+            yield getattr(enum_type, key)
