@@ -10,7 +10,6 @@ from typing import IO, AnyStr, Dict, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_05_01.models import (
     ComponentContainerData,
     ComponentContainerDetails,
@@ -33,6 +32,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, 
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import find_type_in_override
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
@@ -119,6 +119,7 @@ class Component(
             creation_context=creation_context,
             is_anonymous=kwargs.pop("is_anonymous", False),
             base_path=kwargs.pop("base_path", None),
+            source_path=kwargs.pop("source_path", None),
         )
         # store kwargs to self._other_parameter instead of pop to super class to allow component have extra
         # fields not defined in current schema.
@@ -215,9 +216,7 @@ class Component(
         self._version = value
         self._auto_increment_version = self.name and not self._version
 
-    def dump(
-        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
-    ) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the component content into a file in yaml format.
 
         :param dest: The destination to receive this component's content.
@@ -227,15 +226,10 @@ class Component(
             If dest is an open file, the file will be written to directly,
             and an exception will be raised if the file is not writable.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :param path: Deprecated path to a local file as the target, a new file
-            will be created, raises exception if the file exists.
-            It's recommended what you change 'path=' inputs to 'dest='.
-            The first unnamed input of this function will also be treated like a
-            path input.
-        :type path: Union[str, Pathlike]
         """
+        path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, args=args, **kwargs)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     @staticmethod
     def _resolve_component_source_from_id(id):

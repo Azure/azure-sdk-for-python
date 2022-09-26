@@ -41,8 +41,8 @@ class BatchEndpoint(Endpoint):
     :type default_deployment_name: str, optional
     :param scoring_uri: URI to use to perform a prediction, readonly.
     :type scoring_uri: str, optional
-    :param swagger_uri: URI to check the swagger definition of the endpoint.
-    :type swagger_uri: str, optional
+    :param openapi_uri: URI to check the open API definition of the endpoint.
+    :type openapi_uri: str, optional
     """
 
     def __init__(
@@ -57,7 +57,7 @@ class BatchEndpoint(Endpoint):
         defaults: Dict[str, str] = None,
         default_deployment_name: str = None,
         scoring_uri: str = None,
-        swagger_uri: str = None,
+        openapi_uri: str = None,
         **kwargs,
     ) -> None:
         super(BatchEndpoint, self).__init__(
@@ -68,7 +68,7 @@ class BatchEndpoint(Endpoint):
             description=description,
             location=location,
             scoring_uri=scoring_uri,
-            swagger_uri=swagger_uri,
+            openapi_uri=openapi_uri,
             **kwargs,
         )
 
@@ -101,7 +101,7 @@ class BatchEndpoint(Endpoint):
             defaults=endpoint.properties.defaults,
             provisioning_state=endpoint.properties.provisioning_state,
             scoring_uri=endpoint.properties.scoring_uri,
-            swagger_uri=endpoint.properties.swagger_uri,
+            openapi_uri=endpoint.properties.swagger_uri,
         )
 
     def dump(

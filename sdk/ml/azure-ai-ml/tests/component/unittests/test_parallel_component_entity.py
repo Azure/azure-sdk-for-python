@@ -57,7 +57,7 @@ class TestParallelComponentEntity:
             max_concurrency_per_instance=12,
             error_threshold=10,
             mini_batch_error_threshold=5,
-            logging_level="DEBUG",
+            logging_level="INFO",
             task=task,
             base_path="./tests/test_configs/components",
         )

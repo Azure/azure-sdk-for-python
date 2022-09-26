@@ -6,7 +6,6 @@
 import os
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
-from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_06_01_preview.models import AmlToken, ManagedIdentity, UserIdentity
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._component import ComponentSource
@@ -16,6 +15,7 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.entities._job.spark_job_entry import SparkJobEntry
 from azure.ai.ml.entities._job.spark_resource_configuration import SparkResourceConfiguration
+from azure.ai.ml.exceptions import ErrorTarget, ValidationException
 
 from .spark import Spark
 
@@ -176,6 +176,7 @@ def spark(
     job_inputs = {k: v for k, v in job_inputs.items() if v is not None}
     component_outputs, job_outputs = _parse_inputs_outputs(outputs, parse_func=_parse_output)
     component = kwargs.pop("component", None)
+
     if component is None:
         component = SparkComponent(
             name=name,

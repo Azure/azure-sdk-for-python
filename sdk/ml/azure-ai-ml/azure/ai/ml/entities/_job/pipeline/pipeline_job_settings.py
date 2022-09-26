@@ -1,7 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-class PipelineJobSettings(object):
+
+from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
+
+
+class PipelineJobSettings(_AttrDict):
     """Settings of PipelineJob, include default_datastore, default_compute,
     continue_on_step_failure and force_rerun.
 
@@ -23,6 +27,8 @@ class PipelineJobSettings(object):
         force_rerun: bool = None,
         **kwargs
     ):
+        self._init = True
+        super().__init__()
         self.default_compute = default_compute
         self.default_datastore = default_datastore
         self.continue_on_step_failure = continue_on_step_failure
@@ -31,13 +37,29 @@ class PipelineJobSettings(object):
         self.on_finalize = kwargs.get("on_finalize", None)
         for k, v in kwargs.items():
             setattr(self, k, v)
+        self._init = False
+
+    def _get_valid_keys(self):
+        for k, v in self.__dict__.items():
+            if v is None:
+                continue
+            # skip private attributes inherited from _AttrDict
+            if k in ["_logger", "_allowed_keys", "_init", "_key_restriction"]:
+                continue
+            yield k
 
     def _to_dict(self):
-        return {
-            "default_compute": self.default_compute,
-            "default_datastore": self.default_datastore,
-            "continue_on_step_failure": self.continue_on_step_failure,
-            "force_rerun": self.force_rerun,
-            "on_init": self.on_init,
-            "on_finalize": self.on_finalize,
-        }
+        result = {}
+        for k in self._get_valid_keys():
+            result[k] = self.__dict__[k]
+        result.update(self._get_attrs())
+        return result
+
+    def _initializing(self):
+        return self._init
+
+    def __bool__(self):
+        for _ in self._get_valid_keys():
+            return True
+        # _attr_dict will return False if no extra attributes are set
+        return self.__len__() > 0

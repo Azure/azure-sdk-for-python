@@ -6,7 +6,7 @@ import pytest
 from pytest_mock import MockFixture
 
 from azure.ai.ml import load_batch_deployment
-from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 from azure.ai.ml.operations import BatchDeploymentOperations, WorkspaceOperations
@@ -57,6 +57,7 @@ def mock_local_endpoint_helper() -> Mock:
 @pytest.fixture
 def mock_batch_deployment_operations(
     mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
     mock_aml_services_2022_05_01: Mock,
     mock_aml_services_2020_09_01_dataplanepreview: Mock,
     mock_machinelearning_client: Mock,
@@ -66,6 +67,7 @@ def mock_batch_deployment_operations(
 
     yield BatchDeploymentOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         service_client_05_2022=mock_aml_services_2022_05_01,
         all_operations=mock_machinelearning_client._operation_container,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
@@ -78,7 +80,6 @@ class TestBatchDeploymentOperations:
     def test_batch_deployment_create(
         self,
         mock_batch_deployment_operations: BatchDeploymentOperations,
-        rand_compute_name: Callable[[], str],
         create_yaml_happy_path: str,
         mocker: MockFixture,
     ) -> None:
@@ -90,7 +91,7 @@ class TestBatchDeploymentOperations:
             BatchDeploymentOperations, "begin_create_or_update", autospec=True
         )
         batch_deployment = load_batch_deployment(create_yaml_happy_path)
-        batch_deployment.name = rand_compute_name()
+        batch_deployment.name = "random_compute_name"
         mock_batch_deployment_operations.begin_create_or_update(deployment=batch_deployment)
         mock_create_or_update_batch_deployment.assert_called_once()
 
@@ -118,10 +119,9 @@ class TestBatchDeploymentOperations:
         mock_batch_deployment_operations: BatchDeploymentOperations,
         mock_aml_services_2022_05_01: Mock,
         mocker: MockFixture,
-        randstr: Callable[[], str],
         mock_delete_poller: LROPoller,
     ) -> None:
-        random_name = randstr()
+        random_name = "random_name"
         mock_aml_services_2022_05_01.batch_deployments.begin_delete.return_value = mock_delete_poller
         mock_batch_deployment_operations.begin_delete(endpoint_name="batch-ept", name=random_name)
         mock_batch_deployment_operations._batch_deployment.begin_delete.assert_called_once()

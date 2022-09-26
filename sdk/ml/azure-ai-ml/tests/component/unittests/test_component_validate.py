@@ -6,9 +6,9 @@ import pytest
 from marshmallow import ValidationError
 
 from azure.ai.ml import MLClient, load_component
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml.entities import CommandComponent, Environment
 from azure.ai.ml.entities._assets import Code
+from azure.ai.ml.exceptions import ValidationException
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -34,14 +34,14 @@ class TestComponentValidate:
         for invalid_name in invalid_component_names:
             params_override = [{"name": invalid_name}]
             with pytest.raises(ValidationError) as e:
-                load_component(path=test_path, params_override=params_override)
+                load_component(test_path, params_override=params_override)
             err_msg = "Component name should only contain lower letter, number, underscore"
             assert err_msg in str(e.value)
 
         valid_component_names = ["n", "name", "n_a_m_e", "name_1"]
         for valid_name in valid_component_names:
             params_override = [{"name": valid_name}]
-            load_component(path=test_path, params_override=params_override)
+            load_component(test_path, params_override=params_override)
 
     def test_component_input_name_validate(self):
         yaml_files = [
@@ -53,7 +53,7 @@ class TestComponentValidate:
         ]
         for yaml_file in yaml_files:
             with pytest.raises(ValidationException, match="is not a valid parameter name"):
-                load_component(path=yaml_file)
+                load_component(yaml_file)
 
     def test_component_output_name_validate(self):
         yaml_files = [
@@ -65,7 +65,7 @@ class TestComponentValidate:
         ]
         for yaml_file in yaml_files:
             with pytest.raises(ValidationException, match="is not a valid parameter name"):
-                load_component(path=yaml_file)
+                load_component(yaml_file)
 
     @pytest.mark.parametrize(
         "expected_location,asset_object",
@@ -86,7 +86,7 @@ class TestComponentValidate:
         asset_object: Union[Code, Environment],
     ) -> None:
         component_path = "./tests/test_configs/components/helloworld_component.yml"
-        component = load_component(path=component_path)
+        component = load_component(component_path)
         assert component._validate().passed is True, json.dumps(component._to_dict(), indent=2)
 
         def _check_validation_result(new_asset, should_fail=False) -> None:
@@ -123,7 +123,7 @@ class TestComponentValidate:
     def test_component_validate_multiple_invalid_fields(self, mock_machinelearning_client: MLClient) -> None:
         component_path = "./tests/test_configs/components/helloworld_component.yml"
         location_str = str(Path(component_path).resolve().absolute())
-        component: CommandComponent = load_component(path=component_path)
+        component: CommandComponent = load_component(component_path)
         component.name = None
         component.command += " & echo ${{inputs.non_existent}} & echo ${{outputs.non_existent}}"
         validation_result = mock_machinelearning_client.components.validate(component)

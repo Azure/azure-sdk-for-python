@@ -8,7 +8,7 @@
 
 from typing import Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, MlException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException
 
 
 class LocalEndpointNotFoundError(MlException):
@@ -47,8 +47,7 @@ class LocalEndpointInFailedStateError(MlException):
             error_category=error_category,
             target=ErrorTarget.LOCAL_ENDPOINT,
             no_personal_data_message=(
-                f"Local ({resource_type}) is in failed state. "
-                "Try getting logs to debug scoring script."
+                f"Local ({resource_type}) is in failed state. " "Try getting logs to debug scoring script."
             ),
         )
 
@@ -128,9 +127,10 @@ class CloudArtifactsNotSupportedError(MlException):
             if deployment_name
             else f"local endpoint ({endpoint_name})"
         )
-        err =(
-            "Local endpoints only support local artifacts. '%s' in '%s' "
-            "referenced cloud artifacts.", invalid_artifact, resource_name
+        err = (
+            "Local endpoints only support local artifacts. '%s' in '%s' " "referenced cloud artifacts.",
+            invalid_artifact,
+            resource_name,
         )
         super().__init__(
             message=err,
@@ -154,9 +154,12 @@ class RequiredLocalArtifactsNotFoundError(MlException):
             if deployment_name
             else f"Local endpoint ({endpoint_name})"
         )
-        err =(
+        err = (
             "Local endpoints only support local artifacts. '%s' did not contain required local artifact '%s'"
-            " of type '%s'.", resource_name, required_artifact, required_artifact_type
+            " of type '%s'.",
+            resource_name,
+            required_artifact,
+            required_artifact_type,
         )
         super().__init__(
             message=err,

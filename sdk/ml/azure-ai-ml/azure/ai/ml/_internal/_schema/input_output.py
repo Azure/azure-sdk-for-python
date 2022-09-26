@@ -40,21 +40,20 @@ class InternalOutputPortSchema(OutputPortSchema):
 
 class InternalParameterSchema(ParameterSchema):
     type = StringTransformedEnum(
-        allowed_values=["number", "integer", "boolean", "string", "object", "float"],
+        allowed_values=[
+            "integer",
+            "Integer",
+            "boolean",
+            "Boolean",
+            "string",
+            "String",
+            "float",
+            "Float",
+        ],
         casing_transform=lambda x: x,
         required=True,
         data_key="type",
     )
-
-    def get_skip_fields(self):  # pylint: disable=no-self-use
-        return []
-
-    @post_dump(pass_original=True)
-    def resolve_input_specific_field(self, data, original_data, **kwargs):  # pylint: disable=unused-argument
-        for attr_name, value in original_data.items():
-            if not attr_name.startswith("_") and attr_name not in self.get_skip_fields() and attr_name not in data:
-                data[attr_name] = value
-        return data
 
 
 class InternalEnumParameterSchema(ParameterSchema):
