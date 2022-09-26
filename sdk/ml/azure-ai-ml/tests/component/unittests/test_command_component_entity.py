@@ -20,7 +20,6 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
 class TestCommandComponentEntity:
-    @pytest.mark.skip(reason="migration skip: sync pipeline changes during soft code complete.")
     def test_component_load(self):
         # code is specified in yaml, value is respected
         component_yaml = "./tests/test_configs/components/basic_component_code_local_path.yml"

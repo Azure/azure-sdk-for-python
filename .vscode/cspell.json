@@ -395,7 +395,8 @@
         "myasynctable",
         "mytableasync",
         "mytable",
-        "edmtypes"
+        "edmtypes",
+        "specifed"
       ]
     },
     {

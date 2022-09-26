@@ -839,7 +839,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
     def test_create_pipeline_component_from_job(self, client: MLClient, randstr: Callable[[str], str]):
         params_override = [{"name": randstr("component_name_0")}]
         pipeline_job = load_job(
-            path="./tests/test_configs/dsl_pipeline/pipeline_with_pipeline_component/pipeline.yml",
+            "./tests/test_configs/dsl_pipeline/pipeline_with_pipeline_component/pipeline.yml",
             params_override=params_override,
         )
         job = client.jobs.create_or_update(pipeline_job)

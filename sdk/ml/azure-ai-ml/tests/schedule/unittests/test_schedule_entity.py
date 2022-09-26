@@ -130,7 +130,7 @@ class TestScheduleEntity:
 
     def test_invalid_date_string(self):
         pipeline_job = load_job(
-            path="./tests/test_configs/command_job/local_job.yaml",
+            "./tests/test_configs/command_job/local_job.yaml",
         )
         trigger = RecurrenceTrigger(
             frequency="week",

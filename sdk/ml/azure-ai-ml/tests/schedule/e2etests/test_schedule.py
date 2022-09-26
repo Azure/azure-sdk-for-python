@@ -98,7 +98,7 @@ class TestSchedule(AzureRecordedTestCase):
         params_override = [{"name": randstr()}]
         test_job_path = "./tests/test_configs/pipeline_jobs/hello-pipeline-abc.yml"
         pipeline_job = load_job(
-            path=test_job_path,
+            test_job_path,
             params_override=params_override,
         )
         pipeline_job = client.jobs.create_or_update(pipeline_job)

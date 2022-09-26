@@ -2247,8 +2247,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
     def test_spark_components(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/spark_job_in_pipeline"
         synapse_compute_name = "spark31"
-        add_greeting_column = load_component(path=str(components_dir / "add_greeting_column_component.yml"))
-        count_by_row = load_component(path=str(components_dir / "count_by_row_component.yml"))
+        add_greeting_column = load_component(str(components_dir / "add_greeting_column_component.yml"))
+        count_by_row = load_component(str(components_dir / "count_by_row_component.yml"))
 
         # Construct pipeline
         @dsl.pipeline(compute=synapse_compute_name)
@@ -2292,7 +2292,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             Option2 = "world"
 
         hello_world_component_yaml = "./tests/test_configs/components/input_types_component.yml"
-        hello_world_component_func = load_component(path=hello_world_component_yaml)
+        hello_world_component_func = load_component(hello_world_component_yaml)
         from azure.ai.ml.dsl._parameter_group_decorator import parameter_group
 
         @parameter_group
