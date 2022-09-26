@@ -28,8 +28,6 @@ class TestRegistrySchema:
     definition, and regenerate you autorest files."""
 
     def test_deserialize_from_autorest_object(self) -> None:
-        # TODO Implement this once Regisy._from_rest_object is implemented
-
         loc_1 = "USEast"
         tags = {"test": "registry"}
         name = "registry name"
@@ -93,7 +91,7 @@ class TestRegistrySchema:
         assert registry_entity
         assert registry_entity.description == description
         assert registry_entity.location == loc_1
-        assert registry_entity.tags == interior_tags
+        assert registry_entity.tags == tags
         # assert registry_entity.name == name #  TODO Local workspace obj doesn't record name besides pushing up to super class. Should we?
         # assert registry_entity.id == id # TODO Local workspace obj doesn't record id. Should we?
         assert registry_entity.public_network_access == pna

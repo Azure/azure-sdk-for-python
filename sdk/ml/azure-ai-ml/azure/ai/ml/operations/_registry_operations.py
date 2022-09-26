@@ -64,7 +64,7 @@ class RegistryOperations:
         :rtype: ~azure.core.paging.ItemPaged[Registry]
         """
 
-        return self._operation.list_by_subscription(cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs])
+        return self._operation.list(cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs])
 
     @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
     def get(self, name: str = None, **kwargs: Dict) -> Registry:

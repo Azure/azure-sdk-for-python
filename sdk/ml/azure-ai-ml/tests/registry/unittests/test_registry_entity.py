@@ -13,11 +13,14 @@ from azure.ai.ml.constants._registry import StorageAccountType
 from azure.ai.ml.entities import Registry, RegistryRegionArmDetails
 
 loc_1 = "USEast"
-tags = {"test": "registry"}
+exterior_tags = {"test": "registry"}
 name = "registry name"
 # id = "registry id"
 description = "registry description"
-# There are two places in a registry where tags can live. Which do we care about?
+# There are two places in a registry where tags can live. We only care about 
+# tags set at the top level, AKA the 'exterior_tags' defined above/
+# These interior tags only exists to show that the value technically
+# exists due to swagger-side inheritance in the autotest.
 interior_tags = {"properties": "have tags"}
 pna = "Enabled"
 discovery_url = "www.here-be-registries.com"
@@ -52,7 +55,7 @@ class TestRegistrySchema:
     def test_deserialize_from_autorest_object(self) -> None:
         rest_registry = RestRegistry(
             location=loc_1,
-            tags=tags,
+            tags=exterior_tags,
             name=name,
             id="registry id",
             properties=RegistryProperties(
@@ -93,7 +96,7 @@ class TestRegistrySchema:
         assert registry_entity
         assert registry_entity.description == description
         assert registry_entity.location == loc_1
-        assert registry_entity.tags == interior_tags
+        assert registry_entity.tags == exterior_tags
         # TODO https://dev.azure.com/msdata/Vienna/_workitems/edit/1971490/
         # assert registry_entity.name == name #  TODO Local workspace obj doesn't record name besides pushing up to super class. Should we?
         # assert registry_entity.id == id # TODO Local workspace obj doesn't record id. Should we?
@@ -128,7 +131,7 @@ class TestRegistrySchema:
             "name": name,
             "location": loc_1,
             "description": description,
-            "tags": tags,
+            "tags": exterior_tags,
             "public_network_access": pna,
             "replication_locations": [{"location": loc_1, "storage_config": [storage_id_1]}],
             "container_registry": acr_id_1,
@@ -138,7 +141,7 @@ class TestRegistrySchema:
         assert registry
         assert registry.location == loc_1
         assert registry.description == description
-        assert registry.tags == tags
+        assert registry.tags == exterior_tags
         assert registry.public_network_access == pna
         assert registry.region_details[0].acr_config[0] == acr_id_1
         assert registry.region_details[0].location == loc_1
@@ -149,7 +152,7 @@ class TestRegistrySchema:
         pass
 
     def test_registry_dictonary_modifier(self):
-        details = [1, 2, 3]
+        details = [type("", (), {})()]
         input1 = {"replication_locations": details}
         Registry._convert_yaml_dict_to_entity_input(input1)
         assert input1["region_details"] == details

@@ -177,7 +177,7 @@ class Registry(Resource):
                 if not hasattr(region_detail, "acr_details") or len(region_detail.acr_details) == 0:
                     region_detail.acr_config = [acr_input]
             # Return single, non-list managed storage into a 1-element list.
-            if region_detail.storage_config and isinstance(region_detail.storage_config, SystemCreatedStorageAccount):
+            if hasattr(region_detail, "storage_config") and isinstance(region_detail.storage_config, SystemCreatedStorageAccount):
                 region_detail.storage_config = [region_detail.storage_config]
 
     def _to_rest_object(self) -> RestRegistry:
