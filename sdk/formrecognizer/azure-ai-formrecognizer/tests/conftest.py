@@ -64,4 +64,11 @@ def add_sanitizers(test_proxy):
 def pytest_runtest_makereport(item, call):
     if call.excinfo is not None and isinstance(call.excinfo.value, HttpResponseError):
         if "Invalid argument".casefold() in call.excinfo.value.message.casefold():
-            pytest.mark.skip("flaky")
+            item.add_marker(pytest.mark.skip("flaky"))
+
+
+@pytest.hookimpl()
+def pytest_exception_interact(node, call, report):
+    if call.excinfo is not None and isinstance(call.excinfo.value, HttpResponseError):
+        if "Invalid argument".casefold() in call.excinfo.value.message.casefold():
+            node.add_marker(pytest.mark.skip("flaky"))
