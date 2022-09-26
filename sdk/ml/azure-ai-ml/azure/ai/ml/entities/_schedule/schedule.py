@@ -7,11 +7,11 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase as RestJobBase
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobScheduleAction
-from azure.ai.ml._restclient.v2022_06_01_preview.models import PipelineJob as RestPipelineJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase as RestJobBase
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobScheduleAction
+from azure.ai.ml._restclient.v2022_10_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ScheduleProperties
 from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants import JobType
@@ -208,31 +208,29 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
     @classmethod
     def _from_rest_object(cls, obj: RestSchedule) -> "JobSchedule":
         properties = obj.properties
-        action = properties.action
-        create_job = None
-        if isinstance(action, JobScheduleAction):
-            if action.job_definition is None:
-                msg = "Job definition for schedule '{}' can not be None."
-                raise ScheduleException(
-                    message=msg.format(obj.name),
-                    no_personal_data_message=msg.format("[name]"),
-                    target=ErrorTarget.JOB,
-                    error_category=ErrorCategory.SYSTEM_ERROR,
-                )
-            if camel_to_snake(action.job_definition.job_type) != JobType.PIPELINE:
-                msg = f"Unsupported job type {action.job_definition.job_type} for schedule '{{}}'."
-                raise ScheduleException(
-                    message=msg.format(obj.name),
-                    no_personal_data_message=msg.format("[name]"),
-                    target=ErrorTarget.JOB,
-                    # Classified as user_error as we may support other type afterwards.
-                    error_category=ErrorCategory.USER_ERROR,
-                )
-            # Wrap job definition with JobBase for Job._from_rest_object call.
-            create_job = RestJobBase(properties=action.job_definition)
-            # id is a readonly field so set it after init.
-            create_job.id = action.job_definition.source_job_id
-            create_job = PipelineJob._load_from_rest(create_job)
+        action: JobScheduleAction = properties.action
+        if action.job_definition is None:
+            msg = "Job definition for schedule '{}' can not be None."
+            raise ScheduleException(
+                message=msg.format(obj.name),
+                no_personal_data_message=msg.format("[name]"),
+                target=ErrorTarget.JOB,
+                error_category=ErrorCategory.SYSTEM_ERROR,
+            )
+        if camel_to_snake(action.job_definition.job_type) != JobType.PIPELINE:
+            msg = f"Unsupported job type {action.job_definition.job_type} for schedule '{{}}'."
+            raise ScheduleException(
+                message=msg.format(obj.name),
+                no_personal_data_message=msg.format("[name]"),
+                target=ErrorTarget.JOB,
+                # Classified as user_error as we may support other type afterwards.
+                error_category=ErrorCategory.USER_ERROR,
+            )
+        # Wrap job definition with JobBase for Job._from_rest_object call.
+        create_job = RestJobBase(properties=action.job_definition)
+        # id is a readonly field so set it after init.
+        create_job.id = action.job_definition.source_job_id
+        create_job = PipelineJob._load_from_rest(create_job)
         return cls(
             trigger=TriggerBase._from_rest_object(properties.trigger),
             create_job=create_job,

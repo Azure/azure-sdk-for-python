@@ -42,6 +42,7 @@ def load_pipeline_entity_from_rest_json(job_dict) -> PipelineJob:
 @pytest.mark.timeout(_PIPELINE_JOB_TIMEOUT_SECOND)
 @pytest.mark.unittest
 class TestPipelineJobEntity:
+    @pytest.mark.skip(reason="migration skip: sync pipeline changes during soft code complete.")
     def test_automl_node_in_pipeline_regression(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_regression.yml"
 
@@ -201,7 +202,7 @@ class TestPipelineJobEntity:
         rest_obj = FebRestJob.from_dict(json.loads(json.dumps(job_dict)))
         pipeline = PipelineJob._from_rest_object(rest_obj)
         pipeline_dict = pipeline._to_dict()
-        assert pipeline_dict["jobs"] == {
+        assert pydash.omit(pipeline_dict["jobs"], *["properties", "hello_python_world_job.properties"]) == {
             "hello_python_world_job": {
                 "environment_variables": {},
                 "inputs": {
@@ -760,7 +761,7 @@ class TestPipelineJobEntity:
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
-        omit_fields = []  # "name", "display_name", "experiment_name", "properties"
+        omit_fields = ["properties"]  # "name", "display_name", "experiment_name", "properties"
         actual_dict = pydash.omit(rest_job_dict["properties"]["jobs"]["add_greeting_column"], omit_fields)
 
         expected_dict = {
@@ -827,6 +828,8 @@ class TestPipelineJobEntity:
         omit_fields = [
             "jobs.sample_word.componentId",
             "jobs.count_word.componentId",
+            "jobs.sample_word.properties",
+            "jobs.count_word.properties",
         ]
         actual_job = pydash.omit(job._to_rest_object().properties.as_dict(), *omit_fields)
         assert actual_job == {
@@ -1050,6 +1053,7 @@ class TestPipelineJobEntity:
             "jobs": {
                 "train_job": {
                     "type": "command",
+                    "properties": {},
                     "_source": "YAML.JOB",
                     "resources": None,
                     "distribution": None,
@@ -1107,6 +1111,7 @@ class TestPipelineJobEntity:
             },
             "jobs": {
                 "train_job": {
+                    "properties": {},
                     "type": "command",
                     "_source": "YAML.JOB",
                     "resources": None,
@@ -1151,8 +1156,7 @@ class TestPipelineJobEntity:
 
         actual_dict = job._to_rest_object().as_dict()["properties"]
 
-        assert actual_dict == {
-            "properties": {},
+        assert pydash.omit(actual_dict, *["properties", "jobs.train_job.properties"]) == {
             "tags": {},
             "is_archived": False,
             "compute_id": "xxx",
@@ -1223,8 +1227,7 @@ class TestPipelineJobEntity:
 
         actual_dict = job._to_rest_object().as_dict()["properties"]
 
-        assert actual_dict == {
-            "properties": {},
+        assert pydash.omit(actual_dict, *["properties", "jobs.train_job.properties"]) == {
             "tags": {},
             "is_archived": False,
             "compute_id": "xxx",
@@ -1292,8 +1295,7 @@ class TestPipelineJobEntity:
 
         actual_dict = job._to_rest_object().as_dict()["properties"]
 
-        assert actual_dict == {
-            "properties": {},
+        assert pydash.omit(actual_dict, *["properties", "jobs.train_job.properties"]) == {
             "tags": {},
             "is_archived": False,
             "compute_id": "xxx",
@@ -1432,3 +1434,18 @@ class TestPipelineJobEntity:
             },
             "type": "command",
         }
+
+    @pytest.mark.skip(reason="migration skip: sync pipeline changes during soft code complete.")
+    def test_job_properties(self):
+        pipeline_job: PipelineJob = load_job(
+            source="./tests/test_configs/pipeline_jobs/pipeline_job_with_properties.yml"
+        )
+        pipeline_dict = pipeline_job._to_dict()
+        rest_pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["properties"] == {"AZURE_ML_PathOnCompute_input_data": "/tmp/test"}
+        assert rest_pipeline_dict["properties"] == pipeline_dict["properties"]
+        for name, node_dict in pipeline_dict["jobs"].items():
+            rest_node_dict = rest_pipeline_dict["jobs"][name]
+            assert len(node_dict["properties"]) == 1
+            assert "AZURE_ML_PathOnCompute_" in list(node_dict["properties"].keys())[0]
+            assert node_dict["properties"] == rest_node_dict["properties"]

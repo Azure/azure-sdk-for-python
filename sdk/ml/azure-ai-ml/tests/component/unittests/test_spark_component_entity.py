@@ -75,6 +75,7 @@ class TestSparkComponentEntity:
     def test_spark_component_version_as_a_function_with_inputs(self):
         expected_rest_component = {
             "type": "spark",
+            "properties": {},
             "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
             "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
             "py_files": ["utils.zip"],

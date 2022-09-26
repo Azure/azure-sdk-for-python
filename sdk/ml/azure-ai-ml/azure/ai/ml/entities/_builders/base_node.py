@@ -396,6 +396,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
                 computeId=self.compute,
                 inputs=self._to_rest_inputs(),
                 outputs=self._to_rest_outputs(),
+                properties=self.properties,
                 _source=self._source,
                 # add all arbitrary attributes to support setting unknown attributes
                 **self._get_attrs(),
