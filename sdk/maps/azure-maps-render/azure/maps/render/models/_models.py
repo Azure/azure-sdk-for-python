@@ -5,7 +5,7 @@
 
 # pylint: disable=unused-import,ungrouped-imports, C0302, C0203
 from typing import NamedTuple
-
+from .._generated.models import RegionCopyrightsCountry as GenRegionCopyrightsCountry
 class LatLon(NamedTuple):
     """Represents coordinate latitude and longitude
 
