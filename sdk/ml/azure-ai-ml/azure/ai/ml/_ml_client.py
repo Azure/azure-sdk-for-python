@@ -29,7 +29,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062022Preview
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -109,6 +109,8 @@ class MLClient(object):
         :param registry_name: Registry to use in the client, only used in the context of registry assets.
             Defaults to None
         :type registry_name: str, optional
+        :param show_progress: Whether to display progress bars for long running operations. E.g. customers may consider to set this to False if not using this SDK in an interactive setup. Defaults to True.
+        :type show_progress: bool, optional
         :param kwargs: A dictionary of additional configuration parameters.
             For e.g. kwargs = {"cloud": "AzureUSGovernment"}
         :type kwargs: dict
@@ -149,8 +151,11 @@ class MLClient(object):
         """
         if credential is None:
             raise ValueError("credential can not be None")
-
         self._credential = credential
+
+        show_progress = kwargs.pop("show_progress", True)
+        self._operation_config = OperationConfig(show_progress=show_progress)
+
         cloud_name = kwargs.get("cloud", _get_default_cloud_name())
         self._cloud = cloud_name
         _set_cloud(cloud_name)
@@ -252,6 +257,13 @@ class MLClient(object):
             **kwargs,
         )
 
+        self._service_client_10_2022_preview = ServiceClient102022(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._workspaces = WorkspaceOperations(
             self._operation_scope,
             self._rp_service_client,
@@ -289,6 +301,7 @@ class MLClient(object):
 
         self._workspace_connections = WorkspaceConnectionsOperations(
             self._operation_scope,
+            self._operation_config,
             self._rp_service_client_2022_01_01_preview,
             self._operation_container,
             self._credential,
@@ -296,18 +309,21 @@ class MLClient(object):
         self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)
         self._compute = ComputeOperations(
             self._operation_scope,
+            self._operation_config,
             self._rp_service_client_2022_01_01_preview,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.COMPUTE, self._compute)
         self._datastores = DatastoreOperations(
             operation_scope=self._operation_scope,
+            operation_config=self._operation_config,
             serviceclient_2022_05_01=self._service_client_05_2022,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.DATASTORE, self._datastores)
         self._models = ModelOperations(
             self._operation_scope,
+            self._operation_config,
             self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_05_2022,
             self._datastores,
             **app_insights_handler_kwargs,
@@ -315,6 +331,7 @@ class MLClient(object):
         self._operation_container.add(AzureMLResourceType.MODEL, self._models)
         self._code = CodeOperations(
             self._operation_scope,
+            self._operation_config,
             self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_05_2022,
             self._datastores,
             **ops_kwargs,
@@ -322,6 +339,7 @@ class MLClient(object):
         self._operation_container.add(AzureMLResourceType.CODE, self._code)
         self._environments = EnvironmentOperations(
             self._operation_scope,
+            self._operation_config,
             self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_05_2022,
             self._operation_container,
             **ops_kwargs,
@@ -331,6 +349,7 @@ class MLClient(object):
         self._local_deployment_helper = _LocalDeploymentHelper(self._operation_container)
         self._online_endpoints = OnlineEndpointOperations(
             self._operation_scope,
+            self._operation_config,
             self._service_client_02_2022_preview,
             self._operation_container,
             self._local_endpoint_helper,
@@ -340,6 +359,7 @@ class MLClient(object):
         )
         self._batch_endpoints = BatchEndpointOperations(
             self._operation_scope,
+            self._operation_config,
             self._service_client_05_2022,
             self._operation_container,
             self._credential,
@@ -351,6 +371,7 @@ class MLClient(object):
         self._operation_container.add(AzureMLResourceType.ONLINE_ENDPOINT, self._online_endpoints)
         self._online_deployments = OnlineDeploymentOperations(
             self._operation_scope,
+            self._operation_config,
             self._service_client_02_2022_preview,
             self._operation_container,
             self._local_deployment_helper,
@@ -359,6 +380,7 @@ class MLClient(object):
         )
         self._batch_deployments = BatchDeploymentOperations(
             self._operation_scope,
+            self._operation_config,
             self._service_client_05_2022,
             self._operation_container,
             credentials=self._credential,
@@ -370,6 +392,7 @@ class MLClient(object):
         self._operation_container.add(AzureMLResourceType.BATCH_DEPLOYMENT, self._batch_deployments)
         self._data = DataOperations(
             self._operation_scope,
+            self._operation_config,
             self._service_client_05_2022,
             self._datastores,
             requests_pipeline=self._requests_pipeline,
@@ -378,6 +401,7 @@ class MLClient(object):
         self._operation_container.add(AzureMLResourceType.DATA, self._data)
         self._components = ComponentOperations(
             self._operation_scope,
+            self._operation_config,
             self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_05_2022,
             self._operation_container,
             **ops_kwargs,
@@ -385,6 +409,7 @@ class MLClient(object):
         self._operation_container.add(AzureMLResourceType.COMPONENT, self._components)
         self._jobs = JobOperations(
             self._operation_scope,
+            self._operation_config,
             self._service_client_06_2022_preview,
             self._operation_container,
             self._credential,
@@ -395,6 +420,7 @@ class MLClient(object):
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
         self._schedules = ScheduleOperations(
             self._operation_scope,
+            self._operation_config,
             self._service_client_06_2022_preview,
             self._operation_container,
             self._credential,

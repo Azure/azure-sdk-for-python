@@ -548,7 +548,7 @@ class PipelineExpression(PipelineExpressionMixin):
 
             from azure.ai.ml import load_component
 
-            component_func = load_component(path=yaml_path)
+            component_func = load_component(yaml_path)
             component_kwargs = {k: v.value for k, v in self._inputs.items()}
             self._created_component = component_func(**component_kwargs)
         return self._created_component

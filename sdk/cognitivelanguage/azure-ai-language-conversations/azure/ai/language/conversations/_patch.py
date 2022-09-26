@@ -33,6 +33,8 @@ from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._client import ConversationAnalysisClient as GeneratedConversationAnalysisClient
 
+POLLING_INTERVAL_DEFAULT = 5
+
 
 def _authentication_policy(credential):
     authentication_policy = None
@@ -85,6 +87,7 @@ class ConversationAnalysisClient(GeneratedConversationAnalysisClient): # pylint:
             endpoint=endpoint,
             credential=credential,  # type: ignore
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
+            polling_interval=kwargs.pop("polling_interval", POLLING_INTERVAL_DEFAULT),
             **kwargs
         )
 

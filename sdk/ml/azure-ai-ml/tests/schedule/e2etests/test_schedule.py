@@ -1,5 +1,6 @@
 from typing import Callable
 
+import pydash
 import pytest
 
 from azure.ai.ml import AmlToken, MLClient
@@ -47,7 +48,7 @@ class TestSchedule(AzureRecordedTestCase):
         assert rest_schedule._is_enabled is True
         # invalid delete
         with pytest.raises(Exception) as e:
-            client.schedules.begin_delete(schedule.name)
+            client.schedules.begin_delete(schedule.name).result(timeout=LROConfigurations.POLLING_TIMEOUT)
         assert "Cannot delete an active trigger" in str(e)
         # delete
         rest_schedule = client.schedules.begin_disable(schedule.name).result(timeout=LROConfigurations.POLLING_TIMEOUT)
@@ -71,9 +72,9 @@ class TestSchedule(AzureRecordedTestCase):
 
     @pytest.mark.skip(reason="flaky test")
     def test_load_cron_schedule_with_arm_id(self, client: MLClient, randstr: Callable[[], str]):
-        params_override = [{"name": randstr("name")}]
+        params_override = [{"name": randstr()}]
         pipeline_job = load_job(
-            path="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_comps.yml",
+            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_comps.yml",
             params_override=params_override,
         )
         pipeline_job = client.jobs.create_or_update(pipeline_job)
@@ -86,16 +87,18 @@ class TestSchedule(AzureRecordedTestCase):
         assert rest_schedule.name == schedule.name
         client.schedules.begin_disable(schedule.name)
         assert rest_schedule.create_job.id is not None
+        # Set to None to align with yaml as service will fill this
+        rest_schedule.trigger.start_time = None
         assert (
-            rest_schedule.trigger._to_rest_object()
-            == CronTrigger(time_zone="UTC", expression="15 10 * * 1")._to_rest_object()
+            pydash.omit(rest_schedule.trigger._to_rest_object().as_dict(), "start_time")
+            == CronTrigger(time_zone="UTC", expression="15 10 * * 1")._to_rest_object().as_dict()
         )
 
     def test_load_cron_schedule_with_arm_id_and_updates(self, client: MLClient, randstr: Callable[[], str]):
         params_override = [{"name": randstr()}]
         test_job_path = "./tests/test_configs/pipeline_jobs/hello-pipeline-abc.yml"
         pipeline_job = load_job(
-            path=test_job_path,
+            test_job_path,
             params_override=params_override,
         )
         pipeline_job = client.jobs.create_or_update(pipeline_job)

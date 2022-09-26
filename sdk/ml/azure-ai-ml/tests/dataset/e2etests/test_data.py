@@ -271,7 +271,7 @@ sepal_length,sepal_width,petal_length,petal_width,species
     """
         )
 
-        data_asset = load_data(path=f)
+        data_asset = load_data(f)
         assert data_asset.datastore == "workspacefilestore"
 
         with pytest.raises(Exception) as e:

@@ -165,7 +165,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         from azure.ai.ml._schema._sweep.parameterized_sweep import ParameterizedSweepSchema
 
         schema = ParameterizedSweepSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
-        support_data_binding_expression_for_fields(schema, ["type"])
+        support_data_binding_expression_for_fields(schema, ["type", "component", "trial"])
 
         base_sweep = schema.load(obj, unknown=EXCLUDE, partial=True)  # pylint: disable=no-member
         for key, value in base_sweep.items():

@@ -12,6 +12,14 @@ from devtools_testutils import AzureRecordedTestCase
 
 class TestConversationalSummarizationAsync(AzureRecordedTestCase):
 
+    def test_polling_interval(self, conversation_creds):
+        # test default
+        client = ConversationAnalysisClient(conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"]))
+        assert client._config.polling_interval == 5
+        # test override
+        client = ConversationAnalysisClient(conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"]), polling_interval=1)
+        assert client._config.polling_interval == 1
+
     @pytest.mark.asyncio
     async def test_conversational_summarization(self, recorded_test, conversation_creds):
         # analyze query

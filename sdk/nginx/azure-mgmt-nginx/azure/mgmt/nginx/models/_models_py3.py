@@ -207,6 +207,8 @@ class NginxCertificateListResponse(_serialization.Model):
 class NginxCertificateProperties(_serialization.Model):
     """NginxCertificateProperties.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar provisioning_state: Known values are: "Accepted", "Creating", "Updating", "Deleting",
      "Succeeded", "Failed", "Canceled", "Deleted", and "NotSpecified".
     :vartype provisioning_state: str or ~azure.mgmt.nginx.models.ProvisioningState
@@ -218,6 +220,10 @@ class NginxCertificateProperties(_serialization.Model):
     :vartype key_vault_secret_id: str
     """
 
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
     _attribute_map = {
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "key_virtual_path": {"key": "keyVirtualPath", "type": "str"},
@@ -228,16 +234,12 @@ class NginxCertificateProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         key_virtual_path: Optional[str] = None,
         certificate_virtual_path: Optional[str] = None,
         key_vault_secret_id: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword provisioning_state: Known values are: "Accepted", "Creating", "Updating", "Deleting",
-         "Succeeded", "Failed", "Canceled", "Deleted", and "NotSpecified".
-        :paramtype provisioning_state: str or ~azure.mgmt.nginx.models.ProvisioningState
         :keyword key_virtual_path:
         :paramtype key_virtual_path: str
         :keyword certificate_virtual_path:
@@ -246,7 +248,7 @@ class NginxCertificateProperties(_serialization.Model):
         :paramtype key_vault_secret_id: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.key_virtual_path = key_virtual_path
         self.certificate_virtual_path = certificate_virtual_path
         self.key_vault_secret_id = key_vault_secret_id
@@ -393,20 +395,29 @@ class NginxConfigurationPackage(_serialization.Model):
 class NginxConfigurationProperties(_serialization.Model):
     """NginxConfigurationProperties.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar provisioning_state: Known values are: "Accepted", "Creating", "Updating", "Deleting",
      "Succeeded", "Failed", "Canceled", "Deleted", and "NotSpecified".
     :vartype provisioning_state: str or ~azure.mgmt.nginx.models.ProvisioningState
     :ivar files:
     :vartype files: list[~azure.mgmt.nginx.models.NginxConfigurationFile]
+    :ivar protected_files:
+    :vartype protected_files: list[~azure.mgmt.nginx.models.NginxConfigurationFile]
     :ivar package:
     :vartype package: ~azure.mgmt.nginx.models.NginxConfigurationPackage
     :ivar root_file:
     :vartype root_file: str
     """
 
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
     _attribute_map = {
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "files": {"key": "files", "type": "[NginxConfigurationFile]"},
+        "protected_files": {"key": "protectedFiles", "type": "[NginxConfigurationFile]"},
         "package": {"key": "package", "type": "NginxConfigurationPackage"},
         "root_file": {"key": "rootFile", "type": "str"},
     }
@@ -414,26 +425,26 @@ class NginxConfigurationProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         files: Optional[List["_models.NginxConfigurationFile"]] = None,
+        protected_files: Optional[List["_models.NginxConfigurationFile"]] = None,
         package: Optional["_models.NginxConfigurationPackage"] = None,
         root_file: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword provisioning_state: Known values are: "Accepted", "Creating", "Updating", "Deleting",
-         "Succeeded", "Failed", "Canceled", "Deleted", and "NotSpecified".
-        :paramtype provisioning_state: str or ~azure.mgmt.nginx.models.ProvisioningState
         :keyword files:
         :paramtype files: list[~azure.mgmt.nginx.models.NginxConfigurationFile]
+        :keyword protected_files:
+        :paramtype protected_files: list[~azure.mgmt.nginx.models.NginxConfigurationFile]
         :keyword package:
         :paramtype package: ~azure.mgmt.nginx.models.NginxConfigurationPackage
         :keyword root_file:
         :paramtype root_file: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.files = files
+        self.protected_files = protected_files
         self.package = package
         self.root_file = root_file
 
@@ -568,6 +579,7 @@ class NginxDeploymentProperties(_serialization.Model):
     """
 
     _validation = {
+        "provisioning_state": {"readonly": True},
         "nginx_version": {"readonly": True},
         "ip_address": {"readonly": True},
     }
@@ -585,7 +597,6 @@ class NginxDeploymentProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         managed_resource_group: Optional[str] = None,
         network_profile: Optional["_models.NginxNetworkProfile"] = None,
         enable_diagnostics_support: Optional[bool] = None,
@@ -593,9 +604,6 @@ class NginxDeploymentProperties(_serialization.Model):
         **kwargs
     ):
         """
-        :keyword provisioning_state: Known values are: "Accepted", "Creating", "Updating", "Deleting",
-         "Succeeded", "Failed", "Canceled", "Deleted", and "NotSpecified".
-        :paramtype provisioning_state: str or ~azure.mgmt.nginx.models.ProvisioningState
         :keyword managed_resource_group: The managed resource group to deploy VNet injection related
          network resources.
         :paramtype managed_resource_group: str
@@ -607,7 +615,7 @@ class NginxDeploymentProperties(_serialization.Model):
         :paramtype logging: ~azure.mgmt.nginx.models.NginxLogging
         """
         super().__init__(**kwargs)
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.nginx_version = None
         self.managed_resource_group = managed_resource_group
         self.network_profile = network_profile
