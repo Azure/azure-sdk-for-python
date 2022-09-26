@@ -191,13 +191,13 @@ class AzureAppConfigurationProvider:
         """
         return self._dict.copy()
 
-    def has_key(self, k):
+    def __contains__(self, __x: object):
         """
-        Returns True if the configuration settings has been loaded from Azure App Configuration.
+        Returns True if the configuration settings contains the specified key
 
-        type: (str) -> bool
+        type: (object) -> bool
         """
-        return k in self._dict
+        return self._dict.__contains__(__x)
 
     def keys(self):
         """
