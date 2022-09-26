@@ -46,7 +46,7 @@ class TestWorkspaceOperation:
         mock_workspace_operation._operation.get.assert_called_once()
 
     def test_list_keys(self, mock_workspace_operation: WorkspaceOperations) -> None:
-        mock_workspace_operation.list_keys("random_name")
+        mock_workspace_operation.get_keys("random_name")
         mock_workspace_operation._operation.list_keys.assert_called_once()
 
     def test_begin_sync_keys_no_wait(

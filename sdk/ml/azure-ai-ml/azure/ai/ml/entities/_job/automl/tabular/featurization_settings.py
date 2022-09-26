@@ -13,8 +13,8 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     TableVerticalFeaturizationSettings as RestTabularFeaturizationSettings,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants import AutoMLTransformerParameterKeys
-from azure.ai.ml.entities._job.automl.featurization_settings import FeaturizationSettings
+from azure.ai.ml.constants._job.automl import AutoMLTransformerParameterKeys
+from azure.ai.ml.entities._job.automl.featurization_settings import FeaturizationSettings, FeaturizationSettingsType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 module_logger = logging.getLogger(__name__)
@@ -83,6 +83,8 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         :type mode: str
         :param enable_dnn_featurization: Whether to enable DNN featurization.
         :type enable_dnn_featurization: bool
+        :ivar type: Specifies the type of FeaturizationSettings. Set automatically to "Tabular" for this class.
+        :vartype type: str
         """
         super().__init__(dataset_language=dataset_language)
         self.blocked_transformers = blocked_transformers
@@ -90,6 +92,7 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         self.transformer_params = transformer_params
         self.mode = mode
         self.enable_dnn_featurization = enable_dnn_featurization
+        self.type = FeaturizationSettingsType.TABULAR
 
     @property
     def transformer_params(self) -> Dict[str, List[ColumnTransformer]]:

@@ -13,11 +13,13 @@
   "inputs": {
     "model_path": {
       "type": "path",
-      "description": "Trained MNIST image classification model."
+      "description": "Trained MNIST image classification model.",
+      "datastore_mode": "Mount"
     },
     "images_to_score": {
       "type": "path",
-      "description": "Images to score."
+      "description": "Images to score.",
+      "datastore_mode": "Mount"
     }
   },
   "outputs": {

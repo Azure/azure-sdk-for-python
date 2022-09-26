@@ -133,11 +133,14 @@ def _convert_point_to_envelope(
     point: DataPointT,
     name: str,
     resource: Optional[Resource] = None,
-    scope: Optional[InstrumentationScope] = None  # pylint: disable=unused-argument
+    scope: Optional[InstrumentationScope] = None
 ) -> TelemetryItem:
     envelope = _utils._create_telemetry_item(point.time_unix_nano)
     envelope.name = "Microsoft.ApplicationInsights.Metric"
     envelope.tags.update(_utils._populate_part_a_fields(resource))
+    namespace = None
+    if scope is not None:
+        namespace = scope.name
     value = 0
     count = 1
     min_ = None
@@ -154,6 +157,7 @@ def _convert_point_to_envelope(
 
     data_point = MetricDataPoint(
         name=str(name)[:1024],
+        namespace=str(namespace)[:256],
         value=value,
         count=count,
         min=min_,

@@ -11,7 +11,7 @@ from azure.ai.ml._restclient.v2022_05_01.models._models_py3 import (
     ModelVersionData,
     ModelVersionDetails,
 )
-from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities._assets import Model
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.exceptions import ErrorTarget
@@ -20,10 +20,11 @@ from azure.ai.ml.operations import DatastoreOperations, ModelOperations
 
 @pytest.fixture
 def mock_datastore_operation(
-    mock_workspace_scope: OperationScope, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_05_01: Mock
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         serviceclient_2022_05_01=mock_aml_services_2022_05_01,
     )
 
@@ -31,11 +32,13 @@ def mock_datastore_operation(
 @pytest.fixture
 def mock_model_operation(
     mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
     mock_aml_services_2022_05_01: Mock,
     mock_datastore_operation: Mock,
 ) -> ModelOperations:
     yield ModelOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_05_01,
         datastore_operations=mock_datastore_operation,
     )
@@ -86,6 +89,7 @@ version: 3"""
                 asset_hash=None,
                 sas_uri=None,
                 artifact_type=ErrorTarget.MODEL,
+                show_progress=True,
             )
         mock_model_operation._model_versions_operation.create_or_update.assert_called_once()
         assert "version='3'" in str(mock_model_operation._model_versions_operation.create_or_update.call_args)
@@ -234,7 +238,7 @@ path: ./model.pkl"""
             "azure.ai.ml.operations._model_operations.Model._from_rest_object",
             return_value=Model(),
         ):
-            model = load_model(path=p)
+            model = load_model(p)
             path = Path(model._base_path, model.path).resolve()
             mock_model_operation.create_or_update(model)
             mock_upload.assert_called_once_with(
@@ -247,4 +251,5 @@ path: ./model.pkl"""
                 asset_hash=None,
                 sas_uri=None,
                 artifact_type=ErrorTarget.MODEL,
+                show_progress=True,
             )

@@ -63,7 +63,8 @@ class TestExportAndImportAsync(QuestionAnsweringTestCase):
             options=project,
             **self.kwargs_for_polling
         )
-        await import_poller.result()
+        job_state = await import_poller.result()
+        assert job_state["jobId"]
 
         # assert
         project_found = False

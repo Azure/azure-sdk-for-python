@@ -148,6 +148,7 @@
     "docfx",
     "dont",
     "dotenv",
+    "dowhile",
     "dpkg",
     "dtlk",
     "dtlksd",
@@ -231,6 +232,7 @@
     "myacr",
     "mydirectory",
     "myfile",
+    "myvault",
     "nazsdk",
     "nbytes",
     "noarch",
@@ -393,7 +395,8 @@
         "myasynctable",
         "mytableasync",
         "mytable",
-        "edmtypes"
+        "edmtypes",
+        "specifed"
       ]
     },
     {

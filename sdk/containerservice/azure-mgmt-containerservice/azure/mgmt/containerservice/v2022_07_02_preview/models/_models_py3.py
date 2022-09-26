@@ -32,9 +32,9 @@ class SubResource(_serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
@@ -43,12 +43,8 @@ class SubResource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.id = None
         self.name = None
@@ -232,13 +228,13 @@ class AgentPool(SubResource):  # pylint: disable=too-many-instance-attributes
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'os_disk_size_gb': {'maximum': 2048, 'minimum': 0},
-        'current_orchestrator_version': {'readonly': True},
-        'node_image_version': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "os_disk_size_gb": {"maximum": 2048, "minimum": 0},
+        "current_orchestrator_version": {"readonly": True},
+        "node_image_version": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -560,16 +556,19 @@ class AgentPoolAvailableVersions(_serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "agent_pool_versions": {"key": "properties.agentPoolVersions", "type": "[AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem]"},
+        "agent_pool_versions": {
+            "key": "properties.agentPoolVersions",
+            "type": "[AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem]",
+        },
     }
 
     def __init__(
@@ -641,7 +640,7 @@ class AgentPoolListResult(_serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -649,12 +648,7 @@ class AgentPoolListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.AgentPool"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.AgentPool"]] = None, **kwargs):
         """
         :keyword value: The list of agent pools.
         :paramtype value: list[~azure.mgmt.containerservice.v2022_07_02_preview.models.AgentPool]
@@ -690,11 +684,11 @@ class AgentPoolUpgradeProfile(_serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'kubernetes_version': {'required': True},
-        'os_type': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "kubernetes_version": {"required": True},
+        "os_type": {"required": True},
     }
 
     _attribute_map = {
@@ -752,13 +746,7 @@ class AgentPoolUpgradeProfilePropertiesUpgradesItem(_serialization.Model):
         "is_preview": {"key": "isPreview", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        kubernetes_version: Optional[str] = None,
-        is_preview: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kubernetes_version: Optional[str] = None, is_preview: Optional[bool] = None, **kwargs):
         """
         :keyword kubernetes_version: The Kubernetes version (major.minor.patch).
         :paramtype kubernetes_version: str
@@ -785,12 +773,7 @@ class AgentPoolUpgradeSettings(_serialization.Model):
         "max_surge": {"key": "maxSurge", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        max_surge: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, max_surge: Optional[str] = None, **kwargs):
         """
         :keyword max_surge: This can either be set to an integer (e.g. '5') or a percentage (e.g.
          '50%'). If a percentage is specified, it is the percentage of the total agent pool size at the
@@ -822,10 +805,10 @@ class Resource(_serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
@@ -835,12 +818,8 @@ class Resource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.id = None
         self.name = None
@@ -869,11 +848,11 @@ class AzureEntityResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'etag': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "etag": {"readonly": True},
     }
 
     _attribute_map = {
@@ -884,12 +863,8 @@ class AzureEntityResource(Resource):
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.etag = None
 
@@ -1025,19 +1000,14 @@ class ContainerServiceDiagnosticsProfile(_serialization.Model):
     """
 
     _validation = {
-        'vm_diagnostics': {'required': True},
+        "vm_diagnostics": {"required": True},
     }
 
     _attribute_map = {
         "vm_diagnostics": {"key": "vmDiagnostics", "type": "ContainerServiceVMDiagnostics"},
     }
 
-    def __init__(
-        self,
-        *,
-        vm_diagnostics: "_models.ContainerServiceVMDiagnostics",
-        **kwargs
-    ):
+    def __init__(self, *, vm_diagnostics: "_models.ContainerServiceVMDiagnostics", **kwargs):
         """
         :keyword vm_diagnostics: Profile for diagnostics on the container service VMs. Required.
         :paramtype vm_diagnostics:
@@ -1060,8 +1030,8 @@ class ContainerServiceLinuxProfile(_serialization.Model):
     """
 
     _validation = {
-        'admin_username': {'required': True, 'pattern': r'^[A-Za-z][-A-Za-z0-9_]*$'},
-        'ssh': {'required': True},
+        "admin_username": {"required": True, "pattern": r"^[A-Za-z][-A-Za-z0-9_]*$"},
+        "ssh": {"required": True},
     }
 
     _attribute_map = {
@@ -1069,13 +1039,7 @@ class ContainerServiceLinuxProfile(_serialization.Model):
         "ssh": {"key": "ssh", "type": "ContainerServiceSshConfiguration"},
     }
 
-    def __init__(
-        self,
-        *,
-        admin_username: str,
-        ssh: "_models.ContainerServiceSshConfiguration",
-        **kwargs
-    ):
+    def __init__(self, *, admin_username: str, ssh: "_models.ContainerServiceSshConfiguration", **kwargs):
         """
         :keyword admin_username: The administrator username to use for Linux VMs. Required.
         :paramtype admin_username: str
@@ -1159,10 +1123,10 @@ class ContainerServiceMasterProfile(_serialization.Model):
     """
 
     _validation = {
-        'dns_prefix': {'required': True},
-        'vm_size': {'required': True},
-        'os_disk_size_gb': {'maximum': 2048, 'minimum': 0},
-        'fqdn': {'readonly': True},
+        "dns_prefix": {"required": True},
+        "vm_size": {"required": True},
+        "os_disk_size_gb": {"maximum": 2048, "minimum": 0},
+        "fqdn": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1322,10 +1286,12 @@ class ContainerServiceNetworkProfile(_serialization.Model):  # pylint: disable=t
     """
 
     _validation = {
-        'pod_cidr': {'pattern': r'^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$'},
-        'service_cidr': {'pattern': r'^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$'},
-        'dns_service_ip': {'pattern': r'^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'},
-        'docker_bridge_cidr': {'pattern': r'^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$'},
+        "pod_cidr": {"pattern": r"^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$"},
+        "service_cidr": {"pattern": r"^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$"},
+        "dns_service_ip": {
+            "pattern": r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+        },
+        "docker_bridge_cidr": {"pattern": r"^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$"},
     }
 
     _attribute_map = {
@@ -1454,19 +1420,14 @@ class ContainerServiceSshConfiguration(_serialization.Model):
     """
 
     _validation = {
-        'public_keys': {'required': True},
+        "public_keys": {"required": True},
     }
 
     _attribute_map = {
         "public_keys": {"key": "publicKeys", "type": "[ContainerServiceSshPublicKey]"},
     }
 
-    def __init__(
-        self,
-        *,
-        public_keys: List["_models.ContainerServiceSshPublicKey"],
-        **kwargs
-    ):
+    def __init__(self, *, public_keys: List["_models.ContainerServiceSshPublicKey"], **kwargs):
         """
         :keyword public_keys: The list of SSH public keys used to authenticate with Linux-based VMs. A
          maximum of 1 key may be specified. Required.
@@ -1488,19 +1449,14 @@ class ContainerServiceSshPublicKey(_serialization.Model):
     """
 
     _validation = {
-        'key_data': {'required': True},
+        "key_data": {"required": True},
     }
 
     _attribute_map = {
         "key_data": {"key": "keyData", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_data: str,
-        **kwargs
-    ):
+    def __init__(self, *, key_data: str, **kwargs):
         """
         :keyword key_data: Certificate public key used to authenticate with VMs through SSH. The
          certificate must be in PEM format with or without headers. Required.
@@ -1524,8 +1480,8 @@ class ContainerServiceVMDiagnostics(_serialization.Model):
     """
 
     _validation = {
-        'enabled': {'required': True},
-        'storage_uri': {'readonly': True},
+        "enabled": {"required": True},
+        "storage_uri": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1533,12 +1489,7 @@ class ContainerServiceVMDiagnostics(_serialization.Model):
         "storage_uri": {"key": "storageUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: bool,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: bool, **kwargs):
         """
         :keyword enabled: Whether the VM diagnostic agent is provisioned on the VM. Required.
         :paramtype enabled: bool
@@ -1560,12 +1511,7 @@ class CreationData(_serialization.Model):
         "source_resource_id": {"key": "sourceResourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        source_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, source_resource_id: Optional[str] = None, **kwargs):
         """
         :keyword source_resource_id: This is the ARM ID of the source object to be used to create the
          target object.
@@ -1587,8 +1533,8 @@ class CredentialResult(_serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'value': {'readonly': True},
+        "name": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1596,12 +1542,8 @@ class CredentialResult(_serialization.Model):
         "value": {"key": "value", "type": "bytearray"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.name = None
         self.value = None
@@ -1618,19 +1560,15 @@ class CredentialResults(_serialization.Model):
     """
 
     _validation = {
-        'kubeconfigs': {'readonly': True},
+        "kubeconfigs": {"readonly": True},
     }
 
     _attribute_map = {
         "kubeconfigs": {"key": "kubeconfigs", "type": "[CredentialResult]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.kubeconfigs = None
 
@@ -1727,8 +1665,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1736,12 +1674,8 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.type = None
         self.info = None
@@ -1766,11 +1700,11 @@ class ErrorDetail(_serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1781,12 +1715,8 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.code = None
         self.message = None
@@ -1806,12 +1736,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.containerservice.v2022_07_02_preview.models.ErrorDetail
@@ -1879,11 +1804,11 @@ class TrackedResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
@@ -1895,13 +1820,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1946,13 +1865,13 @@ class Fleet(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2001,8 +1920,8 @@ class FleetCredentialResult(_serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'value': {'readonly': True},
+        "name": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2010,12 +1929,8 @@ class FleetCredentialResult(_serialization.Model):
         "value": {"key": "value", "type": "bytearray"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.name = None
         self.value = None
@@ -2032,19 +1947,15 @@ class FleetCredentialResults(_serialization.Model):
     """
 
     _validation = {
-        'kubeconfigs': {'readonly': True},
+        "kubeconfigs": {"readonly": True},
     }
 
     _attribute_map = {
         "kubeconfigs": {"key": "kubeconfigs", "type": "[FleetCredentialResult]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.kubeconfigs = None
 
@@ -2063,8 +1974,8 @@ class FleetHubProfile(_serialization.Model):
     """
 
     _validation = {
-        'fqdn': {'readonly': True},
-        'kubernetes_version': {'readonly': True},
+        "fqdn": {"readonly": True},
+        "kubernetes_version": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2073,12 +1984,7 @@ class FleetHubProfile(_serialization.Model):
         "kubernetes_version": {"key": "kubernetesVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        dns_prefix: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, dns_prefix: Optional[str] = None, **kwargs):
         """
         :keyword dns_prefix: DNS prefix used to create the FQDN for the Fleet hub.
         :paramtype dns_prefix: str
@@ -2101,7 +2007,7 @@ class FleetListResult(_serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2109,12 +2015,7 @@ class FleetListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Fleet"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Fleet"]] = None, **kwargs):
         """
         :keyword value: The list of Fleets.
         :paramtype value: list[~azure.mgmt.containerservice.v2022_07_02_preview.models.Fleet]
@@ -2153,12 +2054,12 @@ class FleetMember(AzureEntityResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2171,12 +2072,7 @@ class FleetMember(AzureEntityResource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        cluster_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, cluster_resource_id: Optional[str] = None, **kwargs):
         """
         :keyword cluster_resource_id: The ARM resource id of the cluster that joins the Fleet. Must be
          a valid Azure resource id. e.g.:
@@ -2200,7 +2096,7 @@ class FleetMembersListResult(_serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2208,12 +2104,7 @@ class FleetMembersListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.FleetMember"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.FleetMember"]] = None, **kwargs):
         """
         :keyword value: The list of members in a given Fleet.
         :paramtype value: list[~azure.mgmt.containerservice.v2022_07_02_preview.models.FleetMember]
@@ -2234,12 +2125,7 @@ class FleetPatch(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2288,7 +2174,7 @@ class KubeletConfig(_serialization.Model):  # pylint: disable=too-many-instance-
     """
 
     _validation = {
-        'container_log_max_files': {'minimum': 2},
+        "container_log_max_files": {"minimum": 2},
     }
 
     _attribute_map = {
@@ -2450,10 +2336,10 @@ class MaintenanceConfiguration(SubResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2500,7 +2386,7 @@ class MaintenanceConfigurationListResult(_serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2508,12 +2394,7 @@ class MaintenanceConfigurationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.MaintenanceConfiguration"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.MaintenanceConfiguration"]] = None, **kwargs):
         """
         :keyword value: The list of maintenance configurations.
         :paramtype value:
@@ -2674,18 +2555,18 @@ class ManagedCluster(TrackedResource):  # pylint: disable=too-many-instance-attr
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'power_state': {'readonly': True},
-        'max_agent_pools': {'readonly': True},
-        'current_kubernetes_version': {'readonly': True},
-        'fqdn': {'readonly': True},
-        'private_fqdn': {'readonly': True},
-        'azure_portal_fqdn': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "power_state": {"readonly": True},
+        "max_agent_pools": {"readonly": True},
+        "current_kubernetes_version": {"readonly": True},
+        "fqdn": {"readonly": True},
+        "private_fqdn": {"readonly": True},
+        "azure_portal_fqdn": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2712,7 +2593,10 @@ class ManagedCluster(TrackedResource):  # pylint: disable=too-many-instance-attr
         "agent_pool_profiles": {"key": "properties.agentPoolProfiles", "type": "[ManagedClusterAgentPoolProfile]"},
         "linux_profile": {"key": "properties.linuxProfile", "type": "ContainerServiceLinuxProfile"},
         "windows_profile": {"key": "properties.windowsProfile", "type": "ManagedClusterWindowsProfile"},
-        "service_principal_profile": {"key": "properties.servicePrincipalProfile", "type": "ManagedClusterServicePrincipalProfile"},
+        "service_principal_profile": {
+            "key": "properties.servicePrincipalProfile",
+            "type": "ManagedClusterServicePrincipalProfile",
+        },
         "addon_profiles": {"key": "properties.addonProfiles", "type": "{ManagedClusterAddonProfile}"},
         "pod_identity_profile": {"key": "properties.podIdentityProfile", "type": "ManagedClusterPodIdentityProfile"},
         "oidc_issuer_profile": {"key": "properties.oidcIssuerProfile", "type": "ManagedClusterOIDCIssuerProfile"},
@@ -2723,8 +2607,14 @@ class ManagedCluster(TrackedResource):  # pylint: disable=too-many-instance-attr
         "network_profile": {"key": "properties.networkProfile", "type": "ContainerServiceNetworkProfile"},
         "aad_profile": {"key": "properties.aadProfile", "type": "ManagedClusterAADProfile"},
         "auto_upgrade_profile": {"key": "properties.autoUpgradeProfile", "type": "ManagedClusterAutoUpgradeProfile"},
-        "auto_scaler_profile": {"key": "properties.autoScalerProfile", "type": "ManagedClusterPropertiesAutoScalerProfile"},
-        "api_server_access_profile": {"key": "properties.apiServerAccessProfile", "type": "ManagedClusterAPIServerAccessProfile"},
+        "auto_scaler_profile": {
+            "key": "properties.autoScalerProfile",
+            "type": "ManagedClusterPropertiesAutoScalerProfile",
+        },
+        "api_server_access_profile": {
+            "key": "properties.apiServerAccessProfile",
+            "type": "ManagedClusterAPIServerAccessProfile",
+        },
         "disk_encryption_set_id": {"key": "properties.diskEncryptionSetID", "type": "str"},
         "identity_profile": {"key": "properties.identityProfile", "type": "{UserAssignedIdentity}"},
         "private_link_resources": {"key": "properties.privateLinkResources", "type": "[PrivateLinkResource]"},
@@ -2734,7 +2624,10 @@ class ManagedCluster(TrackedResource):  # pylint: disable=too-many-instance-attr
         "storage_profile": {"key": "properties.storageProfile", "type": "ManagedClusterStorageProfile"},
         "ingress_profile": {"key": "properties.ingressProfile", "type": "ManagedClusterIngressProfile"},
         "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
-        "workload_auto_scaler_profile": {"key": "properties.workloadAutoScalerProfile", "type": "ManagedClusterWorkloadAutoScalerProfile"},
+        "workload_auto_scaler_profile": {
+            "key": "properties.workloadAutoScalerProfile",
+            "type": "ManagedClusterWorkloadAutoScalerProfile",
+        },
         "azure_monitor_profile": {"key": "properties.azureMonitorProfile", "type": "ManagedClusterAzureMonitorProfile"},
     }
 
@@ -3037,11 +2930,11 @@ class ManagedClusterAccessProfile(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
@@ -3055,12 +2948,7 @@ class ManagedClusterAccessProfile(TrackedResource):
     }
 
     def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        kube_config: Optional[bytes] = None,
-        **kwargs
+        self, *, location: str, tags: Optional[Dict[str, str]] = None, kube_config: Optional[bytes] = None, **kwargs
     ):
         """
         :keyword tags: Resource tags.
@@ -3091,8 +2979,8 @@ class ManagedClusterAddonProfile(_serialization.Model):
     """
 
     _validation = {
-        'enabled': {'required': True},
-        'identity': {'readonly': True},
+        "enabled": {"required": True},
+        "identity": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3101,13 +2989,7 @@ class ManagedClusterAddonProfile(_serialization.Model):
         "identity": {"key": "identity", "type": "ManagedClusterAddonProfileIdentity"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: bool,
-        config: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: bool, config: Optional[Dict[str, str]] = None, **kwargs):
         """
         :keyword enabled: Whether the add-on is enabled or not. Required.
         :paramtype enabled: bool
@@ -3364,10 +3246,10 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):  # pylint:
     """
 
     _validation = {
-        'os_disk_size_gb': {'maximum': 2048, 'minimum': 0},
-        'current_orchestrator_version': {'readonly': True},
-        'node_image_version': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "os_disk_size_gb": {"maximum": 2048, "minimum": 0},
+        "current_orchestrator_version": {"readonly": True},
+        "node_image_version": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3668,7 +3550,9 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):  # pylint:
         self.host_group_id = host_group_id
 
 
-class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):  # pylint: disable=too-many-instance-attributes
+class ManagedClusterAgentPoolProfile(
+    ManagedClusterAgentPoolProfileProperties
+):  # pylint: disable=too-many-instance-attributes
     """Profile for the container service agent pool.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3841,11 +3725,11 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties): 
     """
 
     _validation = {
-        'os_disk_size_gb': {'maximum': 2048, 'minimum': 0},
-        'current_orchestrator_version': {'readonly': True},
-        'node_image_version': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'name': {'required': True, 'pattern': r'^[a-z][a-z0-9]{0,11}$'},
+        "os_disk_size_gb": {"maximum": 2048, "minimum": 0},
+        "current_orchestrator_version": {"readonly": True},
+        "node_image_version": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "name": {"required": True, "pattern": r"^[a-z][a-z0-9]{0,11}$"},
     }
 
     _attribute_map = {
@@ -4103,7 +3987,50 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties): 
         :keyword name: Windows agent pool names must be 6 characters or less. Required.
         :paramtype name: str
         """
-        super().__init__(count=count, vm_size=vm_size, os_disk_size_gb=os_disk_size_gb, os_disk_type=os_disk_type, kubelet_disk_type=kubelet_disk_type, workload_runtime=workload_runtime, message_of_the_day=message_of_the_day, vnet_subnet_id=vnet_subnet_id, pod_subnet_id=pod_subnet_id, max_pods=max_pods, os_type=os_type, os_sku=os_sku, max_count=max_count, min_count=min_count, enable_auto_scaling=enable_auto_scaling, scale_down_mode=scale_down_mode, type=type, mode=mode, orchestrator_version=orchestrator_version, upgrade_settings=upgrade_settings, power_state=power_state, availability_zones=availability_zones, enable_node_public_ip=enable_node_public_ip, enable_custom_ca_trust=enable_custom_ca_trust, node_public_ip_prefix_id=node_public_ip_prefix_id, scale_set_priority=scale_set_priority, scale_set_eviction_policy=scale_set_eviction_policy, spot_max_price=spot_max_price, tags=tags, node_labels=node_labels, node_taints=node_taints, proximity_placement_group_id=proximity_placement_group_id, kubelet_config=kubelet_config, linux_os_config=linux_os_config, enable_encryption_at_host=enable_encryption_at_host, enable_ultra_ssd=enable_ultra_ssd, enable_fips=enable_fips, gpu_instance_profile=gpu_instance_profile, creation_data=creation_data, capacity_reservation_group_id=capacity_reservation_group_id, host_group_id=host_group_id, **kwargs)
+        super().__init__(
+            count=count,
+            vm_size=vm_size,
+            os_disk_size_gb=os_disk_size_gb,
+            os_disk_type=os_disk_type,
+            kubelet_disk_type=kubelet_disk_type,
+            workload_runtime=workload_runtime,
+            message_of_the_day=message_of_the_day,
+            vnet_subnet_id=vnet_subnet_id,
+            pod_subnet_id=pod_subnet_id,
+            max_pods=max_pods,
+            os_type=os_type,
+            os_sku=os_sku,
+            max_count=max_count,
+            min_count=min_count,
+            enable_auto_scaling=enable_auto_scaling,
+            scale_down_mode=scale_down_mode,
+            type=type,
+            mode=mode,
+            orchestrator_version=orchestrator_version,
+            upgrade_settings=upgrade_settings,
+            power_state=power_state,
+            availability_zones=availability_zones,
+            enable_node_public_ip=enable_node_public_ip,
+            enable_custom_ca_trust=enable_custom_ca_trust,
+            node_public_ip_prefix_id=node_public_ip_prefix_id,
+            scale_set_priority=scale_set_priority,
+            scale_set_eviction_policy=scale_set_eviction_policy,
+            spot_max_price=spot_max_price,
+            tags=tags,
+            node_labels=node_labels,
+            node_taints=node_taints,
+            proximity_placement_group_id=proximity_placement_group_id,
+            kubelet_config=kubelet_config,
+            linux_os_config=linux_os_config,
+            enable_encryption_at_host=enable_encryption_at_host,
+            enable_ultra_ssd=enable_ultra_ssd,
+            enable_fips=enable_fips,
+            gpu_instance_profile=gpu_instance_profile,
+            creation_data=creation_data,
+            capacity_reservation_group_id=capacity_reservation_group_id,
+            host_group_id=host_group_id,
+            **kwargs
+        )
         self.name = name
 
 
@@ -4206,12 +4133,7 @@ class ManagedClusterAutoUpgradeProfile(_serialization.Model):
         "upgrade_channel": {"key": "upgradeChannel", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        upgrade_channel: Optional[Union[str, "_models.UpgradeChannel"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, upgrade_channel: Optional[Union[str, "_models.UpgradeChannel"]] = None, **kwargs):
         """
         :keyword upgrade_channel: For more information see `setting the AKS cluster auto-upgrade
          channel <https://docs.microsoft.com/azure/aks/upgrade-cluster#set-auto-upgrade-channel>`_.
@@ -4235,12 +4157,7 @@ class ManagedClusterAzureMonitorProfile(_serialization.Model):
         "metrics": {"key": "metrics", "type": "ManagedClusterAzureMonitorProfileMetrics"},
     }
 
-    def __init__(
-        self,
-        *,
-        metrics: Optional["_models.ManagedClusterAzureMonitorProfileMetrics"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, metrics: Optional["_models.ManagedClusterAzureMonitorProfileMetrics"] = None, **kwargs):
         """
         :keyword metrics: Metrics profile for the prometheus service addon.
         :paramtype metrics:
@@ -4300,7 +4217,7 @@ class ManagedClusterAzureMonitorProfileMetrics(_serialization.Model):
     """
 
     _validation = {
-        'enabled': {'required': True},
+        "enabled": {"required": True},
     }
 
     _attribute_map = {
@@ -4347,7 +4264,7 @@ class ManagedClusterHTTPProxyConfig(_serialization.Model):
     """
 
     _validation = {
-        'effective_no_proxy': {'readonly': True},
+        "effective_no_proxy": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4408,22 +4325,27 @@ class ManagedClusterIdentity(_serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
         "principal_id": {"key": "principalId", "type": "str"},
         "tenant_id": {"key": "tenantId", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{ManagedServiceIdentityUserAssignedIdentitiesValue}"},
+        "user_assigned_identities": {
+            "key": "userAssignedIdentities",
+            "type": "{ManagedServiceIdentityUserAssignedIdentitiesValue}",
+        },
     }
 
     def __init__(
         self,
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "_models.ManagedServiceIdentityUserAssignedIdentitiesValue"]] = None,
+        user_assigned_identities: Optional[
+            Dict[str, "_models.ManagedServiceIdentityUserAssignedIdentitiesValue"]
+        ] = None,
         **kwargs
     ):
         """
@@ -4457,10 +4379,7 @@ class ManagedClusterIngressProfile(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        web_app_routing: Optional["_models.ManagedClusterIngressProfileWebAppRouting"] = None,
-        **kwargs
+        self, *, web_app_routing: Optional["_models.ManagedClusterIngressProfileWebAppRouting"] = None, **kwargs
     ):
         """
         :keyword web_app_routing: Web App Routing settings for the ingress profile.
@@ -4486,13 +4405,7 @@ class ManagedClusterIngressProfileWebAppRouting(_serialization.Model):
         "dns_zone_resource_id": {"key": "dnsZoneResourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        dns_zone_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: Optional[bool] = None, dns_zone_resource_id: Optional[str] = None, **kwargs):
         """
         :keyword enabled: Whether to enable Web App Routing.
         :paramtype enabled: bool
@@ -4517,7 +4430,7 @@ class ManagedClusterListResult(_serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4525,12 +4438,7 @@ class ManagedClusterListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ManagedCluster"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.ManagedCluster"]] = None, **kwargs):
         """
         :keyword value: The list of managed clusters.
         :paramtype value: list[~azure.mgmt.containerservice.v2022_07_02_preview.models.ManagedCluster]
@@ -4569,13 +4477,19 @@ class ManagedClusterLoadBalancerProfile(_serialization.Model):
     """
 
     _validation = {
-        'allocated_outbound_ports': {'maximum': 64000, 'minimum': 0},
-        'idle_timeout_in_minutes': {'maximum': 120, 'minimum': 4},
+        "allocated_outbound_ports": {"maximum": 64000, "minimum": 0},
+        "idle_timeout_in_minutes": {"maximum": 120, "minimum": 4},
     }
 
     _attribute_map = {
-        "managed_outbound_i_ps": {"key": "managedOutboundIPs", "type": "ManagedClusterLoadBalancerProfileManagedOutboundIPs"},
-        "outbound_ip_prefixes": {"key": "outboundIPPrefixes", "type": "ManagedClusterLoadBalancerProfileOutboundIPPrefixes"},
+        "managed_outbound_i_ps": {
+            "key": "managedOutboundIPs",
+            "type": "ManagedClusterLoadBalancerProfileManagedOutboundIPs",
+        },
+        "outbound_ip_prefixes": {
+            "key": "outboundIPPrefixes",
+            "type": "ManagedClusterLoadBalancerProfileOutboundIPPrefixes",
+        },
         "outbound_i_ps": {"key": "outboundIPs", "type": "ManagedClusterLoadBalancerProfileOutboundIPs"},
         "effective_outbound_i_ps": {"key": "effectiveOutboundIPs", "type": "[ResourceReference]"},
         "allocated_outbound_ports": {"key": "allocatedOutboundPorts", "type": "int"},
@@ -4645,8 +4559,8 @@ class ManagedClusterLoadBalancerProfileManagedOutboundIPs(_serialization.Model):
     """
 
     _validation = {
-        'count': {'maximum': 100, 'minimum': 1},
-        'count_ipv6': {'maximum': 100, 'minimum': 0},
+        "count": {"maximum": 100, "minimum": 1},
+        "count_ipv6": {"maximum": 100, "minimum": 0},
     }
 
     _attribute_map = {
@@ -4654,13 +4568,7 @@ class ManagedClusterLoadBalancerProfileManagedOutboundIPs(_serialization.Model):
         "count_ipv6": {"key": "countIPv6", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        count: int = 1,
-        count_ipv6: int = 0,
-        **kwargs
-    ):
+    def __init__(self, *, count: int = 1, count_ipv6: int = 0, **kwargs):
         """
         :keyword count: The desired number of IPv4 outbound IPs created/managed by Azure for the
          cluster load balancer. Allowed values must be in the range of 1 to 100 (inclusive). The default
@@ -4688,12 +4596,7 @@ class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(_serialization.Model):
         "public_ip_prefixes": {"key": "publicIPPrefixes", "type": "[ResourceReference]"},
     }
 
-    def __init__(
-        self,
-        *,
-        public_ip_prefixes: Optional[List["_models.ResourceReference"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, public_ip_prefixes: Optional[List["_models.ResourceReference"]] = None, **kwargs):
         """
         :keyword public_ip_prefixes: A list of public IP prefix resources.
         :paramtype public_ip_prefixes:
@@ -4715,12 +4618,7 @@ class ManagedClusterLoadBalancerProfileOutboundIPs(_serialization.Model):
         "public_i_ps": {"key": "publicIPs", "type": "[ResourceReference]"},
     }
 
-    def __init__(
-        self,
-        *,
-        public_i_ps: Optional[List["_models.ResourceReference"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, public_i_ps: Optional[List["_models.ResourceReference"]] = None, **kwargs):
         """
         :keyword public_i_ps: A list of public IP resources.
         :paramtype public_i_ps:
@@ -4739,19 +4637,14 @@ class ManagedClusterManagedOutboundIPProfile(_serialization.Model):
     """
 
     _validation = {
-        'count': {'maximum': 16, 'minimum': 1},
+        "count": {"maximum": 16, "minimum": 1},
     }
 
     _attribute_map = {
         "count": {"key": "count", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        count: int = 1,
-        **kwargs
-    ):
+    def __init__(self, *, count: int = 1, **kwargs):
         """
         :keyword count: The desired number of outbound IPs created/managed by Azure. Allowed values
          must be in the range of 1 to 16 (inclusive). The default value is 1.
@@ -4777,11 +4670,14 @@ class ManagedClusterNATGatewayProfile(_serialization.Model):
     """
 
     _validation = {
-        'idle_timeout_in_minutes': {'maximum': 120, 'minimum': 4},
+        "idle_timeout_in_minutes": {"maximum": 120, "minimum": 4},
     }
 
     _attribute_map = {
-        "managed_outbound_ip_profile": {"key": "managedOutboundIPProfile", "type": "ManagedClusterManagedOutboundIPProfile"},
+        "managed_outbound_ip_profile": {
+            "key": "managedOutboundIPProfile",
+            "type": "ManagedClusterManagedOutboundIPProfile",
+        },
         "effective_outbound_i_ps": {"key": "effectiveOutboundIPs", "type": "[ResourceReference]"},
         "idle_timeout_in_minutes": {"key": "idleTimeoutInMinutes", "type": "int"},
     }
@@ -4825,7 +4721,7 @@ class ManagedClusterOIDCIssuerProfile(_serialization.Model):
     """
 
     _validation = {
-        'issuer_url': {'readonly': True},
+        "issuer_url": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4833,12 +4729,7 @@ class ManagedClusterOIDCIssuerProfile(_serialization.Model):
         "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
         """
         :keyword enabled: Whether the OIDC issuer is enabled.
         :paramtype enabled: bool
@@ -4864,7 +4755,7 @@ class ManagedClusterPodIdentity(_serialization.Model):
     :ivar identity: The user assigned identity details. Required.
     :vartype identity: ~azure.mgmt.containerservice.v2022_07_02_preview.models.UserAssignedIdentity
     :ivar provisioning_state: The current provisioning state of the pod identity. Known values are:
-     "Assigned", "Updating", "Deleting", and "Failed".
+     "Assigned", "Canceled", "Deleting", "Failed", "Succeeded", and "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerservice.v2022_07_02_preview.models.ManagedClusterPodIdentityProvisioningState
     :ivar provisioning_info:
@@ -4873,11 +4764,11 @@ class ManagedClusterPodIdentity(_serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'namespace': {'required': True},
-        'identity': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'provisioning_info': {'readonly': True},
+        "name": {"required": True},
+        "namespace": {"required": True},
+        "identity": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "provisioning_info": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4932,9 +4823,9 @@ class ManagedClusterPodIdentityException(_serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'namespace': {'required': True},
-        'pod_labels': {'required': True},
+        "name": {"required": True},
+        "namespace": {"required": True},
+        "pod_labels": {"required": True},
     }
 
     _attribute_map = {
@@ -4943,14 +4834,7 @@ class ManagedClusterPodIdentityException(_serialization.Model):
         "pod_labels": {"key": "podLabels", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        namespace: str,
-        pod_labels: Dict[str, str],
-        **kwargs
-    ):
+    def __init__(self, *, name: str, namespace: str, pod_labels: Dict[str, str], **kwargs):
         """
         :keyword name: The name of the pod identity exception. Required.
         :paramtype name: str
@@ -4988,7 +4872,10 @@ class ManagedClusterPodIdentityProfile(_serialization.Model):
         "enabled": {"key": "enabled", "type": "bool"},
         "allow_network_plugin_kubenet": {"key": "allowNetworkPluginKubenet", "type": "bool"},
         "user_assigned_identities": {"key": "userAssignedIdentities", "type": "[ManagedClusterPodIdentity]"},
-        "user_assigned_identity_exceptions": {"key": "userAssignedIdentityExceptions", "type": "[ManagedClusterPodIdentityException]"},
+        "user_assigned_identity_exceptions": {
+            "key": "userAssignedIdentityExceptions",
+            "type": "[ManagedClusterPodIdentityException]",
+        },
     }
 
     def __init__(
@@ -5035,12 +4922,7 @@ class ManagedClusterPodIdentityProvisioningError(_serialization.Model):
         "error": {"key": "error", "type": "ManagedClusterPodIdentityProvisioningErrorBody"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ManagedClusterPodIdentityProvisioningErrorBody"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ManagedClusterPodIdentityProvisioningErrorBody"] = None, **kwargs):
         """
         :keyword error: Details about the error.
         :paramtype error:
@@ -5116,12 +4998,7 @@ class ManagedClusterPodIdentityProvisioningInfo(_serialization.Model):
         "error": {"key": "error", "type": "ManagedClusterPodIdentityProvisioningError"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ManagedClusterPodIdentityProvisioningError"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ManagedClusterPodIdentityProvisioningError"] = None, **kwargs):
         """
         :keyword error: Pod identity assignment error (if any).
         :paramtype error:
@@ -5149,8 +5026,8 @@ class ManagedClusterPoolUpgradeProfile(_serialization.Model):
     """
 
     _validation = {
-        'kubernetes_version': {'required': True},
-        'os_type': {'required': True},
+        "kubernetes_version": {"required": True},
+        "os_type": {"required": True},
     }
 
     _attribute_map = {
@@ -5202,13 +5079,7 @@ class ManagedClusterPoolUpgradeProfileUpgradesItem(_serialization.Model):
         "is_preview": {"key": "isPreview", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        kubernetes_version: Optional[str] = None,
-        is_preview: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kubernetes_version: Optional[str] = None, is_preview: Optional[bool] = None, **kwargs):
         """
         :keyword kubernetes_version: The Kubernetes version (major.minor.patch).
         :paramtype kubernetes_version: str
@@ -5397,7 +5268,7 @@ class ManagedClusterPropertiesForSnapshot(_serialization.Model):
     """
 
     _validation = {
-        'network_profile': {'readonly': True},
+        "network_profile": {"readonly": True},
     }
 
     _attribute_map = {
@@ -5520,7 +5391,10 @@ class ManagedClusterSecurityProfileDefender(_serialization.Model):
 
     _attribute_map = {
         "log_analytics_workspace_resource_id": {"key": "logAnalyticsWorkspaceResourceId", "type": "str"},
-        "security_monitoring": {"key": "securityMonitoring", "type": "ManagedClusterSecurityProfileDefenderSecurityMonitoring"},
+        "security_monitoring": {
+            "key": "securityMonitoring",
+            "type": "ManagedClusterSecurityProfileDefenderSecurityMonitoring",
+        },
     }
 
     def __init__(
@@ -5557,12 +5431,7 @@ class ManagedClusterSecurityProfileDefenderSecurityMonitoring(_serialization.Mod
         "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
         """
         :keyword enabled: Whether to enable Defender threat detection.
         :paramtype enabled: bool
@@ -5585,13 +5454,7 @@ class ManagedClusterSecurityProfileImageCleaner(_serialization.Model):
         "interval_hours": {"key": "intervalHours", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        interval_hours: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: Optional[bool] = None, interval_hours: Optional[int] = None, **kwargs):
         """
         :keyword enabled: Whether to enable ImageCleaner on AKS cluster.
         :paramtype enabled: bool
@@ -5614,12 +5477,7 @@ class ManagedClusterSecurityProfileNodeRestriction(_serialization.Model):
         "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
         """
         :keyword enabled: Whether to enable Node Restriction.
         :paramtype enabled: bool
@@ -5639,12 +5497,7 @@ class ManagedClusterSecurityProfileWorkloadIdentity(_serialization.Model):
         "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
         """
         :keyword enabled: Whether to enable Workload Identity.
         :paramtype enabled: bool
@@ -5665,7 +5518,7 @@ class ManagedClusterServicePrincipalProfile(_serialization.Model):
     """
 
     _validation = {
-        'client_id': {'required': True},
+        "client_id": {"required": True},
     }
 
     _attribute_map = {
@@ -5673,13 +5526,7 @@ class ManagedClusterServicePrincipalProfile(_serialization.Model):
         "secret": {"key": "secret", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        client_id: str,
-        secret: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, client_id: str, secret: Optional[str] = None, **kwargs):
         """
         :keyword client_id: The ID for the service principal. Required.
         :paramtype client_id: str
@@ -5767,12 +5614,12 @@ class ManagedClusterSnapshot(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'managed_cluster_properties_read_only': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "managed_cluster_properties_read_only": {"readonly": True},
     }
 
     _attribute_map = {
@@ -5784,7 +5631,10 @@ class ManagedClusterSnapshot(TrackedResource):
         "location": {"key": "location", "type": "str"},
         "creation_data": {"key": "properties.creationData", "type": "CreationData"},
         "snapshot_type": {"key": "properties.snapshotType", "type": "str"},
-        "managed_cluster_properties_read_only": {"key": "properties.managedClusterPropertiesReadOnly", "type": "ManagedClusterPropertiesForSnapshot"},
+        "managed_cluster_properties_read_only": {
+            "key": "properties.managedClusterPropertiesReadOnly",
+            "type": "ManagedClusterPropertiesForSnapshot",
+        },
     }
 
     def __init__(
@@ -5828,7 +5678,7 @@ class ManagedClusterSnapshotListResult(_serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -5836,12 +5686,7 @@ class ManagedClusterSnapshotListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ManagedClusterSnapshot"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.ManagedClusterSnapshot"]] = None, **kwargs):
         """
         :keyword value: The list of managed cluster snapshots.
         :paramtype value:
@@ -5917,12 +5762,7 @@ class ManagedClusterStorageProfileBlobCSIDriver(_serialization.Model):
         "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
         """
         :keyword enabled: Whether to enable AzureBlob CSI Driver. The default value is false.
         :paramtype enabled: bool
@@ -5945,13 +5785,7 @@ class ManagedClusterStorageProfileDiskCSIDriver(_serialization.Model):
         "version": {"key": "version", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        version: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: Optional[bool] = None, version: Optional[str] = None, **kwargs):
         """
         :keyword enabled: Whether to enable AzureDisk CSI Driver. The default value is true.
         :paramtype enabled: bool
@@ -5974,12 +5808,7 @@ class ManagedClusterStorageProfileFileCSIDriver(_serialization.Model):
         "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
         """
         :keyword enabled: Whether to enable AzureFile CSI Driver. The default value is true.
         :paramtype enabled: bool
@@ -5999,12 +5828,7 @@ class ManagedClusterStorageProfileSnapshotController(_serialization.Model):
         "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
         """
         :keyword enabled: Whether to enable Snapshot Controller. The default value is true.
         :paramtype enabled: bool
@@ -6036,11 +5860,11 @@ class ManagedClusterUpgradeProfile(_serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'control_plane_profile': {'required': True},
-        'agent_pool_profiles': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "control_plane_profile": {"required": True},
+        "agent_pool_profiles": {"required": True},
     }
 
     _attribute_map = {
@@ -6110,7 +5934,7 @@ class ManagedClusterWindowsProfile(_serialization.Model):
     """
 
     _validation = {
-        'admin_username': {'required': True},
+        "admin_username": {"required": True},
     }
 
     _attribute_map = {
@@ -6182,14 +6006,19 @@ class ManagedClusterWorkloadAutoScalerProfile(_serialization.Model):
 
     _attribute_map = {
         "keda": {"key": "keda", "type": "ManagedClusterWorkloadAutoScalerProfileKeda"},
-        "vertical_pod_autoscaler": {"key": "verticalPodAutoscaler", "type": "ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler"},
+        "vertical_pod_autoscaler": {
+            "key": "verticalPodAutoscaler",
+            "type": "ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler",
+        },
     }
 
     def __init__(
         self,
         *,
         keda: Optional["_models.ManagedClusterWorkloadAutoScalerProfileKeda"] = None,
-        vertical_pod_autoscaler: Optional["_models.ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler"] = None,
+        vertical_pod_autoscaler: Optional[
+            "_models.ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler"
+        ] = None,
         **kwargs
     ):
         """
@@ -6216,19 +6045,14 @@ class ManagedClusterWorkloadAutoScalerProfileKeda(_serialization.Model):
     """
 
     _validation = {
-        'enabled': {'required': True},
+        "enabled": {"required": True},
     }
 
     _attribute_map = {
         "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: bool,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: bool, **kwargs):
         """
         :keyword enabled: Whether to enable KEDA. Required.
         :paramtype enabled: bool
@@ -6257,9 +6081,9 @@ class ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler(_serializatio
     """
 
     _validation = {
-        'enabled': {'required': True},
-        'controlled_values': {'required': True},
-        'update_mode': {'required': True},
+        "enabled": {"required": True},
+        "controlled_values": {"required": True},
+        "update_mode": {"required": True},
     }
 
     _attribute_map = {
@@ -6309,8 +6133,8 @@ class ManagedServiceIdentityUserAssignedIdentitiesValue(_serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -6318,12 +6142,8 @@ class ManagedServiceIdentityUserAssignedIdentitiesValue(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
@@ -6410,19 +6230,15 @@ class OperationListResult(_serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[OperationValue]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.value = None
 
@@ -6447,12 +6263,12 @@ class OperationValue(_serialization.Model):
     """
 
     _validation = {
-        'origin': {'readonly': True},
-        'name': {'readonly': True},
-        'operation': {'readonly': True},
-        'resource': {'readonly': True},
-        'description': {'readonly': True},
-        'provider': {'readonly': True},
+        "origin": {"readonly": True},
+        "name": {"readonly": True},
+        "operation": {"readonly": True},
+        "resource": {"readonly": True},
+        "description": {"readonly": True},
+        "provider": {"readonly": True},
     }
 
     _attribute_map = {
@@ -6464,12 +6280,8 @@ class OperationValue(_serialization.Model):
         "provider": {"key": "display.provider", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.origin = None
         self.name = None
@@ -6498,10 +6310,10 @@ class OSOptionProfile(_serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'os_option_property_list': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "os_option_property_list": {"required": True},
     }
 
     _attribute_map = {
@@ -6511,12 +6323,7 @@ class OSOptionProfile(_serialization.Model):
         "os_option_property_list": {"key": "properties.osOptionPropertyList", "type": "[OSOptionProperty]"},
     }
 
-    def __init__(
-        self,
-        *,
-        os_option_property_list: List["_models.OSOptionProperty"],
-        **kwargs
-    ):
+    def __init__(self, *, os_option_property_list: List["_models.OSOptionProperty"], **kwargs):
         """
         :keyword os_option_property_list: The list of OS options. Required.
         :paramtype os_option_property_list:
@@ -6541,8 +6348,8 @@ class OSOptionProperty(_serialization.Model):
     """
 
     _validation = {
-        'os_type': {'required': True},
-        'enable_fips_image': {'required': True},
+        "os_type": {"required": True},
+        "enable_fips_image": {"required": True},
     }
 
     _attribute_map = {
@@ -6550,13 +6357,7 @@ class OSOptionProperty(_serialization.Model):
         "enable_fips_image": {"key": "enable-fips-image", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        os_type: str,
-        enable_fips_image: bool,
-        **kwargs
-    ):
+    def __init__(self, *, os_type: str, enable_fips_image: bool, **kwargs):
         """
         :keyword os_type: The OS type. Required.
         :paramtype os_type: str
@@ -6619,8 +6420,8 @@ class OutboundEnvironmentEndpointCollection(_serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -6628,12 +6429,7 @@ class OutboundEnvironmentEndpointCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.OutboundEnvironmentEndpoint"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.OutboundEnvironmentEndpoint"], **kwargs):
         """
         :keyword value: Collection of resources. Required.
         :paramtype value:
@@ -6656,12 +6452,7 @@ class PowerState(_serialization.Model):
         "code": {"key": "code", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[Union[str, "_models.Code"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, code: Optional[Union[str, "_models.Code"]] = None, **kwargs):
         """
         :keyword code: Tells whether the cluster is Running or Stopped. Known values are: "Running" and
          "Stopped".
@@ -6682,12 +6473,7 @@ class PrivateEndpoint(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: The resource ID of the private endpoint.
         :paramtype id: str
@@ -6707,8 +6493,8 @@ class PrivateEndpointConnection(_serialization.Model):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :ivar provisioning_state: The current provisioning state. Known values are: "Succeeded",
-     "Creating", "Deleting", and "Failed".
+    :ivar provisioning_state: The current provisioning state. Known values are: "Canceled",
+     "Creating", "Deleting", "Failed", and "Succeeded".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerservice.v2022_07_02_preview.models.PrivateEndpointConnectionProvisioningState
     :ivar private_endpoint: The resource of private endpoint.
@@ -6721,10 +6507,10 @@ class PrivateEndpointConnection(_serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -6733,7 +6519,10 @@ class PrivateEndpointConnection(_serialization.Model):
         "type": {"key": "type", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
-        "private_link_service_connection_state": {"key": "properties.privateLinkServiceConnectionState", "type": "PrivateLinkServiceConnectionState"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
     }
 
     def __init__(
@@ -6773,12 +6562,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.PrivateEndpointConnection"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs):
         """
         :keyword value: The collection value.
         :paramtype value:
@@ -6809,7 +6593,7 @@ class PrivateLinkResource(_serialization.Model):
     """
 
     _validation = {
-        'private_link_service_id': {'readonly': True},
+        "private_link_service_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -6864,12 +6648,7 @@ class PrivateLinkResourcesListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.PrivateLinkResource"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs):
         """
         :keyword value: The collection value.
         :paramtype value:
@@ -6926,12 +6705,7 @@ class ResourceReference(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: The fully qualified Azure resource id.
         :paramtype id: str
@@ -6954,7 +6728,7 @@ class RunCommandRequest(_serialization.Model):
     """
 
     _validation = {
-        'command': {'required': True},
+        "command": {"required": True},
     }
 
     _attribute_map = {
@@ -6963,14 +6737,7 @@ class RunCommandRequest(_serialization.Model):
         "cluster_token": {"key": "clusterToken", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        command: str,
-        context: Optional[str] = None,
-        cluster_token: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, command: str, context: Optional[str] = None, cluster_token: Optional[str] = None, **kwargs):
         """
         :keyword command: The command to run. Required.
         :paramtype command: str
@@ -7007,13 +6774,13 @@ class RunCommandResult(_serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'exit_code': {'readonly': True},
-        'started_at': {'readonly': True},
-        'finished_at': {'readonly': True},
-        'logs': {'readonly': True},
-        'reason': {'readonly': True},
+        "id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "exit_code": {"readonly": True},
+        "started_at": {"readonly": True},
+        "finished_at": {"readonly": True},
+        "logs": {"readonly": True},
+        "reason": {"readonly": True},
     }
 
     _attribute_map = {
@@ -7026,12 +6793,8 @@ class RunCommandResult(_serialization.Model):
         "reason": {"key": "properties.reason", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.id = None
         self.provisioning_state = None
@@ -7090,17 +6853,17 @@ class Snapshot(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'kubernetes_version': {'readonly': True},
-        'node_image_version': {'readonly': True},
-        'os_type': {'readonly': True},
-        'os_sku': {'readonly': True},
-        'vm_size': {'readonly': True},
-        'enable_fips': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "kubernetes_version": {"readonly": True},
+        "node_image_version": {"readonly": True},
+        "os_type": {"readonly": True},
+        "os_sku": {"readonly": True},
+        "vm_size": {"readonly": True},
+        "enable_fips": {"readonly": True},
     }
 
     _attribute_map = {
@@ -7165,7 +6928,7 @@ class SnapshotListResult(_serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -7173,12 +6936,7 @@ class SnapshotListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Snapshot"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Snapshot"]] = None, **kwargs):
         """
         :keyword value: The list of snapshots.
         :paramtype value: list[~azure.mgmt.containerservice.v2022_07_02_preview.models.Snapshot]
@@ -7481,12 +7239,7 @@ class TagsObject(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -7513,11 +7266,7 @@ class TimeInWeek(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        day: Optional[Union[str, "_models.WeekDay"]] = None,
-        hour_slots: Optional[List[int]] = None,
-        **kwargs
+        self, *, day: Optional[Union[str, "_models.WeekDay"]] = None, hour_slots: Optional[List[int]] = None, **kwargs
     ):
         """
         :keyword day: The day of the week. Known values are: "Sunday", "Monday", "Tuesday",
@@ -7547,13 +7296,7 @@ class TimeSpan(_serialization.Model):
         "end": {"key": "end", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        *,
-        start: Optional[datetime.datetime] = None,
-        end: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+    def __init__(self, *, start: Optional[datetime.datetime] = None, end: Optional[datetime.datetime] = None, **kwargs):
         """
         :keyword start: The start of a time span.
         :paramtype start: ~datetime.datetime
@@ -7582,9 +7325,9 @@ class TrustedAccessRole(_serialization.Model):
     """
 
     _validation = {
-        'source_resource_type': {'readonly': True},
-        'name': {'readonly': True},
-        'rules': {'readonly': True},
+        "source_resource_type": {"readonly": True},
+        "name": {"readonly": True},
+        "rules": {"readonly": True},
     }
 
     _attribute_map = {
@@ -7593,12 +7336,8 @@ class TrustedAccessRole(_serialization.Model):
         "rules": {"key": "rules", "type": "[TrustedAccessRoleRule]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.source_resource_type = None
         self.name = None
@@ -7624,7 +7363,7 @@ class TrustedAccessRoleBinding(Resource):
      information.
     :vartype system_data: ~azure.mgmt.containerservice.v2022_07_02_preview.models.SystemData
     :ivar provisioning_state: The current provisioning state of trusted access role binding. Known
-     values are: "Succeeded", "Failed", "Updating", and "Deleting".
+     values are: "Canceled", "Deleting", "Failed", "Succeeded", and "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerservice.v2022_07_02_preview.models.TrustedAccessRoleBindingProvisioningState
     :ivar source_resource_id: The ARM resource ID of source resource that trusted access is
@@ -7636,13 +7375,13 @@ class TrustedAccessRoleBinding(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'source_resource_id': {'required': True},
-        'roles': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "source_resource_id": {"required": True},
+        "roles": {"required": True},
     }
 
     _attribute_map = {
@@ -7655,13 +7394,7 @@ class TrustedAccessRoleBinding(Resource):
         "roles": {"key": "properties.roles", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        source_resource_id: str,
-        roles: List[str],
-        **kwargs
-    ):
+    def __init__(self, *, source_resource_id: str, roles: List[str], **kwargs):
         """
         :keyword source_resource_id: The ARM resource ID of source resource that trusted access is
          configured for. Required.
@@ -7689,7 +7422,7 @@ class TrustedAccessRoleBindingListResult(_serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -7697,12 +7430,7 @@ class TrustedAccessRoleBindingListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.TrustedAccessRoleBinding"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.TrustedAccessRoleBinding"]] = None, **kwargs):
         """
         :keyword value: Role binding list.
         :paramtype value:
@@ -7725,8 +7453,8 @@ class TrustedAccessRoleListResult(_serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -7734,12 +7462,8 @@ class TrustedAccessRoleListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -7763,11 +7487,11 @@ class TrustedAccessRoleRule(_serialization.Model):
     """
 
     _validation = {
-        'verbs': {'readonly': True},
-        'api_groups': {'readonly': True},
-        'resources': {'readonly': True},
-        'resource_names': {'readonly': True},
-        'non_resource_ur_ls': {'readonly': True},
+        "verbs": {"readonly": True},
+        "api_groups": {"readonly": True},
+        "resources": {"readonly": True},
+        "resource_names": {"readonly": True},
+        "non_resource_ur_ls": {"readonly": True},
     }
 
     _attribute_map = {
@@ -7778,12 +7502,8 @@ class TrustedAccessRoleRule(_serialization.Model):
         "non_resource_ur_ls": {"key": "nonResourceURLs", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.verbs = None
         self.api_groups = None
