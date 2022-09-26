@@ -778,6 +778,13 @@ def _is_user_error_from_exception_type(e: Union[Exception, None]):
         return True
 
 
+def get_all_enum_values_iter(enum_type):
+    """Get all values of an enum type."""
+    for key in dir(enum_type):
+        if not key.startswith("_"):
+            yield getattr(enum_type, key)
+
+
 def _validate_missing_sub_or_rg_and_raise(subscription_id: str, resource_group: str):
     """Determine if subscription or resource group is missing and raise exception
     as appropriate."""
@@ -797,10 +804,3 @@ def _validate_missing_sub_or_rg_and_raise(subscription_id: str, resource_group: 
             target=ErrorTarget.GENERAL,
             error_category=ErrorCategory.USER_ERROR,
         )
-
-
-def get_all_enum_values_iter(enum_type):
-    """Get all values of an enum type."""
-    for key in dir(enum_type):
-        if not key.startswith("_"):
-            yield getattr(enum_type, key)
