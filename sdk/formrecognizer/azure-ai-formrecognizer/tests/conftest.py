@@ -7,6 +7,8 @@
 # --------------------------------------------------------------------------
 
 import pytest
+from functools import wraps
+from azure.core.exceptions import HttpResponseError
 import sys
 from devtools_testutils import add_remove_header_sanitizer, add_general_regex_sanitizer, add_oauth_response_sanitizer, add_body_key_sanitizer, test_proxy
 
@@ -58,3 +60,14 @@ def add_sanitizers(test_proxy):
         value="redacted",
         regex="([0-9a-f-]{36})",
     )
+
+@pytest.fixture(autouse=True)
+def skip_flaky_tests(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except HttpResponseError as error:
+            if "Invalid request".casefold() in error.message.casefold():
+                pytest.mark.skip("flaky service response")
+    return wrapper
