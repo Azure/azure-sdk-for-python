@@ -64,7 +64,7 @@ class RegistryOperations:
         :rtype: ~azure.core.paging.ItemPaged[Registry]
         """
 
-        return self._operation.list(cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs])
+        return self._operation.list(cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs], resource_group_name=self._resource_group_name)
 
     @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
     def get(self, name: str = None, **kwargs: Dict) -> Registry:
@@ -137,6 +137,7 @@ class RegistryOperations:
             registry_name=registry.name,  # type: str
             body=registry_data,  # type: "_models.Registry"
             polling=self._get_polling(registry.name),
+             cls=lambda response, deserialized, headers: Registry._from_rest_object(deserialized),
         )
 
         return poller

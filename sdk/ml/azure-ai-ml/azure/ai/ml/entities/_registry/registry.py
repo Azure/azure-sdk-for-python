@@ -154,14 +154,13 @@ class Registry(Resource):
             mlflow_registry_uri=real_registry.ml_flow_registry_uri,
             region_details=region_details,
         )
-        return result
 
     # There are differences between what our registry validation schema
     # accepts, and how we actually represent things internally.
     # This is mostly due to the compromise required to balance
     # the actual shape of registries as they're defined by
     # autorest with how the spec wanted users to be able to
-    # configure them
+    # configure them.
     @classmethod
     def _convert_yaml_dict_to_entity_input(cls, input: Dict):
         # change replication_locations to region_details
@@ -180,6 +179,7 @@ class Registry(Resource):
             if hasattr(region_detail, "storage_config") and isinstance(region_detail.storage_config, SystemCreatedStorageAccount):
                 region_detail.storage_config = [region_detail.storage_config]
 
+
     def _to_rest_object(self) -> RestRegistry:
         """Build current parameterized schedule instance to a registry object before submission.
 
@@ -193,9 +193,11 @@ class Registry(Resource):
             name=self.name,
             location=self.location,
             identity=identity,
+            tags=self.tags,
+            description=self.description,
             properties=RegistryProperties(
-                description=self.description,
-                tags=self.tags,
+                #tags=self.tags, interior tags exist due to swagger inheritance 
+                # issues, don't actually use them.
                 public_network_access=self.public_network_access,
                 discovery_url=self.discovery_url,
                 intellectual_property_publisher=self.intellectual_property_publisher,

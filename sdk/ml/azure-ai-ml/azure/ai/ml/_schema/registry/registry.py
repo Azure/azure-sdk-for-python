@@ -18,13 +18,10 @@ from .util import acr_format_validator
 
 # Based on 10-01-preview api
 class RegistrySchema(ResourceSchema):
-    # Inherits name, id, tag and description fields from ResourceSchema
+    # Inherits name, id, tags, and description fields from ResourceSchema
 
     # Values from RegistryTrackedResource (Client name: Registry)
     location = fields.Str(required=True)
-    # identity = ignored - output only
-    # kind = ignored - output only
-    # sku = ignored - output only
 
     # Values from Registry (Client name: RegistryProperties)
     public_network_access = StringTransformedEnum(
@@ -43,6 +40,12 @@ class RegistrySchema(ResourceSchema):
         is_strict=True,
         load_default=SystemCreatedAcrAccount(acr_account_sku=AcrAccountSku.PREMIUM),
     )
-    # managed_resource_group = ignored - output only
-    # mlflow_registry_uri = ignored - output only
-    # discovery_url = ignored - output only
+
+    # Values that can only be set by return values from the system, never
+    # set by the user.
+    identity = fields.Str(dump_only=True)
+    kind = fields.Str(dump_only=True)
+    sku = fields.Str(dump_only=True)
+    managed_resource_group = fields.Str(dump_only=True)
+    mlflow_registry_uri = fields.Str(dump_only=True)
+    discovery_url = fields.Str(dump_only=True)

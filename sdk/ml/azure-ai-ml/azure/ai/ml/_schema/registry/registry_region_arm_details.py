@@ -17,13 +17,19 @@ from .util import acr_format_validator, storage_account_validator
 # Differs from the swagger def in that the acr_details can only be supplied as a
 # single registry-wide instance, rather than a per-region list.
 class RegistryRegionArmDetailsSchema(metaclass=PatchedSchemaMeta):
-    acr_config = fields.List(
+    # Commenting this out for the time being.
+    # We do not want to surface the acr_config as a per-region configurable
+    # field. Instead we want to simplify the UX and surface it as a non-list, 
+    # top-level value called 'container_registry'.
+    # We don't even want to show the per-region acrs when displaying a 
+    # registry to the user, so this isn't even left as a dump-only field.
+    '''acr_config = fields.List(
         UnionField(
             [DumpableStringField(validate=acr_format_validator), NestedField(SystemCreatedAcrAccountSchema)],
             dump_only=True,
             is_strict=True,
         )
-    )
+    )'''
     location = fields.Str()
     storage_config = UnionField(
         [
