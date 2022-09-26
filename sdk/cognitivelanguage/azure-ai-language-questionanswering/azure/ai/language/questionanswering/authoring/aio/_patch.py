@@ -11,6 +11,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, AsyncBearerTokenCredentialPolicy
 from ._client import QuestionAnsweringAuthoringClient as QuestionAnsweringAuthoringClientGenerated
+from .._patch import POLLING_INTERVAL_DEFAULT
 
 
 def _authentication_policy(credential, **kwargs):
@@ -64,6 +65,7 @@ class QuestionAnsweringAuthoringClient(QuestionAnsweringAuthoringClientGenerated
             endpoint=endpoint,
             credential=credential,  # type: ignore
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential, **kwargs)),
+            polling_interval=kwargs.pop("polling_interval", POLLING_INTERVAL_DEFAULT),
             **kwargs
         )
 

@@ -231,6 +231,7 @@
     "myacr",
     "mydirectory",
     "myfile",
+    "myvault",
     "nazsdk",
     "nbytes",
     "noarch",
@@ -393,7 +394,8 @@
         "myasynctable",
         "mytableasync",
         "mytable",
-        "edmtypes"
+        "edmtypes",
+        "specifed"
       ]
     },
     {

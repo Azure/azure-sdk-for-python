@@ -429,7 +429,7 @@ class TestPipelineJob:
 
     def test_components_input_output(self):
         yaml_path = "./tests/test_configs/internal/component_with_input_types/component_spec.yaml"
-        component: InternalComponent = load_component(path=yaml_path)
+        component: InternalComponent = load_component(yaml_path)
 
         fake_input = Input(type=AssetTypes.MLTABLE, path="azureml:scope_tsv:1")
         inputs = {

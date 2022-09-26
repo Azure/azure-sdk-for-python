@@ -25,7 +25,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType, ModelVersionData
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
@@ -69,11 +69,12 @@ class ModelOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client: Union[ServiceClient052022, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
-        super(ModelOperations, self).__init__(operation_scope)
+        super(ModelOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._model_versions_operation = service_client.model_versions
         self._model_container_operation = service_client.model_containers
@@ -111,7 +112,7 @@ class ModelOperations(_ScopeDependentOperations):
             sas_uri = None
 
             if self._registry_name:
-                # Case of promote model to registry
+                # Case of copy model to registry
                 if isinstance(model, WorkspaceModelReference):
                     # verify that model is not already in registry
                     try:
@@ -447,10 +448,10 @@ class ModelOperations(_ScopeDependentOperations):
         return Model._from_rest_object(result)
 
     # pylint: disable=no-self-use
-    def _prepare_to_promote(self, model: Model, name: str = None, version: str = None) -> WorkspaceModelReference:
+    def _prepare_to_copy(self, model: Model, name: str = None, version: str = None) -> WorkspaceModelReference:
 
         """Returns WorkspaceModelReference
-        to promote a registered model to registry given the asset id
+        to copy a registered model to registry given the asset id
 
         :param model: Registered model
         :type model: Model
@@ -463,7 +464,7 @@ class ModelOperations(_ScopeDependentOperations):
         workspace = self._service_client.workspaces.get(
             resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
         )
-        workspace_guid = workspace.discovery_url.split("/")[5]
+        workspace_guid = workspace.workspace_id
         workspace_location = workspace.location
 
         # Get model asset ID

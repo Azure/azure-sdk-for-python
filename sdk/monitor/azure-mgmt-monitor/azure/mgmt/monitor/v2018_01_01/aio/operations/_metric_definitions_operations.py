@@ -7,9 +7,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -20,8 +28,10 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._metric_definitions_operations import build_list_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class MetricDefinitionsOperations:
     """
@@ -42,46 +52,45 @@ class MetricDefinitionsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def list(
-        self,
-        resource_uri: str,
-        metricnamespace: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncIterable[_models.MetricDefinitionCollection]:
+        self, resource_uri: str, metricnamespace: Optional[str] = None, **kwargs: Any
+    ) -> AsyncIterable["_models.MetricDefinition"]:
         """Lists the metric definitions for the resource.
 
-        :param resource_uri: The identifier of the resource.
+        :param resource_uri: The identifier of the resource. Required.
         :type resource_uri: str
         :param metricnamespace: Metric namespace to query metric definitions for. Default value is
          None.
         :type metricnamespace: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either MetricDefinitionCollection or the result of
-         cls(response)
+        :return: An iterator like instance of either MetricDefinition or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2018_01_01.models.MetricDefinitionCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2018_01_01.models.MetricDefinition]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-01-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.MetricDefinitionCollection]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetricDefinitionCollection]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     resource_uri=resource_uri,
-                    api_version=api_version,
                     metricnamespace=metricnamespace,
-                    template_url=self.list.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -89,15 +98,11 @@ class MetricDefinitionsOperations:
                 request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
-                
-                request = build_list_request(
-                    resource_uri=resource_uri,
-                    api_version=api_version,
-                    metricnamespace=metricnamespace,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -113,10 +118,8 @@ class MetricDefinitionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -127,8 +130,6 @@ class MetricDefinitionsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/{resourceUri}/providers/Microsoft.Insights/metricDefinitions"}  # type: ignore
+    list.metadata = {"url": "/{resourceUri}/providers/Microsoft.Insights/metricDefinitions"}  # type: ignore

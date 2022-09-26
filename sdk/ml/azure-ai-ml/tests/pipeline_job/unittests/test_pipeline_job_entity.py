@@ -473,7 +473,7 @@ class TestPipelineJobEntity:
         )
 
         expected_dict = {
-            "limits": {"timeout_minutes": 60},
+            "limits": {"timeout_minutes": 60, "max_concurrent_trials": 4, "max_trials": 20},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -485,7 +485,6 @@ class TestPipelineJobEntity:
             "validation_data": "${{parent.inputs.image_multiclass_classification_validate_data}}",
             "sweep": {
                 "sampling_algorithm": "random",
-                "limits": {"max_concurrent_trials": 4, "max_trials": 20},
                 "early_termination": {
                     "evaluation_interval": 10,
                     "delay_evaluation": 0,
@@ -551,7 +550,7 @@ class TestPipelineJobEntity:
         )
 
         expected_dict = {
-            "limits": {"timeout_minutes": 60},
+            "limits": {"timeout_minutes": 60, "max_concurrent_trials": 4, "max_trials": 20},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "iou",
@@ -563,7 +562,6 @@ class TestPipelineJobEntity:
             "validation_data": "${{parent.inputs.image_multilabel_classification_validate_data}}",
             "sweep": {
                 "sampling_algorithm": "random",
-                "limits": {"max_concurrent_trials": 4, "max_trials": 20},
                 "early_termination": {
                     "evaluation_interval": 10,
                     "delay_evaluation": 0,
@@ -625,7 +623,7 @@ class TestPipelineJobEntity:
         )
 
         expected_dict = {
-            "limits": {"timeout_minutes": 60},
+            "limits": {"timeout_minutes": 60, "max_concurrent_trials": 4, "max_trials": 20},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "mean_average_precision",
@@ -637,7 +635,6 @@ class TestPipelineJobEntity:
             "validation_data": "${{parent.inputs.image_object_detection_validate_data}}",
             "sweep": {
                 "sampling_algorithm": "random",
-                "limits": {"max_concurrent_trials": 4, "max_trials": 20},
                 "early_termination": {
                     "evaluation_interval": 10,
                     "delay_evaluation": 0,
@@ -706,7 +703,7 @@ class TestPipelineJobEntity:
         )
 
         expected_dict = {
-            "limits": {"timeout_minutes": 60},
+            "limits": {"timeout_minutes": 60, "max_concurrent_trials": 4, "max_trials": 20},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "mean_average_precision",
@@ -718,7 +715,6 @@ class TestPipelineJobEntity:
             "validation_data": "${{parent.inputs.image_instance_segmentation_validate_data}}",
             "sweep": {
                 "sampling_algorithm": "random",
-                "limits": {"max_concurrent_trials": 4, "max_trials": 20},
                 "early_termination": {
                     "evaluation_interval": 10,
                     "delay_evaluation": 0,
@@ -752,7 +748,7 @@ class TestPipelineJobEntity:
     def test_spark_node_in_pipeline(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
         test_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline.yml"
 
-        job = load_job(path=test_path)
+        job = load_job(test_path)
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, Spark)
@@ -827,7 +823,7 @@ class TestPipelineJobEntity:
 
     def test_default_user_identity_if_empty_identity_input(self):
         test_path = "./tests/test_configs/pipeline_jobs/shakespear-sample-and-word-count-using-spark/pipeline.yml"
-        job = load_job(path=test_path)
+        job = load_job(test_path)
         omit_fields = [
             "jobs.sample_word.componentId",
             "jobs.count_word.componentId",
@@ -914,7 +910,7 @@ class TestPipelineJobEntity:
         self,
     ):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_dynamic_allocation_disabled.yml"
-        job = load_job(path=test_path)
+        job = load_job(test_path)
         with pytest.raises(ValidationException) as ve:
             job._to_rest_object().as_dict()
             assert ve.message == "Should not specify min or max executors when dynamic allocation is disabled."
@@ -923,7 +919,7 @@ class TestPipelineJobEntity:
         self,
     ):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_code.yml"
-        job = load_job(path=test_path)
+        job = load_job(test_path)
         with pytest.raises(ValidationException) as ve:
             job._validate()
             assert ve.message == "Entry doesn't exist"
@@ -932,7 +928,7 @@ class TestPipelineJobEntity:
         self,
     ):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_git_code.yml"
-        job = load_job(path=test_path)
+        job = load_job(test_path)
         job._validate()
 
     def test_infer_pipeline_output_type_as_node_type(
@@ -1353,7 +1349,7 @@ class TestPipelineJobEntity:
 
     def test_pipeline_job_with_parameter_group(self):
         test_path = "./tests/test_configs/pipeline_jobs/pipeline_job_with_parameter_group.yml"
-        job: PipelineJob = load_job(path=test_path)
+        job: PipelineJob = load_job(test_path)
         assert isinstance(job.inputs.group, _GroupAttrDict)
         job.inputs.group.int_param = 5
         job.inputs.group.sub_group.str_param = "str"
@@ -1398,7 +1394,7 @@ class TestPipelineJobEntity:
         }
 
     def test_pipeline_with_init_finalize(self) -> None:
-        pipeline_job = load_job(path="./tests/test_configs/pipeline_jobs/pipeline_job_init_finalize.yaml")
+        pipeline_job = load_job("./tests/test_configs/pipeline_jobs/pipeline_job_init_finalize.yaml")
         assert pipeline_job.settings.on_init == "a"
         assert pipeline_job.settings.on_finalize == "c"
         pipeline_job_dict = pipeline_job._to_rest_object().as_dict()

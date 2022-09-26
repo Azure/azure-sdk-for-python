@@ -59,7 +59,8 @@ class TestExportAndImport(QuestionAnsweringTestCase):
             options=project,
             **self.kwargs_for_polling
         )
-        import_poller.result()
+        job_state = import_poller.result()
+        assert job_state["jobId"]
 
         # assert
         project_found = False

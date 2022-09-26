@@ -372,7 +372,7 @@ class TestComponent:
     )
     def test_invalid_additional_includes(self, yaml_path: str, expected_error_msg_prefix: str) -> None:
         component = load_component(
-            path=os.path.join("./tests/test_configs/internal/component_with_additional_includes", yaml_path)
+            os.path.join("./tests/test_configs/internal/component_with_additional_includes", yaml_path)
         )
         validation_result = component._customized_validate()
         assert validation_result.passed is False
@@ -380,7 +380,7 @@ class TestComponent:
 
     def test_component_input_types(self) -> None:
         yaml_path = "./tests/test_configs/internal/component_with_input_types/component_spec.yaml"
-        component: InternalComponent = load_component(path=yaml_path)
+        component: InternalComponent = load_component(yaml_path)
         component.code = "scope:1"
 
         with open(yaml_path, "r") as f:
@@ -407,7 +407,7 @@ class TestComponent:
 
     def test_component_input_list_type(self) -> None:
         yaml_path = "./tests/test_configs/internal/scope-component/component_spec.yaml"
-        component: InternalComponent = load_component(path=yaml_path)
+        component: InternalComponent = load_component(yaml_path)
         assert component._customized_validate().passed is True
         input_text_data_type = component._to_rest_object().properties.component_spec["inputs"]["TextData"]["type"]
         # for list type component input, REST object should remain type list for service contract
