@@ -535,7 +535,7 @@ class CodegenTestPR:
                 fw.write(content)
 
         # config ci.yml
-        ci_path = f'{Path(test_path).parent}/ci.yml'
+        ci_path = f'{Path(self.sdk_code_path()).parent}/ci.yml'
         new_lines = ''
         with open(ci_path, 'r+') as f:
             if 'TestProxy' not in f.read():
