@@ -201,7 +201,7 @@ class TestDMACTraining(FormRecognizerTest):
             raw_response.append(model_info)
             raw_response.append(document_model)
 
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_multipage_storage_container_sas_url, cls=callback)
+        poller = client.begin_build_document_model("t", blob_container_url=formrecognizer_multipage_storage_container_sas_url, cls=callback)
         model = poller.result()
 
         raw_model = raw_response[0]
