@@ -3856,6 +3856,7 @@ class TestInitFinalizeJob:
         from azure.ai.ml.dsl import pipeline
 
         def assert_pipeline_job_init_finalize_job(pipeline_job: PipelineJob):
+            assert pipeline_job._validate_init_finalize_job().passed
             assert pipeline_job.settings.on_init == "init_job"
             assert pipeline_job.settings.on_finalize == "finalize_job"
             pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
