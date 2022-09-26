@@ -51,6 +51,7 @@ common_omit_fields = [
     "jobs.*.componentId",
     "inputs.*.uri",
     "jobs.*._source",
+    "jobs.*.properties",
     "settings._source",
     "source_job_id",
 ]
@@ -198,7 +199,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         component_job_dict = component_node._to_rest_object()
         assert is_ARM_id_for_resource(component_job_dict["componentId"])
-        omit_fields = ["componentId", "_source"]
+        omit_fields = ["componentId", "_source", "properties"]
         component_job_dict = pydash.omit(component_job_dict, *omit_fields)
         assert component_job_dict == {
             "computeId": None,
@@ -1488,7 +1489,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         job = client.jobs.create_or_update(pipeline, force_rerun=True)
         assert job.settings.force_rerun is True
 
-    def test_parallel_components_with_tabular_input(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_parallel_components_with_tabular_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_tabular_input"
 
         batch_inference = load_component(source=str(components_dir / "tabular_input_e2e.yml"))
@@ -1524,7 +1525,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    def test_parallel_components_with_file_input(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_parallel_components_with_file_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
 
         batch_inference = load_component(source=str(components_dir / "score.yml"))

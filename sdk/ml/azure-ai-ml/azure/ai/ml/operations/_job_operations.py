@@ -139,6 +139,7 @@ class JobOperations(_ScopeDependentOperations):
         super(JobOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation_2022_06_preview = service_client_06_2022_preview.jobs
+        self._service_client = service_client_06_2022_preview
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
@@ -190,7 +191,9 @@ class JobOperations(_ScopeDependentOperations):
                 self._credential, base_url=self._api_url, **self._service_client_kwargs
             )
             self._dataset_dataplane_operations_client = DatasetDataplaneOperations(
-                self._operation_scope, self._operation_config, service_client_dataset_dataplane
+                self._operation_scope,
+                self._operation_config,
+                service_client_dataset_dataplane,
             )
         return self._dataset_dataplane_operations_client
 
@@ -201,7 +204,9 @@ class JobOperations(_ScopeDependentOperations):
                 self._credential, base_url=self._api_url, **self._service_client_kwargs
             )
             self._model_dataplane_operations_client = ModelDataplaneOperations(
-                self._operation_scope, self._operation_config, service_client_model_dataplane
+                self._operation_scope,
+                self._operation_config,
+                service_client_model_dataplane,
             )
         return self._model_dataplane_operations_client
 

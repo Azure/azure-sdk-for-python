@@ -52,8 +52,9 @@ class TestComponentValidate:
             str(components_dir / "invalid/helloworld_component_with_start_number_input_names.yml"),
         ]
         for yaml_file in yaml_files:
+            component = load_component(yaml_file)
             with pytest.raises(ValidationException, match="is not a valid parameter name"):
-                load_component(yaml_file)
+                component()
 
     def test_component_output_name_validate(self):
         yaml_files = [
@@ -64,8 +65,9 @@ class TestComponentValidate:
             str(components_dir / "invalid/helloworld_component_with_start_number_output_names.yml"),
         ]
         for yaml_file in yaml_files:
+            component = load_component(yaml_file)
             with pytest.raises(ValidationException, match="is not a valid parameter name"):
-                load_component(yaml_file)
+                component()
 
     @pytest.mark.parametrize(
         "expected_location,asset_object",

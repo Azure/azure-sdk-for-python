@@ -776,3 +776,10 @@ def _is_user_error_from_exception_type(e: Union[Exception, None]):
     # For OSError/IOError with error no 28: "No space left on device" should be sdk user error
     if isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28):
         return True
+
+
+def get_all_enum_values_iter(enum_type):
+    """Get all values of an enum type."""
+    for key in dir(enum_type):
+        if not key.startswith("_"):
+            yield getattr(enum_type, key)

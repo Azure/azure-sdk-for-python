@@ -80,23 +80,21 @@ class TestPipelineJobValidate:
                     "value": None,
                 },
             ),
-            # does not work in CI
-            # (
-            #     "./tests/test_configs/pipeline_jobs/invalid/type_sensitive_component_error.yml",
-            #     # not allowed type
-            #     {
-            #         "location": f"{Path('./tests/test_configs/pipeline_jobs/invalid/type_sensitive_component_error.yml').absolute()}#line 24",
-            #         "message": "Value unsupported passed is not in set "
-            #         "['command', 'import', 'sweep', 'parallel', 'pipeline', 'automl', 'spark']",
-            #         "path": "jobs.hello_world_unsupported_type.type",
-            #         "value": "unsupported",
-            #     },
-            # ),
+            (
+                "./tests/test_configs/pipeline_jobs/invalid/type_sensitive_component_error.yml",
+                # not allowed type
+                {
+                    "location": f"{Path('./tests/test_configs/pipeline_jobs/invalid/type_sensitive_component_error.yml').absolute()}#line 24",
+                    "message": "Value 'unsupported' passed is not in set " "['command', 'import', 'sweep', 'parallel'",
+                    "path": "jobs.hello_world_unsupported_type.type",
+                    "value": "unsupported",
+                },
+            ),
             (
                 "./tests/test_configs/pipeline_jobs/job_with_incorrect_component_content/pipeline.yml",
                 {
                     "location": f"{Path('./tests/test_configs/pipeline_jobs/job_with_incorrect_component_content/pipeline.yml').absolute()}#line 8",
-                    "message": "Not a valid string.; Not a valid string.; Not a valid URL.; "
+                    "message": "Not a valid string.; Not a valid URL.; "
                     "In order to specify a git path, please provide "
                     "the correct path prefixed with 'git+\n"
                     "; In order to specify an existing codes, please "
@@ -115,7 +113,7 @@ class TestPipelineJobValidate:
         assert expected_validation_result.pop("message") in result_dict[0].pop("message")
         assert result_dict[0] == expected_validation_result
 
-    @pytest.mark.skip(reason="does not work locally")
+    @pytest.mark.skip(reason="migration skip: sync pipeline changes during soft code complete.")
     def test_pipeline_job_type_sensitive_error_message(self):
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_comps.yml"
         pipeline_job: PipelineJob = load_job(test_path)

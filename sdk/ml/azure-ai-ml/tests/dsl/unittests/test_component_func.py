@@ -253,6 +253,7 @@ class TestComponentFunc:
             "outputs": {},
             "resources": {"instance_count": 2, "properties": {}},
             "tags": {},
+            "properties": {},
         }
 
     def test_component_func_dict_distribution(self):
