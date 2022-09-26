@@ -127,7 +127,7 @@ async def example_create_servicebus_receiver_async():
     from azure.servicebus.aio import ServiceBusClient
     servicebus_connection_str = os.environ['SERVICEBUS_CONNECTION_STR']
     topic_name = os.environ["SERVICEBUS_TOPIC_NAME"]
-    subscription_name = os.environ["SERVICEBUSSUBSCRIPTION_NAME"]
+    subscription_name = os.environ["SERVICEBUS_SUBSCRIPTION_NAME"]
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
     async with servicebus_client:
         subscription_receiver = servicebus_client.get_subscription_receiver(
