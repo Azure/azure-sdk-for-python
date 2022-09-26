@@ -1,6 +1,7 @@
 import pydash
 import pytest
 
+from azure.ai.ml import load_component
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
@@ -8,7 +9,6 @@ from azure.ai.ml.entities._job.pipeline._exceptions import UnexpectedKeywordErro
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
-from azure.ai.ml import load_component
 
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
@@ -18,7 +18,7 @@ class TestParallelComponentEntity:
         # code is specified in yaml, value is respected
         component_yaml = "./tests/test_configs/components/basic_parallel_component_score.yml"
         parallel_component = load_component(
-            path=component_yaml,
+            source=component_yaml,
         )
         assert parallel_component.task.get("type") == "run_function"
         assert parallel_component.code == "../python"
@@ -57,8 +57,9 @@ class TestParallelComponentEntity:
             max_concurrency_per_instance=12,
             error_threshold=10,
             mini_batch_error_threshold=5,
-            logging_level="DEBUG",
+            logging_level="INFO",
             task=task,
+            base_path="./tests/test_configs/components",
         )
         omit_fields = [
             "properties.component_spec.$schema",
@@ -69,7 +70,7 @@ class TestParallelComponentEntity:
         component_dict = pydash.omit(component_dict, *omit_fields)
 
         yaml_path = "./tests/test_configs/components/basic_parallel_component_score.yml"
-        yaml_component = load_component(path=yaml_path)
+        yaml_component = load_component(source=yaml_path)
         yaml_component_dict = yaml_component._to_rest_object().as_dict()
         yaml_component_dict = pydash.omit(yaml_component_dict, *omit_fields)
 
@@ -78,20 +79,21 @@ class TestParallelComponentEntity:
     def test_parallel_component_version_as_a_function_with_inputs(self):
         expected_rest_component = {
             "componentId": "fake_component",
-            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "_source": "YAML.COMPONENT",
             "computeId": None,
             "display_name": None,
             "input_data": "${{inputs.component_in_path}}",
             "inputs": {
-                "component_in_number": {"job_input_type": "Literal", "value": "10"},
+                "component_in_number": {"job_input_type": "literal", "value": "10"},
                 "component_in_path": {
-                    "job_input_type": "Literal",
+                    "job_input_type": "literal",
                     "value": "${{parent.inputs.pipeline_input}}",
                 },
             },
             "name": None,
             "outputs": {},
             "tags": {},
+            "properties": {},
             "input_data": "${{inputs.component_in_path}}",
             "type": "parallel",
             "error_threshold": None,
@@ -106,14 +108,14 @@ class TestParallelComponentEntity:
                 "append_row_to": "${{outputs.scoring_summary}}",
                 "program_arguments": "--label ${{inputs.label}} --model ${{inputs.model}} "
                 "--output ${{outputs.scored_result}}",
-                "code": "azureml:../python",
+                "code": "../python",
                 "entry_script": "score.py",
                 "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
                 "type": "run_function",
             },
         }
         yaml_path = "./tests/test_configs/components/helloworld_parallel.yml"
-        yaml_component_version = load_component(path=yaml_path)
+        yaml_component_version = load_component(source=yaml_path)
         pipeline_input = PipelineInput(name="pipeline_input", owner="pipeline", meta=None)
         yaml_component = yaml_component_version(component_in_number=10, component_in_path=pipeline_input)
 

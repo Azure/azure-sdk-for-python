@@ -6,9 +6,10 @@ import logging
 from typing import Dict
 
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2022_02_01_preview.models import SystemData
 from azure.ai.ml._schema.job import BaseJobSchema
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, TYPE, JobType
+from azure.ai.ml.constants import JobType
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 
 from .job import Job
@@ -34,7 +35,8 @@ class _BaseJob(Job):
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
-    :param experiment_name:  Name of the experiment the job will be created under, if None is provided, default will be set to current directory name.
+    :param experiment_name:  Name of the experiment the job will be created under,
+        if None is provided, default will be set to current directory name.
     :type experiment_name: str
     :param services: Information on services associated with the job, readonly.
     :type services: dict[str, JobService]
@@ -50,6 +52,7 @@ class _BaseJob(Job):
         super().__init__(**kwargs)
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return BaseJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod

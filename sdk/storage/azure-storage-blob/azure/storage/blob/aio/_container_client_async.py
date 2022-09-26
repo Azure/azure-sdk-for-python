@@ -36,7 +36,8 @@ from .._models import ContainerProperties, BlobType, BlobProperties, FilteredBlo
 from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 from ._blob_client_async import BlobClient
 from ._lease_async import BlobLeaseClient
-from ._list_blobs_helper import BlobPropertiesPaged, BlobPrefix
+from ._list_blobs_helper import BlobNamesPaged, BlobPropertiesPaged, BlobPrefix
+from .._list_blobs_helper import IgnoreListBlobsDeserializer
 from ._models import FilteredBlobPaged
 
 if TYPE_CHECKING:
@@ -121,9 +122,14 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             container_name=container_name,
             credential=credential,
             **kwargs)
-        self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._api_version = get_api_version(kwargs)
+        self._client = self._build_generated_client()
         self._configure_encryption(kwargs)
+
+    def _build_generated_client(self):
+        client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
+        client._config.version = self._api_version # pylint: disable=protected-access
+        return client
 
     @distributed_trace_async
     async def create_container(self, metadata=None, public_access=None, **kwargs):
@@ -645,6 +651,43 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         )
 
     @distributed_trace
+    def list_blob_names(self, **kwargs: Any) -> AsyncItemPaged[str]:
+        """Returns a generator to list the names of blobs under the specified container.
+        The generator will lazily follow the continuation tokens returned by
+        the service.
+
+        Note that no additional properties or metadata will be returned when using this API.
+        Additionally this API does not have an option to include additional blobs such as snapshots,
+        versions, soft-deleted blobs, etc. To get any of this data, use :func:`list_blobs()`.
+
+        :keyword str name_starts_with:
+            Filters the results to return only blobs whose names
+            begin with the specified prefix.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An iterable (auto-paging) response of blob names as strings.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
+        """
+        name_starts_with = kwargs.pop('name_starts_with', None)
+        results_per_page = kwargs.pop('results_per_page', None)
+        timeout = kwargs.pop('timeout', None)
+
+        # For listing only names we need to create a one-off generated client and
+        # override its deserializer to prevent deserialization of the full response.
+        client = self._build_generated_client()
+        client.container._deserialize = IgnoreListBlobsDeserializer()  # pylint: disable=protected-access
+
+        command = functools.partial(
+            client.container.list_blob_flat_segment,
+            timeout=timeout,
+            **kwargs)
+        return AsyncItemPaged(
+            command,
+            prefix=name_starts_with,
+            results_per_page=results_per_page,
+            page_iterator_class=BlobNamesPaged)
+
+    @distributed_trace
     def walk_blobs(
             self, name_starts_with=None, # type: Optional[str]
             include=None, # type: Optional[Any]
@@ -875,8 +918,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         If a delete retention policy is enabled for the service, then this operation soft deletes the blob or snapshot
         and retains the blob or snapshot for specified number of days.
         After specified number of days, blob's data is removed from the service during garbage collection.
-        Soft deleted blob or snapshot is accessible through :func:`list_blobs()` specifying `include=["deleted"]`
-        option. Soft-deleted blob or snapshot can be restored using :func:`~BlobClient.undelete()`
+        Soft deleted blobs or snapshots are accessible through :func:`list_blobs()` specifying `include=["deleted"]`
+        Soft-deleted blob or snapshot can be restored using :func:`~azure.storage.blob.aio.BlobClient.undelete()`
 
         :param blob: The blob with which to interact. If specified, this value will override
             a blob value specified in the blob URL.
@@ -1046,9 +1089,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             **kwargs)
 
     @distributed_trace_async
-    async def delete_blobs(  # pylint: disable=arguments-differ
-            self, *blobs: List[Union[str, BlobProperties, dict]],
-            **kwargs
+    async def delete_blobs(
+        self, *blobs: Union[str, Dict[str, Any], BlobProperties],
+        **kwargs: Any
     ) -> AsyncIterator[AsyncHttpResponse]:
         """Marks the specified blobs or snapshots for deletion.
 
@@ -1060,7 +1103,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         and retains the blobs or snapshots for specified number of days.
         After specified number of days, blobs' data is removed from the service during garbage collection.
         Soft deleted blobs or snapshots are accessible through :func:`list_blobs()` specifying `include=["deleted"]`
-        Soft-deleted blobs or snapshots can be restored using :func:`~BlobClient.undelete()`
+        Soft-deleted blobs or snapshots can be restored using :func:`~azure.storage.blob.aio.BlobClient.undelete()`
 
         The maximum number of blobs that can be deleted in a single request is 256.
 
@@ -1090,7 +1133,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
                 timeout for subrequest:
                     key: 'timeout', value type: int
 
-        :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
+        :type blobs: str or dict(str, Any) or ~azure.storage.blob.BlobProperties
         :keyword str delete_snapshots:
             Required if a blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -1138,12 +1181,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
 
         return await self._batch_send(*reqs, **options)
 
-    @distributed_trace
+    @distributed_trace_async
     async def set_standard_blob_tier_blobs(
-        self,
-        standard_blob_tier: Union[str, 'StandardBlobTier'],
-        *blobs: List[Union[str, BlobProperties, dict]],
-        **kwargs
+        self, standard_blob_tier: Union[str, 'StandardBlobTier'],
+        *blobs: Union[str, Dict[str, Any], BlobProperties],
+        **kwargs: Any
     ) -> AsyncIterator[AsyncHttpResponse]:
         """This operation sets the tier on block blobs.
 
@@ -1184,7 +1226,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
                 timeout for subrequest:
                     key: 'timeout', value type: int
 
-        :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
+        :type blobs: str or dict(str, Any) or ~azure.storage.blob.BlobProperties
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
         :keyword str if_tags_match_condition:
@@ -1206,12 +1248,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
 
         return await self._batch_send(*reqs, **options)
 
-    @distributed_trace
+    @distributed_trace_async
     async def set_premium_page_blob_tier_blobs(
-        self,
-        premium_page_blob_tier: Union[str, 'PremiumPageBlobTier'],
-        *blobs: List[Union[str, BlobProperties, dict]],
-        **kwargs
+        self, premium_page_blob_tier: Union[str, 'PremiumPageBlobTier'],
+        *blobs: Union[str, Dict[str, Any], BlobProperties],
+        **kwargs: Any
     ) -> AsyncIterator[AsyncHttpResponse]:
         """Sets the page blob tiers on the blobs. This API is only supported for page blobs on premium accounts.
 
@@ -1242,7 +1283,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
                 timeout for subrequest:
                     key: 'timeout', value type: int
 
-        :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
+        :type blobs: str or dict(str, Any) or ~azure.storage.blob.BlobProperties
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to

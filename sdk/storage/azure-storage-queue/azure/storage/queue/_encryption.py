@@ -41,7 +41,7 @@ _ERROR_OBJECT_INVALID = \
 
 def _validate_not_none(param_name, param):
     if param is None:
-        raise ValueError('{0} should not be None.'.format(param_name))
+        raise ValueError(f'{param_name} should not be None.')
 
 
 def _validate_key_encryption_key_wrap(kek):
@@ -680,7 +680,7 @@ def encrypt_blob(blob, key_encryption_key, version):
 
     elif version == _ENCRYPTION_PROTOCOL_V2:
         # AES256 GCM uses 256 bit (32 byte) keys and a 12 byte nonce.
-        content_encryption_key = AESGCM.generate_key(bit_length=256)
+        content_encryption_key = os.urandom(32)
         initialization_vector = None
 
         data = BytesIO(blob)
@@ -909,7 +909,7 @@ def encrypt_queue_message(message, key_encryption_key, version):
 
     elif version == _ENCRYPTION_PROTOCOL_V2:
         # AES256 GCM uses 256 bit (32 byte) keys and a 12 byte nonce.
-        content_encryption_key = AESGCM.generate_key(bit_length=256)
+        content_encryption_key = os.urandom(32)
         initialization_vector = None
 
         # The nonce MUST be different for each key

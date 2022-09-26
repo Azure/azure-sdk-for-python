@@ -1,19 +1,18 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Optional, List
+# pylint: disable=protected-access
+from typing import List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
-    ScheduleStatus as ScheduleState,
-    TriggerType,
-    ComputePowerAction,
-    ComputeSchedules as RestComputeSchedules,
-    ComputeStartStopSchedule as RestComputeStartStopSchedule,
-)
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputePowerAction
+from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeSchedules as RestComputeSchedules
+from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeStartStopSchedule as RestComputeStartStopSchedule
+from azure.ai.ml._restclient.v2022_01_01_preview.models import ScheduleStatus as ScheduleState
+from azure.ai.ml._restclient.v2022_01_01_preview.models import TriggerType
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
-from .._schedule.trigger import TriggerBase, CronTrigger, RecurrenceTrigger
+from .._schedule.trigger import CronTrigger, RecurrenceTrigger
 
 
 class ComputeStartStopSchedule(RestTranslatableMixin):
@@ -32,7 +31,7 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        trigger: TriggerBase = None,
+        trigger: Union[CronTrigger, RecurrenceTrigger] = None,
         action: ComputePowerAction = None,
         state: ScheduleState = ScheduleState.ENABLED,
         **kwargs
@@ -77,27 +76,27 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
         return rest_object
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestComputeStartStopSchedule) -> "ComputeStartStopSchedule":
+    def _from_rest_object(cls, obj: RestComputeStartStopSchedule) -> "ComputeStartStopSchedule":
         schedule = ComputeStartStopSchedule(
-            action=rest_obj.action,
-            state=rest_obj.status,
-            schedule_id=rest_obj.id,
-            provisioning_state=rest_obj.provisioning_status,
+            action=obj.action,
+            state=obj.status,
+            schedule_id=obj.id,
+            provisioning_state=obj.provisioning_status,
         )
 
-        if rest_obj.trigger_type == TriggerType.CRON:
+        if obj.trigger_type == TriggerType.CRON:
             schedule.trigger = CronTrigger(
-                start_time=rest_obj.cron.start_time,
-                time_zone=rest_obj.cron.time_zone,
-                expression=rest_obj.cron.expression,
+                start_time=obj.cron.start_time,
+                time_zone=obj.cron.time_zone,
+                expression=obj.cron.expression,
             )
-        elif rest_obj.trigger_type == TriggerType.RECURRENCE:
+        elif obj.trigger_type == TriggerType.RECURRENCE:
             schedule.trigger = RecurrenceTrigger(
-                start_time=rest_obj.recurrence.start_time,
-                time_zone=rest_obj.recurrence.time_zone,
-                frequency=rest_obj.recurrence.frequency,
-                interval=rest_obj.recurrence.interval,
-                schedule=rest_obj.recurrence.schedule,
+                start_time=obj.recurrence.start_time,
+                time_zone=obj.recurrence.time_zone,
+                frequency=obj.recurrence.frequency,
+                interval=obj.recurrence.interval,
+                schedule=obj.recurrence.schedule,
             )
 
         return schedule
@@ -113,7 +112,7 @@ class ComputeSchedules(RestTranslatableMixin):
     :type kwargs: dict
     """
 
-    def __init__(self, *, compute_start_stop: List[ComputeStartStopSchedule] = None, **kwargs):
+    def __init__(self, *, compute_start_stop: List[ComputeStartStopSchedule] = None):
         self.compute_start_stop = compute_start_stop
 
     def _to_rest_object(self) -> RestComputeSchedules:
@@ -127,10 +126,10 @@ class ComputeSchedules(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestComputeSchedules) -> "ComputeSchedules":
+    def _from_rest_object(cls, obj: RestComputeSchedules) -> "ComputeSchedules":
         schedules: List[ComputeStartStopSchedule] = []
-        if rest_obj.compute_start_stop:
-            for schedule in rest_obj.compute_start_stop:
+        if obj.compute_start_stop:
+            for schedule in obj.compute_start_stop:
                 schedules.append(ComputeStartStopSchedule._from_rest_object(schedule))
 
         return ComputeSchedules(

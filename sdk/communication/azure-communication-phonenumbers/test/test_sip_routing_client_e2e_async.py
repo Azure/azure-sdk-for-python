@@ -7,7 +7,7 @@
 import asyncio
 
 from _shared.asynctestcase import AsyncCommunicationTestCase
-from _shared.uri_replacer_processor import URIReplacerProcessor
+from _shared.helper import URIReplacerProcessor
 from _shared.utils import async_create_token_credential, get_http_logging_policy
 
 from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient

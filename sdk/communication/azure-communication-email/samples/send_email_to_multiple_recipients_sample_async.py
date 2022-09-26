@@ -36,7 +36,7 @@ sys.path.append("..")
 
 class EmailMultipleRecipientSampleAsync(object):
 
-    connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING")
+    connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING_EMAIL")
     sender_address = os.getenv("SENDER_ADDRESS")
     recipient_address = os.getenv("RECIPIENT_ADDRESS")
     second_recipient_address = os.getenv("SECOND_RECIPIENT_ADDRESS")

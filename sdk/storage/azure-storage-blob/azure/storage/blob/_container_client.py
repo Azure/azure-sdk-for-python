@@ -17,7 +17,7 @@ from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
@@ -34,7 +34,13 @@ from ._deserialize import deserialize_container_properties
 from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin
 from ._lease import BlobLeaseClient
-from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged, FilteredBlobPaged
+from ._list_blobs_helper import (
+    BlobNamesPaged,
+    BlobPrefix,
+    BlobPropertiesPaged,
+    FilteredBlobPaged,
+    IgnoreListBlobsDeserializer
+)
 from ._models import (
     ContainerProperties,
     BlobProperties,
@@ -44,7 +50,6 @@ from ._models import (
 from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpResponse  # pylint: disable=ungrouped-imports
     from datetime import datetime
     from ._models import (  # pylint: disable=unused-import
         PublicAccess,
@@ -156,9 +161,14 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
+        self._api_version = get_api_version(kwargs)
+        self._client = self._build_generated_client()
         self._configure_encryption(kwargs)
+
+    def _build_generated_client(self):
+        client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
+        client._config.version = self._api_version # pylint: disable=protected-access
+        return client
 
     def _format_url(self, hostname):
         container_name = self.container_name
@@ -786,6 +796,43 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             page_iterator_class=BlobPropertiesPaged)
 
     @distributed_trace
+    def list_blob_names(self, **kwargs: Any) -> ItemPaged[str]:
+        """Returns a generator to list the names of blobs under the specified container.
+        The generator will lazily follow the continuation tokens returned by
+        the service.
+
+        Note that no additional properties or metadata will be returned when using this API.
+        Additionally, this API does not have an option to include additional blobs such as snapshots,
+        versions, soft-deleted blobs, etc. To get any of this data, use :func:`list_blobs()`.
+
+        :keyword str name_starts_with:
+            Filters the results to return only blobs whose names
+            begin with the specified prefix.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An iterable (auto-paging) response of blob names as strings.
+        :rtype: ~azure.core.paging.ItemPaged[str]
+        """
+        name_starts_with = kwargs.pop('name_starts_with', None)
+        results_per_page = kwargs.pop('results_per_page', None)
+        timeout = kwargs.pop('timeout', None)
+
+        # For listing only names we need to create a one-off generated client and
+        # override its deserializer to prevent deserialization of the full response.
+        client = self._build_generated_client()
+        client.container._deserialize = IgnoreListBlobsDeserializer()  # pylint: disable=protected-access
+
+        command = functools.partial(
+            client.container.list_blob_flat_segment,
+            timeout=timeout,
+            **kwargs)
+        return ItemPaged(
+            command,
+            prefix=name_starts_with,
+            results_per_page=results_per_page,
+            page_iterator_class=BlobNamesPaged)
+
+    @distributed_trace
     def walk_blobs(
             self, name_starts_with=None, # type: Optional[str]
             include=None, # type: Optional[Any]
@@ -1017,7 +1064,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         and retains the blob or snapshot for specified number of days.
         After specified number of days, blob's data is removed from the service during garbage collection.
         Soft deleted blob or snapshot is accessible through :func:`list_blobs()` specifying `include=["deleted"]`
-        option. Soft-deleted blob or snapshot can be restored using :func:`~BlobClient.undelete()`
+        option. Soft-deleted blob or snapshot can be restored using :func:`~azure.storage.blob.BlobClient.undelete()`
 
         :param blob: The blob with which to interact. If specified, this value will override
             a blob value specified in the blob URL.
@@ -1252,10 +1299,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
         return query_parameters, header_parameters
 
-    def _generate_delete_blobs_options(self,
-                                       *blobs,  # type: List[Union[str, BlobProperties, dict]]
-                                       **kwargs
-                                       ):
+    def _generate_delete_blobs_options(
+            self, *blobs: Union[str, Dict[str, Any], BlobProperties],
+            **kwargs: Any
+        ):
         timeout = kwargs.pop('timeout', None)
         raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
         delete_snapshots = kwargs.pop('delete_snapshots', None)
@@ -1309,8 +1356,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         return reqs, kwargs
 
     @distributed_trace
-    def delete_blobs(self, *blobs, **kwargs):
-        # type: (...) -> Iterator[HttpResponse]
+    def delete_blobs(
+            self, *blobs: Union[str, Dict[str, Any], BlobProperties],
+            **kwargs: Any
+        ) -> Iterator[HttpResponse]:
         """Marks the specified blobs or snapshots for deletion.
 
         The blobs are later deleted during garbage collection.
@@ -1321,7 +1370,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         and retains the blobs or snapshots for specified number of days.
         After specified number of days, blobs' data is removed from the service during garbage collection.
         Soft deleted blobs or snapshots are accessible through :func:`list_blobs()` specifying `include=["deleted"]`
-        Soft-deleted blobs or snapshots can be restored using :func:`~BlobClient.undelete()`
+        Soft-deleted blobs or snapshots can be restored using :func:`~azure.storage.blob.BlobClient.undelete()`
 
         The maximum number of blobs that can be deleted in a single request is 256.
 
@@ -1353,7 +1402,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 timeout for subrequest:
                     key: 'timeout', value type: int
 
-        :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
+        :type blobs: str or dict(str, Any) or ~azure.storage.blob.BlobProperties
         :keyword str delete_snapshots:
             Required if a blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -1442,11 +1491,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
         return query_parameters, header_parameters
 
-    def _generate_set_tiers_options(self,
-                                    blob_tier,  # type: Optional[Union[str, StandardBlobTier, PremiumPageBlobTier]]
-                                    *blobs,  # type: List[Union[str, BlobProperties, dict]]
-                                    **kwargs
-                                    ):
+    def _generate_set_tiers_options(
+            self, blob_tier: Optional[Union[str, 'StandardBlobTier', 'PremiumPageBlobTier']],
+            *blobs: Union[str, Dict[str, Any], BlobProperties],
+            **kwargs: Any
+        ):
         timeout = kwargs.pop('timeout', None)
         raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
         rehydrate_priority = kwargs.pop('rehydrate_priority', None)
@@ -1490,12 +1539,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @distributed_trace
     def set_standard_blob_tier_blobs(
-        self,
-        standard_blob_tier,  # type: Optional[Union[str, StandardBlobTier]]
-        *blobs,  # type: List[Union[str, BlobProperties, dict]]
-        **kwargs
-    ):
-        # type: (...) -> Iterator[HttpResponse]
+        self, standard_blob_tier: Optional[Union[str, 'StandardBlobTier']],
+        *blobs: Union[str, Dict[str, Any], BlobProperties],
+        **kwargs: Any
+    ) -> Iterator[HttpResponse]:
         """This operation sets the tier on block blobs.
 
         A block blob's tier determines Hot/Cool/Archive storage type.
@@ -1540,7 +1587,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 timeout for subrequest:
                     key: 'timeout', value type: int
 
-        :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
+        :type blobs: str or dict(str, Any) or ~azure.storage.blob.BlobProperties
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
         :keyword str if_tags_match_condition:
@@ -1563,12 +1610,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @distributed_trace
     def set_premium_page_blob_tier_blobs(
-        self,
-        premium_page_blob_tier,  # type: Optional[Union[str, PremiumPageBlobTier]]
-        *blobs,  # type: List[Union[str, BlobProperties, dict]]
-        **kwargs
-    ):
-        # type: (...) -> Iterator[HttpResponse]
+        self, premium_page_blob_tier: Optional[Union[str, 'PremiumPageBlobTier']],
+        *blobs: Union[str, Dict[str, Any], BlobProperties],
+        **kwargs: Any
+    ) -> Iterator[HttpResponse]:
         """Sets the page blob tiers on all blobs. This API is only supported for page blobs on premium accounts.
 
         The maximum number of blobs that can be updated in a single request is 256.
@@ -1599,7 +1644,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 timeout for subrequest:
                     key: 'timeout', value type: int
 
-        :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
+        :type blobs: str or dict(str, Any) or ~azure.storage.blob.BlobProperties
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to

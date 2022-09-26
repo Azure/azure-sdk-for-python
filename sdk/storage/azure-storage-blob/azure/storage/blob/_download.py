@@ -9,7 +9,7 @@ import threading
 import time
 import warnings
 from io import BytesIO
-from typing import Generic, Iterator, Optional, TypeVar
+from typing import Generic, IO, Iterator, Optional, TypeVar
 
 from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
 from azure.core.tracing.common import with_current_context
@@ -445,7 +445,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                     self.size = self._file_size
 
             except HttpResponseError as error:
-                if self._start_range is None and error.response.status_code == 416:
+                if self._start_range is None and error.response and error.response.status_code == 416:
                     # Get range will fail on an empty file. If the user did not
                     # request a range, do a regular get request in order to get
                     # any properties.
@@ -646,8 +646,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             return data.decode(self._encoding)
         return data
 
-    def readall(self):
-        # type: () -> T
+    def readall(self) -> T:
         """
         Read the entire contents of this blob.
         This operation is blocking until all data is downloaded.
@@ -697,7 +696,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._encoding = encoding
         return self.readall()
 
-    def readinto(self, stream):
+    def readinto(self, stream: IO[T]) -> int:
         """Download the contents of this file to a stream.
 
         :param stream:

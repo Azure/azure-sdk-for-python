@@ -1504,12 +1504,12 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        container = await self._create_container(bsc)
+        container = await self._create_container(bsc, 'testfind')
 
         data = b'hello world'
-        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        tags = {"tag1": "tagone", "tag2": "tagtwo", "tag3": "tagthree"}
         other_tags = {'tag1': 'other'}
-        filter_expression = "tag1='firsttag' and tag2='secondtag'"
+        filter_expression = "tag1='tagone' and tag2='tagtwo'"
 
         c1 = container.get_blob_client('blob1')
         await c1.upload_blob(data, tags=tags)
@@ -1521,7 +1521,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         await c4.upload_blob(data, tags=other_tags)
 
         if self.is_live:
-            sleep(15)
+            sleep(10)
 
         # Act
         blob_pages = container.find_blobs_by_tags(filter_expression, results_per_page=2).by_page()
@@ -1538,8 +1538,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         assert 2 == len(items_on_page1)
         assert 1 == len(items_on_page2)
         assert len(items_on_page2[0]['tags']) == 2
-        assert items_on_page2[0]['tags']['tag1'] == 'firsttag'
-        assert items_on_page2[0]['tags']['tag2'] == 'secondtag'
+        assert items_on_page2[0]['tags']['tag1'] == 'tagone'
+        assert items_on_page2[0]['tags']['tag2'] == 'tagtwo'
 
     def test_batch_delete_empty_blob_list(self):
         container_client = ContainerClient("https://mystorageaccount.blob.core.windows.net", "container")
@@ -2306,4 +2306,63 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         assert downloaded_data == data
 
-#------------------------------------------------------------------------------
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_list_blob_names(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        container: ContainerClient = await self._create_container(bsc)
+        data = b'hello world'
+
+        await (container.get_blob_client('blob1')).upload_blob(data, overwrite=True)
+        await (container.get_blob_client('blob2')).upload_blob(data, overwrite=True)
+        await (container.get_blob_client('test1')).upload_blob(data, overwrite=True)
+
+        # Act
+        all_blobs = []
+        async for b in container.list_blob_names():
+            all_blobs.append(b)
+
+        test_blobs = []
+        async for b in container.list_blob_names(name_starts_with="test"):
+            test_blobs.append(b)
+
+        # Assert
+        assert len(all_blobs) == 3
+        assert all_blobs[0] == 'blob1'
+        assert all_blobs[1] == 'blob2'
+        assert all_blobs[2] == 'test1'
+        assert len(test_blobs) == 1
+        assert test_blobs[0] == 'test1'
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_list_blob_names_pagination(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        container: ContainerClient = await self._create_container(bsc)
+        data = b'hello world'
+
+        await (container.get_blob_client('blob1')).upload_blob(data, overwrite=True)
+        await (container.get_blob_client('blob2')).upload_blob(data, overwrite=True)
+        await (container.get_blob_client('blob3')).upload_blob(data, overwrite=True)
+
+        # Act
+        blob_pages = container.list_blob_names(results_per_page=2).by_page()
+        items_on_page1 = []
+        async for b in await blob_pages.__anext__():
+            items_on_page1.append(b)
+        items_on_page2 = []
+        async for b in await blob_pages.__anext__():
+            items_on_page2.append(b)
+
+        # Assert
+        assert len(items_on_page1) == 2
+        assert items_on_page1[0] == 'blob1'
+        assert items_on_page1[1] == 'blob2'
+        assert len(items_on_page2) == 1
+        assert items_on_page2[0] == 'blob3'

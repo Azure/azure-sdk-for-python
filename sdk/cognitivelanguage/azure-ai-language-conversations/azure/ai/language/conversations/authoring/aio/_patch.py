@@ -11,6 +11,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._client import ConversationAuthoringClient as GeneratedConversationAuthoringClient
+from .._patch import POLLING_INTERVAL_DEFAULT
 
 
 def _authentication_policy(credential):
@@ -23,8 +24,8 @@ def _authentication_policy(credential):
         )
     elif credential is not None and not hasattr(credential, "get_token"):
         raise TypeError(
-            "Unsupported credential: {}. Use an instance of AzureKeyCredential "
-            "or a token credential from azure.identity".format(type(credential))
+            f"Unsupported credential: {type(credential)}. Use an instance of AzureKeyCredential "
+            "or a token credential from azure.identity"
         )
     return authentication_policy
 
@@ -56,10 +57,16 @@ class ConversationAuthoringClient(GeneratedConversationAuthoringClient): # pylin
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
     ) -> None:
+        try:
+            endpoint = endpoint.rstrip("/")
+        except AttributeError:
+            raise ValueError("Parameter 'endpoint' must be a string.")
+
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
+            polling_interval=kwargs.pop("polling_interval", POLLING_INTERVAL_DEFAULT),
             **kwargs
         )
 

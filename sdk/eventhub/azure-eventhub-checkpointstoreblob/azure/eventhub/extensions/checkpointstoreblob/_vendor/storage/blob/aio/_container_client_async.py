@@ -903,7 +903,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                     key: 'name', value type: str
                 snapshot you want to delete:
                     key: 'snapshot', value type: str
-                whether to delete snapthots when deleting blob:
+                whether to delete snapshots when deleting blob:
                     key: 'delete_snapshots', value: 'include' or 'only'
                 if the blob modified or not:
                     key: 'if_modified_since', 'if_unmodified_since', value type: datetime

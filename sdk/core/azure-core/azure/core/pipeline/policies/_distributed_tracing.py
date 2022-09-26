@@ -26,7 +26,7 @@
 """Traces network calls using the implementation library from the settings."""
 import logging
 import sys
-from six.moves import urllib
+import urllib
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.settings import settings

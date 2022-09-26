@@ -10,7 +10,7 @@ from azure.cosmos.partition_key import PartitionKey
 import config
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites -
 #
 # 1. An Azure Cosmos account -
 #    https://azure.microsoft.com/en-us/documentation/articles/documentdb-create-account/
@@ -180,6 +180,19 @@ def create_container(db, id):
 
     except exceptions.CosmosResourceExistsError:
         print('A container with id \'_container_analytical_store\' already exists')
+
+    print("\n2.8 Create Container - With auto scale settings")
+
+    try:
+        container = db.create_container(
+            id=id+"_container_auto_scale_settings",
+            partition_key=partition_key,
+            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
+        )
+        print('Container with id \'{0}\' created'.format(container.id))
+
+    except exceptions.CosmosResourceExistsError:
+        print('A container with id \'{0}\' already exists'.format(coll['id']))
 
 
 
