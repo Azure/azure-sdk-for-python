@@ -15,7 +15,7 @@ import datetime
 from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus import ServiceBusMessage
 
-CONNECTION_STR = os.environ["SERVICEBUSCONNECTION_STR"]
+CONNECTION_STR = os.environ["SERVICEBUS_CONNECTION_STR"]
 TOPIC_NAME = os.environ["SERVICEBUS_TOPIC_NAME"]
 
 
