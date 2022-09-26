@@ -527,6 +527,27 @@ class CodegenTestPR:
         print(tests_info)
         return tests_info
 
+    def config_test(self, test_path, template_path):
+        if not Path(f'{test_path}/conftest.py').exists():
+            with open(template_path/'conftest.py', 'r') as fr:
+                content = fr.read()
+            with open(f'{test_path}/conftest.py', 'w') as fw:
+                fw.write(content)
+
+        # config ci.yml
+        ci_path = f'{Path(test_path).parent}/ci.yml'
+        new_lines = ''
+        with open(ci_path, 'r+') as f:
+            if 'TestProxy' not in f.read():
+                f.seek(0, 0)
+                for line in f:
+                    if 'ServiceDirectory' in line:
+                        line += '    TestProxy: true\n'
+                    new_lines += line
+
+                with open(ci_path, 'w+') as fw:
+                    fw.write(new_lines)
+
     @return_origin_path
     def prepare_tests(self):
         os.chdir('../../../')
@@ -549,18 +570,15 @@ class CodegenTestPR:
                                    package=self.package_name,
                                    client=client_name,
                                    operation=operation_name,
-                                   functions=functions)
+                                   functions=functions
+                                   )
 
             with suppress(black.NothingChanged):
                 file_content = black.format_file_contents(temp_out, fast=True, mode=_BLACK_MODE)
                 with open(f'{test_path}/test_mgmt_{self.package_name.lower()}_{operation_name}.py', 'w', encoding='utf-8') as f:
                     f.writelines(file_content)
 
-        if not Path(f'{test_path}/conftest.py').exists():
-            with open(template_path/'conftest.py', 'r') as fr:
-                content = fr.read()
-            with open(f'{test_path}/conftest.py', 'w') as fw:
-                fw.write(content)
+        self.config_test(test_path, template_path)
 
     @return_origin_path
     def run_test_proc(self):
