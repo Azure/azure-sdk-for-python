@@ -97,6 +97,7 @@ response = client.knowledgebase.generate_answer(
     kb_id="<my-knowledge-base-id>",
     generate_answer_payload=generate_answer_payload,
 )
+best_answers = [a for a in response.answers if a.score > 0.9]
 ```
 
 In the modern `azure-ai-language-questionanswering`, you use `get_answers`:
@@ -133,6 +134,7 @@ response = client.knowledgebase.generate_answer(
     kb_id="<my-knowledge-base-id>",
     generate_answer_payload=generate_answer_payload,
 )
+best_answers = [a for a in response.answers if a.score > 0.9]
 ```
 
 Now in `azure-ai-language-questionanswering`, you use `KnowledgeBaseAnswerContext`  to set `project_name`, `deployment_name`, and `question` along with setting the `answer_context` to have `previous_qna_id`:
@@ -199,6 +201,7 @@ client = QuestionAnsweringAuthoringClient(
 Previously in `azure-cognitiveservices-knowledge-qnamaker`, you could create a new knowledgebase using a `CreateKbDTO`:
 
 ```python
+import time
 from msrest.authentication import CognitiveServicesCredentials
 from azure.cognitiveservices.knowledge.qnamaker.models import CreateKbDTO, QnADTO
 from azure.cognitiveservices.knowledge.qnamaker import QnAMakerClient
@@ -220,6 +223,20 @@ operation = client.knowledgebase.create(
         
     )
 )
+for i in range(20):
+    if operation.operation_state in ["NotStarted", "Running"]:
+        print("Waiting for operation: {} to complete.".format(operation.operation_id))
+        time.sleep(5)
+        operation = client.operations.get_details(operation_id=operation.operation_id)
+    else:
+        break
+
+if operation.operation_state != "Succeeded":
+    raise Exception("Operation {} failed to complete.".format(operation.operation_id))
+
+# Get knowledge base ID from resourceLocation HTTP header
+knowledge_base_id = operation.resource_location.replace("/knowledgebases/", "")
+print("Created KB with ID: {}".format(knowledge_base_id))
 ```
 
 Now in `azure-ai-language-questionanswering`, you can create a new Question Answering project by passing a `dict` with the needed project creation properties:
@@ -243,6 +260,10 @@ project = client.create_project(
             "defaultAnswer": "no answer"
         }
     })
+
+print(f"Project name: {project['projectName']}")
+print(f"language: {project['language']}")
+print(f"description: {project['description']}")
 ```
 
 #### Updating knowledge base
@@ -250,6 +271,7 @@ project = client.create_project(
 Previously in `azure-cognitiveservices-knowledge-qnamaker`, you could update your knowledge base using a `UpdateKbOperationDTO`:
 
 ```python
+import time
 from msrest.authentication import CognitiveServicesCredentials
 from azure.cognitiveservices.knowledge.qnamaker.models import UpdateKbOperationDTO, UpdateKbOperationDTOAdd, QnADTO
 from azure.cognitiveservices.knowledge.qnamaker import QnAMakerClient
@@ -272,6 +294,20 @@ operation = client.knowledgebase.update(
         )   
     )
 )
+for i in range(20):
+    if operation.operation_state in ["NotStarted", "Running"]:
+        print("Waiting for operation: {} to complete.".format(operation.operation_id))
+        time.sleep(5)
+        operation = client.operations.get_details(operation_id=operation.operation_id)
+    else:
+        break
+
+if operation.operation_state != "Succeeded":
+    raise Exception("Operation {} failed to complete.".format(operation.operation_id))
+
+# Get knowledge base ID from resourceLocation HTTP header
+knowledge_base_id = operation.resource_location.replace("/knowledgebases/", "")
+print("Created KB with ID: {}".format(knowledge_base_id))
 ```
 
 Now in `azure-ai-language-questionanswering`, you can update your knowledge source using the `begin_update_sources` method:
@@ -302,10 +338,10 @@ sources_poller = client.begin_update_sources(
 sources = sources_poller.result()
 
 for item in sources:
-    print("source name: {}".format(item.get("displayName", "N/A")))
-    print("\tsource: {}".format(item["source"]))
-    print("\tsource uri: {}".format(item.get("sourceUri", "N/A")))
-    print("\tsource kind: {}".format(item["sourceKind"]))
+    print(f"source name: {item.get('displayName', 'N/A')}")
+    print(f"\tsource: {item['source']}")
+    print(f"\tsource uri: {item.get('sourceUri', 'N/A')}")
+    print(f"\tsource kind: {item['sourceKind']}")
 ```
 
 You can also update a project's questions and answers directly as follows:
@@ -335,11 +371,11 @@ qna_poller = client.begin_update_qnas(
 qnas = qna_poller.result()
 
 for item in qnas:
-    print("qna: {}".format(item["id"]))
+    print(f"qna: {item['id']}")
     print("\tquestions:")
     for question in item["questions"]:
-        print("\t\t{}".format(question))
-    print("\tanswer: {}".format(item["answer"]))
+        print(f"\t\t{question}")
+    print(f"\tanswer: {item['answer']}")
 ```
 
 #### Exporting knowledge base
@@ -359,6 +395,7 @@ data = client.knowledgebase.download(
     kb_id="<knowledgebase-id>",
     environment="Test",
 )
+print(data.qna_documents)
 ```
 
 Now you can export your Question Answering project:
@@ -394,7 +431,7 @@ client = QnAMakerClient(
     credentials=CognitiveServicesCredentials("API key")
 )
 
-data = client.knowledgebase.delete(
+client.knowledgebase.delete(
     kb_id="<knowledgebase-id>"
 )
 ```
