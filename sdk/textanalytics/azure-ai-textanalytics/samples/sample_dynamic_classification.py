@@ -5,14 +5,14 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_dynamically_classify_async.py
+FILE: sample_dynamic_classification.py
 
 DESCRIPTION:
     This sample demonstrates how to dynamically classify documents into one or multiple categories.
     No model training is required to use dynamic classification.
 
 USAGE:
-    python sample_dynamically_classify_async.py
+    python sample_dynamic_classification.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
@@ -20,15 +20,13 @@ USAGE:
 """
 
 
-from cgitb import text
 import os
-import asyncio
 
 
-async def sample_dynamically_classify_async() -> None:
-    # [START dynamic_classification_async]
+def sample_dynamic_classification() -> None:
+    # [START dynamic_classification]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.textanalytics.aio import TextAnalyticsClient
+    from azure.ai.textanalytics import TextAnalyticsClient
 
     endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
     key = os.environ["AZURE_LANGUAGE_KEY"]
@@ -41,18 +39,13 @@ async def sample_dynamically_classify_async() -> None:
         "The WHO is issuing a warning about Monkey Pox.",
         "Mo Salah plays in Liverpool FC in England.",
     ]
+    result = text_analytics_client.dynamic_classification(
+        documents,
+        categories=["Health", "Politics", "Music", "Sports"],
+        classification_type="Multi"
+    )
 
-    async with text_analytics_client:
-        results = await text_analytics_client.dynamically_classify(
-            documents,
-            categories=["Health", "Politics", "Music", "Sports"],
-            classification_type="Multi"
-        )
-        document_results = []
-        async for result in results:
-            document_results.append(result)
-
-    for doc, classification_result in zip(documents, document_results):
+    for doc, classification_result in zip(documents, result):
         if classification_result.kind == "DynamicClassification":
             classifications = classification_result.classifications
             print(f"\n'{doc}' classifications:\n")
@@ -64,8 +57,8 @@ async def sample_dynamically_classify_async() -> None:
             print("Document '{}' has an error with code '{}' and message '{}'".format(
                 doc, classification_result.code, classification_result.message
             ))
-    # [END dynamic_classification_async]
+    # [END dynamic_classification]
 
 
 if __name__ == "__main__":
-    asyncio.run(sample_dynamically_classify_async())
+    sample_dynamic_classification()

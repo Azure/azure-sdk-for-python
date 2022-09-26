@@ -255,7 +255,7 @@ The following section provides several code snippets covering some of the most c
 - [Custom Entity Recognition][recognize_custom_entities_sample]
 - [Custom Single Label Classification][single_label_classify_sample]
 - [Custom Multi Label Classification][multi_label_classify_sample]
-- [Dynamic Classification][dynamically_classify_sample]
+- [Dynamic Classification][dynamic_classification_sample]
 
 ### Analyze sentiment
 
@@ -666,7 +666,7 @@ Common scenarios
 - Custom Entity Recognition: [sample_recognize_custom_entities.py][recognize_custom_entities_sample] ([async_version][recognize_custom_entities_sample_async])
 - Custom Single Label Classification: [sample_single_label_classify.py][single_label_classify_sample] ([async_version][single_label_classify_sample_async])
 - Custom Multi Label Classification: [sample_multi_label_classify.py][multi_label_classify_sample] ([async_version][multi_label_classify_sample_async])
-- Dynamic Classification: [sample_dynamically_classify.py][dynamically_classify_sample] ([async_version][dynamically_classify_sample_async])
+- Dynamic Classification: [sample_dynamic_classification.py][dynamic_classification_sample] ([async_version][dynamic_classification_sample_async])
 
 Advanced scenarios
 
@@ -769,8 +769,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [multi_label_classify_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_multi_label_classify.py
 [multi_label_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_multi_label_classify_async.py
 [healthcare_action_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_healthcare_action.py
-[dynamically_classify_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_dynamically_classify.py
-[dynamically_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_dynamically_classify_async.py
+[dynamic_classification_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_dynamic_classification.py
+[dynamic_classification_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_dynamic_classification_async.py
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/

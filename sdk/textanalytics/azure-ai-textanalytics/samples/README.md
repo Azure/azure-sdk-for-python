@@ -34,7 +34,7 @@ These sample programs show common scenarios for the Text Analytics client's offe
 |[sample_multi_label_classify.py][multi_label_classify_sample] and [sample_multi_label_classify_async.py][multi_label_classify_sample_async]|Use a custom model to classify documents into multiple categories|
 |[sample_model_version.py][sample_model_version] and [sample_model_version_async.py][sample_model_version_async]|Set the model version for pre-built Text Analytics models|
 |[sample_analyze_healthcare_action.py][sample_analyze_healthcare_action] and [sample_analyze_healthcare_action_async.py][sample_analyze_healthcare_action_async]|Run a healthcare and PII analysis together|
-|[sample_dynamically_classify.py][dynamically_classify_sample] and [sample_dynamically_classify_async.py][dynamically_classify_sample_async]|Dynamically classify documents without needing to train a model.|
+|[sample_dynamic_classification.py][dynamic_classification_sample] and [sample_dynamic_classification_async.py][dynamic_classification_sample_async]|Dynamically classify documents without needing to train a model.|
 
 ## Prerequisites
 * Python 3.7 or later is required to use this package
@@ -113,8 +113,8 @@ what you can do with the Azure Text Analytics client library.
 [sample_model_version_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_model_version_async.py
 [sample_analyze_healthcare_action]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_healthcare_action.py
 [sample_analyze_healthcare_action_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_healthcare_action_async.py
-[dynamically_classify_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_dynamically_classify.py
-[dynamically_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_dynamically_classify_async.py
+[dynamic_classification_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_dynamic_classification.py
+[dynamic_classification_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_dynamic_classification_async.py
 [pip]: https://pypi.org/project/pip/
 [azure_subscription]: https://azure.microsoft.com/free/
 [azure_language_account]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows

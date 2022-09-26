@@ -1634,7 +1634,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @validate_multiapi_args(
         version_method_added="2022-10-01-preview",
     )
-    def dynamically_classify(
+    def dynamic_classification(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         categories: List[str],
@@ -1686,11 +1686,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: 2022-10-01-preview
-            The *dynamically_classify* client method.
+            The *dynamic_classification* client method.
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_dynamically_classify.py
+            .. literalinclude:: ../samples/sample_dynamic_classification.py
                 :start-after: [START dynamic_classification]
                 :end-before: [END dynamic_classification]
                 :language: python
