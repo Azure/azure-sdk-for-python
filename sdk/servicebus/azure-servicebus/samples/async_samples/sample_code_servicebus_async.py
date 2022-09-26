@@ -66,7 +66,7 @@ async def example_create_servicebus_sender_async():
     import os
     from azure.servicebus.aio import ServiceBusClient
     servicebus_connection_str = os.environ['SERVICEBUS_CONNECTION_STR']
-    queue_name = os.environ['SERVICEBUSQUEUE_NAME']
+    queue_name = os.environ['SERVICEBUS_QUEUE_NAME']
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
     async with servicebus_client:
         queue_sender = servicebus_client.get_queue_sender(queue_name=queue_name)
