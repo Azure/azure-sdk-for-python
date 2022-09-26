@@ -351,9 +351,7 @@
     "prnumber",
     "yarl",
     "SDDL",
-    "dacl",
-    "\uFFFE",
-    "\uFFFF"
+    "dacl"
   ],
   "overrides": [
     {
@@ -766,7 +764,9 @@
         "myaccount",
         "testid",
         "filea",
-        "fileb"
+        "fileb",
+        "FFFE",
+        "Fdirectory"
       ]
     },
     {
