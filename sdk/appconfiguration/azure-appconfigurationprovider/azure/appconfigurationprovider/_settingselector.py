@@ -7,7 +7,7 @@
 class SettingSelector:
     """
     Selects a set of configuration settings from Azure App Configuration.
-    
+
     :param key_filter: A filter to select configuration settings based on their keys.
     :type key_filter: str
     :param label_filter: A filter to select configuration settings based on their labels. Default is value is '\0'
