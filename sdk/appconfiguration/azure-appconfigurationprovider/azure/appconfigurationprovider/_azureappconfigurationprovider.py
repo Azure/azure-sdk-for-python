@@ -75,18 +75,26 @@ class AzureAppConfigurationProvider:
             except HttpResponseError as e:
                 raise e
             for config in configurations:
+
+                trimmed_key = config.key
+                # Trim the key if it starts with one of the prefixes provided
+                for trim in provider._trim_prefixes:
+                    if config.key.startswith(trim):
+                        trimmed_key = config.key[len(trim):]
+                        break
+                
                 if config.content_type == KEY_VAULT_REFERENCE_CONTENT_TYPE:
                     secret = provider.__resolve_keyvault_reference(config, key_vault_options, secret_clients)
-                    provider._dict[provider.__trim(config.key)] = secret
+                    provider._dict[trimmed_key] = secret
                 elif provider.__is_json_content_type(config.content_type):
                     try:
                         j_object = json.loads(config.value)
-                        provider._dict[provider.__trim(config.key)] = j_object
+                        provider._dict[trimmed_key] = j_object
                     except json.JSONDecodeError as e:
                         # If the value is not a valid JSON, treat it like regular string value
-                        provider._dict[provider.__trim(config.key)] = config.value
+                        provider._dict[trimmed_key] = config.value
                 else:
-                    provider._dict[provider.__trim(config.key)] = config.value
+                    provider._dict[trimmed_key] = config.value
         return provider
 
     def __buildprovider(self, connection_string, endpoint, credential, key_vault_options):
@@ -167,12 +175,6 @@ class AzureAppConfigurationProvider:
             return True
 
         return False
-
-    def __trim(self, key):
-        for trim in self._trim_prefixes:
-            if key.startswith(trim):
-                return key[len(trim):]
-        return key
 
     def __getitem__(self, key):
         return self._dict[key]
