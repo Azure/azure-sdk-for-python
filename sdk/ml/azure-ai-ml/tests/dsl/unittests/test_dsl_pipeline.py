@@ -3975,7 +3975,6 @@ class TestInitFinalizeJob:
         def subgraph_func():
             node = self.component_func()
             node.compute = "cpu-cluster"
-            set_pipeline_settings(on_init=node)  # will be ignored when in subgraph
 
         @dsl.pipeline()
         def subgraph_init_finalize_job_func():
@@ -3984,24 +3983,7 @@ class TestInitFinalizeJob:
             finalize_job = subgraph_func()
             set_pipeline_settings(on_init=init_job, on_finalize=finalize_job)
 
-        # as we set on_init for subgraph, there should be warning of ignoring on_init setting
-        # update logger name to "Operation" to enable caplog capture logs
-        from azure.ai.ml.dsl import _pipeline_decorator
-
-        _pipeline_decorator.module_logger = logging.getLogger("Operation")
-        with caplog.at_level(logging.WARNING):
-            valid_pipeline = subgraph_init_finalize_job_func()
-        assert any(
-            [
-                (
-                    "Job settings {'on_init': 'node'} on pipeline function 'subgraph_func' "
-                    "are ignored when using inside PipelineJob."
-                )
-                == msg.replace("  ", "")  # hack here, use replace to remove spaces in the middle
-                for msg in caplog.messages
-            ]
-        )
-
+        valid_pipeline = subgraph_init_finalize_job_func()
         assert valid_pipeline._customized_validate().passed
         assert valid_pipeline.settings.on_init == "init_job"
         assert valid_pipeline.settings.on_finalize == "finalize_job"
