@@ -211,7 +211,7 @@ class AzureAppConfigurationProvider:
         """
         Returns a list of values loaded from Azure App Configuration. Any values that are Key Vault references will be
         resolved.
-        
+
         type: () -> list
         """
         return self._dict.values()
