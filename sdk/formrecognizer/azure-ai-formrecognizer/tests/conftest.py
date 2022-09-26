@@ -61,15 +61,7 @@ def add_sanitizers(test_proxy):
         regex="([0-9a-f-]{36})",
     )
 
-@pytest.fixture(autouse=True)
-def skip_tests(request):
-    try:
-        yield
-    except HttpResponseError as error:
-        if "Invalid request".casefold() in error.message.casefold():
-            pytest.mark.skip("flaky service response")
-
-def skip_flaky_tests(f):
+def skip_flaky_test(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         try:
