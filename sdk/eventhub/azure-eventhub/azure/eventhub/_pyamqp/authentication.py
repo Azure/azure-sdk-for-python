@@ -5,7 +5,6 @@
 #-------------------------------------------------------------------------
 
 import time
-import urllib
 from collections import namedtuple
 from functools import partial
 
@@ -19,12 +18,6 @@ from .constants import (
     AUTH_TYPE_CBS,
     AUTH_TYPE_SASL_PLAIN
 )
-
-try:
-    from urlparse import urlparse
-    from urllib import quote_plus  # type: ignore
-except ImportError:
-    from urllib.parse import urlparse, quote_plus
 
 AccessToken = namedtuple("AccessToken", ["token", "expires_on"])
 

@@ -5,13 +5,13 @@
 # --------------------------------------------------------------------------
 
 # pylint: disable=too-many-lines
+from typing import Callable
 from enum import Enum
 
 from ._encode import encode_payload
 from .utils import get_message_encoded_size
 from .error import AMQPError
-from .message import Message, Header, Properties, BatchMessage
-#from uamqp import constants, errors
+from .message import Header, Properties
 
 
 class MessageState(Enum):
@@ -49,16 +49,17 @@ class LegacyMessage(object):
         self.delivery_no = kwargs.get('delivery_no')
         self.delivery_tag = kwargs.get('delivery_tag') or None
         self.on_send_complete = None
-        self.properties = LegacyMessageProperties(self._message.properties)
-        self.application_properties = self._message.application_properties
-        self.annotations = self._message.annotations
-        self.header = LegacyMessageHeader(self._message.header)
+        self.properties = LegacyMessageProperties(self._message.properties) if self._message.properties else None
+        self.application_properties = self._message.application_properties if any(self._message.application_properties) else None
+        self.annotations = self._message.annotations if any(self._message.annotations) else None
+        self.header = LegacyMessageHeader(self._message.header) if self._message.header else None
         self.footer = self._message.footer
         self.delivery_annotations = self._message.delivery_annotations
         if self._settler:
             self.state = MessageState.ReceivedUnsettled
         elif self.delivery_no:
             self.state = MessageState.ReceivedSettled
+        self._to_outgoing_amqp_message: Callable = kwargs.get('to_outgoing_amqp_message')
 
     def __str__(self):
         return str(self._message)
@@ -77,11 +78,11 @@ class LegacyMessage(object):
         return True
 
     def get_message_encoded_size(self):
-        return get_message_encoded_size(self._message._to_outgoing_amqp_message())
+        return get_message_encoded_size(self._to_outgoing_amqp_message(self._message))
 
     def encode_message(self):
         output = bytearray()
-        encode_payload(output, self._message._to_outgoing_amqp_message())
+        encode_payload(output, self._to_outgoing_amqp_message(self._message))
         return bytes(output)
 
     def get_data(self):
@@ -97,7 +98,7 @@ class LegacyMessage(object):
         return [self]
 
     def get_message(self):
-        return self._message._to_outgoing_amqp_message()
+        return self._to_outgoing_amqp_message(self._message)
 
     def accept(self):
         if self._can_settle_message():
@@ -211,7 +212,7 @@ class LegacyMessageProperties(object):
 class LegacyMessageHeader(object):
 
     def __init__(self, header):
-        self.delivery_count = header.delivery_count  # or 0
+        self.delivery_count = header.delivery_count or 0
         self.time_to_live = header.time_to_live
         self.first_acquirer = header.first_acquirer
         self.durable = header.durable

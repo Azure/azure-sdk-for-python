@@ -34,7 +34,6 @@
 
 import asyncio
 import errno
-import re
 import socket
 import ssl
 import struct
@@ -47,7 +46,7 @@ from typing import Optional
 
 import certifi
 
-from .._platform import KNOWN_TCP_OPTS, SOL_TCP, pack, unpack
+from .._platform import KNOWN_TCP_OPTS, SOL_TCP
 from .._encode import encode_frame
 from .._decode import decode_frame, decode_empty_frame
 from ..constants import TLS_HEADER_FRAME, WEBSOCKET_PORT, AMQP_WS_SUBPROTOCOL
@@ -56,7 +55,6 @@ from .._transport import (
     get_errno,
     to_host_port,
     DEFAULT_SOCKET_SETTINGS,
-    IPV6_LITERAL,
     SIGNED_INT_MAX,
     _UNAVAIL,
     set_cloexec,
@@ -149,6 +147,7 @@ class AsyncTransportMixin:
 
         await self.write(data)
         # _LOGGER.info("OCH%d -> %r", channel, frame)
+
 
     def _build_ssl_opts(self, sslopts):
         if sslopts in [True, False, None, {}]:
@@ -272,7 +271,6 @@ class AsyncTransport(AsyncTransportMixin):
                     # family, reraise the previous socket.error since it's more
                     # relevant to users
                     raise (e if e is not None else socket.error("failed to resolve broker hostname"))
-                continue  # pragma: no cover
 
             # now that we have address(es) for the hostname, connect to broker
             for i, res in enumerate(entries):
@@ -442,7 +440,6 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         self.ws = None
         self.session = None
         self._http_proxy = kwargs.get("http_proxy", None)
-        
     async def connect(self):
         username, password = None, None
         http_proxy_host, http_proxy_port = None, None
@@ -471,7 +468,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
                 autoclose=False,
                 proxy=http_proxy_host,
                 proxy_auth=http_proxy_auth,
-                ssl=self.sslopts
+                ssl=self.sslopts,
             )
            
         except ImportError:
@@ -513,5 +510,3 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         http://tools.ietf.org/html/rfc6455#section-5.2
         """       
         await self.ws.send_bytes(s)
-        
-
