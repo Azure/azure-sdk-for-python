@@ -1,49 +1,28 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+import logging
 import os
-import sys
-import pytest
-
-from devtools_testutils import AzureTestCase
-from azure_devtools.scenario_tests import RecordingProcessor
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.maps.route import MapsRouteClient
-from azure.maps.route.models import LatLon
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
+from route_preparer import MapsRoutePreparer
 
 
-# cSpell:disable
-class HeaderReplacer(RecordingProcessor):
-    def __init__(self):
-        self.headers = []
-
-    def register_header(self, header_name, new_val):
-        self.headers.append((header_name, new_val))
-
-    def process_request(self, request):
-        for header_name, new_val in self.headers:
-            for key in request.headers.keys():
-                if key.lower() == header_name.lower():
-                    request.headers[key] = new_val
-                    break
-        return request
+logger = logging.getLogger(__name__)
 
 
-# cSpell:disable
-class AzureMapsRouteClientE2ETest(AzureTestCase):
-    def __init__(self, *args, **kwargs):
-        super(AzureMapsRouteClientE2ETest, self).__init__(*args, **kwargs)
-        header_replacer = HeaderReplacer()
-        header_replacer.register_header("subscription-key", "<RealSubscriptionKey>")
-        header_replacer.register_header("x-ms-client-id", "<RealClientId>")
-        self.recording_processors.append(header_replacer)
-
-    def setUp(self):
-        super(AzureMapsRouteClientE2ETest, self).setUp()
+class TestMapsRouteClient(AzureRecordedTestCase):
+    def setup_method(self, method):
         self.client = MapsRouteClient(
-            client_id=self.get_settings_value('CLIENT_ID'),
-            credential=AzureKeyCredential(self.get_settings_value('SUBSCRIPTION_KEY')),
+            credential=AzureKeyCredential(os.environ.get('AZURE_SUBSCRIPTION_KEY', "AzureMapsSubscriptionKey"))
         )
         assert self.client is not None
 
-    @pytest.mark.live_test_only
+    @MapsRoutePreparer()
+    @recorded_by_proxy
     def test_get_route_directions(self):
         result = self.client.get_route_directions(route_points=[(52.50931,13.42936), (52.50274,13.43872)])
         assert len(result.routes) > 0
@@ -52,7 +31,9 @@ class AzureMapsRouteClientE2ETest(AzureTestCase):
         assert len(top_answer.legs) > 0
         assert len(top_answer.legs[0].points) > 0
 
-    @pytest.mark.live_test_only
+    # cSpell:ignore CEST
+    @MapsRoutePreparer()
+    @recorded_by_proxy
     def test_get_route_range(self):
         result = self.client.get_route_range(coordinates=(50.97452,5.86605), time_budget_in_sec=6000)
         top_answer = result.reachable_range
@@ -62,7 +43,8 @@ class AzureMapsRouteClientE2ETest(AzureTestCase):
         assert top_answer.boundary[0].latitude > top_answer.center.latitude
         assert top_answer.boundary[0].longitude < top_answer.center.longitude
 
-    @pytest.mark.live_test_only
+    @MapsRoutePreparer()
+    @recorded_by_proxy
     def request_route_matrix(self):
         request_obj = {
             "origins": {
@@ -97,11 +79,3 @@ class AzureMapsRouteClientE2ETest(AzureTestCase):
         assert len(result.matrix) == result.summary.total_routes
         top_answer = result.matrix[0]
         assert top_answer.response.route_summary.length_in_meters == 495
-
-
-if __name__ == "__main__" :
-    testArgs = [ "-v" , "-s" ] if len(sys.argv) == 1 else sys.argv[1:]
-
-    pytest.main(args=testArgs)
-
-    print("main() Leave")

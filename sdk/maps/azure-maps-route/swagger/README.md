@@ -28,5 +28,7 @@ enable-xml: true
 vanilla: true
 clear-output-folder: true
 python: true
-version-tolerant: false
+python3-only: true
+version-tolerant: true
+models-mode: msrest
 ```
