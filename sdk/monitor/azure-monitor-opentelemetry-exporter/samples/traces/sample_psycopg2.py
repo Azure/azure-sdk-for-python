@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+# cSpell:disable
 """
 An example to show an application instrumented with the OpenTelemetry psycopg2 instrumentation.
 Calls made with the flask library will be automatically tracked and telemetry is exported to 
@@ -7,7 +8,6 @@ application insights with the AzureMonitorTraceExporter.
 See more info on the psycopg2 instrumentation here:
 https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-psycopg2
 """
-# cSpell:disable
 import os
 import psycopg2
 

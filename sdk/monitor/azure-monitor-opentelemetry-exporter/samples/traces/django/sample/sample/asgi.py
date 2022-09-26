@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+# cSpell:disable
 """
 ASGI config for sample project.
 
@@ -7,7 +10,6 @@ For more information on this file, see
 https://docs.djangoproject.com/en/3.2/howto/deployment/asgi/
 """
 
-# cSpell:disable
 import os
 
 from django.core.asgi import get_asgi_application

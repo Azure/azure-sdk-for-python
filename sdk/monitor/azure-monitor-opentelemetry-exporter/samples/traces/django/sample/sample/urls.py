@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 """sample URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
