@@ -3,16 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import logging
 import os
 from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.maps.route import MapsRouteClient
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
 from route_preparer import MapsRoutePreparer
-
-
-logger = logging.getLogger(__name__)
-
 
 class TestMapsRouteClient(AzureRecordedTestCase):
     def setup_method(self, method):

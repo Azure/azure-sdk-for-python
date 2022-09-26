@@ -75,7 +75,10 @@ from azure.maps.route import MapsRouteClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-route_client = MapsRouteClient(credential=credential)
+route_client = MapsRouteClient(
+    client_id="<Azure Maps Client ID>",
+    credential=credential
+)
 ```
 
 ## Key concepts
@@ -176,13 +179,6 @@ logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-```
-
-Similarly, `logging_enable` can enable detailed logging for a single operation,
-even when it isn't enabled for the client:
-
-```python
-service_client.get_service_stats(logging_enable=True)
 ```
 
 ### Additional

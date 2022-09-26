@@ -41,5 +41,4 @@ async def get_route_range():
     # [END get_route_range_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(get_route_range())
+    asyncio.run(get_route_range())
