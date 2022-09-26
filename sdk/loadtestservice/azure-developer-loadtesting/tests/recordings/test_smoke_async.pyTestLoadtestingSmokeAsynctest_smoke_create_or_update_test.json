@@ -8,7 +8,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "181",
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.8.10 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Floadtest.azure-dev.com%2F.default",
       "StatusCode": 200,
@@ -16,14 +16,14 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 04 Aug 2022 06:58:57 GMT",
+        "Date": "Mon, 26 Sep 2022 07:39:43 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13418.9 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13672.8 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -41,7 +41,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "466",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b1 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b2 Python/3.8.10 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
@@ -64,13 +64,13 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
         "Connection": "keep-alive",
-        "Content-Length": "1067",
+        "Content-Length": "1065",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 04 Aug 2022 06:58:59 GMT",
-        "mise-correlation-id": "538652cb-009c-4e82-823a-cf1e43ac9f6a",
+        "Date": "Mon, 26 Sep 2022 07:39:45 GMT",
+        "mise-correlation-id": "29168725-e359-428d-bbaa-7c7d9a1a2af5",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "aaddcf81-e649-4572-b65b-3a72cfc8e2b3"
+        "x-ms-correlation-request-id": "a40ae382-e60e-4745-867c-d664e21e4f79"
       },
       "ResponseBody": {
         "testId": "000",
@@ -84,19 +84,19 @@
         "passFailCriteria": {
           "passFailMetrics": {}
         },
-        "createdDateTime": "2022-07-26T02:38:46.669Z",
+        "createdDateTime": "2022-07-26T08:14:02.431Z",
         "createdBy": null,
-        "lastModifiedDateTime": "2022-07-26T02:38:46.669Z",
+        "lastModifiedDateTime": "2022-07-26T08:14:02.431Z",
         "lastModifiedBy": null,
         "inputArtifacts": {
           "configUrl": null,
           "testScriptUrl": {
-            "url": "https://stcntproddataeus.blob.core.windows.net/041c60a4-d25f-4102-b324-4f30261785e3/000?sv=2020-04-08\u0026se=2022-08-04T07%3A58%3A59Z\u0026sr=b\u0026sp=r\u0026sig=b29mcLaovVdJhPTUB9sDjyaxLLnhLkhXw5axpmA3lps%3D",
+            "url": "https://stcntproddataeus.blob.core.windows.net/6b531e99-3b8a-4a2c-9c16-10dae47bbedf/000?sv=2020-04-08\u0026se=2022-09-26T08%3A39%3A45Z\u0026sr=b\u0026sp=r\u0026sig=wGkcIc6XU52LNyDIg7jqjpmnB2OsylbZffcxqHw2xB8%3D",
             "fileId": "000",
             "filename": "sample.jmx",
             "fileType": 0,
-            "expireTime": "2022-08-04T07:08:59.0297775\u002B00:00",
-            "validationStatus": "VALIDATION_INITIATED"
+            "expireTime": "2022-09-26T07:49:45.0657258\u002B00:00",
+            "validationStatus": "VALIDATION_SUCCESS"
           },
           "userPropUrl": null,
           "inputArtifactsZipFileurl": null,

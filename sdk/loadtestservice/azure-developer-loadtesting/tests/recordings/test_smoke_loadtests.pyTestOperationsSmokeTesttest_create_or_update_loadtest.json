@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.8.10 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 04 Aug 2022 08:39:22 GMT",
+        "Date": "Mon, 26 Sep 2022 07:43:56 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13418.9 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13672.8 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -101,7 +101,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.8.10 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 04 Aug 2022 08:39:22 GMT",
+        "Date": "Mon, 26 Sep 2022 07:43:56 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13418.10 - KRC ProdSlices",
+        "x-ms-ests-server": "2.1.13777.5 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,28 +172,28 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "56e927c5-005c-4edb-82e9-3bbd5b53fe9d",
+        "client-request-id": "a50386f1-1f4a-4e6b-9fc1-25b6fea82e00",
         "Connection": "keep-alive",
         "Content-Length": "290",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.8.10 (Windows-10-10.0.22000-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
         "x-client-os": "win32",
         "x-client-sku": "MSAL.Python",
-        "x-client-ver": "1.16.0",
+        "x-client-ver": "1.18.0",
         "x-ms-lib-capability": "retry-after, h429"
       },
       "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Floadtest.azure-dev.com%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "56e927c5-005c-4edb-82e9-3bbd5b53fe9d",
+        "client-request-id": "a50386f1-1f4a-4e6b-9fc1-25b6fea82e00",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 04 Aug 2022 08:39:23 GMT",
+        "Date": "Mon, 26 Sep 2022 07:43:56 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.13418.9 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13777.5 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -220,7 +220,7 @@
         "Connection": "keep-alive",
         "Content-Length": "466",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b1 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b2 Python/3.8.10 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
@@ -243,13 +243,13 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
         "Connection": "keep-alive",
-        "Content-Length": "1067",
+        "Content-Length": "1065",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 04 Aug 2022 08:39:25 GMT",
-        "mise-correlation-id": "0ce67c68-19d8-4732-9f2e-4ce636125983",
+        "Date": "Mon, 26 Sep 2022 07:43:58 GMT",
+        "mise-correlation-id": "fc8c2a45-a882-4107-b17a-ca351ac76525",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "6a462baf-3eaf-4527-b9ae-4db26b235ce9"
+        "x-ms-correlation-request-id": "5d7a16ae-d52b-4480-85d0-e2d99ef3ea93"
       },
       "ResponseBody": {
         "testId": "000",
@@ -263,19 +263,19 @@
         "passFailCriteria": {
           "passFailMetrics": {}
         },
-        "createdDateTime": "2022-07-26T02:38:46.669Z",
+        "createdDateTime": "2022-07-26T08:14:02.431Z",
         "createdBy": null,
-        "lastModifiedDateTime": "2022-07-26T02:38:46.669Z",
+        "lastModifiedDateTime": "2022-07-26T08:14:02.431Z",
         "lastModifiedBy": null,
         "inputArtifacts": {
           "configUrl": null,
           "testScriptUrl": {
-            "url": "https://stcntproddataeus.blob.core.windows.net/041c60a4-d25f-4102-b324-4f30261785e3/000?sv=2020-04-08\u0026se=2022-08-04T09%3A39%3A25Z\u0026sr=b\u0026sp=r\u0026sig=zPe8gyps7T0gBPwHyJL4PfyIOSI0MJe6PQ7mkXAvegQ%3D",
+            "url": "https://stcntproddataeus.blob.core.windows.net/6b531e99-3b8a-4a2c-9c16-10dae47bbedf/000?sv=2020-04-08\u0026se=2022-09-26T08%3A43%3A58Z\u0026sr=b\u0026sp=r\u0026sig=KlPipzaWRT6lsd543l1Zg0HnSi4zzZQwlJNbzCxkmNI%3D",
             "fileId": "000",
             "filename": "sample.jmx",
             "fileType": 0,
-            "expireTime": "2022-08-04T08:49:25.4678644\u002B00:00",
-            "validationStatus": "VALIDATION_INITIATED"
+            "expireTime": "2022-09-26T07:53:58.6113942\u002B00:00",
+            "validationStatus": "VALIDATION_SUCCESS"
           },
           "userPropUrl": null,
           "inputArtifactsZipFileurl": null,
@@ -297,7 +297,7 @@
         "Connection": "keep-alive",
         "Content-Length": "518",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b1 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b2 Python/3.8.10 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
@@ -321,11 +321,11 @@
         "Connection": "keep-alive",
         "Content-Length": "314",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 04 Aug 2022 08:39:25 GMT",
-        "mise-correlation-id": "c422dcf2-5681-419e-9206-290673bba000",
+        "Date": "Mon, 26 Sep 2022 07:43:59 GMT",
+        "mise-correlation-id": "ce5d1bbb-c0ae-4b99-92ab-06d9b9345880",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "37b5ad07-e799-49ba-b164-2d6a3e73f12b"
+        "x-ms-correlation-request-id": "0e6ae7ef-1600-4252-98c9-c1eccb222ce9"
       },
       "ResponseBody": {
         "errors": {
@@ -336,7 +336,7 @@
         "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
         "title": "One or more validation errors occurred.",
         "status": 400,
-        "traceId": "00-399cdb4343a474d870080dae2db5e394-9fda2d873eae0b4c-00"
+        "traceId": "00-d860150dbf5929739699c6894d6a2c73-c6840ce35907674c-00"
       }
     }
   ],

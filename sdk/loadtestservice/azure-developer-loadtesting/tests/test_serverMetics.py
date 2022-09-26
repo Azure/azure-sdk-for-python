@@ -13,19 +13,15 @@ from azure.core.exceptions import ResourceNotFoundError
 from testcase import LoadtestingTest, LoadtestingPowerShellPreparer
 from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 
-test_id = os.environ.get("TEST_ID", "000")
-file_id = os.environ.get("FILE_ID", "000")
-test_run_id = os.environ.get("TEST_RUN_ID", "000")
 non_existing_test_id = "0000-0000"
 non_existing_test_run_id = "0000-0000"
 non_existing_file_id = "000-000"
-subscription_id = os.environ.get("LOADTESTING_SUBSCRIPTION_ID", "000")
 DISPLAY_NAME = "TestingResource"
 
 
 class TestServerMetricsSmoke(LoadtestingTest):
 
-    def prepare(self, endpoint):
+    def prepare(self, endpoint, test_id, file_id, test_run_id, subscription_id):
         client = self.create_client(endpoint=endpoint)
 
         client.load_test_administration.create_or_update_test(
@@ -63,18 +59,30 @@ class TestServerMetricsSmoke(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_create_or_update_server_metrics_config(self, loadtesting_endpoint):
+    def test_create_or_update_server_metrics_config(
+            self,
+            loadtesting_endpoint,
+            loadtesting_test_id,
+            loadtesting_file_id,
+            loadtesting_test_run_id,
+            loadtesting_subscription_id
+    ):
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
         )
-        self.prepare(endpoint=loadtesting_endpoint)
+        self.prepare(endpoint=loadtesting_endpoint,
+                     test_id=loadtesting_test_id,
+                     file_id=loadtesting_file_id,
+                     test_run_id=loadtesting_test_run_id,
+                     subscription_id=loadtesting_subscription_id
+                     )
 
         # positive test
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.create_or_update_server_metrics_config(
             "some-unique-server-metrics-config-id",
             {
-                "testRunId": test_run_id,
+                "testRunId": loadtesting_test_run_id,
             }
         )
         assert result is not None
@@ -90,11 +98,23 @@ class TestServerMetricsSmoke(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_delete_server_metrics_config(self, loadtesting_endpoint):
+    def test_delete_server_metrics_config(
+            self,
+            loadtesting_endpoint,
+            loadtesting_test_id,
+            loadtesting_file_id,
+            loadtesting_test_run_id,
+            loadtesting_subscription_id
+    ):
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
         )
-        self.prepare(endpoint=loadtesting_endpoint)
+        self.prepare(endpoint=loadtesting_endpoint,
+                     test_id=loadtesting_test_id,
+                     file_id=loadtesting_file_id,
+                     test_run_id=loadtesting_test_run_id,
+                     subscription_id=loadtesting_subscription_id
+                     )
 
         # positive test
         client = self.create_client(endpoint=loadtesting_endpoint)
@@ -111,17 +131,29 @@ class TestServerMetricsSmoke(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_get_server_metrics_config(self, loadtesting_endpoint):
+    def test_get_server_metrics_config(
+            self,
+            loadtesting_endpoint,
+            loadtesting_test_id,
+            loadtesting_file_id,
+            loadtesting_test_run_id,
+            loadtesting_subscription_id
+    ):
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
         )
-        self.prepare(endpoint=loadtesting_endpoint)
+        self.prepare(endpoint=loadtesting_endpoint,
+                     test_id=loadtesting_test_id,
+                     file_id=loadtesting_file_id,
+                     test_run_id=loadtesting_test_run_id,
+                     subscription_id=loadtesting_subscription_id
+                     )
 
         # positive test
         client = self.create_client(endpoint=loadtesting_endpoint)
 
         result = client.load_test_administration.get_server_metrics_config(
-            test_id=test_id,
+            test_id=loadtesting_test_id,
         )
         assert result is not None
 
@@ -133,11 +165,23 @@ class TestServerMetricsSmoke(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_get_server_default_metrics_config(self, loadtesting_endpoint):
+    def test_get_server_default_metrics_config(
+            self,
+            loadtesting_endpoint,
+            loadtesting_test_id,
+            loadtesting_file_id,
+            loadtesting_test_run_id,
+            loadtesting_subscription_id
+    ):
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
         )
-        self.prepare(endpoint=loadtesting_endpoint)
+        self.prepare(endpoint=loadtesting_endpoint,
+                     test_id=loadtesting_test_id,
+                     file_id=loadtesting_file_id,
+                     test_run_id=loadtesting_test_run_id,
+                     subscription_id=loadtesting_subscription_id
+                     )
 
         # positive test
         client = self.create_client(endpoint=loadtesting_endpoint)
@@ -147,11 +191,23 @@ class TestServerMetricsSmoke(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_list_supported_resource_types(self, loadtesting_endpoint):
+    def test_list_supported_resource_types(
+            self,
+            loadtesting_endpoint,
+            loadtesting_test_id,
+            loadtesting_file_id,
+            loadtesting_test_run_id,
+            loadtesting_subscription_id
+    ):
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
         )
-        self.prepare(endpoint=loadtesting_endpoint)
+        self.prepare(endpoint=loadtesting_endpoint,
+                     test_id=loadtesting_test_id,
+                     file_id=loadtesting_file_id,
+                     test_run_id=loadtesting_test_run_id,
+                     subscription_id=loadtesting_subscription_id
+                     )
 
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.list_supported_resource_types()

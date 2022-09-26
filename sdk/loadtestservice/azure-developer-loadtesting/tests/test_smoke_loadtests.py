@@ -16,12 +16,8 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher, set_custom_default_matcher
 
-test_id = os.environ.get("TEST_ID", "000")
-file_id = os.environ.get("FILE_ID", "000")
-test_run_id = os.environ.get("TEST_RUN_ID", "000")
 non_existing_test_run_id = "0000-0000"
 non_existing_file_id = "000-000"
-subscription_id = os.environ.get("LOADTESTING_SUBSCRIPTION_ID", "000")
 DISPLAY_NAME = "TestingResource"
 
 
@@ -29,14 +25,19 @@ class TestOperationsSmokeTest(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_create_or_update_loadtest(self, loadtesting_endpoint):
+    def test_create_or_update_loadtest(
+            self,
+            loadtesting_endpoint,
+            loadtesting_test_id,
+            loadtesting_subscription_id
+    ):
         set_bodiless_matcher()
         # positive testing
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.create_or_update_test(
-            test_id,
+            loadtesting_test_id,
             {
-                "resourceId": f"/subscriptions/{subscription_id}/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
+                "resourceId": f"/subscriptions/{loadtesting_subscription_id}/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
                 "description": "",
                 "displayName": DISPLAY_NAME,
                 "loadTestConfig": {
@@ -58,7 +59,7 @@ class TestOperationsSmokeTest(LoadtestingTest):
             client.load_test_administration.create_or_update_test(
                 "some-test-id",
                 {
-                    "resourceId": f"/subscriptions/{subscription_id}/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
+                    "resourceId": f"/subscriptions/{loadtesting_subscription_id}/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
                     "description": "",
                     "displayName": DISPLAY_NAME + "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
                     "loadTestConfig": {
@@ -76,14 +77,14 @@ class TestOperationsSmokeTest(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_delete_loadtest(self, loadtesting_endpoint):
+    def test_delete_loadtest(self, loadtesting_endpoint, loadtesting_subscription_id):
         set_bodiless_matcher()
         # creating a mock test to delete
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.create_or_update_test(
             "to-be-deleted-test-id",
             {
-                "resourceId": f"/subscriptions/{subscription_id}/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
+                "resourceId": f"/subscriptions/{loadtesting_subscription_id}/resourceGroups/yashika-rg/providers/Microsoft.LoadTestService/loadtests/loadtestsdk",
                 "description": "",
                 "displayName": DISPLAY_NAME,
                 "loadTestConfig": {
@@ -113,12 +114,12 @@ class TestOperationsSmokeTest(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_get_loadtest(self, loadtesting_endpoint):
+    def test_get_loadtest(self, loadtesting_endpoint, loadtesting_test_id):
         set_bodiless_matcher()
         # positive testing
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.get_load_test(
-            test_id=test_id
+            test_id=loadtesting_test_id
         )
         assert result is not None
 
@@ -130,14 +131,14 @@ class TestOperationsSmokeTest(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_file_upload(self, loadtesting_endpoint):
+    def test_file_upload(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_file_id):
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
         )
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.upload_test_file(
-            test_id,
-            file_id,
+            loadtesting_test_id,
+            loadtesting_file_id,
             open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb")
         )
         assert result is not None
@@ -145,18 +146,18 @@ class TestOperationsSmokeTest(LoadtestingTest):
         with pytest.raises(ResourceNotFoundError):
             client.load_test_administration.upload_test_file(
                 non_existing_test_run_id,
-                file_id,
+                loadtesting_file_id,
                 open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb")
             )
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_get_file_by_name(self, loadtesting_endpoint):
+    def test_get_file_by_name(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_file_id):
         set_bodiless_matcher()
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = client.load_test_administration.get_test_file(
-            test_id,
-            file_id
+            loadtesting_test_id,
+            loadtesting_file_id
         )
         print(result)
         assert result is not None
@@ -169,46 +170,46 @@ class TestOperationsSmokeTest(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_delete_test_file(self, loadtesting_endpoint):
+    def test_delete_test_file(self, loadtesting_endpoint, loadtesting_test_id):
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
         )
         # pushing a sample file to delete
         client = self.create_client(endpoint=loadtesting_endpoint)
         client.load_test_administration.upload_test_file(
-            test_id,
+            loadtesting_test_id,
             "unique-image-file-id",
             open(os.path.join(Path(__file__).resolve().parent, "sample-image.jpg"), "rb")
         )
 
         result = client.load_test_administration.delete_test_file(
-            test_id,
+            loadtesting_test_id,
             "unique-image-file-id"
         )
         assert result is None
 
         with pytest.raises(ResourceNotFoundError):
             client.load_test_administration.delete_test_file(
-                test_id,
+                loadtesting_test_id,
                 "unique-image-file-id"
             )
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_list_test_files(self, loadtesting_endpoint):
+    def test_list_test_files(self, loadtesting_endpoint, loadtesting_test_id):
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Type,x-ms-client-request-id,x-ms-request-id"
         )
         # pushing a sample file to test list
         client = self.create_client(endpoint=loadtesting_endpoint)
         client.load_test_administration.upload_test_file(
-            test_id,
+            loadtesting_test_id,
             "unique-image-file-id",
             open(os.path.join(Path(__file__).resolve().parent, "sample-image.jpg"), "rb")
         )
 
         result = client.load_test_administration.list_test_files(
-            test_id
+            loadtesting_test_id
         )
         assert result is not None
 
