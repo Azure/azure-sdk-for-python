@@ -8,12 +8,11 @@ from pathlib import Path
 from typing import Iterable, Tuple
 
 from azure.ai.ml._artifacts._artifact_utilities import download_artifact_from_storage_url
-from azure.ai.ml._local_endpoints.errors import RequiredLocalArtifactsNotFoundError
 from azure.ai.ml._utils._arm_id_utils import parse_name_version
 from azure.ai.ml._utils.utils import dump_yaml, is_url
 from azure.ai.ml.entities import OnlineDeployment
 from azure.ai.ml.entities._assets.environment import BuildContext, Environment
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, RequiredLocalArtifactsNotFoundError, ValidationException
 from azure.ai.ml.operations._environment_operations import EnvironmentOperations
 
 

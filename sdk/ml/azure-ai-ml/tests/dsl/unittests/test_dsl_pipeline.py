@@ -38,10 +38,9 @@ from azure.ai.ml.entities._builders import Command, Parallel, Spark, Sweep
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob
 from azure.ai.ml.entities._job.job_service import JobService
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
-from azure.ai.ml.exceptions import ValidationException
+from azure.ai.ml.exceptions import UserErrorException, ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
 from azure.ai.ml.sweep import (
     BanditPolicy,
@@ -3945,7 +3944,7 @@ class TestInitFinalizeJob:
 
         # invalid case: call `set_pipeline_settings` out of `pipeline` decorator
         from azure.ai.ml._internal.dsl import set_pipeline_settings
-        from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
+        from azure.ai.ml.exceptions import UserErrorException
 
         with pytest.raises(UserErrorException) as e:
             set_pipeline_settings(on_init="init_job", on_finalize="finalize_job")

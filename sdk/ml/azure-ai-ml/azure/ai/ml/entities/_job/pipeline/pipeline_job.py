@@ -44,13 +44,12 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 from azure.ai.ml.entities._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import Job
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._job.pipeline._io import InputsAttrDict, OutputsAttrDict, PipelineInput, PipelineIOMixin
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
-from azure.ai.ml.exceptions import ErrorTarget
+from azure.ai.ml.exceptions import ErrorTarget, UserErrorException
 
 module_logger = logging.getLogger(__name__)
 
