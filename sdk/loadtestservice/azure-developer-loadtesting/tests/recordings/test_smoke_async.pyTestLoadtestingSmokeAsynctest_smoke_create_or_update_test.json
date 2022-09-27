@@ -16,14 +16,14 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:39:43 GMT",
+        "Date": "Tue, 27 Sep 2022 02:29:38 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13672.8 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13777.5 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -64,13 +64,13 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
         "Connection": "keep-alive",
-        "Content-Length": "1065",
+        "Content-Length": "1037",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:39:45 GMT",
-        "mise-correlation-id": "29168725-e359-428d-bbaa-7c7d9a1a2af5",
+        "Date": "Tue, 27 Sep 2022 02:29:39 GMT",
+        "mise-correlation-id": "6cc951ae-1546-4f51-834e-725cb822fb21",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "a40ae382-e60e-4745-867c-d664e21e4f79"
+        "x-ms-correlation-request-id": "1425f8c7-ccbf-4f67-b9f7-fdc1629e0aa3"
       },
       "ResponseBody": {
         "testId": "000",
@@ -91,16 +91,25 @@
         "inputArtifacts": {
           "configUrl": null,
           "testScriptUrl": {
-            "url": "https://stcntproddataeus.blob.core.windows.net/6b531e99-3b8a-4a2c-9c16-10dae47bbedf/000?sv=2020-04-08\u0026se=2022-09-26T08%3A39%3A45Z\u0026sr=b\u0026sp=r\u0026sig=wGkcIc6XU52LNyDIg7jqjpmnB2OsylbZffcxqHw2xB8%3D",
+            "url": "url",
             "fileId": "000",
             "filename": "sample.jmx",
             "fileType": 0,
-            "expireTime": "2022-09-26T07:49:45.0657258\u002B00:00",
+            "expireTime": "2022-09-27T02:39:39.9800305\u002B00:00",
             "validationStatus": "VALIDATION_SUCCESS"
           },
           "userPropUrl": null,
           "inputArtifactsZipFileurl": null,
-          "additionalUrls": []
+          "additionalUrls": [
+            {
+              "url": "url",
+              "fileId": "unique-image-file-id",
+              "filename": "sample-image.jpg",
+              "fileType": 2,
+              "expireTime": "2022-09-27T02:39:39.9800305\u002B00:00",
+              "validationStatus": ""
+            }
+          ]
         },
         "secrets": null,
         "environmentVariables": null,

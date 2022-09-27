@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:34:33 GMT",
+        "Date": "Tue, 27 Sep 2022 02:33:07 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13672.8 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13777.5 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -110,13 +110,14 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-OIZ5winB_e816Vz5-dMhDA\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027none\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:34:33 GMT",
+        "Date": "Tue, 27 Sep 2022 02:33:07 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13777.5 - SEASLR1 ProdSlices",
+        "x-ms-ests-server": "2.1.13777.5 - KRSLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,7 +173,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "45bfef53-edb7-4449-acf7-5312f1c455ad",
+        "client-request-id": "a6585e43-86df-44bf-a110-f6decf2b2eaa",
         "Connection": "keep-alive",
         "Content-Length": "290",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -190,10 +191,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "45bfef53-edb7-4449-acf7-5312f1c455ad",
+        "client-request-id": "a6585e43-86df-44bf-a110-f6decf2b2eaa",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:34:34 GMT",
+        "Date": "Tue, 27 Sep 2022 02:33:07 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +202,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.13672.8 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.13777.5 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -252,12 +253,12 @@
         "Connection": "keep-alive",
         "Content-Length": "1777",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:34:35 GMT",
+        "Date": "Tue, 27 Sep 2022 02:33:08 GMT",
         "Location": "https://myservice.azure.com/appcomponents/000?resourceId=%2fsubscriptions%2f00000000-0000-0000-0000-000000000000%2fresourcegroups%2fpython-sdk-test%2fproviders%2fmicrosoft.loadtestservice%2floadtests%2floadtest-jf\u0026api-version=2022-06-01-preview",
-        "mise-correlation-id": "e2c5bb48-6e16-42be-80ce-0173b1cdd21e",
+        "mise-correlation-id": "79afce70-c9f8-4e2d-a3e2-3c4d8362b6c5",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "b83a8f94-5dad-4546-874e-73d1c0875db8"
+        "x-ms-correlation-request-id": "19597a7f-530b-4e1a-b7d3-a4035cbb23bb"
       },
       "ResponseBody": {
         "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/python-sdk-test/providers/microsoft.loadtestservice/loadtests/loadtest-jf",
@@ -311,11 +312,11 @@
         "Connection": "keep-alive",
         "Content-Length": "1777",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:34:35 GMT",
-        "mise-correlation-id": "e4714a2e-b6db-48b1-a2e5-01ca3175760a",
+        "Date": "Tue, 27 Sep 2022 02:33:08 GMT",
+        "mise-correlation-id": "5ec631da-23d3-40b5-a978-040385b37932",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "6f4f2087-b04f-4e89-8b86-7843632edf53"
+        "x-ms-correlation-request-id": "b2c88112-559b-4808-acff-08753a5ea58f"
       },
       "ResponseBody": {
         "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/python-sdk-test/providers/microsoft.loadtestservice/loadtests/loadtest-jf",
@@ -369,11 +370,11 @@
         "Connection": "keep-alive",
         "Content-Length": "1777",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:34:37 GMT",
-        "mise-correlation-id": "cfa628eb-5c56-4b87-a127-28ef397edeb0",
+        "Date": "Tue, 27 Sep 2022 02:33:09 GMT",
+        "mise-correlation-id": "a46d4928-0071-4648-a109-f3a81d4a53c6",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "2148a689-39ef-4e25-8b2b-f0f7194f45a3"
+        "x-ms-correlation-request-id": "3c4ae02d-8b68-43a0-8433-4f246aca6b33"
       },
       "ResponseBody": {
         "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/python-sdk-test/providers/microsoft.loadtestservice/loadtests/loadtest-jf",
@@ -427,11 +428,11 @@
         "Connection": "keep-alive",
         "Content-Length": "143",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:34:37 GMT",
-        "mise-correlation-id": "76be6f44-5720-4ce3-9ef6-1d3917e7cd98",
+        "Date": "Tue, 27 Sep 2022 02:33:09 GMT",
+        "mise-correlation-id": "82da10d3-e5ec-4713-944e-a497296fbec2",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "ade07062-e10e-4ed1-ab46-1ffd0a0866a4"
+        "x-ms-correlation-request-id": "27cd6215-12da-4a38-8af6-d65ab8c98c15"
       },
       "ResponseBody": {
         "error": {
@@ -457,7 +458,7 @@
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json",
-        "Date": "Mon, 26 Sep 2022 07:34:38 GMT",
+        "Date": "Tue, 27 Sep 2022 02:33:10 GMT",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
@@ -487,7 +488,7 @@
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json",
-        "Date": "Mon, 26 Sep 2022 07:34:38 GMT",
+        "Date": "Tue, 27 Sep 2022 02:33:10 GMT",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
@@ -517,7 +518,7 @@
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json",
-        "Date": "Mon, 26 Sep 2022 07:34:40 GMT",
+        "Date": "Tue, 27 Sep 2022 02:33:12 GMT",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
@@ -547,7 +548,7 @@
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json",
-        "Date": "Mon, 26 Sep 2022 07:34:44 GMT",
+        "Date": "Tue, 27 Sep 2022 02:33:16 GMT",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",

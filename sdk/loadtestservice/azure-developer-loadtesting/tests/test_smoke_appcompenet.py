@@ -32,7 +32,7 @@ class TestAppComponentTestingSmoke(LoadtestingTest):
         result = client.load_test_administration.create_or_update_app_components(
             loadtesting_app_component,
             {
-                "name": "app_component",
+                "name": "app_componentx",
                 "testId": loadtesting_test_id,
                 "value": {
                     f"/subscriptions/{loadtesting_subscription_id}/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo": {
@@ -63,7 +63,7 @@ class TestAppComponentTestingSmoke(LoadtestingTest):
             client.load_test_administration.create_or_update_app_components(
                 loadtesting_app_component,
                 {
-                    "name": "app_component",
+                    "name": "app_componentx",
                     "value": {
                         f"/subscriptions/{loadtesting_subscription_id}/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample": {
                             "resourceId": f"/subscriptions/{loadtesting_subscription_id}/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample",

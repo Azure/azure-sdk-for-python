@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:02:21 GMT",
+        "Date": "Tue, 27 Sep 2022 02:29:17 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13672.8 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.13777.5 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -110,13 +110,14 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-_IZOwyThiI4XPihJzHA6Pw\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027none\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:02:21 GMT",
+        "Date": "Tue, 27 Sep 2022 02:29:17 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13777.5 - SEASLR1 ProdSlices",
+        "x-ms-ests-server": "2.1.13777.5 - KRSLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,7 +173,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "6b301104-2398-4bb5-8ddd-496c841407af",
+        "client-request-id": "7ddc88ee-1875-4bd2-a185-e44ee2e52319",
         "Connection": "keep-alive",
         "Content-Length": "290",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -190,10 +191,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "6b301104-2398-4bb5-8ddd-496c841407af",
+        "client-request-id": "7ddc88ee-1875-4bd2-a185-e44ee2e52319",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:02:21 GMT",
+        "Date": "Tue, 27 Sep 2022 02:29:17 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +202,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.13672.8 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13777.5 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -238,13 +239,13 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
         "Connection": "keep-alive",
-        "Content-Length": "737",
+        "Content-Length": "1777",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:02:22 GMT",
-        "mise-correlation-id": "fa75566c-f656-436d-b5da-3160deb27303",
+        "Date": "Tue, 27 Sep 2022 02:29:18 GMT",
+        "mise-correlation-id": "2aecbcc1-280b-47d8-b892-a4848f359609",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "b3b6ff0f-cafd-4b75-9cc0-05d617dbe6a1"
+        "x-ms-correlation-request-id": "a9fb1e1d-d73f-4fb6-b9f7-e58d55c2ee34"
       },
       "ResponseBody": {
         "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/python-sdk-test/providers/microsoft.loadtestservice/loadtests/loadtest-jf",
@@ -254,6 +255,24 @@
         "value": {
           "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo": {
             "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample-Demo",
+            "resourceName": "App-Service-Sample-Demo",
+            "resourceType": "Microsoft.Web/sites",
+            "displayName": null,
+            "resourceGroup": "App-Service-Sample-Demo-rg",
+            "subscriptionId": "00000000-0000-0000-0000-000000000000",
+            "kind": null
+          },
+          "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Demo-App-Service-Sample-rg/providers/Microsoft.Web/sites/Demo-App-Service-Sample": {
+            "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Demo-App-Service-Sample-rg/providers/Microsoft.Web/sites/Demo-App-Service-Sample",
+            "resourceName": "Demo-App-Service-Sample",
+            "resourceType": "Microsoft.Web/sites",
+            "displayName": null,
+            "resourceGroup": "Demo-App-Service-Sample-rg",
+            "subscriptionId": "00000000-0000-0000-0000-000000000000",
+            "kind": null
+          },
+          "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample": {
+            "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web/sites/App-Service-Sample",
             "resourceName": "App-Service-Sample-Demo",
             "resourceType": "Microsoft.Web/sites",
             "displayName": null,

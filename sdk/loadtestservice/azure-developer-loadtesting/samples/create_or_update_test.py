@@ -27,7 +27,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
+LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTING_ENDPOINT"]
 
 # Build a client through AAD and resource endpoint
 client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)

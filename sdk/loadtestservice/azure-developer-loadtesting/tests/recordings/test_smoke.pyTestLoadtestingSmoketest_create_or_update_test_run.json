@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:02:22 GMT",
+        "Date": "Tue, 27 Sep 2022 02:29:18 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13672.8 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13777.5 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:02:22 GMT",
+        "Date": "Tue, 27 Sep 2022 02:29:18 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13777.5 - SEASLR1 ProdSlices",
+        "x-ms-ests-server": "2.1.13777.5 - SEASLR2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,7 +172,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "151406bc-e172-4030-a3ff-a6cf06885bc4",
+        "client-request-id": "93a5a618-0860-4949-a6f1-9bc676bc7809",
         "Connection": "keep-alive",
         "Content-Length": "290",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -190,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "151406bc-e172-4030-a3ff-a6cf06885bc4",
+        "client-request-id": "93a5a618-0860-4949-a6f1-9bc676bc7809",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:02:22 GMT",
+        "Date": "Tue, 27 Sep 2022 02:29:19 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.13777.5 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.13777.5 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -236,23 +236,23 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
         "Connection": "keep-alive",
-        "Content-Length": "3079",
+        "Content-Length": "2192",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:02:24 GMT",
-        "mise-correlation-id": "67a88301-3900-4d6a-844f-98b5c36e97c1",
+        "Date": "Tue, 27 Sep 2022 02:29:21 GMT",
+        "mise-correlation-id": "edeebd0f-9937-4f6e-9330-69305255836a",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "c8c5b966-10e9-402a-8600-d706d6f1f820"
+        "x-ms-correlation-request-id": "abc653be-9074-49f3-aef6-a67cc992b632"
       },
       "ResponseBody": {
         "testRunId": "000",
         "displayName": "TestingResource",
-        "testId": "a011890b-0201-004d-010d",
+        "testId": "000",
         "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/python-sdk-test/providers/microsoft.loadtestservice/loadtests/loadtest-jf",
         "description": null,
         "status": "CANCELLED",
-        "startDateTime": "2022-08-08T08:03:44.5Z",
-        "endDateTime": "2022-08-08T08:03:50.736Z",
+        "startDateTime": "2022-09-26T08:12:27.273Z",
+        "endDateTime": "2022-09-26T08:12:28.127Z",
         "loadTestConfig": {
           "engineInstances": 1,
           "splitAllCSVs": false
@@ -264,37 +264,37 @@
         "testArtifacts": {
           "inputArtifacts": {
             "configUrl": {
-              "url": "https://stcntproddataeus.blob.core.windows.net/041c60a4-d25f-4102-b324-4f30261785e3/3e6a229e-04a6-4884-b677-ca7856fa2b31?sv=2020-04-08\u0026se=2022-09-26T08%3A02%3A24Z\u0026sr=b\u0026sp=r\u0026sig=%2FLvtP5SC3qkEonTptiGv1EGm2V%2BWv89nx8B%2FHRfPSOw%3D",
-              "fileId": "3e6a229e-04a6-4884-b677-ca7856fa2b31",
+              "url": "url",
+              "fileId": "8a4ac8cb-0a0e-4f7a-8df0-8efffe0a235b",
               "filename": "config.yaml",
               "fileType": 2,
-              "expireTime": "2022-09-26T07:12:24.2157655\u002B00:00",
+              "expireTime": "2022-09-27T02:39:21.4616809\u002B00:00",
               "validationStatus": ""
             },
             "testScriptUrl": {
-              "url": "https://stcntproddataeus.blob.core.windows.net/041c60a4-d25f-4102-b324-4f30261785e3/000?sv=2020-04-08\u0026se=2022-09-26T08%3A02%3A24Z\u0026sr=b\u0026sp=r\u0026sig=dX9PPP0kR6VJJd54kIhOu1tDx9VKe7KLpDz9YThwqd0%3D",
+              "url": "url",
               "fileId": "000",
               "filename": "sample.jmx",
               "fileType": 0,
-              "expireTime": "2022-09-26T07:12:24.2157655\u002B00:00",
-              "validationStatus": "VALIDATION_INITIATED"
+              "expireTime": "2022-09-27T02:39:21.4616809\u002B00:00",
+              "validationStatus": "VALIDATION_SUCCESS"
             },
             "userPropUrl": null,
             "inputArtifactsZipFileurl": {
-              "url": "https://stcntproddataeus.blob.core.windows.net/041c60a4-d25f-4102-b324-4f30261785e3/624a79d5-3b7d-4ea2-a698-9cb1396a8f7b?sv=2020-04-08\u0026se=2022-09-26T08%3A02%3A24Z\u0026sr=b\u0026sp=r\u0026sig=u5WkCq%2F1XHRcriGArwC%2FSsrgJfsk9WCJsDNJ6YkB9h4%3D",
-              "fileId": "624a79d5-3b7d-4ea2-a698-9cb1396a8f7b",
+              "url": "url",
+              "fileId": "8fe3e419-e2bb-4b79-a9a5-9255dcbdda80",
               "filename": "inputartifacts.zip",
               "fileType": 2,
-              "expireTime": "2022-09-26T07:12:24.2157655\u002B00:00",
+              "expireTime": "2022-09-27T02:39:21.4616809\u002B00:00",
               "validationStatus": ""
             },
             "additionalUrls": [
               {
-                "url": "https://stcntproddataeus.blob.core.windows.net/041c60a4-d25f-4102-b324-4f30261785e3/unique-image-file-id?sv=2020-04-08\u0026se=2022-09-26T08%3A02%3A24Z\u0026sr=b\u0026sp=r\u0026sig=O3FpNIHRZSeI6JGd%2FoZy%2FjfmIttC4z8d0HACxqEghbs%3D",
+                "url": "url",
                 "fileId": "unique-image-file-id",
                 "filename": "sample-image.jpg",
                 "fileType": 2,
-                "expireTime": "2022-09-26T07:12:24.2157655\u002B00:00",
+                "expireTime": "2022-09-27T02:39:21.4616809\u002B00:00",
                 "validationStatus": ""
               }
             ]
@@ -304,7 +304,7 @@
             "logsUrl": null
           }
         },
-        "executedDateTime": "2022-08-08T08:03:34.403Z",
+        "executedDateTime": "2022-09-26T08:11:51.104Z",
         "vusers": 0,
         "testRunStatistics": {
           "Total": {
@@ -324,11 +324,11 @@
             "sentKBytesPerSec": 0.0
           }
         },
-        "createdDateTime": "2022-08-08T08:03:34.727Z",
+        "createdDateTime": "2022-09-26T08:11:51.32Z",
         "createdBy": null,
-        "lastModifiedDateTime": "2022-08-08T08:03:34.727Z",
+        "lastModifiedDateTime": "2022-09-26T08:11:51.32Z",
         "lastModifiedBy": null,
-        "portalUrl": "https://portal.azure.com/#blade/Microsoft_Azure_CloudNativeTesting/NewReport//resourceId/%2fsubscriptions%2f00000000-0000-0000-0000-000000000000%2fresourcegroups%2fpython-sdk-test%2fproviders%2fmicrosoft.loadtestservice%2floadtests%2floadtest-jf/testId/a011890b-0201-004d-010d/testRunId/000",
+        "portalUrl": "https://portal.azure.com/#blade/Microsoft_Azure_CloudNativeTesting/NewReport//resourceId/%2fsubscriptions%2f00000000-0000-0000-0000-000000000000%2fresourcegroups%2fpython-sdk-test%2fproviders%2fmicrosoft.loadtestservice%2floadtests%2floadtest-jf/testId/000/testRunId/000",
         "secrets": null,
         "environmentVariables": null,
         "duration": null,

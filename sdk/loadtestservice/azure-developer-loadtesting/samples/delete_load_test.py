@@ -35,7 +35,7 @@ from dotenv import load_dotenv
 
 # loading dotenv file
 load_dotenv()
-LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
+LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTING_ENDPOINT"]
 
 TEST_ID = "my-new-sdk-test-id"
 

@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:43:59 GMT",
+        "Date": "Tue, 27 Sep 2022 02:29:45 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13777.5 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.13777.5 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -110,14 +110,13 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
-        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-nfndVCuNoG878jzvXJgY0g\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027none\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:43:59 GMT",
+        "Date": "Tue, 27 Sep 2022 02:29:45 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13777.5 - KRSLR1 ProdSlices",
+        "x-ms-ests-server": "2.1.13777.5 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -173,7 +172,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "38e12460-2f35-496f-a7f9-8c53dc08bb71",
+        "client-request-id": "95054ba6-7590-46e1-ac47-30ae9199368c",
         "Connection": "keep-alive",
         "Content-Length": "290",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -191,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "38e12460-2f35-496f-a7f9-8c53dc08bb71",
+        "client-request-id": "95054ba6-7590-46e1-ac47-30ae9199368c",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:44:00 GMT",
+        "Date": "Tue, 27 Sep 2022 02:29:45 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -202,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.13672.8 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.13777.5 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -246,12 +245,12 @@
         "Connection": "keep-alive",
         "Content-Length": "746",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:44:00 GMT",
+        "Date": "Tue, 27 Sep 2022 02:29:46 GMT",
         "Location": "https://myservice.azure.com/loadtests/to-be-deleted-test-id?resourceId=%2fsubscriptions%2f00000000-0000-0000-0000-000000000000%2fresourcegroups%2fpython-sdk-test%2fproviders%2fmicrosoft.loadtestservice%2floadtests%2floadtest-jf\u0026api-version=2022-06-01-preview",
-        "mise-correlation-id": "52a13a11-cc83-4d21-9ae0-5d0acf8fbe70",
+        "mise-correlation-id": "0691eafa-e059-41f4-9d75-2369cbc5ab9b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "0862a95c-eabe-4f99-b509-155ee4a2f1f7"
+        "x-ms-correlation-request-id": "eba5ae21-d223-4c96-88b6-035cad5a217d"
       },
       "ResponseBody": {
         "testId": "to-be-deleted-test-id",
@@ -265,9 +264,9 @@
         "passFailCriteria": {
           "passFailMetrics": {}
         },
-        "createdDateTime": "2022-09-26T07:44:00.832Z",
+        "createdDateTime": "2022-09-27T02:29:46.292Z",
         "createdBy": null,
-        "lastModifiedDateTime": "2022-09-26T07:44:00.832Z",
+        "lastModifiedDateTime": "2022-09-27T02:29:46.292Z",
         "lastModifiedBy": null,
         "inputArtifacts": {
           "configUrl": null,
@@ -298,11 +297,11 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
         "Connection": "keep-alive",
-        "Date": "Mon, 26 Sep 2022 07:44:02 GMT",
-        "mise-correlation-id": "53517638-2a93-40da-94b1-19fb5528d9d8",
+        "Date": "Tue, 27 Sep 2022 02:29:46 GMT",
+        "mise-correlation-id": "8d74993f-d971-4582-936a-3514e8b02d97",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "c5993405-1446-4a8b-93a3-1235cca77367"
+        "x-ms-correlation-request-id": "60b2df07-aef2-4d18-b154-83bda21ecdf6"
       },
       "ResponseBody": null
     },
@@ -323,11 +322,11 @@
         "Connection": "keep-alive",
         "Content-Length": "126",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:44:02 GMT",
-        "mise-correlation-id": "748c83b0-0a3c-45d1-a18f-beea7ca18a9b",
+        "Date": "Tue, 27 Sep 2022 02:29:47 GMT",
+        "mise-correlation-id": "de38752d-f6e7-4adb-91df-005f484208b5",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "c95cb932-0f47-4ebb-8268-aaae9f3810bb"
+        "x-ms-correlation-request-id": "3dfbe45e-fee9-4c03-bd1c-85082498d0e6"
       },
       "ResponseBody": {
         "error": {

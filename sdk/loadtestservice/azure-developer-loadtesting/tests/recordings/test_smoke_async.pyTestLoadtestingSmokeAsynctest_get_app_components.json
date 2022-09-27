@@ -16,14 +16,14 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:39:47 GMT",
+        "Date": "Tue, 27 Sep 2022 02:29:41 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13672.8 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.13777.5 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -48,11 +48,11 @@
         "Connection": "keep-alive",
         "Content-Length": "1777",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 07:39:48 GMT",
-        "mise-correlation-id": "15743b07-164a-4d60-ad76-82d46e7ddd22",
+        "Date": "Tue, 27 Sep 2022 02:29:43 GMT",
+        "mise-correlation-id": "0408c882-94c2-4270-807c-b1e39fe84e92",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "fcb729c0-d22f-4a31-969a-a0de8bf92335"
+        "x-ms-correlation-request-id": "50bc148c-9b88-4e10-bde8-0e0718a9c72b"
       },
       "ResponseBody": {
         "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/python-sdk-test/providers/microsoft.loadtestservice/loadtests/loadtest-jf",
