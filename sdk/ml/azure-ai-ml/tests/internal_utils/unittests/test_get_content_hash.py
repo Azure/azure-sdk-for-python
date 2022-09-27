@@ -40,11 +40,10 @@ class TestGetContentHash:
         actual_hash.update(content4)
         assert actual_hash.hexdigest() == hash == "3f99429630ebd5882337eedef79dc029a9b406338cd6f466206aef2c951453be"
 
-    def test_get_content_hash_for_single_file(self):
-        root = Path.cwd().joinpath("code")
+    def test_get_content_hash_for_single_file(self, tmp_path: Path):
         content1 = b"test\n"
 
-        file_path = root.joinpath("file1.txt")
+        file_path = tmp_path / "file1.txt"
         os.makedirs(file_path.parent, exist_ok=True)
         with open(file_path, "wb") as f:
             f.write(content1)
@@ -55,4 +54,4 @@ class TestGetContentHash:
         actual_hash.update(b"#file1.txt#" + str(len(content1)).encode())
         actual_hash.update(content1)
         assert actual_hash.hexdigest() == hash == "f27673a89617f7808d3ed1bba0299a524bc23da2ba1aab4d508961f8b215ab84"
-        shutil.rmtree(root)
+    
