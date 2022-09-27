@@ -772,7 +772,12 @@
         "gzrs",
         "ragzrs",
         "wsid",
-        "azml"
+        "azml",
+        "uncompiled",
+        "segs",
+        "fnmatch",
+        "posixpath",
+        "SEPS"
       ]
     },
     {
