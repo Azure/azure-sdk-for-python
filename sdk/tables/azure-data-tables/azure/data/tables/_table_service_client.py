@@ -6,7 +6,7 @@
 
 import functools
 from typing import Any, Dict, TYPE_CHECKING
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, AzureError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
@@ -136,7 +136,7 @@ class TableServiceClient(TablesBaseClient):
         except HttpResponseError as error:
             try:
                 _process_table_error(error)
-            except AzureError as decoded_error:
+            except HttpResponseError as decoded_error:
                 _reprocess_error(decoded_error)
         return service_properties_deserialize(service_props)
 
@@ -172,7 +172,7 @@ class TableServiceClient(TablesBaseClient):
         except HttpResponseError as error:
             try:
                 _process_table_error(error)
-            except AzureError as decoded_error:
+            except HttpResponseError as decoded_error:
                 _reprocess_error(decoded_error)
 
     @distributed_trace

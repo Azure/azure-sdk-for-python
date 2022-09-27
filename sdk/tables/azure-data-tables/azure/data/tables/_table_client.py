@@ -13,7 +13,7 @@ except ImportError:
     from urllib2 import unquote  # type: ignore
 
 from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError, AzureError
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
@@ -256,7 +256,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         except HttpResponseError as error:
             try:
                 _process_table_error(error, table_name=self.table_name)
-            except AzureError as decoded_error:
+            except HttpResponseError as decoded_error:
                 _reprocess_error(decoded_error)
         return TableItem(name=result.table_name)  # type: ignore
 
@@ -288,7 +288,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
                 return
             try:
                 _process_table_error(error, table_name=self.table_name)
-            except AzureError as decoded_error:
+            except HttpResponseError as decoded_error:
                 _reprocess_error(decoded_error)
 
     @overload

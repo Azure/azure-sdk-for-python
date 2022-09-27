@@ -14,7 +14,7 @@ except ImportError:
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.exceptions import HttpResponseError, AzureError
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -250,7 +250,7 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
         except HttpResponseError as error:
             try:
                 _process_table_error(error, table_name=self.table_name)
-            except AzureError as decoded_error:
+            except HttpResponseError as decoded_error:
                 _reprocess_error(decoded_error)
         return TableItem(name=result.table_name)  # type: ignore
 
@@ -279,7 +279,7 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
                 return
             try:
                 _process_table_error(error, table_name=self.table_name)
-            except AzureError as decoded_error:
+            except HttpResponseError as decoded_error:
                 _reprocess_error(decoded_error)
 
     @overload

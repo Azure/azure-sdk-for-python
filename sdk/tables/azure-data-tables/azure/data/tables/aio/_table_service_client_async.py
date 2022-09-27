@@ -12,7 +12,7 @@ from typing import (
 )
 
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, AzureError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -137,7 +137,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         except HttpResponseError as error:
             try:
                 _process_table_error(error)
-            except AzureError as decoded_error:
+            except HttpResponseError as decoded_error:
                 _reprocess_error(decoded_error)
         return service_properties_deserialize(service_props)
 
@@ -179,7 +179,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         except HttpResponseError as error:
             try:
                 _process_table_error(error)
-            except AzureError as decoded_error:
+            except HttpResponseError as decoded_error:
                 _reprocess_error(decoded_error)
 
     @distributed_trace_async
