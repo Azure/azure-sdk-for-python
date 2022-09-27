@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from multiprocessing.sharedctypes import Value
 import pytest
 import platform
 

@@ -10,7 +10,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import ResourceExistsError
 from azure.data.tables import (
     TableAccessPolicy,

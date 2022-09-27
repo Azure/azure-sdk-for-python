@@ -23,10 +23,10 @@ from azure.data.tables import (
     generate_account_sas,
     ResourceTypes
 )
-from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import ResourceExistsError
 
-from _shared.testcase import TableTestCase, TEST_TABLE_PREFIX
+from _shared.testcase import TableTestCase
 from preparers import tables_decorator, tables_decorator
 
 # ------------------------------------------------------------------------------
