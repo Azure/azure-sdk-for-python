@@ -5,6 +5,7 @@
 # pylint: disable=protected-access,no-self-use
 
 import random
+import re
 from typing import Dict, Optional
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
@@ -21,9 +22,10 @@ from azure.ai.ml._scope_dependent_operations import (
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import upload_dependencies
+from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
+from azure.ai.ml._utils._endpoint_utils import upload_dependencies,validate_scoring_script
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations
+from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
 from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType
 from azure.ai.ml.entities import OnlineDeployment
 from azure.ai.ml.exceptions import (
@@ -80,6 +82,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         *,
         local: bool = False,
         vscode_debug: bool = False,
+        skip_script_validation: bool = False,
     ) -> LROPoller[OnlineDeployment]:
         """Create or update a deployment.
 
@@ -113,6 +116,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                     deployment=deployment,
                     local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug),
                 )
+            if not skip_script_validation and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX) and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code):
+                validate_scoring_script(deployment)
 
             path_format_arguments = {
                 "endpointName": deployment.name,
