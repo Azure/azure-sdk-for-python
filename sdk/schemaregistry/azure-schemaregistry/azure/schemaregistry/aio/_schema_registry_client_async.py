@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 from typing import Any, TYPE_CHECKING, Union, cast, overload
 
+from azure.core.tracing.decorator_async import distributed_trace_async
 from .._utils import get_http_request_kwargs
 from .._common._constants import SchemaFormat, DEFAULT_VERSION
 from .._common._schema import Schema, SchemaProperties
@@ -89,6 +90,7 @@ class SchemaRegistryClient(object):
         """
         await self._generated_client.close()
 
+    @distributed_trace_async
     async def register_schema(
         self,
         group_name: str,
@@ -151,6 +153,7 @@ class SchemaRegistryClient(object):
     async def get_schema(self, *, group_name: str, name: str, version: str, **kwargs) -> Schema:
         ...
 
+    @distributed_trace_async
     async def get_schema(self, *args: Union[str, int], **kwargs: Any) -> Schema:
         """Gets a registered schema. There are two ways to call this method:
         1) To get a registered schema by its unique ID, pass the `schema_id` parameter and any optional keyword arguments.
@@ -210,6 +213,7 @@ class SchemaRegistryClient(object):
         response.raise_for_status()
         return _parse_response_schema(response)
 
+    @distributed_trace_async
     async def get_schema_properties(
         self,
         group_name: str,
