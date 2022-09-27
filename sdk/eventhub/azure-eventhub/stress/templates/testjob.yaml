@@ -12,7 +12,7 @@ spec:
       imagePullPolicy: Always
      
       {{ if eq .Stress.Scenario "identity" }}
-      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_sync --azure_identity True --pyamqp_logging_enable --print_console --duration 7200']
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_sync --azure_identity True --uamqp_logging_enable --print_console --duration 7200']
       {{- end -}}
 
       {{ if eq .Stress.Scenario "sendsync" }}

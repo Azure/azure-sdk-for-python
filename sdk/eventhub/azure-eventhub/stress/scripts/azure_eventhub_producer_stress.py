@@ -140,7 +140,7 @@ class StressTestRunner(object):
         self.argument_parser.add_argument("--aad_secret", help="AAD secret")
         self.argument_parser.add_argument("--aad_tenant_id", help="AAD tenant id")
         self.argument_parser.add_argument("--payload", help="payload size", type=int, default=1024)
-        self.argument_parser.add_argument("--pyamqp_logging_enable", help="pyamqp logging enable", action="store_true")
+        self.argument_parser.add_argument("--uamqp_logging_enable", help="uamqp logging enable", action="store_true")
         self.argument_parser.add_argument("--print_console", action="store_true")
         self.argument_parser.add_argument("--log_filename", help="log file name", type=str)
         self.argument_parser.add_argument("--retry_total", type=int, default=3)
@@ -180,7 +180,7 @@ class StressTestRunner(object):
                 auth_timeout=self.args.auth_timeout,
                 http_proxy=http_proxy,
                 transport_type=transport_type,
-                logging_enable=self.args.pyamqp_logging_enable,
+                logging_enable=self.args.uamqp_logging_enable,
                 **retry_options 
             )
         elif self.args.conn_str:
@@ -190,7 +190,7 @@ class StressTestRunner(object):
                 auth_timeout=self.args.auth_timeout,
                 http_proxy=http_proxy,
                 transport_type=transport_type,
-                logging_enable=self.args.pyamqp_logging_enable,
+                logging_enable=self.args.uamqp_logging_enable,
                 **retry_options
             )
         elif self.args.hostname:
@@ -201,7 +201,7 @@ class StressTestRunner(object):
                     auth_timeout=self.args.auth_timeout,
                     http_proxy=http_proxy,
                     transport_type=transport_type,
-                    logging_enable=self.args.pyamqp_logging_enable,
+                    logging_enable=self.args.uamqp_logging_enable,
                     **retry_options
                 )
         elif self.args.aad_client_id:
@@ -216,7 +216,7 @@ class StressTestRunner(object):
                 credential=credential,
                 http_proxy=http_proxy,
                 transport_type=transport_type,
-                logging_enable=self.args.pyamqp_logging_enable,
+                logging_enable=self.args.uamqp_logging_enable,
                 **retry_options
             )
         else:
