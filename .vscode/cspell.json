@@ -465,7 +465,7 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": ["qnas", "qnamaker"],
+      "words": ["qnas", "qnamaker", "ADTO"],
       "caseSensitive": false
     },
     {
@@ -772,7 +772,12 @@
         "gzrs",
         "ragzrs",
         "wsid",
-        "azml"
+        "azml",
+        "uncompiled",
+        "segs",
+        "fnmatch",
+        "posixpath",
+        "SEPS"
       ]
     },
     {

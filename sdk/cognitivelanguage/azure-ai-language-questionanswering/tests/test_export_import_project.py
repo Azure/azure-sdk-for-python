@@ -22,7 +22,7 @@ class TestExportAndImport(QuestionAnsweringTestCase):
         # export project
         export_poller = client.begin_export(
             project_name=project_name,
-            format="json",
+            file_format="json",
             **self.kwargs_for_polling
         )
         result = export_poller.result()

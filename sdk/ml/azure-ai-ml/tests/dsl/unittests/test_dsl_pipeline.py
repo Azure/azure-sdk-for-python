@@ -38,10 +38,9 @@ from azure.ai.ml.entities._builders import Command, Parallel, Spark, Sweep
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob
 from azure.ai.ml.entities._job.job_service import JobService
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
-from azure.ai.ml.exceptions import ValidationException
+from azure.ai.ml.exceptions import UserErrorException, ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
 from azure.ai.ml.sweep import (
     BanditPolicy,
@@ -3856,6 +3855,7 @@ class TestInitFinalizeJob:
         from azure.ai.ml.dsl import pipeline
 
         def assert_pipeline_job_init_finalize_job(pipeline_job: PipelineJob):
+            assert pipeline_job._validate_init_finalize_job().passed
             assert pipeline_job.settings.on_init == "init_job"
             assert pipeline_job.settings.on_finalize == "finalize_job"
             pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
@@ -3945,11 +3945,26 @@ class TestInitFinalizeJob:
 
         # invalid case: call `set_pipeline_settings` out of `pipeline` decorator
         from azure.ai.ml._internal.dsl import set_pipeline_settings
-        from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
+        from azure.ai.ml.exceptions import UserErrorException
 
         with pytest.raises(UserErrorException) as e:
             set_pipeline_settings(on_init="init_job", on_finalize="finalize_job")
         assert str(e.value) == "Please call `set_pipeline_settings` inside a `pipeline` decorated function."
+
+        # invalid case: set on_init for pipeline component
+        @dsl.pipeline
+        def subgraph_func():
+            node = self.component_func()
+            set_pipeline_settings(on_init=node)  # set on_init for subgraph (pipeline component)
+
+        @dsl.pipeline
+        def subgraph_with_init_func():
+            subgraph_func()
+            self.component_func()
+
+        with pytest.raises(UserErrorException) as e:
+            subgraph_with_init_func()
+        assert str(e.value) == "On_init/on_finalize is not supported for pipeline component."
 
     def test_init_finalize_job_with_subgraph(self, caplog) -> None:
         from azure.ai.ml._internal.dsl import set_pipeline_settings
@@ -3959,7 +3974,6 @@ class TestInitFinalizeJob:
         def subgraph_func():
             node = self.component_func()
             node.compute = "cpu-cluster"
-            set_pipeline_settings(on_init=node)  # will be ignored when in subgraph
 
         @dsl.pipeline()
         def subgraph_init_finalize_job_func():
@@ -3968,24 +3982,7 @@ class TestInitFinalizeJob:
             finalize_job = subgraph_func()
             set_pipeline_settings(on_init=init_job, on_finalize=finalize_job)
 
-        # as we set on_init for subgraph, there should be warning of ignoring on_init setting
-        # update logger name to "Operation" to enable caplog capture logs
-        from azure.ai.ml.dsl import _pipeline_decorator
-
-        _pipeline_decorator.module_logger = logging.getLogger("Operation")
-        with caplog.at_level(logging.WARNING):
-            valid_pipeline = subgraph_init_finalize_job_func()
-        assert any(
-            [
-                (
-                    "Job settings {'on_init': 'node'} on pipeline function 'subgraph_func' "
-                    "are ignored when using inside PipelineJob."
-                )
-                == msg.replace("  ", "")  # hack here, use replace to remove spaces in the middle
-                for msg in caplog.messages
-            ]
-        )
-
+        valid_pipeline = subgraph_init_finalize_job_func()
         assert valid_pipeline._customized_validate().passed
         assert valid_pipeline.settings.on_init == "init_job"
         assert valid_pipeline.settings.on_finalize == "finalize_job"
