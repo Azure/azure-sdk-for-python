@@ -253,24 +253,28 @@ def get_content_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFil
     4. Hash the content and convert to hex digest string.
     """
     # DO NOT change this function unless you change the verification logic together
-    _hash = hashlib.sha256()
     actual_path = path
     if os.path.islink(path):
         link_path = os.readlink(path)
         actual_path = link_path if os.path.isabs(link_path) else os.path.join(os.path.dirname(path), link_path)
     if os.path.isdir(actual_path):
-        _hash = _get_folder_content_hash(actual_path, _hash, ignore_file=ignore_file)
+        return _get_file_list_content_hash(_get_upload_files_from_folder(actual_path, ignore_file=ignore_file))
     elif os.path.isfile(actual_path):
-        _hash = _get_file_hash(actual_path, _hash)
-    return str(_hash.hexdigest())
+        return _get_file_list_content_hash([(actual_path, Path(actual_path).name)])
+    return None
 
 
-def _get_folder_content_hash(
-    path: Union[str, Path], _hash: hash_type, ignore_file: IgnoreFile = IgnoreFile()
-) -> hash_type:
+def _get_upload_files_from_folder(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> List[str]:
     upload_paths = []
     for root, _, files in os.walk(path, followlinks=True):
         upload_paths += list(traverse_directory(root, files, Path(path).resolve(), "", ignore_file=ignore_file))
+    return upload_paths
+
+
+def _get_file_list_content_hash(file_list) -> str:
+    # file_list is a list of tuples, (absolute_path, relative_path)
+
+    _hash = hashlib.sha256()
     # Add file count to the hash and add '#' around file name then add each file's size to avoid collision like:
     # Case 1:
     # 'a.txt' with contents 'a'
@@ -279,14 +283,14 @@ def _get_folder_content_hash(
     # Case 2:
     # cspell:disable-next-line
     # 'a.txt' with contents 'ab.txtb'
-    _hash.update(str(len(upload_paths)).encode())
+    _hash.update(str(len(file_list)).encode())
     # Sort by "destination" path, since in this function destination prefix is empty and keep the link name in path.
-    for file_path, file_name in sorted(upload_paths, key=lambda x: str(x[1]).lower()):
+    for file_path, file_name in sorted(file_list, key=lambda x: str(x[1]).lower()):
         _hash.update(("#" + file_name + "#").encode())
         _hash.update(str(os.path.getsize(file_path)).encode())
-    for file_path, file_name in sorted(upload_paths, key=lambda x: str(x[1]).lower()):
+    for file_path, file_name in sorted(file_list, key=lambda x: str(x[1]).lower()):
         _hash = _get_file_hash(file_path, _hash)
-    return _hash
+    return str(_hash.hexdigest())
 
 
 def traverse_directory(
