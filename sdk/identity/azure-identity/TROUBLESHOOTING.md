@@ -12,8 +12,9 @@ This troubleshooting guide covers failure investigation techniques, common error
 - [Logging](#logging)
 - [Troubleshoot DefaultAzureCredential Authentication Issues](#troubleshoot-defaultazurecredential-authentication-issues)
 - [Troubleshoot EnvironmentCredential Authentication Issues](#troubleshoot-environmentcredential-authentication-issues)
+- [Troubleshoot ClientAssertionCredential Authentication Issues](#troubleshoot-clientassertioncredential-authentication-issues)
 - [Troubleshoot ClientSecretCredential Authentication Issues](#troubleshoot-clientsecretcredential-authentication-issues)
-- [Troubleshoot ClientCertificateCredential Authentication Issues](#troubleshoot-clientcertificatecredential-authentication-issues)
+- [Troubleshoot CertificateCredential Authentication Issues](#troubleshoot-certificatecredential-authentication-issues)
 - [Troubleshoot UsernamePasswordCredential Authentication Issues](#troubleshoot-usernamepasswordcredential-authentication-issues)
 - [Troubleshoot ManagedIdentityCredential Authentication Issues](#troubleshoot-managedidentitycredential-authentication-issues)
   - [Azure Virtual Machine Managed Identity](#azure-virtual-machine-managed-identity)
@@ -88,7 +89,7 @@ See full SDK logging documentation with examples [here][sdk_logging_docs].
 
 | Error Message |Description| Mitigation |
 |---|---|---|
-|Environment variables aren't fully configured.|A valid combination of environment variables wasn't set.|Ensure the appropriate environment variables are set **prior to application startup** for the intended authentication method.<p/>  <ul><li>To authenticate a service principal using a client secret, ensure the variables `AZURE_CLIENT_ID`, `AZURE_TENANT_ID` and `AZURE_CLIENT_SECRET` are properly set.</li><li>To authenticate a service principal using a certificate, ensure the variables `AZURE_CLIENT_ID`, `AZURE_TENANT_ID` and `AZURE_CLIENT_CERTIFICATE_PATH` are properly set.</li><li>To authenticate a user using a password, ensure the variables `AZURE_USERNAME` and `AZURE_PASSWORD` are properly set.</li><ul>|
+|Environment variables aren't fully configured.|A valid combination of environment variables wasn't set.|Ensure the appropriate environment variables are set **prior to application startup** for the intended authentication method.<p/>  <ul><li>To authenticate a service principal using a client secret, ensure the variables `AZURE_CLIENT_ID`, `AZURE_TENANT_ID` and `AZURE_CLIENT_SECRET` are properly set.</li><li>To authenticate a service principal using a certificate, ensure the variables `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_CERTIFICATE_PATH`, and optionally `AZURE_CLIENT_CERTIFICATE_PASSWORD` are properly set.</li><li>To authenticate a user using a password, ensure the variables `AZURE_USERNAME` and `AZURE_PASSWORD` are properly set.</li><ul>|
 
 ## Troubleshoot `ClientSecretCredential` Authentication Issues
 
@@ -97,14 +98,26 @@ See full SDK logging documentation with examples [here][sdk_logging_docs].
 | Error Code | Issue | Mitigation |
 |---|---|---|
 |AADSTS7000215|An invalid client secret was provided.|Ensure the `client_secret` provided when constructing the credential is valid. If unsure, create a new client secret using the Azure portal. Details on creating a new client secret can be found [here](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#option-2-create-a-new-application-secret).|
+|AADSTS7000222|An expired client secret was provided.|Create a new client secret using the Azure portal. Details on creating a new client secret can be found [here](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#option-2-create-a-new-application-secret).|
+|AADSTS700016|The specified application wasn't found in the specified tenant.|Ensure the specified `clientId` and `tenantId` are correct for your application registration.  For multi-tenant apps, ensure the application has been added to the desired tenant by a tenant admin. To add a new application in the desired tenant, follow the instructions [here](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal).|
 
-## Troubleshoot `ClientCertificateCredential` Authentication Issues
+## Troubleshoot `CertificateCredential` Authentication Issues
 
 `ClientAuthenticationError`
 | Error Code | Description | Mitigation |
 |---|---|---|
 |AADSTS700027|Client assertion contains an invalid signature.|Ensure the specified certificate has been uploaded to the AAD application registration. Instructions for uploading certificates to the application registration can be found [here](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#option-1-upload-a-certificate).|
 |AADSTS700016|The specified application wasn’t found in the specified tenant.| Ensure the specified `client_id` and `tenant_id` are correct for your application registration. For multi-tenant apps, ensure the application has been added to the desired tenant by a tenant admin. To add a new application in the desired tenant, follow the instructions [here](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal).
+
+## Troubleshoot `ClientAssertionCredential` Authentication Issues
+
+`ClientAuthenticationError`
+
+| Error Code | Description | Mitigation |
+|---|---|---|
+|AADSTS700021| Client assertion application identifier doesn't match 'client_id' parameter. Review the documentation at https://docs.microsoft.com/azure/active-directory/develop/active-directory-certificate-credentials. | Ensure the JWT assertion created has the correct values specified for the `sub` and `issuer` value of the payload, both of these should have the value be equal to `clientId`. Refer documentation for [client assertion format](https://docs.microsoft.com/azure/active-directory/develop/active-directory-certificate-credentials).|
+|AADSTS700023| Client assertion audience claim does not match Realm issuer. Review the documentation at https://docs.microsoft.com/azure/active-directory/develop/active-directory-certificate-credentials. | Ensure the audience `aud` field in the JWT assertion created has the correct value for the audience specified in the payload. This should be set to `https://login.microsoftonline.com/{tenantId}/v2`.|
+|AADSTS50027| JWT token is invalid or malformed. | Ensure the JWT assertion token is in the valid format. Refer to the documentation for [client assertion format](https://docs.microsoft.com/azure/active-directory/develop/active-directory-certificate-credentials).|
 
 ## Troubleshoot `UsernamePasswordCredential` Authentication Issues
 
@@ -243,6 +256,14 @@ Get-AzAccessToken -ResourceUrl "https://management.core.windows.net"
 ```
 
 >Note that output of this command will contain a valid access token, and SHOULD NOT BE SHARED to avoid compromising account security.
+
+## Troubleshoot Multi Tenant Authentication Issues
+
+`ClientAuthenticationError`
+
+| Error Message |Description| Mitigation |
+|---|---|---|
+|The current credential is not configured to acquire tokens for tenant <tenant ID>|The application must configure the credential to allow acquiring tokens from the requested tenant.|Add the requested tenant ID it to the AdditionallyAllowedTenants on the credential options, or add \"*\" to AdditionallyAllowedTenants to allow acquiring tokens for any tenant.</p>This exception was added as part of a breaking change to multi tenant authentication in version `1.11.0`. Users experiencing this error after upgrading can find details on the change and migration in [BREAKING_CHANGES.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/BREAKING_CHANGES.md#1110) |
 
 ## Get Additional Help
 
