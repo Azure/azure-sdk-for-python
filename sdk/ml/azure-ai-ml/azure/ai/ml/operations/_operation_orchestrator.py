@@ -138,7 +138,6 @@ class OperationOrchestrator(object):
                 if (
                     azureml_type == "environments"
                     and asset.startswith(CURATED_ENV_PREFIX)
-                    and is_private_preview_enabled()
                 ):
                     module_logger.warning(
                         "This job/deployment uses curated environments. The syntax for using curated "
