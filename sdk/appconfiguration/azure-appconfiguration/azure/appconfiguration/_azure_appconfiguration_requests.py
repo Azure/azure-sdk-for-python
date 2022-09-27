@@ -7,7 +7,6 @@
 import hashlib
 import base64
 import hmac
-from yarl import URL
 from azure.core.pipeline.policies import HTTPPolicy
 from ._utils import get_current_utc_time
 
@@ -27,6 +26,7 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
         # Need URL() to get a correct encoded key value, from "%2A" to "*", when transport is in type AioHttpTransport.
         # There's a similar scenario in azure-storage-blob, the check logic is from there.
         try:
+            from yarl import URL
             from azure.core.pipeline.transport import AioHttpTransport
             if isinstance(request.context.transport, AioHttpTransport) or \
                 isinstance(getattr(request.context.transport, "_transport", None), AioHttpTransport) or \
