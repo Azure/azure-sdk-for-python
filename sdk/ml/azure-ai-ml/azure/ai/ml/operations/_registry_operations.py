@@ -17,8 +17,6 @@ from azure.ai.ml.exceptions import (ErrorCategory, ErrorTarget,
                                     ValidationException)
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
-from azure.mgmt.msi._managed_service_identity_client import \
-    ManagedServiceIdentityClient
 
 from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import LROConfigurations
@@ -132,7 +130,7 @@ class RegistryOperations:
 
         registry_data = registry._to_rest_object()
         poller = self._operation.begin_create_or_update(
-            resource_group_name=self._resource_group_name.
+            resource_group_name=self._resource_group_name,
             registry_name=registry.name,
             body=registry_data,
             polling=self._get_polling(registry.name),
