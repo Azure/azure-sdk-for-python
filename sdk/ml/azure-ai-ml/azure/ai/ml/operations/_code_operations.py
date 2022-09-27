@@ -69,6 +69,11 @@ class CodeOperations(_ScopeDependentOperations):
 
         :param code: Code asset object.
         :type code: Code
+        :raises ~azure.ai.ml.exceptions.AssetPathException: Raised when the Code artifact path is already linked to another asset
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Code cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
+        :return: Code asset object.
+        :rtype: ~azure.ai.ml.entities.Code
         """
         try:
             name = code.name
@@ -141,6 +146,9 @@ class CodeOperations(_ScopeDependentOperations):
         :type name: str
         :param version: Version of the code asset.
         :type version: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Code cannot be successfully validated. Details will be provided in the error message.
+        :return: Code asset object.
+        :rtype: ~azure.ai.ml.entities.Code
         """
         if not version:
             msg = "Code asset version must be specified as part of name parameter, in format 'name:version'."

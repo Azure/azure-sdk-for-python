@@ -5,7 +5,6 @@ from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities import PipelineJobSettings
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
-from azure.ai.ml.entities._job.pipeline._exceptions import UnsupportedOperationError
 
 from .._util import _DSL_TIMEOUT_SECOND
 

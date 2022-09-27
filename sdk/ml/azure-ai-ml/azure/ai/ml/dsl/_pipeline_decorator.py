@@ -16,7 +16,7 @@ from typing import Any, Callable, Dict, TypeVar
 from azure.ai.ml.entities import Data, PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._inputs_outputs import Input, is_parameter_group
-from azure.ai.ml.entities._job.pipeline._exceptions import (
+from azure.ai.ml.exceptions import (
     MissingPositionalArgsError,
     MultipleValueError,
     TooManyPositionalArgsError,
@@ -182,6 +182,9 @@ def pipeline(
                 "tags": tags,
             }
             if _is_inside_dsl_pipeline_func():
+                # on_init/on_finalize is not supported for pipeline component
+                if job_settings.get("on_init") is not None or job_settings.get("on_finalize") is not None:
+                    raise UserErrorException("On_init/on_finalize is not supported for pipeline component.")
                 # Build pipeline node instead of pipeline job if inside dsl.
                 built_pipeline = Pipeline(_from_component_func=True, **common_init_args)
                 if job_settings:

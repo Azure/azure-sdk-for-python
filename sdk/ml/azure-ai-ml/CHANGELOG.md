@@ -14,6 +14,7 @@
 - Workspace.list_keys renamed to Workspace.get_keys.
 
 ### Bugs Fixed
+- Fix identity passthrough job with single file code
 
 ### Other Changes
  - Removed declaration on Python 3.6 support
