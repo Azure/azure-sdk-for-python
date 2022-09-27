@@ -170,7 +170,6 @@ class SynapseSparkCompute(Compute):
             name=self.name,
             compute_type=self.type,
             resource_id=self.resource_id,
-            compute_location=self.location,
             description=self.description,
         )
         return ComputeResource(
