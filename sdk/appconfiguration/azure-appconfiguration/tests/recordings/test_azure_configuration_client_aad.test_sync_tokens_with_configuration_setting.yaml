@@ -19,8 +19,8 @@ interactions:
     uri: https://fake_app_config.azconfig-test.io/kv/KEY1?api-version=1.0
   response:
     body:
-      string: '{"etag":"4HmnzUriGCotSlOVEu1SettfM3-gmf27V0sNqbArDgo","key":"KEY1","label":null,"content_type":"test
-        content type","value":"TEST_VALUE1","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-08-16T23:11:45+00:00"}'
+      string: '{"etag":"8XiB2osa1Uowlgs3H9IJRDNn5OwUOWvBXLBPZ0PaNh4","key":"KEY1","label":null,"content_type":"test
+        content type","value":"TEST_VALUE1","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-09-15T23:56:24+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -38,17 +38,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Tue, 16 Aug 2022 23:11:45 GMT
+      - Thu, 15 Sep 2022 23:56:24 GMT
       etag:
-      - '"4HmnzUriGCotSlOVEu1SettfM3-gmf27V0sNqbArDgo"'
+      - '"8XiB2osa1Uowlgs3H9IJRDNn5OwUOWvBXLBPZ0PaNh4"'
       last-modified:
-      - Tue, 16 Aug 2022 23:11:45 GMT
+      - Thu, 15 Sep 2022 23:56:24 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=NTo1IzExMzM2ODc5;sn=11336879
+      - zAJw6V16=Nzo1IzEwNDg4NDY=;sn=1048846
       transfer-encoding:
       - chunked
     status:
@@ -69,15 +69,15 @@ interactions:
       Content-Type:
       - application/vnd.microsoft.appconfig.kv+json
       Sync-Token:
-      - zAJw6V16=NTo1IzExMzM2ODc5
+      - zAJw6V16=Nzo1IzEwNDg4NDY=
       User-Agent:
       - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://fake_app_config.azconfig-test.io/kv/KEY2?api-version=1.0
   response:
     body:
-      string: '{"etag":"9ACjBS38dEZKsnn-o_wSuXrgep8sIlC2wa5Ys_yTqBs","key":"KEY2","label":null,"content_type":"test
-        content type","value":"TEST_VALUE2","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-08-16T23:11:45+00:00"}'
+      string: '{"etag":"CLvf2hseSnSkfolzFKfVLRcNrj4gFNsU7SX8BCJ7Beg","key":"KEY2","label":null,"content_type":"test
+        content type","value":"TEST_VALUE2","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-09-15T23:56:24+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -95,17 +95,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Tue, 16 Aug 2022 23:11:45 GMT
+      - Thu, 15 Sep 2022 23:56:24 GMT
       etag:
-      - '"9ACjBS38dEZKsnn-o_wSuXrgep8sIlC2wa5Ys_yTqBs"'
+      - '"CLvf2hseSnSkfolzFKfVLRcNrj4gFNsU7SX8BCJ7Beg"'
       last-modified:
-      - Tue, 16 Aug 2022 23:11:45 GMT
+      - Thu, 15 Sep 2022 23:56:24 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=NTo1IzExMzM2ODgy;sn=11336882
+      - zAJw6V16=Nzo1IzEwNDg4NDg=;sn=1048848
       transfer-encoding:
       - chunked
     status:
@@ -123,15 +123,15 @@ interactions:
       Content-Length:
       - '0'
       Sync-Token:
-      - zAJw6V16=NTo1IzExMzM2ODgy
+      - zAJw6V16=Nzo1IzEwNDg4NDg=
       User-Agent:
       - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://fake_app_config.azconfig-test.io/kv/KEY2?api-version=1.0
   response:
     body:
-      string: '{"etag":"9ACjBS38dEZKsnn-o_wSuXrgep8sIlC2wa5Ys_yTqBs","key":"KEY2","label":null,"content_type":"test
-        content type","value":"TEST_VALUE2","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-08-16T23:11:45+00:00"}'
+      string: '{"etag":"CLvf2hseSnSkfolzFKfVLRcNrj4gFNsU7SX8BCJ7Beg","key":"KEY2","label":null,"content_type":"test
+        content type","value":"TEST_VALUE2","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-09-15T23:56:24+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -149,17 +149,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Tue, 16 Aug 2022 23:11:45 GMT
+      - Thu, 15 Sep 2022 23:56:24 GMT
       etag:
-      - '"9ACjBS38dEZKsnn-o_wSuXrgep8sIlC2wa5Ys_yTqBs"'
+      - '"CLvf2hseSnSkfolzFKfVLRcNrj4gFNsU7SX8BCJ7Beg"'
       last-modified:
-      - Tue, 16 Aug 2022 23:11:45 GMT
+      - Thu, 15 Sep 2022 23:56:24 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=NTo1IzExMzM2ODg0;sn=11336884
+      - zAJw6V16=Nzo1IzEwNDg4NTA=;sn=1048850
       transfer-encoding:
       - chunked
     status:
