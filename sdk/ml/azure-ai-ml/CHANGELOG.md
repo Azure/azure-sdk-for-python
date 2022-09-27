@@ -3,18 +3,24 @@
 ## 0.1.0 (Unreleased)
 
 ### Features Added
+ - Support passing JobService as argument to Command()
+ - Added support for custom setup scripts on compute instances.
+ - Added a `show_progress` parameter to MLClient for enable/disable progress bars of long running operations.
 
 ### Breaking Changes
+- ComputeOperations.attach has been renamed to begin_attach.
+- Deprecated parameter path has been removed from load and dump methods.
+- JobOperations.cancel() is renamed to JobOperations.begin_cancel() and it returns LROPoller
+- Workspace.list_keys renamed to Workspace.get_keys.
 
 ### Bugs Fixed
 
 ### Other Changes
  - Removed declaration on Python 3.6 support
  - Added support for custom setup scripts on compute instances.
- - Removed declaration on Python 3.6 support.
  - Updated dependencies upper bounds to be major versions.
 
-## 0.1.0b7 (In progress)
+## 0.1.0b7 (2022-09-22)
 
 ### Features Added
  - Spark job submission.
@@ -41,7 +47,7 @@
  - Show 'properties' on data assets
 
 
-## 0.1.0b6
+## 0.1.0b6 (2022-08-09)
 
 ### Features Added
 

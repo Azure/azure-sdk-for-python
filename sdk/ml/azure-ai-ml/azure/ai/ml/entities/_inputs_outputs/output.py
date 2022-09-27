@@ -6,6 +6,8 @@
 
 from typing import Dict, overload
 
+from typing_extensions import Literal
+
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import IOConstants
 
@@ -31,7 +33,7 @@ class Output(_InputOutputBase):
     """
 
     @overload
-    def __init__(self, type="uri_folder", path=None, mode=None, description=None):
+    def __init__(self, type: Literal["uri_folder"] = "uri_folder", path=None, mode=None, description=None):
         """Define a uri_folder output.
 
         :param type: The type of the data output. Possible values include:
@@ -49,7 +51,7 @@ class Output(_InputOutputBase):
         """
 
     @overload
-    def __init__(self, type="uri_file", path=None, mode=None, description=None):
+    def __init__(self, type: Literal["uri_file"] = "uri_file", path=None, mode=None, description=None):
         """Define a uri_file output.
 
         :param type: The type of the data output. Possible values include:

@@ -150,9 +150,8 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
                 ),
             ]
         )
+        image_classification_multilabel_job_sweep.set_limits(max_trials=1, max_concurrent_trials=1)
         image_object_detection_job_sweep.set_sweep(
-            max_trials=1,
-            max_concurrent_trials=1,
             sampling_algorithm="Random",
             early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
         )

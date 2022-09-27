@@ -54,10 +54,14 @@ class BaseNodeSchema(PathAwareSchema):
         keys=fields.Str(),
         values=UnionField([OutputBindingStr, NestedField(OutputSchema)], allow_none=True),
     )
+    properties = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        support_data_binding_expression_for_fields(self, ["type"])
+        # data binding expression is not supported inside component field, while validation error
+        # message will be very long when component is an object as error message will include
+        # str(component), so just add component to skip list. The same to trial in Sweep.
+        support_data_binding_expression_for_fields(self, ["type", "component", "trial"])
 
     @post_dump(pass_original=True)
     def add_user_setting_attr_dict(self, data, original_data, **kwargs):  # pylint: disable=unused-argument

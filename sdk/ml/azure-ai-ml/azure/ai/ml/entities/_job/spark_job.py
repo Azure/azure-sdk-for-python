@@ -342,6 +342,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             outputs=self.outputs,
             compute=self.compute,
             resources=self.resources,
+            properties=self.properties,
         )
 
     def _validate(self) -> None:

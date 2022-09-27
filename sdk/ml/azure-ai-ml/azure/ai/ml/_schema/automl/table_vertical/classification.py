@@ -13,7 +13,7 @@ from azure.ai.ml._schema.automl.table_vertical.table_vertical import AutoMLTable
 from azure.ai.ml._schema.automl.training_settings import ClassificationTrainingSettingsSchema
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants import AutoMLConstants
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 
 
 class AutoMLClassificationSchema(AutoMLTableVerticalSchema):

@@ -111,7 +111,7 @@ class TestSparkJob(AzureRecordedTestCase):
         # https://msdata.visualstudio.com/Vienna/_workitems/edit/1940993
         params_override = [{"name": randstr()}]
         job = load_job(
-            path="./tests/test_configs/spark_job/spark_job_inputs_outputs_test.yml",
+            "./tests/test_configs/spark_job/spark_job_inputs_outputs_test.yml",
             params_override=params_override,
         )
         spark_job = client.jobs.create_or_update(job=job)

@@ -105,8 +105,9 @@ def camel_case_transformer(key, value):
 
 
 def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retries: int = 3) -> HttpPipeline:
-    """Creates an HttpPipeline identical to the provided one, except
-       with a new override
+    """Creates an HttpPipeline that reuses the same configuration as the
+    supplied pipeline (including the transport), but overwrites the
+    retry policy
 
     Args:
         requests_pipeline (HttpPipeline): Pipeline to base new one off of.
@@ -275,15 +276,12 @@ def dump_yaml_to_file(
     dest: Union[AnyStr, PathLike, IO, None],
     data_dict: Union[OrderedDict, dict],
     default_flow_style=False,
-    path: Union[AnyStr, PathLike] = None,  # deprecated input
-    args=None,  # deprecated* input
     **kwargs,
 ) -> None:
     # Check for deprecated path input, either named or as first unnamed input
+    path = kwargs.pop("path", None)
     if dest is None:
-        if args is not None and len(args) > 0:
-            dest = args[0]
-        elif path is not None:
+        if path is not None:
             dest = path
             warnings.warn(
                 "the 'path' input for dump functions is deprecated. Please use 'dest' instead.", DeprecationWarning
@@ -778,3 +776,10 @@ def _is_user_error_from_exception_type(e: Union[Exception, None]):
     # For OSError/IOError with error no 28: "No space left on device" should be sdk user error
     if isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28):
         return True
+
+
+def get_all_enum_values_iter(enum_type):
+    """Get all values of an enum type."""
+    for key in dir(enum_type):
+        if not key.startswith("_"):
+            yield getattr(enum_type, key)
