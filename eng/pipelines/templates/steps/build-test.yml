@@ -82,7 +82,7 @@ steps:
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/.logs'
-      ArtifactName: '$(Agent.JobName)_logs'
+      ArtifactName: '$(System.StageName)_$(Agent.JobName)_logs'
 
   - task: PublishPipelineArtifact@1
     displayName: Publish Tox Logs
