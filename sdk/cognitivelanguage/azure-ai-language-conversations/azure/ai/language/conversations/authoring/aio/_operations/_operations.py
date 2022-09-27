@@ -74,7 +74,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def list_projects(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
-        """Lists the existing projects.
+        """Lists the existing projects. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-projects
+        for more information.
 
         :keyword top: The maximum number of resources to return from the collection. Default value is
          None.
@@ -187,7 +189,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     async def create_project(
         self, project_name: str, project: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
-        """Creates a new project or updates an existing one.
+        """Creates a new project or updates an existing one. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/create-project
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -252,7 +256,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     async def create_project(
         self, project_name: str, project: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
-        """Creates a new project or updates an existing one.
+        """Creates a new project or updates an existing one. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/create-project
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -297,7 +303,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace_async
     async def create_project(self, project_name: str, project: Union[JSON, IO], **kwargs: Any) -> JSON:
-        """Creates a new project or updates an existing one.
+        """Creates a new project or updates an existing one. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/create-project
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -404,7 +412,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace_async
     async def get_project(self, project_name: str, **kwargs: Any) -> JSON:
-        """Gets the details of a project.
+        """Gets the details of a project. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-project for
+        more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -540,7 +550,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace_async
     async def begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[JSON]:
-        """Deletes a project.
+        """Deletes a project. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-project
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -732,7 +744,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         asset_kind: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
-        """Triggers a job to export a project's data.
+        """Triggers a job to export a project's data. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/export for more
+        information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -951,7 +965,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
-        that project is replaced.
+        that project is replaced. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/import for more
+        information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1161,7 +1177,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
-        that project is replaced.
+        that project is replaced. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/import for more
+        information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1253,7 +1271,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
-        that project is replaced.
+        that project is replaced. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/import for more
+        information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1456,7 +1476,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     async def begin_train(
         self, project_name: str, configuration: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
-        """Triggers a training job for a project.
+        """Triggers a training job for a project. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/train for more
+        information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1593,7 +1615,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     async def begin_train(
         self, project_name: str, configuration: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
-        """Triggers a training job for a project.
+        """Triggers a training job for a project. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/train for more
+        information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1709,7 +1733,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     async def begin_train(
         self, project_name: str, configuration: Union[JSON, IO], **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
-        """Triggers a training job for a project.
+        """Triggers a training job for a project. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/train for more
+        information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1877,7 +1903,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def list_deployments(
         self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
-        """Lists the deployments belonging to a project.
+        """Lists the deployments belonging to a project. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-deployments
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2048,7 +2076,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     async def begin_swap_deployments(
         self, project_name: str, deployments: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
-        """Swaps two existing deployments with each other.
+        """Swaps two existing deployments with each other. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/swap-deployments
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2139,7 +2169,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     async def begin_swap_deployments(
         self, project_name: str, deployments: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
-        """Swaps two existing deployments with each other.
+        """Swaps two existing deployments with each other. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/swap-deployments
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2222,7 +2254,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     async def begin_swap_deployments(
         self, project_name: str, deployments: Union[JSON, IO], **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
-        """Swaps two existing deployments with each other.
+        """Swaps two existing deployments with each other. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/swap-deployments
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2355,7 +2389,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace_async
     async def get_deployment(self, project_name: str, deployment_name: str, **kwargs: Any) -> JSON:
-        """Gets the details of a deployment.
+        """Gets the details of a deployment. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-deployment
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2505,7 +2541,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
-        """Creates a new deployment or replaces an existing one.
+        """Creates a new deployment or replaces an existing one. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/deploy-project
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2560,7 +2598,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
-        """Creates a new deployment or replaces an existing one.
+        """Creates a new deployment or replaces an existing one. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/deploy-project
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2604,7 +2644,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     async def begin_deploy_project(
         self, project_name: str, deployment_name: str, deployment: Union[JSON, IO], **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
-        """Creates a new deployment or replaces an existing one.
+        """Creates a new deployment or replaces an existing one. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/deploy-project
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2756,7 +2798,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     async def begin_delete_deployment(
         self, project_name: str, deployment_name: str, **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
-        """Deletes a project deployment.
+        """Deletes a project deployment. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-deployment
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2885,7 +2929,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     async def get_deployment_job_status(
         self, project_name: str, deployment_name: str, job_id: str, **kwargs: Any
     ) -> JSON:
-        """Gets the status of an existing deployment job.
+        """Gets the status of an existing deployment job. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-deployment-status
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -3003,7 +3049,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace_async
     async def get_swap_deployments_job_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
-        """Gets the status of an existing swap deployment job.
+        """Gets the status of an existing swap deployment job. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-swap-deployments-status
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -3119,6 +3167,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     @distributed_trace_async
     async def get_export_project_job_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-export-status
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -3235,7 +3286,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace_async
     async def get_import_project_job_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
-        """Gets the status for an import.
+        """Gets the status for an import. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-import-status
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -3352,7 +3405,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def list_trained_models(
         self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
-        """Lists the trained models belonging to a project.
+        """Lists the trained models belonging to a project. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-trained-models
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -3453,7 +3508,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace_async
     async def get_trained_model(self, project_name: str, trained_model_label: str, **kwargs: Any) -> JSON:
-        """Gets the details of a trained model.
+        """Gets the details of a trained model. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-trained-model
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -3528,7 +3585,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     async def delete_trained_model(  # pylint: disable=inconsistent-return-statements
         self, project_name: str, trained_model_label: str, **kwargs: Any
     ) -> None:
-        """Deletes an existing trained model.
+        """Deletes an existing trained model. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-trained-model
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -3588,7 +3647,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Gets the detailed results of the evaluation for a trained model. This includes the raw
-        inference results for the data included in the evaluation process.
+        inference results for the data included in the evaluation process. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-model-evaluation-results
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -3720,7 +3781,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     @distributed_trace_async
     async def get_model_evaluation_summary(self, project_name: str, trained_model_label: str, **kwargs: Any) -> JSON:
         """Gets the evaluation summary of a trained model. The summary includes high level performance
-        measurements of the model e.g., F1, Precision, Recall, etc.
+        measurements of the model e.g., F1, Precision, Recall, etc. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-model-evaluation-summary
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -3869,7 +3932,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def list_training_jobs(
         self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
-        """Lists the non-expired training jobs created for a project.
+        """Lists the non-expired training jobs created for a project. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-training-jobs
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -4045,7 +4110,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace_async
     async def get_training_job_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
-        """Gets the status for a training job.
+        """Gets the status for a training job. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-training-status
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -4247,7 +4314,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace_async
     async def begin_cancel_training_job(self, project_name: str, job_id: str, **kwargs: Any) -> AsyncLROPoller[JSON]:
-        """Triggers a cancellation for a running training job.
+        """Triggers a cancellation for a running training job. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/cancel-training-job
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -4407,7 +4476,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
     @distributed_trace_async
     async def get_project_deletion_job_status(self, job_id: str, **kwargs: Any) -> JSON:
-        """Gets the status for a project deletion job.
+        """Gets the status for a project deletion job. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-project-deletion-status
+        for more information.
 
         :param job_id: The job ID. Required.
         :type job_id: str
@@ -4521,7 +4592,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def list_supported_languages(
         self, *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
-        """Lists the supported languages for the given project type.
+        """Lists the supported languages for the given project type. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-supported-languages
+        for more information.
 
         :keyword project_kind: The project kind. Known values are: "Conversation" and "Orchestration".
          Required.
@@ -4626,7 +4699,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         skip: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterable[JSON]:
-        """Lists the supported prebuilt entities that can be used while creating composed entities.
+        """Lists the supported prebuilt entities that can be used while creating composed entities. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-supported-prebuilt-entities
+        for more information.
 
         :keyword language: The language to get supported prebuilt entities for. Required if
          multilingual is false. This is BCP-47 representation of a language. For example, use "en" for
@@ -4729,7 +4804,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def list_training_config_versions(
         self, *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
-        """Lists the support training config version for a given project type.
+        """Lists the support training config version for a given project type. See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-training-config-versions
+        for more information.
 
         :keyword project_kind: The project kind. Known values are: "Conversation" and "Orchestration".
          Required.

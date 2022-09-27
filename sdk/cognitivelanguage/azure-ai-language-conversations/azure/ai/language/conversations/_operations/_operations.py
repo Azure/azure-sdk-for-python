@@ -87,7 +87,9 @@ def build_conversation_analysis_request(**kwargs: Any) -> HttpRequest:
 class ConversationAnalysisClientOperationsMixin(MixinABC):
     @overload
     def analyze_conversation(self, task: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
-        """Analyzes the input conversation utterance.
+        """Analyzes the input conversation utterance. See
+        https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation
+        for more information.
 
         :param task: A single conversational task to execute. Required.
         :type task: JSON
@@ -202,7 +204,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
     @overload
     def analyze_conversation(self, task: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
-        """Analyzes the input conversation utterance.
+        """Analyzes the input conversation utterance. See
+        https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation
+        for more information.
 
         :param task: A single conversational task to execute. Required.
         :type task: IO
@@ -275,7 +279,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
     @distributed_trace
     def analyze_conversation(self, task: Union[JSON, IO], **kwargs: Any) -> JSON:
-        """Analyzes the input conversation utterance.
+        """Analyzes the input conversation utterance. See
+        https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation
+        for more information.
 
         :param task: A single conversational task to execute. Is either a model type or a IO type.
          Required.
@@ -472,7 +478,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         """Submit analysis job for conversations.
 
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
-        executed.
+        executed. See
+        https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/submit-job for more
+        information.
 
         :param task: The collection of conversations to analyze and one or more tasks to execute.
          Required.
@@ -591,7 +599,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         """Submit analysis job for conversations.
 
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
-        executed.
+        executed. See
+        https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/submit-job for more
+        information.
 
         :param task: The collection of conversations to analyze and one or more tasks to execute.
          Required.
@@ -695,7 +705,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         """Submit analysis job for conversations.
 
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
-        executed.
+        executed. See
+        https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/submit-job for more
+        information.
 
         :param task: The collection of conversations to analyze and one or more tasks to execute. Is
          either a model type or a IO type. Required.

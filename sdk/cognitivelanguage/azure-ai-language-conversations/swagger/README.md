@@ -71,6 +71,24 @@ Customizations that should eventually be added to central autorest configuration
 
 ### General customizations
 
+#### Add rest api docs to operations
+
+```yaml
+directive:
+- from: analyzeconversations-authoring.json
+  where: $.paths.*.*
+  transform: |
+    var operationId = $.operationId.replace(/_/g, "/").replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+    $.description = $.description + " See https://learn.microsoft.com/rest/api/language/" + operationId + " for more information.";
+- from: analyzeconversations.json
+  where: $.paths.*.*
+  transform: |
+    var operationId = $.operationId.replace(/_/g, "/").replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase().split("/")[1];
+    $.description = $.description + " See https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/" + operationId + " for more information.";
+```
+
+
+
 ```yaml
 directive:
 # Support automatically generating code for key credentials.
