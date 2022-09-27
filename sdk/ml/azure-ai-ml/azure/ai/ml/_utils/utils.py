@@ -522,7 +522,7 @@ def hash_dict(items: dict, keys_to_omit=None):
     items = pydash.omit(items, keys_to_omit)
     # serialize dict with order so same dict will have same content
     serialized_component_interface = json.dumps(items, sort_keys=True)
-    object_hash = hashlib.md5()
+    object_hash = hashlib.md5() # nosec
     object_hash.update(serialized_component_interface.encode("utf-8"))
     return str(UUID(object_hash.hexdigest()))
 

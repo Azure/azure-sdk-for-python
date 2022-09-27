@@ -163,7 +163,7 @@ To set up: https://docs.microsoft.com/azure/machine-learning/how-to-setup-vs-cod
 
 def get_md5_string(text):
     try:
-        return hashlib.md5(text.encode("utf8")).hexdigest()
+        return hashlib.md5(text.encode("utf8")).hexdigest() # nosec
     except Exception as ex:
         raise ex
 

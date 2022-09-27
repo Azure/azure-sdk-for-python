@@ -323,6 +323,11 @@ def _http_send(logger, data_to_send, service_endpoint_uri, send_timeout=10):
     :param send_timeout: timeout
     :return: SUCCESS/FAILURE
     """
+
+    if not service_endpoint_uri.startswith("https"):
+        logger.warning("Application Insights endpoint must be HTTPS.")
+        return FAILURE
+
     request_payload = json.dumps([a.write() for a in data_to_send], default=_json_serialize_unknown)
 
     content = bytearray(request_payload, "utf-8")
