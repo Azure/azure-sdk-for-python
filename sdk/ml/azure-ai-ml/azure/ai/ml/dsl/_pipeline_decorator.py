@@ -182,6 +182,9 @@ def pipeline(
                 "tags": tags,
             }
             if _is_inside_dsl_pipeline_func():
+                # on_init/on_finalize is not supported for pipeline component
+                if job_settings.get("on_init") is not None or job_settings.get("on_finalize") is not None:
+                    raise UserErrorException("On_init/on_finalize is not supported for pipeline component.")
                 # Build pipeline node instead of pipeline job if inside dsl.
                 built_pipeline = Pipeline(_from_component_func=True, **common_init_args)
                 if job_settings:
