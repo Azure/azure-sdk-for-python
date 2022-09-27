@@ -44,14 +44,14 @@ class CopyTableSamples(object):
         self.table_connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name, self.access_key, self.endpoint_suffix
         )
-        self.table_name="mytable"
+        self.copy_to_blob_table_name = "mytable1"
+        self.copy_to_table_table_name = "mytable2"
         self.blob_account_name = os.getenv("STORAGE_ACCOUNT_NAME")
         self.blob_account_key = os.getenv("STORAGE_ACCOUNT_KEY")
         self.blob_connection_string = "DefDefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix=core.windows.net".format(
             self.blob_account_name, self.blob_account_key
         )
         self.blob_service_client = BlobServiceClient.from_connection_string(self.blob_connection_string)
-        self.container_name = "mycontainer"
         self.entity = {
             "PartitionKey": "color",
             "text": "Marker",
@@ -66,7 +66,7 @@ class CopyTableSamples(object):
     async def copy_table_from_table_to_blob(self):
         await self._setup_table()
         try:
-            self.container_client = await self.blob_service_client.create_container(self.table_name)           
+            self.container_client = await self.blob_service_client.create_container(self.copy_to_blob_table_name)           
             # Upload in-memory table data to a blob that stays in a container
             async for entity in self.table_client.list_entities():
                 # Convert type datetime, bytes, UUID values to string as they're not JSON serializable
@@ -74,7 +74,7 @@ class CopyTableSamples(object):
                 entity["product_id"] = entity["product_id"].hex
                 entity["barcode"] = entity["barcode"].decode("utf-8")
                 blob_name = entity["PartitionKey"] + entity["RowKey"]
-                blob_client = self.blob_service_client.get_blob_client(self.table_name, blob_name)
+                blob_client = self.blob_service_client.get_blob_client(self.copy_to_blob_table_name, blob_name)
                 await blob_client.upload_blob(json.dumps(entity))
         finally:
             await self._tear_down()
@@ -86,8 +86,8 @@ class CopyTableSamples(object):
             # Note: when entities size is too big, may need to do copy by chunk
             blob_list = self.container_client.list_blobs()
             # Upload entities to a table
-            table_service_client = TableServiceClient.from_connection_string(conn_str=self.table_connection_string, table_name=self.container_name)
-            self.table_client = table_service_client.get_table_client(self.container_name)
+            table_service_client = TableServiceClient.from_connection_string(conn_str=self.table_connection_string, table_name=self.copy_to_table_table_name)
+            self.table_client = table_service_client.get_table_client(self.copy_to_table_table_name)
             await self.table_client.create_table()
             async for blob in blob_list:
                 blob_client = self.container_client.get_blob_client(blob)
@@ -102,15 +102,15 @@ class CopyTableSamples(object):
             await self._tear_down()
 
     async def _setup_table(self):
-        table_service_client = TableServiceClient.from_connection_string(conn_str=self.table_connection_string, table_name=self.table_name)
-        self.table_client = table_service_client.get_table_client(self.table_name)
+        table_service_client = TableServiceClient.from_connection_string(conn_str=self.table_connection_string, table_name=self.copy_to_blob_table_name)
+        self.table_client = table_service_client.get_table_client(self.copy_to_blob_table_name)
         await self.table_client.create_table()
         for i in range(10):
             self.entity["RowKey"] = str(i)
             await self.table_client.create_entity(self.entity)
 
     async def _setup_blob(self):
-        self.container_client = await self.blob_service_client.create_container(self.container_name)
+        self.container_client = await self.blob_service_client.create_container(self.copy_to_table_table_name)
         entity = copy.deepcopy(self.entity)
         # Convert type datetime, bytes, UUID values to string as they're not JSON serializable
         entity["last_updated"] = entity["last_updated"].isoformat()
@@ -119,7 +119,7 @@ class CopyTableSamples(object):
         for i in range(10):
             entity["RowKey"] = str(i)
             blob_name = entity["PartitionKey"] + entity["RowKey"]
-            blob_client = self.blob_service_client.get_blob_client(self.container_name, blob_name)
+            blob_client = self.blob_service_client.get_blob_client(self.copy_to_table_table_name, blob_name)
             await blob_client.upload_blob(json.dumps(entity))
 
     async def _tear_down(self):
