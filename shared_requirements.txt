@@ -473,6 +473,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-extendedlocation msrest>=0.6.21
 #override azure-mgmt-extendedlocation azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-alertsmanagement azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-devhub msrest>=0.7.1
 #override azure-mgmt-education msrest>=0.6.21
 #override azure-mgmt-education azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-web azure-mgmt-core>=1.3.2,<2.0.0
@@ -488,6 +489,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-fluidrelay azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-developer-loadtesting azure-core<2.0.0,>=1.24.0
 #override azure-developer-loadtesting isodate<1.0.0,>=0.6.1
+#override azure-mgmt-devhub azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-datalake-analytics msrest>=0.6.21
 #override azure-mgmt-datalake-analytics azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-datalake-store msrest>=0.7.1
