@@ -62,7 +62,7 @@ def _enumerate_operation_combination() -> Dict[str, Union[str, Exception]]:
             for operator in _SUPPORTED_OPERATORS:
                 k = f"{type1} {operator} {type2}"
                 try:
-                    eval_result = literal_eval(f"{operand1} {operator} {operand2}")  # pylint: disable=eval-used
+                    eval_result = eval(f"{operand1} {operator} {operand2}")  # pylint: disable=eval-used # nosec
                     res[k] = IOConstants.PRIMITIVE_TYPE_2_STR[type(eval_result)]
                 except TypeError:
                     error_message = (
@@ -386,7 +386,7 @@ class PipelineExpression(PipelineExpressionMixin):
                 if self._inputs[token].type != ComponentParameterTypes.STRING:
                     return False
             else:
-                if not isinstance(literal_eval(token), str):  # pylint: disable=eval-used
+                if not isinstance(eval(token), str):  # pylint: disable=eval-used # nosec
                     return False
         return True
 
@@ -405,7 +405,7 @@ class PipelineExpression(PipelineExpressionMixin):
                 if token in self._inputs:
                     stack.append(self._inputs[token].value._data_binding())
                 else:
-                    stack.append(literal_eval(token))  # pylint: disable=eval-used
+                    stack.append(eval(token))  # pylint: disable=eval-used # nosec
                 continue
             operand2, operand1 = stack.pop(), stack.pop()
             stack.append(operand1 + operand2)
@@ -457,7 +457,7 @@ class PipelineExpression(PipelineExpressionMixin):
     def _get_operand_type(self, operand: str) -> str:
         if operand in self._inputs:
             return self._inputs[operand].type
-        return type(literal_eval(operand)).__name__  # pylint: disable=eval-used
+        return type(eval(operand)).__name__  # pylint: disable=eval-used # nosec
 
     @property
     def _component_code(self) -> str:
