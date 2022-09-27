@@ -753,6 +753,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         component = load_component(
             source=component_path,
         )
+        print(component.is_deterministic)
         # Assert binding on compute not changed after resolve dependencies
         client.components._resolve_arm_id_for_pipeline_component_jobs(
             component.jobs, resolver=client.components._orchestrators.get_asset_arm_id
