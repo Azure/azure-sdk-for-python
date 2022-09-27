@@ -773,7 +773,9 @@
         "azml",
         "uncompiled",
         "segs",
-        "fnmatch"
+        "fnmatch",
+        "posixpath",
+        "SEPS"
       ]
     },
     {
