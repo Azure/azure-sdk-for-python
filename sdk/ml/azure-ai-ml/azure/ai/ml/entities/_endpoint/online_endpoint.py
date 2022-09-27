@@ -363,7 +363,9 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
     :param identity: defaults to SystemAssigned
     :type identity: IdentityConfiguration, optional
     :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None.
-    :type kind: str, optional
+    :type kind: str, optional,
+    :param public_network_access: Whether to allow public endpoint connectivity
+    :type public_network_access: str
     """
 
     def __init__(
@@ -379,9 +381,10 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
         mirror_traffic: Dict[str, int] = None,
         identity: IdentityConfiguration = None,
         kind: str = None,
+        public_network_access = None,
         **kwargs,
     ):
-        self.public_network_access = kwargs.pop("public_network_access", None)
+        self.public_network_access = public_network_access
 
         super(ManagedOnlineEndpoint, self).__init__(
             name=name,
