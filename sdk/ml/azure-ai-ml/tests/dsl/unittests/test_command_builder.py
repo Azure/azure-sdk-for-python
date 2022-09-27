@@ -18,7 +18,7 @@ from azure.ai.ml import (
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
 from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._builders import Command
-from azure.ai.ml.entities._job.job_service import JobService
+from azure.ai.ml.entities._job.job_service import JobService as JobService
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.exceptions import JobException, ValidationException
 
@@ -122,7 +122,9 @@ class TestCommandFunction:
         }
         actual_command = pydash.omit(
             test_command._to_rest_object(),
-            ["componentId", "source_job_id"],
+            "componentId",
+            "source_job_id",
+            "properties",
         )
         assert actual_command == expected_command
 
@@ -250,18 +252,12 @@ class TestCommandFunction:
             "tags": {},
             "type": "command",
         }
-        actual_dict = pydash.omit(
-            node1_dict,
-            "componentId",
-        )
+        actual_dict = pydash.omit(node1_dict, "componentId", "properties")
         assert actual_dict == expected_dict
 
     def test_command_function_default_values(self, test_command):
         node1 = test_command()
-        node1_dict = pydash.omit(
-            node1._to_rest_object(),
-            "componentId",
-        )
+        node1_dict = pydash.omit(node1._to_rest_object(), "componentId", "properties")
         expected_dict = {
             "_source": "BUILDER",
             "type": "command",
@@ -294,10 +290,7 @@ class TestCommandFunction:
         node2.compute = "new-cluster"
         node2.limits = CommandJobLimits(timeout=10)
         node3 = node2()
-        node3_dict = pydash.omit(
-            node3._to_rest_object(),
-            "componentId",
-        )
+        node3_dict = pydash.omit(node3._to_rest_object(), "componentId", "properties")
         expected_dict = {
             "_source": "BUILDER",
             "type": "command",
@@ -371,6 +364,7 @@ class TestCommandFunction:
             "resources": None,
             "name": None,
             "tags": {},
+            "properties": {},
         }
         assert node1_dict == expected_dict
 
@@ -580,7 +574,7 @@ class TestCommandFunction:
 
         actual_node = pydash.omit(
             node1._to_rest_object(),
-            "componentId",
+            *["componentId", "properties"],
         )
         expected_node = {
             "_source": "BUILDER",
@@ -872,8 +866,7 @@ class TestCommandFunction:
             assert isinstance(service, JobService)
 
         node_rest_obj = node._to_rest_object()
-        for name, service in node_rest_obj["services"].items():
-            assert isinstance(service, RestJobService)
+        assert node_rest_obj["services"] == services
 
         # test invalid services
         invalid_services_0 = "jupyter"
@@ -918,7 +911,7 @@ class TestCommandFunction:
         assert hash(node1) == hash(node2)
         assert node1 == node2
 
-        component_func = load_component(path="./tests/test_configs/components/helloworld_component_no_paths.yml")
+        component_func = load_component("./tests/test_configs/components/helloworld_component_no_paths.yml")
         node3 = component_func()
         node4 = component_func()
         assert hash(node3) == hash(node4)

@@ -14,7 +14,7 @@ from typing import Dict, List, Tuple, Union
 from azure.ai.ml._utils.utils import dump_yaml_to_file, get_all_data_binding_expressions, load_yaml
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
+from azure.ai.ml.exceptions import UserErrorException
 
 ExpressionInput = namedtuple("ExpressionInput", ["name", "type", "value"])
 
@@ -548,7 +548,7 @@ class PipelineExpression(PipelineExpressionMixin):
 
             from azure.ai.ml import load_component
 
-            component_func = load_component(path=yaml_path)
+            component_func = load_component(yaml_path)
             component_kwargs = {k: v.value for k, v in self._inputs.items()}
             self._created_component = component_func(**component_kwargs)
         return self._created_component

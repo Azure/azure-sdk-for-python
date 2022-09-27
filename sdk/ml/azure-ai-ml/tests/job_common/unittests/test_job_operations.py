@@ -208,7 +208,7 @@ class TestJobOperations:
         self, mock_method, mock_job_operation: JobOperations
     ) -> None:
         mock_method.return_value = Command(component=None)
-        job = load_job(path="./tests/test_configs/command_job/simple_train_test.yml")
+        job = load_job("./tests/test_configs/command_job/simple_train_test.yml")
         with patch.object(JobOperations, "_validate") as mock_thing, patch.object(
             JobOperations, "_resolve_arm_id_or_upload_dependencies"
         ):

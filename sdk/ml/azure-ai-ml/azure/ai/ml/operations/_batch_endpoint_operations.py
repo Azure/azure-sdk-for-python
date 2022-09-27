@@ -200,14 +200,21 @@ class BatchEndpointOperations(_ScopeDependentOperations):
     ) -> BatchJobResource:
         """Invokes the batch endpoint with the provided payload.
 
-        :param str endpoint_name: the endpoint name
-        :param (str, optional) deployment_name: Name of a specific deployment to invoke. This is optional.
+        :param endpoint_name: The endpoint name.
+        :type endpoint_name: str
+        :param deployment_name: The name of a specific deployment to invoke. This is optional.
             By default requests are routed to any of the deployments according to the traffic rules.
-        :param (Input, optional) input: To use a existing data asset, public uri file,
-            or folder pass in a Input object, for batch endpoints only.
-        :param (List, optional) params_override: Used to overwrite deployment configurations, for batch endpoints only.
-        Returns:
-            Union[str, BatchJobResource]: Prediction output for online endpoints or details of batch prediction job.
+        :type deployment_name: Optional[str]
+        :param input: An existing data asset, public uri file or folder to use with the deployment
+        :type input: Optional[Input]
+        :param params_override: Parameters to overwrite deployment configurations, for batch endpoints only.
+        :type params_override: Dict
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if deployment cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if BatchEndpoint assets (e.g. Data, Code, Model, Environment) cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if BatchEndpoint model cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
+        :return: The invoked batch deployment job.
+        :rtype: BatchJobResource
         """
         params_override = params_override or []
         # Until this bug is resolved https://msdata.visualstudio.com/Vienna/_workitems/edit/1446538

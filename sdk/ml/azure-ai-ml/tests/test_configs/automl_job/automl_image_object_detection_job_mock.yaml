@@ -10,8 +10,8 @@ primary_metric: mean_average_precision
 
 limits:
   timeout_minutes: 60
-  max_concurrent_trials: 1
-  max_trials: 1
+  max_concurrent_trials: 4
+  max_trials: 20
 
 target_column_name: label
 training_data:
@@ -22,9 +22,6 @@ validation_data:
   type: mltable
 
 sweep:
-  limits:
-    max_trials: 20
-    max_concurrent_trials: 4
   sampling_algorithm: Grid
   early_termination:
     type: bandit

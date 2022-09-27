@@ -6,8 +6,8 @@ type: pipeline
 
 inputs:
   job_in_path:
-    type: uri_file
-    path: ././invalid_pipeline.yml
+    type: uri_folder
+    path: ./
   job_in_number: 3
 
 outputs:
@@ -45,12 +45,12 @@ jobs:
 
   command_component_body_node:
     type: command
-    component: ./components/write_input_num.yml
+    component: ./components/basic_component.yml
     compute: azureml:cpu-cluster
     inputs:
-      component_in_number: ${{parent.jobs.command_component_body_node.outputs.output_in_number}}
-      component_in_number_1: ${{parent.jobs.command_component_body_node.outputs.output_in_number}}
-      component_in_path: ${{parent.jobs.command_component_body_node.outputs.output_in_path}}
+      component_in_number: ${{parent.inputs.job_in_number}}
+      component_in_number_1: ${{parent.inputs.job_in_number}}
+      component_in_path: ${{parent.inputs.job_in_path}}
 
   do_while_job_with_command_component:
     type: do_while
@@ -66,7 +66,7 @@ jobs:
 
   get_do_while_result:
     type: command
-    component: ./components/write_input_num.yml
+    component: ./components/basic_component.yml
     compute: azureml:cpu-cluster
     inputs:
       component_in_number: ${{parent.jobs.pipeline_body_node.outputs.output_in_number}}

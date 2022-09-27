@@ -10,10 +10,9 @@ from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities import Data, JobResourceConfiguration
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.pipeline._exceptions import UnexpectedKeywordError, UserErrorException
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
-from azure.ai.ml.exceptions import ValidationException
+from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -253,6 +252,7 @@ class TestComponentFunc:
             "outputs": {},
             "resources": {"instance_count": 2, "properties": {}},
             "tags": {},
+            "properties": {},
         }
 
     def test_component_func_dict_distribution(self):

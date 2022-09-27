@@ -286,7 +286,7 @@ class TestDSLPipeline:
             sub: SubParamClass = SubParamClass()
 
         hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
-        hello_world_component_func = load_component(path=hello_world_component_yaml)
+        hello_world_component_func = load_component(hello_world_component_yaml)
 
         @pipeline()
         def pipeline_with_group_default(group: ParamClass = ParamClass()):
@@ -306,7 +306,7 @@ class TestDSLPipeline:
             str_param: str = "string_by_default"
 
         hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
-        hello_world_component_func = load_component(path=hello_world_component_yaml)
+        hello_world_component_func = load_component(hello_world_component_yaml)
 
         @pipeline()
         def str_param_pipeline(str_param, group: ParamClass):

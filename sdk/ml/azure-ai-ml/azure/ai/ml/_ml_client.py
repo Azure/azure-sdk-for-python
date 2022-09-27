@@ -257,6 +257,13 @@ class MLClient(object):
             **kwargs,
         )
 
+        self._service_client_10_2022_preview = ServiceClient102022(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._workspaces = WorkspaceOperations(
             self._operation_scope,
             self._rp_service_client,
@@ -451,9 +458,9 @@ class MLClient(object):
         :param kwargs: A dictionary of additional configuration parameters.
             For e.g. kwargs = {"cloud": "AzureUSGovernment"}
         :type kwargs: dict
-
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if config.json cannot be found in directory. Details will be provided in the error message.
         :return: The workspace object for an existing Azure ML Workspace.
-        :rtype: MLClient
+        :rtype: ~azure.ai.ml.MLClient
         """
 
         path = Path(".") if path is None else Path(path)
