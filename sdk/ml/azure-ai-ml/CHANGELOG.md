@@ -33,6 +33,7 @@
  - Enable using @dsl.pipeline without brackets when no additional parameters.
  - Expose Azure subscription Id and resource group name from MLClient objects.
  - Added Idle Shutdown support for Compute Instances, allowing instances to shutdown after a set period of inactivity.
+ - Syntax validation on scoring scripts of Batch Deployment and Online Deployment will prevent the user from submitting bad deployments.
 
 ### Breaking Changes
  - Change (begin_)create_or_update typehints to use generics.
