@@ -151,17 +151,17 @@ class SchemaRegistryClient(object):
         ...
 
     @overload
-    def get_schema(self, *, group_name: str, name: str, version: str, **kwargs) -> Schema:
+    def get_schema(self, *, group_name: str, name: str, version: int, **kwargs) -> Schema:
         ...
 
     @distributed_trace
     def get_schema(self, *args: Union[str, int], **kwargs: Any) -> Schema:
         """Gets a registered schema. There are two ways to call this method:
         1) To get a registered schema by its unique ID, pass the `schema_id` parameter and any optional keyword arguments.
-         Azure Schema Registry guarantees that ID is unique within a namespace.
+        Azure Schema Registry guarantees that ID is unique within a namespace.
 
         2) To get a specific version of a schema within the specified schema group, pass in the required keyword argments
-         `group_name`, `name`, and `version` and any optional keyword arguments.
+        `group_name`, `name`, and `version` and any optional keyword arguments.
 
         :param str schema_id: References specific schema in registry namespace.
         :keyword str group_name: Name of schema group that contains the registered schema.
@@ -179,15 +179,12 @@ class SchemaRegistryClient(object):
                 :dedent: 4
                 :caption: Get schema by id.
 
-        .. admonition:: Example:
-
             .. literalinclude:: ../samples/sync_samples/sample_code_schemaregistry.py
                 :start-after: [START get_schema_by_version_sync]
                 :end-before: [END get_schema_by_version_sync]
                 :language: python
                 :dedent: 4
                 :caption: Get schema by version.
-
         """
         try:
             try:

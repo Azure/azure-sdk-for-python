@@ -83,7 +83,7 @@ def register_schema(schema_registry_client):
 
 def get_schema(schema_registry_client, schema_id):
     # [START get_schema_sync]
-    schema = schema_registry_client.get_schema(schema_id=schema_id)
+    schema = schema_registry_client.get_schema(schema_id)
     definition = schema.definition
     properties = schema.properties
     # [END get_schema_sync]

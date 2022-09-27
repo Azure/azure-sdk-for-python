@@ -6,7 +6,7 @@ This version and all future versions will require Python 3.7+, Python 3.6 is no 
 
 ### Features Added
 
-- `group_name`, `name`, and `version` have been added as optional parameters to the method `get_schema` method on the sync and async `SchemaRegistryClient`.
+- `group_name`, `name`, and `version` have been added as optional parameters to the `get_schema` method on the sync and async `SchemaRegistryClient`.
 - `version` has been added to `SchemaProperties`.
 
 ### Other Changes
