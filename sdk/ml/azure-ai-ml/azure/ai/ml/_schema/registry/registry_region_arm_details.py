@@ -19,9 +19,9 @@ from .util import acr_format_validator, storage_account_validator
 class RegistryRegionArmDetailsSchema(metaclass=PatchedSchemaMeta):
     # Commenting this out for the time being.
     # We do not want to surface the acr_config as a per-region configurable
-    # field. Instead we want to simplify the UX and surface it as a non-list, 
+    # field. Instead we want to simplify the UX and surface it as a non-list,
     # top-level value called 'container_registry'.
-    # We don't even want to show the per-region acrs when displaying a 
+    # We don't even want to show the per-region acr accounts when displaying a
     # registry to the user, so this isn't even left as a dump-only field.
     '''acr_config = fields.List(
         UnionField(

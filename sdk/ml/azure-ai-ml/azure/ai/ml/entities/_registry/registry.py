@@ -91,7 +91,7 @@ class Registry(Resource):
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
         schema = RegistrySchema(context={BASE_PATH_CONTEXT_KEY: "./"})
-        # Change name of region_details to user-shown anme
+        # Change name of region_details to user-shown name
         self.replication_locations = self.region_details
         # Grab the first acr account of the first region and set that
         # as the system-wide container registry.
