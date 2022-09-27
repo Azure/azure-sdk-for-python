@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
         "x-ms-content-sha256": "47DEQpj8HBSa\u002B/TImW\u002B5JCeuQeRkm5NMpJWZG3hSuFU=",
-        "x-ms-date": "Aug, 24 2022 02:32:04.595550 GMT"
+        "x-ms-date": "Sep, 27 2022 20:04:38.856916 GMT"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -19,12 +19,12 @@
         "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kvset\u002Bjson; charset=utf-8",
-        "Date": "Wed, 24 Aug 2022 02:32:03 GMT",
+        "Date": "Tue, 27 Sep 2022 20:04:39 GMT",
         "Server": "openresty/1.17.8.2",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTQ3;sn=11682947",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5NzQ=;sn=6786974",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "fee3ab45-3410-4f9c-b3b3-0e73714a05d1"
+        "x-ms-correlation-request-id": "e6a99d87-992b-43a9-bf97-b97f1aa3b209"
       },
       "ResponseBody": {
         "items": []
@@ -38,12 +38,12 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "231",
-        "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson",
+        "Content-Type": "application/json",
         "If-None-Match": "*",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTQ3",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5NzQ=",
         "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
         "x-ms-content-sha256": "5b/E4qQlXHTRod\u002Bn\u002Bf\u002BxjK6c/tRVR8uxoC62FjvGJPw=",
-        "x-ms-date": "Aug, 24 2022 02:32:04.705593 GMT"
+        "x-ms-date": "Sep, 27 2022 20:04:38.905225 GMT"
       },
       "RequestBody": {
         "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
@@ -62,17 +62,17 @@
         "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson; charset=utf-8",
-        "Date": "Wed, 24 Aug 2022 02:32:03 GMT",
-        "ETag": "\u0022MLzy7SAuiwsBMOF1Z6xLPNse_EBWD-P7vIT5o3XolM0\u0022",
-        "Last-Modified": "Wed, 24 Aug 2022 02:32:03 GMT",
+        "Date": "Tue, 27 Sep 2022 20:04:39 GMT",
+        "ETag": "\u0022v4wSzjNrrexHZ1T7idc_kRK-x4A_PryD3M4gt2ObP2k\u0022",
+        "Last-Modified": "Tue, 27 Sep 2022 20:04:39 GMT",
         "Server": "openresty/1.17.8.2",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTQ4;sn=11682948",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5NzU=;sn=6786975",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "77c2298d-4ba8-40ae-99a1-4247216bf222"
+        "x-ms-correlation-request-id": "7c15d72c-1c36-45b5-b995-17a3ac6bf166"
       },
       "ResponseBody": {
-        "etag": "MLzy7SAuiwsBMOF1Z6xLPNse_EBWD-P7vIT5o3XolM0",
+        "etag": "v4wSzjNrrexHZ1T7idc_kRK-x4A_PryD3M4gt2ObP2k",
         "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
         "label": "test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309",
         "content_type": "test content type",
@@ -82,7 +82,7 @@
           "tag2": "tag2"
         },
         "locked": false,
-        "last_modified": "2022-08-24T02:32:03\u002B00:00"
+        "last_modified": "2022-09-27T20:04:39\u002B00:00"
       }
     },
     {
@@ -92,10 +92,10 @@
         "Accept": "application/vnd.microsoft.appconfig.kvset\u002Bjson, application/json, application/problem\u002Bjson",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTQ4",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5NzU=",
         "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
         "x-ms-content-sha256": "47DEQpj8HBSa\u002B/TImW\u002B5JCeuQeRkm5NMpJWZG3hSuFU=",
-        "x-ms-date": "Aug, 24 2022 02:32:04.751473 GMT"
+        "x-ms-date": "Sep, 27 2022 20:04:38.951093 GMT"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -105,17 +105,17 @@
         "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kvset\u002Bjson; charset=utf-8",
-        "Date": "Wed, 24 Aug 2022 02:32:03 GMT",
+        "Date": "Tue, 27 Sep 2022 20:04:39 GMT",
         "Server": "openresty/1.17.8.2",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTQ5;sn=11682949",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5NzY=;sn=6786976",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "c86789a3-1ed5-45be-9ad2-8a6ee32677c4"
+        "x-ms-correlation-request-id": "e62746c8-b963-4bd9-90b6-312fe3349ca8"
       },
       "ResponseBody": {
         "items": [
           {
-            "etag": "MLzy7SAuiwsBMOF1Z6xLPNse_EBWD-P7vIT5o3XolM0",
+            "etag": "v4wSzjNrrexHZ1T7idc_kRK-x4A_PryD3M4gt2ObP2k",
             "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
             "label": "test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309",
             "content_type": "test content type",
@@ -125,7 +125,7 @@
               "tag2": "tag2"
             },
             "locked": false,
-            "last_modified": "2022-08-24T02:32:03\u002B00:00"
+            "last_modified": "2022-09-27T20:04:39\u002B00:00"
           }
         ]
       }
@@ -138,10 +138,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTQ5",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5NzY=",
         "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
         "x-ms-content-sha256": "47DEQpj8HBSa\u002B/TImW\u002B5JCeuQeRkm5NMpJWZG3hSuFU=",
-        "x-ms-date": "Aug, 24 2022 02:32:04.789881 GMT"
+        "x-ms-date": "Sep, 27 2022 20:04:38.993075 GMT"
       },
       "RequestBody": null,
       "StatusCode": 204,
@@ -151,10 +151,10 @@
         "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson; charset=utf-8",
-        "Date": "Wed, 24 Aug 2022 02:32:03 GMT",
+        "Date": "Tue, 27 Sep 2022 20:04:39 GMT",
         "Server": "openresty/1.17.8.2",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "x-ms-correlation-request-id": "91de5d6f-d09f-4a50-b797-8ae335f3e0fa"
+        "x-ms-correlation-request-id": "64a4c62d-be82-493c-91bd-33b84c56f26b"
       },
       "ResponseBody": null
     },
@@ -166,12 +166,12 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "170",
-        "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson",
+        "Content-Type": "application/json",
         "If-None-Match": "*",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTQ5",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5NzY=",
         "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
         "x-ms-content-sha256": "4rt07HteiPg5NxofrgzMmlQPTVbo1no7aKxDSI5uUU4=",
-        "x-ms-date": "Aug, 24 2022 02:32:04.835386 GMT"
+        "x-ms-date": "Sep, 27 2022 20:04:39.029427 GMT"
       },
       "RequestBody": {
         "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
@@ -189,17 +189,17 @@
         "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson; charset=utf-8",
-        "Date": "Wed, 24 Aug 2022 02:32:03 GMT",
-        "ETag": "\u0022AJ9dNJ03e-MV9JtjySyEy6w1Nn_dh0w6aJ8ate-1LPE\u0022",
-        "Last-Modified": "Wed, 24 Aug 2022 02:32:03 GMT",
+        "Date": "Tue, 27 Sep 2022 20:04:39 GMT",
+        "ETag": "\u0022D84Rts5YKsB0FvGJTxHouaL99E_OGCIZhejNLj0sZto\u0022",
+        "Last-Modified": "Tue, 27 Sep 2022 20:04:39 GMT",
         "Server": "openresty/1.17.8.2",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUw;sn=11682950",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5Nzc=;sn=6786977",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "5967ad4e-1b1f-4060-b92a-56d714e485b8"
+        "x-ms-correlation-request-id": "ac5778f3-2462-4ff1-9a13-899e9f12edd9"
       },
       "ResponseBody": {
-        "etag": "AJ9dNJ03e-MV9JtjySyEy6w1Nn_dh0w6aJ8ate-1LPE",
+        "etag": "D84Rts5YKsB0FvGJTxHouaL99E_OGCIZhejNLj0sZto",
         "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
         "label": null,
         "content_type": "test content type",
@@ -209,7 +209,7 @@
           "tag2": "tag2"
         },
         "locked": false,
-        "last_modified": "2022-08-24T02:32:03\u002B00:00"
+        "last_modified": "2022-09-27T20:04:39\u002B00:00"
       }
     },
     {
@@ -219,10 +219,10 @@
         "Accept": "application/vnd.microsoft.appconfig.kvset\u002Bjson, application/json, application/problem\u002Bjson",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUw",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5Nzc=",
         "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
         "x-ms-content-sha256": "47DEQpj8HBSa\u002B/TImW\u002B5JCeuQeRkm5NMpJWZG3hSuFU=",
-        "x-ms-date": "Aug, 24 2022 02:32:04.883702 GMT"
+        "x-ms-date": "Sep, 27 2022 20:04:39.117124 GMT"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -233,13 +233,13 @@
         "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kvset\u002Bjson; charset=utf-8",
-        "Date": "Wed, 24 Aug 2022 02:32:03 GMT",
-        "Link": "\u003C/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2MTMwNzA5Nzs5MktVcVRieXJEV2swYng4OWpXTWluNmRGNUhqX0lkVExoNGJPa0gwRXdz\u003E; rel=\u0022next\u0022",
+        "Date": "Tue, 27 Sep 2022 20:04:39 GMT",
+        "Link": "\u003C/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2NDIzNjgxNTtWdUdkX2dSZ2xsSWhPMEpocmo4RFlsWVVtV2U3SmVSMVBsYWFzN2d6djZN\u003E; rel=\u0022next\u0022",
         "Server": "openresty/1.17.8.2",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUx;sn=11682951",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5Nzg=;sn=6786978",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "1facc779-7185-45d1-8a4a-f1d507d43f74"
+        "x-ms-correlation-request-id": "5b0525a1-0257-4ea5-b249-2d9e662f2c5e"
       },
       "ResponseBody": {
         "items": [
@@ -312,71 +312,11 @@
             "content_type": "test content type"
           },
           {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
             "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
             "content_type": "test content type"
           },
           {
@@ -416,55 +356,67 @@
             "content_type": "test content type"
           },
           {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
             "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
             "content_type": "test content type"
           },
           {
@@ -500,63 +452,71 @@
             "content_type": "test content type"
           },
           {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
             "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
             "content_type": "test content type"
           },
           {
@@ -584,6 +544,74 @@
             "content_type": "test content type"
           },
           {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
             "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
             "content_type": "test content type"
           },
@@ -608,31 +636,7 @@
             "content_type": "test content type"
           },
           {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
             "content_type": "test content type"
           },
           {
@@ -644,20 +648,20 @@
             "content_type": "test content type"
           }
         ],
-        "@nextLink": "/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2MTMwNzA5Nzs5MktVcVRieXJEV2swYng4OWpXTWluNmRGNUhqX0lkVExoNGJPa0gwRXdz"
+        "@nextLink": "/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2NDIzNjgxNTtWdUdkX2dSZ2xsSWhPMEpocmo4RFlsWVVtV2U3SmVSMVBsYWFzN2d6djZN"
       }
     },
     {
-      "RequestUri": "https://fake_app_config.azconfig-test.io/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2MTMwNzA5Nzs5MktVcVRieXJEV2swYng4OWpXTWluNmRGNUhqX0lkVExoNGJPa0gwRXdz",
+      "RequestUri": "https://fake_app_config.azconfig-test.io/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2NDIzNjgxNTtWdUdkX2dSZ2xsSWhPMEpocmo4RFlsWVVtV2U3SmVSMVBsYWFzN2d6djZN",
       "RequestMethod": "GET",
       "RequestHeaders": {
-        "Accept": "application/vnd.microsoft.appconfig.kvset\u002Bjson, application/json, application/problem\u002Bjson",
+        "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUx",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5Nzg=",
         "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
         "x-ms-content-sha256": "47DEQpj8HBSa\u002B/TImW\u002B5JCeuQeRkm5NMpJWZG3hSuFU=",
-        "x-ms-date": "Aug, 24 2022 02:32:04.932571 GMT"
+        "x-ms-date": "Sep, 27 2022 20:04:39.182357 GMT"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -668,13 +672,13 @@
         "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kvset\u002Bjson; charset=utf-8",
-        "Date": "Wed, 24 Aug 2022 02:32:03 GMT",
-        "Link": "\u003C/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2MTI0MTA5ODtORGQzc0xCNVlJRW9wQkpUY2k1Q0dKajZVQ1JabXBJLVViNnlfajdaVF9V\u003E; rel=\u0022next\u0022",
+        "Date": "Tue, 27 Sep 2022 20:04:40 GMT",
+        "Link": "\u003C/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2NDIzNjI5NTt0TDdhTGFXRWtzbXpoelZHZ1FraGthTkZ1OVFnMDZkWl9BN1BEa3lXR093\u003E; rel=\u0022next\u0022",
         "Server": "openresty/1.17.8.2",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUx;sn=11682951",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5Nzg=;sn=6786978",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "10d7a62d-d7b9-4792-b541-fea93e8ee215"
+        "x-ms-correlation-request-id": "7263846e-bb84-4f5b-9116-2384131ce09d"
       },
       "ResponseBody": {
         "items": [
@@ -695,146 +699,6 @@
             "content_type": "test content type"
           },
           {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
             "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
             "content_type": "test content type"
           },
@@ -868,146 +732,6 @@
           },
           {
             "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
             "content_type": "test content type"
           },
           {
@@ -1055,6 +779,26 @@
             "content_type": "test content type"
           },
           {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
             "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
             "content_type": "test content type"
           },
@@ -1076,23 +820,283 @@
           },
           {
             "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
+            "content_type": "test content type"
+          },
+          {
+            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
             "content_type": "test content type"
           }
         ],
-        "@nextLink": "/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2MTI0MTA5ODtORGQzc0xCNVlJRW9wQkpUY2k1Q0dKajZVQ1JabXBJLVViNnlfajdaVF9V"
+        "@nextLink": "/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2NDIzNjI5NTt0TDdhTGFXRWtzbXpoelZHZ1FraGthTkZ1OVFnMDZkWl9BN1BEa3lXR093"
       }
     },
     {
-      "RequestUri": "https://fake_app_config.azconfig-test.io/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2MTI0MTA5ODtORGQzc0xCNVlJRW9wQkpUY2k1Q0dKajZVQ1JabXBJLVViNnlfajdaVF9V",
+      "RequestUri": "https://fake_app_config.azconfig-test.io/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2NDIzNjI5NTt0TDdhTGFXRWtzbXpoelZHZ1FraGthTkZ1OVFnMDZkWl9BN1BEa3lXR093",
       "RequestMethod": "GET",
       "RequestHeaders": {
-        "Accept": "application/vnd.microsoft.appconfig.kvset\u002Bjson, application/json, application/problem\u002Bjson",
+        "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUx",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5Nzg=",
         "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
         "x-ms-content-sha256": "47DEQpj8HBSa\u002B/TImW\u002B5JCeuQeRkm5NMpJWZG3hSuFU=",
-        "x-ms-date": "Aug, 24 2022 02:32:04.993779 GMT"
+        "x-ms-date": "Sep, 27 2022 20:04:39.245802 GMT"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1103,460 +1107,12 @@
         "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kvset\u002Bjson; charset=utf-8",
-        "Date": "Wed, 24 Aug 2022 02:32:03 GMT",
-        "Link": "\u003C/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2MTI0MDQzNztXV2JnS3pqT2NfeGFyM2g4WFMxS0tUeVhNUk5aaWF6Zjl1TlNDU3Etd3VV\u003E; rel=\u0022next\u0022",
+        "Date": "Tue, 27 Sep 2022 20:04:40 GMT",
         "Server": "openresty/1.17.8.2",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUx;sn=11682951",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5Nzg=;sn=6786978",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "8d591407-bf15-41df-bb0c-229d4a96a8fa"
-      },
-      "ResponseBody": {
-        "items": [
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          }
-        ],
-        "@nextLink": "/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2MTI0MDQzNztXV2JnS3pqT2NfeGFyM2g4WFMxS0tUeVhNUk5aaWF6Zjl1TlNDU3Etd3VV"
-      }
-    },
-    {
-      "RequestUri": "https://fake_app_config.azconfig-test.io/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2MTI0MDQzNztXV2JnS3pqT2NfeGFyM2g4WFMxS0tUeVhNUk5aaWF6Zjl1TlNDU3Etd3VV",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "application/vnd.microsoft.appconfig.kvset\u002Bjson, application/json, application/problem\u002Bjson",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUx",
-        "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-content-sha256": "47DEQpj8HBSa\u002B/TImW\u002B5JCeuQeRkm5NMpJWZG3hSuFU=",
-        "x-ms-date": "Aug, 24 2022 02:32:05.073468 GMT"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Accept-Ranges": "items",
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
-        "Connection": "keep-alive",
-        "Content-Type": "application/vnd.microsoft.appconfig.kvset\u002Bjson; charset=utf-8",
-        "Date": "Wed, 24 Aug 2022 02:32:04 GMT",
-        "Link": "\u003C/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2MTIzOTQ3MDtXaGhkeUJMVEJZbkp1MUNMeWN4WnlrVFhEQWJXWVlTWTZmcTBlR21DUl9V\u003E; rel=\u0022next\u0022",
-        "Server": "openresty/1.17.8.2",
-        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUx;sn=11682951",
-        "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "56248fb7-cb9e-4108-aecd-8d25132c06db"
+        "x-ms-correlation-request-id": "416c9be8-79e2-48fa-92fc-84e5802607b3"
       },
       "ResponseBody": {
         "items": [
@@ -1618,911 +1174,6 @@
           },
           {
             "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          }
-        ],
-        "@nextLink": "/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2MTIzOTQ3MDtXaGhkeUJMVEJZbkp1MUNMeWN4WnlrVFhEQWJXWVlTWTZmcTBlR21DUl9V"
-      }
-    },
-    {
-      "RequestUri": "https://fake_app_config.azconfig-test.io/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2MTIzOTQ3MDtXaGhkeUJMVEJZbkp1MUNMeWN4WnlrVFhEQWJXWVlTWTZmcTBlR21DUl9V",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "application/vnd.microsoft.appconfig.kvset\u002Bjson, application/json, application/problem\u002Bjson",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUx",
-        "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-content-sha256": "47DEQpj8HBSa\u002B/TImW\u002B5JCeuQeRkm5NMpJWZG3hSuFU=",
-        "x-ms-date": "Aug, 24 2022 02:32:05.134061 GMT"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Accept-Ranges": "items",
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
-        "Connection": "keep-alive",
-        "Content-Type": "application/vnd.microsoft.appconfig.kvset\u002Bjson; charset=utf-8",
-        "Date": "Wed, 24 Aug 2022 02:32:04 GMT",
-        "Link": "\u003C/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2MTIzODc3MztreGdWRW9EaEhZOGkzREIyakhxcjNhX2prSlBjZk9jd3hISzFNMU1RbXFV\u003E; rel=\u0022next\u0022",
-        "Server": "openresty/1.17.8.2",
-        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUx;sn=11682951",
-        "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "2b4808d4-8308-4402-be8c-cdd148b85de2"
-      },
-      "ResponseBody": {
-        "items": [
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          }
-        ],
-        "@nextLink": "/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2MTIzODc3MztreGdWRW9EaEhZOGkzREIyakhxcjNhX2prSlBjZk9jd3hISzFNMU1RbXFV"
-      }
-    },
-    {
-      "RequestUri": "https://fake_app_config.azconfig-test.io/revisions?key=*\u0026label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309\u0026api-version=1.0\u0026$Select=key,content_type\u0026after=MTY2MTIzODc3MztreGdWRW9EaEhZOGkzREIyakhxcjNhX2prSlBjZk9jd3hISzFNMU1RbXFV",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "application/vnd.microsoft.appconfig.kvset\u002Bjson, application/json, application/problem\u002Bjson",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUx",
-        "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-content-sha256": "47DEQpj8HBSa\u002B/TImW\u002B5JCeuQeRkm5NMpJWZG3hSuFU=",
-        "x-ms-date": "Aug, 24 2022 02:32:05.189756 GMT"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Accept-Ranges": "items",
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
-        "Connection": "keep-alive",
-        "Content-Type": "application/vnd.microsoft.appconfig.kvset\u002Bjson; charset=utf-8",
-        "Date": "Wed, 24 Aug 2022 02:32:04 GMT",
-        "Server": "openresty/1.17.8.2",
-        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUx;sn=11682951",
-        "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "fa48306f-8a5d-42a1-9d1e-ee7fb7fe41a2"
-      },
-      "ResponseBody": {
-        "items": [
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_ADD",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
-            "content_type": "test content type"
-          },
-          {
-            "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET",
             "content_type": "test content type"
           },
           {
@@ -2547,10 +1198,10 @@
         "Accept": "application/vnd.microsoft.appconfig.kvset\u002Bjson, application/json, application/problem\u002Bjson",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUx",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5Nzg=",
         "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
         "x-ms-content-sha256": "47DEQpj8HBSa\u002B/TImW\u002B5JCeuQeRkm5NMpJWZG3hSuFU=",
-        "x-ms-date": "Aug, 24 2022 02:32:05.234542 GMT"
+        "x-ms-date": "Sep, 27 2022 20:04:39.285517 GMT"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -2560,17 +1211,17 @@
         "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kvset\u002Bjson; charset=utf-8",
-        "Date": "Wed, 24 Aug 2022 02:32:04 GMT",
+        "Date": "Tue, 27 Sep 2022 20:04:40 GMT",
         "Server": "openresty/1.17.8.2",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUx;sn=11682951",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5Nzg=;sn=6786978",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "cc86f524-ef98-413d-95f3-86d7a54439e0"
+        "x-ms-correlation-request-id": "66b9d014-e3cb-469d-ae85-c06a2370ab70"
       },
       "ResponseBody": {
         "items": [
           {
-            "etag": "AJ9dNJ03e-MV9JtjySyEy6w1Nn_dh0w6aJ8ate-1LPE",
+            "etag": "D84Rts5YKsB0FvGJTxHouaL99E_OGCIZhejNLj0sZto",
             "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
             "label": null,
             "content_type": "test content type",
@@ -2580,10 +1231,10 @@
               "tag2": "tag2"
             },
             "locked": false,
-            "last_modified": "2022-08-24T02:32:03\u002B00:00"
+            "last_modified": "2022-09-27T20:04:39\u002B00:00"
           },
           {
-            "etag": "MLzy7SAuiwsBMOF1Z6xLPNse_EBWD-P7vIT5o3XolM0",
+            "etag": "v4wSzjNrrexHZ1T7idc_kRK-x4A_PryD3M4gt2ObP2k",
             "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
             "label": "test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309",
             "content_type": "test content type",
@@ -2593,7 +1244,7 @@
               "tag2": "tag2"
             },
             "locked": false,
-            "last_modified": "2022-08-24T02:32:03\u002B00:00"
+            "last_modified": "2022-09-27T20:04:39\u002B00:00"
           }
         ]
       }
@@ -2606,10 +1257,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUx",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5Nzg=",
         "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
         "x-ms-content-sha256": "47DEQpj8HBSa\u002B/TImW\u002B5JCeuQeRkm5NMpJWZG3hSuFU=",
-        "x-ms-date": "Aug, 24 2022 02:32:05.271587 GMT"
+        "x-ms-date": "Sep, 27 2022 20:04:39.324289 GMT"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -2619,17 +1270,17 @@
         "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson; charset=utf-8",
-        "Date": "Wed, 24 Aug 2022 02:32:04 GMT",
-        "ETag": "\u0022AJ9dNJ03e-MV9JtjySyEy6w1Nn_dh0w6aJ8ate-1LPE\u0022",
-        "Last-Modified": "Wed, 24 Aug 2022 02:32:03 GMT",
+        "Date": "Tue, 27 Sep 2022 20:04:40 GMT",
+        "ETag": "\u0022D84Rts5YKsB0FvGJTxHouaL99E_OGCIZhejNLj0sZto\u0022",
+        "Last-Modified": "Tue, 27 Sep 2022 20:04:39 GMT",
         "Server": "openresty/1.17.8.2",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUy;sn=11682952",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5Nzk=;sn=6786979",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "4bd55764-9a26-4ddf-b605-ac47832d837b"
+        "x-ms-correlation-request-id": "cf16ba6c-844b-415c-949b-2eab6c7e34dd"
       },
       "ResponseBody": {
-        "etag": "AJ9dNJ03e-MV9JtjySyEy6w1Nn_dh0w6aJ8ate-1LPE",
+        "etag": "D84Rts5YKsB0FvGJTxHouaL99E_OGCIZhejNLj0sZto",
         "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
         "label": null,
         "content_type": "test content type",
@@ -2639,7 +1290,7 @@
           "tag2": "tag2"
         },
         "locked": false,
-        "last_modified": "2022-08-24T02:32:03\u002B00:00"
+        "last_modified": "2022-09-27T20:04:39\u002B00:00"
       }
     },
     {
@@ -2650,10 +1301,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUy",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5Nzk=",
         "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
         "x-ms-content-sha256": "47DEQpj8HBSa\u002B/TImW\u002B5JCeuQeRkm5NMpJWZG3hSuFU=",
-        "x-ms-date": "Aug, 24 2022 02:32:05.324051 GMT"
+        "x-ms-date": "Sep, 27 2022 20:04:39.367729 GMT"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -2663,17 +1314,17 @@
         "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson; charset=utf-8",
-        "Date": "Wed, 24 Aug 2022 02:32:04 GMT",
-        "ETag": "\u0022MLzy7SAuiwsBMOF1Z6xLPNse_EBWD-P7vIT5o3XolM0\u0022",
-        "Last-Modified": "Wed, 24 Aug 2022 02:32:03 GMT",
+        "Date": "Tue, 27 Sep 2022 20:04:40 GMT",
+        "ETag": "\u0022v4wSzjNrrexHZ1T7idc_kRK-x4A_PryD3M4gt2ObP2k\u0022",
+        "Last-Modified": "Tue, 27 Sep 2022 20:04:39 GMT",
         "Server": "openresty/1.17.8.2",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=NTo1IzExNjgyOTUz;sn=11682953",
+        "Sync-Token": "zAJw6V16=Mzo1IzY3ODY5ODA=;sn=6786980",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "e0597033-6b39-467c-8210-8c15a077df15"
+        "x-ms-correlation-request-id": "2e0f1738-bc42-4ba5-90b2-3473e2fb8c43"
       },
       "ResponseBody": {
-        "etag": "MLzy7SAuiwsBMOF1Z6xLPNse_EBWD-P7vIT5o3XolM0",
+        "etag": "v4wSzjNrrexHZ1T7idc_kRK-x4A_PryD3M4gt2ObP2k",
         "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
         "label": "test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309",
         "content_type": "test content type",
@@ -2683,7 +1334,7 @@
           "tag2": "tag2"
         },
         "locked": false,
-        "last_modified": "2022-08-24T02:32:03\u002B00:00"
+        "last_modified": "2022-09-27T20:04:39\u002B00:00"
       }
     }
   ],
