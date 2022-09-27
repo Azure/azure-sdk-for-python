@@ -55,6 +55,7 @@ class PipelineComponent(Component):
     :type outputs: Component outputs
     :param jobs: Id to components dict inside pipeline definition.
     :type jobs: OrderedDict[str, Component]
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if PipelineComponent cannot be successfully validated. Details will be provided in the error message.
     """
 
     def __init__(

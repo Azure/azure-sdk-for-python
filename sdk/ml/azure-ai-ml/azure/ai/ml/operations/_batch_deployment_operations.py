@@ -68,6 +68,9 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         :param deployment: The deployment entity.
         :type deployment: ~azure.ai.ml.entities.BatchDeployment
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineDeployment assets (e.g. Data, Code, Model, Environment) cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if OnlineDeployment model cannot be successfully validated. Details will be provided in the error message.
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.BatchDeployment]
         """

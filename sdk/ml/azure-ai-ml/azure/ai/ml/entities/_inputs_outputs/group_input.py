@@ -5,8 +5,7 @@
 from enum import Enum as PyEnum
 
 from azure.ai.ml.constants._component import IOConstants
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
-from azure.ai.ml.exceptions import ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationException
 
 from .input import Input
 from .utils import is_parameter_group

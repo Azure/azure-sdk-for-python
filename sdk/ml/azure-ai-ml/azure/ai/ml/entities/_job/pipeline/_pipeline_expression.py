@@ -14,7 +14,7 @@ from typing import Dict, List, Tuple, Union
 from azure.ai.ml._utils.utils import dump_yaml_to_file, get_all_data_binding_expressions, load_yaml
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
+from azure.ai.ml.exceptions import UserErrorException
 
 ExpressionInput = namedtuple("ExpressionInput", ["name", "type", "value"])
 

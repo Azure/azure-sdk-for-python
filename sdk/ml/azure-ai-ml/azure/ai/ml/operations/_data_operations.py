@@ -117,7 +117,9 @@ class DataOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the data asset. (mutually exclusive with version)
         :type label: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Data cannot be successfully identified and retrieved. Details will be provided in the error message.
         :return: Data asset object.
+        :rtype: ~azure.ai.ml.entities.Data
         """
         if version and label:
             msg = "Cannot specify both version and label."
@@ -158,8 +160,12 @@ class DataOperations(_ScopeDependentOperations):
         If not already in storage, asset will be uploaded to the workspace's blob storage.
 
         :param data: Data asset object.
-        :type data: Data
+        :type data: azure.ai.ml.entities.Data
+        :raises ~azure.ai.ml.exceptions.AssetPathException: Raised when the Data artifact path is already linked to another asset
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Data cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: Data asset object.
+        :rtype: ~azure.ai.ml.entities.Data
         """
         try:
             name = data.name
