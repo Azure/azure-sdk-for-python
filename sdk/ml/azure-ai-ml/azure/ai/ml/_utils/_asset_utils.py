@@ -82,7 +82,7 @@ class IgnoreFile(object):
         if not self.exists():
             return None
         with open(self._path, "r") as fh:
-            return [GitWildMatchPattern(line) for line in fh]
+            return [GitWildMatchPattern(line) for line in fh if line]
 
     def exists(self) -> bool:
         """Checks if ignore file exists."""
