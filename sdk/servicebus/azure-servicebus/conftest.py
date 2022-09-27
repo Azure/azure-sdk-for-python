@@ -16,22 +16,6 @@ from devtools_testutils.sanitizers import (
 
 
 collect_ignore = []
-collect_ignore.append("tests/test_connection_string_parser.py")
-collect_ignore.append("tests/test_message.py")
-collect_ignore.append("tests/test_queues.py")
-collect_ignore.append("tests/test_sb_client.py")
-collect_ignore.append("tests/test_sessions.py")
-collect_ignore.append("tests/test_topic.py")
-collect_ignore.append("tests/test_subscriptions.py")
-collect_ignore.append("tests/livetest/test_errors.py")
-
-collect_ignore.append("tests/async_tests/test_connection_string_parser_async.py")
-collect_ignore.append("tests/async_tests/test_message_async.py")
-collect_ignore.append("tests/async_tests/test_queues_async.py")
-collect_ignore.append("tests/async_tests/test_sb_client_async.py")
-collect_ignore.append("tests/async_tests/test_sessions_async.py")
-collect_ignore.append("tests/async_tests/test_topic_async.py")
-collect_ignore.append("tests/async_tests/test_subscriptions_async.py")
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
