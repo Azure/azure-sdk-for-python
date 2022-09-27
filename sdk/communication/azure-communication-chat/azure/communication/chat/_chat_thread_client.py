@@ -33,6 +33,7 @@ from ._models import (
 from ._communication_identifier_serializer import serialize_identifier
 from ._utils import CommunicationErrorResponseConverter
 from ._version import SDK_MONIKER
+from ._api_versions import DEFAULT_VERSION
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -41,7 +42,7 @@ if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
 
 
-class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-keyword
+class ChatThreadClient(object):
     """A client to interact with the AzureCommunicationService Chat gateway.
     Instances of this class is normally retrieved by ChatClient.get_chat_thread_client()
 
@@ -59,6 +60,10 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
         Access Token
     :param str thread_id:
         The unique thread id.
+
+    :keyword api_version: Api Version. Default value is "2021-09-07". Note that overriding this
+        default value may result in unsupported behavior.
+    :paramtype api_version: str
 
     .. admonition:: Example:
 
@@ -96,10 +101,12 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
 
         self._thread_id = thread_id
         self._endpoint = endpoint
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._credential = credential
 
         self._client = AzureCommunicationChatService(
             endpoint,
+            api_version=self._api_version,
             authentication_policy=BearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs
