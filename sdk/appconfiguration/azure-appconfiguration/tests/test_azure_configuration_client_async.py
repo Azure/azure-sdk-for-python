@@ -973,7 +973,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
 
 
 class TestAppConfigurationClientUnitTest:
-    async def test_mock_policies(self):
+    async def test_mock_policies(self, appconfiguration_connection_string):
         from azure.core.pipeline.transport import HttpResponse, AsyncHttpTransport
         from azure.core.pipeline import PipelineRequest, PipelineResponse
         class MockTransport(AsyncHttpTransport):
@@ -1002,8 +1002,7 @@ class TestAppConfigurationClientUnitTest:
         AppConfigRequestsCredentialsPolicy._signed_request = new_method
 
         client = AzureAppConfigurationClient.from_connection_string(
-            os.environ["APPCONFIGURATION_CONNECTION_STRING"],
-            transport=MockTransport()
+            appconfiguration_connection_string, transport=MockTransport()
         )
         client.list_configuration_settings()
 
