@@ -229,6 +229,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
                 _process_table_error(error, table_name=self.table_name)
             except HttpResponseError as table_error:
                 _reprocess_error(table_error, identifiers=identifiers)
+                raise
 
     @distributed_trace
     def create_table(
