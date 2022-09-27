@@ -18,7 +18,6 @@ USAGE:
 """
 import asyncio
 import os
-from shapely.geometry import Polygon
 
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
@@ -73,12 +72,26 @@ async def search_inside_geometry():
         ]
     }
 
-    geo_interface_obj = Polygon([
-        [-122.43576049804686, 37.7524152343544],
-        [-122.43301391601562, 37.70660472542312],
-        [-122.36434936523438, 37.712059855877314],
-        [-122.43576049804686, 37.7524152343544]
-    ]).__geo_interface__
+    # This is the mock results we can get from 3rd party package `Shapely`
+    #
+    # from shapely.geometry import Polygon
+    #
+    # data = Polygon([
+    #     [-122.43576049804686, 37.7524152343544],
+    #     [-122.43301391601562, 37.70660472542312],
+    #     [-122.36434936523438, 37.712059855877314],
+    #     [-122.43576049804686, 37.7524152343544]
+    # ]).__geo_interface__
+    #
+    geo_obj_interface = {
+        'type': 'Polygon',
+        'coordinates': ((
+            (-122.43576049804686, 37.7524152343544),
+            (-122.43301391601562, 37.70660472542312),
+            (-122.36434936523438, 37.712059855877314),
+            (-122.43576049804686, 37.7524152343544)),
+        )
+    }
 
     result1 = maps_search_client.search_inside_geometry(
         query="pizza",
@@ -99,7 +112,7 @@ async def search_inside_geometry():
 
     result3 = maps_search_client.search_inside_geometry(
         query="pizza",
-        geometry=geo_interface_obj
+        geometry=geo_obj_interface
     )
     print("Search inside geometry with Polygon from third party library `shapely` with geo_interface as result 3:")
     print(result2.__dict__)

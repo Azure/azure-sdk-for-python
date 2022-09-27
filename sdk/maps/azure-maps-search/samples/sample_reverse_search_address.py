@@ -28,7 +28,7 @@ def reverse_search_address():
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
-    result = maps_search_client.reverse_search_address(coordinates=(25.0338053, 121.5640089))
+    result = maps_search_client.reverse_search_address(coordinates=(25.0338053, 121.5640089), language="en")
 
     print("Get Search Address Reverse:")
     print(result.results[0].address)

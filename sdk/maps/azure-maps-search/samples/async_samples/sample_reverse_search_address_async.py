@@ -30,7 +30,7 @@ async def reverse_search_address_async():
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
     async with maps_search_client:
-        result = await maps_search_client.reverse_search_address(coordinates=(25.0338053, 121.5640089))
+        result = await maps_search_client.reverse_search_address(coordinates=(25.0338053, 121.5640089), language="en")
 
     print("Get Search Address Reverse:")
     print(result)
