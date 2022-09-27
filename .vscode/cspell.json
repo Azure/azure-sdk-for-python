@@ -766,7 +766,10 @@
         "filea",
         "fileb",
         "FFFE",
-        "Fdirectory"
+        "Fdirectory",
+        "Ffile",
+        "Fsubdir",
+        "Fdir"
       ]
     },
     {
