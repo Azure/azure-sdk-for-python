@@ -1,5 +1,6 @@
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.personalizer import PersonalizerClient
+import azure.ai.personalizer
+import azure.ai.personalizer.aio
 from devtools_testutils import EnvironmentVariableLoader
 import functools
 import time
@@ -15,9 +16,11 @@ PersonalizerPreparer = functools.partial(
 
 def create_personalizer_client(personalizer_endpoint, personalizer_api_key):
     credential = AzureKeyCredential(personalizer_api_key)
-    client = PersonalizerClient(personalizer_endpoint, credential=credential)
+    client = azure.ai.personalizer.PersonalizerClient(personalizer_endpoint, credential=credential)
     return client
 
-def sleep(test, delay):
-    if test.is_live:
-        time.sleep(delay)
+def create_async_personalizer_client(personalizer_endpoint, personalizer_api_key):
+    credential = AzureKeyCredential(personalizer_api_key)
+    client = azure.ai.personalizer.aio.PersonalizerClient(personalizer_endpoint, credential=credential)
+    return client
+
