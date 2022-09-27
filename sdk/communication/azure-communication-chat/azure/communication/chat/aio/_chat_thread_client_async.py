@@ -10,6 +10,7 @@ from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union,
 from datetime import datetime
 
 import six
+from azure.core.credentials import TokenCredential, AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
@@ -54,9 +55,8 @@ class ChatThreadClient(object):
 
     :param str endpoint:
         The endpoint of the Azure Communication resource.
-    :param CommunicationTokenCredential credential:
-        The credentials with which to authenticate. The value contains a User
-        Access Token
+    :param Union[TokenCredential, AzureKeyCredential] credential:
+        The credential we use to authenticate against the service.
     :param str thread_id:
         The unique thread id.
 
@@ -77,7 +77,7 @@ class ChatThreadClient(object):
     def __init__(
             self,
             endpoint: str,
-            credential: CommunicationTokenCredential,
+            credential: Union[TokenCredential, AzureKeyCredential],
             thread_id: str,
             **kwargs: Any
     ): # type: (...) -> None
@@ -103,7 +103,8 @@ class ChatThreadClient(object):
         self._credential = credential
 
         self._client = AzureCommunicationChatService(
-            endpoint,
+            self._credential,
+            self._endpoint,
             api_version=self._api_version,
             authentication_policy=AsyncBearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,

@@ -3,15 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 from uuid import uuid4
 from urllib.parse import urlparse
 
+from azure.core.credentials import TokenCredential, AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
 from ._chat_thread_client import ChatThreadClient
-from ._shared.user_credential import CommunicationTokenCredential
 from ._generated import AzureCommunicationChatService
 from ._generated.models import CreateChatThreadRequest
 from ._models import (
@@ -28,7 +28,7 @@ from ._api_versions import DEFAULT_VERSION
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar
     from datetime import datetime
     from azure.core.paging import ItemPaged
 
@@ -41,8 +41,8 @@ class ChatClient(object):
 
     :param str endpoint:
         The endpoint of the Azure Communication resource.
-    :param CommunicationTokenCredential credential:
-        The credentials with which to authenticate.
+    :param Union[TokenCredential, AzureKeyCredential] credential:
+        The credential we use to authenticate against the service.
 
     :keyword api_version: Api Version. Default value is "2021-09-07". Note that overriding this
         default value may result in unsupported behavior.
@@ -61,7 +61,7 @@ class ChatClient(object):
     def __init__(
             self,
             endpoint,  # type: str
-            credential,  # type: CommunicationTokenCredential
+            credential: Union[TokenCredential, AzureKeyCredential],
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -83,6 +83,7 @@ class ChatClient(object):
         self._credential = credential
 
         self._client = AzureCommunicationChatService(
+            self._credential,
             self._endpoint,
             api_version=self._api_version,
             authentication_policy=BearerTokenCredentialPolicy(self._credential),

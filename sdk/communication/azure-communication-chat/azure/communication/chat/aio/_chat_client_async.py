@@ -11,6 +11,7 @@ from datetime import datetime
 from uuid import uuid4
 
 import six
+from azure.core.credentials import TokenCredential, AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
@@ -45,8 +46,8 @@ class ChatClient(object):
 
     :param str endpoint:
         The endpoint of the Azure Communication resource.
-    :param CommunicationTokenCredential credential:
-        The credentials with which to authenticate.
+    :param Union[TokenCredential, AzureKeyCredential] credential:
+        The credential we use to authenticate against the service.
 
     :keyword api_version: Api Version. Default value is "2021-09-07". Note that overriding this
         default value may result in unsupported behavior.
@@ -64,7 +65,7 @@ class ChatClient(object):
 
     def __init__(
         self, endpoint: str,
-        credential: CommunicationTokenCredential,
+        credential: Union[TokenCredential, AzureKeyCredential],
         **kwargs: Any
     ) -> None:
         # type: (...) -> None
@@ -87,6 +88,7 @@ class ChatClient(object):
         self._credential = credential
 
         self._client = AzureCommunicationChatService(
+            self._credential,
             self._endpoint,
             api_version=self._api_version,
             authentication_policy=AsyncBearerTokenCredentialPolicy(self._credential),
