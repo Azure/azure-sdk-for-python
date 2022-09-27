@@ -236,7 +236,7 @@ def _reprocess_error(decoded_error, identifiers=None):
             "Too many access policies provided. The server does not support setting more than 5 access policies"\
                 "on a single resource."
             )
-    raise
+    raise decoded_error
 
 
 class TableTransactionError(HttpResponseError):
