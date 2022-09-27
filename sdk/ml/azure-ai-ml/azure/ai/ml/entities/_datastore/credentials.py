@@ -192,8 +192,7 @@ class CertificateCredentials(BaseTenantCredentials):
     def _from_rest_object(cls, obj: CertificateDatastoreCredentials) -> "CertificateCredentials":
         return cls(
             authority_url=obj.authority_url,
-            resource_url=obj.resource_url
-            ,
+            resource_url=obj.resource_url,
             tenant_id=obj.tenant_id,
             client_id=obj.client_id,
             thumbprint=obj.thumbprint,
