@@ -2,6 +2,7 @@ from typing import Callable
 from unittest.mock import DEFAULT, Mock, call, patch
 
 import pytest
+from azure.ai.ml import load_registry
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities._registry.registry import Registry
 from azure.ai.ml.operations import RegistryOperations
@@ -40,7 +41,20 @@ class TestRegistryOperation:
         with pytest.raises(Exception):
             mock_registry_operation._check_registry_name(None)
 
-    def test_create(self, mock_registry_operation: RegistryOperations) -> None:
-        mock_registry_operation.begin_create()
+    def test_create(self, mock_registry_operation: RegistryOperations, randstr: Callable[[], str]) -> None:
+        reg_name = f"unittest_{randstr()}"
+        params_override = [
+            {
+                "name": reg_name
+            }
+        ]
+        reg = load_registry(
+            source="./tests/test_configs/registry/registry_valid_min.yaml", params_override=params_override
+        )
+        # valid creation of new registry
+        mock_registry_operation.begin_create(reg)
         mock_registry_operation._operation.begin_create_or_update.assert_called_once()
 
+        # create existing registry - calls GET
+        mock_registry_operation.begin_create(registry=reg)
+        mock_registry_operation._operation.begin_create_or_update.assert_not_called()
