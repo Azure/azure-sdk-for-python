@@ -29,7 +29,7 @@ def get_iana_version():
 
     version = maps_timezone_client.get_iana_version()
 
-    print("Current IANA version is: {}".format(version.version))
+    print("Current IANA version is: {}".format(version))
     # [END get_iana_version]
 
 if __name__ == '__main__':

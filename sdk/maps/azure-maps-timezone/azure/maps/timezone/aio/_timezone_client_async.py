@@ -15,7 +15,6 @@ from ..models import LatLon
 from .._generated.aio import TimezoneClient as _MapsTimezoneClient
 from .._generated.models import (
     IanaId,
-    TimezoneIanaVersionResult,
     TimezoneResult,
     TimezoneWindows
 )
@@ -45,14 +44,14 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AsyncTokenCredential
     :keyword client_id: Specifies which account is intended for usage in conjunction with the Azure
-     AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved
-     from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see
-     the following `articles <https://aka.ms/amauthdetails>` for guidance. Default value is None.
+      AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved
+      from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see
+      the following articles: https://aka.ms/amauthdetails for guidance. Default value is `None`.
     :paramtype client_id: str
     :keyword endpoint: Service URL. Default value is "https://atlas.microsoft.com".
     :paramtype endpoint: str
     :keyword api_version: Api Version. Default value is "1.0". Note that overriding this default
-     value may result in unsupported behavior.
+      value may result in unsupported behavior.
     :paramtype api_version: str
 
     .. admonition:: Example:
@@ -109,24 +108,24 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
         :param timezone_id: The IANA time zone ID. Required. For example: "Europe/Berlin".
         :type timezone_id: str
         :keyword accept_language: Specifies the language code in which the timezone names should be
-         returned. If no language code is provided, the response will be in "EN". Please refer to
-         `Supported Languages <https://docs.microsoft.com/en-us/azure/azure-maps/supported-languages>`
-         for details. Default value is None.
+          returned. If no language code is provided, the response will be in "EN". Please refer to
+          `Supported Languages <https://docs.microsoft.com/en-us/azure/azure-maps/supported-languages>`
+          for details. Default value is `None`.
         :paramtype accept_language: str
         :keyword options: Alternatively, use alias "o". Options available for types of information
-         returned in the result. Known values are: "none", "zoneInfo", "transitions", and "all". Default
-         value is None.
+          returned in the result. Known values are: "none", "zoneInfo", "transitions", and "all". Default
+          value is None.
         :paramtype options: str or ~azure.maps.timezone.models.TimezoneOptions
         :keyword time_stamp: Alternatively, use alias "stamp", or "s". Reference time, if omitted, the
-         API will use the machine time serving the request. Default value is None.
+          API will use the machine time serving the request. Default value is `None`.
         :paramtype time_stamp: ~datetime.datetime
         :keyword daylight_savings_time_from: Alternatively, use alias "tf". The start date from which
-         daylight savings time (DST) transitions are requested, only applies when "options" = all or
-         "options" = transitions. Default value is None.
+          daylight savings time (DST) transitions are requested, only applies when "options" = all or
+          "options" = transitions. Default value is `None`.
         :paramtype daylight_savings_time_from: ~datetime.datetime
         :keyword daylight_savings_time_lasting_years: Alternatively, use alias "ty". The number of years
-         from "transitionsFrom" for which DST transitions are requested, only applies when "options" =
-         all or "options" = transitions. Default value is None.
+          from "transitionsFrom" for which DST transitions are requested, only applies when "options" =
+          all or "options" = transitions. Default value is `None`.
         :paramtype daylight_savings_time_lasting_years: int
         :rtype: ~azure.maps.timezone.models.TimezoneResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -157,28 +156,28 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
         location.
 
         :param coordinates: Coordinates of the point for which time zone information is requested. This
-         parameter is a list of coordinates, containing a pair of coordinate(lat, long). When this
-         endpoint is called directly, coordinates are passed in as a single string containing
-         coordinates, separated by commas. Required.
+          parameter is a list of coordinates, containing a pair of coordinate(lat, long). When this
+          endpoint is called directly, coordinates are passed in as a single string containing
+          coordinates, separated by commas. Required.
         :type coordinates: LatLon
         :param accept_language: Specifies the language code in which the timezone names should be
-         returned. If no language code is provided, the response will be in "EN". Please refer to
-         `Supported Languages <https://docs.microsoft.com/en-us/azure/azure-maps/supported-languages>`
-         for details. Default value is None.
+          returned. If no language code is provided, the response will be in "EN". Please refer to
+          `Supported Languages <https://docs.microsoft.com/en-us/azure/azure-maps/supported-languages>`
+          for details. Default value is `None`.
         :type accept_language: str
         :param options: Options available for types of information returned in the result.
-         Known values are: "none", "zoneInfo", "transitions", and "all". Default value is None.
+          Known values are: "none", "zoneInfo", "transitions", and "all". Default value is `None`.
         :type options: str or ~azure.maps.timezone.models.TimezoneOptions
         :param time_stamp: Alternatively, use alias "stamp", or "s". Reference time, if omitted, the
-         API will use the machine time serving the request. Default value is None.
+          API will use the machine time serving the request. Default value is `None`.
         :type time_stamp: ~datetime.datetime
         :param daylight_savings_time_from: Alternatively, use alias "tf". The start date from which
-         daylight savings time (DST) transitions are requested, only applies when "options" = all or
-         "options" = transitions. Default value is None.
+          daylight savings time (DST) transitions are requested, only applies when "options" = all or
+          "options" = transitions. Default value is `None`.
         :type daylight_savings_time_from: ~datetime.datetime
         :param daylight_savings_time_lasting_years: Alternatively, use alias "ty". The number of years
-         from "transitionsFrom" for which DST transitions are requested, only applies when "options" =
-         all or "options" = transitions. Default value is None.
+          from "transitionsFrom" for which DST transitions are requested, only applies when "options" =
+          all or "options" = transitions. Default value is `None`.
         :type daylight_savings_time_lasting_years: int
         :rtype: ~azure.maps.timezone.models.TimezoneResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -244,10 +243,10 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
     async def get_iana_version(
         self,
         **kwargs: Any
-    )-> TimezoneIanaVersionResult:
+    )-> str:
         """This API returns the current IANA version number as Metadata.
 
-        :rtype: ~azure.maps.timezone.models.TimezoneIanaVersionResult
+        :rtype: str
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -259,7 +258,11 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
                 :dedent: 4
                 :caption: Get current IANA version number.
         """
-        return await self._timezone_client.get_iana_version(**kwargs)
+        iana_version = await self._timezone_client.get_iana_version(**kwargs)
+
+        if iana_version is not None:
+            return iana_version.version
+        return None
 
     @distributed_trace_async
     async def convert_windows_timezone_to_iana(
@@ -273,7 +276,7 @@ class MapsTimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
 
         :param windows_timezone_id: The Windows time zone ID. Required. For example: "pacific standard time".
         :type windows_timezone_id: str
-        :keyword windows_territory_code: Windows Time Zone territory code. Default value is None.
+        :keyword windows_territory_code: Windows Time Zone territory code. Default value is `None`.
         :paramtype windows_territory_code: str
         :rtype: list[~azure.maps.timezone.models.IanaId]
         :raises ~azure.core.exceptions.HttpResponseError:

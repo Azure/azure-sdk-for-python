@@ -9,17 +9,16 @@ from .._generated.models import (
     CountryRecord,
     IanaId,
     ReferenceTime,
-    RepresentativePoint,
     TimeTransition,
-    TimezoneIanaVersionResult,
-    TimezoneId,
     TimezoneNames,
+    TimezoneOptions,
     TimezoneResult,
     TimezoneWindows,
 )
 
 from ._models import (
-    LatLon
+    LatLon,
+    TimezoneId
 )
 
 __all__ = [
@@ -27,11 +26,10 @@ __all__ = [
     'IanaId',
     'LatLon',
     'ReferenceTime',
-    'RepresentativePoint',
     'TimeTransition',
-    'TimezoneIanaVersionResult',
     'TimezoneId',
     'TimezoneNames',
+    "TimezoneOptions",
     'TimezoneResult',
     'TimezoneWindows',
 ]

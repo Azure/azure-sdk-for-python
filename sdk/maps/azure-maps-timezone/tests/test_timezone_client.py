@@ -77,7 +77,7 @@ class TestMapsTimezoneClient(AzureRecordedTestCase):
     def test_get_iana_version(self, **kwargs):
         version = self.client.get_iana_version()
 
-        assert version.version == "2022c"
+        assert version == "2022c"
 
     @MapsTimezonePreparer()
     @recorded_by_proxy

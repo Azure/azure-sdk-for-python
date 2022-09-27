@@ -32,7 +32,7 @@ async def get_iana_version():
     async with maps_timezone_client:
         version = await maps_timezone_client.get_iana_version()
 
-    print("Current IANA version is: {}".format(version.version))
+    print("Current IANA version is: {}".format(version))
     # [END get_iana_version_async]
 
 if __name__ == '__main__':
