@@ -132,9 +132,9 @@ class RegistryOperations:
 
         registry_data = registry._to_rest_object()
         poller = self._operation.begin_create_or_update(
-            resource_group_name=self._resource_group_name,  # type: str
-            registry_name=registry.name,  # type: str
-            body=registry_data,  # type: "_models.Registry"
+            resource_group_name=self._resource_group_name.
+            registry_name=registry.name,
+            body=registry_data,
             polling=self._get_polling(registry.name),
              cls=lambda response, deserialized, headers: Registry._from_rest_object(deserialized),
         )
