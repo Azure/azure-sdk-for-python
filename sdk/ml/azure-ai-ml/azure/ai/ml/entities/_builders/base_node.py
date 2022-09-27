@@ -401,12 +401,14 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
                 inputs=self._to_rest_inputs(),
                 outputs=self._to_rest_outputs(),
                 properties=self.properties,
-                comment=self.comment,
                 _source=self._source,
                 # add all arbitrary attributes to support setting unknown attributes
                 **self._get_attrs(),
             )
         )
+        # only add comment in REST object when it is set
+        if self.comment is not None:
+            rest_obj.update(dict(comment=self.comment))
 
         return convert_ordered_dict_to_dict(rest_obj)
 
