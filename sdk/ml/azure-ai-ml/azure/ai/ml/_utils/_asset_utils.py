@@ -48,7 +48,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: 
     ModelVersionsOperations,
 )
 from azure.ai.ml._utils._exception_utils import EmptyDirectoryError
-from azure.ai.ml._utils._pathspec import GitWildMatchPattern
+from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry
 from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, OrderString
 from azure.ai.ml.entities._assets.asset import Asset
@@ -105,9 +105,11 @@ class IgnoreFile(object):
             file_path = os.path.relpath(file_path, ignore_dirname)
 
         file_path = str(file_path)
+        norm_file = normalize_file(file_path)
         for pattern in self._path_spec:
-            if file_path in pattern.match((file_path,)) and bool(pattern.include):
-                return True
+            if pattern.include is not None:
+                if norm_file in pattern.match((norm_file,)):
+                    return bool(pattern.include)
         return False
 
     @property
