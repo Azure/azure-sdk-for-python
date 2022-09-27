@@ -146,10 +146,6 @@ class TestPyodideTransportClass:
         assert kwargs["cert"] is None
         assert not kwargs["files"]
 
-        # check that the js_stream property is cloning
-        num_clones = mock_pyfetch.clone.call_count
-        response.js_stream
-        assert mock_pyfetch.call_count == num_clones + 1
 
     @pytest.mark.asyncio
     async def test_unsuccessful_send(self, mock_pyfetch, mock_pyodide_module, pipeline):
