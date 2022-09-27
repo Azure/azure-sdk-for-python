@@ -149,6 +149,15 @@ class MLClient(object):
                     for ws in ml_client.workspaces.list():
                         print(ws.name, ":", ws.location, ":", ws.description)
         """
+
+        if registry_name and workspace_name:
+            raise ValidationException(
+            message="Both workspace_name and registry_name cannot be used together, for the ml client",
+            no_personal_data_message="Both workspace_name and registry_name are used",
+            target=ErrorTarget.GENERAL,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+
         if credential is None:
             raise ValueError("credential can not be None")
         if not registry_name:
@@ -168,8 +177,8 @@ class MLClient(object):
             )
         module_logger.debug("Cloud configured in MLClient: '%s'.", cloud_name)
 
-        # registry_name is present when the operatins need referring assets from registry.
-        # the subscription, resource group will be ignored and will be replaced from the
+        # registry_name is present when the operations need referring assets from registry.
+        # the subscription, resource group, if provided, will be ignored and replaced by
         # whatever is received from the registry discovery service.
         if registry_name:
             # This will come back later
