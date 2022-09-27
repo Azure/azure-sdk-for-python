@@ -226,6 +226,7 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
                 _process_table_error(error, table_name=self.table_name)
             except HttpResponseError as table_error:
                 _reprocess_error(table_error, identifiers=identifiers)
+                raise
 
     @distributed_trace_async
     async def create_table(self, **kwargs) -> TableItem:
@@ -252,6 +253,7 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
                 _process_table_error(error, table_name=self.table_name)
             except HttpResponseError as decoded_error:
                 _reprocess_error(decoded_error)
+                raise
         return TableItem(name=result.table_name)  # type: ignore
 
     @distributed_trace_async
@@ -281,6 +283,7 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
                 _process_table_error(error, table_name=self.table_name)
             except HttpResponseError as decoded_error:
                 _reprocess_error(decoded_error)
+                raise
 
     @overload
     async def delete_entity(self, partition_key: str, row_key: str, **kwargs: Any) -> None:

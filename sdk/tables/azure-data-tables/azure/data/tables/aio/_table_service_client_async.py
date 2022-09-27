@@ -139,6 +139,7 @@ class TableServiceClient(AsyncTablesBaseClient):
                 _process_table_error(error)
             except HttpResponseError as decoded_error:
                 _reprocess_error(decoded_error)
+                raise
         return service_properties_deserialize(service_props)
 
     @distributed_trace_async
@@ -181,6 +182,7 @@ class TableServiceClient(AsyncTablesBaseClient):
                 _process_table_error(error)
             except HttpResponseError as decoded_error:
                 _reprocess_error(decoded_error)
+                raise
 
     @distributed_trace_async
     async def create_table(self, table_name: str, **kwargs) -> TableClient:

@@ -259,6 +259,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
                 _process_table_error(error, table_name=self.table_name)
             except HttpResponseError as decoded_error:
                 _reprocess_error(decoded_error)
+                raise
         return TableItem(name=result.table_name)  # type: ignore
 
     @distributed_trace
@@ -291,6 +292,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
                 _process_table_error(error, table_name=self.table_name)
             except HttpResponseError as decoded_error:
                 _reprocess_error(decoded_error)
+                raise
 
     @overload
     def delete_entity(self, partition_key, row_key, **kwargs):
