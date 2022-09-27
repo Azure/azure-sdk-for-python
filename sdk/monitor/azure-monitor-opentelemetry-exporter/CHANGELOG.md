@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b8 (Unreleased)
+## 1.0.0b9 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b8 (2022-09-26)
 
 ### Features Added
 
@@ -22,12 +32,6 @@
     ([#26257](https://github.com/Azure/azure-sdk-for-python/pull/26257))
 - Populate metric namespace with meter instrumentation scope name
     ([#26257](https://github.com/Azure/azure-sdk-for-python/pull/26257))
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0b7 (2022-08-12)
 
