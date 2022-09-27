@@ -36,5 +36,4 @@ async def get_geolocation_async():
     # [END get_geolocation_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(get_geolocation_async())
+    asyncio.run(get_geolocation_async())

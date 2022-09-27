@@ -15,11 +15,16 @@ DESCRIPTION:
 USAGE:
     python sample_authentication_async.py
     Set the environment variables with your own values before running the sample:
-    - AZURE_SUBSCRIPTION_KEY - your subscription key
+    - AZURE_SUBSCRIPTION_KEY - your Azure Maps subscription key
+    - TENANT_ID - your tenant ID that wants to access Azure Maps account
+    - CLIENT_ID - your client ID that wants to access Azure Maps account
+    - CLIENT_SECRET - your client secret that wants to access Azure Maps account
+    - AZURE_MAPS_CLIENT_ID - your Azure Maps client ID
 """
 
 import asyncio
 import os
+import sys
 
 async def authentication_maps_service_client_with_subscription_key_credential_async():
     # [START create_maps_geolocation_service_client_with_key_async]
@@ -36,6 +41,31 @@ async def authentication_maps_service_client_with_subscription_key_credential_as
 
     print(result)
 
+async def authentication_maps_service_client_with_aad_credential_async():
+    """DefaultAzureCredential will use the values from these environment
+    variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, AZURE_MAPS_CLIENT_ID
+    """
+    # [START create_maps_geolocation_service_client_with_aad_async]
+    from azure.identity.aio import DefaultAzureCredential
+    from azure.maps.geolocation.aio import MapsRenderClient
+
+    credential = DefaultAzureCredential()
+    maps_client_id = os.getenv("AZURE_MAPS_CLIENT_ID")
+
+    maps_geolocation_client = MapsRenderClient(client_id=maps_client_id, credential=credential)
+    # [END create_maps_geolocation_service_client_with_aad_async]
+
+    async with maps_geolocation_client:
+        result = await maps_geolocation_client.get_geolocation(ip_address="2001:4898:80e8:b::189")
+
+    print(result)
+
+
+async def main():
+    await authentication_maps_service_client_with_subscription_key_credential_async()
+    await authentication_maps_service_client_with_aad_credential_async()
+
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(authentication_maps_service_client_with_subscription_key_credential_async())
+    if sys.platform == 'win32':
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    asyncio.run(main())

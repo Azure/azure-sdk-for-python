@@ -4,44 +4,36 @@
 
 ## Setup
 
-```ps
+Install Autorest v3
 
+```ps
 npm install -g autorest
 ```
 
-## Generation
+### Generation
 
 ```ps
-
 cd <swagger-folder>
-autorest SWAGGER.md
+autorest --v3 --python
 ```
 
-To generate this file, simply type
-
-```ps
-
-autorest swagger/README.md --python-sdks-folder=<location-of-your-sdk-dir>
-```
-
-We automatically hardcode in that this is `python`.
-
-## Basic Information
+### Settings
 
 ```yaml
 tag: 1.0-preview
 require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/maps/data-plane/Geolocation/readme.md
-output-folder: ../azure/maps/geolocation/_generated
-namespace: azure.maps.geolocation
-package-name: azure-maps-geolocation
+output-folder: ../azure/maps/route/_generated
+namespace: azure.maps.route
 no-namespace-folders: true
+use-extension:
+  "@autorest/modelerfour": "4.22.3"
+
 license-header: MICROSOFT_MIT_NO_VERSION
-credential-scopes: https://atlas.microsoft.com/.default
+enable-xml: true
+vanilla: true
 clear-output-folder: true
 python: true
-no-async: false
-add-credential: false
-title: MapsGeolocationClient
-disable-async-iterators: true
-python-sdks-folder: $(python-sdks-folder)
+python3-only: true
+version-tolerant: true
+models-mode: msrest
 ```
