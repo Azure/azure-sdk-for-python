@@ -4,16 +4,19 @@
 
 # pylint: disable=protected-access
 
+import inspect
 import logging
+import os.path
 from collections import OrderedDict
 from functools import wraps
 from inspect import Parameter, signature
+from pathlib import Path
 from typing import Any, Callable, Dict, TypeVar
 
-from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
+from azure.ai.ml.entities import Data, PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._inputs_outputs import Input, is_parameter_group
-from azure.ai.ml.entities._job.pipeline._exceptions import (
+from azure.ai.ml.exceptions import (
     MissingPositionalArgsError,
     MultipleValueError,
     TooManyPositionalArgsError,
@@ -21,17 +24,20 @@ from azure.ai.ml.entities._job.pipeline._exceptions import (
     UnsupportedParameterKindError,
     UserErrorException,
 )
-from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutputBase
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
+from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 
 from ._pipeline_component_builder import PipelineComponentBuilder, _is_inside_dsl_pipeline_func
 from ._settings import _dsl_settings_stack
+from ._utils import _resolve_source_file
 
 _TFunc = TypeVar("_TFunc", bound=Callable[..., Any])
 
 SUPPORTED_INPUT_TYPES = (
     PipelineInput,
-    PipelineOutputBase,
+    NodeOutput,
     Input,
+    Data,  # For the case use a Data object as an input, we will convert it to Input object
     Pipeline,  # For the case use a pipeline node as the input, we use its only one output as the real input.
     str,
     bool,
@@ -124,6 +130,13 @@ def pipeline(
             "on_init": on_init,
             "on_finalize": on_finalize,
         }
+        func_entry_path = _resolve_source_file()
+        if not func_entry_path:
+            func_path = Path(inspect.getfile(func))
+            # in notebook, func_path may be a fake path and will raise error when trying to resolve this fake path
+            if func_path.exists():
+                func_entry_path = func_path.resolve().absolute()
+
         job_settings = {k: v for k, v in job_settings.items() if v is not None}
         pipeline_builder = PipelineComponentBuilder(
             func=func,
@@ -134,6 +147,7 @@ def pipeline(
             compute=compute,
             default_datastore=default_datastore,
             tags=tags,
+            source_path=str(func_entry_path),
         )
 
         @wraps(func)
@@ -168,6 +182,9 @@ def pipeline(
                 "tags": tags,
             }
             if _is_inside_dsl_pipeline_func():
+                # on_init/on_finalize is not supported for pipeline component
+                if job_settings.get("on_init") is not None or job_settings.get("on_finalize") is not None:
+                    raise UserErrorException("On_init/on_finalize is not supported for pipeline component.")
                 # Build pipeline node instead of pipeline job if inside dsl.
                 built_pipeline = Pipeline(_from_component_func=True, **common_init_args)
                 if job_settings:
@@ -194,8 +211,7 @@ def pipeline(
     # enable use decorator without "()" if all arguments are default values
     if func is not None:
         return pipeline_decorator(func)
-    else:
-        return pipeline_decorator
+    return pipeline_decorator
 
 
 def _validate_args(func, args, kwargs):
@@ -226,7 +242,11 @@ def _validate_args(func, args, kwargs):
         raise MissingPositionalArgsError(func.__name__, missing_keys)
 
     def _is_supported_data_type(_data):
-        return isinstance(_data, SUPPORTED_INPUT_TYPES) or is_parameter_group(_data)
+        return (
+            isinstance(_data, SUPPORTED_INPUT_TYPES)
+            or is_parameter_group(_data)
+            or isinstance(_data, PipelineExpression)
+        )
 
     for pipeline_input_name in provided_args:
         data = provided_args[pipeline_input_name]

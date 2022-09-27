@@ -14,7 +14,7 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import AmlToken, JobBase
 from azure.ai.ml._restclient.v2022_06_01_preview.models import SparkJob as RestSparkJob
 from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
-from azure.ai.ml._schema.job.parameterized_spark import SparkConfSchema
+from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
 from azure.ai.ml._schema.job.spark_job import SparkJobSchema
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
@@ -173,10 +173,19 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         # pylint: disable=no-member
         return SparkJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
+    def filter_conf_fields(self):
+        if self.conf is None:
+            return {}
+        data_conf = {}
+        for conf_key, conf_val in self.conf.items():
+            if not (conf_key in CONF_KEY_MAP):
+                data_conf[conf_key] = conf_val
+        return data_conf
+
     def _to_rest_object(self) -> JobBase:
         self._validate()
         conf = {
-            **(self.conf or {}),
+            **(self.filter_conf_fields()),
             "spark.driver.cores": self.driver_cores,
             "spark.driver.memory": self.driver_memory,
             "spark.executor.cores": self.executor_cores,
@@ -333,6 +342,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             outputs=self.outputs,
             compute=self.compute,
             resources=self.resources,
+            properties=self.properties,
         )
 
     def _validate(self) -> None:

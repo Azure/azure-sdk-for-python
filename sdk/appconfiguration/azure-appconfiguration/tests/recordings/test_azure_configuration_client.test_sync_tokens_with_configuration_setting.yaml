@@ -1,0 +1,180 @@
+interactions:
+- request:
+    body: '{"key": "KEY1", "content_type": "test content type", "value": "TEST_VALUE1",
+      "tags": {"tag1": "tag1", "tag2": "tag2"}}'
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json, application/json, application/problem+json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '118'
+      Content-Type:
+      - application/vnd.microsoft.appconfig.kv+json
+      User-Agent:
+      - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+      x-ms-content-sha256:
+      - eTBcdCT6xD+MRo6iwb/AnfQMPA5seUH1LfivaIfLgGA=
+      x-ms-date:
+      - Sep, 15 2022 23:55:33.504546 GMT
+    method: PUT
+    uri: https://fake_app_config.azconfig-test.io/kv/KEY1?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"ZNPG5FyfvLVbrh-uMjUgBAzzL8-J6qdoLe6lpA6rFlk","key":"KEY1","label":null,"content_type":"test
+        content type","value":"TEST_VALUE1","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-09-15T23:55:33+00:00"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id,
+        x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate
+      connection:
+      - keep-alive
+      content-type:
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date:
+      - Thu, 15 Sep 2022 23:55:33 GMT
+      etag:
+      - '"ZNPG5FyfvLVbrh-uMjUgBAzzL8-J6qdoLe6lpA6rFlk"'
+      last-modified:
+      - Thu, 15 Sep 2022 23:55:33 GMT
+      server:
+      - openresty/1.17.8.2
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=Nzo1IzEwNDgzNjA=;sn=1048360
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"key": "KEY2", "content_type": "test content type", "value": "TEST_VALUE2",
+      "tags": {"tag1": "tag1", "tag2": "tag2"}}'
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json, application/json, application/problem+json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '118'
+      Content-Type:
+      - application/vnd.microsoft.appconfig.kv+json
+      Sync-Token:
+      - zAJw6V16=Nzo1IzEwNDgzNjA=
+      User-Agent:
+      - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+      x-ms-content-sha256:
+      - 4w9J7rkeTFd9y2h+DKzfHwJqoa/BkS1NcNbIQE7zQ18=
+      x-ms-date:
+      - Sep, 15 2022 23:55:33.617182 GMT
+    method: PUT
+    uri: https://fake_app_config.azconfig-test.io/kv/KEY2?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"7fCFD_H9TwmXDouEdYkHpid3Vuy7j5YFmtUhXCQG7K4","key":"KEY2","label":null,"content_type":"test
+        content type","value":"TEST_VALUE2","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-09-15T23:55:33+00:00"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id,
+        x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate
+      connection:
+      - keep-alive
+      content-type:
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date:
+      - Thu, 15 Sep 2022 23:55:33 GMT
+      etag:
+      - '"7fCFD_H9TwmXDouEdYkHpid3Vuy7j5YFmtUhXCQG7K4"'
+      last-modified:
+      - Thu, 15 Sep 2022 23:55:33 GMT
+      server:
+      - openresty/1.17.8.2
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=Nzo1IzEwNDgzNjE=;sn=1048361
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json, application/json, application/problem+json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Sync-Token:
+      - zAJw6V16=Nzo1IzEwNDgzNjE=
+      User-Agent:
+      - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+      x-ms-content-sha256:
+      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+      x-ms-date:
+      - Sep, 15 2022 23:55:33.658156 GMT
+    method: DELETE
+    uri: https://fake_app_config.azconfig-test.io/kv/KEY2?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"7fCFD_H9TwmXDouEdYkHpid3Vuy7j5YFmtUhXCQG7K4","key":"KEY2","label":null,"content_type":"test
+        content type","value":"TEST_VALUE2","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-09-15T23:55:33+00:00"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent,
+        x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
+        If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
+        Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id,
+        x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate
+      connection:
+      - keep-alive
+      content-type:
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date:
+      - Thu, 15 Sep 2022 23:55:33 GMT
+      etag:
+      - '"7fCFD_H9TwmXDouEdYkHpid3Vuy7j5YFmtUhXCQG7K4"'
+      last-modified:
+      - Thu, 15 Sep 2022 23:55:33 GMT
+      server:
+      - openresty/1.17.8.2
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=Nzo1IzEwNDgzNjI=;sn=1048362
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1

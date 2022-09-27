@@ -16,7 +16,7 @@ from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.core.fields import DistributionField
 from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._job.distribution import DistributionConfiguration
-from azure.ai.ml.entities._util import get_rest_dict
+from azure.ai.ml.entities._util import get_rest_dict_for_node_attrs
 
 
 class Command(InternalBaseNode):
@@ -25,7 +25,8 @@ class Command(InternalBaseNode):
     """
 
     def __init__(self, **kwargs):
-        super(Command, self).__init__(**kwargs)
+        node_type = kwargs.pop("type", None) or NodeType.COMMAND
+        super(Command, self).__init__(type=node_type, **kwargs)
         self._init = True
         self._resources = kwargs.pop("resources", JobResourceConfiguration())
         self._compute = kwargs.pop("compute", None)
@@ -66,7 +67,7 @@ class Command(InternalBaseNode):
         self._limits = value
 
     @property
-    def resources(self):
+    def resources(self) -> JobResourceConfiguration:
         """Compute Resource configuration for the component."""
         return self._resources
 
@@ -86,11 +87,10 @@ class Command(InternalBaseNode):
 
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
-        limits = self.limits._to_rest_object() if self.limits else None
         rest_obj.update(
             dict(
-                limits=get_rest_dict(limits),
-                resources=get_rest_dict(self.resources, clear_empty_value=True),
+                limits=get_rest_dict_for_node_attrs(self.limits, clear_empty_value=True),
+                resources=get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
             )
         )
         return rest_obj
@@ -173,7 +173,7 @@ class Distributed(Command):
         distribution = self.distribution._to_rest_object() if self.distribution else None  # pylint: disable=no-member
         rest_obj.update(
             dict(
-                distribution=get_rest_dict(distribution),
+                distribution=get_rest_dict_for_node_attrs(distribution),
             )
         )
         return rest_obj

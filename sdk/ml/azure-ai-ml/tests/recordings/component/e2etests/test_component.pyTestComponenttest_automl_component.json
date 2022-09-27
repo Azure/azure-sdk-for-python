@@ -1,0 +1,614 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://eastus.api.azureml.ms/registrymanagement/v1.0/registries/testFeed/discovery",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/0.0.139 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.9.13 (Windows-10-10.0.22622-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 23 Sep 2022 16:08:16 GMT",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "x-aml-cluster": "vienna-eastus-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-response-type": "standard",
+        "x-request-time": "0.335"
+      },
+      "ResponseBody": {
+        "registryId": "3b513a6b-f110-4e7f-9ce3-472b5aa28170",
+        "registryName": "testFeed",
+        "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+        "primaryRegion": "centraluseuap",
+        "regions": [
+          "centraluseuap"
+        ],
+        "subscriptionId": "4f26493f-21d2-4726-92ea-1ddd550b1d27",
+        "resourceGroup": "test-registries",
+        "workspaceName": null,
+        "primaryRegionResourceProviderUri": "https://cert-master.experiments.azureml-test.net/",
+        "registryFqdns": {
+          "centraluseuap": {
+            "uri": "https://3b513a6b-f110-4e7f-9ce3-472b5aa28170.registry.master.api.azureml-test.ms"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_158361314178/versions/1.0?api-version=2022-05-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "598",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/0.0.139 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.9.13 (Windows-10-10.0.22622-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "description": "Component that executes an AutoML Classification task model training in a pipeline.",
+          "properties": {},
+          "tags": {},
+          "isAnonymous": false,
+          "isArchived": false,
+          "componentSpec": {
+            "name": "test_158361314178",
+            "description": "Component that executes an AutoML Classification task model training in a pipeline.",
+            "tags": {},
+            "version": "1.0",
+            "$schema": "http://azureml/sdk-2-0/AutoMLComponent.json",
+            "display_name": "AutoML Classification",
+            "is_deterministic": true,
+            "inputs": {},
+            "outputs": {},
+            "type": "automl",
+            "task": "classification",
+            "_source": "YAML.COMPONENT"
+          }
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1051",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 23 Sep 2022 16:08:18 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_158361314178/versions/1.0?api-version=2022-05-01",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-5bca153d3ff437f2f861e168e590be01-82bf4786c46b273b-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-eastus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "2ab075d6-0b26-4d89-ae34-7c169b17cbba",
+        "x-ms-ratelimit-remaining-subscription-writes": "1127",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "KOREACENTRAL:20220923T160819Z:2ab075d6-0b26-4d89-ae34-7c169b17cbba",
+        "x-request-time": "0.493"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_158361314178/versions/1.0",
+        "name": "1.0",
+        "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
+        "properties": {
+          "description": null,
+          "tags": {},
+          "properties": {},
+          "isArchived": false,
+          "isAnonymous": false,
+          "componentSpec": {
+            "name": "test_158361314178",
+            "version": "1.0",
+            "display_name": "AutoML Classification",
+            "type": "automl",
+            "description": "Component that executes an AutoML Classification task model training in a pipeline.",
+            "task": "classification",
+            "$schema": "http://azureml/sdk-2-0/AutoMLComponent.json"
+          }
+        },
+        "systemData": {
+          "createdAt": "2022-09-23T16:08:18.9358299\u002B00:00",
+          "createdBy": "Zhengfei Wang",
+          "createdByType": "User",
+          "lastModifiedAt": "2022-09-23T16:08:19.1000538\u002B00:00",
+          "lastModifiedBy": "Zhengfei Wang",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_158361314178/versions/1.0?api-version=2022-05-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/0.0.139 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.9.13 (Windows-10-10.0.22622-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 23 Sep 2022 16:08:19 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-d626dafc30367ef4a24e2642b22426df-f98d4aa9c84c2b93-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-eastus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "fd53cc54-0611-4316-afb8-71a03044b6ff",
+        "x-ms-ratelimit-remaining-subscription-reads": "11899",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "KOREACENTRAL:20220923T160820Z:fd53cc54-0611-4316-afb8-71a03044b6ff",
+        "x-request-time": "0.116"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_158361314178/versions/1.0",
+        "name": "1.0",
+        "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
+        "properties": {
+          "description": null,
+          "tags": {},
+          "properties": {},
+          "isArchived": false,
+          "isAnonymous": false,
+          "componentSpec": {
+            "name": "test_158361314178",
+            "version": "1.0",
+            "display_name": "AutoML Classification",
+            "type": "automl",
+            "description": "Component that executes an AutoML Classification task model training in a pipeline.",
+            "task": "classification",
+            "$schema": "http://azureml/sdk-2-0/AutoMLComponent.json"
+          }
+        },
+        "systemData": {
+          "createdAt": "2022-09-23T16:08:18.9358299\u002B00:00",
+          "createdBy": "Zhengfei Wang",
+          "createdByType": "User",
+          "lastModifiedAt": "2022-09-23T16:08:19.1000538\u002B00:00",
+          "lastModifiedBy": "Zhengfei Wang",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_158361314178/versions/2?api-version=2022-05-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "596",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/0.0.139 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.9.13 (Windows-10-10.0.22622-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "description": "Component that executes an AutoML Classification task model training in a pipeline.",
+          "properties": {},
+          "tags": {},
+          "isAnonymous": false,
+          "isArchived": false,
+          "componentSpec": {
+            "name": "test_158361314178",
+            "description": "Component that executes an AutoML Classification task model training in a pipeline.",
+            "tags": {},
+            "version": "2",
+            "$schema": "http://azureml/sdk-2-0/AutoMLComponent.json",
+            "display_name": "AutoML Classification",
+            "is_deterministic": true,
+            "inputs": {},
+            "outputs": {},
+            "type": "automl",
+            "task": "classification",
+            "_source": "YAML.COMPONENT"
+          }
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1045",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 23 Sep 2022 16:08:20 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_158361314178/versions/2?api-version=2022-05-01",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-48a0baf8412ca1b37b6f15d5b968fb34-e169c5d7d74edf5d-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-eastus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "11f01222-3a7c-4c8d-b81c-4fe6a10841f5",
+        "x-ms-ratelimit-remaining-subscription-writes": "1126",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "KOREACENTRAL:20220923T160821Z:11f01222-3a7c-4c8d-b81c-4fe6a10841f5",
+        "x-request-time": "0.511"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_158361314178/versions/2",
+        "name": "2",
+        "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
+        "properties": {
+          "description": null,
+          "tags": {},
+          "properties": {},
+          "isArchived": false,
+          "isAnonymous": false,
+          "componentSpec": {
+            "name": "test_158361314178",
+            "version": "2",
+            "display_name": "AutoML Classification",
+            "type": "automl",
+            "description": "Component that executes an AutoML Classification task model training in a pipeline.",
+            "task": "classification",
+            "$schema": "http://azureml/sdk-2-0/AutoMLComponent.json"
+          }
+        },
+        "systemData": {
+          "createdAt": "2022-09-23T16:08:20.8668695\u002B00:00",
+          "createdBy": "Zhengfei Wang",
+          "createdByType": "User",
+          "lastModifiedAt": "2022-09-23T16:08:21.0966598\u002B00:00",
+          "lastModifiedBy": "Zhengfei Wang",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://cert-master.experiments.azureml-test.net/mferp/managementfrontend/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/registries/testFeed/components/test_169392430306/versions/1.0?api-version=2021-10-01-dataplanepreview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "598",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/0.0.139 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.9.13 (Windows-10-10.0.22622-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "description": "Component that executes an AutoML Classification task model training in a pipeline.",
+          "properties": {},
+          "tags": {},
+          "isAnonymous": false,
+          "isArchived": false,
+          "componentSpec": {
+            "name": "test_169392430306",
+            "description": "Component that executes an AutoML Classification task model training in a pipeline.",
+            "tags": {},
+            "version": "1.0",
+            "$schema": "http://azureml/sdk-2-0/AutoMLComponent.json",
+            "display_name": "AutoML Classification",
+            "is_deterministic": true,
+            "inputs": {},
+            "outputs": {},
+            "type": "automl",
+            "task": "classification",
+            "_source": "YAML.COMPONENT"
+          }
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Length": "4",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 23 Sep 2022 16:08:29 GMT",
+        "Location": "https://master.api.azureml-test.ms/assetstore/v1.0/operations/LeFNlH9Js3fcx81Wx01n07e9g45_HFiGcR6or7Xop3E",
+        "Request-Context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains; preload",
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-async-operation-timeout": "PT1H",
+        "x-ms-response-type": "standard",
+        "x-request-time": "4.901"
+      },
+      "ResponseBody": "null"
+    },
+    {
+      "RequestUri": "https://master.api.azureml-test.ms/assetstore/v1.0/operations/LeFNlH9Js3fcx81Wx01n07e9g45_HFiGcR6or7Xop3E",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/0.0.139 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.9.13 (Windows-10-10.0.22622-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Length": "90",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 23 Sep 2022 16:08:36 GMT",
+        "Request-Context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains; preload",
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-response-type": "standard",
+        "x-request-time": "0.034"
+      },
+      "ResponseBody": {
+        "assetId": "azureml://registries/testFeed/components/test_169392430306/versions/1.0"
+      }
+    },
+    {
+      "RequestUri": "https://cert-master.experiments.azureml-test.net/mferp/managementfrontend/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/registries/testFeed/components/test_169392430306/versions/1.0?api-version=2021-10-01-dataplanepreview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/0.0.139 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.9.13 (Windows-10-10.0.22622-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 23 Sep 2022 16:08:38 GMT",
+        "Request-Context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-7d57a46a4290dfeeb9b78b8d41214a40-7dcb64733c7e987a-00\u0022",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": [
+          "nosniff",
+          "nosniff"
+        ],
+        "x-ms-response-type": "standard",
+        "x-request-time": "0.874"
+      },
+      "ResponseBody": {
+        "id": "azureml://registries/testFeed/components/test_169392430306/versions/1.0",
+        "name": "1.0",
+        "properties": {
+          "description": null,
+          "tags": {},
+          "properties": {},
+          "isArchived": false,
+          "isAnonymous": false,
+          "componentSpec": {
+            "name": "test_169392430306",
+            "version": "1.0",
+            "display_name": "AutoML Classification",
+            "type": "automl",
+            "description": "Component that executes an AutoML Classification task model training in a pipeline.",
+            "task": "classification",
+            "$schema": "http://azureml/sdk-2-0/AutoMLComponent.json"
+          }
+        },
+        "systemData": {
+          "createdAt": "2022-09-23T16:08:27.4186862\u002B00:00",
+          "createdBy": "Zhengfei Wang",
+          "createdByType": "User",
+          "lastModifiedAt": "2022-09-23T16:08:27.4186862\u002B00:00",
+          "lastModifiedBy": "Zhengfei Wang",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://cert-master.experiments.azureml-test.net/mferp/managementfrontend/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/registries/testFeed/components/test_169392430306/versions/1.0?api-version=2021-10-01-dataplanepreview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/0.0.139 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.9.13 (Windows-10-10.0.22622-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 23 Sep 2022 16:08:39 GMT",
+        "Request-Context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-9974e2f5dfed8503fed39c18135f456e-e71c2cb03b26f31c-00\u0022",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": [
+          "nosniff",
+          "nosniff"
+        ],
+        "x-ms-response-type": "standard",
+        "x-request-time": "0.733"
+      },
+      "ResponseBody": {
+        "id": "azureml://registries/testFeed/components/test_169392430306/versions/1.0",
+        "name": "1.0",
+        "properties": {
+          "description": null,
+          "tags": {},
+          "properties": {},
+          "isArchived": false,
+          "isAnonymous": false,
+          "componentSpec": {
+            "name": "test_169392430306",
+            "version": "1.0",
+            "display_name": "AutoML Classification",
+            "type": "automl",
+            "description": "Component that executes an AutoML Classification task model training in a pipeline.",
+            "task": "classification",
+            "$schema": "http://azureml/sdk-2-0/AutoMLComponent.json"
+          }
+        },
+        "systemData": {
+          "createdAt": "2022-09-23T16:08:27.4186862\u002B00:00",
+          "createdBy": "Zhengfei Wang",
+          "createdByType": "User",
+          "lastModifiedAt": "2022-09-23T16:08:27.4186862\u002B00:00",
+          "lastModifiedBy": "Zhengfei Wang",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://cert-master.experiments.azureml-test.net/mferp/managementfrontend/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/registries/testFeed/components/test_169392430306/versions/2?api-version=2021-10-01-dataplanepreview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "596",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/0.0.139 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.9.13 (Windows-10-10.0.22622-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "description": "Component that executes an AutoML Classification task model training in a pipeline.",
+          "properties": {},
+          "tags": {},
+          "isAnonymous": false,
+          "isArchived": false,
+          "componentSpec": {
+            "name": "test_169392430306",
+            "description": "Component that executes an AutoML Classification task model training in a pipeline.",
+            "tags": {},
+            "version": "2",
+            "$schema": "http://azureml/sdk-2-0/AutoMLComponent.json",
+            "display_name": "AutoML Classification",
+            "is_deterministic": true,
+            "inputs": {},
+            "outputs": {},
+            "type": "automl",
+            "task": "classification",
+            "_source": "YAML.COMPONENT"
+          }
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Length": "4",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 23 Sep 2022 16:08:43 GMT",
+        "Location": "https://master.api.azureml-test.ms/assetstore/v1.0/operations/2Te2tpgbW19buSqMXPeU_BUH32vTQ4lOntghvHI_zI0",
+        "Request-Context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains; preload",
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-async-operation-timeout": "PT1H",
+        "x-ms-response-type": "standard",
+        "x-request-time": "3.594"
+      },
+      "ResponseBody": "null"
+    },
+    {
+      "RequestUri": "https://master.api.azureml-test.ms/assetstore/v1.0/operations/2Te2tpgbW19buSqMXPeU_BUH32vTQ4lOntghvHI_zI0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/0.0.139 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.9.13 (Windows-10-10.0.22622-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Length": "88",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 23 Sep 2022 16:08:49 GMT",
+        "Request-Context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains; preload",
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-response-type": "standard",
+        "x-request-time": "0.025"
+      },
+      "ResponseBody": {
+        "assetId": "azureml://registries/testFeed/components/test_169392430306/versions/2"
+      }
+    },
+    {
+      "RequestUri": "https://cert-master.experiments.azureml-test.net/mferp/managementfrontend/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/registries/testFeed/components/test_169392430306/versions/2?api-version=2021-10-01-dataplanepreview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/0.0.139 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.9.13 (Windows-10-10.0.22622-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 23 Sep 2022 16:08:50 GMT",
+        "Request-Context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-9e358e2196cc674ad9063b88d9cb3cca-4cd07893ffd342ca-00\u0022",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": [
+          "nosniff",
+          "nosniff"
+        ],
+        "x-ms-response-type": "standard",
+        "x-request-time": "0.638"
+      },
+      "ResponseBody": {
+        "id": "azureml://registries/testFeed/components/test_169392430306/versions/2",
+        "name": "2",
+        "properties": {
+          "description": null,
+          "tags": {},
+          "properties": {},
+          "isArchived": false,
+          "isAnonymous": false,
+          "componentSpec": {
+            "name": "test_169392430306",
+            "version": "2",
+            "display_name": "AutoML Classification",
+            "type": "automl",
+            "description": "Component that executes an AutoML Classification task model training in a pipeline.",
+            "task": "classification",
+            "$schema": "http://azureml/sdk-2-0/AutoMLComponent.json"
+          }
+        },
+        "systemData": {
+          "createdAt": "2022-09-23T16:08:40.969063\u002B00:00",
+          "createdBy": "Zhengfei Wang",
+          "createdByType": "User",
+          "lastModifiedAt": "2022-09-23T16:08:40.9690631\u002B00:00",
+          "lastModifiedBy": "Zhengfei Wang",
+          "lastModifiedByType": "User"
+        }
+      }
+    }
+  ],
+  "Variables": {
+    "registry_component_name": "test_169392430306",
+    "workspace_component_name": "test_158361314178"
+  }
+}

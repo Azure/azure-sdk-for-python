@@ -32,8 +32,8 @@ from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._inputs_outputs import Input
 
-from ..._ml_exceptions import ValidationException
 from ...entities._job.pipeline._attr_dict import _AttrDict
+from ...exceptions import ValidationException
 from .._sweep.parameterized_sweep import ParameterizedSweepSchema
 from .._utils.data_binding_expression import support_data_binding_expression_for_fields
 from ..core.fields import ComputeField, StringTransformedEnum, TypeSensitiveUnionField
@@ -54,10 +54,14 @@ class BaseNodeSchema(PathAwareSchema):
         keys=fields.Str(),
         values=UnionField([OutputBindingStr, NestedField(OutputSchema)], allow_none=True),
     )
+    properties = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        support_data_binding_expression_for_fields(self, ["type"])
+        # data binding expression is not supported inside component field, while validation error
+        # message will be very long when component is an object as error message will include
+        # str(component), so just add component to skip list. The same to trial in Sweep.
+        support_data_binding_expression_for_fields(self, ["type", "component", "trial"])
 
     @post_dump(pass_original=True)
     def add_user_setting_attr_dict(self, data, original_data, **kwargs):  # pylint: disable=unused-argument
@@ -65,6 +69,13 @@ class BaseNodeSchema(PathAwareSchema):
         if isinstance(original_data, _AttrDict):
             user_setting_attr_dict = original_data._get_attrs()
             data.update(user_setting_attr_dict)
+        return data
+
+    # an alternative would be set schema property to be load_only, but sub-schemas like CommandSchema usually also
+    # inherit from other schema classes which also have schema property. Set post dump here would be more efficient.
+    @post_dump()
+    def remove_meaningless_key_for_node(self, data, **kwargs):
+        data.pop("$schema", None)
         return data
 
 
@@ -117,7 +128,8 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
         metadata={
             "description": "The command run and the parameters passed. \
             This string may contain place holders of inputs in {}. "
-        }
+        },
+        load_only=True,
     )
     environment = UnionField(
         [

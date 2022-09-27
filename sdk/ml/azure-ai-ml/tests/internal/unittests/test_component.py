@@ -6,17 +6,20 @@ import os
 from pathlib import Path
 from typing import Dict
 
+import pydash
 import pytest
 import yaml
-from tests.internal._utils import PARAMETERS_TO_TEST
 
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
 from azure.ai.ml._internal.entities.component import InternalComponent
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
 from azure.ai.ml.entities import Component
+from azure.ai.ml.entities._builders.control_flow_node import LoopNode
+from azure.ai.ml.exceptions import ValidationException
+
+from .._utils import PARAMETERS_TO_TEST
 
 
 @pytest.mark.usefixtures("enable_internal_components")
@@ -48,7 +51,7 @@ class TestComponent:
             successful_return_code="Zero",
             inputs={"train_data": {"type": "path", "optional": False}},
             outputs={"output_dir": {"type": "path", "datastore_mode": "Upload"}},
-            environment={"name": "AzureML-Minimal", "version": "45", "os": "linux"},
+            environment={"name": "AzureML-Minimal", "version": "45", "os": "Linux"},
             command="sh ls.sh {inputs.input_dir} {inputs.file_name} {outputs.output_dir}",
         )
         rest_obj = base_component_internal._to_rest_object()
@@ -61,10 +64,10 @@ class TestComponent:
             "display_name": "0.0.1",
             "is_deterministic": True,
             "successful_return_code": "Zero",
-            "inputs": {"train_data": {"type": "path", "optional": False}},
+            "inputs": {"train_data": {"type": "path"}},
             "outputs": {"output_dir": {"type": "path", "datastore_mode": "Upload"}},
             "command": "sh ls.sh {inputs.input_dir} {inputs.file_name} {outputs.output_dir}",
-            "environment": {"name": "AzureML-Minimal", "version": "45", "os": "linux"},
+            "environment": {"name": "AzureML-Minimal", "version": "45", "os": "Linux"},
         }
         component = Component._from_rest_object(rest_obj)
         assert component._to_dict() == {
@@ -77,9 +80,9 @@ class TestComponent:
             "is_deterministic": True,
             "successful_return_code": "Zero",
             "inputs": {"train_data": {"type": "path"}},  # optional will be drop if False
-            "outputs": {"output_dir": {"type": "path"}},  # TODO: 1871902 "datastore_mode": "Upload"}},
+            "outputs": {"output_dir": {"type": "path", "datastore_mode": "Upload"}},
             "command": "sh ls.sh {inputs.input_dir} {inputs.file_name} {outputs.output_dir}",
-            "environment": {"name": "AzureML-Minimal", "version": "45", "os": "linux"},
+            "environment": {"name": "AzureML-Minimal", "version": "45", "os": "Linux"},
         }
 
     def test_load_from_registered_internal_scope_component_rest_obj(self):
@@ -93,7 +96,7 @@ class TestComponent:
             is_deterministic=True,
             inputs={
                 "TextData": {
-                    "type": "AnyFile",  # TODO: support list of type
+                    "type": "AnyFile",
                     "optional": False,
                     "description": "relative path on ADLS storage",
                 },
@@ -121,12 +124,10 @@ class TestComponent:
             "inputs": {
                 "TextData": {
                     "type": "AnyFile",
-                    "optional": False,
                     "description": "relative path on ADLS storage",
                 },
                 "ExtractionClause": {
                     "type": "string",
-                    "optional": False,
                     "description": 'the extraction clause,something like "column1:string, column2:int"',
                 },
             },
@@ -164,6 +165,7 @@ class TestComponent:
             },
         }
 
+    @pytest.mark.skip(reason="migration skip: sync pipeline changes during soft code complete.")
     @pytest.mark.parametrize(
         "yaml_path",
         list(map(lambda x: x[0], PARAMETERS_TO_TEST)),
@@ -175,19 +177,28 @@ class TestComponent:
         entity = load_component(yaml_path)
 
         expected_dict = copy.deepcopy(yaml_dict)
-        if expected_dict["type"].endswith("@1-legacy"):
-            expected_dict["type"] = expected_dict["type"].rsplit("@", 1)[0]
-        for key in ["tags", "inputs", "outputs"]:
-            if key not in expected_dict:
-                expected_dict[key] = {}
+        for key, value in {
+            "type": expected_dict["type"].rsplit("@", 1)[0]
+            if expected_dict["type"].endswith("@1-legacy")
+            else expected_dict["type"],
+            "tags": expected_dict.get("tags", {}),
+            "inputs": expected_dict.get("inputs", {}),
+            "outputs": expected_dict.get("outputs", {}),
+        }.items():
+            pydash.set_(expected_dict, key, value)
+        if "environment" in expected_dict:
+            expected_dict["environment"]["os"] = "Linux"
         for input_port_name in expected_dict["inputs"]:
             input_port = expected_dict["inputs"][input_port_name]
             # enum will be transformed to string
-            if isinstance(input_port["type"], str) and input_port["type"].lower() == "enum":
+            if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum"]:
                 if "enum" in input_port:
                     input_port["enum"] = list(map(lambda x: str(x), input_port["enum"]))
                 if "default" in input_port:
                     input_port["default"] = str(input_port["default"])
+            # optional will be dropped if it's False
+            if "optional" in input_port and input_port["optional"] is False:
+                del input_port["optional"]
 
         assert entity._to_dict() == expected_dict
         rest_obj = entity._to_rest_object()
@@ -237,12 +248,25 @@ class TestComponent:
                     "os": "Linux",
                 },
             ),
+            (
+                "./tests/test_configs/internal/env-dockerfile-build/component_spec.yaml",
+                {
+                    "docker": {
+                        "build": {
+                            "dockerfile": "FROM mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:20220815.v1\n",
+                        },
+                    },
+                    "python": {
+                        "user_managed_dependencies": True,
+                    },
+                    "os": "Linux",
+                },
+            ),
         ],
     )
     def test_environment_dependencies_resolve(self, yaml_path: str, expected_dict: Dict) -> None:
         component: InternalComponent = load_component(source=yaml_path)
-        component._resolve_local_environment()
-        assert component.environment == expected_dict
+        component.environment.resolve(component._source_path)
         rest_obj = component._to_rest_object()
         assert rest_obj.properties.component_spec["environment"] == expected_dict
 
@@ -267,7 +291,7 @@ class TestComponent:
         assert validation_result.passed
         expected_warning_message = (
             "environment.conda: Duplicated declaration of dependencies, "
-            "will honor in the order conda_dependencies, conda_dependencies_file, pip_requirements_file."
+            "will honor in the order conda_dependencies, conda_dependencies_file and pip_requirements_file."
         )
         assert str(validation_result._warnings[0]) == expected_warning_message
 
@@ -347,17 +371,86 @@ class TestComponent:
     )
     def test_invalid_additional_includes(self, yaml_path: str, expected_error_msg_prefix: str) -> None:
         component = load_component(
-            path=os.path.join("./tests/test_configs/internal/component_with_additional_includes", yaml_path)
+            os.path.join("./tests/test_configs/internal/component_with_additional_includes", yaml_path)
         )
         validation_result = component._customized_validate()
         assert validation_result.passed is False
         assert validation_result.messages["*"].startswith(expected_error_msg_prefix), validation_result.messages["*"]
 
+    def test_component_input_types(self) -> None:
+        yaml_path = "./tests/test_configs/internal/component_with_input_types/component_spec.yaml"
+        component: InternalComponent = load_component(yaml_path)
+        component.code = "scope:1"
+
+        with open(yaml_path, "r") as f:
+            yaml_dict = yaml.safe_load(f)
+            for key, value in {
+                "inputs.param_enum_cap.type": "enum",
+            }.items():
+                pydash.set_(yaml_dict, key, value)
+        assert component._to_rest_object().properties.component_spec["inputs"] == yaml_dict["inputs"]
+        assert component._to_rest_object().properties.component_spec["outputs"] == yaml_dict["outputs"]
+        assert component._validate().passed is True, repr(component._validate())
+
+        for key, value in {
+            "inputs.param_bool_cap.type": "boolean",
+            "inputs.param_int_cap.type": "integer",
+            "inputs.param_string_cap.type": "string",
+        }.items():
+            pydash.set_(yaml_dict, key, value)
+        regen_component = Component._from_rest_object(component._to_rest_object())
+        assert regen_component._to_rest_object().properties.component_spec["inputs"] == yaml_dict["inputs"]
+        assert regen_component._to_rest_object().properties.component_spec["outputs"] == yaml_dict["outputs"]
+        assert component._validate().passed is True, repr(component._validate())
+
+    def test_component_input_with_attrs(self) -> None:
+        yaml_path = "./tests/test_configs/internal/component_with_input_types/component_spec_with_attrs.yaml"
+        component: InternalComponent = load_component(source=yaml_path)
+
+        expected_inputs = {
+            "inputs": {
+                "param_data_path": {
+                    "description": "Path to the data",
+                    "is_resource": True,
+                    "datastore_mode": "mount",
+                    "type": "path",
+                },
+                "param_bool": {"type": "boolean"},
+                "param_enum_cap": {"enum": ["minimal", "reuse", "expiry", "policies"], "type": "enum"},
+                "param_enum_with_int_values": {"default": "3", "enum": ["1", "2.0", "3", "4"], "type": "enum"},
+                "param_float": {"type": "float"},
+                "param_int": {"type": "integer"},
+                "param_string_with_default_value": {"default": ",", "type": "string"},
+                "param_string_with_default_value_2": {"default": "utf8", "type": "string"},
+                # yes will be converted to true in YAML 1.2, users may use "yes" as a workaround
+                "param_string_with_yes_value": {"default": "True", "type": "string"},
+                "param_string_with_quote_yes_value": {"default": "yes", "type": "string"},
+            }
+        }
+        assert component._to_rest_object().properties.component_spec["inputs"] == expected_inputs["inputs"]
+        assert component._validate().passed is True, repr(component._validate())
+
+        regenerated_component = Component._from_rest_object(component._to_rest_object())
+        assert regenerated_component._to_rest_object().properties.component_spec["inputs"] == expected_inputs["inputs"]
+        assert component._validate().passed is True, repr(component._validate())
+
     def test_component_input_list_type(self) -> None:
         yaml_path = "./tests/test_configs/internal/scope-component/component_spec.yaml"
-        component: InternalComponent = load_component(path=yaml_path)
+        component: InternalComponent = load_component(yaml_path)
         assert component._customized_validate().passed is True
         input_text_data_type = component._to_rest_object().properties.component_spec["inputs"]["TextData"]["type"]
         # for list type component input, REST object should remain type list for service contract
         assert isinstance(input_text_data_type, list)
         assert input_text_data_type == ["AnyFile", "AnyDirectory"]
+
+    def test_loop_node_is_internal_components(self):
+        from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
+        from azure.ai.ml.dsl._utils import environment_variable_overwrite
+
+        yaml_path = "./tests/test_configs/internal/helloworld_component_command.yml"
+        component_func = load_component(source=yaml_path)
+        loop_node = LoopNode(body=component_func())
+        loop_node.body._referenced_control_flow_node_instance_id = loop_node._instance_id
+        with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "True"):
+            validate_result = loop_node._validate_body(raise_error=False)
+            assert validate_result.passed

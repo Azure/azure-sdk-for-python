@@ -3,15 +3,19 @@ from typing import Callable
 import pytest
 
 from azure.ai.ml import Input, MLClient, Output, load_job, spark
-from azure.ai.ml._restclient.v2022_06_01_preview.models import AmlToken
+from azure.ai.ml.entities._job.identity import ManagedIdentity
 from azure.ai.ml.entities._job.spark_job import SparkJob
+
+from devtools_testutils import AzureRecordedTestCase
 
 
 @pytest.mark.timeout(600)
-class TestSparkJob:
+@pytest.mark.usefixtures("recorded_test", "mock_asset_name", "mock_code_hash")
+@pytest.mark.skip(reason="user assigned identity not attached to test workspace")
+class TestSparkJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_spark_job(self, randstr: Callable[[], str], client: MLClient) -> None:
-        job_name = randstr()
+        job_name = randstr("job_name")
         print(f"Creating spark job {job_name}")
 
         try:
@@ -81,7 +85,7 @@ class TestSparkJob:
             dynamic_allocation_enabled=True,
             dynamic_allocation_min_executors=1,
             dynamic_allocation_max_executors=3,
-            identity=AmlToken(),
+            identity=ManagedIdentity(),
             inputs=inputs,
             outputs=outputs,
             args="--input1 ${{inputs.input1}} --output1 ${{outputs.output1}} --my_sample_rate 0.01",
@@ -92,13 +96,13 @@ class TestSparkJob:
         )
 
         assert node.experiment_name == "builder-spark-experiment-name"
-        assert node.identity == AmlToken()
+        assert node.identity == ManagedIdentity()
         assert node.description == "simply spark description"
 
         result = client.create_or_update(node)
         assert result.description == "simply spark description"
         assert result.experiment_name == "builder-spark-experiment-name"
-        assert result.identity == AmlToken()
+        assert result.identity == ManagedIdentity()
 
     @pytest.mark.e2etest
     def test_spark_job_with_input_output(self, client: MLClient, randstr: Callable[[], str]) -> None:
@@ -107,7 +111,7 @@ class TestSparkJob:
         # https://msdata.visualstudio.com/Vienna/_workitems/edit/1940993
         params_override = [{"name": randstr()}]
         job = load_job(
-            path="./tests/test_configs/spark_job/spark_job_inputs_outputs_test.yml",
+            "./tests/test_configs/spark_job/spark_job_inputs_outputs_test.yml",
             params_override=params_override,
         )
         spark_job = client.jobs.create_or_update(job=job)

@@ -1,0 +1,132 @@
+interactions:
+- request:
+    body: '{"key": ".appconfig.featureflag/custom", "content_type": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
+      "value": "{\"enabled\": true, \"conditions\": {\"client_filters\": [{\"name\":
+      \"Microsoft.Percentage\", \"parameters\": {\"Value\": 10, \"User\": \"user1\"}}]}}",
+      "tags": {}}'
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json, application/json, application/problem+json
+      Content-Length:
+      - '293'
+      Content-Type:
+      - application/vnd.microsoft.appconfig.kv+json
+      User-Agent:
+      - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+    method: PUT
+    uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fcustom?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"G70BVnm4Ub73mIyp2GqW6THYE7ENJr1TY6oe3YPaRek","key":".appconfig.featureflag/custom","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"enabled\":
+        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.Percentage\",
+        \"parameters\": {\"Value\": 10, \"User\": \"user1\"}}]}}","tags":{},"locked":false,"last_modified":"2022-09-15T23:56:31+00:00"}'
+    headers:
+      access-control-allow-credentials: 'true'
+      access-control-allow-origin: '*'
+      access-control-expose-headers: DNT, X-CustomHeader, Keep-Alive, User-Agent,
+        X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization,
+        x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host,
+        Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id,
+        ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id,
+        x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent,
+        tracestate
+      connection: keep-alive
+      content-type: application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date: Thu, 15 Sep 2022 23:56:31 GMT
+      etag: '"G70BVnm4Ub73mIyp2GqW6THYE7ENJr1TY6oe3YPaRek"'
+      last-modified: Thu, 15 Sep 2022 23:56:31 GMT
+      server: openresty/1.17.8.2
+      strict-transport-security: max-age=15724800; includeSubDomains
+      sync-token: zAJw6V16=Nzo1IzEwNDg4OTc=;sn=1048897
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://yallappconfigtests-azconfig-net.azconfig.io/kv/.appconfig.featureflag%2Fcustom?api-version=1.0
+- request:
+    body: '{"key": ".appconfig.featureflag/custom", "content_type": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
+      "value": "{\"enabled\": true, \"conditions\": {\"client_filters\": [{\"name\":
+      \"Microsoft.Percentage\", \"parameters\": {\"Value\": 100, \"User\": \"user1\"}}]}}",
+      "last_modified": "2022-09-15T23:56:31.000Z", "tags": {}, "locked": false, "etag":
+      "G70BVnm4Ub73mIyp2GqW6THYE7ENJr1TY6oe3YPaRek"}'
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json, application/json, application/problem+json
+      Content-Length:
+      - '411'
+      Content-Type:
+      - application/vnd.microsoft.appconfig.kv+json
+      Sync-Token:
+      - zAJw6V16=Nzo1IzEwNDg4OTc=
+      User-Agent:
+      - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+    method: PUT
+    uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fcustom?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"FXpVmvU72foCn0Dc14yey6gNZvmM_c_imv89UmaV1bs","key":".appconfig.featureflag/custom","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"enabled\":
+        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.Percentage\",
+        \"parameters\": {\"Value\": 100, \"User\": \"user1\"}}]}}","tags":{},"locked":false,"last_modified":"2022-09-15T23:56:31+00:00"}'
+    headers:
+      access-control-allow-credentials: 'true'
+      access-control-allow-origin: '*'
+      access-control-expose-headers: DNT, X-CustomHeader, Keep-Alive, User-Agent,
+        X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization,
+        x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host,
+        Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id,
+        ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id,
+        x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent,
+        tracestate
+      connection: keep-alive
+      content-type: application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date: Thu, 15 Sep 2022 23:56:31 GMT
+      etag: '"FXpVmvU72foCn0Dc14yey6gNZvmM_c_imv89UmaV1bs"'
+      last-modified: Thu, 15 Sep 2022 23:56:31 GMT
+      server: openresty/1.17.8.2
+      strict-transport-security: max-age=15724800; includeSubDomains
+      sync-token: zAJw6V16=Nzo1IzEwNDg4OTk=;sn=1048899
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://yallappconfigtests-azconfig-net.azconfig.io/kv/.appconfig.featureflag%2Fcustom?api-version=1.0
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json, application/json, application/problem+json
+      Sync-Token:
+      - zAJw6V16=Nzo1IzEwNDg4OTk=
+      User-Agent:
+      - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+    method: DELETE
+    uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fcustom?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"FXpVmvU72foCn0Dc14yey6gNZvmM_c_imv89UmaV1bs","key":".appconfig.featureflag/custom","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"enabled\":
+        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.Percentage\",
+        \"parameters\": {\"Value\": 100, \"User\": \"user1\"}}]}}","tags":{},"locked":false,"last_modified":"2022-09-15T23:56:31+00:00"}'
+    headers:
+      access-control-allow-credentials: 'true'
+      access-control-allow-origin: '*'
+      access-control-expose-headers: DNT, X-CustomHeader, Keep-Alive, User-Agent,
+        X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization,
+        x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host,
+        Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id,
+        ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id,
+        x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent,
+        tracestate
+      connection: keep-alive
+      content-type: application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date: Thu, 15 Sep 2022 23:56:31 GMT
+      etag: '"FXpVmvU72foCn0Dc14yey6gNZvmM_c_imv89UmaV1bs"'
+      last-modified: Thu, 15 Sep 2022 23:56:31 GMT
+      server: openresty/1.17.8.2
+      strict-transport-security: max-age=15724800; includeSubDomains
+      sync-token: zAJw6V16=Nzo1IzEwNDg5MDE=;sn=1048901
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://yallappconfigtests-azconfig-net.azconfig.io/kv/.appconfig.featureflag%2Fcustom?api-version=1.0
+version: 1

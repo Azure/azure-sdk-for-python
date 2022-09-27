@@ -9,7 +9,7 @@ from azure.ai.ml._schema.automl.featurization_settings import NlpFeaturizationSe
 from azure.ai.ml._schema.automl.nlp_vertical.nlp_vertical_limit_settings import NlpLimitsSchema
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.input_output_entry import MLTableInputSchema
-from azure.ai.ml.constants import AutoMLConstants
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 
 
 class NlpVerticalSchema(AutoMLVerticalSchema):

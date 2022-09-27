@@ -1,0 +1,198 @@
+interactions:
+- request:
+    body: '{"key": ".appconfig.featureflag/newflag", "content_type": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
+      "value": "{\"enabled\": true, \"conditions\": {\"client_filters\": [{\"name\":
+      \"Microsoft.Targeting\", \"parameters\": {\"Audience\": {\"Users\": [\"abc\",
+      \"def\"], \"Groups\": [\"ghi\", \"jkl\"], \"DefaultRolloutPercentage\": 75}}}]}}",
+      "tags": {}}'
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json, application/json, application/problem+json
+      Content-Length:
+      - '370'
+      Content-Type:
+      - application/vnd.microsoft.appconfig.kv+json
+      User-Agent:
+      - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+    method: PUT
+    uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fnewflag?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"APcekuqpDXluk_23OT7qTMLI9UkqzdXFUDfICy29ykc","key":".appconfig.featureflag/newflag","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"enabled\":
+        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.Targeting\",
+        \"parameters\": {\"Audience\": {\"Users\": [\"abc\", \"def\"], \"Groups\":
+        [\"ghi\", \"jkl\"], \"DefaultRolloutPercentage\": 75}}}]}}","tags":{},"locked":false,"last_modified":"2022-09-15T23:56:32+00:00"}'
+    headers:
+      access-control-allow-credentials: 'true'
+      access-control-allow-origin: '*'
+      access-control-expose-headers: DNT, X-CustomHeader, Keep-Alive, User-Agent,
+        X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization,
+        x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host,
+        Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id,
+        ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id,
+        x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent,
+        tracestate
+      connection: keep-alive
+      content-type: application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date: Thu, 15 Sep 2022 23:56:32 GMT
+      etag: '"APcekuqpDXluk_23OT7qTMLI9UkqzdXFUDfICy29ykc"'
+      last-modified: Thu, 15 Sep 2022 23:56:32 GMT
+      server: openresty/1.17.8.2
+      strict-transport-security: max-age=15724800; includeSubDomains
+      sync-token: zAJw6V16=Nzo1IzEwNDg5MDc=;sn=1048907
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://yallappconfigtests-azconfig-net.azconfig.io/kv/.appconfig.featureflag%2Fnewflag?api-version=1.0
+- request:
+    body: '{"key": ".appconfig.featureflag/newflag", "content_type": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
+      "value": "{\"enabled\": true, \"conditions\": {\"client_filters\": [{\"name\":
+      \"Microsoft.Targeting\", \"parameters\": {\"Audience\": {\"Users\": [\"abc\",
+      \"def\"], \"Groups\": [\"ghi\", \"jkl\"], \"DefaultRolloutPercentage\": 80}}}]}}",
+      "last_modified": "2022-09-15T23:56:32.000Z", "tags": {}, "locked": false, "etag":
+      "APcekuqpDXluk_23OT7qTMLI9UkqzdXFUDfICy29ykc"}'
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json, application/json, application/problem+json
+      Content-Length:
+      - '487'
+      Content-Type:
+      - application/vnd.microsoft.appconfig.kv+json
+      Sync-Token:
+      - zAJw6V16=Nzo1IzEwNDg5MDc=
+      User-Agent:
+      - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+    method: PUT
+    uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fnewflag?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"iPZPeNwry_vh00A9otvi-ZguWIuXx3-hcyaW9yz-Pr0","key":".appconfig.featureflag/newflag","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"enabled\":
+        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.Targeting\",
+        \"parameters\": {\"Audience\": {\"Users\": [\"abc\", \"def\"], \"Groups\":
+        [\"ghi\", \"jkl\"], \"DefaultRolloutPercentage\": 80}}}]}}","tags":{},"locked":false,"last_modified":"2022-09-15T23:56:32+00:00"}'
+    headers:
+      access-control-allow-credentials: 'true'
+      access-control-allow-origin: '*'
+      access-control-expose-headers: DNT, X-CustomHeader, Keep-Alive, User-Agent,
+        X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization,
+        x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host,
+        Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id,
+        ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id,
+        x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent,
+        tracestate
+      connection: keep-alive
+      content-type: application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date: Thu, 15 Sep 2022 23:56:32 GMT
+      etag: '"iPZPeNwry_vh00A9otvi-ZguWIuXx3-hcyaW9yz-Pr0"'
+      last-modified: Thu, 15 Sep 2022 23:56:32 GMT
+      server: openresty/1.17.8.2
+      strict-transport-security: max-age=15724800; includeSubDomains
+      sync-token: zAJw6V16=Nzo1IzEwNDg5MDk=;sn=1048909
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://yallappconfigtests-azconfig-net.azconfig.io/kv/.appconfig.featureflag%2Fnewflag?api-version=1.0
+- request:
+    body: '{"key": ".appconfig.featureflag/newflag", "content_type": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
+      "value": "{\"enabled\": true, \"conditions\": {\"client_filters\": [{\"name\":
+      \"Microsoft.Targeting\", \"parameters\": {\"Audience\": {\"Users\": [\"abc\",
+      \"def\"], \"Groups\": [\"ghi\", \"jkl\"], \"DefaultRolloutPercentage\": 80}}},
+      {\"name\": \"Microsoft.Targeting\", \"parameters\": {\"Audience\": {\"Users\":
+      [\"abcd\", \"defg\"], \"Groups\": [\"ghij\", \"jklm\"], \"DefaultRolloutPercentage\":
+      50}}}, {\"name\": \"Microsoft.Targeting\", \"parameters\": {\"Audience\": {\"Users\":
+      [\"abcde\", \"defgh\"], \"Groups\": [\"ghijk\", \"jklmn\"], \"DefaultRolloutPercentage\":
+      100}}}]}}", "last_modified": "2022-09-15T23:56:32.000Z", "tags": {}, "locked":
+      false, "etag": "iPZPeNwry_vh00A9otvi-ZguWIuXx3-hcyaW9yz-Pr0"}'
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json, application/json, application/problem+json
+      Content-Length:
+      - '836'
+      Content-Type:
+      - application/vnd.microsoft.appconfig.kv+json
+      Sync-Token:
+      - zAJw6V16=Nzo1IzEwNDg5MDk=
+      User-Agent:
+      - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+    method: PUT
+    uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fnewflag?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"4MG_glpukX7SNOmT3tLHfUg46nyrHo3Vrv5Fg8VA1J0","key":".appconfig.featureflag/newflag","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"enabled\":
+        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.Targeting\",
+        \"parameters\": {\"Audience\": {\"Users\": [\"abc\", \"def\"], \"Groups\":
+        [\"ghi\", \"jkl\"], \"DefaultRolloutPercentage\": 80}}}, {\"name\": \"Microsoft.Targeting\",
+        \"parameters\": {\"Audience\": {\"Users\": [\"abcd\", \"defg\"], \"Groups\":
+        [\"ghij\", \"jklm\"], \"DefaultRolloutPercentage\": 50}}}, {\"name\": \"Microsoft.Targeting\",
+        \"parameters\": {\"Audience\": {\"Users\": [\"abcde\", \"defgh\"], \"Groups\":
+        [\"ghijk\", \"jklmn\"], \"DefaultRolloutPercentage\": 100}}}]}}","tags":{},"locked":false,"last_modified":"2022-09-15T23:56:32+00:00"}'
+    headers:
+      access-control-allow-credentials: 'true'
+      access-control-allow-origin: '*'
+      access-control-expose-headers: DNT, X-CustomHeader, Keep-Alive, User-Agent,
+        X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization,
+        x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host,
+        Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id,
+        ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id,
+        x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent,
+        tracestate
+      connection: keep-alive
+      content-type: application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date: Thu, 15 Sep 2022 23:56:33 GMT
+      etag: '"4MG_glpukX7SNOmT3tLHfUg46nyrHo3Vrv5Fg8VA1J0"'
+      last-modified: Thu, 15 Sep 2022 23:56:32 GMT
+      server: openresty/1.17.8.2
+      strict-transport-security: max-age=15724800; includeSubDomains
+      sync-token: zAJw6V16=Nzo1IzEwNDg5MTE=;sn=1048911
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://yallappconfigtests-azconfig-net.azconfig.io/kv/.appconfig.featureflag%2Fnewflag?api-version=1.0
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json, application/json, application/problem+json
+      Sync-Token:
+      - zAJw6V16=Nzo1IzEwNDg5MTE=
+      User-Agent:
+      - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+    method: DELETE
+    uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fnewflag?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"4MG_glpukX7SNOmT3tLHfUg46nyrHo3Vrv5Fg8VA1J0","key":".appconfig.featureflag/newflag","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"enabled\":
+        true, \"conditions\": {\"client_filters\": [{\"name\": \"Microsoft.Targeting\",
+        \"parameters\": {\"Audience\": {\"Users\": [\"abc\", \"def\"], \"Groups\":
+        [\"ghi\", \"jkl\"], \"DefaultRolloutPercentage\": 80}}}, {\"name\": \"Microsoft.Targeting\",
+        \"parameters\": {\"Audience\": {\"Users\": [\"abcd\", \"defg\"], \"Groups\":
+        [\"ghij\", \"jklm\"], \"DefaultRolloutPercentage\": 50}}}, {\"name\": \"Microsoft.Targeting\",
+        \"parameters\": {\"Audience\": {\"Users\": [\"abcde\", \"defgh\"], \"Groups\":
+        [\"ghijk\", \"jklmn\"], \"DefaultRolloutPercentage\": 100}}}]}}","tags":{},"locked":false,"last_modified":"2022-09-15T23:56:32+00:00"}'
+    headers:
+      access-control-allow-credentials: 'true'
+      access-control-allow-origin: '*'
+      access-control-expose-headers: DNT, X-CustomHeader, Keep-Alive, User-Agent,
+        X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization,
+        x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host,
+        Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id,
+        ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id,
+        x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent,
+        tracestate
+      connection: keep-alive
+      content-type: application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date: Thu, 15 Sep 2022 23:56:33 GMT
+      etag: '"4MG_glpukX7SNOmT3tLHfUg46nyrHo3Vrv5Fg8VA1J0"'
+      last-modified: Thu, 15 Sep 2022 23:56:32 GMT
+      server: openresty/1.17.8.2
+      strict-transport-security: max-age=15724800; includeSubDomains
+      sync-token: zAJw6V16=Nzo1IzEwNDg5MTM=;sn=1048913
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://yallappconfigtests-azconfig-net.azconfig.io/kv/.appconfig.featureflag%2Fnewflag?api-version=1.0
+version: 1

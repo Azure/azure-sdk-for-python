@@ -1,6 +1,6 @@
 # Release History
 
-## 4.5.2 (Unreleased)
+## 4.7.0b1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,13 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.6.0 (2022-09-19)
+
+### Breaking Changes
+- Clients verify the challenge resource matches the vault domain. This should affect few customers,
+  who can provide `verify_challenge_resource=False` to client constructors to disable.
+  See https://aka.ms/azsdk/blog/vault-uri for more information.
 
 ## 4.5.1 (2022-08-11)
 

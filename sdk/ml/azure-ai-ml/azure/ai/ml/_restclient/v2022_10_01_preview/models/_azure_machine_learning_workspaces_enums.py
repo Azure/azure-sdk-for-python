@@ -31,6 +31,17 @@ class ApplicationSharingPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     PERSONAL = "Personal"
     SHARED = "Shared"
 
+class AssetProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Provisioning state of registry asset.
+    """
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+
 class Autosave(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Auto save settings.
     """
@@ -763,6 +774,13 @@ class MLAssistConfigurationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+class MLFlowAutologgerState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to determine the state of mlflow autologger.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
 class ModelSize(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Image model size.
     """
@@ -813,6 +831,25 @@ class Network(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     BRIDGE = "Bridge"
     HOST = "Host"
 
+class NlpLearningRateScheduler(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum of learning rate schedulers that aligns with those supported by HF
+    """
+
+    #: No learning rate schedule.
+    NONE = "None"
+    #: Linear warmup and decay.
+    LINEAR = "Linear"
+    #: Linear warmup then cosine decay.
+    COSINE = "Cosine"
+    #: Linear warmup, cosine decay, then restart to initial LR.
+    COSINE_WITH_RESTARTS = "CosineWithRestarts"
+    #: Increase linearly then polynomially decay.
+    POLYNOMIAL = "Polynomial"
+    #: Constant learning rate.
+    CONSTANT = "Constant"
+    #: Linear warmup followed by constant value.
+    CONSTANT_WITH_WARMUP = "ConstantWithWarmup"
+
 class NodeState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """State of the compute node. Values are idle, running, preparing, unusable, leaving and
     preempted.
@@ -824,6 +861,13 @@ class NodeState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNUSABLE = "unusable"
     LEAVING = "leaving"
     PREEMPTED = "preempted"
+
+class NodesValueType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The enumerated types for the nodes value
+    """
+
+    ALL = "All"
+    CUSTOM = "Custom"
 
 class ObjectDetectionPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Primary metrics for Image ObjectDetection task.
@@ -1067,6 +1111,12 @@ class ScheduleActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     CREATE_JOB = "CreateJob"
     INVOKE_BATCH_ENDPOINT = "InvokeBatchEndpoint"
+
+class ScheduleListViewType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    ENABLED_ONLY = "EnabledOnly"
+    DISABLED_ONLY = "DisabledOnly"
+    ALL = "All"
 
 class ScheduleProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 

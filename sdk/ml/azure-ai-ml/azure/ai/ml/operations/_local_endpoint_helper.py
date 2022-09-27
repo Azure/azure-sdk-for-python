@@ -11,13 +11,19 @@ from typing import Iterable
 from docker.models.containers import Container
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.ai.ml._local_endpoints import DockerClient, EndpointStub
-from azure.ai.ml._local_endpoints.errors import InvalidLocalEndpointError, LocalEndpointNotFoundError
+from azure.ai.ml._exception_helper import log_and_raise_error
+from azure.ai.ml._local_endpoints import EndpointStub
+from azure.ai.ml._local_endpoints.docker_client import (
+    DockerClient,
+    get_endpoint_json_from_container,
+    get_scoring_uri_from_container,
+    get_status_from_container,
+)
 from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, LocalEndpointConstants
 from azure.ai.ml.entities import OnlineEndpoint
-from azure.ai.ml._ml_exceptions import ValidationException, log_and_raise_error
+from azure.ai.ml.exceptions import InvalidLocalEndpointError, LocalEndpointNotFoundError, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -59,7 +65,7 @@ class _LocalEndpointHelper(object):
                 endpoint=endpoint,
             )
             return self.get(endpoint_name=endpoint.name)
-        except Exception as ex:
+        except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:
@@ -99,10 +105,10 @@ class _LocalEndpointHelper(object):
         container = self._docker_client.get_endpoint_container(endpoint_name=endpoint_name, include_stopped=True)
         if endpoint:
             if container:
-                return self._convert_container_to_endpoint(container=container, endpoint_json=endpoint.dump())
+                return _convert_container_to_endpoint(container=container, endpoint_json=endpoint.dump())
             return endpoint
-        elif container:
-            return self._convert_container_to_endpoint(container=container)
+        if container:
+            return _convert_container_to_endpoint(container=container)
         raise LocalEndpointNotFoundError(endpoint_name=endpoint_name)
 
     def list(self) -> Iterable[OnlineEndpoint]:
@@ -120,7 +126,7 @@ class _LocalEndpointHelper(object):
             # override certain endpoint properties with deployment information and remove it from containers list.
             # Otherwise, return endpoint spec.
             if container:
-                endpoints.append(self._convert_container_to_endpoint(endpoint_json=endpoint_json, container=container))
+                endpoints.append(_convert_container_to_endpoint(endpoint_json=endpoint_json, container=container))
                 containers.remove(container)
             else:
                 endpoints.append(
@@ -131,7 +137,7 @@ class _LocalEndpointHelper(object):
                 )
         # Iterate through any deployments that don't have an explicit local endpoint stub.
         for container in containers:
-            endpoints.append(self._convert_container_to_endpoint(container=container))
+            endpoints.append(_convert_container_to_endpoint(container=container))
         return endpoints
 
     def delete(self, name: str):
@@ -151,40 +157,41 @@ class _LocalEndpointHelper(object):
         else:
             raise LocalEndpointNotFoundError(endpoint_name=name)
 
-    def _convert_container_to_endpoint(self, container: Container, endpoint_json: dict = None) -> OnlineEndpoint:
-        """Converts provided Container for local deployment to OnlineEndpoint
-        entity.
 
-        :param container: Container for a local deployment.
-        :type container: docker.models.containers.Container
-        :returns OnlineEndpoint entity:
-        """
-        if endpoint_json is None:
-            endpoint_json = self._docker_client.get_endpoint_json_from_container(container=container)
-        provisioning_state = self._docker_client.get_status_from_container(container=container)
-        if provisioning_state == LocalEndpointConstants.CONTAINER_EXITED:
-            return self._convert_json_to_endpoint(
-                endpoint_json=endpoint_json,
-                location=LocalEndpointConstants.ENDPOINT_STATE_LOCATION,
-                provisioning_state=LocalEndpointConstants.ENDPOINT_STATE_FAILED,
-            )
-        else:
-            scoring_uri = self._docker_client.get_scoring_uri_from_container(container=container)
-            return self._convert_json_to_endpoint(
-                endpoint_json=endpoint_json,
-                location=LocalEndpointConstants.ENDPOINT_STATE_LOCATION,
-                provisioning_state=LocalEndpointConstants.ENDPOINT_STATE_SUCCEEDED,
-                scoring_uri=scoring_uri,
-            )
+def _convert_container_to_endpoint(container: Container, endpoint_json: dict = None) -> OnlineEndpoint:
+    """Converts provided Container for local deployment to OnlineEndpoint
+    entity.
 
-    def _convert_json_to_endpoint(self, endpoint_json: dict, **kwargs) -> OnlineEndpoint:
-        """Converts metadata json and kwargs to OnlineEndpoint entity.
+    :param container: Container for a local deployment.
+    :type container: docker.models.containers.Container
+    :returns OnlineEndpoint entity:
+    """
+    if endpoint_json is None:
+        endpoint_json = get_endpoint_json_from_container(container=container)
+    provisioning_state = get_status_from_container(container=container)
+    if provisioning_state == LocalEndpointConstants.CONTAINER_EXITED:
+        return _convert_json_to_endpoint(
+            endpoint_json=endpoint_json,
+            location=LocalEndpointConstants.ENDPOINT_STATE_LOCATION,
+            provisioning_state=LocalEndpointConstants.ENDPOINT_STATE_FAILED,
+        )
+    scoring_uri = get_scoring_uri_from_container(container=container)
+    return _convert_json_to_endpoint(
+        endpoint_json=endpoint_json,
+        location=LocalEndpointConstants.ENDPOINT_STATE_LOCATION,
+        provisioning_state=LocalEndpointConstants.ENDPOINT_STATE_SUCCEEDED,
+        scoring_uri=scoring_uri,
+    )
 
-        :param endpoint_json: dictionary representation of OnlineEndpoint entity.
-        :type endpoint_json: dict
-        :returns OnlineEndpoint entity:
-        """
-        params_override = []
-        for k, v in kwargs.items():
-            params_override.append({k: v})
-        return OnlineEndpoint._load(data=endpoint_json, params_override=params_override)
+
+def _convert_json_to_endpoint(endpoint_json: dict, **kwargs) -> OnlineEndpoint:
+    """Converts metadata json and kwargs to OnlineEndpoint entity.
+
+    :param endpoint_json: dictionary representation of OnlineEndpoint entity.
+    :type endpoint_json: dict
+    :returns OnlineEndpoint entity:
+    """
+    params_override = []
+    for k, v in kwargs.items():
+        params_override.append({k: v})
+    return OnlineEndpoint._load(data=endpoint_json, params_override=params_override)

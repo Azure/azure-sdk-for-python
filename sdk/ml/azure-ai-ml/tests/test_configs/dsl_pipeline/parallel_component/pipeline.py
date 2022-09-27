@@ -25,6 +25,7 @@ def generate_dsl_pipeline() -> PipelineJob:
 
         file_batch_inference_node = file_batch_inference(job_data_path=get_data_node.outputs.file_output_data)
         file_batch_inference_node.inputs.job_data_path.mode = InputOutputModes.EVAL_MOUNT
+        file_batch_inference_node.logging_level = "DEBUG"
 
         convert_data_node = convert_data(input_data=file_batch_inference_node.outputs.job_output_path)
         convert_data_node.outputs.file_output_data.type = AssetTypes.MLTABLE
@@ -33,11 +34,13 @@ def generate_dsl_pipeline() -> PipelineJob:
             job_data_path=convert_data_node.outputs.file_output_data
         )
         file_batch_inference_duplicate_node.inputs.job_data_path.mode = InputOutputModes.EVAL_MOUNT
+        file_batch_inference_duplicate_node.logging_level = "DEBUG"
 
         tabular_batch_inference_node = tabular_batch_inference(
             job_data_path=get_data_node.outputs.tabular_output_data, score_model=pipeline_score_model
         )
         tabular_batch_inference_node.inputs.job_data_path.mode = InputOutputModes.DIRECT
+        tabular_batch_inference_node.logging_level = "DEBUG"
 
         return {
             "pipeline_job_out_file": file_batch_inference_duplicate_node.outputs.job_output_path,

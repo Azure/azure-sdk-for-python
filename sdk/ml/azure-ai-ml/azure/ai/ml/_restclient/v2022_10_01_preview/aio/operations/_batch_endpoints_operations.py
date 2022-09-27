@@ -69,6 +69,9 @@ class BatchEndpointsOperations:
         :type count: int
         :param skip: Continuation token for pagination.
         :type skip: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BatchEndpointTrackedResourceArmPaginatedResult or
          the result of cls(response)
@@ -76,6 +79,8 @@ class BatchEndpointsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.BatchEndpointTrackedResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchEndpointTrackedResourceArmPaginatedResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -88,6 +93,7 @@ class BatchEndpointsOperations:
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
+                    api_version=api_version,
                     count=count,
                     skip=skip,
                     template_url=self.list.metadata['url'],
@@ -101,6 +107,7 @@ class BatchEndpointsOperations:
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
+                    api_version=api_version,
                     count=count,
                     skip=skip,
                     template_url=next_link,
@@ -149,12 +156,15 @@ class BatchEndpointsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_delete_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             endpoint_name=endpoint_name,
+            api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -198,6 +208,9 @@ class BatchEndpointsOperations:
         :type workspace_name: str
         :param endpoint_name: Inference Endpoint name.
         :type endpoint_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -210,6 +223,7 @@ class BatchEndpointsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -222,6 +236,7 @@ class BatchEndpointsOperations:
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 endpoint_name=endpoint_name,
+                api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -265,6 +280,9 @@ class BatchEndpointsOperations:
         :type workspace_name: str
         :param endpoint_name: Name for the Batch Endpoint.
         :type endpoint_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BatchEndpoint, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.BatchEndpoint
@@ -276,12 +294,15 @@ class BatchEndpointsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             endpoint_name=endpoint_name,
+            api_version=api_version,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -319,6 +340,7 @@ class BatchEndpointsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'PartialMinimalTrackedResourceWithIdentity')
@@ -328,6 +350,7 @@ class BatchEndpointsOperations:
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             endpoint_name=endpoint_name,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self._update_initial.metadata['url'],
@@ -383,6 +406,9 @@ class BatchEndpointsOperations:
         :param body: Mutable batch inference endpoint definition object.
         :type body:
          ~azure.mgmt.machinelearningservices.models.PartialMinimalTrackedResourceWithIdentity
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -397,6 +423,7 @@ class BatchEndpointsOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.BatchEndpoint]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchEndpoint"]
@@ -411,6 +438,7 @@ class BatchEndpointsOperations:
                 workspace_name=workspace_name,
                 endpoint_name=endpoint_name,
                 body=body,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -454,6 +482,7 @@ class BatchEndpointsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'BatchEndpoint')
@@ -463,6 +492,7 @@ class BatchEndpointsOperations:
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             endpoint_name=endpoint_name,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self._create_or_update_initial.metadata['url'],
@@ -516,6 +546,9 @@ class BatchEndpointsOperations:
         :type endpoint_name: str
         :param body: Batch inference endpoint definition object.
         :type body: ~azure.mgmt.machinelearningservices.models.BatchEndpoint
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -530,6 +563,7 @@ class BatchEndpointsOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.BatchEndpoint]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchEndpoint"]
@@ -544,6 +578,7 @@ class BatchEndpointsOperations:
                 workspace_name=workspace_name,
                 endpoint_name=endpoint_name,
                 body=body,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -591,6 +626,9 @@ class BatchEndpointsOperations:
         :type workspace_name: str
         :param endpoint_name: Inference Endpoint name.
         :type endpoint_name: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EndpointAuthKeys, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.EndpointAuthKeys
@@ -602,12 +640,15 @@ class BatchEndpointsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         
         request = build_list_keys_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             endpoint_name=endpoint_name,
+            api_version=api_version,
             template_url=self.list_keys.metadata['url'],
         )
         request = _convert_request(request)

@@ -322,8 +322,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     async def test_list_configuration_settings_correct_etag(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         to_list_kv = self.create_config_setting()
-        to_list_kv = await self.add_for_test(client, to_list_kv)
-        custom_headers = {"If-Match": to_list_kv.etag}
+        await self.add_for_test(client, to_list_kv)
+        custom_headers = {"If-Match": to_list_kv.etag or ""}
         items = await self.convert_to_list(client.list_configuration_settings(
             key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
         ))
@@ -432,16 +432,15 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_revisions_correct_etag(self, appconfiguration_connection_string):
-        client = self.create_client(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_connection_string)
         to_list_kv = self.create_config_setting()
-        to_list_kv = await self.add_for_test(client, to_list_kv)
-        custom_headers = {"If-Match": to_list_kv.etag}
-        items = await self.convert_to_list(client.list_revisions(
+        custom_headers = {"If-Match": to_list_kv.etag or ""}
+        items = await self.convert_to_list(self.client.list_revisions(
             key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
         ))
         assert len(items) >= 1
         assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
-        await client.delete_configuration_setting(to_list_kv.key)
+        await self.tear_down()
 
     @app_config_decorator_async
     @recorded_by_proxy_async

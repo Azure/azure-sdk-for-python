@@ -1,10 +1,12 @@
 import copy
 import os
 import signal
+import tempfile
 import time
 from io import StringIO
 from typing import Dict
 from zipfile import ZipFile
+from io import StringIO
 
 import pydash
 import urllib3
@@ -13,6 +15,7 @@ from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import Job, PipelineJob
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
+from azure.core.polling import LROPoller
 
 _PYTEST_TIMEOUT_METHOD = "signal" if hasattr(signal, "SIGALRM") else "thread"  # use signal when os support SIGALRM
 DEFAULT_TASK_TIMEOUT = 30 * 60  # 30mins
@@ -150,7 +153,9 @@ def assert_final_job_status(
         job = client.jobs.get(job.name)
 
     if job.status not in RunHistoryConstants.TERMINAL_STATUSES:
-        client.jobs.cancel(job.name)
+        cancel_poller = client.jobs.begin_cancel(job.name)
+        assert isinstance(cancel_poller, LROPoller)
+        assert cancel_poller.result() is None
 
     assert job.status == expected_terminal_status, f"Job status mismatch. Job created: {job}"
 
@@ -188,7 +193,7 @@ def verify_entity_load_and_dump(
     load_function,
     entity_validation_function,
     test_load_file_path: str,
-    test_dump_file_path="./dump-test.yaml",
+    test_dump_file_path="dump-test.yaml",
     **load_kwargs,
 ):
     # test loading
@@ -209,7 +214,7 @@ def verify_entity_load_and_dump(
     first_input_entity = load_function(test_load_file_path, **load_kwargs)
     assert first_input_entity is not None
 
-    old_path_entity = load_function(path=test_load_file_path, **load_kwargs)
+    old_path_entity = load_function(test_load_file_path, **load_kwargs)
     assert old_path_entity is not None
 
     # Run entity-specific validation on both loaded entities
@@ -222,27 +227,32 @@ def verify_entity_load_and_dump(
     # TODO once dump functionality audit is complete, this testing should be
     # made more robust, like comparing it to the inputted yaml or something.
     if test_dump_file_path is not None:
-        # delete test dump file if it still exists for some reason
-        delete_file_if_exists(test_dump_file_path)
+
         # test file pointer-based dump
-        with open(test_dump_file_path, "w") as f:
-            file_entity.dump(f)
-        assert get_file_contents(test_dump_file_path) != ""
-        delete_file_if_exists(test_dump_file_path)
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            tmpfilename = f"{tmpdirname}/{test_dump_file_path}"
+            with open(tmpfilename, "w+") as f:
+                file_entity.dump(f)
+            assert get_file_contents(tmpfilename) != ""
 
         # test string stream dump
         with StringIO() as outputStream:
             stream_entity.dump(outputStream)
             assert outputStream.tell() > 0
+
         # test path-based dump
-        first_input_entity.dump(test_dump_file_path)
-        assert get_file_contents(test_dump_file_path) != ""
-        delete_file_if_exists(test_dump_file_path)
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            tmpfilename = f"{tmpdirname}/{test_dump_file_path}"
+            first_input_entity.dump(tmpfilename)
+            assert get_file_contents(tmpfilename) != ""
+            delete_file_if_exists(tmpfilename)
 
         # test path-based dump using deprecated input name
-        first_input_entity.dump(path=test_dump_file_path)
-        assert get_file_contents(test_dump_file_path) != ""
-        delete_file_if_exists(test_dump_file_path)
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            tmpfilename = f"{tmpdirname}/{test_dump_file_path}"
+            first_input_entity.dump(tmpfilename)
+            assert get_file_contents(tmpfilename) != ""
+            delete_file_if_exists(tmpfilename)
 
     return (old_path_entity, file_entity)
 
