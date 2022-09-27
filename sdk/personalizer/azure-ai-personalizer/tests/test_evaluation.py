@@ -15,8 +15,8 @@ class TestEvaluations(AzureRecordedTestCase):
         client = helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
         evaluation_id = str(uuid.uuid4())
         evaluation_name = "python_sdk_test_evaluation"
-        start_time = date.fromisoformat("2022-08-16")
-        end_time = date.fromisoformat("2022-08-17")
+        start_time = date.fromisoformat("2022-09-24")
+        end_time = date.fromisoformat("2022-09-26")
         iso_start_time = start_time.strftime("%Y%m%dT%H%M%S")
         iso_end_time = end_time.strftime("%Y%m%dT%H%M%S")
         evaluation_contract = {

@@ -31,5 +31,5 @@ extends:
     ServiceDirectory: personalizer
     ValidateFormatting: true
     Artifacts:
-    - name: azure-personalizer
-      safeName: azurepersonalizer
+    - name: azure-ai-personalizer
+      safeName: azureaipersonalizer

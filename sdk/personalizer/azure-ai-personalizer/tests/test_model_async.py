@@ -1,9 +1,11 @@
+import pytest
 from devtools_testutils import AzureRecordedTestCase
 import helpers
 
 class TestModelAsync(AzureRecordedTestCase):
 
     @helpers.PersonalizerPreparer()
+    @pytest.mark.asyncio
     async def test_model_import_export(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')

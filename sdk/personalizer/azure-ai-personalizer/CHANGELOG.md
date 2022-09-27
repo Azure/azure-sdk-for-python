@@ -16,10 +16,8 @@ This library replaces the package found here: https://pypi.org/project/azure-cog
 For more information about this, and preview releases of other Azure SDK libraries, please visit
 https://azure.github.io/azure-sdk/releases/latest/python.html.
 
-**Breaking changes: New API design**
-
 - New namespace/package name:
-  - The namespace/package name for the Form Recognizer client library has changed from
+  - The namespace/package name for the Personalizer client library has changed from
     `azure.cognitiveservices.personalizer` to `azure.ai.personalizer`
 - Asynchronous APIs added under `azure.ai.personalizer.aio` namespace
 - Authentication with API key supported using `AzureKeyCredential("<api_key>")` from `azure.core.credentials`

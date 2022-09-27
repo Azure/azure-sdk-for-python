@@ -1,4 +1,4 @@
-from venv import create
+import pytest
 from devtools_testutils import AzureRecordedTestCase
 import helpers
 import asyncio
@@ -9,14 +9,15 @@ import uuid
 class TestEvaluationsAsync(AzureRecordedTestCase):
 
     @helpers.PersonalizerPreparer()
+    @pytest.mark.asyncio
     async def test_run_evaluation(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
         client = helpers.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
         evaluation_id = str(uuid.uuid4())
         evaluation_name = "python_sdk_test_evaluation"
-        start_time = date.fromisoformat("2022-08-16")
-        end_time = date.fromisoformat("2022-08-17")
+        start_time = date.fromisoformat("2022-09-24")
+        end_time = date.fromisoformat("2022-09-26")
         iso_start_time = start_time.strftime("%Y%m%dT%H%M%S")
         iso_end_time = end_time.strftime("%Y%m%dT%H%M%S")
         evaluation_contract = {
@@ -35,6 +36,7 @@ class TestEvaluationsAsync(AzureRecordedTestCase):
         await client.evaluations.delete(evaluation_id)
 
     @helpers.PersonalizerPreparer()
+    @pytest.mark.asyncio
     async def test_list_evaluations(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')

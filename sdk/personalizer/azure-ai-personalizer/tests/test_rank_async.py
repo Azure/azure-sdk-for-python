@@ -1,9 +1,11 @@
+import pytest
 from devtools_testutils import AzureRecordedTestCase
 import helpers
 
 class TestRank(AzureRecordedTestCase):
 
     @helpers.PersonalizerPreparer()
+    @pytest.mark.asyncio
     def test_rank_with_no_context_features(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
@@ -20,6 +22,7 @@ class TestRank(AzureRecordedTestCase):
         client.rank(request)
 
     @helpers.PersonalizerPreparer()
+    @pytest.mark.asyncio
     def test_rank_with_context_features(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')

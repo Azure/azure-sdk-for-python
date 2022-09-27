@@ -3,3 +3,4 @@
 ../../core/azure-core
 -e ../../identity/azure-identity
 aiohttp>=3.0
+pytest>=7.1.3
