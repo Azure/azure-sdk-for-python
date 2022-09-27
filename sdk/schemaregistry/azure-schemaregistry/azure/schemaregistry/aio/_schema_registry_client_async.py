@@ -185,24 +185,24 @@ class SchemaRegistryClient(object):
                 :dedent: 4
                 :caption: Get schema by version.
         """
+        http_request_kwargs = get_http_request_kwargs(kwargs)
         try:
             try:
                 schema_id = args[0]
             except IndexError:
                 schema_id = kwargs.pop("schema_id")
-            http_request_kwargs = get_http_request_kwargs(kwargs)
             schema_id = cast(str, schema_id)
             request = schema_rest.build_get_by_id_request(
                 id=schema_id, **http_request_kwargs
             )
         except KeyError:
+            http_request_kwargs = get_http_request_kwargs(kwargs)
             try:
                 group_name = kwargs.pop("group_name")
                 name = kwargs.pop("name")
                 version = kwargs.pop("version")
             except KeyError as exc:
                 raise TypeError(f"If getting schema by version, '{exc.args[0]}' is a required keyword. Else, pass in the required argument for the `schema_id` parameter.")
-            http_request_kwargs = get_http_request_kwargs(kwargs)
             request = schema_rest.build_get_schema_version_request(
                 group_name=group_name, schema_name=name, schema_version=version, **http_request_kwargs
             )
