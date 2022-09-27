@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, TYPE_CHECKING, Union, cast
+from typing import Any, TYPE_CHECKING, Union, cast, overload
 
 from ._utils import get_http_request_kwargs
 from ._common._constants import SchemaFormat, DEFAULT_VERSION
@@ -143,13 +143,26 @@ class SchemaRegistryClient(object):
         response.raise_for_status()
         return _parse_response_schema_properties(response, format)
 
-    def get_schema(self, schema_id, **kwargs):
-        # type: (str, Any) -> Schema
-        """
-        Gets a registered schema by its unique ID.
-        Azure Schema Registry guarantees that ID is unique within a namespace.
+    @overload
+    def get_schema(self, schema_id: str, **kwargs: Any) -> Schema:
+        ...
+
+    @overload
+    def get_schema(self, *, group_name: str, name: str, version: str, **kwargs) -> Schema:
+        ...
+
+    def get_schema(self, *args: Union[str, int], **kwargs: Any) -> Schema:
+        """Gets a registered schema. There are two ways to call this method:
+        1) To get a registered schema by its unique ID, pass the `schema_id` parameter and any optional keyword arguments.
+         Azure Schema Registry guarantees that ID is unique within a namespace.
+
+        2) To get a specific version of a schema within the specified schema group, pass in the required keyword argments
+         `group_name`, `name`, and `version` and any optional keyword arguments.
 
         :param str schema_id: References specific schema in registry namespace.
+        :keyword str group_name: Name of schema group that contains the registered schema.
+        :keyword str name: Name of schema which should be retrieved.
+        :keyword int version: Version of schema which should be retrieved.
         :rtype: ~azure.schemaregistry.Schema
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -162,25 +175,6 @@ class SchemaRegistryClient(object):
                 :dedent: 4
                 :caption: Get schema by id.
 
-        """
-        http_request_kwargs = get_http_request_kwargs(kwargs)
-        request = schema_rest.build_get_by_id_request(
-            id=schema_id, **http_request_kwargs
-        )
-        response = self._generated_client.send_request(request, **kwargs)
-        response.raise_for_status()
-        return _parse_response_schema(response)
-
-    def get_schema_by_version(self, group_name: str, name: str, version: int, **kwargs: Any) -> Schema:
-        """
-        Gets a specific version of a schema within the specified schema group.
-
-        :param str group_name: Name of schema group that contains the registered schema.
-        :param str name: Name of schema which should be retrieved.
-        :param int version: Version of schema which should be retrieved.
-        :rtype: ~azure.schemaregistry.Schema
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
-
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sync_samples/sample_code_schemaregistry.py
@@ -191,10 +185,27 @@ class SchemaRegistryClient(object):
                 :caption: Get schema by version.
 
         """
-        http_request_kwargs = get_http_request_kwargs(kwargs)
-        request = schema_rest.build_get_schema_version_request(
-            group_name=group_name, schema_name=name, schema_version=version, **http_request_kwargs
-        )
+        try:
+            try:
+                schema_id = args[0]
+            except IndexError:
+                schema_id = kwargs.pop("schema_id")
+            http_request_kwargs = get_http_request_kwargs(kwargs)
+            schema_id = cast(str, schema_id)
+            request = schema_rest.build_get_by_id_request(
+                id=schema_id, **http_request_kwargs
+            )
+        except KeyError:
+            try:
+                group_name = kwargs.pop("group_name")
+                name = kwargs.pop("name")
+                version = kwargs.pop("version")
+            except KeyError as exc:
+                raise TypeError(f"If getting schema by version, '{exc.args[0]}' is a required keyword. Else, pass in the required argument for the `schema_id` parameter.")
+            http_request_kwargs = get_http_request_kwargs(kwargs)
+            request = schema_rest.build_get_schema_version_request(
+                group_name=group_name, schema_name=name, schema_version=version, **http_request_kwargs
+            )
         response = self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
         return _parse_response_schema(response)

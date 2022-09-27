@@ -83,7 +83,7 @@ def register_schema(schema_registry_client):
 
 def get_schema(schema_registry_client, schema_id):
     # [START get_schema_sync]
-    schema = schema_registry_client.get_schema(schema_id)
+    schema = schema_registry_client.get_schema(schema_id=schema_id)
     definition = schema.definition
     properties = schema.properties
     # [END get_schema_sync]
@@ -95,7 +95,7 @@ def get_schema_by_version(schema_registry_client, version):
     # [START get_schema_by_version_sync]
     group_name = os.environ["SCHEMAREGISTRY_GROUP"]
     name = "your-schema-name"
-    schema = schema_registry_client.get_schema_by_version(group_name, name, version)
+    schema = schema_registry_client.get_schema(group_name=group_name, name=name, version=version)
     definition = schema.definition
     properties = schema.properties
     # [END get_schema_by_version_sync]
@@ -123,7 +123,7 @@ def get_old_schema_by_version(schema_registry_client):
     )
     print(f"Updated schema v{updated_schema_properties.version}: {NEW_SCHEMA_JSON}")
     old_version = updated_schema_properties.version - 1
-    schema = schema_registry_client.get_schema_by_version(GROUP_NAME, NAME, old_version)
+    schema = schema_registry_client.get_schema(group_name=GROUP_NAME, name=NAME, version=old_version)
     print(f"Retrieving old schema v{schema.properties.version}: {schema.definition}")
     return schema
 
