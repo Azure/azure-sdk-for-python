@@ -48,7 +48,7 @@ class SystemCreatedAcrAccount:
     # string input.
     @classmethod
     def _to_rest_object(cls, acr) -> RestAcrDetails:
-        if hasattr(acr, "acr_account_sku"):
+        if hasattr(acr, "acr_account_sku") and acr.acr_account_sku is not None:
             # SKU enum requires input to be a capitalized word.
             # Format input to be acceptable as long as spelling is correct.
             acr_account_sku = acr.acr_account_sku.capitalize()
@@ -68,12 +68,12 @@ class SystemCreatedAcrAccount:
         if not rest_obj:
             return None
         # TODO should we even bother check if both values are set and throw an error? This shouldn't be possible.
-        if hasattr(rest_obj, "system_created_acr_account"):
+        if hasattr(rest_obj, "system_created_acr_account") and rest_obj.system_created_acr_account is not None:
             return SystemCreatedAcrAccount(
                 acr_account_sku=rest_obj.system_created_acr_account.acr_account_sku,
                 arm_resource_id=rest_obj.system_created_acr_account.arm_resource_id,
             )
-        elif hasattr(rest_obj, "user_created_acr_account"):
+        elif hasattr(rest_obj, "user_created_acr_account") and rest_obj.user_created_acr_account is not None:
             return rest_obj.user_created_acr_account
         else:
             return None  # TODO should this throw an error instead?
@@ -109,7 +109,7 @@ class SystemCreatedStorageAccount:
     # string input.
     @classmethod
     def _to_rest_object(cls, storage) -> RestStorageAccountDetails:
-        if hasattr(storage, "storage_account_type"):
+        if hasattr(storage, "storage_account_type") and storage.storage_account_type is not None:
             storage_account_type = StorageAccountType(
                 storage.storage_account_type.lower())
             account = RestSystemCreatedStorageAccount(
