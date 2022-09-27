@@ -10,10 +10,7 @@ from azure.keyvault.secrets import (
      SecretClient,
      KeyVaultSecretIdentifier
 )
-from azure.core.exceptions import (
-    HttpResponseError,
-    ResourceNotFoundError
-)
+from azure.core.exceptions import ResourceNotFoundError
 from ._settingselector import SettingSelector
 from ._azure_appconfiguration_provider_error import KeyVaultReferenceError
 from ._constants import KEY_VAULT_REFERENCE_CONTENT_TYPE
@@ -69,11 +66,8 @@ class AzureAppConfigurationProvider:
         secret_clients = key_vault_options.secret_clients if key_vault_options else {}
 
         for select in selects:
-            try:
-                configurations = provider._client.list_configuration_settings(
-                    key_filter=select.key_filter, label_filter=select.label_filter)
-            except HttpResponseError as e:
-                raise e
+            configurations = provider._client.list_configuration_settings(
+                key_filter=select.key_filter, label_filter=select.label_filter)
             for config in configurations:
 
                 trimmed_key = config.key
@@ -82,7 +76,7 @@ class AzureAppConfigurationProvider:
                     if config.key.startswith(trim):
                         trimmed_key = config.key[len(trim):]
                         break
-                
+
                 if config.content_type == KEY_VAULT_REFERENCE_CONTENT_TYPE:
                     secret = provider.__resolve_keyvault_reference(config, key_vault_options, secret_clients)
                     provider._dict[trimmed_key] = secret
@@ -90,7 +84,7 @@ class AzureAppConfigurationProvider:
                     try:
                         j_object = json.loads(config.value)
                         provider._dict[trimmed_key] = j_object
-                    except json.JSONDecodeError as e:
+                    except json.JSONDecodeError:
                         # If the value is not a valid JSON, treat it like regular string value
                         provider._dict[trimmed_key] = config.value
                 else:
@@ -143,11 +137,10 @@ class AzureAppConfigurationProvider:
         if referenced_client:
             try:
                 return referenced_client.get_secret(key_vault_identifier.name, version=key_vault_identifier.version)
-            except ResourceNotFoundError as e:
+            except ResourceNotFoundError:
                 raise KeyVaultReferenceError("Key Vault %s does not contain secret %s" % (
                     key_vault_identifier.vault_url, key_vault_identifier.name))
-            except HttpResponseError as e:
-                raise e
+
 
         if key_vault_options.secret_resolver is not None:
             return key_vault_options.secret_resolver(config.secret_id)
