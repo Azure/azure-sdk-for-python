@@ -28,7 +28,8 @@ from azure.ai.ml._restclient.v2022_01_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062022Preview
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
+from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
+from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
@@ -199,13 +200,6 @@ class MLClient(object):
             **kwargs,
         )
 
-        self._rp_service_client_registries = ServiceClient102022(
-            subscription_id=self._operation_scope._subscription_id,
-            credential=self._credential,
-            base_url=base_url,
-            **kwargs,
-        )
-
         self._rp_service_client = ServiceClient052022(
             subscription_id=self._operation_scope._subscription_id,
             credential=self._credential,
@@ -257,7 +251,14 @@ class MLClient(object):
             **kwargs,
         )
 
-        self._service_client_10_2022_preview = ServiceClient102022(
+        self._service_client_10_2022_preview = ServiceClient102022Preview(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
+        self._service_client_10_2022 = ServiceClient102022(
             credential=self._credential,
             subscription_id=self._operation_scope._subscription_id,
             base_url=base_url,
@@ -275,7 +276,7 @@ class MLClient(object):
         # TODO make sure that at least one reviewer who understands operation initialization details reviews this
         self._registries = RegistryOperations(
             self._operation_scope,
-            self._rp_service_client_registries,
+            self._service_client_10_2022_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
