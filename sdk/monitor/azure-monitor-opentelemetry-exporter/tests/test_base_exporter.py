@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import json
 import os
 import shutil
 import unittest
@@ -62,6 +61,7 @@ class TestBaseExporter(unittest.TestCase):
         os.environ[
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
+        os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         cls._base = BaseExporter()
         cls._envelopes_to_export = [TelemetryItem(name="Test", time=datetime.now())]
 
@@ -193,9 +193,45 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    def test_transmit_request_error_statsbeat(self, stats_mock):
+        exporter = BaseExporter(enable_local_storage=False)
+        with mock.patch.object(AzureMonitorClient, 'track', throw(ServiceRequestError, message="error")):
+            result = exporter._transmit(self._envelopes_to_export)
+        stats_mock.assert_called_once()
+        self.assertEqual(len(_REQUESTS_MAP), 3)
+        self.assertEqual(_REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]]["ServiceRequestError"], 1)
+        self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
+        self.assertEqual(_REQUESTS_MAP["count"], 1)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
     def test_transmit_request_exception(self):
         with mock.patch.object(AzureMonitorClient, 'track', throw(Exception)):
             result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    def test_transmit_request_exception_statsbeat(self, stats_mock):
+        exporter = BaseExporter(enable_local_storage=False)
+        with mock.patch.object(AzureMonitorClient, 'track', throw(Exception)):
+            result = exporter._transmit(self._envelopes_to_export)
+        stats_mock.assert_called_once()
+        self.assertEqual(len(_REQUESTS_MAP), 3)
+        self.assertEqual(_REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]]["Exception"], 1)
+        self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
+        self.assertEqual(_REQUESTS_MAP["count"], 1)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     def test_transmission_200(self):
@@ -208,14 +244,23 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.SUCCESS)
 
-    def test_statsbeat_200(self):
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    def test_statsbeat_200(self, stats_mock):
+        exporter = BaseExporter(enable_local_storage=False)
         with mock.patch.object(AzureMonitorClient, 'track') as post:
             post.return_value = TrackResponse(
                 items_received=1,
                 items_accepted=1,
                 errors=[],
             )
-            result = self._base._transmit(self._envelopes_to_export)
+            result = exporter._transmit(self._envelopes_to_export)
+        stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
         self.assertEqual(_REQUESTS_MAP[_REQ_SUCCESS_NAME[1]], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
@@ -223,7 +268,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(result, ExportResult.SUCCESS)
 
     def test_transmission_206_retry(self):
-        exporter = BaseExporter()
+        exporter = BaseExporter(enable_local_storage=False)
         exporter.storage = mock.Mock()
         test_envelope = TelemetryItem(name="testEnvelope", time=datetime.now())
         custom_envelopes_to_export = [TelemetryItem(name="Test", time=datetime.now(
@@ -248,9 +293,16 @@ class TestBaseExporter(unittest.TestCase):
             result = exporter._transmit(custom_envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
         exporter.storage.put.assert_called_once()
-    
-    def test_statsbeat_206_retry(self):
-        exporter = BaseExporter()
+
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    def test_statsbeat_206_retry(self, stats_mock):
+        exporter = BaseExporter(enable_local_storage=False)
         exporter.storage = mock.Mock()
         test_envelope = TelemetryItem(name="testEnvelope", time=datetime.now())
         custom_envelopes_to_export = [TelemetryItem(name="Test", time=datetime.now(
@@ -273,6 +325,7 @@ class TestBaseExporter(unittest.TestCase):
                 ],
             )
             result = exporter._transmit(custom_envelopes_to_export)
+        stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
         self.assertEqual(_REQUESTS_MAP[_REQ_RETRY_NAME[1]][500], 1)
         self.assertEqual(_REQUESTS_MAP["count"], 1)
@@ -280,7 +333,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmission_206_no_retry(self):
-        exporter = BaseExporter()
+        exporter = BaseExporter(enable_local_storage=False)
         exporter.storage = mock.Mock()
         test_envelope = TelemetryItem(name="testEnvelope", time=datetime.now())
         custom_envelopes_to_export = [TelemetryItem(name="Test", time=datetime.now(
@@ -300,9 +353,16 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(custom_envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
         exporter.storage.put.assert_not_called()
-    
-    def test_statsbeat_206_no_retry(self):
-        exporter = BaseExporter()
+
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    def test_statsbeat_206_no_retry(self, stats_mock):
+        exporter = BaseExporter(enable_local_storage=False)
         exporter.storage = mock.Mock()
         test_envelope = TelemetryItem(name="testEnvelope", time=datetime.now())
         custom_envelopes_to_export = [TelemetryItem(name="Test", time=datetime.now(
@@ -320,6 +380,7 @@ class TestBaseExporter(unittest.TestCase):
                 ],
             )
             result = exporter._transmit(custom_envelopes_to_export)
+        stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 2)
         self.assertEqual(_REQUESTS_MAP["count"], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
@@ -331,10 +392,19 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
-    def test_statsbeat_400(self):
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    def test_statsbeat_400(self, stats_mock):
+        exporter = BaseExporter(enable_local_storage=False)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(400, "{}")
-            result = self._base._transmit(self._envelopes_to_export)
+            result = exporter._transmit(self._envelopes_to_export)
+        stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
         self.assertEqual(_REQUESTS_MAP[_REQ_FAILURE_NAME[1]][400], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
@@ -347,10 +417,19 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
-    def test_statsbeat_402(self):
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    def test_statsbeat_402(self, stats_mock):
+        exporter = BaseExporter(enable_local_storage=False)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(402, "{}")
-            result = self._base._transmit(self._envelopes_to_export)
+            result = exporter._transmit(self._envelopes_to_export)
+        stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
         self.assertEqual(_REQUESTS_MAP[_REQ_THROTTLE_NAME[1]][402], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
@@ -363,10 +442,19 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
-    def test_statsbeat_408(self):
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    def test_statsbeat_408(self, stats_mock):
+        exporter = BaseExporter(enable_local_storage=False)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(408, "{}")
-            result = self._base._transmit(self._envelopes_to_export)
+            result = exporter._transmit(self._envelopes_to_export)
+        stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
         self.assertEqual(_REQUESTS_MAP[_REQ_RETRY_NAME[1]][408], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
@@ -379,10 +467,19 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
-    def test_statsbeat_429(self):
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    def test_statsbeat_429(self, stats_mock):
+        exporter = BaseExporter(enable_local_storage=False)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(429, "{}")
-            result = self._base._transmit(self._envelopes_to_export)
+            result = exporter._transmit(self._envelopes_to_export)
+        stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
         self.assertEqual(_REQUESTS_MAP[_REQ_RETRY_NAME[1]][429], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
@@ -395,10 +492,19 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
-    def test_statsbeat_439(self):
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    def test_statsbeat_439(self, stats_mock):
+        exporter = BaseExporter(enable_local_storage=False)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(439, "{}")
-            result = self._base._transmit(self._envelopes_to_export)
+            result = exporter._transmit(self._envelopes_to_export)
+        stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
         self.assertEqual(_REQUESTS_MAP[_REQ_THROTTLE_NAME[1]][439], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
@@ -411,10 +517,19 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
-    def test_statsbeat_500(self):
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    def test_statsbeat_500(self, stats_mock):
+        exporter = BaseExporter(enable_local_storage=False)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(500, "{}")
-            result = self._base._transmit(self._envelopes_to_export)
+            result = exporter._transmit(self._envelopes_to_export)
+        stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
         self.assertEqual(_REQUESTS_MAP[_REQ_RETRY_NAME[1]][500], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
@@ -427,10 +542,19 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
-    def test_statsbeat_502(self):
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    def test_statsbeat_502(self, stats_mock):
+        exporter = BaseExporter(enable_local_storage=False)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(502, "{}")
-            result = self._base._transmit(self._envelopes_to_export)
+            result = exporter._transmit(self._envelopes_to_export)
+        stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
         self.assertEqual(_REQUESTS_MAP[_REQ_RETRY_NAME[1]][502], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
@@ -443,6 +567,12 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
     def test_statsbeat_503(self):
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(503, "{}")
@@ -459,10 +589,19 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
-    def test_statsbeat_504(self):
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    def test_statsbeat_504(self, stats_mock):
+        exporter = BaseExporter(enable_local_storage=False)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(504, "{}")
-            result = self._base._transmit(self._envelopes_to_export)
+            result = exporter._transmit(self._envelopes_to_export)
+        stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
         self.assertEqual(_REQUESTS_MAP[_REQ_RETRY_NAME[1]][504], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])

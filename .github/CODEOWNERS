@@ -88,7 +88,7 @@
 /sdk/containerservice/                                               @samkreter @zqingqing1 @GaneshaThirumurthi
 
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @tjprescott @JericHunter
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @JericHunter
 
 # ServiceLabel: %Cosmos %Service Attention
 #/<NotInRepo>/                                                       @pjohari-ms @simorenoh @gahl-levy
@@ -135,7 +135,7 @@
 /sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
 
 # PRLabel: %Synapse
-/sdk/synapse/                                                        @wonner @idear1203 @xiangyan99
+/sdk/synapse/                                                        @wonner @yanjungao718 @xiangyan99
 
 # PRLabel: %EngSys
 /sdk/template/                                                       @scbedd @weshaggard @benbp
@@ -564,7 +564,7 @@
 #/<NotInRepo>/          @sunilagarwal @lfittl-msft @sr-msft @niklarin
 
 # ServiceLabel: %Recovery Services Backup %Service Attention
-#/<NotInRepo>/          @pvrk @adityabalaji-msft
+#/<NotInRepo>/          @pvrk @adityabalaji-msft @Daya-Patil
 
 # ServiceLabel: %Recovery Services Site-Recovery %Service Attention
 #/<NotInRepo>/          @Sharmistha-Rai

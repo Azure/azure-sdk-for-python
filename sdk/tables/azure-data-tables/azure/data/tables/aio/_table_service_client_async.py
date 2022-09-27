@@ -195,8 +195,8 @@ class TableServiceClient(AsyncTablesBaseClient):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_create_delete_table_async.py
-                :start-after: [START create_table]
-                :end-before: [END create_table]
+                :start-after: [START create_table_from_tsc]
+                :end-before: [END create_table_from_tsc]
                 :language: python
                 :dedent: 8
                 :caption: Creating a table from TableServiceClient.
@@ -219,8 +219,8 @@ class TableServiceClient(AsyncTablesBaseClient):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_create_delete_table_async.py
-                :start-after: [START create_if_not_exists]
-                :end-before: [END create_if_not_exists]
+                :start-after: [START create_table_if_not_exists]
+                :end-before: [END create_table_if_not_exists]
                 :language: python
                 :dedent: 8
                 :caption: Creating a table if it does not already exist
@@ -245,8 +245,8 @@ class TableServiceClient(AsyncTablesBaseClient):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_create_delete_table_async.py
-                :start-after: [START delete_table]
-                :end-before: [END delete_table]
+                :start-after: [START delete_table_from_tc]
+                :end-before: [END delete_table_from_tc]
                 :language: python
                 :dedent: 8
                 :caption: Deleting a table

@@ -21,7 +21,7 @@ class _StatsBeatExporter(AzureMonitorMetricExporter):
         scope: Optional[InstrumentationScope] = None
     ) -> TelemetryItem:
         # map statsbeat name from OpenTelemetry name
-        name = _STATSBEAT_METRIC_NAME_MAPPINGS.get(name, "")
+        name = _STATSBEAT_METRIC_NAME_MAPPINGS[name]
         return super()._point_to_envelope(
             point,
             name,

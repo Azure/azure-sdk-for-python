@@ -5,15 +5,15 @@
 import logging
 from abc import abstractmethod
 from os import PathLike
-from typing import Any, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
 
-class Endpoint(Resource):
+class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
     """Endpoint base class.
 
     :param auth_mode: the authentication mode, defaults to None
@@ -30,8 +30,8 @@ class Endpoint(Resource):
     :type properties: dict[str, str]
     :param scoring_uri: str, Endpoint URI, readonly
     :type scoring_uri: str, optional
-    :param swagger_uri: str, Endpoint Swagger URI, readonly
-    :type swagger_uri: str, optional
+    :param openapi_uri: str, Endpoint Open API URI, readonly
+    :type openapi_uri: str, optional
     :param provisioning_state: str, provisioning state, readonly
     :type provisioning_state: str, optional
     :param description: Description of the resource.
@@ -40,7 +40,6 @@ class Endpoint(Resource):
 
     def __init__(
         self,
-        base_path: Optional[str] = None,  # TODO: maybe delete this?
         auth_mode: str = None,
         location: str = None,
         name: str = None,
@@ -53,7 +52,7 @@ class Endpoint(Resource):
         if name:
             name = name.lower()
         self._scoring_uri = kwargs.pop("scoring_uri", None)
-        self._swagger_uri = kwargs.pop("swagger_uri", None)
+        self._openapi_uri = kwargs.pop("openapi_uri", None)
         self._provisioning_state = kwargs.pop("provisioning_state", None)
         super().__init__(name, description, tags, properties, **kwargs)
         self.auth_mode = auth_mode
@@ -69,13 +68,13 @@ class Endpoint(Resource):
         return self._scoring_uri
 
     @property
-    def swagger_uri(self) -> Optional[str]:
-        """URI to check the swagger definition of the endpoint.
+    def openapi_uri(self) -> Optional[str]:
+        """URI to check the open api definition of the endpoint.
 
-        :return: The swagger URI
+        :return: The open API URI
         :rtype: Optional[str]
         """
-        return self._swagger_uri
+        return self._openapi_uri
 
     @property
     def provisioning_state(self) -> Optional[str]:
@@ -87,11 +86,11 @@ class Endpoint(Resource):
         return self._provisioning_state
 
     @abstractmethod
-    def dump(self, path: Union[PathLike, str]) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         pass
 
     @abstractmethod
-    def _from_rest_object(self) -> Any:
+    def _from_rest_object(self, obj: Any) -> Any:
         pass
 
     def _merge_with(self, other: "Endpoint") -> None:
@@ -111,8 +110,8 @@ class Endpoint(Resource):
                 self.properties = {**self.properties, **other.properties}
             self.auth_mode = other.auth_mode or self.auth_mode
             if hasattr(other, "traffic"):
-                self.traffic = other.traffic
+                self.traffic = other.traffic  # pylint: disable=attribute-defined-outside-init
             if hasattr(other, "mirror_traffic"):
-                self.mirror_traffic = other.mirror_traffic
+                self.mirror_traffic = other.mirror_traffic  # pylint: disable=attribute-defined-outside-init
             if hasattr(other, "defaults"):
-                self.defaults = other.defaults
+                self.defaults = other.defaults  # pylint: disable=attribute-defined-outside-init

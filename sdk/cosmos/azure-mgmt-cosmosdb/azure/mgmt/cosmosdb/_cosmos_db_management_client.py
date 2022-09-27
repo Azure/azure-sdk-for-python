@@ -23,11 +23,9 @@ from .operations import (
     CollectionPartitionOperations,
     CollectionPartitionRegionOperations,
     CollectionRegionOperations,
-    DataTransferJobsOperations,
     DatabaseAccountRegionOperations,
     DatabaseAccountsOperations,
     DatabaseOperations,
-    GraphResourcesOperations,
     GremlinResourcesOperations,
     LocationsOperations,
     MongoDBResourcesOperations,
@@ -41,17 +39,12 @@ from .operations import (
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
     RestorableDatabaseAccountsOperations,
-    RestorableGremlinDatabasesOperations,
-    RestorableGremlinGraphsOperations,
-    RestorableGremlinResourcesOperations,
     RestorableMongodbCollectionsOperations,
     RestorableMongodbDatabasesOperations,
     RestorableMongodbResourcesOperations,
     RestorableSqlContainersOperations,
     RestorableSqlDatabasesOperations,
     RestorableSqlResourcesOperations,
-    RestorableTableResourcesOperations,
-    RestorableTablesOperations,
     ServiceOperations,
     SqlResourcesOperations,
     TableResourcesOperations,
@@ -95,8 +88,6 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
     :ivar partition_key_range_id_region: PartitionKeyRangeIdRegionOperations operations
     :vartype partition_key_range_id_region:
      azure.mgmt.cosmosdb.operations.PartitionKeyRangeIdRegionOperations
-    :ivar graph_resources: GraphResourcesOperations operations
-    :vartype graph_resources: azure.mgmt.cosmosdb.operations.GraphResourcesOperations
     :ivar sql_resources: SqlResourcesOperations operations
     :vartype sql_resources: azure.mgmt.cosmosdb.operations.SqlResourcesOperations
     :ivar mongo_db_resources: MongoDBResourcesOperations operations
@@ -109,8 +100,6 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
     :vartype gremlin_resources: azure.mgmt.cosmosdb.operations.GremlinResourcesOperations
     :ivar locations: LocationsOperations operations
     :vartype locations: azure.mgmt.cosmosdb.operations.LocationsOperations
-    :ivar data_transfer_jobs: DataTransferJobsOperations operations
-    :vartype data_transfer_jobs: azure.mgmt.cosmosdb.operations.DataTransferJobsOperations
     :ivar cassandra_clusters: CassandraClustersOperations operations
     :vartype cassandra_clusters: azure.mgmt.cosmosdb.operations.CassandraClustersOperations
     :ivar cassandra_data_centers: CassandraDataCentersOperations operations
@@ -143,20 +132,6 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
     :ivar restorable_mongodb_resources: RestorableMongodbResourcesOperations operations
     :vartype restorable_mongodb_resources:
      azure.mgmt.cosmosdb.operations.RestorableMongodbResourcesOperations
-    :ivar restorable_gremlin_databases: RestorableGremlinDatabasesOperations operations
-    :vartype restorable_gremlin_databases:
-     azure.mgmt.cosmosdb.operations.RestorableGremlinDatabasesOperations
-    :ivar restorable_gremlin_graphs: RestorableGremlinGraphsOperations operations
-    :vartype restorable_gremlin_graphs:
-     azure.mgmt.cosmosdb.operations.RestorableGremlinGraphsOperations
-    :ivar restorable_gremlin_resources: RestorableGremlinResourcesOperations operations
-    :vartype restorable_gremlin_resources:
-     azure.mgmt.cosmosdb.operations.RestorableGremlinResourcesOperations
-    :ivar restorable_tables: RestorableTablesOperations operations
-    :vartype restorable_tables: azure.mgmt.cosmosdb.operations.RestorableTablesOperations
-    :ivar restorable_table_resources: RestorableTableResourcesOperations operations
-    :vartype restorable_table_resources:
-     azure.mgmt.cosmosdb.operations.RestorableTableResourcesOperations
     :ivar service: ServiceOperations operations
     :vartype service: azure.mgmt.cosmosdb.operations.ServiceOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
@@ -165,8 +140,8 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-05-15-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-08-15". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -219,7 +194,6 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
         self.partition_key_range_id_region = PartitionKeyRangeIdRegionOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.graph_resources = GraphResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sql_resources = SqlResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.mongo_db_resources = MongoDBResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -232,9 +206,6 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
             self._client, self._config, self._serialize, self._deserialize
         )
         self.locations = LocationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.data_transfer_jobs = DataTransferJobsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.cassandra_clusters = CassandraClustersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -269,21 +240,6 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
             self._client, self._config, self._serialize, self._deserialize
         )
         self.restorable_mongodb_resources = RestorableMongodbResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.restorable_gremlin_databases = RestorableGremlinDatabasesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.restorable_gremlin_graphs = RestorableGremlinGraphsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.restorable_gremlin_resources = RestorableGremlinResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.restorable_tables = RestorableTablesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.restorable_table_resources = RestorableTableResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)

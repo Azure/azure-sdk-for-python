@@ -20,8 +20,6 @@ from _shared.testcase import (
 
 from preparers import tables_decorator
 
-# ------------------------------------------------------------------------------
-
 SERVICES = {
     TableServiceClient: 'table',
     TableClient: 'table',
@@ -30,6 +28,7 @@ SERVICES = {
 _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 'TableSecondaryEndpoint'}
+
 
 class TestTableClient(AzureRecordedTestCase, TableTestCase):
     @tables_decorator

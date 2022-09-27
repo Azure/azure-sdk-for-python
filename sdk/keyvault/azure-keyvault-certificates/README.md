@@ -60,6 +60,7 @@ This section contains code snippets covering common tasks:
 * [Update properties of an existing certificate](#update-properties-of-an-existing-certificate)
 * [Delete a certificate](#delete-a-certificate)
 * [List properties of certificates](#list-properties-of-certificates)
+* [Async operations](#async-operations)
 * [Asynchronously create a certificate](#asynchronously-create-a-certificate)
 * [Asynchronously list properties of certificates](#asynchronously-list-properties-of-certificates)
 

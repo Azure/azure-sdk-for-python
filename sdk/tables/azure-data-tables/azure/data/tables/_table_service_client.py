@@ -189,8 +189,8 @@ class TableServiceClient(TablesBaseClient):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_create_delete_table.py
-                :start-after: [START create_table_from_tc]
-                :end-before: [END create_table_from_tc]
+                :start-after: [START create_table_from_tsc]
+                :end-before: [END create_table_from_tsc]
                 :language: python
                 :dedent: 8
                 :caption: Creating a table from the TableServiceClient object

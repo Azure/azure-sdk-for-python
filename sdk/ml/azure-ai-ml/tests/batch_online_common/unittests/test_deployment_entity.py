@@ -1,25 +1,28 @@
-from azure.ai.ml.constants import BATCH_ENDPOINT_TYPE, ONLINE_ENDPOINT_TYPE, BatchDeploymentOutputAction
+import copy
+
+import pytest
+import yaml
+from test_utilities.utils import verify_entity_load_and_dump
+
+from azure.ai.ml import load_batch_deployment, load_online_deployment
+from azure.ai.ml._restclient.v2021_10_01.models import BatchOutputAction, EndpointComputeType
+from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities import (
-    CodeConfiguration,
-    OnlineEndpoint,
-    OnlineDeployment,
     BatchDeployment,
+    CodeConfiguration,
+    DefaultScaleSettings,
     KubernetesOnlineDeployment,
     ManagedOnlineDeployment,
-    DefaultScaleSettings,
-    TargetUtilizationScaleSettings,
+    OnlineDeployment,
+    OnlineEndpoint,
     ProbeSettings,
     ResourceRequirementsSettings,
     ResourceSettings,
+    TargetUtilizationScaleSettings,
 )
-from azure.ai.ml.entities._assets import Model, Environment
-from azure.ai.ml._restclient.v2021_10_01.models import EndpointComputeType, BatchOutputAction
-from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.entities._assets import Environment, Model
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
-from azure.ai.ml import load_online_deployment, load_batch_deployment
-import copy
-import yaml
-import pytest
+from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 
 
 @pytest.mark.unittest
@@ -162,20 +165,26 @@ class TestOnlineDeploymentFromYAML:
 class TestBatchDeploymentSDK:
     DEPLOYMENT = "tests/test_configs/deployments/batch/batch_deployment_mlflow.yaml"
 
-    def test_batch_endpoint_deployment_load(self) -> None:
+    def test_batch_endpoint_deployment_load_and_dump(self) -> None:
         with open(TestBatchDeploymentSDK.DEPLOYMENT, "r") as f:
             target = yaml.safe_load(f)
-        deployment = load_batch_deployment(TestBatchDeploymentSDK.DEPLOYMENT)
-        assert isinstance(deployment, BatchDeployment)
-        assert isinstance(deployment.model, str)
-        assert isinstance(deployment.compute, str)
-        assert isinstance(deployment.resources, ResourceConfiguration)
-        assert deployment.model == "lightgbm_predict:1"
-        assert deployment.output_action == BatchDeploymentOutputAction.APPEND_ROW
-        assert deployment.max_concurrency_per_instance == target["max_concurrency_per_instance"]
-        assert deployment.retry_settings.max_retries == target["retry_settings"]["max_retries"]
-        assert deployment.retry_settings.timeout == target["retry_settings"]["timeout"]
-        assert deployment.description == target["description"]
+
+        def simple_batch_deployment_validation(deployment):
+            assert isinstance(deployment, BatchDeployment)
+            assert isinstance(deployment.model, str)
+            assert isinstance(deployment.compute, str)
+            # comment out assertion as resources type has changes to JobResourceConfiguration
+            # assert isinstance(deployment.resources, ResourceConfiguration)
+            assert deployment.model == "lightgbm_predict:1"
+            assert deployment.output_action == BatchDeploymentOutputAction.APPEND_ROW
+            assert deployment.max_concurrency_per_instance == target["max_concurrency_per_instance"]
+            assert deployment.retry_settings.max_retries == target["retry_settings"]["max_retries"]
+            assert deployment.retry_settings.timeout == target["retry_settings"]["timeout"]
+            assert deployment.description == target["description"]
+
+        verify_entity_load_and_dump(
+            load_batch_deployment, simple_batch_deployment_validation, TestBatchDeploymentSDK.DEPLOYMENT
+        )
 
     def test_batch_endpoint_deployment_to_rest_object(self) -> None:
         with open(TestBatchDeploymentSDK.DEPLOYMENT, "r") as f:

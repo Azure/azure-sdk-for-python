@@ -6,7 +6,7 @@ FILE: sample_cascade_delete.py
 
 DESCRIPTION:
     This sample demonstrates 
-    - Getting a filterd list of farmers based on last modified timestamp
+    - Getting a filtered list of farmers based on last modified timestamp
     - Queuing a cascade delete job on a farmer, and polling for it to complete
 
 USAGE:

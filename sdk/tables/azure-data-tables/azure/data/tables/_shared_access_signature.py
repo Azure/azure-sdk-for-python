@@ -108,7 +108,7 @@ class SharedAccessSignature(object):
 
         return sas.get_token()
 
-
+# cspell:ignoreRegExp rsc.
 class QueryStringConstants(object):
     SIGNED_SIGNATURE = "sig"
     SIGNED_PERMISSION = "sp"

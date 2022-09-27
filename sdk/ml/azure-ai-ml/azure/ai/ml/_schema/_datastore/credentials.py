@@ -33,8 +33,6 @@ class AccountKeySchema(metaclass=PatchedSchemaMeta):
 
     @pre_dump
     def predump(self, data, **kwargs):
-        from azure.ai.ml.entities._datastore.credentials import AccountKeyCredentials
-
         if not isinstance(data, AccountKeyCredentials):
             raise ValidationError("Cannot dump non-AccountKeyCredentials object into AccountKeyCredentials")
         return data
@@ -49,8 +47,6 @@ class SasTokenSchema(metaclass=PatchedSchemaMeta):
 
     @pre_dump
     def predump(self, data, **kwargs):
-        from azure.ai.ml.entities._datastore.credentials import SasTokenCredentials
-
         if not isinstance(data, SasTokenCredentials):
             raise ValidationError("Cannot dump non-SasTokenCredentials object into SasTokenCredentials")
         return data
@@ -72,8 +68,6 @@ class ServicePrincipalSchema(BaseTenantCredentialSchema):
 
     @pre_dump
     def predump(self, data, **kwargs):
-        from azure.ai.ml.entities._datastore.credentials import ServicePrincipalCredentials
-
         if not isinstance(data, ServicePrincipalCredentials):
             raise ValidationError("Cannot dump non-ServicePrincipalCredentials object into ServicePrincipalCredentials")
         return data
@@ -89,8 +83,6 @@ class CertificateSchema(BaseTenantCredentialSchema):
 
     @pre_dump
     def predump(self, data, **kwargs):
-        from azure.ai.ml.entities._datastore.credentials import CertificateCredentials
-
         if not isinstance(data, CertificateCredentials):
             raise ValidationError("Cannot dump non-CertificateCredentials object into CertificateCredentials")
         return data

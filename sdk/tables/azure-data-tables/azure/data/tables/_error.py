@@ -78,6 +78,11 @@ def _validate_cosmos_tablename(table_name):
 
 def _validate_tablename_error(decoded_error, table_name):
     if (decoded_error.error_code == 'InvalidResourceName' and
+        'The specified resource name contains invalid characters' in decoded_error.message):
+        # This error is raised by Storage for any table/entity operations where the table name contains
+        # forbidden characters.
+        _validate_storage_tablename(table_name)
+    elif (decoded_error.error_code == 'InvalidResourceName' and
         'The specifed resource name contains invalid characters' in decoded_error.message):
         # This error is raised by Storage for any table/entity operations where the table name contains
         # forbidden characters.

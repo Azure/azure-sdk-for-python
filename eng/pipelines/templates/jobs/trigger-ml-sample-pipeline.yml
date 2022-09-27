@@ -10,7 +10,7 @@ parameters:
       skipVerifyChangeLog: true
   - name: SamplesRepo
     type: string
-    default: 'https://github.com/scbedd/azureml-examples'
+    default: 'https://github.com/azure/azureml-examples'
 
 jobs:
   - job: 'Build_Upload_PR'
@@ -54,7 +54,7 @@ jobs:
     - pwsh: |
         git clone --depth 1 ${{ parameters.SamplesRepo }} $(Agent.BuildDirectory)/ml
         Write-Host "##vso[task.setvariable variable=mlrepo;]$(Agent.BuildDirectory)/ml"
-      displayName: Clone the ML Samples Repo
+      displayName: Clone the ML Samples Repo, Set Variables
 
     - pwsh: |
         Get-ChildItem "$(mlrepo)" -R
@@ -78,7 +78,9 @@ jobs:
     - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
       parameters:
         RepoName: azureml-examples
+        RepoOwner: Azure
         PRBranchName: test-ml-sdk-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
+        PROwner: Azure
         BaseBranchName: main
         CommitMsg: "Update sdk/setup.sh to target fresh built azure-ai-ml wheel."
         PRTitle: "SDK Samples Run generated from $(Build.BuildId)"
