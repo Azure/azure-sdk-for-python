@@ -449,7 +449,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
             http_proxy_host = self._http_proxy["proxy_hostname"]
             http_proxy_port = self._http_proxy["proxy_port"]
             if http_proxy_host and http_proxy_port:
-                self.http_proxy_host = f"{http_proxy_host}:{http_proxy_port}"
+                http_proxy_host = f"{http_proxy_host}:{http_proxy_port}"
             username = self._http_proxy.get("username", None)
             password = self._http_proxy.get("password", None)
 
