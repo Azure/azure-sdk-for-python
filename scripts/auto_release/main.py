@@ -472,7 +472,6 @@ class CodegenTestPR:
     @staticmethod
     def get_function(function_attr):
         signature = inspect.signature(function_attr)
-        print(f"++++ func return:{str(signature.return_annotation)}, type:{type(signature.return_annotation)}")
         return_type = ReturnType.STRING
         if 'LROPoller' in str(signature.return_annotation):
             return_type = ReturnType.POLLING
@@ -491,7 +490,6 @@ class CodegenTestPR:
             parameter = signature.parameters[parameter_name]
             if parameter.default is parameter.empty and parameter_name != "kwargs":
                 return None
-        print(f"++++ func return:{signature.return_annotation}, type:{type(signature.return_annotation)}")
         return func_content
 
     def get_tests_info(self, module_name):
@@ -524,7 +522,6 @@ class CodegenTestPR:
                     else:
                         operations_info[op_name] = [func_content]
         tests_info = {'client': client_name, 'operations': operations_info}
-        print(tests_info)
         return tests_info
 
     def config_test(self, test_path, template_path):
