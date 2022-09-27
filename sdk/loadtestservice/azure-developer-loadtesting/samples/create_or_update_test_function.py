@@ -5,13 +5,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: create_or_update_test.py
+FILE: create_or_update_test_function.py
 
 DESCRIPTION:
     This sample shows how to create or update a load test
 
 USAGE:
-    python create_or_update_test.py
+    python create_or_update_test_function.py
 
     Set the environment variables with your own values before running the sample:
     1)  AZURE_CLIENT_ID - client id
@@ -27,7 +27,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTING_ENDPOINT"]
+LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
 # Build a client through AAD and resource endpoint
 client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)

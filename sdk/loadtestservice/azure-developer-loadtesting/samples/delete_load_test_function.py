@@ -5,13 +5,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: delete_load_test.py
+FILE: delete_load_test_function.py
 
 DESCRIPTION:
     This sample shows how to delete a load test
 
 USAGE:
-    python delete_load_test.py
+    python delete_load_test_function.py
 
     Set the environment variables with your own values before running the sample:
     1)  AZURE_CLIENT_ID - client id
@@ -35,7 +35,7 @@ from dotenv import load_dotenv
 
 # loading dotenv file
 load_dotenv()
-LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTING_ENDPOINT"]
+LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
 TEST_ID = "my-new-sdk-test-id"
 
