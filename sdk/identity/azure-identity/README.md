@@ -202,7 +202,7 @@ The [Managed identity authentication](https://docs.microsoft.com/azure/active-di
 
 * [Azure Virtual Machines](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token)
 * [Azure Virtual Machines Scale Sets](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/qs-configure-powershell-windows-vmss)
-* [Azure App Service and Azure Functions](https://docs.microsoft.com/azure/app-service/overview-managed-identity?tabs=dotnet)
+* [Azure App Service and Azure Functions](https://docs.microsoft.com/azure/app-service/overview-managed-identity?tabs=python)
 * [Azure Kubernetes Service](https://docs.microsoft.com/azure/aks/use-managed-identity)
 * [Azure Cloud Shell](https://docs.microsoft.com/azure/cloud-shell/msi-authorization)
 * [Azure Arc](https://docs.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)
