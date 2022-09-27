@@ -121,7 +121,6 @@ class RegistryOperations:
         :rtype: LROPoller
         """
         existing_registry = None
-        resource_group = self._resource_group_name
         try:
             existing_registry = self.get(name=registry.name)
         except Exception:  # pylint: disable=broad-except
