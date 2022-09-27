@@ -67,14 +67,14 @@ class SchemaRegistryClient(object):
         self,
         fully_qualified_namespace: str,
         credential: "AsyncTokenCredential",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._generated_client = AzureSchemaRegistry(
             credential=credential,
             endpoint=fully_qualified_namespace,
             api_version=api_version,
-            **kwargs
+            **kwargs,
         )
 
     async def __aenter__(self):
@@ -97,7 +97,7 @@ class SchemaRegistryClient(object):
         name: str,
         definition: str,
         format: Union[str, SchemaFormat],  # pylint:disable=redefined-builtin
-        **kwargs: Any
+        **kwargs: Any,
     ) -> SchemaProperties:
         """
         Register new schema. If schema of specified name does not exist in specified group,
@@ -138,7 +138,7 @@ class SchemaRegistryClient(object):
             content_type=kwargs.pop(
                 "content_type", "application/json; serialization={}".format(format)
             ),
-            **http_request_kwargs
+            **http_request_kwargs,
         )
 
         response = await self._generated_client.send_request(request, **kwargs)
@@ -150,17 +150,19 @@ class SchemaRegistryClient(object):
         ...
 
     @overload
-    async def get_schema(self, *, group_name: str, name: str, version: int, **kwargs) -> Schema:
+    async def get_schema(
+        self, *, group_name: str, name: str, version: int, **kwargs
+    ) -> Schema:
         ...
 
     @distributed_trace_async
     async def get_schema(self, *args: Union[str, int], **kwargs: Any) -> Schema:
         """Gets a registered schema. There are two ways to call this method:
-        1) To get a registered schema by its unique ID, pass the `schema_id` parameter and any optional keyword arguments.
-        Azure Schema Registry guarantees that ID is unique within a namespace.
+        1) To get a registered schema by its unique ID, pass the `schema_id` parameter and any optional
+        keyword arguments. Azure Schema Registry guarantees that ID is unique within a namespace.
 
-        2) To get a specific version of a schema within the specified schema group, pass in the required keyword argments
-        `group_name`, `name`, and `version` and any optional keyword arguments.
+        2) To get a specific version of a schema within the specified schema group, pass in the required
+        keyword arguments `group_name`, `name`, and `version` and any optional keyword arguments.
 
         :param str schema_id: References specific schema in registry namespace.
         :keyword str group_name: Name of schema group that contains the registered schema.
@@ -202,9 +204,15 @@ class SchemaRegistryClient(object):
                 name = kwargs.pop("name")
                 version = kwargs.pop("version")
             except KeyError as exc:
-                raise TypeError(f"If getting schema by version, '{exc.args[0]}' is a required keyword. Else, pass in the required argument for the `schema_id` parameter.")
+                raise TypeError(
+                    f"""If getting schema by version, '{exc.args[0]}' is a required keyword."""
+                    """Else, pass in the required argument for the `schema_id` parameter."""
+                )
             request = schema_rest.build_get_schema_version_request(
-                group_name=group_name, schema_name=name, schema_version=version, **http_request_kwargs
+                group_name=group_name,
+                schema_name=name,
+                schema_version=version,
+                **http_request_kwargs,
             )
         response = await self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
@@ -217,7 +225,7 @@ class SchemaRegistryClient(object):
         name: str,
         definition: str,
         format: Union[str, SchemaFormat],  # pylint:disable=redefined-builtin
-        **kwargs: Any
+        **kwargs: Any,
     ) -> SchemaProperties:
         """
         Gets the schema properties corresponding to an existing schema within the specified schema group,
@@ -256,7 +264,7 @@ class SchemaRegistryClient(object):
             content_type=kwargs.pop(
                 "content_type", "application/json; serialization={}".format(format)
             ),
-            **http_request_kwargs
+            **http_request_kwargs,
         )
 
         response = await self._generated_client.send_request(request, **kwargs)
