@@ -11,6 +11,7 @@ import functools
 import logging
 import time
 import warnings
+from enum import Enum
 from typing import Any, List, Optional, AsyncIterator, Union, Callable, TYPE_CHECKING, cast
 
 from .._pyamqp.error import AMQPError
@@ -208,9 +209,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             **kwargs
         )
         self._session = (
-            None if self._session_id is None else ServiceBusSession(self._session_id, self)
+            None if self._session_id is None else ServiceBusSession(cast(str, self._session_id), self)
         )
         self._receive_context = asyncio.Event()
+        self._handler: ReceiveClientAsync
 
     # Python 3.5 does not allow for yielding from a coroutine, so instead of the try-finally functional wrapper
     # trick to restore the timeout, let's use a wrapper class to maintain the override that may be specified.
@@ -769,7 +771,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         await self._open()
         uamqp_receive_mode = ServiceBusToAMQPReceiveModeMap[self._receive_mode]
         try:
-            receive_mode = uamqp_receive_mode.value
+            receive_mode = cast(Enum, uamqp_receive_mode).value
         except AttributeError:
             receive_mode = int(uamqp_receive_mode)
         message = {

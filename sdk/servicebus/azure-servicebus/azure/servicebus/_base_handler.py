@@ -18,6 +18,7 @@ except ImportError:
 
 from ._pyamqp.utils import generate_sas_token, amqp_string_value
 from ._pyamqp.message import Message, Properties
+from ._pyamqp.client import AMQPClientSync
 
 from ._common._configuration import Configuration
 from .exceptions import (
@@ -259,7 +260,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
         self._running = False
-        self._handler = None  # type: uamqp.AMQPClientSync
+        self._handler = cast(AMQPClientSync, None)  # type: AMQPClientSync
         self._auth_uri = None
         self._properties = create_properties(self._config.user_agent)
         self._shutdown = threading.Event()
@@ -450,7 +451,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         timeout=None,
         **kwargs
     ):
-        # type: (bytes, Any, Callable, bool, Optional[float], Any) -> uamqp.Message
+        # type: (bytes, Any, Callable, bool, Optional[float], Any) -> Message
         """
         Execute an amqp management operation.
 
@@ -478,7 +479,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             except AttributeError:
                 pass
 
-        mgmt_msg = Message(
+        mgmt_msg = Message( # type: ignore # TODO: fix mypy error
             value=message,
             properties=Properties(reply_to=self._mgmt_target, **kwargs),
             application_properties=application_properties,

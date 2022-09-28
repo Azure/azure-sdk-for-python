@@ -6,12 +6,13 @@ import logging
 import asyncio
 import uuid
 import time
-from typing import TYPE_CHECKING, Any, Callable, Optional, Dict, Union
+from typing import TYPE_CHECKING, Any, Callable, Optional, Dict, Union, cast
 
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 
 from .._pyamqp.utils import amqp_string_value
 from .._pyamqp.message import Message, Properties
+from .._pyamqp.aio._client_async import AMQPClientAsync
 from .._base_handler import _generate_sas_token, BaseHandler as BaseHandlerSync, _get_backoff_time
 from .._common._configuration import Configuration
 from .._common.utils import create_properties, strip_protocol_from_uri, parse_sas_credential
@@ -143,7 +144,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
         self._running = False
-        self._handler = None  # type: uamqp.AMQPClientAsync
+        self._handler = cast(AMQPClientAsync, None)  # type: AMQPClientAsync
         self._auth_uri = None
         self._properties = create_properties(self._config.user_agent)
         self._shutdown = asyncio.Event()
@@ -298,7 +299,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         timeout=None,
         **kwargs
     ):
-        # type: (bytes, uamqp.Message, Callable, bool, Optional[float], Any) -> uamqp.Message
+        # type: (bytes, Message, Callable, bool, Optional[float], Any) -> Message
         """
         Execute an amqp management operation.
 
@@ -325,7 +326,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 }
             except AttributeError:
                 pass
-        mgmt_msg = Message(
+        mgmt_msg = Message( # type: ignore  # TODO: fix mypy
             value=message,
             properties=Properties(reply_to=self._mgmt_target, **kwargs),
             application_properties=application_properties,

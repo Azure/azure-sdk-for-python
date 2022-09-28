@@ -98,7 +98,7 @@ def build_uri(address, entity):
 
 
 def create_properties(user_agent=None):
-    # type: (Optional[str]) -> Dict[types.AMQPSymbol, str]
+    # type: (Optional[str]) -> Dict[str, str]
     """
     Format the properties with which to instantiate the connection.
     This acts like a user agent over HTTP.

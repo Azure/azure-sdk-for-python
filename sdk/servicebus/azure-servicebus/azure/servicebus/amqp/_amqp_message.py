@@ -9,7 +9,7 @@ import time
 import uuid
 from datetime import datetime
 import warnings
-from typing import Optional, Any, cast, Mapping, Union, Dict
+from typing import Optional, Any, cast, Mapping, Union, Dict, Iterable
 
 from msrest.serialization import TZ_UTC
 from .._pyamqp.message import Message, Header, Properties
@@ -172,13 +172,13 @@ class AmqpAnnotatedMessage(object):
         self._footer = footer
         properties_dict = cast(Mapping, properties)
         self._properties = AmqpMessageProperties(**properties_dict) if properties else None
-        self._application_properties = application_properties
-        self._annotations = annotations
-        self._delivery_annotations = delivery_annotations
+        self._application_properties = cast(Optional[Dict[Union[str, bytes], Any]], application_properties)
+        self._annotations = cast(Optional[Dict[Union[str, bytes], Any]], annotations)
+        self._delivery_annotations = cast(Optional[Dict[Union[str, bytes], Any]], delivery_annotations)
 
     def __str__(self) -> str:
         if self.body_type == AmqpMessageBodyType.DATA: # pylint:disable=no-else-return
-            return "".join(d.decode(self._encoding) for d in self._data_body)
+            return "".join(d.decode(self._encoding) for d in cast(Iterable[bytes], self._data_body))
         elif self.body_type == AmqpMessageBodyType.SEQUENCE:
             return str(self._sequence_body)
         elif self.body_type == AmqpMessageBodyType.VALUE:
@@ -346,9 +346,9 @@ class AmqpAnnotatedMessage(object):
         :rtype: Any
         """
         if self.body_type == AmqpMessageBodyType.DATA: # pylint:disable=no-else-return
-            return (i for i in self._data_body)
+            return (i for i in cast(Iterable, self._data_body))
         elif self.body_type == AmqpMessageBodyType.SEQUENCE:
-            return (i for i in self._sequence_body)
+            return (i for i in cast(Iterable, self._sequence_body))
         elif self.body_type == AmqpMessageBodyType.VALUE:
             return self._value_body
         return None

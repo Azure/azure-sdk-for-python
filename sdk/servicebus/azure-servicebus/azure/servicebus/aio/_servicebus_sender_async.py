@@ -136,6 +136,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._max_message_size_on_link = 0
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
+        self._handler: SendClientAsync
 
     @classmethod
     def _from_connection_string(

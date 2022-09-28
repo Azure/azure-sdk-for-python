@@ -47,6 +47,7 @@ from ._common.constants import (
 )
 
 if TYPE_CHECKING:
+    from ._pyamqp.authentication import JWTTokenAuth
     from azure.core.credentials import (
         TokenCredential,
         AzureSasCredential,
@@ -187,6 +188,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._max_message_size_on_link = 0
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
+        self._handler: SendClientSync
 
     @classmethod
     def _from_connection_string(cls, conn_str, **kwargs):
@@ -227,7 +229,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return cls(**constructor_args)
 
     def _create_handler(self, auth):
-        # type: (AMQPAuth) -> None
+        # type: (JWTTokenAuth) -> None
 
         custom_endpoint_address = self._config.custom_endpoint_address # pylint:disable=protected-access
         transport_type = self._config.transport_type # pylint:disable=protected-access
@@ -273,7 +275,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             raise
 
     def _send(self, message, timeout=None):
-        # type: (Union[ServiceBusMessage, ServiceBusMessageBatch], Optional[float], Exception) -> None
+        # type: (Union[ServiceBusMessage, ServiceBusMessageBatch], Optional[float]) -> None
         self._open()
         try:
             # TODO This is not batch message sending?
@@ -454,6 +456,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             ):  # pylint: disable=len-as-condition
                 return  # Short circuit noop if an empty list or batch is provided.
 
+            obj_message = cast(Union[ServiceBusMessage, ServiceBusMessageBatch], obj_message)
             if send_span:
                 self._add_span_request_attributes(send_span)
             self._send(

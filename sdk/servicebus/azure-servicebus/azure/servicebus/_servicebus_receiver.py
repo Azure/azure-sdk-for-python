@@ -10,7 +10,8 @@ import functools
 import uuid
 import datetime
 import warnings
-from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, cast
+from enum import Enum
+from typing import Any, Callable, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, cast
 
 #from uamqp.authentication.common import AMQPAuth
 from ._pyamqp.message import Message
@@ -65,6 +66,7 @@ from ._common.utils import utc_from_timestamp, utc_now
 from ._servicebus_session import ServiceBusSession
 
 if TYPE_CHECKING:
+    from ._pyamqp.authentication import JWTTokenAuth
     from ._common.auto_lock_renewer import AutoLockRenewer
     from azure.core.credentials import (
         TokenCredential,
@@ -213,9 +215,10 @@ class ServiceBusReceiver(
         self._session = (
             None
             if self._session_id is None
-            else ServiceBusSession(self._session_id, self)
+            else ServiceBusSession(cast(str, self._session_id), self)
         )
         self._receive_context = threading.Event()
+        self._handler: ReceiveClientSync
 
     def __iter__(self):
         return self._iter_contextual_wrapper()
@@ -350,7 +353,7 @@ class ServiceBusReceiver(
         return cls(**constructor_args)
 
     def _create_handler(self, auth):
-        # type: (AMQPAuth) -> None
+        # type: (JWTTokenAuth) -> None
 
         custom_endpoint_address = self._config.custom_endpoint_address # pylint:disable=protected-access
         transport_type = self._config.transport_type # pylint:disable=protected-access
@@ -382,7 +385,8 @@ class ServiceBusReceiver(
             link_properties={CONSUMER_IDENTIFIER: self._name},
         )
         if self._prefetch_count == 1:
-            self._handler._message_received = self._enhanced_message_received  # pylint: disable=protected-access
+            # pylint: disable=protected-access
+            self._handler._message_received = self._enhanced_message_received  # type: ignore
 
     def _open(self):
         # pylint: disable=protected-access
@@ -803,7 +807,7 @@ class ServiceBusReceiver(
         self._open()
         uamqp_receive_mode = ServiceBusToAMQPReceiveModeMap[self._receive_mode]
         try:
-            receive_mode = uamqp_receive_mode.value
+            receive_mode = cast(Enum, uamqp_receive_mode).value
         except AttributeError:
             receive_mode = int(uamqp_receive_mode)
         message = {

@@ -5,10 +5,11 @@
 # -------------------------------------------------------------------------
 # pylint: disable=too-many-lines
 
+from __future__ import annotations
 import time
 import datetime
 import uuid
-from typing import Optional, Dict, List, Union, Iterable, Any, Mapping, cast
+from typing import Optional, Dict, List, Union, Iterable, Any, Mapping, cast, TYPE_CHECKING
 from azure.core.tracing import AbstractSpan
 
 from .._pyamqp.message import Message, BatchMessage
@@ -51,11 +52,11 @@ from .utils import (
     transform_messages_if_needed,
 )
 
-#if TYPE_CHECKING:
-#from ..aio._servicebus_receiver_async import (
-#    ServiceBusReceiver as AsyncServiceBusReceiver,
-#)
-#from .._servicebus_receiver import ServiceBusReceiver
+if TYPE_CHECKING:
+    from ..aio._servicebus_receiver_async import (
+        ServiceBusReceiver as AsyncServiceBusReceiver,
+    )
+    from .._servicebus_receiver import ServiceBusReceiver
 PrimitiveTypes = Union[
     int,
     float,
@@ -104,7 +105,7 @@ class ServiceBusMessage(
         self,
         body: Optional[Union[str, bytes]],
         *,
-        application_properties: Optional[Dict[str, "PrimitiveTypes"]] = None,
+        application_properties: Optional[Dict[Union[str, bytes], "PrimitiveTypes"]] = None,
         session_id: Optional[str] = None,
         message_id: Optional[str] = None,
         scheduled_enqueue_time_utc: Optional[datetime.datetime] = None,
@@ -280,7 +281,7 @@ class ServiceBusMessage(
         self._raw_amqp_message.properties.group_id = value
 
     @property
-    def application_properties(self) -> Optional[Dict[Union[str, bytes], Any]]:
+    def application_properties(self) -> Optional[Dict[Union[str, bytes], PrimitiveTypes]]:
         """The user defined properties on the message.
 
         :rtype: dict
@@ -627,12 +628,12 @@ class ServiceBusMessageBatch(object):
 
     def __init__(self, max_size_in_bytes: Optional[int] = None) -> None:
         self._max_size_in_bytes = max_size_in_bytes or MAX_MESSAGE_LENGTH_BYTES
-        self._message = [None] * 9
+        self._message = cast(List, [None] * 9)
         self._message[5] = []
         self._size = get_message_encoded_size(BatchMessage(*self._message))
         self._count = 0
         self._messages: List[ServiceBusMessage] = []
-        self._uamqp_message = None
+        self._uamqp_message: Optional[LegacyBatchMessage] = None
 
     def __repr__(self) -> str:
         batch_repr = "max_size_in_bytes={}, message_count={}".format(
