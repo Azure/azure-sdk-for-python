@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Update `README.md`
+    ([#25752](https://github.com/Azure/azure-sdk-for-python/pull/25752))
+
 ## 1.0.0b8 (2022-09-26)
 
 ### Features Added
