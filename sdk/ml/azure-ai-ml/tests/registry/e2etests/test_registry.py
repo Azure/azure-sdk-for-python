@@ -8,17 +8,13 @@ from azure.ai.ml import MLClient, load_registry
 from azure.ai.ml.constants._common import LROConfigurations
 from azure.ai.ml.entities._workspace.identity import ManagedServiceIdentityType
 from azure.core.paging import ItemPaged
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 
 @pytest.mark.e2etest
-@pytest.mark.mlc
-@pytest.mark.usefixtures(
-    "recorded_test"
-)
 class TestRegistry(AzureRecordedTestCase):
     @pytest.mark.e2etest
-    @pytest.mark.mlc
+    @recorded_by_proxy
     def test_registry_list_and_get(
         self,
         crud_registry_client: MLClient,
