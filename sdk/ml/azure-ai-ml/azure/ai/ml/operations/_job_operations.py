@@ -96,7 +96,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
-from ..entities._job.pipeline._io import InputOutputBase, _GroupAttrDict
+from ..entities._job.pipeline._io import InputOutputBase, _GroupAttrDict, PipelineInput
 from ..entities._validation import ValidationResult, _ValidationResultBuilder
 from ._component_operations import ComponentOperations
 from ._compute_operations import ComputeOperations
@@ -325,7 +325,7 @@ class JobOperations(_ScopeDependentOperations):
     def try_get_compute_arm_id(self, compute: Union[Compute, str]):
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
         # DataFactory 'clusterless' job
-        if compute == ComputeType.ADF:
+        if str(compute) == ComputeType.ADF:
             return compute
 
         if compute is not None:
@@ -336,6 +336,8 @@ class JobOperations(_ScopeDependentOperations):
                 compute_name = compute.name
             elif isinstance(compute, str):
                 compute_name = compute
+            elif isinstance(compute, PipelineInput):
+                compute_name = str(compute)
             else:
                 raise ValueError(
                     "compute must be either an arm id of Compute, a Compute object or a compute name but got {}".format(
