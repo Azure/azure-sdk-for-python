@@ -78,7 +78,7 @@ def generate_swagger_readme(work_path: str, env: Environment, **kwargs: Any) -> 
 
 def generate_toml_file(target_path: Path) -> None:
     with open(target_path / "sdk_packaging.toml", "w") as file_out:
-        file_out.write("[packaging]\nauto_update = false\n\n")
+        file_out.write("[packaging]\nauto_update = false\n")
 
 
 def get_autorest_version() -> str:
