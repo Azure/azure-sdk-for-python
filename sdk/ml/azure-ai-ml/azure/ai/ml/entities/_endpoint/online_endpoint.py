@@ -2,12 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=no-member
+
 import logging
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     EndpointAuthMode,
     IdentityConfiguration,
@@ -16,15 +17,16 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
 from azure.ai.ml._schema._endpoint import KubernetesOnlineEndpointSchema, ManagedOnlineEndpointSchema
 from azure.ai.ml._utils.utils import convert_identity_dict, dict_eq
-from azure.ai.ml.constants import (
+from azure.ai.ml.constants._common import (
     AAD_TOKEN_YAML,
     AML_TOKEN_YAML,
     BASE_PATH_CONTEXT_KEY,
     KEY,
     PARAMS_OVERRIDE_KEY,
-    EndpointYamlFields,
 )
+from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._util import is_compute_in_override, load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ._endpoint_helpers import validate_endpoint_or_deployment_name, validate_identity_type_defined
 from .endpoint import Endpoint
@@ -49,7 +51,7 @@ class OnlineEndpoint(Endpoint):
     :type location: str, optional
     :param traffic:  Traffic rules on how the traffic will be routed across deployments, defaults to {}
     :type traffic: Dict[str, int], optional
-    :param mirror_traffic: Duplicated life traffic used to train a single deployment, defaults to {}
+    :param mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to {}
     :type mirror_traffic: Dict[str, int], optional
     :param provisioning_state: str, provisioning state, readonly
     :type provisioning_state: str, optional
@@ -71,7 +73,7 @@ class OnlineEndpoint(Endpoint):
         mirror_traffic: Dict[str, int] = None,
         identity: IdentityConfiguration = None,
         scoring_uri: str = None,
-        swagger_uri: str = None,
+        openapi_uri: str = None,
         provisioning_state: str = None,
         kind: str = None,
         **kwargs,
@@ -86,7 +88,7 @@ class OnlineEndpoint(Endpoint):
             description=description,
             location=location,
             scoring_uri=scoring_uri,
-            swagger_uri=swagger_uri,
+            openapi_uri=openapi_uri,
             provisioning_state=provisioning_state,
             **kwargs,
         )
@@ -168,12 +170,7 @@ class OnlineEndpoint(Endpoint):
         return switcher.get(yaml_auth_mode, yaml_auth_mode)
 
     @classmethod
-    def _from_rest_object(
-        cls,
-        resource: OnlineEndpointData,
-    ):
-
-        from azure.ai.ml.entities import KubernetesOnlineEndpoint, ManagedOnlineEndpoint
+    def _from_rest_object(cls, resource: OnlineEndpointData):  # pylint: disable=arguments-renamed
 
         auth_mode = cls._rest_auth_mode_to_yaml_auth_mode(resource.properties.auth_mode)
         if resource.properties.compute:
@@ -189,7 +186,7 @@ class OnlineEndpoint(Endpoint):
                 traffic=resource.properties.traffic,
                 provisioning_state=resource.properties.provisioning_state,
                 scoring_uri=resource.properties.scoring_uri,
-                swagger_uri=resource.properties.swagger_uri,
+                openapi_uri=resource.properties.swagger_uri,
                 identity=resource.identity,
                 kind=resource.kind,
             )
@@ -206,7 +203,7 @@ class OnlineEndpoint(Endpoint):
                 mirror_traffic=resource.properties.mirror_traffic,
                 provisioning_state=resource.properties.provisioning_state,
                 scoring_uri=resource.properties.scoring_uri,
-                swagger_uri=resource.properties.swagger_uri,
+                openapi_uri=resource.properties.swagger_uri,
                 identity=resource.identity,
                 kind=resource.kind,
                 public_network_access=resource.properties.public_network_access,
@@ -234,11 +231,12 @@ class OnlineEndpoint(Endpoint):
     @classmethod
     def _load(
         cls,
-        data: dict,
+        data: Dict = None,
         yaml_path: Union[PathLike, str] = None,
         params_override: list = None,
         **kwargs,
     ) -> "Endpoint":
+        data = data or {}
         params_override = params_override or []
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
@@ -247,8 +245,8 @@ class OnlineEndpoint(Endpoint):
 
         if data.get(EndpointYamlFields.COMPUTE) or is_compute_in_override(params_override):
             return load_from_dict(KubernetesOnlineEndpointSchema, data, context)
-        else:
-            return load_from_dict(ManagedOnlineEndpointSchema, data, context)
+
+        return load_from_dict(ManagedOnlineEndpointSchema, data, context)
 
 
 class KubernetesOnlineEndpoint(OnlineEndpoint):
@@ -308,7 +306,13 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
 
         self.compute = compute
 
-    def dump(self) -> Dict[str, Any]:
+    def dump(
+        self,
+        *args,  # pylint: disable=unused-argument
+        dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
+        path: Union[str, PathLike] = None,  # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
+    ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
         return KubernetesOnlineEndpointSchema(context=context).dump(self)
 
@@ -393,7 +397,13 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
             **kwargs,
         )
 
-    def dump(self) -> Dict[str, Any]:
+    def dump(
+        self,
+        *args,  # pylint: disable=unused-argument
+        dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
+        path: Union[str, PathLike] = None,  # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
+    ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
         return ManagedOnlineEndpointSchema(context=context).dump(self)
 

@@ -7,9 +7,29 @@
 import re
 from typing import Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml.constants import SearchSpace
-from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
+from azure.ai.ml._schema._sweep.search_space import (
+    ChoiceSchema,
+    NormalSchema,
+    QNormalSchema,
+    QUniformSchema,
+    RandintSchema,
+    UniformSchema,
+)
+from azure.ai.ml.constants._job.sweep import SearchSpace
+from azure.ai.ml.entities._job.sweep.search_space import (
+    Choice,
+    LogNormal,
+    LogUniform,
+    Normal,
+    QLogNormal,
+    QLogUniform,
+    QNormal,
+    QUniform,
+    Randint,
+    SweepDistribution,
+    Uniform,
+)
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 def _convert_to_rest_object(sweep_distribution: Union[bool, int, float, str, SweepDistribution]) -> str:
@@ -58,13 +78,13 @@ def _convert_to_rest_object(sweep_distribution: Union[bool, int, float, str, Swe
                 target=ErrorTarget.AUTOML,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        for idx, value in enumerate(rest_object[1][0]):
+        for value in rest_object[1][0]:
             if isinstance(value, str):
                 sweep_distribution_args.append("'" + value + "'")
             else:
                 sweep_distribution_args.append(str(value))
     else:
-        for idx, value in enumerate(rest_object[1]):
+        for value in rest_object[1]:
             sweep_distribution_args.append(str(value))
 
     sweep_distribution_str = sweep_distribution_type + "("
@@ -94,15 +114,14 @@ def _get_type_inferred_value(value: str) -> Union[bool, int, float, str]:
     if _is_int(value):
         # Int
         return int(value)
-    elif _is_float(value):
+    if _is_float(value):
         # Float
         return float(value)
-    elif value in ["True", "False"]:
+    if value in ["True", "False"]:
         # Convert "True", "False" to python boolean literals
         return value == "True"
-    else:
-        # string value. Remove quotes before returning.
-        return value.strip("'\"")
+    # string value. Remove quotes before returning.
+    return value.strip("'\"")
 
 
 def _convert_from_rest_object(
@@ -130,3 +149,82 @@ def _convert_from_rest_object(
 
     sweep_distribution = SweepDistribution._from_rest_object([sweep_distribution_type, sweep_distribution_args])
     return sweep_distribution
+
+
+def _convert_sweep_dist_dict_to_str_dict(sweep_distribution: dict) -> dict:
+    for k, sweep_dist_dict in sweep_distribution.items():
+        if sweep_dist_dict is not None:
+            sweep_distribution[k] = _convert_sweep_dist_dict_item_to_str(sweep_dist_dict)
+    return sweep_distribution
+
+
+def _convert_sweep_dist_dict_item_to_str(sweep_distribution: Union[bool, int, float, str, dict]) -> str:
+    # Convert a Sweep Distribution dict to Sweep Distribution string
+    # Eg. {type: 'choice', values: ['vitb16r224','vits16r224']} => "Choice('vitb16r224','vits16r224')"
+    if isinstance(sweep_distribution, dict):
+        sweep_dist_type = sweep_distribution["type"]
+        if sweep_dist_type == SearchSpace.CHOICE:
+            sweep_dist_obj = ChoiceSchema().load(sweep_distribution)
+        elif sweep_dist_type in SearchSpace.UNIFORM_LOGUNIFORM:
+            sweep_dist_obj = UniformSchema().load(sweep_distribution)
+        elif sweep_dist_type in SearchSpace.NORMAL_LOGNORMAL:
+            sweep_dist_obj = NormalSchema().load(sweep_distribution)
+        elif sweep_dist_type in SearchSpace.QUNIFORM_QLOGUNIFORM:
+            sweep_dist_obj = QUniformSchema().load(sweep_distribution)
+        elif sweep_dist_type in SearchSpace.QNORMAL_QLOGNORMAL:
+            sweep_dist_obj = QNormalSchema().load(sweep_distribution)
+        elif sweep_dist_type in SearchSpace.RANDINT:
+            sweep_dist_obj = RandintSchema().load(sweep_distribution)
+        else:
+            msg = f"Unsupported sweep distribution type {sweep_dist_type}"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.AUTOML,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+    else:  # Case for other primitive types
+        sweep_dist_obj = sweep_distribution
+
+    sweep_dist_str = _convert_to_rest_object(sweep_dist_obj)
+    return sweep_dist_str
+
+
+def _convert_sweep_dist_str_to_dict(sweep_dist_str_list: dict) -> dict:
+    for k, val in sweep_dist_str_list.items():
+        if isinstance(val, str):
+            sweep_dist_str_list[k] = _convert_sweep_dist_str_item_to_dict(val)
+    return sweep_dist_str_list
+
+
+def _convert_sweep_dist_str_item_to_dict(
+    sweep_distribution_str: str,
+) -> Union[bool, int, float, str, dict]:
+    # sweep_distribution_str can be a distribution like "choice('vitb16r224', 'vits16r224')"
+    # return type is {type: 'choice', values: ['vitb16r224', 'vits16r224']}
+    sweep_dist_obj = _convert_from_rest_object(sweep_distribution_str)
+    if isinstance(sweep_dist_obj, SweepDistribution):
+        if isinstance(sweep_dist_obj, Choice):
+            sweep_dist = ChoiceSchema().dump(sweep_dist_obj)
+        elif isinstance(sweep_dist_obj, Uniform) or isinstance(sweep_dist_obj, LogUniform):
+            sweep_dist = UniformSchema().dump(sweep_dist_obj)
+        elif isinstance(sweep_dist_obj, Normal) or isinstance(sweep_dist_obj, LogNormal):
+            sweep_dist = NormalSchema().dump(sweep_dist_obj)
+        elif isinstance(sweep_dist_obj, QNormal) or isinstance(sweep_dist_obj, QLogNormal):
+            sweep_dist = QNormalSchema().dump(sweep_dist_obj)
+        elif isinstance(sweep_dist_obj, QUniform) or isinstance(sweep_dist_obj, QLogUniform):
+            sweep_dist = QUniformSchema().dump(sweep_dist_obj)
+        elif isinstance(sweep_dist_obj, Randint):
+            sweep_dist = RandintSchema().dump(sweep_dist_obj)
+        else:
+            msg = f"Invalid sweep distribution {sweep_distribution_str}"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.AUTOML,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+    else:  # Case for other primitive types
+        sweep_dist = sweep_dist_obj
+
+    return sweep_dist

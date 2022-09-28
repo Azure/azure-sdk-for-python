@@ -15,3 +15,4 @@ stages:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         TEST_MODE: "RunLiveNoRecord" # use when allowing preparers to create the rgs for you
         AZURE_TEST_RUN_LIVE: "true" # use when utilizing the New-TestResources Script
+        AZURE_SKIP_LIVE_RECORDING: 'True'

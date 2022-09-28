@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List, Optional, Tuple, Union
-from ._models_py3 import (
+from ._models import (
     MetadataFilter as MetadataFilterGenerated,
     AnswersFromTextOptions as AnswersFromTextOptionsGenerated,
     TextDocument,
@@ -34,6 +34,7 @@ class MetadataFilter(MetadataFilterGenerated):
          "AND", "OR".
         :paramtype logical_operation: str
         """
+        # pylint:disable=useless-super-delegation
         super().__init__(metadata=metadata, logical_operation=logical_operation, **kwargs)
 
 

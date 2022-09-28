@@ -10,6 +10,7 @@ Familiarity with the `azure-applicationinsights` v0.1.0 package is assumed. If y
   - [Cross-service SDK improvements](#cross-service-sdk-improvements)
   - [New features](#new-features)
 - [Important changes](#important-changes)
+  - [Resource mode support](#resource-mode-support)
   - [The client](#the-client)
   - [Client constructors and authentication](#client-constructors-and-authentication)
   - [Send a single query request](#sending-a-single-query-request)
@@ -41,6 +42,10 @@ There are various new features in version 1.0 of the Monitor Query library. Some
 For more new features, changes, and bug fixes, see the [change log](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/CHANGELOG.md).
 
 ## Important changes
+
+### Resource mode support
+
+The Azure Monitor Query library doesn't support Application Insights resources using the [classic resource mode](https://docs.microsoft.com/azure/azure-monitor/app/create-new-resource). To use this library with a classic Application Insights resource, you must first [migrate to a workspace-based resource](https://docs.microsoft.com/azure/azure-monitor/app/convert-classic-resource).
 
 ### The client
 

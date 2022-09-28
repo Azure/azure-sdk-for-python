@@ -25,6 +25,7 @@ pr:
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  TestProxy: true
   parameters:
     ServiceDirectory: security
     Artifacts:

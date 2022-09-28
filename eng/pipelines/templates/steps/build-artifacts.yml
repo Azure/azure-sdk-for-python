@@ -62,11 +62,10 @@ steps:
     displayName: Update package properties with dev version
     condition: and(succeeded(),eq(variables['SetDevVersion'],'true'))
 
-  - task: PythonScript@0
+  - pwsh: |
+      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}}
     displayName: 'Generate Packages'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/build_packages.py'
-      arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --devbuild="$(SetDevVersion)"'
+    condition: succeededOrFailed()
 
   - script: |
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
@@ -109,6 +108,11 @@ steps:
       CustomCondition: ${{ parameters.BuildDocs }}
       ArtifactName: 'documentation'
 
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/.logs'
+      ArtifactName: 'build_logs'
+
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
       displayName: 'Generate BOM'
@@ -120,4 +124,3 @@ steps:
       parameters:
         ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
         ArtifactName: 'manifest'
-

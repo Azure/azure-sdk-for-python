@@ -18,7 +18,9 @@ from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import (
 from azure.ai.ml._schema.core.fields import ArmStr, NestedField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
-from azure.ai.ml.constants import AssetTypes, AzureMLResourceType, EndpointYamlFields
+from azure.ai.ml.constants import AssetTypes
+from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities import ComputeConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input
 

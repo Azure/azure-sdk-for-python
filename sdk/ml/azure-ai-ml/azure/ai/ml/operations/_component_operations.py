@@ -4,19 +4,22 @@
 
 # pylint: disable=protected-access
 
-import logging
 import time
 import types
 from inspect import Parameter, signature
-from typing import Callable, Dict, Iterable, Union
+from typing import Callable, Dict, Iterable, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerDetails, ListViewType
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml._telemetry import (
     AML_INTERNAL_LOGGER_NAMESPACE,
     ActivityType,
@@ -32,21 +35,23 @@ from azure.ai.ml._utils._asset_utils import (
 )
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
-from azure.ai.ml.constants import AzureMLResourceType, LROConfigurations
+from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._validation import ValidationResult
+from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 
 from .._utils._experimental import experimental
+from .._utils.utils import is_data_binding_expression
 from ..entities._component.automl_component import AutoMLComponent
 from ..entities._component.pipeline_component import PipelineComponent
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
 from ._operation_orchestrator import OperationOrchestrator
 
-logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
-logger.propagate = False
-module_logger = logging.getLogger(__name__)
+ops_logger = OpsLogger(__name__)
+logger, module_logger = ops_logger.logger, ops_logger.module_logger
 
 
 class ComponentOperations(_ScopeDependentOperations):
@@ -60,11 +65,12 @@ class ComponentOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client: Union[ServiceClient052022, ServiceClient102021Dataplane],
         all_operations: OperationsContainer,
         **kwargs: Dict,
     ):
-        super(ComponentOperations, self).__init__(operation_scope)
+        super(ComponentOperations, self).__init__(operation_scope, operation_config)
         if "app_insights_handler" in kwargs:
             logger.addHandler(kwargs.pop("app_insights_handler"))
         self._version_operation = service_client.component_versions
@@ -74,7 +80,7 @@ class ComponentOperations(_ScopeDependentOperations):
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
-        self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope)
+        self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
 
     @property
     def _code_operations(self) -> CodeOperations:
@@ -99,7 +105,7 @@ class ComponentOperations(_ScopeDependentOperations):
         name: Union[str, None] = None,
         *,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
-    ) -> Iterable[Union[Component, ComponentContainerDetails]]:
+    ) -> Iterable[Component]:
         """List specific component or components of the workspace.
 
         :param name: Component name, if not set, list all components of the workspace
@@ -135,6 +141,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 resource_group_name=self._resource_group_name,
                 registry_name=self._registry_name,
                 **self._init_args,
+                cls=lambda objs: [Component._from_container_rest_object(obj) for obj in objs],
             )
             if self._registry_name
             else self._container_operation.list(
@@ -142,19 +149,23 @@ class ComponentOperations(_ScopeDependentOperations):
                 workspace_name=self._workspace_name,
                 list_view_type=list_view_type,
                 **self._init_args,
+                cls=lambda objs: [Component._from_container_rest_object(obj) for obj in objs],
             )
         )
 
     @monitor_with_telemetry_mixin(logger, "Component.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str = None, label: str = None) -> Component:
+    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Component:
         """Returns information about the specified component.
 
         :param name: Name of the code component.
         :type name: str
         :param version: Version of the component.
-        :type version: str
+        :type version: Optional[str]
         :param label: Label of the component. (mutually exclusive with version)
-        :type label: str
+        :type label: Optional[str]
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully identified and retrieved. Details will be provided in the error message.
+        :return: The specified component object.
+        :rtype: ~azure.ai.ml.entities.Component
         """
         if version and label:
             msg = "Cannot specify both version and label."
@@ -217,7 +228,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return self._validate(component, raise_on_failure=raise_on_failure)
 
     @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
-    def _validate(
+    def _validate(  # pylint: disable=no-self-use
         self,
         component: Union[Component, types.FunctionType],
         raise_on_failure: bool = False,
@@ -254,6 +265,13 @@ class ComponentOperations(_ScopeDependentOperations):
         :type version: str
         :param skip_validation: whether to skip validation before creating/updating the component
         :type skip_validation: bool
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if Component assets (e.g. Data, Code, Model, Environment) cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ComponentException: Raised if Component type is unsupported. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if Component model cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
+        :return: The specified component object.
+        :rtype: ~azure.ai.ml.entities.Component
         """
         # Update component when the input is a component function
         if isinstance(component, types.FunctionType):
@@ -416,76 +434,101 @@ class ComponentOperations(_ScopeDependentOperations):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        get_arm_id_and_fill_back = OperationOrchestrator(self._all_operations, self._operation_scope).get_asset_arm_id
+        get_arm_id_and_fill_back = OperationOrchestrator(
+            self._all_operations, self._operation_scope, self._operation_config
+        ).get_asset_arm_id
 
-        if hasattr(component, "code"):
-            if is_ARM_id_for_resource(component.code, AzureMLResourceType.CODE):
-                # arm id can be passed directly
-                pass
-            elif isinstance(component.code, Code) or is_registry_id_for_resource(component.code):
-                # Code object & registry id need to be resolved into arm id
-                component.code = get_arm_id_and_fill_back(component.code, azureml_type=AzureMLResourceType.CODE)
-            else:
-                # local path & None (will be transformed into temp local path) will be used to create a code object
-                # before resolving
-                component._resolve_local_code(
-                    lambda code: get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)
+        # resolve component's code
+        _try_resolve_code_for_component(component=component, get_arm_id_and_fill_back=get_arm_id_and_fill_back)
+        # resolve component's environment
+        if hasattr(component, "environment"):
+            # for internal component, environment may be a dict or InternalEnvironment object
+            # in these two scenarios, we don't need to resolve the environment;
+            # Note for not directly importing InternalEnvironment and check with `isinstance`:
+            #   import from azure.ai.ml._internal will enable internal component feature for all users,
+            #   therefore, use type().__name__ to avoid import and execute type check
+            if (
+                not isinstance(component.environment, dict)
+                and not type(component.environment).__name__ == "InternalEnvironment"
+            ):
+                component.environment = get_arm_id_and_fill_back(
+                    component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
                 )
-
-        if hasattr(component, "environment") and not isinstance(component.environment, dict):
-            component.environment = get_arm_id_and_fill_back(
-                component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
-            )
 
         self._resolve_arm_id_and_inputs(component)
 
     def _resolve_inputs_for_pipeline_component_jobs(self, jobs, base_path):
-        from azure.ai.ml.entities._builders import BaseNode
+        from azure.ai.ml.entities._builders import BaseNode, Pipeline
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 
         for _, job_instance in jobs.items():
             # resolve inputs for each job's component
-            if isinstance(job_instance, BaseNode):
+            if isinstance(job_instance, Pipeline):
+                node: Pipeline = job_instance
+                self._job_operations._resolve_pipeline_job_inputs(
+                    node,
+                    base_path,
+                )
+            elif isinstance(job_instance, BaseNode):
                 node: BaseNode = job_instance
                 self._job_operations._resolve_job_inputs(
                     map(lambda x: x._data, node.inputs.values()),
                     base_path,
                 )
             elif isinstance(job_instance, AutoMLJob):
-                self._job_operations._resolve_automl_job_inputs(job_instance, base_path, inside_pipeline=True)
+                self._job_operations._resolve_automl_job_inputs(job_instance)
 
     def _resolve_arm_id_for_pipeline_component_jobs(self, jobs, resolver: Callable):
 
-        from azure.ai.ml.entities import CommandComponent, ParallelComponent
         from azure.ai.ml.entities._builders import BaseNode, Sweep
+        from azure.ai.ml.entities._builders.control_flow_node import LoopNode
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+        from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
+        from azure.ai.ml.entities._job.pipeline._io import PipelineInput
+
+        def preprocess_job(node):
+            """Resolve all PipelineInput(binding from sdk) on supported fields to string."""
+            # compute binding to pipeline input is supported on node.
+            supported_fields = ["compute"]
+            for field_name in supported_fields:
+                val = try_get_non_arbitrary_attr_for_potential_attr_dict(node, field_name)
+                if isinstance(val, PipelineInput):
+                    # Put binding string to field
+                    setattr(node, field_name, val._data_binding())
+
+        def resolve_base_node(name, node):
+            """Resolve node name, compute and component for base node."""
+            # Set display name as node name
+            if (
+                isinstance(node.component, Component)
+                and node.component._is_anonymous
+                and not node.component.display_name
+            ):
+                node.component.display_name = name
+            if isinstance(node.component, PipelineComponent):
+                # Resolve nested arm id for pipeline component
+                self._resolve_arm_id_and_inputs(node.component)
+            else:
+                # Resolve compute for other type
+                # Keep data binding expression as they are
+                if not is_data_binding_expression(node.compute):
+                    # Get compute for each job
+                    node.compute = resolver(node.compute, azureml_type=AzureMLResourceType.COMPUTE)
+            # Get the component id for each job's component
+            # Note: do not use node.component as Sweep don't have that
+            node._component = resolver(
+                node._component,
+                azureml_type=AzureMLResourceType.COMPONENT,
+            )
 
         for key, job_instance in jobs.items():
+            preprocess_job(job_instance)
+            if isinstance(job_instance, LoopNode):
+                job_instance = job_instance.body
             if isinstance(job_instance, AutoMLJob):
                 self._job_operations._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)
             elif isinstance(job_instance, BaseNode):
-                # Get the default for the specific job type
-                if (
-                    isinstance(
-                        job_instance.component,
-                        (CommandComponent, ParallelComponent, PipelineComponent),
-                    )
-                    and job_instance.component._is_anonymous
-                    and not job_instance.component.display_name
-                ):
-                    job_instance.component.display_name = key
-
-                if isinstance(job_instance.component, PipelineComponent):
-                    self._resolve_arm_id_and_inputs(job_instance.component)
-                else:
-                    # Get compute for each job
-                    job_instance.compute = resolver(job_instance.compute, azureml_type=AzureMLResourceType.COMPUTE)
-
-                # Get the component id for each job's component
-                job_instance._component = resolver(
-                    job_instance.trial if isinstance(job_instance, Sweep) else job_instance.component,
-                    azureml_type=AzureMLResourceType.COMPONENT,
-                )
+                resolve_base_node(key, job_instance)
             else:
                 msg = f"Non supported job type in Pipeline: {type(job_instance)}"
                 raise ComponentException(
@@ -535,7 +578,7 @@ def _refine_component(component_func: types.FunctionType) -> Component:
         check_parameter_type(component_func)
         if component_func._job_settings:
             module_logger.warning(
-                "Job settings %s on pipeline function " "%s are ignored when creating PipelineComponent.",
+                "Job settings %s on pipeline function '%s' are ignored when creating PipelineComponent.",
                 component_func._job_settings,
                 component_func.__name__,
             )
@@ -547,3 +590,18 @@ def _refine_component(component_func: types.FunctionType) -> Component:
         error_category=ErrorCategory.USER_ERROR,
         target=ErrorTarget.COMPONENT,
     )
+
+
+def _try_resolve_code_for_component(component: Component, get_arm_id_and_fill_back: Callable) -> None:
+    if hasattr(component, "code"):
+        if is_ARM_id_for_resource(component.code, AzureMLResourceType.CODE):
+            # arm id can be passed directly
+            pass
+        elif isinstance(component.code, Code) or is_registry_id_for_resource(component.code):
+            # Code object & registry id need to be resolved into arm id
+            component.code = get_arm_id_and_fill_back(component.code, azureml_type=AzureMLResourceType.CODE)
+        else:
+            with component._resolve_local_code() as code_path:
+                component.code = get_arm_id_and_fill_back(
+                    Code(base_path=component._base_path, path=code_path), azureml_type=AzureMLResourceType.CODE
+                )

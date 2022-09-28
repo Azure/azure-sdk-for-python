@@ -14,12 +14,13 @@ from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationErr
 from azure.ai.formrecognizer import (
     DocumentModelAdministrationClient,
     DocumentAnalysisApiVersion,
-    DocumentModelOperationDetails
+    OperationDetails
 )
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from conftest import skip_flaky_test
 
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
@@ -28,6 +29,7 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 class TestManagementAsync(AsyncFormRecognizerTest):
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     async def test_active_directory_auth_async(self):
         token = self.generate_oauth_token()
@@ -51,7 +53,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         client = kwargs.pop("client")
         with pytest.raises(ValueError):
             async with client:
-                result = await client.get_model("")
+                result = await client.get_document_model("")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -59,7 +61,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         client = kwargs.pop("client")
         with pytest.raises(ValueError):
             async with client:
-                result = await client.get_model(None)
+                result = await client.get_document_model(None)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -67,7 +69,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         client = kwargs.pop("client")
         with pytest.raises(ValueError):
             async with client:
-                result = await client.delete_model(None)
+                result = await client.delete_document_model(None)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -75,8 +77,9 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         client = kwargs.pop("client")
         with pytest.raises(ValueError):
             async with client:
-                result = await client.delete_model("")
+                result = await client.delete_document_model("")
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -84,15 +87,16 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         async with client:
             info = await client.get_resource_details()
 
-        assert info.document_model_limit
-        assert info.document_model_count
+        assert info.custom_document_models.limit
+        assert info.custom_document_models.count
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_get_model_prebuilt(self, client):
         async with client:
-            model = await client.get_model("prebuilt-invoice")
+            model = await client.get_document_model("prebuilt-invoice")
             assert model.model_id == "prebuilt-invoice"
             assert model.description is not None
             assert model.created_on
@@ -101,8 +105,9 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                 for key, field in doc_type.field_schema.items():
                     assert key
                     assert field["type"]
-                assert doc_type.field_confidence is None
+                assert doc_type.field_confidence == {}
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -110,10 +115,10 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         set_bodiless_matcher()
         
         async with client:
-            poller = await client.begin_build_model("template", blob_container_url=formrecognizer_storage_container_sas_url, description="mgmt model")
+            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url, description="mgmt model")
             model = await poller.result()
 
-            model_from_get = await client.get_model(model.model_id)
+            model_from_get = await client.get_document_model(model.model_id)
 
             assert model.model_id == model_from_get.model_id
             assert model.description == model_from_get.description
@@ -125,16 +130,17 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                     assert field["type"] == model_from_get.doc_types[name].field_schema[key]["type"]
                     assert doc_type.field_confidence[key] == model_from_get.doc_types[name].field_confidence[key]
 
-            models_list = client.list_models()
+            models_list = client.list_document_models()
             async for model in models_list:
                 assert model.model_id
                 assert model.created_on
 
-            await client.delete_model(model.model_id)
+            await client.delete_document_model(model.model_id)
 
             with pytest.raises(ResourceNotFoundError):
-                await client.get_model(model.model_id)
+                await client.get_document_model(model.model_id)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -161,7 +167,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                 op = await client.get_operation(successful_op.operation_id)
                 # test to/from dict
                 op_dict = op.to_dict()
-                op = DocumentModelOperationDetails.from_dict(op_dict)
+                op = OperationDetails.from_dict(op_dict)
                 assert op.error is None
                 model = op.result
                 assert model.model_id
@@ -181,7 +187,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                 op = await client.get_operation(failed_op.operation_id)
                 # test to/from dict
                 op_dict = op.to_dict()
-                op = DocumentModelOperationDetails.from_dict(op_dict)
+                op = OperationDetails.from_dict(op_dict)
 
                 error = op.error
                 assert op.result is None
@@ -198,6 +204,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         with pytest.raises(ValueError):
             await client.get_operation(None)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_get_document_analysis_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
@@ -214,6 +221,6 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             async with dtc.get_document_analysis_client() as dac:
                 assert transport.session is not None
                 await (await dac.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)).wait()
-                assert dac._api_version == DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
+                assert dac._api_version == DocumentAnalysisApiVersion.V2022_08_31
             await dtc.get_resource_details()
             assert transport.session is not None

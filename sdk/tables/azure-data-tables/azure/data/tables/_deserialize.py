@@ -144,8 +144,8 @@ def _convert_to_entity(entry_element):
        "IsActive":true,
        "NumberOfOrders@odata.type":"Edm.Int64",
        "NumberOfOrders":"255",
-       "PartitionKey":"mypartitionkey",
-       "RowKey":"myrowkey"
+       "PartitionKey":"my_partition_key",
+       "RowKey":"my_row_key"
     }
     """
     entity = TableEntity()
@@ -199,9 +199,9 @@ def _convert_to_entity(entry_element):
         elif mtype in [EdmType.STRING, EdmType.INT32]:
             entity[name] = value
         else:  # need an object to hold the property
-            conv = _ENTITY_TO_PYTHON_CONVERSIONS.get(mtype)
-            if conv is not None:
-                new_property = conv(value)
+            convert = _ENTITY_TO_PYTHON_CONVERSIONS.get(mtype)
+            if convert is not None:
+                new_property = convert(value)
             else:
                 new_property = EntityProperty(mtype, value)
             entity[name] = new_property

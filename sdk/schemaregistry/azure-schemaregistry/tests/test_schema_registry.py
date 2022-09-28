@@ -58,6 +58,15 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert returned_schema.properties.name == name
         assert returned_schema.definition == schema_str
 
+        returned_version_schema = client.get_schema_by_version(schemaregistry_group, name, schema_properties.version, logging_enable=True)
+
+        assert returned_version_schema.properties.id == schema_properties.id
+        assert returned_version_schema.properties.format == "Avro"
+        assert returned_version_schema.properties.group_name == schemaregistry_group
+        assert returned_version_schema.properties.name == name
+        assert returned_version_schema.properties.version == schema_properties.version
+        assert returned_version_schema.definition == schema_str
+
         returned_schema_properties = client.get_schema_properties(schemaregistry_group, name, schema_str, format, logging_enable=True)
 
         assert returned_schema_properties.id == schema_properties.id
@@ -96,6 +105,16 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert new_schema.properties.group_name == schemaregistry_group
         assert new_schema.properties.name == name
 
+        old_schema = client.get_schema_by_version(schemaregistry_group, name, schema_properties.version, logging_enable=True)
+
+        assert old_schema.properties.id != new_schema_properties.id
+        assert old_schema.properties.id == schema_properties.id
+        assert old_schema.definition == schema_str
+        assert old_schema.properties.format == "Avro"
+        assert old_schema.properties.group_name == schemaregistry_group
+        assert old_schema.properties.name == name
+        assert old_schema.properties.version == schema_properties.version
+
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy
     def test_schema_same_twice(self, **kwargs):
@@ -123,7 +142,6 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         with pytest.raises(ClientAuthenticationError):
             client.register_schema(schemaregistry_group, name, schema_str, format)
 
-    @pytest.mark.skip("Figure out why live_test_only mark not working for non-live mode")
     @pytest.mark.live_test_only
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy
@@ -138,7 +156,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
             client.register_schema(schemaregistry_group, name, schema_str, format)
         if exc_info.type is HttpResponseError:
             response_content = json.loads(exc_info.value.response.content)
-            assert "Name does not resolve" in response_content["Message"]
+            assert any([(m in response_content["Message"]) for m in ["Name does not resolve", "Unable to find a record"]])
 
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy
@@ -151,6 +169,21 @@ class TestSchemaRegistry(AzureRecordedTestCase):
 
         with pytest.raises(HttpResponseError):
             client.get_schema('a' * 32)
+
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy
+    def test_schema_negative_no_schema_version(self, **kwargs):
+        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
+        client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        name = self.get_resource_name('test-schema-negative-version')
+        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}"""
+        format = "Avro"
+        schema_properties = client.register_schema(schemaregistry_group, name, schema_str, format)
+        version = schema_properties.version + 1
+        with pytest.raises(HttpResponseError):
+            client.get_schema_by_version(schemaregistry_group, name, version)
+
 
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy

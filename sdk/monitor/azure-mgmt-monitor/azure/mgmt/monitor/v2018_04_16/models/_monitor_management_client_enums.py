@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AlertSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Severity Level of Alert
-    """
+    """Severity Level of Alert."""
 
     ZERO = "0"
     ONE = "1"
@@ -20,9 +19,9 @@ class AlertSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     THREE = "3"
     FOUR = "4"
 
+
 class ConditionalOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Result Condition Evaluation criteria.
-    """
+    """Result Condition Evaluation criteria."""
 
     GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
@@ -30,37 +29,37 @@ class ConditionalOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LESS_THAN = "LessThan"
     EQUAL = "Equal"
 
+
 class Enabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The flag which indicates whether the Log Search rule is enabled. Value should be true or false
-    """
+    """The flag which indicates whether the Log Search rule is enabled. Value should be true or false."""
 
     TRUE = "true"
     FALSE = "false"
 
+
 class MetricTriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Metric Trigger Evaluation Type
-    """
+    """Metric Trigger Evaluation Type."""
 
     CONSECUTIVE = "Consecutive"
     TOTAL = "Total"
 
+
 class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Operator for dimension values
-    """
+    """Operator for dimension values."""
 
     INCLUDE = "Include"
 
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state of the scheduled query rule
-    """
+    """Provisioning state of the scheduled query rule."""
 
     SUCCEEDED = "Succeeded"
     DEPLOYING = "Deploying"
     CANCELED = "Canceled"
     FAILED = "Failed"
 
+
 class QueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Set value to 'ResultAccount'
-    """
+    """Set value to 'ResultAccount'."""
 
     RESULT_COUNT = "ResultCount"

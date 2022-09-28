@@ -197,7 +197,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         :param public_access:
             To specify whether data in the file system may be accessed publicly and the level of access.
         :type public_access: ~azure.storage.filedatalake.PublicAccess
-        :keyword file_system_encryption_scope:
+        :keyword encryption_scope_options:
             Specifies the default encryption scope to set on the file system and use for
             all future writes.
 

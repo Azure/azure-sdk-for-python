@@ -1,6 +1,7 @@
-import os
-import logging
 import json
+import logging
+import os
+
 import numpy
 from sklearn.externals import joblib
 from sklearn.linear_model import Ridge

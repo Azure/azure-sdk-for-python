@@ -586,7 +586,7 @@ class IterStreamer(object):
         raise UnsupportedOperation("Data generator does not support tell.")
 
     def seek(self, *args, **kwargs):
-        raise UnsupportedOperation("Data generator is unseekable.")
+        raise UnsupportedOperation("Data generator is not seekable.")
 
     def read(self, size):
         data = self.leftover
