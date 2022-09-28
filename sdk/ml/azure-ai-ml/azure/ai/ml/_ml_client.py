@@ -193,8 +193,8 @@ class MLClient(object):
                 self._credential, registry_name, self._service_client_registry_discovery_client, **kwargs_registry
             )
             self._service_client_10_2021_dataplanepreview = registry_discovery.get_registry_service_client()
-            subscription_id = RegistryDiscovery.subscription_id
-            resource_group_name = RegistryDiscovery.resource_group
+            subscription_id = registry_discovery.subscription_id
+            resource_group_name = registry_discovery.resource_group
 
         self._operation_scope = OperationScope(subscription_id, resource_group_name, workspace_name, registry_name)
 
