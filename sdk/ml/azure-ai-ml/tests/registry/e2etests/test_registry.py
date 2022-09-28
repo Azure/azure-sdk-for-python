@@ -12,15 +12,15 @@ from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 
 @pytest.mark.e2etest
+@pytest.mark.usefixtures("recorded_test")
 class TestRegistry(AzureRecordedTestCase):
     @pytest.mark.e2etest
-    @recorded_by_proxy
     def test_registry_list_and_get(
         self,
         crud_registry_client: MLClient,
         randstr: Callable[[], str],
     ) -> None:
-        reg_name = f"e2etest_{randstr()}"
+        reg_name = f"e2etest_{randstr("reg_name")}"
         params_override = [
             {
                 "name": reg_name,
