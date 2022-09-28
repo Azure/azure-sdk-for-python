@@ -61,7 +61,7 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             assert returned_schema.properties.name == name
             assert returned_schema.definition == schema_str
 
-            returned_version_schema = await client.get_schema_by_version(schemaregistry_group, name, schema_properties.version, logging_enable=True)
+            returned_version_schema = await client.get_schema(group_name=schemaregistry_group, name=name, version=schema_properties.version, logging_enable=True)
 
             assert returned_version_schema.properties.id == schema_properties.id
             assert returned_version_schema.properties.format == "Avro"
@@ -69,6 +69,10 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             assert returned_version_schema.properties.name == name
             assert returned_version_schema.properties.version == schema_properties.version
             assert returned_version_schema.definition == schema_str
+
+            with pytest.raises(TypeError) as exc:
+                await client.get_schema(group_name=schemaregistry_group, version=schema_properties.version, logging_enable=True)
+            assert "Missing" in str(exc)
 
             returned_schema_properties = await client.get_schema_properties(schemaregistry_group, name, schema_str, format, logging_enable=True)
 
@@ -108,7 +112,7 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             assert new_schema.properties.group_name == schemaregistry_group
             assert new_schema.properties.name == name
 
-            old_schema = await client.get_schema_by_version(schemaregistry_group, name, schema_properties.version, logging_enable=True)
+            old_schema = await client.get_schema(group_name=schemaregistry_group, name=name, version=schema_properties.version, logging_enable=True)
 
             assert old_schema.properties.id != new_schema_properties.id
             assert old_schema.properties.id == schema_properties.id
@@ -188,7 +192,7 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             schema_properties = await client.register_schema(schemaregistry_group, name, schema_str, format)
             version = schema_properties.version + 1
             with pytest.raises(HttpResponseError):
-                await client.get_schema_by_version(schemaregistry_group, name, version)
+                await client.get_schema(group_name=schemaregistry_group, name=name, version=version)
         await client._generated_client._config.credential.close()
 
     @SchemaRegistryEnvironmentVariableLoader()
