@@ -38,7 +38,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_list_by_database_account_request(
+def build_list_graphs_request(
     resource_group_name: str, account_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -50,7 +50,7 @@ def build_list_by_database_account_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/privateEndpointConnections",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/graphs",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
@@ -73,12 +73,8 @@ def build_list_by_database_account_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_request(
-    resource_group_name: str,
-    account_name: str,
-    private_endpoint_connection_name: str,
-    subscription_id: str,
-    **kwargs: Any
+def build_get_graph_request(
+    resource_group_name: str, account_name: str, graph_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -89,7 +85,7 @@ def build_get_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/graphs/{graphName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
@@ -99,9 +95,7 @@ def build_get_request(
         "accountName": _SERIALIZER.url(
             "account_name", account_name, "str", max_length=50, min_length=3, pattern=r"^[a-z0-9]+(-[a-z0-9]+)*"
         ),
-        "privateEndpointConnectionName": _SERIALIZER.url(
-            "private_endpoint_connection_name", private_endpoint_connection_name, "str"
-        ),
+        "graphName": _SERIALIZER.url("graph_name", graph_name, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -115,12 +109,8 @@ def build_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_or_update_request(
-    resource_group_name: str,
-    account_name: str,
-    private_endpoint_connection_name: str,
-    subscription_id: str,
-    **kwargs: Any
+def build_create_update_graph_request(
+    resource_group_name: str, account_name: str, graph_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -132,7 +122,7 @@ def build_create_or_update_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/graphs/{graphName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
@@ -142,9 +132,7 @@ def build_create_or_update_request(
         "accountName": _SERIALIZER.url(
             "account_name", account_name, "str", max_length=50, min_length=3, pattern=r"^[a-z0-9]+(-[a-z0-9]+)*"
         ),
-        "privateEndpointConnectionName": _SERIALIZER.url(
-            "private_endpoint_connection_name", private_endpoint_connection_name, "str"
-        ),
+        "graphName": _SERIALIZER.url("graph_name", graph_name, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -160,23 +148,16 @@ def build_create_or_update_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_request(
-    resource_group_name: str,
-    account_name: str,
-    private_endpoint_connection_name: str,
-    subscription_id: str,
-    **kwargs: Any
+def build_delete_graph_resource_request(
+    resource_group_name: str, account_name: str, graph_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-08-15-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/graphs/{graphName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
@@ -186,9 +167,7 @@ def build_delete_request(
         "accountName": _SERIALIZER.url(
             "account_name", account_name, "str", max_length=50, min_length=3, pattern=r"^[a-z0-9]+(-[a-z0-9]+)*"
         ),
-        "privateEndpointConnectionName": _SERIALIZER.url(
-            "private_endpoint_connection_name", private_endpoint_connection_name, "str"
-        ),
+        "graphName": _SERIALIZER.url("graph_name", graph_name, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -196,20 +175,17 @@ def build_delete_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-class PrivateEndpointConnectionsOperations:
+class GraphResourcesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.cosmosdb.CosmosDBManagementClient`'s
-        :attr:`private_endpoint_connections` attribute.
+        :attr:`graph_resources` attribute.
     """
 
     models = _models
@@ -222,10 +198,10 @@ class PrivateEndpointConnectionsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_by_database_account(
+    def list_graphs(
         self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> Iterable["_models.PrivateEndpointConnection"]:
-        """List all private endpoint connections on a Cosmos DB account.
+    ) -> Iterable["_models.GraphResourceGetResults"]:
+        """Lists the graphs under an existing Azure Cosmos DB database account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -233,16 +209,16 @@ class PrivateEndpointConnectionsOperations:
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PrivateEndpointConnection or the result of
+        :return: An iterator like instance of either GraphResourceGetResults or the result of
          cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.PrivateEndpointConnection]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.GraphResourceGetResults]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PrivateEndpointConnectionListResult]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.GraphResourcesListResult]
 
         error_map = {
             401: ClientAuthenticationError,
@@ -255,12 +231,12 @@ class PrivateEndpointConnectionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_database_account_request(
+                request = build_list_graphs_request(
                     resource_group_name=resource_group_name,
                     account_name=account_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_database_account.metadata["url"],
+                    template_url=self.list_graphs.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -279,7 +255,7 @@ class PrivateEndpointConnectionsOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("PrivateEndpointConnectionListResult", pipeline_response)
+            deserialized = self._deserialize("GraphResourcesListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -301,24 +277,25 @@ class PrivateEndpointConnectionsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_database_account.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/privateEndpointConnections"}  # type: ignore
+    list_graphs.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/graphs"}  # type: ignore
 
     @distributed_trace
-    def get(
-        self, resource_group_name: str, account_name: str, private_endpoint_connection_name: str, **kwargs: Any
-    ) -> _models.PrivateEndpointConnection:
-        """Gets a private endpoint connection.
+    def get_graph(
+        self, resource_group_name: str, account_name: str, graph_name: str, **kwargs: Any
+    ) -> _models.GraphResourceGetResults:
+        """Gets the Graph resource under an existing Azure Cosmos DB database account with the provided
+        name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
-        :type private_endpoint_connection_name: str
+        :param graph_name: Cosmos DB graph resource name. Required.
+        :type graph_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateEndpointConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.cosmosdb.models.PrivateEndpointConnection
+        :return: GraphResourceGetResults or the result of cls(response)
+        :rtype: ~azure.mgmt.cosmosdb.models.GraphResourceGetResults
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -333,15 +310,15 @@ class PrivateEndpointConnectionsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PrivateEndpointConnection]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.GraphResourceGetResults]
 
-        request = build_get_request(
+        request = build_get_graph_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            private_endpoint_connection_name=private_endpoint_connection_name,
+            graph_name=graph_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
+            template_url=self.get_graph.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -358,23 +335,23 @@ class PrivateEndpointConnectionsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PrivateEndpointConnection", pipeline_response)
+        deserialized = self._deserialize("GraphResourceGetResults", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
+    get_graph.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/graphs/{graphName}"}  # type: ignore
 
-    def _create_or_update_initial(
+    def _create_update_graph_initial(
         self,
         resource_group_name: str,
         account_name: str,
-        private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, IO],
+        graph_name: str,
+        create_update_graph_parameters: Union[_models.GraphResourceCreateUpdateParameters, IO],
         **kwargs: Any
-    ) -> Optional[_models.PrivateEndpointConnection]:
+    ) -> Optional[_models.GraphResourceGetResults]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -388,26 +365,26 @@ class PrivateEndpointConnectionsOperations:
 
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.PrivateEndpointConnection]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.GraphResourceGetResults]]
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(parameters, (IO, bytes)):
-            _content = parameters
+        if isinstance(create_update_graph_parameters, (IO, bytes)):
+            _content = create_update_graph_parameters
         else:
-            _json = self._serialize.body(parameters, "PrivateEndpointConnection")
+            _json = self._serialize.body(create_update_graph_parameters, "GraphResourceCreateUpdateParameters")
 
-        request = build_create_or_update_request(
+        request = build_create_update_graph_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            private_endpoint_connection_name=private_endpoint_connection_name,
+            graph_name=graph_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
+            template_url=self._create_update_graph_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -422,42 +399,43 @@ class PrivateEndpointConnectionsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize("PrivateEndpointConnection", pipeline_response)
+            deserialized = self._deserialize("GraphResourceGetResults", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_or_update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
+    _create_update_graph_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/graphs/{graphName}"}  # type: ignore
 
     @overload
-    def begin_create_or_update(
+    def begin_create_update_graph(
         self,
         resource_group_name: str,
         account_name: str,
-        private_endpoint_connection_name: str,
-        parameters: _models.PrivateEndpointConnection,
+        graph_name: str,
+        create_update_graph_parameters: _models.GraphResourceCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.PrivateEndpointConnection]:
-        """Approve or reject a private endpoint connection with a given name.
+    ) -> LROPoller[_models.GraphResourceGetResults]:
+        """Create or update an Azure Cosmos DB Graph.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
-        :type private_endpoint_connection_name: str
-        :param parameters: Required.
-        :type parameters: ~azure.mgmt.cosmosdb.models.PrivateEndpointConnection
+        :param graph_name: Cosmos DB graph resource name. Required.
+        :type graph_name: str
+        :param create_update_graph_parameters: The parameters to provide for the current graph.
+         Required.
+        :type create_update_graph_parameters:
+         ~azure.mgmt.cosmosdb.models.GraphResourceCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -469,34 +447,35 @@ class PrivateEndpointConnectionsOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either PrivateEndpointConnection or the result
-         of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PrivateEndpointConnection]
+        :return: An instance of LROPoller that returns either GraphResourceGetResults or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.GraphResourceGetResults]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def begin_create_or_update(
+    def begin_create_update_graph(
         self,
         resource_group_name: str,
         account_name: str,
-        private_endpoint_connection_name: str,
-        parameters: IO,
+        graph_name: str,
+        create_update_graph_parameters: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.PrivateEndpointConnection]:
-        """Approve or reject a private endpoint connection with a given name.
+    ) -> LROPoller[_models.GraphResourceGetResults]:
+        """Create or update an Azure Cosmos DB Graph.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
-        :type private_endpoint_connection_name: str
-        :param parameters: Required.
-        :type parameters: IO
+        :param graph_name: Cosmos DB graph resource name. Required.
+        :type graph_name: str
+        :param create_update_graph_parameters: The parameters to provide for the current graph.
+         Required.
+        :type create_update_graph_parameters: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -508,32 +487,34 @@ class PrivateEndpointConnectionsOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either PrivateEndpointConnection or the result
-         of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PrivateEndpointConnection]
+        :return: An instance of LROPoller that returns either GraphResourceGetResults or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.GraphResourceGetResults]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def begin_create_or_update(
+    def begin_create_update_graph(
         self,
         resource_group_name: str,
         account_name: str,
-        private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, IO],
+        graph_name: str,
+        create_update_graph_parameters: Union[_models.GraphResourceCreateUpdateParameters, IO],
         **kwargs: Any
-    ) -> LROPoller[_models.PrivateEndpointConnection]:
-        """Approve or reject a private endpoint connection with a given name.
+    ) -> LROPoller[_models.GraphResourceGetResults]:
+        """Create or update an Azure Cosmos DB Graph.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
-        :type private_endpoint_connection_name: str
-        :param parameters: Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.cosmosdb.models.PrivateEndpointConnection or IO
+        :param graph_name: Cosmos DB graph resource name. Required.
+        :type graph_name: str
+        :param create_update_graph_parameters: The parameters to provide for the current graph. Is
+         either a model type or a IO type. Required.
+        :type create_update_graph_parameters:
+         ~azure.mgmt.cosmosdb.models.GraphResourceCreateUpdateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -545,9 +526,9 @@ class PrivateEndpointConnectionsOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either PrivateEndpointConnection or the result
-         of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PrivateEndpointConnection]
+        :return: An instance of LROPoller that returns either GraphResourceGetResults or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.GraphResourceGetResults]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -555,16 +536,16 @@ class PrivateEndpointConnectionsOperations:
 
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PrivateEndpointConnection]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.GraphResourceGetResults]
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._create_or_update_initial(  # type: ignore
+            raw_result = self._create_update_graph_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                private_endpoint_connection_name=private_endpoint_connection_name,
-                parameters=parameters,
+                graph_name=graph_name,
+                create_update_graph_parameters=create_update_graph_parameters,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -575,7 +556,7 @@ class PrivateEndpointConnectionsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("PrivateEndpointConnection", pipeline_response)
+            deserialized = self._deserialize("GraphResourceGetResults", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -595,10 +576,10 @@ class PrivateEndpointConnectionsOperations:
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
+    begin_create_update_graph.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/graphs/{graphName}"}  # type: ignore
 
-    def _delete_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, account_name: str, private_endpoint_connection_name: str, **kwargs: Any
+    def _delete_graph_resource_initial(  # pylint: disable=inconsistent-return-statements
+        self, resource_group_name: str, account_name: str, graph_name: str, **kwargs: Any
     ) -> None:
         error_map = {
             401: ClientAuthenticationError,
@@ -614,13 +595,13 @@ class PrivateEndpointConnectionsOperations:
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_delete_request(
+        request = build_delete_graph_resource_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            private_endpoint_connection_name=private_endpoint_connection_name,
+            graph_name=graph_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
+            template_url=self._delete_graph_resource_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -633,29 +614,28 @@ class PrivateEndpointConnectionsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
+    _delete_graph_resource_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/graphs/{graphName}"}  # type: ignore
 
     @distributed_trace
-    def begin_delete(
-        self, resource_group_name: str, account_name: str, private_endpoint_connection_name: str, **kwargs: Any
+    def begin_delete_graph_resource(
+        self, resource_group_name: str, account_name: str, graph_name: str, **kwargs: Any
     ) -> LROPoller[None]:
-        """Deletes a private endpoint connection with a given name.
+        """Deletes an existing Azure Cosmos DB Graph Resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
-        :type private_endpoint_connection_name: str
+        :param graph_name: Cosmos DB graph resource name. Required.
+        :type graph_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -677,10 +657,10 @@ class PrivateEndpointConnectionsOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._delete_initial(  # type: ignore
+            raw_result = self._delete_graph_resource_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                private_endpoint_connection_name=private_endpoint_connection_name,
+                graph_name=graph_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -708,4 +688,4 @@ class PrivateEndpointConnectionsOperations:
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
+    begin_delete_graph_resource.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/graphs/{graphName}"}  # type: ignore
