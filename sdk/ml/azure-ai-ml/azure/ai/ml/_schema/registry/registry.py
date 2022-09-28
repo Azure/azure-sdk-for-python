@@ -11,6 +11,7 @@ from azure.ai.ml.constants._common import PublicNetworkAccess
 from azure.ai.ml.constants._registry import AcrAccountSku
 from azure.ai.ml.entities._registry.registry_support_classes import SystemCreatedAcrAccount
 
+from azure.ai.ml._schema.workspace.identity import IdentitySchema
 from .registry_region_arm_details import RegistryRegionArmDetailsSchema
 from .system_created_acr_account import SystemCreatedAcrAccountSchema
 from .util import acr_format_validator
@@ -43,7 +44,7 @@ class RegistrySchema(ResourceSchema):
 
     # Values that can only be set by return values from the system, never
     # set by the user.
-    identity = fields.Str(dump_only=True)
+    identity = NestedField(IdentitySchema, dump_only=True)
     kind = fields.Str(dump_only=True)
     sku = fields.Str(dump_only=True)
     managed_resource_group = fields.Str(dump_only=True)
