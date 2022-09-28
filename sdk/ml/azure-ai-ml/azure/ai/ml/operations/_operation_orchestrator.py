@@ -22,7 +22,6 @@ from azure.ai.ml._utils._arm_id_utils import (
     parse_prefixed_name_version,
 )
 from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset
-from azure.ai.ml._utils._exception_utils import EmptyDirectoryError
 from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import (
@@ -44,6 +43,7 @@ from azure.ai.ml.entities._assets import Code, Data, Environment, Model
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.exceptions import (
     AssetException,
+    EmptyDirectoryError,
     ErrorCategory,
     ErrorTarget,
     MlException,
@@ -106,14 +106,15 @@ class OperationOrchestrator(object):
         :type asset: Optional[Union[str, Asset]]
         :param azureml_type: The AzureML resource type. Defined in AzureMLResourceType.
         :type azureml_type: str
-        :param register_asset: flag to register the asset, defaults to True
-        :type register_asset: bool, optional
+        :param register_asset: Indicates if the asset should be registered, defaults to True.
+        :type register_asset: Optional[bool]
         :param sub_workspace_resource:
-        :type sub_workspace_resource: bool, optional
-        :param arm_id_cache_dict: a dict to cache the arm id of input asset
-        :type arm_id_cache_dict: Dict[str, str], optional
+        :type sub_workspace_resource: Optional[bool]
+        :param arm_id_cache_dict: A dict to cache the ARM id of input asset.
+        :type arm_id_cache_dict: Optional[Dict[str, str]]
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if asset's ID cannot be converted or asset cannot be successfully registered.
         :return: The ARM Id or entity object
-        :rtype: Union[str, Asset], optional
+        :rtype: Optional[Union[str, ~azure.ai.ml.entities.Asset]]
         """
         if (
             asset is None

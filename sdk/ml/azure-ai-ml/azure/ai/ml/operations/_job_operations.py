@@ -73,7 +73,7 @@ from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.base_job import _BaseJob
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
-from azure.ai.ml.entities._job.job_errors import JobParsingError, PipelineChildJobError
+from azure.ai.ml.entities.job_errors import JobParsingError, PipelineChildJobError
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
 from azure.ai.ml.entities._job.service_instance import ServiceInstance
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
@@ -452,8 +452,14 @@ class JobOperations(_ScopeDependentOperations):
         :param skip_validation: whether to skip validation before creating/updating the job. Note that dependent
             resources like anonymous component won't skip their validation in creating.
         :type skip_validation: bool
+        :raises [~azure.ai.ml.exceptions.UserErrorException, ~azure.ai.ml.exceptions.ValidationException]: Raised if Job cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if Job assets (e.g. Data, Code, Model, Environment) cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if Job model cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.JobException: Raised if Job object or attributes correctly formatted. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
+        :raises ~azure.ai.ml.exceptions.DockerEngineNotAvailableError: Raised if Docker Engine is not available for local job.
         :return: Created or updated job.
-        :rtype: Job
+        :rtype: ~azure.ai.ml.entities.Job
         """
         try:
             if isinstance(job, BaseNode) and not (
@@ -610,6 +616,16 @@ class JobOperations(_ScopeDependentOperations):
         :param Union[PathLike, str] download_path: Local path as download destination, defaults to '.'.
         :param str output_name: Named output to download, defaults to None.
         :param bool all: Whether to download logs and all named outputs, defaults to False.
+        :param name: Name of a job.
+        :type name: str
+        :param download_path: Local path as download destination, defaults to '.'.
+        :type download_path: Union[PathLike, str]
+        :param output_name: Named output to download, defaults to None.
+        :type output_name: str
+        :param all: Whether to download logs and all named outputs, defaults to False.
+        :type all: bool
+        :raises ~azure.ai.ml.exceptions.JobException: Raised if Job is not yet in a terminal state. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.MlException: Raised if logs and outputs cannot be successfully downloaded. Details will be provided in the error message.
         """
         job_details = self.get(name)
         # job is reused, get reused job to download
@@ -1150,7 +1166,7 @@ class JobOperations(_ScopeDependentOperations):
             and getattr(pipeline_job.component, "_source", None) == ComponentSource.YAML_COMPONENT
         ):
             pipeline_job.component = resolver(
-                pipeline_job._to_component(silent=True),
+                pipeline_job.component,
                 azureml_type=AzureMLResourceType.COMPONENT,
             )
 

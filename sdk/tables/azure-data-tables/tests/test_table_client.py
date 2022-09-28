@@ -10,7 +10,7 @@ import platform
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.data.tables._error import _validate_storage_tablename
-from azure.data.tables import TableServiceClient, TableClient, TableTransactionError
+from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables import __version__ as VERSION
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
@@ -649,3 +649,14 @@ class TestTableUnitTests(TableTestCase):
             _validate_storage_tablename("a aa")
         with pytest.raises(ValueError):
             _validate_storage_tablename("1aaa")
+    
+    def test_use_development_storage(self):
+        tsc = TableServiceClient.from_connection_string("UseDevelopmentStorage=true")
+        assert tsc.account_name == "devstoreaccount1"
+        assert tsc.scheme == "http"
+        assert tsc.credential.named_key.name == "devstoreaccount1"
+        assert tsc.credential.named_key.key == "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+        assert tsc.url == "http://127.0.0.1:10002/devstoreaccount1"
+        assert tsc._primary_endpoint == "http://127.0.0.1:10002/devstoreaccount1"
+        assert tsc._secondary_endpoint == "http://127.0.0.1:10002/devstoreaccount1-secondary"
+        assert not tsc._cosmos_endpoint

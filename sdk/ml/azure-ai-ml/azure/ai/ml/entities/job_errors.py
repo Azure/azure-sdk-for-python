@@ -4,7 +4,10 @@
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException
 
-from ._studio_url_from_job_id import studio_url_from_job_id
+from ._job._studio_url_from_job_id import studio_url_from_job_id
+
+
+# These exceptions can't be placed in azure.ai.ml.exceptions due to circular imports
 
 
 class JobParsingError(MlException):
