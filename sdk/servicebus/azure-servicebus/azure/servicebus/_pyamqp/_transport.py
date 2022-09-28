@@ -152,6 +152,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         connect_timeout=None,
         socket_settings=None,
         raise_on_initial_eintr=True,
+        **kwargs    # pylint: disable=unused-argument
     ):
         self._quick_recv = None
         self.connected = False

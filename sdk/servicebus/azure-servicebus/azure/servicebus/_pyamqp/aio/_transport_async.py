@@ -142,6 +142,7 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
         ssl_opts=False,
         socket_settings=None,
         raise_on_initial_eintr=True,
+        **kwargs    # pylint: disable=unused-argument
     ):
         self.connected = False
         self.sock = None
