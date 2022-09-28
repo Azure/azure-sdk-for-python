@@ -14,18 +14,18 @@ from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._workspace.connections.credentials import (
     ManagedIdentityCredentials,
-    PatTokenCredentials,
     SasTokenCredentials,
     ServicePrincipalCredentials,
     UsernamePasswordCredentials,
 )
+from azure.ai.ml.entities._credentials import PatTokenConfiguration
 
 
 class WorkspaceCredentialsSchema(metaclass=PatchedSchemaMeta):
     type = fields.Str()
 
 
-class PatTokenCredentialsSchema(metaclass=PatchedSchemaMeta):
+class PatTokenConfigurationSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
         allowed_values=ConnectionAuthType.PAT,
         casing_transform=camel_to_snake,
@@ -34,9 +34,9 @@ class PatTokenCredentialsSchema(metaclass=PatchedSchemaMeta):
     pat = fields.Str()
 
     @post_load
-    def make(self, data: Dict[str, str], **kwargs) -> PatTokenCredentials:
+    def make(self, data: Dict[str, str], **kwargs) -> PatTokenConfiguration:
         data.pop("type")
-        return PatTokenCredentials(**data)
+        return PatTokenConfiguration(**data)
 
 
 class SasTokenCredentialsSchema(metaclass=PatchedSchemaMeta):

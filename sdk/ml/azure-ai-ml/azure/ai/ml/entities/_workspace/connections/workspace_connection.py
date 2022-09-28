@@ -24,17 +24,11 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
 from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.entities._credentials import PatTokenConfiguration, SasTokenConfiguration, \
+    UsernamePasswordConfiguration, ManagedIdentityConfiguration, ServicePrincipalConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._workspace.connections.credentials import (
-    ManagedIdentityCredentials,
-    PatTokenCredentials,
-    SasTokenCredentials,
-    ServicePrincipalCredentials,
-    UsernamePasswordCredentials,
-    WorkspaceConnectionCredentials,
-)
 
 
 class WorkspaceConnection(Resource):
@@ -61,11 +55,11 @@ class WorkspaceConnection(Resource):
         # TODO : Check if this is okay since it shadows builtin-type type
         type: str,  # pylint: disable=redefined-builtin
         credentials: Union[
-            PatTokenCredentials,
-            SasTokenCredentials,
-            UsernamePasswordCredentials,
-            ManagedIdentityCredentials,
-            ServicePrincipalCredentials,
+            PatTokenConfiguration,
+            SasTokenConfiguration,
+            UsernamePasswordConfiguration,
+            ManagedIdentityConfiguration,
+            ServicePrincipalConfiguration,
         ],
         metadata: Dict[str, Any] = None,
         **kwargs,
@@ -78,8 +72,8 @@ class WorkspaceConnection(Resource):
 
     @property
     def type(self) -> str:
-        """Type of the workspace connection, supported are 'Git', 'PythonFeed'
-        and 'ContainerRegistry'.
+        """Type of the workspace connection, supported are 'git', 'python_feed'
+        and 'container_registry'.
 
         :return: Type of the job.
         :rtype: str
@@ -90,7 +84,7 @@ class WorkspaceConnection(Resource):
     def type(self, value: str):
         if not value:
             return
-        self._type = _snake_to_camel(value)
+        self._type = camel_to_snake(value)
 
     @property
     def target(self) -> str:
@@ -102,11 +96,23 @@ class WorkspaceConnection(Resource):
         return self._target
 
     @property
-    def credentials(self) -> WorkspaceConnectionCredentials:
+    def credentials(self) -> Union[
+        PatTokenConfiguration,
+        SasTokenConfiguration,
+        UsernamePasswordConfiguration,
+        ManagedIdentityConfiguration,
+        ServicePrincipalConfiguration,
+        ]:
         """Credentials for workspace connection.
 
         :return: Credentials for workspace connection.
-        :rtype: WorkspaceConnectionCredentials
+        :rtype: Union[
+            PatTokenCredentialsConfiguration,
+            SasTokenCredentialsConfiguration,
+            UsernamePasswordCredentialsConfiguration,
+            ManagedIdentityConfiguration,
+            ServicePrincipalCredentialsConfiguration,
+        ]
         """
         return self._credentials
 
@@ -167,25 +173,21 @@ class WorkspaceConnection(Resource):
         properties = rest_obj.properties
 
         if properties.auth_type == ConnectionAuthType.PAT:
-            credentials = PatTokenCredentials(pat=properties.credential.pat if properties.credentials else None)
+            credentials = PatTokenConfiguration._from_workspace_connection_rest_object(properties.credential)
         if properties.auth_type == ConnectionAuthType.SAS:
-            credentials = SasTokenCredentials(sas=properties.credential.sas if properties.credentials else None)
+            credentials = SasTokenConfiguration._from_workspace_connection_rest_object(properties.credential)
         if properties.auth_type == ConnectionAuthType.MANAGED_IDENTITY:
-            credentials = ManagedIdentityCredentials(
-                client_id=properties.credential.client_id if properties.credentials else None,
-                resource_id=properties.credential.resource_id if properties.credentials else None,
+            credentials = ManagedIdentityConfiguration._from_workspace_connection_rest_object(
+                properties.credential
             )
         if properties.auth_type == ConnectionAuthType.USERNAME_PASSWORD:
-            credentials = UsernamePasswordCredentials(
-                username=properties.credential.username if properties.credentials else None,
-                password=properties.credential.password if properties.credentials else None,
+            credentials = UsernamePasswordConfiguration._from_workspace_connection_rest_object(
+                properties.credentials
             )
 
         if properties.auth_type == ConnectionAuthType.SERVICE_PRINCIPAL:
-            credentials = ServicePrincipalCredentials(
-                client_id=properties.credential.client_id if properties.credentials else None,
-                client_secret=properties.credential.client_secret if properties.credentials else None,
-                tenant_id=properties.credential.tenant_id if properties.credentials else None,
+            credentials = ServicePrincipalConfiguration._from_workspace_connection_rest_object(
+                properties.credentials
             )
 
         workspace_connection = WorkspaceConnection(
@@ -222,7 +224,7 @@ class WorkspaceConnection(Resource):
 
         properties = workspace_connection_properties_class(
             target=self.target,
-            credentials=self.credentials._to_rest_object(),
+            credentials=self.credentials._to_workspace_connection_rest_object(),
             metadata=self.metadata,
             auth_type=auth_type,
             category=_snake_to_camel(self.type),
