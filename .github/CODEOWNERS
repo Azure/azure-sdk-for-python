@@ -26,6 +26,10 @@
 ####
 # Service team
 ####
+
+# PRLabel: %AgriFood
+/sdk/agrifood/azure-agrifood-farming                                 TODO
+
 # PRLabel: %Azure.Identity
 /sdk/identity/                                                       @mccoyp @schaabs @xiangyan99
 
@@ -38,14 +42,20 @@
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                               @xiangyan99 @YalinLi0312
 
+# PRLabel: %Monitor - ApplicationInsights
 /sdk/applicationinsights/azure-applicationinsights/                  @omziv @anatse @raronen @ischrei @danhadari @azmonapplicationinsights
+
+# PRLabel: %Monitor - LogAnalytics  TODO?
 /sdk/loganalytics/azure-loganalytics/                                @omziv @anatse @raronen @ischrei @danhadari @azmonapplicationinsights
 
+# PRLabel: %Attestation
 /sdk/attestation/azure-security-attestation                          @anilba06 @Azure/azure-sdk-write-attestation @gkostal
 
 # PRLabel: %Batch
 /sdk/batch/                                                          @cRui861 @paterasMSFT @dpwatrous @gingi @zfengms
-/sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
+
+# PRLabel: %CognitiveServices
+/sdk/cognitiveservices/                                              @kristapratico
 
 # PRLabel: %Communication - Phone Numbers
 /sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @lucasrsant @RoyHerrod @danielav7
@@ -65,8 +75,14 @@
 # PRLabel: %Communication
 /sdk/communication/                                                  @acsdevx-msft
 
+# PRLabel: %Confidential Ledger
+sdk/confidentialledger/azure-confidentialledger                      TODO
+
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @mccoyp @YalinLi0312
+
+# PRLabel: %TODO
+/sdk/loadtestservice/azure-developer-loadtesting                     TODO
 
 # PRLabel: %Monitor - LogAnalytics
 /sdk/loganalytics/                                                   @alexeldeib
@@ -74,8 +90,11 @@
 # PRLabel: %Monitor - Exporter
 /sdk/monitor/azure-monitor-opentelemetry-exporter                    @rakshith91 @lmazuel @lzchen @hectorhdzg @jeremydvoss
 
-# PRLabel: %Monitor - Log
+# PRLabel: %Monitor - Query
 /sdk/monitor/azure-monitor-query                                     @rakshith91
+
+# PRLabel: %Monitor - Ingestion
+/sdk/monitor/azure-monitor-ingestion                                 @rakshith91
 
 # PRLabel: %Consumption
 /sdk/consumption/                                                    @sandeepnl
@@ -84,7 +103,9 @@
 /sdk/containerinstance/                                              @samkreter @xizhamsft
 
 # PRLabel: %Container Registry
-/sdk/containerregistry/                                              @djyou
+/sdk/containerregistry/                                              @djyou @YalinLi0312
+
+# PRLabel: %Container Service
 /sdk/containerservice/                                               @samkreter @zqingqing1 @GaneshaThirumurthi
 
 # PRLabel: %Cosmos
@@ -97,6 +118,9 @@
 /sdk/datafactory/                                                    @hvermis
 /sdk/datalake/                                                       @ro-joowan
 /sdk/datadatamigration/                                              @vchske
+
+# PRLabel: %Device Update
+/sdk/deviceupdate/                                                   @dpokluda @sedols
 
 # ServiceLabel: %Device Update for IoT Hub %Service Attention
 /sdk/deviceupdate/                                                   @dpokluda @sedols
@@ -116,11 +140,21 @@
 # PRLabel: %Machine Learning
 /sdk/ml/                                                             @azureml-github @Azure/azure-ml-sdk
 
+# PRLabel: %Maps
+/sdk/maps/                                                           TODO
+
+# PRLabel: %Mixed Reality
+/sdk/mixedreality/                                                   TODO
+/sdk/remoterendering/                                                TODO
+
+# PRLabel: %Purview
+/sdk/purview/                                                        TODO
+
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
 
 # PRLabel: %Schema Registry
-/sdk/schemaregistry/                                                 @kashifkhan
+/sdk/schemaregistry/                                                 @kashifkhan @swathipil
 
 # PRLabel: %Search
 /sdk/search/                                                         @rakshith91
@@ -141,7 +175,7 @@
 /sdk/template/                                                       @scbedd @weshaggard @benbp
 
 # PRLabel: %Cognitive - Text Analytics
-/sdk/textanalytics/                                                  @kristapratico @iscai-msft @abhahn
+/sdk/textanalytics/                                                  @kristapratico @iscai-msft
 
 # PRLabel: %Cognitive - Form Recognizer
 /sdk/formrecognizer/                                                 @kristapratico @iscai-msft @catalinaperalta
@@ -157,6 +191,9 @@
 
 # PRLabel: %Cognitive - Language
 /sdk/cognitivelanguage/                                              @kristapratico @mohamedshabanofficial
+
+# PRLabel: %Graph
+sdk/graphrbac/                                                       TODO
 
 # PRLabel: %Tables
 /sdk/tables/                                                         @annatisch @YalinLi0312
