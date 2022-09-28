@@ -10,7 +10,7 @@ trigger:
     - restapi*
   paths:
     include:
-    - sdk/ServiceName/
+    - sdk/{{ service_name }}/
 
 pr:
   branches:

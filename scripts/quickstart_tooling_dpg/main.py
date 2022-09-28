@@ -39,7 +39,7 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
         with open(ci, "r") as file_in:
             content = file_in.readlines()
             for line in content:
-                if f'{package_name}' in line:
+                if package_name in line:
                     return
             content.append(f'    - name: {package_name}\n')
             content.append(f'      safeName: {safe_name}\n')
@@ -68,7 +68,8 @@ def generate_swagger_readme(work_path: str, env: Environment, **kwargs: Any) -> 
 
     # render file
     template = env.get_template('README.md')
-    result = template.render(**kwargs)
+    input_file = kwargs.pop("input_file", "").split(",")
+    result = template.render(input_file=input_file, **kwargs)
     swagger_readme = swagger_path / Path('README.md')
     with open(swagger_readme, 'w') as fd:
         fd.write(result)
