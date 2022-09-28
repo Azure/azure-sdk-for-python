@@ -190,6 +190,8 @@ class SchemaRegistryClient(object):
         """
         http_request_kwargs = get_http_request_kwargs(kwargs)
         try:
+            # Check positional args for schema_id.
+            # Else, check if schema_id was passed in with keyword.
             try:
                 schema_id = args[0]
             except IndexError:
@@ -199,6 +201,7 @@ class SchemaRegistryClient(object):
                 id=schema_id, **http_request_kwargs
             )
         except KeyError:
+            # If group_name, name, and version aren't passed in as kwargs, raise error.
             try:
                 group_name = kwargs.pop("group_name")
                 name = kwargs.pop("name")
