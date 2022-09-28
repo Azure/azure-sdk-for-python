@@ -1,0 +1,61 @@
+interactions:
+- request:
+    body: '{"actions": [{"id": "NewsArticle", "features": [{"type": "News"}]}, {"id":
+      "SportsArticle", "features": [{"type": "Sports"}]}, {"id": "EntertainmentArticle",
+      "features": [{"type": "Entertainment"}]}], "slots": [{"id": "Main Article",
+      "baselineAction": "NewsArticle", "features": [{"Size": "Large", "Position":
+      "Top Middle"}], "excludedActions": ["SportsArticle", "EntertainmentArticle"]},
+      {"id": "Side Bar", "baselineAction": "SportsArticle", "features": [{"Size":
+      "Small", "Position": "Bottom Right"}], "excludedActions": ["EntertainmentArticle"]}],
+      "eventId": "123456789"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '574'
+      Content-Type:
+      - application/json
+      Ocp-Apim-Subscription-Key:
+      - e5891e8a293f4ede99277e8d0229a477
+      User-Agent:
+      - azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)
+    method: POST
+    uri: https://REDACTED.cognitiveservices.azure.com/personalizer/multislot/rank?api-version=2022-09-01-preview
+  response:
+    body:
+      string: "{\n  \"slots\": [\n    {\n      \"id\": \"Main Article\",\n      \"rewardActionId\":
+        \"NewsArticle\"\n    },\n    {\n      \"id\": \"Side Bar\",\n      \"rewardActionId\":
+        \"SportsArticle\"\n    }\n  ],\n  \"eventId\": \"123456789\"\n}"
+    headers:
+      apim-request-id:
+      - 780d025e-51e0-4950-a26f-7605230b1302
+      cache-control:
+      - no-cache, no-store, must-revalidate
+      content-length:
+      - '201'
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.Personalizer.Transaction=1
+      date:
+      - Wed, 28 Sep 2022 16:36:21 GMT
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      timing-allow-origin:
+      - '*'
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '5'
+    status:
+      code: 201
+      message: Created
+version: 1

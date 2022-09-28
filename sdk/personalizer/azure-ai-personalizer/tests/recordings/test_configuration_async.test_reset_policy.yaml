@@ -1,0 +1,33 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Ocp-Apim-Subscription-Key:
+      - f8405db129b84ad0bd80464c9884ad71
+      User-Agent:
+      - azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)
+    method: DELETE
+    uri: https://REDACTED.cognitiveservices.azure.com/personalizer/configurations/policy?api-version=2022-09-01-preview
+  response:
+    body:
+      string: "{\n  \"name\": \"dccb7cec1bc54695b64a0ea223b02533\",\n  \"arguments\":
+        \"--cb_explore_adf --epsilon 0.2 --power_t 0 -l 0.001 --cb_type mtr -q ::\"\n}"
+    headers:
+      apim-request-id: 611a374a-7303-4274-b119-e306a81e25f1
+      cache-control: no-cache, no-store, must-revalidate
+      content-length: '138'
+      content-type: application/json; charset=utf-8
+      date: Wed, 28 Sep 2022 16:36:12 GMT
+      expires: '0'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      timing-allow-origin: '*'
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '214'
+    status:
+      code: 200
+      message: OK
+    url: https://javapersonalizerlivetestresource.cognitiveservices.azure.com//personalizer/configurations/policy?api-version=2022-09-01-preview
+version: 1

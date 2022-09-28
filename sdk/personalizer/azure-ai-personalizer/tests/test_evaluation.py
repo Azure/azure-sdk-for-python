@@ -1,18 +1,19 @@
-from venv import create
-from devtools_testutils import AzureRecordedTestCase
-import helpers
+import pytest
+from devtools_testutils import AzureTestCase
+import personalizer_helpers
 import time
 from datetime import date
 import uuid
 
 
-class TestEvaluations(AzureRecordedTestCase):
+class TestEvaluations(AzureTestCase):
 
-    @helpers.PersonalizerPreparer()
+    @personalizer_helpers.PersonalizerPreparer()
+    @pytest.mark.skip('Get evaluation api is currently failing')
     def test_run_evaluation(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client = helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
         evaluation_id = str(uuid.uuid4())
         evaluation_name = "python_sdk_test_evaluation"
         start_time = date.fromisoformat("2022-09-24")
@@ -34,11 +35,11 @@ class TestEvaluations(AzureRecordedTestCase):
         assert evaluation["status"] == "Completed"
         client.evaluations.delete(evaluation_id)
 
-    @helpers.PersonalizerPreparer()
+    @personalizer_helpers.PersonalizerPreparer()
     def test_list_evaluations(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client = helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client =  personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
         client.evaluations.list()
 
     def is_evaluation_final(self, client, evaluation_id, iso_start_time, iso_end_time):

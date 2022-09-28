@@ -1,0 +1,60 @@
+interactions:
+- request:
+    body: '{"eventId": "123456789", "actions": [{"id": "Person1", "features": [{"videoType":
+      "documentary", "videoLength": 35, "director": "CarlSagan"}, {"mostWatchedByAge":
+      "30-35"}]}, {"id": "Person2", "features": [{"videoType": "documentary", "videoLength":
+      35, "director": "CarlSagan"}, {"mostWatchedByAge": "40-45"}]}], "contextFeatures":
+      [{"Features": {"day": "tuesday", "time": "night", "weather": "rainy"}}, {"Features":
+      {"payingUser": true, "favoriteGenre": "documentary", "hoursOnSite": 0.12, "lastWatchedType":
+      "movie"}}], "excludedActions": ["Person1"]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '554'
+      Content-Type:
+      - application/json
+      Ocp-Apim-Subscription-Key:
+      - f8405db129b84ad0bd80464c9884ad71
+      User-Agent:
+      - azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)
+    method: POST
+    uri: https://REDACTED.cognitiveservices.azure.com/personalizer/rank?api-version=2022-09-01-preview
+  response:
+    body:
+      string: "{\n  \"ranking\": [\n    {\n      \"id\": \"Person1\",\n      \"probability\":
+        0.0\n    },\n    {\n      \"id\": \"Person2\",\n      \"probability\": 1.0\n
+        \   }\n  ],\n  \"eventId\": \"123456789\",\n  \"rewardActionId\": \"Person2\"\n}"
+    headers:
+      apim-request-id:
+      - 0ba50e61-5bfb-4b59-8cdb-f45ea549f368
+      cache-control:
+      - no-cache, no-store, must-revalidate
+      content-length:
+      - '200'
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.Personalizer.Transaction=1
+      date:
+      - Wed, 28 Sep 2022 16:36:23 GMT
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      timing-allow-origin:
+      - '*'
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '32'
+    status:
+      code: 201
+      message: Created
+version: 1

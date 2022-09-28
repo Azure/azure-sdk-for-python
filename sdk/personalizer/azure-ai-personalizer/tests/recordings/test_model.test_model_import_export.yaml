@@ -1,0 +1,274 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/octet-stream, application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Ocp-Apim-Subscription-Key:
+      - f8405db129b84ad0bd80464c9884ad71
+      User-Agent:
+      - azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://REDACTED.cognitiveservices.azure.com/personalizer/model?api-version=2022-09-01-preview&signed=false
+  response:
+    body:
+      string: !!binary |
+        BgAAADkuMS4wAAEAAAAAbQAAAAAAAAAAEgAAAAAAAAAAAAAAAAAAAPoAAAAgLS1jYl9hZGYgLS1j
+        Yl9leHBsb3JlX2FkZiAtLWNiX3R5cGUgaXBzIC0tY3NvYWFfbGRmIG11bHRpbGluZSAtLWNzb2Fh
+        X3JhbmsgLS1lcHNpbG9uIDAuMjAwMDAwMDAyOTgwMjMyIC0tcXVhZHJhdGljIEdUIC0tcXVhZHJh
+        dGljIE1SIC0tcXVhZHJhdGljIEdSIC0tcXVhZHJhdGljIE1FIC0tcXVhZHJhdGljIE9UIC0tcXVh
+        ZHJhdGljIE9FIC0tcXVhZHJhdGljIE9SIC0tcXVhZHJhdGljIE1TIC0tcXVhZHJhdGljIEdYIC0t
+        aWdub3JlIEEABAAAAG92P3oAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPA/
+    headers:
+      apim-request-id:
+      - 2b56c06a-ed16-459c-a71f-f158f3af0131
+      cache-control:
+      - no-cache, no-store, must-revalidate
+      content-disposition:
+      - attachment; filename=model.vw; filename*=UTF-8''model.vw
+      content-length:
+      - '447'
+      content-type:
+      - application/octet-stream
+      date:
+      - Wed, 28 Sep 2022 16:44:02 GMT
+      expires:
+      - '0'
+      last-modified:
+      - Wed, 28 Sep 2022 16:36:18 GMT
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      timing-allow-origin:
+      - '*'
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '21'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/octet-stream, application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Ocp-Apim-Subscription-Key:
+      - f8405db129b84ad0bd80464c9884ad71
+      User-Agent:
+      - azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://REDACTED.cognitiveservices.azure.com/personalizer/model?api-version=2022-09-01-preview&signed=true
+  response:
+    body:
+      string: !!binary |
+        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
+    headers:
+      apim-request-id:
+      - 3b5b757e-8f2f-42e9-a565-786301da02f6
+      cache-control:
+      - no-cache, no-store, must-revalidate
+      content-disposition:
+      - attachment; filename=model.vw.zip; filename*=UTF-8''model.vw.zip
+      content-length:
+      - '1861'
+      content-type:
+      - application/octet-stream
+      date:
+      - Wed, 28 Sep 2022 16:44:02 GMT
+      expires:
+      - '0'
+      last-modified:
+      - Wed, 28 Sep 2022 16:36:18 GMT
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      timing-allow-origin:
+      - '*'
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '45'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      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
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/octet-stream
+      Ocp-Apim-Subscription-Key:
+      - f8405db129b84ad0bd80464c9884ad71
+      Transfer-Encoding:
+      - chunked
+      User-Agent:
+      - azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)
+    method: PUT
+    uri: https://REDACTED.cognitiveservices.azure.com/personalizer/model?api-version=2022-09-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - e1143ff2-d3af-44ca-8af6-5a7c4ba6d067
+      cache-control:
+      - no-cache, no-store, must-revalidate
+      content-length:
+      - '0'
+      date:
+      - Wed, 28 Sep 2022 16:44:02 GMT
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      timing-allow-origin:
+      - '*'
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '199'
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/octet-stream, application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Ocp-Apim-Subscription-Key:
+      - f8405db129b84ad0bd80464c9884ad71
+      User-Agent:
+      - azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://REDACTED.cognitiveservices.azure.com/personalizer/model?api-version=2022-09-01-preview&signed=false
+  response:
+    body:
+      string: !!binary |
+        BgAAADkuMS4wAAEAAAAAbQAAAAAAAAAAEgAAAAAAAAAAAAAAAAAAAPoAAAAgLS1jYl9hZGYgLS1j
+        Yl9leHBsb3JlX2FkZiAtLWNiX3R5cGUgaXBzIC0tY3NvYWFfbGRmIG11bHRpbGluZSAtLWNzb2Fh
+        X3JhbmsgLS1lcHNpbG9uIDAuMjAwMDAwMDAyOTgwMjMyIC0tcXVhZHJhdGljIEdUIC0tcXVhZHJh
+        dGljIE1SIC0tcXVhZHJhdGljIEdSIC0tcXVhZHJhdGljIE1FIC0tcXVhZHJhdGljIE9UIC0tcXVh
+        ZHJhdGljIE9FIC0tcXVhZHJhdGljIE9SIC0tcXVhZHJhdGljIE1TIC0tcXVhZHJhdGljIEdYIC0t
+        aWdub3JlIEEABAAAAG92P3oAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPA/
+    headers:
+      apim-request-id:
+      - 55b56a18-3910-49fd-9729-e4bf5968b989
+      cache-control:
+      - no-cache, no-store, must-revalidate
+      content-disposition:
+      - attachment; filename=model.vw; filename*=UTF-8''model.vw
+      content-length:
+      - '447'
+      content-type:
+      - application/octet-stream
+      date:
+      - Wed, 28 Sep 2022 16:44:02 GMT
+      expires:
+      - '0'
+      last-modified:
+      - Wed, 28 Sep 2022 16:44:03 GMT
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      timing-allow-origin:
+      - '*'
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '23'
+    status:
+      code: 200
+      message: OK
+version: 1

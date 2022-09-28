@@ -1,16 +1,18 @@
 import pytest
-from devtools_testutils import AzureRecordedTestCase
-import helpers
+from devtools_testutils import AzureTestCase
+import personalizer_helpers_async
+
+import personalizer_helpers
 
 
-class TestMultiSlotRankAsync(AzureRecordedTestCase):
+class TestMultiSlotRankAsync(AzureTestCase):
 
-    @helpers.PersonalizerPreparer()
+    @personalizer_helpers.PersonalizerPreparer()
     @pytest.mark.asyncio
     async def test_rank_with_no_context_features(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_multi_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_multi_slot')
-        client = helpers.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
         event_id = "123456789";
         request = {"actions": get_actions(), "slots": get_slots(), "eventId": event_id}
         response = await client.multi_slot.rank(request)
@@ -20,12 +22,12 @@ class TestMultiSlotRankAsync(AzureRecordedTestCase):
         assert slots[0]['rewardActionId'] == "NewsArticle"
         assert slots[1]['rewardActionId'] == "SportsArticle"
 
-    @helpers.PersonalizerPreparer()
+    @personalizer_helpers.PersonalizerPreparer()
     @pytest.mark.asyncio
     async def test_rank_with_context_features(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_multi_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_multi_slot')
-        client = helpers.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
         event_id = "123456789"
         request = {
             "eventId": event_id,

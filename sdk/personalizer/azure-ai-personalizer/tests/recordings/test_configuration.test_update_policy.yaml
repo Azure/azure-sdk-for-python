@@ -1,0 +1,102 @@
+interactions:
+- request:
+    body: '{"name": "app1", "arguments": "--cb_explore_adf --quadratic GT --quadratic
+      MR --quadratic GR --quadratic ME --quadratic OT --quadratic OE --quadratic OR
+      --quadratic MS --quadratic GX --ignore A --cb_type ips --epsilon 0.2"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '223'
+      Content-Type:
+      - application/json
+      Ocp-Apim-Subscription-Key:
+      - f8405db129b84ad0bd80464c9884ad71
+      User-Agent:
+      - azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)
+    method: PUT
+    uri: https://REDACTED.cognitiveservices.azure.com/personalizer/configurations/policy?api-version=2022-09-01-preview
+  response:
+    body:
+      string: "{\n  \"name\": \"dccb7cec1bc54695b64a0ea223b02533\",\n  \"arguments\":
+        \"--cb_explore_adf --quadratic GT --quadratic MR --quadratic GR --quadratic
+        ME --quadratic OT --quadratic OE --quadratic OR --quadratic MS --quadratic
+        GX --ignore A --cb_type ips --epsilon 0.2\"\n}"
+    headers:
+      apim-request-id:
+      - c7878b37-cd8d-45df-8cd8-8469adf0fd56
+      cache-control:
+      - no-cache, no-store, must-revalidate
+      content-length:
+      - '257'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 28 Sep 2022 16:35:40 GMT
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      timing-allow-origin:
+      - '*'
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '174'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Ocp-Apim-Subscription-Key:
+      - f8405db129b84ad0bd80464c9884ad71
+      User-Agent:
+      - azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://REDACTED.cognitiveservices.azure.com/personalizer/configurations/policy?api-version=2022-09-01-preview
+  response:
+    body:
+      string: "{\n  \"name\": \"dccb7cec1bc54695b64a0ea223b02533\",\n  \"arguments\":
+        \"--cb_explore_adf --quadratic GT --quadratic MR --quadratic GR --quadratic
+        ME --quadratic OT --quadratic OE --quadratic OR --quadratic MS --quadratic
+        GX --ignore A --cb_type ips --epsilon 0.2\"\n}"
+    headers:
+      apim-request-id:
+      - b2198f4c-b04c-462f-bcd4-fe0735785897
+      cache-control:
+      - no-cache, no-store, must-revalidate
+      content-length:
+      - '257'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 28 Sep 2022 16:36:11 GMT
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      timing-allow-origin:
+      - '*'
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '18'
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,0 +1,61 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Ocp-Apim-Subscription-Key:
+      - e5891e8a293f4ede99277e8d0229a477
+      User-Agent:
+      - azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)
+    method: DELETE
+    uri: https://REDACTED.cognitiveservices.azure.com/personalizer/logs?api-version=2022-09-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: b559c076-d9cf-4ffb-84ed-45e23b9c34a6
+      cache-control: no-cache, no-store, must-revalidate
+      content-length: '0'
+      date: Wed, 28 Sep 2022 16:36:16 GMT
+      expires: '0'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      timing-allow-origin: '*'
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '9'
+    status:
+      code: 204
+      message: No Content
+    url: https://javapersonalizermultislotlivetestresource.cognitiveservices.azure.com//personalizer/logs?api-version=2022-09-01-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Ocp-Apim-Subscription-Key:
+      - e5891e8a293f4ede99277e8d0229a477
+      User-Agent:
+      - azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://REDACTED.cognitiveservices.azure.com/personalizer/logs/properties?api-version=2022-09-01-preview
+  response:
+    body:
+      string: '{}'
+    headers:
+      apim-request-id: 62f99d33-a30d-4a83-b9b4-2c31f25add8e
+      cache-control: no-cache, no-store, must-revalidate
+      content-length: '2'
+      content-type: application/json; charset=utf-8
+      date: Wed, 28 Sep 2022 16:36:16 GMT
+      expires: '0'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      timing-allow-origin: '*'
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '15'
+    status:
+      code: 200
+      message: OK
+    url: https://javapersonalizermultislotlivetestresource.cognitiveservices.azure.com//personalizer/logs/properties?api-version=2022-09-01-preview
+version: 1

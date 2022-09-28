@@ -1,9 +1,8 @@
 from azure.core.credentials import AzureKeyCredential
-import azure.ai.personalizer
-import azure.ai.personalizer.aio
+from azure.ai.personalizer import PersonalizerClient
 from devtools_testutils import EnvironmentVariableLoader
 import functools
-import time
+
 
 PersonalizerPreparer = functools.partial(
     EnvironmentVariableLoader,
@@ -16,11 +15,5 @@ PersonalizerPreparer = functools.partial(
 
 def create_personalizer_client(personalizer_endpoint, personalizer_api_key):
     credential = AzureKeyCredential(personalizer_api_key)
-    client = azure.ai.personalizer.PersonalizerClient(personalizer_endpoint, credential=credential)
+    client = PersonalizerClient(personalizer_endpoint, credential=credential)
     return client
-
-def create_async_personalizer_client(personalizer_endpoint, personalizer_api_key):
-    credential = AzureKeyCredential(personalizer_api_key)
-    client = azure.ai.personalizer.aio.PersonalizerClient(personalizer_endpoint, credential=credential)
-    return client
-

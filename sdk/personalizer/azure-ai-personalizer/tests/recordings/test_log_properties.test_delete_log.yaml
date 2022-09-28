@@ -1,0 +1,90 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Ocp-Apim-Subscription-Key:
+      - e5891e8a293f4ede99277e8d0229a477
+      User-Agent:
+      - azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)
+    method: DELETE
+    uri: https://REDACTED.cognitiveservices.azure.com/personalizer/logs?api-version=2022-09-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - c45eeba9-38d9-4854-ae17-21d3172f7201
+      cache-control:
+      - no-cache, no-store, must-revalidate
+      content-length:
+      - '0'
+      date:
+      - Wed, 28 Sep 2022 16:36:16 GMT
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      timing-allow-origin:
+      - '*'
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '3'
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Ocp-Apim-Subscription-Key:
+      - e5891e8a293f4ede99277e8d0229a477
+      User-Agent:
+      - azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://REDACTED.cognitiveservices.azure.com/personalizer/logs/properties?api-version=2022-09-01-preview
+  response:
+    body:
+      string: '{}'
+    headers:
+      apim-request-id:
+      - 5fa265c4-637f-4443-8360-2332067586b4
+      cache-control:
+      - no-cache, no-store, must-revalidate
+      content-length:
+      - '2'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 28 Sep 2022 16:36:16 GMT
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      timing-allow-origin:
+      - '*'
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '16'
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: '{"reward": [{"slotId": "myslotid", "value": 1.0}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '50'
+      Content-Type:
+      - application/json
+      Ocp-Apim-Subscription-Key:
+      - e5891e8a293f4ede99277e8d0229a477
+      User-Agent:
+      - azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)
+    method: POST
+    uri: https://REDACTED.cognitiveservices.azure.com/personalizer/multislot/events/123456789/reward?api-version=2022-09-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: a06805df-0c06-4925-9c06-7c2b2ecca846
+      cache-control: no-cache, no-store, must-revalidate
+      content-length: '0'
+      date: Wed, 28 Sep 2022 16:36:21 GMT
+      expires: '0'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '2'
+    status:
+      code: 204
+      message: No Content
+    url: https://javapersonalizermultislotlivetestresource.cognitiveservices.azure.com//personalizer/multislot/events/123456789/reward?api-version=2022-09-01-preview
+version: 1

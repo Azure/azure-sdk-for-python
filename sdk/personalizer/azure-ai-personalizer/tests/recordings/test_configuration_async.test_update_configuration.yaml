@@ -1,0 +1,80 @@
+interactions:
+- request:
+    body: '{"rewardAggregation": "average", "modelExportFrequency": "PT3M", "defaultReward":
+      1.0, "modelRetrainDays": 0, "rewardWaitTime": "PT4H", "explorationPercentage":
+      0.3, "logRetentionDays": -1, "learningMode": "Online"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '215'
+      Content-Type:
+      - application/json
+      Ocp-Apim-Subscription-Key:
+      - f8405db129b84ad0bd80464c9884ad71
+      User-Agent:
+      - azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)
+    method: PUT
+    uri: https://REDACTED.cognitiveservices.azure.com/personalizer/configurations/service?api-version=2022-09-01-preview
+  response:
+    body:
+      string: "{\n  \"rewardWaitTime\": \"PT4H\",\n  \"defaultReward\": 1.0,\n  \"rewardAggregation\":
+        \"average\",\n  \"explorationPercentage\": 0.3,\n  \"modelExportFrequency\":
+        \"PT3M\",\n  \"logRetentionDays\": -1,\n  \"lastConfigurationEditDate\": \"2022-09-28T16:36:12\",\n
+        \ \"learningMode\": \"Online\",\n  \"isAutoOptimizationEnabled\": true,\n
+        \ \"autoOptimizationFrequency\": \"P28D\",\n  \"autoOptimizationStartDate\":
+        \"2022-09-01T21:02:42\",\n  \"modelRetrainDays\": 0,\n  \"isInferenceExplainabilityEnabled\":
+        false\n}"
+    headers:
+      apim-request-id: 7947fdfd-f8e9-4646-8f03-437776f6a225
+      cache-control: no-cache, no-store, must-revalidate
+      content-length: '462'
+      content-type: application/json; charset=utf-8
+      date: Wed, 28 Sep 2022 16:36:12 GMT
+      expires: '0'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      timing-allow-origin: '*'
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '78'
+    status:
+      code: 200
+      message: OK
+    url: https://javapersonalizerlivetestresource.cognitiveservices.azure.com//personalizer/configurations/service?api-version=2022-09-01-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Ocp-Apim-Subscription-Key:
+      - f8405db129b84ad0bd80464c9884ad71
+      User-Agent:
+      - azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://REDACTED.cognitiveservices.azure.com/personalizer/configurations/service?api-version=2022-09-01-preview
+  response:
+    body:
+      string: "{\n  \"rewardWaitTime\": \"PT4H\",\n  \"defaultReward\": 1.0,\n  \"rewardAggregation\":
+        \"average\",\n  \"explorationPercentage\": 0.3,\n  \"modelExportFrequency\":
+        \"PT3M\",\n  \"logRetentionDays\": -1,\n  \"lastConfigurationEditDate\": \"2022-09-28T16:36:12\",\n
+        \ \"learningMode\": \"Online\",\n  \"isAutoOptimizationEnabled\": true,\n
+        \ \"autoOptimizationFrequency\": \"P28D\",\n  \"autoOptimizationStartDate\":
+        \"2022-09-01T21:02:42\",\n  \"modelRetrainDays\": 0,\n  \"isInferenceExplainabilityEnabled\":
+        false\n}"
+    headers:
+      apim-request-id: 5f5d48aa-5d84-47e2-bb71-6fdd6aa4e6e9
+      cache-control: no-cache, no-store, must-revalidate
+      content-length: '462'
+      content-type: application/json; charset=utf-8
+      date: Wed, 28 Sep 2022 16:36:12 GMT
+      expires: '0'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      timing-allow-origin: '*'
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '37'
+    status:
+      code: 200
+      message: OK
+    url: https://javapersonalizerlivetestresource.cognitiveservices.azure.com//personalizer/configurations/service?api-version=2022-09-01-preview
+version: 1

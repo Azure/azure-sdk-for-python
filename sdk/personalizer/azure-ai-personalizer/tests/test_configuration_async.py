@@ -1,7 +1,9 @@
 import pytest
-from devtools_testutils import AzureRecordedTestCase
-import helpers
+from devtools_testutils import AzureTestCase
+import personalizer_helpers_async
 import asyncio
+
+from tests import personalizer_helpers
 
 
 def configuration_equals(actual, expected):
@@ -17,14 +19,14 @@ def policy_equals(actual, expected):
     assert actual.get('arguments') == expected.get('arguments')
 
 
-class TestConfigurationAsync(AzureRecordedTestCase):
+class TestConfigurationAsync(AzureTestCase):
 
-    @helpers.PersonalizerPreparer()
+    @personalizer_helpers.PersonalizerPreparer()
     @pytest.mark.asyncio
     async def test_update_configuration(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client = helpers.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
         configuration = {
             "rewardAggregation": "average",
             "modelExportFrequency": "PT3M",
@@ -41,12 +43,12 @@ class TestConfigurationAsync(AzureRecordedTestCase):
         new_configuration = await client.service_configuration.get()
         configuration_equals(new_configuration, configuration)
 
-    @helpers.PersonalizerPreparer()
+    @personalizer_helpers.PersonalizerPreparer()
     @pytest.mark.asyncio
     async def test_update_policy(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client = helpers.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
         policy = {
             "name": "app1",
             "arguments": "--cb_explore_adf --quadratic GT --quadratic MR --quadratic GR --quadratic ME --quadratic OT --quadratic OE --quadratic OR --quadratic MS --quadratic GX --ignore A --cb_type ips --epsilon 0.2",
@@ -57,7 +59,7 @@ class TestConfigurationAsync(AzureRecordedTestCase):
         new_policy = await client.policy.get()
         policy_equals(new_policy, policy)
 
-    @helpers.PersonalizerPreparer()
+    @personalizer_helpers.PersonalizerPreparer()
     @pytest.mark.asyncio
     async def test_reset_policy(self, **kwargs):
         default_policy = {
@@ -66,7 +68,7 @@ class TestConfigurationAsync(AzureRecordedTestCase):
         }
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client = helpers.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
         new_policy = await client.policy.reset()
         self.sleep(30)
         policy_equals(new_policy, default_policy)

@@ -1,5 +1,5 @@
-from devtools_testutils import AzureRecordedTestCase
-import helpers
+from devtools_testutils import AzureTestCase
+import personalizer_helpers
 import time
 
 
@@ -16,13 +16,13 @@ def policy_equals(actual, expected):
     assert actual.get('arguments') == expected.get('arguments')
 
 
-class TestConfiguration(AzureRecordedTestCase):
+class TestConfiguration(AzureTestCase):
 
-    @helpers.PersonalizerPreparer()
+    @personalizer_helpers.PersonalizerPreparer()
     def test_update_configuration(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client = helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client =  personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
         configuration = {
             "rewardAggregation": "average",
             "modelExportFrequency": "PT3M",
@@ -39,11 +39,11 @@ class TestConfiguration(AzureRecordedTestCase):
         new_configuration = client.service_configuration.get()
         configuration_equals(new_configuration, configuration)
 
-    @helpers.PersonalizerPreparer()
+    @personalizer_helpers.PersonalizerPreparer()
     def test_update_policy(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client = helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client =  personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
         policy = {
             "name": "app1",
             "arguments": "--cb_explore_adf --quadratic GT --quadratic MR --quadratic GR --quadratic ME --quadratic OT --quadratic OE --quadratic OR --quadratic MS --quadratic GX --ignore A --cb_type ips --epsilon 0.2",
@@ -54,7 +54,7 @@ class TestConfiguration(AzureRecordedTestCase):
         new_policy = client.policy.get()
         policy_equals(new_policy, policy)
 
-    @helpers.PersonalizerPreparer()
+    @personalizer_helpers.PersonalizerPreparer()
     def test_reset_policy(self, **kwargs):
         default_policy = {
             "name": "app1",
@@ -62,7 +62,7 @@ class TestConfiguration(AzureRecordedTestCase):
         }
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client = helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client =  personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
         new_policy = client.policy.reset()
         self.sleep(30)
         policy_equals(new_policy, default_policy)
