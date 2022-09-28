@@ -23,11 +23,16 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, TYPE_CHECKING, Union, cast, overload
+from __future__ import annotations
+from typing import Any, TYPE_CHECKING, Union, overload
 
 from azure.core.tracing.decorator import distributed_trace
 
-from ._utils import get_http_request_kwargs
+from ._utils import (
+    build_get_schema_props_request,
+    build_get_schema_request,
+    build_register_schema_request,
+)
 from ._common._constants import SchemaFormat, DEFAULT_VERSION
 from ._common._schema import Schema, SchemaProperties
 from ._common._response_handlers import (
@@ -35,7 +40,6 @@ from ._common._response_handlers import (
     _parse_response_schema_properties,
 )
 from ._generated._client import AzureSchemaRegistry
-from ._generated.rest import schema as schema_rest
 
 
 if TYPE_CHECKING:
@@ -64,8 +68,9 @@ class SchemaRegistryClient(object):
 
     """
 
-    def __init__(self, fully_qualified_namespace, credential, **kwargs):
-        # type: (str, TokenCredential, Any) -> None
+    def __init__(
+        self, fully_qualified_namespace: str, credential: TokenCredential, **kwargs: Any
+    ) -> None:
         api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._generated_client = AzureSchemaRegistry(
             credential=credential,
@@ -74,17 +79,14 @@ class SchemaRegistryClient(object):
             **kwargs,
         )
 
-    def __enter__(self):
-        # type: () -> SchemaRegistryClient
+    def __enter__(self) -> SchemaRegistryClient:
         self._generated_client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._generated_client.__exit__(*exc_details)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
@@ -93,13 +95,12 @@ class SchemaRegistryClient(object):
     @distributed_trace
     def register_schema(
         self,
-        group_name,
-        name,
-        definition,
-        format,
-        **kwargs,  # pylint:disable=redefined-builtin
-    ):
-        # type: (str, str, str, Union[str, SchemaFormat], Any) -> SchemaProperties
+        group_name: str,
+        name: str,
+        definition: str,
+        format: Union[str, SchemaFormat],  # pylint:disable=redefined-builtin
+        **kwargs: Any,
+    ) -> SchemaProperties:
         """
         Register new schema. If schema of specified name does not exist in specified group,
         schema is created at version 1. If schema of specified name exists already in specified group,
@@ -124,24 +125,9 @@ class SchemaRegistryClient(object):
                 :caption: Register a new schema.
 
         """
-        try:
-            format = cast(SchemaFormat, format)
-            format = format.value
-        except AttributeError:
-            pass
-
-        format = format.capitalize()
-        http_request_kwargs = get_http_request_kwargs(kwargs)
-        request = schema_rest.build_register_request(
-            group_name=group_name,
-            schema_name=name,
-            content=definition,
-            content_type=kwargs.pop(
-                "content_type", "application/json; serialization={}".format(format)
-            ),
-            **http_request_kwargs,
+        request = build_register_schema_request(
+            group_name, name, definition, format, kwargs
         )
-
         response = self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
         return _parse_response_schema_properties(response, format)
@@ -188,35 +174,7 @@ class SchemaRegistryClient(object):
                 :dedent: 4
                 :caption: Get schema by version.
         """
-        http_request_kwargs = get_http_request_kwargs(kwargs)
-        try:
-            # Check positional args for schema_id.
-            # Else, check if schema_id was passed in with keyword.
-            try:
-                schema_id = args[0]
-            except IndexError:
-                schema_id = kwargs.pop("schema_id")
-            schema_id = cast(str, schema_id)
-            request = schema_rest.build_get_by_id_request(
-                id=schema_id, **http_request_kwargs
-            )
-        except KeyError:
-            # If group_name, name, and version aren't passed in as kwargs, raise error.
-            try:
-                group_name = kwargs.pop("group_name")
-                name = kwargs.pop("name")
-                version = kwargs.pop("version")
-            except KeyError as exc:
-                raise TypeError(
-                    f"""If getting schema by version, '{exc.args[0]}' is a required keyword."""
-                    """Else, pass in the required argument for the `schema_id` parameter."""
-                )
-            request = schema_rest.build_get_schema_version_request(
-                group_name=group_name,
-                schema_name=name,
-                schema_version=version,
-                **http_request_kwargs,
-            )
+        request = build_get_schema_request(args, kwargs)
         response = self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
         return _parse_response_schema(response)
@@ -224,13 +182,12 @@ class SchemaRegistryClient(object):
     @distributed_trace
     def get_schema_properties(
         self,
-        group_name,
-        name,
-        definition,
-        format,
-        **kwargs,  # pylint:disable=redefined-builtin
-    ):
-        # type: (str, str, str, Union[str, SchemaFormat], Any) -> SchemaProperties
+        group_name: str,
+        name: str,
+        definition: str,
+        format: Union[str, SchemaFormat],  # pylint:disable=redefined-builtin
+        **kwargs: Any,
+    ) -> SchemaProperties:
         """
         Gets the schema properties corresponding to an existing schema within the specified schema group,
         as matched by schema definition comparison.
@@ -253,24 +210,9 @@ class SchemaRegistryClient(object):
                 :caption: Get schema id.
 
         """
-        try:
-            format = cast(SchemaFormat, format)
-            format = format.value
-        except AttributeError:
-            pass
-
-        format = format.capitalize()
-        http_request_kwargs = get_http_request_kwargs(kwargs)
-        request = schema_rest.build_query_id_by_content_request(
-            group_name=group_name,
-            schema_name=name,
-            content=definition,
-            content_type=kwargs.pop(
-                "content_type", "application/json; serialization={}".format(format)
-            ),
-            **http_request_kwargs,
+        request = build_get_schema_props_request(
+            group_name, name, definition, format, kwargs
         )
-
         response = self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
         return _parse_response_schema_properties(response, format)

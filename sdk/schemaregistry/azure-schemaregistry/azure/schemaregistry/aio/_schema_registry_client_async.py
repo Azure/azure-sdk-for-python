@@ -23,10 +23,14 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, TYPE_CHECKING, Union, cast, overload
+from typing import Any, TYPE_CHECKING, Union, overload
 
 from azure.core.tracing.decorator_async import distributed_trace_async
-from .._utils import get_http_request_kwargs
+from .._utils import (
+    build_get_schema_props_request,
+    build_get_schema_request,
+    build_register_schema_request,
+)
 from .._common._constants import SchemaFormat, DEFAULT_VERSION
 from .._common._schema import Schema, SchemaProperties
 from .._common._response_handlers import (
@@ -35,7 +39,6 @@ from .._common._response_handlers import (
 )
 
 from .._generated.aio._client import AzureSchemaRegistry
-from .._generated.rest import schema as schema_rest
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -123,24 +126,9 @@ class SchemaRegistryClient(object):
                 :caption: Register a new schema.
 
         """
-        try:
-            format = cast(SchemaFormat, format)
-            format = format.value
-        except AttributeError:
-            pass
-
-        format = format.capitalize()
-        http_request_kwargs = get_http_request_kwargs(kwargs)
-        request = schema_rest.build_register_request(
-            group_name=group_name,
-            schema_name=name,
-            content=definition,
-            content_type=kwargs.pop(
-                "content_type", "application/json; serialization={}".format(format)
-            ),
-            **http_request_kwargs,
+        request = build_register_schema_request(
+            group_name, name, definition, format, kwargs
         )
-
         response = await self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
         return _parse_response_schema_properties(response, format)
@@ -187,35 +175,7 @@ class SchemaRegistryClient(object):
                 :dedent: 4
                 :caption: Get schema by version.
         """
-        http_request_kwargs = get_http_request_kwargs(kwargs)
-        try:
-            # Check positional args for schema_id.
-            # Else, check if schema_id was passed in with keyword.
-            try:
-                schema_id = args[0]
-            except IndexError:
-                schema_id = kwargs.pop("schema_id")
-            schema_id = cast(str, schema_id)
-            request = schema_rest.build_get_by_id_request(
-                id=schema_id, **http_request_kwargs
-            )
-        except KeyError:
-            # If group_name, name, and version aren't passed in as kwargs, raise error.
-            try:
-                group_name = kwargs.pop("group_name")
-                name = kwargs.pop("name")
-                version = kwargs.pop("version")
-            except KeyError as exc:
-                raise TypeError(
-                    f"""If getting schema by version, '{exc.args[0]}' is a required keyword."""
-                    """Else, pass in the required argument for the `schema_id` parameter."""
-                )
-            request = schema_rest.build_get_schema_version_request(
-                group_name=group_name,
-                schema_name=name,
-                schema_version=version,
-                **http_request_kwargs,
-            )
+        request = build_get_schema_request(args, kwargs)
         response = await self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
         return _parse_response_schema(response)
@@ -251,24 +211,9 @@ class SchemaRegistryClient(object):
                 :caption: Get schema by id.
 
         """
-        try:
-            format = cast(SchemaFormat, format)
-            format = format.value
-        except AttributeError:
-            pass
-
-        format = format.capitalize()
-        http_request_kwargs = get_http_request_kwargs(kwargs)
-        request = schema_rest.build_query_id_by_content_request(
-            group_name=group_name,
-            schema_name=name,
-            content=definition,
-            content_type=kwargs.pop(
-                "content_type", "application/json; serialization={}".format(format)
-            ),
-            **http_request_kwargs,
+        request = build_get_schema_props_request(
+            group_name, name, definition, format, kwargs
         )
-
         response = await self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
         return _parse_response_schema_properties(response, format)
