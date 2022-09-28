@@ -82,7 +82,6 @@ class ScheduleOperations(_ScopeDependentOperations):
         :type list_view_type: Optional[ScheduleListViewType]
         :return: An iterator to list JobSchedule.
         :rtype: Iterable[JobSchedule]
-        :raises: ~azure.core.exceptions.HttpResponseError
         """
 
         def safe_from_rest_object(objs):
@@ -124,7 +123,6 @@ class ScheduleOperations(_ScopeDependentOperations):
 
         :param name: Schedule name.
         :type name: str
-        :raises: ~azure.core.exceptions.HttpResponseError
         """
         poller = self.service_client.begin_delete(
             resource_group_name=self._operation_scope.resource_group_name,
@@ -147,7 +145,6 @@ class ScheduleOperations(_ScopeDependentOperations):
         :type name: str
         :return: The schedule object.
         :rtype: JobSchedule
-        :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self.service_client.get(
             resource_group_name=self._operation_scope.resource_group_name,
@@ -169,7 +166,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         :type schedule: JobSchedule
         :return: An instance of LROPoller that returns JobSchedule if no_wait=True, or JobSchedule if no_wait=False
         :rtype: Union[LROPoller, JobSchedule]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: Union[LROPoller, ~azure.ai.ml.entities.JobSchedule]
         """
 
         schedule._validate(raise_error=True)

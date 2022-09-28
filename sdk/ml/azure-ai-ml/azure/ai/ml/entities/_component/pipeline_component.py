@@ -55,6 +55,7 @@ class PipelineComponent(Component):
     :type outputs: Component outputs
     :param jobs: Id to components dict inside pipeline definition.
     :type jobs: OrderedDict[str, Component]
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if PipelineComponent cannot be successfully validated. Details will be provided in the error message.
     """
 
     def __init__(
@@ -68,6 +69,7 @@ class PipelineComponent(Component):
         inputs: Dict = None,
         outputs: Dict = None,
         jobs: Dict[str, BaseNode] = None,
+        is_deterministic: bool = None,
         **kwargs,
     ):
         kwargs[COMPONENT_TYPE] = NodeType.PIPELINE
@@ -79,6 +81,7 @@ class PipelineComponent(Component):
             display_name=display_name,
             inputs=inputs,
             outputs=outputs,
+            is_deterministic=is_deterministic,
             **kwargs,
         )
         self._jobs = self._process_jobs(jobs) if jobs else {}

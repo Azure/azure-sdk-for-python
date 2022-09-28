@@ -168,6 +168,14 @@ def download_text_from_url(
 
 
 def load_file(file_path: str) -> str:
+    """Load a local file.
+
+    :param file_path: The relative or absolute path to the local file.
+    :type file_path: str
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if file or folder cannot be found.
+    :return: A string representation of the local file's contents.
+    :rtype: str
+    """
     try:
         with open(file_path, "r") as f:
             cfg = f.read()
@@ -183,7 +191,15 @@ def load_file(file_path: str) -> str:
     return cfg
 
 
-def load_json(file_path: Union[str, os.PathLike, None]) -> Dict:
+def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
+    """Load a local json file.
+
+    :param file_path: The relative or absolute path to the local file.
+    :type file_path: Union[str, os.PathLike]
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if file or folder cannot be found.
+    :return: A dictionary representation of the local file's contents.
+    :rtype: Dict
+    """
     try:
         with open(file_path, "r") as f:
             cfg = json.load(f)
@@ -199,10 +215,18 @@ def load_json(file_path: Union[str, os.PathLike, None]) -> Dict:
     return cfg
 
 
-def load_yaml(source: Union[AnyStr, PathLike, IO, None]) -> Dict:
+def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
     # null check - just return an empty dict.
     # Certain CLI commands rely on this behavior to produce a resource
     # via CLI, which is then populated through CLArgs.
+    """Load a local YAML file.
+
+    :param file_path: The relative or absolute path to the local file.
+    :type file_path: str
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if file or folder cannot be successfully loaded. Details will be provided in the error message.
+    :return: A dictionary representation of the local file's contents.
+    :rtype: Dict
+    """
     if source is None:
         return {}
 
@@ -273,11 +297,26 @@ def dump_yaml(*args, **kwargs):
 
 
 def dump_yaml_to_file(
-    dest: Union[AnyStr, PathLike, IO, None],
-    data_dict: Union[OrderedDict, dict],
+    dest: Optional[Union[AnyStr, PathLike, IO]],
+    data_dict: Union[OrderedDict, Dict],
     default_flow_style=False,
+    args=None,  # deprecated* input
     **kwargs,
 ) -> None:
+    """Dump dictionary to a local YAML file.
+
+    :param dest: The relative or absolute path where the YAML dictionary will be dumped.
+    :type dest: Optional[Union[AnyStr, PathLike, IO]]
+    :param data_dict: Dictionary representing a YAML object
+    :type data_dict: Union[OrderedDict, Dict]
+    :param default_flow_style: Use flow style for formatting nested YAML collections instead of block style. Defaults to False.
+    :type default_flow_style: bool
+    :param path: Deprecated. Use 'dest' param instead.
+    :type path: Optional[Union[AnyStr, PathLike]]
+    :param args: Deprecated.
+    :type: Any
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully dumped. Details will be provided in the error message.
+    """
     # Check for deprecated path input, either named or as first unnamed input
     path = kwargs.pop("path", None)
     if dest is None:
@@ -522,7 +561,7 @@ def hash_dict(items: dict, keys_to_omit=None):
     items = pydash.omit(items, keys_to_omit)
     # serialize dict with order so same dict will have same content
     serialized_component_interface = json.dumps(items, sort_keys=True)
-    object_hash = hashlib.md5()
+    object_hash = hashlib.md5() # nosec
     object_hash.update(serialized_component_interface.encode("utf-8"))
     return str(UUID(object_hash.hexdigest()))
 

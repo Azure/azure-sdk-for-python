@@ -22,7 +22,6 @@ import os
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 async def get_point_of_interest_categories_async():
-    # [START get_point_of_interest_categories_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search.aio import MapsSearchClient
 
@@ -33,7 +32,6 @@ async def get_point_of_interest_categories_async():
 
     print("Get Search POI Categories:")
     print(result)
-    # [END get_point_of_interest_categories_async]
 
 if __name__ == '__main__':
     asyncio.run(get_point_of_interest_categories_async())

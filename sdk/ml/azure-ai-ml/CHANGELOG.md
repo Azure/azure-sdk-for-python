@@ -6,6 +6,8 @@
  - Support passing JobService as argument to Command()
  - Added support for custom setup scripts on compute instances.
  - Added a `show_progress` parameter to MLClient for enable/disable progress bars of long running operations.
+ - Support `month_days` in `RecurrencePattern` when using `RecurrenceSchedule`.
+ - Support `ml_client.schedules.list` with `list_view_type`, default to `ENABLED_ONLY`.
 
 ### Breaking Changes
 - ComputeOperations.attach has been renamed to begin_attach.
@@ -14,6 +16,7 @@
 - Workspace.list_keys renamed to Workspace.get_keys.
 
 ### Bugs Fixed
+- Fix identity passthrough job with single file code
 
 ### Other Changes
  - Removed declaration on Python 3.6 support
@@ -32,6 +35,7 @@
  - Enable using @dsl.pipeline without brackets when no additional parameters.
  - Expose Azure subscription Id and resource group name from MLClient objects.
  - Added Idle Shutdown support for Compute Instances, allowing instances to shutdown after a set period of inactivity.
+ - Syntax validation on scoring scripts of Batch Deployment and Online Deployment will prevent the user from submitting bad deployments.
 
 ### Breaking Changes
  - Change (begin_)create_or_update typehints to use generics.
