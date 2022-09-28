@@ -19,9 +19,6 @@ collect_ignore = []
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    # set_custom_default_matcher(
-    #     compare_bodies=False,
-    # )
     add_remove_header_sanitizer(headers="aeg-sas-key")
     add_remove_header_sanitizer(headers="aeg-sas-token")
     add_remove_header_sanitizer(headers="ServiceBusSupplementaryAuthorization")

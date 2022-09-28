@@ -5,7 +5,6 @@ stages:
     parameters:
       ServiceDirectory: servicebus
       TestTimeoutInMinutes: 300
-      TestProxy: true
       BuildTargetingString: azure-servicebus*
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
