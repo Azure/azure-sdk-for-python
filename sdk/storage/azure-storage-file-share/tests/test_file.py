@@ -2375,8 +2375,8 @@ class TestStorageTest(StorageRecordedTestCase):
 
         return variables
 
+    pytest.mark.live_test_only
     @FileSharePreparer()
-    @recorded_by_proxy
     def test_account_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2470,8 +2470,8 @@ class TestStorageTest(StorageRecordedTestCase):
                 file_path="foo",
                 credential=AzureSasCredential("?foo=bar"))
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
-    @recorded_by_proxy
     def test_shared_read_access_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2500,8 +2500,8 @@ class TestStorageTest(StorageRecordedTestCase):
         assert response.ok
         assert self.short_byte_data == response.content
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
-    @recorded_by_proxy
     def test_shared_read_access_file_with_content_query_params(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2539,8 +2539,8 @@ class TestStorageTest(StorageRecordedTestCase):
         assert response.headers['content-language'] == 'fr'
         assert response.headers['content-type'] == 'text'
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
-    @recorded_by_proxy
     def test_shared_write_access_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2572,8 +2572,8 @@ class TestStorageTest(StorageRecordedTestCase):
         file_content = file_client_admin.download_file().readall()
         assert updated_data == file_content[:len(updated_data)]
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
-    @recorded_by_proxy
     def test_shared_delete_access_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2784,6 +2784,7 @@ class TestStorageTest(StorageRecordedTestCase):
         props = new_file.get_file_properties()
         assert props is not None
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_rename_file_share_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
